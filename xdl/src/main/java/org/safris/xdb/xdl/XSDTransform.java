@@ -26,7 +26,7 @@ import org.w3.x2001.xmlschema.$xs_complexType;
 import org.w3.x2001.xmlschema.$xs_simpleType;
 import org.w3.x2001.xmlschema.xs_schema;
 
-public class XSDCreator extends XDLParser {
+public class XSDTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
     createXSD(new File(args[0]), null);
   }
@@ -35,25 +35,25 @@ public class XSDCreator extends XDLParser {
     final xdl_database database = parseArguments(xdlFile, outDir);
 
     try {
-      final XSDCreator creator = new XSDCreator(database);
+      final XSDTransform creator = new XSDTransform(database);
       final xs_schema schema = creator.parse();
 
-      writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.database.get_name$().getText() + ".xsd") : null);
+      writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.unmerged.get_name$().getText() + ".xsd") : null);
     }
     catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  private XSDCreator(final xdl_database database) throws Exception {
-    super(database, false);
+  private XSDTransform(final xdl_database database) throws Exception {
+    super(database);
   }
 
   private xs_schema parse() {
     final xs_schema schema = new xs_schema();
-    schema.set_targetNamespace$(new xs_schema._targetNamespace$(database.get_targetNamespace$().getText()));
+    schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
 
-    for ($xdl_tableType table : database.get_table()) {
+    for ($xdl_tableType<?> table : unmerged.get_table()) {
       if (table.get_abstract$().getText()) {
         final $xs_complexType complexType = parseTable(table, new xs_schema._complexType());
         complexType.set_name$(new $xs_complexType._name$(table.get_name$().getText()));
@@ -61,7 +61,7 @@ public class XSDCreator extends XDLParser {
       }
       else {
         final xs_schema._element element = new xs_schema._element();
-        element.set_type$(new xs_schema._element._type$(new QName(database.get_targetNamespace$().getText(), table.get_name$().getText(), database.get_name$().getText())));
+        element.set_type$(new xs_schema._element._type$(new QName(unmerged.get_targetNamespace$().getText(), table.get_name$().getText(), unmerged.get_name$().getText())));
         element.set_name$(new xs_schema._element._name$(table.get_name$().getText()));
         schema.add_element(element);
 
@@ -82,7 +82,7 @@ public class XSDCreator extends XDLParser {
 
       final $xs_complexType._complexContent._extension extension = new $xs_complexType._complexContent._extension();
       complexContent.add_extension(extension);
-      extension.set_base$(new $xs_complexType._complexContent._extension._base$(new QName(database.get_targetNamespace$().getText(), table.get_extends$().getText(), database.get_name$().getText())));
+      extension.set_base$(new $xs_complexType._complexContent._extension._base$(new QName(unmerged.get_targetNamespace$().getText(), table.get_extends$().getText(), unmerged.get_name$().getText())));
 
       complexType = extension;
     }
@@ -115,10 +115,12 @@ public class XSDCreator extends XDLParser {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "boolean");
         else if (column instanceof $xdl_varchar)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "string");
-        else if (column instanceof $xdl_enum)
-          type = new QName(NamespaceURI.XS.getNamespaceURI(), "enum");
-        else if (column instanceof $xdl_integer)
+        else if (column instanceof $xdl_smallint)
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), "short");
+        else if (column instanceof $xdl_int)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "integer");
+        else if (column instanceof $xdl_bigint)
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), "long");
         else if (column instanceof $xdl_date)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "date");
         else if (column instanceof $xdl_dateTime)

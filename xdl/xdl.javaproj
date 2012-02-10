@@ -27,87 +27,123 @@
   <includedFiles>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/DDLCreator.java</incPathSpec>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/DDLTransform.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/XDLParser.java</incPathSpec>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/JPABeanTransform.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/XSDCreator.java</incPathSpec>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/XDLTransformer.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_blob.java</incPathSpec>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/XSDTransform.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/manifest.xml</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/META-INF/MANIFEST.MF</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/org/safris/xdb/xdl/org.safris.xdb.xdl.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/org/w3/x2001/xmlschema/org.w3.x2001.xmlschema.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/xdl.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/classes/XMLSchemaAPI.xsd</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_boolean.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Appointment.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_char.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentAudit.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_columnType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentTimeline.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_databaseType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOff.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_date.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffAudit.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_dateTime.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Bookable.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_decimal.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_enum.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Duration.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_float.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/EventType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_integer.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Holiday.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_numeric.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Id.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_smallint.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Location.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_tableType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/LocationAudit.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_time.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/LocationType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_timestamp.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Patient.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdb_varchar.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Provider.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_blob.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Slot.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotAudit.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotDuration.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_bigint.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -119,19 +155,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_boolean.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_char.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_char.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_columnType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -143,19 +167,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_databaseType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_date.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_date.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_dateTime.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -167,14 +179,6 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_decimal.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_enum.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_enum.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -183,11 +187,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_float.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_integer.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_int.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -199,19 +199,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_numeric.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_smallint.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_smallint.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_tableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -223,19 +211,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_time.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_timestamp.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_timestamp.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_varchar.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -244,18 +220,6 @@
     <javaFile2>
       <buildAction>NONE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/org.safris.xdb.xdl.xsd</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>NONE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/org.safris.xdb.xdl.xsd</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/xdb_database.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/xdl_database.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -275,19 +239,23 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/w3/x2001/xmlschema/xs_element.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/w3/x2001/xmlschema/xs_restriction.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/w3/x2001/xmlschema/xs_schema.java</incPathSpec>
     </javaFile2>
     <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/w3/x2001/xmlschema/xs_simpleType.java</incPathSpec>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/maven-archiver/pom.properties</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/test-classes/META-INF/MANIFEST.MF</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/test-classes/org/safris/xdb/xdl/org.safris.xdb.xdl.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>NONE</buildAction>
+      <incPathSpec>target/test-classes/org/w3/x2001/xmlschema/org.w3.x2001.xmlschema.xsd</incPathSpec>
     </javaFile2>
   </includedFiles>
   <name>org.safris.xdb:xdl</name>
@@ -312,20 +280,47 @@
       <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
       <projectGuid>{85CD76B7-40AB-31D6-84C8-79E348237EBB}</projectGuid>
     </projectReference>
+    <projectReference>
+      <name>org.safris.commons:lang</name>
+      <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
+      <projectGuid>{5AD274B7-A76B-33E3-9C0B-21059E680A5E}</projectGuid>
+    </projectReference>
+    <projectReference>
+      <name>org.safris.commons:formatter</name>
+      <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
+      <projectGuid>{CA403C4A-02A4-3CDA-B7DE-60529A77E290}</projectGuid>
+    </projectReference>
   </projectReferences>
-  <references/>
+  <references>
+    <classpathReference>
+      <relativePath>..\..\..\..\..\..\.m2\repository\javax\persistence\persistence-api\1.0.2\persistence-api-1.0.2.jar</relativePath>
+    </classpathReference>
+    <classpathReference>
+      <relativePath>..\..\..\..\..\..\.m2\repository\org\eclipse\persistence\eclipselink\1.1.3\eclipselink-1.1.3.jar</relativePath>
+    </classpathReference>
+    <classpathReference>
+      <relativePath>..\..\..\..\..\..\.m2\repository\javax\validation\validation-api\1.0.0.GA\validation-api-1.0.0.GA.jar</relativePath>
+    </classpathReference>
+  </references>
   <startingPoints>
     <startingPoint>
       <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl</commandLineArguments>
-      <name>CreateDDL</name>
-      <target>org.safris.xdb.xdl.CreateDDL</target>
+      <name>DDLTransform</name>
+      <target>org.safris.xdb.xdl.DDLTransform</target>
       <vmOtherOptions></vmOtherOptions>
       <workingDir></workingDir>
     </startingPoint>
     <startingPoint>
       <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl</commandLineArguments>
-      <name>CreateXSD</name>
-      <target>org.safris.xdb.xdl.CreateXSD</target>
+      <name>XSDTransform</name>
+      <target>org.safris.xdb.xdl.XSDTransform</target>
+      <vmOtherOptions></vmOtherOptions>
+      <workingDir></workingDir>
+    </startingPoint>
+    <startingPoint>
+      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl /Users/seva/Projects/org/safris/trunk/xdb/xdl/target/generated-sources/xdl</commandLineArguments>
+      <name>JPABeanTransform</name>
+      <target>org.safris.xdb.xdl.JPABeanTransform</target>
       <vmOtherOptions></vmOtherOptions>
       <workingDir></workingDir>
     </startingPoint>

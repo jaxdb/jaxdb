@@ -25,27 +25,25 @@ import java.util.Set;
 import org.safris.commons.util.TopologicalSort;
 import org.safris.xml.generator.compiler.runtime.ComplexType;
 
-public class DDLCreator extends XDLParser {
+public class DDLTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
     createDDL(new File(args[0]), null);
   }
 
   public static void createDDL(final File xdlFile, final File outDir) {
     final xdl_database database = parseArguments(xdlFile, outDir);
-
     try {
-      final DDLCreator creator = new DDLCreator(database);
+      final DDLTransform creator = new DDLTransform(database);
       final String sql = creator.parse();
-
-      writeOutput(sql, outDir != null ? new File(outDir, creator.database.get_name$().getText() + ".sql") : null);
+      writeOutput(sql, outDir != null ? new File(outDir, creator.merged.get_name$().getText() + ".sql") : null);
     }
     catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
 
-  private DDLCreator(final xdl_database database) throws Exception {
-    super(database, true);
+  private DDLTransform(final xdl_database database) throws Exception {
+    super(database);
   }
 
   private String parseColumns(final $xdl_tableType<ComplexType> table) {
@@ -85,9 +83,33 @@ public class DDLCreator extends XDLParser {
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
         }
-        else if (column instanceof $xdl_integer) {
-          final $xdl_integer type = ($xdl_integer)column;
+        else if (column instanceof $xdl_smallint) {
+          final $xdl_smallint type = ($xdl_smallint)column;
+          columnsBuffer.append("SMALLINT");
+          if (type.get_precision$() != null)
+            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+
+          if (type.get_unsigned$() != null)
+            columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_default$() != null)
+            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+        }
+        else if (column instanceof $xdl_int) {
+          final $xdl_int type = ($xdl_int)column;
           columnsBuffer.append("INT");
+          if (type.get_precision$() != null)
+            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+
+          if (type.get_unsigned$() != null)
+            columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_default$() != null)
+            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+        }
+        else if (column instanceof $xdl_bigint) {
+          final $xdl_bigint type = ($xdl_bigint)column;
+          columnsBuffer.append("BIGINT");
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
@@ -219,22 +241,32 @@ public class DDLCreator extends XDLParser {
   }
 
   private String parse() throws Exception {
-    for ($xdl_tableType table : database.get_table())
-      if (!table.get_abstract$().getText())
+    final Set<String> skipTables = new HashSet<String>();
+    for ($xdl_tableType table : merged.get_table()) {
+      if (table.get_skip$().getText())
+        skipTables.add(table.get_name$().getText());
+      else if (!table.get_abstract$().getText())
         dropStatements.put(table.get_name$().getText(), createDropStatement(table));
+    }
 
-    for ($xdl_tableType table : database.get_table())
+    for ($xdl_tableType table : merged.get_table())
       if (!table.get_abstract$().getText())
         createStatements.put(table.get_name$().getText(), parseTable(table));
 
     final StringBuffer tablesBuffer = new StringBuffer();
     final List<String> sortedTableOrder = TopologicalSort.sort(dependencyGraph);
     for (int i = sortedTableOrder.size() - 1; 0 <= i; i--)
-      tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
+      if(dropStatements.containsKey(sortedTableOrder.get(i)))
+         tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
 
     for (String tableName : sortedTableOrder)
-      tablesBuffer.append("\n").append(createStatements.get(tableName));
+      if (!skipTables.contains(tableName))
+        tablesBuffer.append("\n").append(createStatements.get(tableName));
 
+    if (tablesBuffer.length() == 0)
+    {
+      int i = 0;
+    }
     return tablesBuffer.substring(1);
   }
 }

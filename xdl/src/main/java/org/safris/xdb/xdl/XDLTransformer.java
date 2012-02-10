@@ -19,6 +19,7 @@ package org.safris.xdb.xdl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,12 +27,13 @@ import java.util.Map;
 import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
+import org.safris.commons.xml.dom.DOMs;
 import org.safris.xdb.xdl.$xdl_tableType;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.safris.xml.generator.compiler.runtime.ComplexType;
 import org.xml.sax.InputSource;
 
-public abstract class XDLParser {
+public abstract class XDLTransformer {
   static {
     try {
       PackageLoader.getSystemPackageLoader().loadPackage(xdl_database.class.getPackage().getName());
@@ -68,6 +70,13 @@ public abstract class XDLParser {
         System.out.println(output);
       }
       else {
+        if (file.getParentFile().isFile())
+          throw new IllegalArgumentException(file.getParent() + " is a file.");
+
+        if (!file.getParentFile().exists())
+          if (!file.getParentFile().mkdirs())
+            throw new IllegalArgumentException("Could not create path: " + file.getParent());
+
         final FileOutputStream out = new FileOutputStream(file);
         out.write(output.getBytes());
         out.close();
@@ -80,16 +89,42 @@ public abstract class XDLParser {
 
   private final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
 
-  protected final xdl_database database;
+  protected final xdl_database unmerged;
+  protected final xdl_database merged;
 
-  public XDLParser(final xdl_database database, final boolean flatten) {
-    this.database = database;
+  public XDLTransformer(final xdl_database database) {
+    this.unmerged = database;
+    try {
+      merged = (xdl_database)Bindings.clone(database);
+    }
+    catch (Exception e) {
+      throw new Error(e);
+    }
+
     // First, register the table names to be referencable by the @extends attribute
-    for ($xdl_tableType table : database.get_table())
+    for ($xdl_tableType table : merged.get_table())
       tableNameToTable.put(table.get_name$().getText(), table);
 
-    for ($xdl_tableType table : database.get_table())
+    for ($xdl_tableType table : merged.get_table())
       mergeTable(table);
+
+    final List<String> errors = getErrors();
+    if (errors != null && errors.size() > 0) {
+      for (String error : errors)
+        System.err.println("[ERROR] " + error);
+
+      System.exit(1);
+    }
+  }
+
+  private List<String> getErrors() {
+    final List<String> errors = new ArrayList<String>();
+    for ($xdl_tableType<?> table : merged.get_table()) {
+      if (table.get_constraints() == null || table.get_constraints().get(0).get_primaryKey() == null || table.get_constraints().get(0).get_primaryKey().get(0).get_column() == null)
+        errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
+    }
+
+    return errors;
   }
 
   private final Set<String> mergedTables = new HashSet<String>();
@@ -104,13 +139,15 @@ public abstract class XDLParser {
 
     final $xdl_tableType superTable = tableNameToTable.get(table.get_extends$().getText());
     mergeTable(superTable);
-    if (table.get_column() != null) {
-      table.get_column().addAll(0, superTable.get_column());
-    }
-    else {
-      final List<$xdl_columnType<? extends ComplexType>> columns = superTable.get_column();
-      for ($xdl_columnType<? extends ComplexType> column : columns)
-        table.add_column(column);
+    if (superTable.get_column() != null) {
+      if (table.get_column() != null) {
+        table.get_column().addAll(0, superTable.get_column());
+      }
+      else {
+        final List<$xdl_columnType<? extends ComplexType>> columns = superTable.get_column();
+        for ($xdl_columnType<? extends ComplexType> column : columns)
+          table.add_column(column);
+      }
     }
 
     if (superTable.get_constraints() == null)

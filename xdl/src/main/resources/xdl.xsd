@@ -1,23 +1,24 @@
 <!--
   Copyright Safris Software 2006
-  
+
   This code is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<xs:schema 
+
+<xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://xdb.safris.org/xdl.xsd"
-  xmlns:xdl="http://xdb.safris.org/xdl.xsd" 
+  xmlns:xdl="http://xdb.safris.org/xdl.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
   <xs:complexType name="columnType" abstract="true">
@@ -130,8 +131,26 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <xs:complexType name="int">
+    <xs:complexContent>
+      <xs:extension base="xdl:columnType">
+        <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="default">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:pattern value="null|[0-9]*"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min" type="xs:integer"/>
+        <xs:attribute name="max" type="xs:integer"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   
-  <xs:complexType name="integer">
+  <xs:complexType name="bigint">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
         <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
@@ -176,7 +195,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="dateTime">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
@@ -184,7 +203,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
@@ -211,7 +230,7 @@
           <xs:sequence>
             <xs:element name="primaryKey" minOccurs="0">
               <xs:complexType>
-                <xs:sequence>
+                <xs:sequence maxOccurs="unbounded">
                   <xs:element name="column">
                     <xs:complexType>
                       <xs:attribute name="name" type="xs:NCName" use="required"/>
@@ -219,6 +238,10 @@
                   </xs:element>
                 </xs:sequence>
               </xs:complexType>
+              <xs:unique name="primaryKeyColump">
+                <xs:selector xpath="./xdl:column"/>
+                <xs:field xpath="@name"/>
+              </xs:unique>
             </xs:element>
             <xs:element name="autoIncrement" minOccurs="0">
               <xs:complexType>
@@ -228,34 +251,34 @@
             <xs:sequence maxOccurs="unbounded">
               <xs:element name="unique" minOccurs="0">
                 <xs:complexType>
-                	<xs:attribute name="column" type="xs:NCName" use="required"/>
+                  <xs:attribute name="column" type="xs:NCName" use="required"/>
                 </xs:complexType>
               </xs:element>
               <xs:element name="index" minOccurs="0">
                 <xs:complexType>
-                	<xs:all>
-                		<xs:element name="columns">
-                			<xs:complexType>
-                				<xs:sequence maxOccurs="unbounded">
-                					<xs:element name="column">
-                						<xs:complexType>
-                							<xs:attribute name="name" type="xs:NCName" use="required"/>
-                						</xs:complexType>
-                					</xs:element>
-                				</xs:sequence>
-                			</xs:complexType>
-                			<xs:unique name="uniqueColumnName">
-                				<xs:selector xpath="./xdl:column"/>
-                				<xs:field xpath="@name"/>
-                			</xs:unique>
-                		</xs:element>
-                	</xs:all>
-                	<xs:attribute name="unique" type="xs:boolean" default="false"/>
+                  <xs:all>
+                    <xs:element name="columns">
+                      <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded">
+                          <xs:element name="column">
+                            <xs:complexType>
+                              <xs:attribute name="name" type="xs:NCName" use="required"/>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                      <xs:unique name="uniqueColumnName">
+                        <xs:selector xpath="./xdl:column"/>
+                        <xs:field xpath="@name"/>
+                      </xs:unique>
+                    </xs:element>
+                  </xs:all>
+                  <xs:attribute name="unique" type="xs:boolean" default="false"/>
                 </xs:complexType>
               </xs:element>
               <xs:element name="check" minOccurs="0">
                 <xs:complexType>
-                	<xs:attribute name="condition" type="xs:string" use="required"/>
+                  <xs:attribute name="condition" type="xs:string" use="required"/>
                 </xs:complexType>
               </xs:element>
             </xs:sequence>
@@ -270,6 +293,7 @@
     <xs:attribute name="name" type="xs:NCName" use="required"/>
     <xs:attribute name="abstract" type="xs:boolean" default="false"/>
     <xs:attribute name="extends" type="xs:NCName"/>
+    <xs:attribute name="skip" type="xs:boolean" default="false"/>
   </xs:complexType>
 
   <xs:complexType name="databaseType">
