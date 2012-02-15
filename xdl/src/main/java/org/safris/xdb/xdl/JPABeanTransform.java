@@ -18,7 +18,6 @@ package org.safris.xdb.xdl;
 
 import java.io.File;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,9 +105,9 @@ public class JPABeanTransform extends XDLTransformer {
       if (!table.get_abstract$().getText())
         buffer.append(" implements ").append(Serializable.class.getName());
 
-      buffer.append(" {\n");
+      buffer.append(" {");
       if (!table.get_abstract$().getText())
-        buffer.append("  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
+        buffer.append("\n  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
 
       // CONSTRUCTORS
       if (table.get_column() != null) {
@@ -127,6 +126,15 @@ public class JPABeanTransform extends XDLTransformer {
         buffer.append("\n  public ").append(tableClassName).append("(final ").append(Strings.toClassCase(table.get_extends$().getText())).append(" copy) {\n");
         buffer.append("    super(copy);\n");
         buffer.append("  }\n");
+
+        if (table.get_column() == null) {
+          final $xdl_tableType superTable = tableNameToTable.get(table.get_extends$().getText());
+          if (superTable != null && superTable.get_extends$() != null) {
+            buffer.append("\n  public ").append(tableClassName).append("(final ").append(Strings.toClassCase(superTable.get_extends$().getText())).append(" copy) {\n");
+            buffer.append("    super(copy);\n");
+            buffer.append("  }\n");
+          }
+        }
       }
 
       buffer.append("\n  public ").append(tableClassName).append("() {\n");
@@ -141,6 +149,7 @@ public class JPABeanTransform extends XDLTransformer {
             columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
 
           final String type;
+          final String def;
           if (column instanceof $xdl_enum) {
             final String enumName = Strings.toClassCase(column.get_name$().getText());
             final StringBuffer enumBuffer = new StringBuffer();
@@ -159,34 +168,53 @@ public class JPABeanTransform extends XDLTransformer {
 
             columnsBuffer.append(enumBuffer).append("  }\n\n");
             columnsBuffer.append("  @").append(Enumerated.class.getName()).append("(").append(EnumType.class.getName()).append(".STRING)\n");
+            def = (($xdl_enum)column).get_default$() != null ? "\"" + (($xdl_enum)column).get_default$().getText() + "\"" : null;
           }
-          else if (column instanceof $xdl_boolean)
+          else if (column instanceof $xdl_boolean) {
             type = Boolean.class.getName();
-          else if (column instanceof $xdl_varchar)
+            def = (($xdl_boolean)column).get_default$() != null ? String.valueOf((($xdl_boolean)column).get_default$().getText()) : null;
+          }
+          else if (column instanceof $xdl_varchar) {
             type = String.class.getName();
-          else if (column instanceof $xdl_smallint)
+            def = (($xdl_varchar)column).get_default$() != null ? "\"" + (($xdl_varchar)column).get_default$().getText() + "\"" : null;
+          }
+          else if (column instanceof $xdl_smallint) {
             type = Short.class.getName();
-          else if (column instanceof $xdl_int)
+            def = (($xdl_smallint)column).get_default$() != null ? String.valueOf((($xdl_smallint)column).get_default$().getText()) : null;
+          }
+          else if (column instanceof $xdl_int) {
             type = Integer.class.getName();
-          else if (column instanceof $xdl_bigint)
+            def = (($xdl_int)column).get_default$() != null ? String.valueOf((($xdl_int)column).get_default$().getText()) : null;
+          }
+          else if (column instanceof $xdl_bigint) {
             type = Long.class.getName();
+            def = (($xdl_bigint)column).get_default$() != null ? String.valueOf((($xdl_bigint)column).get_default$().getText()) : null;
+          }
           else if (column instanceof $xdl_date) {
             type = Date.class.getName();
+            def = (($xdl_date)column).get_default$() != null ? String.valueOf((($xdl_date)column).get_default$().getText()) : null;
             columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)\n");
           }
           else if (column instanceof $xdl_dateTime) {
             type = Date.class.getName();
+            def = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
             columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)\n");
           }
-          else
+          else {
             type = null;
+            def = null;
+          }
 
           final String instanceName = getColumnInstanceName(column);
           columnsBuffer.append("  @").append(Column.class.getName()).append("(name=\"").append(column.get_name$().getText()).append("\")\n");
           if (!column.get_null$().getText())
             columnsBuffer.append("  @").append(NotNull.class.getName()).append("\n");
 
-          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n\n");
+          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName);
+          if (def != null)
+            columnsBuffer.append(" = ").append(def);
+          columnsBuffer.append(";\n\n");
+
           columnsBuffer.append("  public void set").append(Strings.toClassCase(column.get_name$().getText())).append("(").append(type).append(" ").append(instanceName).append(") {\n");
           columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
           columnsBuffer.append("  public ").append(type).append(" get").append(Strings.toClassCase(column.get_name$().getText())).append("() {\n");

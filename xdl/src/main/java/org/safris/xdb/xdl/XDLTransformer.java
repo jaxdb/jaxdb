@@ -87,7 +87,7 @@ public abstract class XDLTransformer {
     }
   }
 
-  private final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
+  protected final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
 
   protected final xdl_database unmerged;
   protected final xdl_database merged;
