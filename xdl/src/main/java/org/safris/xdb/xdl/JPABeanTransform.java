@@ -116,8 +116,10 @@ public class JPABeanTransform extends XDLTransformer {
           buffer.append("    super(copy);\n");
 
         for ($xdl_columnType column : table.get_column()) {
-          final String instanceName = getColumnInstanceName(column);
-          buffer.append("    this.").append(instanceName).append(" = copy.").append(instanceName).append(";\n");
+          if (!(column instanceof $xdl_inherited)) {
+            final String instanceName = getColumnInstanceName(column);
+            buffer.append("    this.").append(instanceName).append(" = copy.").append(instanceName).append(";\n");
+          }
         }
         buffer.append("  }\n");
       }
@@ -140,10 +142,12 @@ public class JPABeanTransform extends XDLTransformer {
       buffer.append("\n  public ").append(tableClassName).append("() {\n");
       buffer.append("  }\n");
 
+      final StringBuffer columnsBuffer = new StringBuffer();
       if (table.get_column() != null) {
-        final StringBuffer columnsBuffer = new StringBuffer();
-
         for ($xdl_columnType column : table.get_column()) {
+          if (column instanceof $xdl_inherited)
+            continue;
+
           columnsBuffer.append("\n");
           if (primaryColumnNames.contains(column.get_name$().getText()))
             columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
@@ -221,54 +225,64 @@ public class JPABeanTransform extends XDLTransformer {
           columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n");
         }
 
-        // CLONE METHOD
-        columnsBuffer.append("\n  public ").append(tableClassName).append(" clone() {\n");
-        if (table.get_abstract$().getText())
-          columnsBuffer.append("    throw new ").append(RuntimeException.class.getName()).append("(\"Attempt to instantiate an abstract class.\");\n");
-        else
-          columnsBuffer.append("    return new ").append(tableClassName).append("(this);\n");
-        columnsBuffer.append("  }\n");
+      }
 
-        // EQUALS METHOD
-        columnsBuffer.append("\n  public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
-        if (!table.get_abstract$().getText()) {
-          columnsBuffer.append("    if (obj == this)\n");
-          columnsBuffer.append("      return true;\n\n");
-        }
+      // CLONE METHOD
+      columnsBuffer.append("\n  public ").append(tableClassName).append(" clone() {\n");
+      if (table.get_abstract$().getText())
+        columnsBuffer.append("    throw new ").append(RuntimeException.class.getName()).append("(\"Attempt to instantiate an abstract class.\");\n");
+      else
+        columnsBuffer.append("    return new ").append(tableClassName).append("(this);\n");
+      columnsBuffer.append("  }\n");
 
-        if (table.get_extends$() != null) {
-          columnsBuffer.append("    if (!super.equals(obj))\n");
-          columnsBuffer.append("      return false;\n\n");
-        }
-        columnsBuffer.append("    if (!(this instanceof ").append(tableClassName).append("))\n");
+      // EQUALS METHOD
+      columnsBuffer.append("\n  public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
+      if (!table.get_abstract$().getText()) {
+        columnsBuffer.append("    if (obj == this)\n");
+        columnsBuffer.append("      return true;\n\n");
+      }
+
+      if (table.get_extends$() != null) {
+        columnsBuffer.append("    if (!super.equals(obj))\n");
         columnsBuffer.append("      return false;\n\n");
+      }
+      columnsBuffer.append("    if (!(this instanceof ").append(tableClassName).append("))\n");
+      columnsBuffer.append("      return false;\n\n");
 
+      if (table.get_column() != null) {
         columnsBuffer.append("    final ").append(tableClassName).append(" that = (").append(tableClassName).append(")obj;\n");
         for ($xdl_columnType column : table.get_column()) {
-          final String instanceName = getColumnInstanceName(column);
-          columnsBuffer.append("    if (").append(instanceName).append(" != null ? !").append(instanceName).append(".equals(that.").append(instanceName).append(") : that.").append(instanceName).append(" != null)\n");
-          columnsBuffer.append("      return false;\n\n");
+          if (!(column instanceof $xdl_inherited)) {
+            final String instanceName = getColumnInstanceName(column);
+            columnsBuffer.append("    if (").append(instanceName).append(" != null ? !").append(instanceName).append(".equals(that.").append(instanceName).append(") : that.").append(instanceName).append(" != null)\n");
+            columnsBuffer.append("      return false;\n\n");
+          }
         }
-
-        columnsBuffer.append("    return true;\n");
-        columnsBuffer.append("  }\n");
-
-        // HASHCODE METHOD
-        columnsBuffer.append("\n  public int hashCode() {\n");
-        if (table.get_extends$() != null)
-          columnsBuffer.append("    int hashCode = super.hashCode();\n");
-        else
-          columnsBuffer.append("    int hashCode = 7;\n");
-
-        for ($xdl_columnType column : table.get_column()) {
-          final String instanceName = getColumnInstanceName(column);
-          columnsBuffer.append("    hashCode += ").append(instanceName).append(" != null ? ").append(instanceName).append(".hashCode() : -1;\n");
-        }
-
-        columnsBuffer.append("    return hashCode;\n");
-        columnsBuffer.append("  }\n");
-        buffer.append(columnsBuffer);
       }
+
+      columnsBuffer.append("    return true;\n");
+      columnsBuffer.append("  }\n");
+
+      // HASHCODE METHOD
+      columnsBuffer.append("\n  public int hashCode() {\n");
+      if (table.get_extends$() != null)
+        columnsBuffer.append("    int hashCode = super.hashCode();\n");
+      else
+        columnsBuffer.append("    int hashCode = 7;\n");
+
+      if (table.get_column() != null) {
+        for ($xdl_columnType column : table.get_column()) {
+          if (!(column instanceof $xdl_inherited)) {
+            final String instanceName = getColumnInstanceName(column);
+            columnsBuffer.append("    hashCode += ").append(instanceName).append(" != null ? ").append(instanceName).append(".hashCode() : -1;\n");
+          }
+        }
+      }
+
+      columnsBuffer.append("    return hashCode;\n");
+      columnsBuffer.append("  }\n");
+
+      buffer.append(columnsBuffer);
 
       buffer.append("}");
 

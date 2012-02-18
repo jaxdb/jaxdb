@@ -259,11 +259,11 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_int.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_inherited.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_integer.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_int.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>

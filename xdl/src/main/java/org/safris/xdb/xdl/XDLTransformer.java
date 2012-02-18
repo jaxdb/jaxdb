@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
-import org.safris.commons.xml.dom.DOMs;
 import org.safris.xdb.xdl.$xdl_tableType;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.safris.xml.generator.compiler.runtime.ComplexType;
@@ -119,10 +118,9 @@ public abstract class XDLTransformer {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for ($xdl_tableType<?> table : merged.get_table()) {
+    for ($xdl_tableType<?> table : merged.get_table())
       if (table.get_constraints() == null || table.get_constraints().get(0).get_primaryKey() == null || table.get_constraints().get(0).get_primaryKey().get(0).get_column() == null)
         errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
-    }
 
     return errors;
   }
@@ -138,6 +136,11 @@ public abstract class XDLTransformer {
       return;
 
     final $xdl_tableType superTable = tableNameToTable.get(table.get_extends$().getText());
+    if (!superTable.get_abstract$().getText()) {
+      System.err.println("[ERROR] Table " + superTable.get_name$().getText() + " must be abstract to be inherited by " + table.get_name$().getText());
+      System.exit(1);
+    }
+
     mergeTable(superTable);
     if (superTable.get_column() != null) {
       if (table.get_column() != null) {
@@ -163,11 +166,7 @@ public abstract class XDLTransformer {
       return;
 
     final List<$xdl_tableType._constraints> constraints2 = table.get_constraints();
-    if (constraints2 != null) {
-      if (constraints2.get(0).get_primaryKey() != null)
-        throw new Error(table.get_name$().getText() + " has a primary key, which conflicts with the super type's primary key " + superTable.get_name$().getText());
-
+    if (constraints2 != null)
       constraints2.get(0).add_primaryKey(constraints.get(0).get_primaryKey().get(0));
-    }
   }
 }

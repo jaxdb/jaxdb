@@ -139,7 +139,7 @@
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
-            <xs:restriction base="xs:NCName">
+            <xs:restriction base="xs:string">
               <xs:pattern value="null|[0-9]*"/>
             </xs:restriction>
           </xs:simpleType>
@@ -219,7 +219,13 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
+  <xs:complexType name="inherited">
+    <xs:complexContent>
+      <xs:extension base="xdl:columnType"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <!-- TODO: Define INTERVAL -->
 
   <xs:complexType name="tableType">
