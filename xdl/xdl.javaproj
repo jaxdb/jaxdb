@@ -143,6 +143,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/CalendarEvent.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Duration.java</incPathSpec>
     </javaFile2>
     <javaFile2>

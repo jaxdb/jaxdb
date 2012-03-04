@@ -168,6 +168,11 @@ public class JPABeanTransform extends XDLTransformer {
              enumBuffer.append("    private ").append(enumName).append("(").append(String.class.getName()).append(" value) {\n");
              enumBuffer.append("      this.value = value;\n    }\n");*/
             //files.put(enumName, enumBuffer.toString());
+
+            // This was an attempt to have upper/lower-case enums convert propely between java and the db
+            /*enumBuffer.append("\n    public static ").append(enumName).append(" parseType(final ").append(String.class.getName()).append(" ").append(instanceName).append(") {\n");
+            enumBuffer.append("      return ").append(enumName).append(".valueOf(").append(instanceName).append(".toUpperCase());\n    }\n");*/
+
             type = enumName;
 
             columnsBuffer.append(enumBuffer).append("  }\n\n");
@@ -210,6 +215,7 @@ public class JPABeanTransform extends XDLTransformer {
           }
 
           final String instanceName = getColumnInstanceName(column);
+
           columnsBuffer.append("  @").append(Column.class.getName()).append("(name=\"").append(column.get_name$().getText()).append("\")\n");
           if (!column.get_null$().getText())
             columnsBuffer.append("  @").append(NotNull.class.getName()).append("\n");
@@ -293,6 +299,6 @@ public class JPABeanTransform extends XDLTransformer {
   }
 
   private String getColumnInstanceName(final $xdl_columnType column) {
-    return "_" + Strings.toInstanceCase(column.get_name$().getText());
+    return Strings.toInstanceCase(column.get_name$().getText());
   }
 }
