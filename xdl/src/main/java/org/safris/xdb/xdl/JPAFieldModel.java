@@ -3,12 +3,14 @@ package org.safris.xdb.xdl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.Column;
 
-public class JPAFieldModel {
+public class JPAFieldModel implements Cloneable {
   private final JPAEntityModel entityModel;
   private final List<Column> columns;
   private JPAForeignKeyModel foreignKeyModel;
+  private boolean isPrimary;
+  private boolean isImmutable;
+  private List<JPAFieldModel> realFieldModels;
 
   public JPAFieldModel(final JPAEntityModel entityModel, final List<Column> columns) {
     this.entityModel = entityModel;
@@ -17,6 +19,15 @@ public class JPAFieldModel {
 
   public JPAFieldModel(final JPAEntityModel entityModel, final Column column) {
     this(entityModel, Collections.<Column>singletonList(column));
+  }
+
+  private JPAFieldModel(final JPAFieldModel copy) {
+    this.entityModel = copy.entityModel;
+    this.columns = copy.getColumns() != null ? new ArrayList<Column>(copy.getColumns()) : null;
+    this.foreignKeyModel = copy.foreignKeyModel;
+    this.isPrimary = copy.isPrimary;
+    this.isImmutable = copy.isImmutable;
+    this.realFieldModels = copy.realFieldModels;
   }
 
   public JPAEntityModel getEntityModel() {
@@ -39,6 +50,34 @@ public class JPAFieldModel {
     return foreignKeyModel;
   }
 
+  public void setPrimary(boolean isPrimary) {
+    this.isPrimary = isPrimary;
+  }
+
+  public boolean isPrimary() {
+    return isPrimary;
+  }
+
+  public void setImmutable(boolean isImmutable) {
+    this.isImmutable = isImmutable;
+  }
+
+  public boolean isImmutable() {
+    return isImmutable;
+  }
+
+  public void setRealFieldModels(final List<JPAFieldModel> realFieldModels) {
+    this.realFieldModels = realFieldModels;
+  }
+
+  public List<JPAFieldModel> getRealFieldModel() {
+    return realFieldModels;
+  }
+
+  public JPAFieldModel clone() {
+    return new JPAFieldModel(this);
+  }
+
   public boolean equals(final Object obj) {
     if (obj == this)
       return true;
@@ -47,11 +86,11 @@ public class JPAFieldModel {
       return false;
 
     final JPAFieldModel that = (JPAFieldModel)obj;
-    return (columns != null ? columns.equals(that.columns) : that.columns == null) && (foreignKeyModel != null ? foreignKeyModel.equals(that.foreignKeyModel) : that.foreignKeyModel == null);
+    return (columns != null ? columns.equals(that.columns) : that.columns == null) && (foreignKeyModel != null ? foreignKeyModel.equals(that.foreignKeyModel) : that.foreignKeyModel == null) && (isImmutable == that.isImmutable);
   }
 
   public int hashCode() {
-    return columns.hashCode() + (foreignKeyModel != null ? foreignKeyModel.hashCode() : -139625);
+    return columns.hashCode() + (foreignKeyModel != null ? foreignKeyModel.hashCode() : -139625) + (isImmutable ? 324 : -7483);
   }
 
   public static class Column {

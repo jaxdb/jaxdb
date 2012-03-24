@@ -87,8 +87,7 @@ public class JPAForeignKeyModel {
       return false;
 
     final JPAForeignKeyModel that = (JPAForeignKeyModel)obj;
-    return (fieldModel != null ? fieldModel.equals(that.fieldModel) : that.fieldModel == null) &&
-      (id != null ? id.equals(that.id) : that.id == null) &&
+    return (id != null ? id.equals(that.id) : that.id == null) &&
       (referencedTableName != null ? referencedTableName.equals(that.referencedTableName) : that.referencedTableName == null) &&
       (association == that.association) &&
       (fetchType == that.fetchType) &&
@@ -98,7 +97,7 @@ public class JPAForeignKeyModel {
   }
 
   public int hashCode() {
-    return fieldModel.hashCode() + (id != null ? id.hashCode() : -32) + referencedTableName.hashCode() + association.hashCode() + fetchType.hashCode() + field.hashCode() + inverseField.hashCode() + referencedColumnNames.hashCode();
+    return (id != null ? id.hashCode() : -32) + (referencedTableName != null ? referencedTableName.hashCode() : -81364) + (association != null ? association.hashCode() : 32128) + (fetchType != null ? fetchType.hashCode() : -291864) + (field != null ? field.hashCode() : 3864) + (inverseField != null ? inverseField.hashCode() : -82796) + (referencedColumnNames != null ? referencedColumnNames.hashCode() : 3792);
   }
 
   public class Field {
@@ -130,7 +129,7 @@ public class JPAForeignKeyModel {
     }
 
     public int hashCode() {
-      return name.hashCode() + cascade.hashCode();
+      return (name != null ? name.hashCode() : -382) + (cascade != null ? cascade.hashCode() : -32382);
     }
   }
 

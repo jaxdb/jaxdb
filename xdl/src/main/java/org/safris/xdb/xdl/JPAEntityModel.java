@@ -64,13 +64,13 @@ public class JPAEntityModel {
     return fieldModelsMap.get(columnName);
   }
 
-  public JPAFieldModel removeFieldModel(final String columnName) {
+  /*public JPAFieldModel removeFieldModel(final String columnName) {
     final JPAFieldModel fieldModel = fieldModelsMap.remove(columnName);
     if (fieldModel != null)
       fieldModelsList.remove(fieldModel);
 
     return fieldModel;
-  }
+  }*/
 
   public JPAForeignKeyModel getForeignKeyModel(final String id) {
     return foreignKeyIds.get(id);

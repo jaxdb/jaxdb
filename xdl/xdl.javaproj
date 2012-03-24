@@ -91,14 +91,6 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -107,19 +99,7 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -144,14 +124,6 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Providers.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -216,18 +188,6 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_float.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_foreignKeyRefType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_foreignKeyRefType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_foreignKeyRefType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
