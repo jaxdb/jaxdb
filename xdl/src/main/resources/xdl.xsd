@@ -34,7 +34,7 @@
           <xs:all>
             <xs:element name="multiplicity" type="xdl:multiplicityType"/>
           </xs:all>
-          <xs:attribute name="id" type="xs:NCName"/>
+          <xs:attribute name="id" type="xs:string"/>
           <xs:attribute name="references" type="xs:NCName" use="required"/>
           <xs:attribute name="column" type="xs:NCName" use="required"/>
           <xs:attribute name="onDelete" type="xdl:referentialAction" default="CASCADE"/>
@@ -56,7 +56,7 @@
   <xs:complexType name="multiplicityType">
     <xs:sequence>
       <xs:element name="field" type="xdl:fieldType"/>
-      <xs:element name="inverse_field" type="xdl:fieldType" minOccurs="0"/>
+      <xs:element name="inverse" type="xdl:fieldType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="association" use="required">
       <xs:simpleType>
@@ -68,13 +68,28 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="fetch" type="xdl:fetchType" use="required"/>
-    <!--<xs:attribute name="mappedBy" type="xs:NCName"/>-->
-    <!--<xs:attribute name="targetEntity" type="xs:NCName"/>-->
+  </xs:complexType>
+  
+  <xs:complexType name="relationType">
+    <xs:sequence>
+      <xs:element name="field" type="xdl:fieldRefType"/>
+      <xs:element name="inverse" type="xdl:fieldRefType" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="association" type="xs:NCName" fixed="ManyToMany" use="required"/>
+    <xs:attribute name="fetch" type="xdl:fetchType" use="required"/>
   </xs:complexType>
   
   <xs:complexType name="fieldType">
     <xs:attribute name="name" type="xs:NCName" use="required"/>
     <xs:attribute name="cascade" type="xdl:cascadeType" use="required"/>
+  </xs:complexType>
+  
+  <xs:complexType name="fieldRefType">
+    <xs:complexContent>
+      <xs:extension base="xdl:fieldType">
+        <xs:attribute name="id" type="xs:NCName" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   
   <xs:simpleType name="fetchType">
@@ -352,22 +367,7 @@
           <xs:field xpath="@column"/>
         </xs:unique>
       </xs:element>
-      <xs:element name="relations" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence maxOccurs="unbounded">
-            <xs:element name="relation">
-              <xs:complexType>
-                <xs:all>
-                  <xs:element name="foreignKey" type="xdl:foreignKeyRefType"/>
-                  <xs:element name="inverseForeignKey" type="xdl:foreignKeyRefType"/>
-                </xs:all>
-                <xs:attribute name="association" type="xs:NCName" fixed="ManyToMany" use="required"/>
-                <xs:attribute name="fetch" type="xdl:fetchType" use="required"/>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="relation" type="xdl:relationType" minOccurs="0"/>            
     </xs:sequence>
     <xs:attribute name="name" type="xs:NCName" use="required"/>
     <xs:attribute name="abstract" type="xs:boolean" default="false"/>
@@ -375,12 +375,6 @@
     <xs:attribute name="skip" type="xs:boolean" default="false"/>
   </xs:complexType>
   
-  <xs:complexType name="foreignKeyRefType">
-    <xs:attribute name="id" type="xs:NCName" use="required"/>
-    <xs:attribute name="field" type="xs:NCName" use="required"/>
-    <xs:attribute name="cascade" type="xdl:cascadeType" use="required"/>
-  </xs:complexType>
-
   <xs:complexType name="databaseType">
     <xs:sequence>
       <xs:element name="source" minOccurs="0" maxOccurs="unbounded">
@@ -397,9 +391,13 @@
           <xs:selector xpath="./xdl:column"/>
           <xs:field xpath="@name"/>
         </xs:key>
-        <xs:keyref name="keyrefColumnName" refer="xdl:keyColumnName">
-          <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
+        <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
+          <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
           <xs:field xpath="@column | @name"/>
+        </xs:keyref>
+        <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
+          <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column"/>
+          <xs:field xpath="@name"/>
         </xs:keyref>
       </xs:element>
     </xs:sequence>
@@ -412,8 +410,12 @@
       <xs:selector xpath="./xdl:table"/>
       <xs:field xpath="@name"/>
     </xs:key>
-    <xs:keyref name="keyrefTableName" refer="xdl:keyTableName">
+    <xs:keyref name="keyrefTableName1" refer="xdl:keyTableName">
       <xs:selector xpath="./xdl:table/xdl:column/xdl:foreignKey"/>
+      <xs:field xpath="@references"/>
+    </xs:keyref>
+    <xs:keyref name="keyrefTableName2" refer="xdl:keyTableName">
+      <xs:selector xpath="./xdl:table/xdl:constraints/xdl:foreignKey"/>
       <xs:field xpath="@references"/>
     </xs:keyref>
     <xs:keyref name="keyrefExtendsTableName" refer="xdl:keyTableName">

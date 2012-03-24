@@ -71,8 +71,8 @@ public class JPAForeignKeyModel {
     fetchType = FetchType.valueOf(multiplicity.get_fetch$().getText());
     association = $xdl_columnType._foreignKey._multiplicity._association$.MANYTOONE.getText().equals(multiplicity.get_association$().getText()) ? ManyToOne.class : ($xdl_columnType._foreignKey._multiplicity._association$.ONETOMANY.getText().equals(multiplicity.get_association$().getText()) ? OneToMany.class : OneToOne.class);
     field = new Field(multiplicity.get_field().get(0).get_name$().getText(), multiplicity.get_field().get(0).get_cascade$().getText());
-    if (multiplicity.get_inverse_field() != null)
-      inverseField = new InverseField(multiplicity.get_inverse_field().get(0).get_name$().getText(), multiplicity.get_inverse_field().get(0).get_cascade$().getText(), fieldModel.getEntityModel().getName(), multiplicity.get_field().get(0).get_name$().getText());
+    if (multiplicity.get_inverse() != null)
+      inverseField = new InverseField(multiplicity.get_inverse().get(0).get_name$().getText(), multiplicity.get_inverse().get(0).get_cascade$().getText(), fieldModel.getEntityModel().getName(), multiplicity.get_field().get(0).get_name$().getText());
   }
 
   public boolean equals(final Object obj) {

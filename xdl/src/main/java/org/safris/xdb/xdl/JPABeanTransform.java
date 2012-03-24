@@ -172,12 +172,12 @@ public class JPABeanTransform extends XDLTransformer {
           fieldModel.setForeignKeyModel(foreignKeyModel);
         }
 
-        if (table.get_relations() != null) {
-          final List<$xdl_tableType._relations._relation> relations = table.get_relations().get(0).get_relation();
-          for ($xdl_tableType._relations._relation relation : relations) {
-            final JPARelationModel.ForeignKey foreignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_foreignKey().get(0).get_id$().getText()), relation.get_foreignKey().get(0).get_field$().getText(), relation.get_foreignKey().get(0).get_cascade$().getText());
-            final JPARelationModel.ForeignKey inverseForeignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_inverseForeignKey().get(0).get_id$().getText()), relation.get_inverseForeignKey().get(0).get_field$().getText(), relation.get_inverseForeignKey().get(0).get_cascade$().getText());
-            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_tableType._relations._relation._association$.MANYTOMANY.getText().equals(relation.get_association$().getText()) ? ManyToMany.class : null, FetchType.valueOf(relation.get_fetch$().getText()), foreignKey, inverseForeignKey);
+        if (table.get_relation() != null) {
+          final List<$xdl_relationType<?>> relations = table.get_relation();
+          for ($xdl_relationType<?> relation : relations) {
+            final JPARelationModel.ForeignKey foreignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_field().get(0).get_id$().getText()), relation.get_field().get(0).get_name$().getText(), relation.get_field().get(0).get_cascade$().getText());
+            final JPARelationModel.ForeignKey inverseForeignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_inverse().get(0).get_id$().getText()), relation.get_inverse().get(0).get_name$().getText(), relation.get_inverse().get(0).get_cascade$().getText());
+            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.getText().equals(relation.get_association$().getText()) ? ManyToMany.class : null, FetchType.valueOf(relation.get_fetch$().getText()), foreignKey, inverseForeignKey);
             xdlModel.getEntity(foreignKey.getForeignKeyModel().getReferencedTableName()).addRelation(relationModel);
             xdlModel.getEntity(inverseForeignKey.getForeignKeyModel().getReferencedTableName()).addInverseRelation(relationModel);
           }
