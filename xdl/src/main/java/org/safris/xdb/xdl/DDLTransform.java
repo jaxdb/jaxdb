@@ -168,20 +168,37 @@ public class DDLTransform extends XDLTransformer {
     if (table.get_column() != null) {
       for ($xdl_columnType<?> column : table.get_column()) {
         if (column.get_foreignKey() != null) {
-          final StringBuffer foreignKeysBuffer = new StringBuffer();
-          for ($xdl_columnType._foreignKey foreignKey : column.get_foreignKey()) {
-            foreignKeysBuffer.append(",\n  FOREIGN KEY (").append(column.get_name$().getText());
-            foreignKeysBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
-            insertDependency(tableName, foreignKey.get_references$().getText());
-            foreignKeysBuffer.append(" (").append(foreignKey.get_column$().getText()).append(")");
-            if (foreignKey.get_onUpdate$() != null)
-              foreignKeysBuffer.append(" ON UPDATE ").append(foreignKey.get_onUpdate$().getText());
+          final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey().get(0);
+          contraintsBuffer.append(",\n  FOREIGN KEY (").append(column.get_name$().getText());
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
+          insertDependency(tableName, foreignKey.get_references$().getText());
+          contraintsBuffer.append(" (").append(foreignKey.get_column$().getText()).append(")");
+          if (foreignKey.get_onUpdate$() != null)
+            contraintsBuffer.append(" ON UPDATE ").append(foreignKey.get_onUpdate$().getText());
 
-            if (foreignKey.get_onDelete$() != null)
-              foreignKeysBuffer.append(" ON DELETE ").append(foreignKey.get_onDelete$().getText());
+          if (foreignKey.get_onDelete$() != null)
+            contraintsBuffer.append(" ON DELETE ").append(foreignKey.get_onDelete$().getText());
+        }
+      }
+
+      if (table.get_constraints() != null && table.get_constraints().get(0).get_foreignKey() != null) {
+        for ($xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints().get(0).get_foreignKey()) {
+          String columns = "";
+          String referencedColumns = "";
+          for ($xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
+            columns += ", " + column.get_name$().getText();
+            referencedColumns += ", " + column.get_column$().getText();
           }
 
-          contraintsBuffer.append(foreignKeysBuffer);
+          contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
+          insertDependency(tableName, foreignKey.get_references$().getText());
+          contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
+          if (foreignKey.get_onUpdate$() != null)
+            contraintsBuffer.append(" ON UPDATE ").append(foreignKey.get_onUpdate$().getText());
+
+          if (foreignKey.get_onDelete$() != null)
+            contraintsBuffer.append(" ON DELETE ").append(foreignKey.get_onDelete$().getText());
         }
       }
     }
@@ -267,10 +284,6 @@ public class DDLTransform extends XDLTransformer {
       if (!skipTables.contains(tableName))
         tablesBuffer.append("\n").append(createStatements.get(tableName));
 
-    if (tablesBuffer.length() == 0)
-    {
-      int i = 0;
-    }
     return tablesBuffer.substring(1);
   }
 }

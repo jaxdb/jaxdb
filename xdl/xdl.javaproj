@@ -35,6 +35,26 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/JPAEntityModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/JPAFieldModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/JPAForeignKeyModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/JPARelationModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/XDLModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/XDLTransformer.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -67,155 +87,71 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Appointment.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentOccurance.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentOccuranceAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentOccurence.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentOccurenceAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentOccurenceType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentTimeline.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/AppointmentType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOff.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Holiday.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffOccurance.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/HolidayDate.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffOccuranceAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Id.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffOccurence.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Location.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffOccurenceAudit.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffOccurenceType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BlockOffType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Bookable.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/BookableType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/CalendarEvent.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Duration.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/EventType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Holiday.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Id.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Location.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/LocationAudit.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/LocationType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Patient.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Provider.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/Slot.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotAudit.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotDuration.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotOccurance.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotOccuranceAudit.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotOccurence.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotOccurenceAudit.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotOccurenceType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/calendar/SlotType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Providers.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -231,11 +167,19 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_cascadeType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_char.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_columnType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_databaseType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -259,7 +203,23 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_fetchType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_fieldType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_float.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_foreignKeyRefType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_foreignKeyRefType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -271,11 +231,23 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_multiplicityType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_numeric.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_referentialAction.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_smallint.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_tableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -296,6 +268,10 @@
     <javaFile2>
       <buildAction>NONE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/org.safris.xdb.xdl.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/xdl_database.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
