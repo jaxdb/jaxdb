@@ -26,9 +26,11 @@
       <xs:element name="documentation" type="xs:string" minOccurs="0"/>
       <xs:element name="foreignKey" minOccurs="0">
         <xs:annotation>
-          <xs:documentation>There is a great potential to be able to have schema validation on the content entered into this element.
+          <xs:documentation>
+            There is a great potential to be able to have schema validation on the content entered into this element.
             However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
-            queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.</xs:documentation>
+            queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
+          </xs:documentation>
         </xs:annotation>
         <xs:complexType>
           <xs:all>

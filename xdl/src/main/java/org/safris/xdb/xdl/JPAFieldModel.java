@@ -27,6 +27,10 @@ public class JPAFieldModel {
     return columns;
   }
 
+  public Column getColumn(final int index) {
+    return columns != null && -1 < index && index < columns.size() ? columns.get(index) : null;
+  }
+
   public void setForeignKeyModel(final JPAForeignKeyModel foreignKeyModel) {
     this.foreignKeyModel = foreignKeyModel;
   }

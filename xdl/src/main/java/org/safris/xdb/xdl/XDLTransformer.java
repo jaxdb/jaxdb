@@ -119,7 +119,7 @@ public abstract class XDLTransformer {
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
     for ($xdl_tableType<?> table : merged.get_table())
-      if (table.get_constraints() == null || table.get_constraints().get(0).get_primaryKey() == null || table.get_constraints().get(0).get_primaryKey().get(0).get_column() == null)
+      if (table.get_constraints() == null || table.get_constraints(0).get_primaryKey() == null || table.get_constraints(0).get_primaryKey(0).get_column() == null)
         errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
 
     return errors;
@@ -167,6 +167,6 @@ public abstract class XDLTransformer {
 
     final List<$xdl_tableType._constraints> constraints2 = table.get_constraints();
     if (constraints2 != null)
-      constraints2.get(0).add_primaryKey(constraints.get(0).get_primaryKey().get(0));
+      constraints2.get(0).add_primaryKey(constraints.get(0).get_primaryKey(0));
   }
 }

@@ -147,7 +147,7 @@ public class DDLTransform extends XDLTransformer {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table.get_constraints() != null) {
       final List<$xdl_tableType._constraints> constraints = table.get_constraints();
-      final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get(0).get_primaryKey().get(0);
+      final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get(0).get_primaryKey(0);
       if (primaryKey != null) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
         for ($xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {
@@ -168,7 +168,7 @@ public class DDLTransform extends XDLTransformer {
     if (table.get_column() != null) {
       for ($xdl_columnType<?> column : table.get_column()) {
         if (column.get_foreignKey() != null) {
-          final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey().get(0);
+          final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey(0);
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(column.get_name$().getText());
           contraintsBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
           insertDependency(tableName, foreignKey.get_references$().getText());
@@ -181,8 +181,8 @@ public class DDLTransform extends XDLTransformer {
         }
       }
 
-      if (table.get_constraints() != null && table.get_constraints().get(0).get_foreignKey() != null) {
-        for ($xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints().get(0).get_foreignKey()) {
+      if (table.get_constraints() != null && table.get_constraints(0).get_foreignKey() != null) {
+        for ($xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints(0).get_foreignKey()) {
           String columns = "";
           String referencedColumns = "";
           for ($xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
