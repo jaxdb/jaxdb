@@ -199,6 +199,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_joinType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_multiplicityType.java</incPathSpec>
     </javaFile2>
     <javaFile2>

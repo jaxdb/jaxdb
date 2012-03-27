@@ -34,7 +34,7 @@
         </xs:annotation>
         <xs:complexType>
           <xs:all>
-            <xs:element name="multiplicity" type="xdl:multiplicityType"/>
+            <xs:element name="join" type="xdl:joinType"/>
           </xs:all>
           <xs:attribute name="id" type="xs:string"/>
           <xs:attribute name="references" type="xs:NCName" use="required"/>
@@ -55,7 +55,7 @@
     </xs:attribute>-->
   </xs:complexType>
   
-  <xs:complexType name="multiplicityType">
+  <xs:complexType name="joinType">
     <xs:sequence>
       <xs:element name="field" type="xdl:fieldType"/>
       <xs:element name="inverse" type="xdl:fieldType" minOccurs="0"/>
@@ -315,7 +315,7 @@
                       <xs:attribute name="column" type="xs:NCName"/>
                     </xs:complexType>
                   </xs:element>
-                  <xs:element name="multiplicity" type="xdl:multiplicityType"/>
+                  <xs:element name="join" type="xdl:joinType"/>
                 </xs:sequence>
                 <xs:attribute name="id" type="xs:NCName"/>
                 <xs:attribute name="references" type="xs:NCName" use="required"/>

@@ -143,7 +143,7 @@ public class JPABeanTransform extends XDLTransformer {
 
             final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey(0);
             final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), foreignKey.get_column$().getText());
-            foreignKeyModel.setMultiplicity(foreignKey.get_multiplicity(0));
+            foreignKeyModel.setMultiplicity(foreignKey.get_join(0));
             if (foreignKeyModel.getInverseField() != null)
               xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
 
@@ -176,7 +176,7 @@ public class JPABeanTransform extends XDLTransformer {
           entityModel.addFieldModel(fieldModel);
 
           final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), referencedColumnNames);
-          foreignKeyModel.setMultiplicity(foreignKey.get_multiplicity(0));
+          foreignKeyModel.setMultiplicity(foreignKey.get_join(0));
           if (foreignKeyModel.getInverseField() != null)
             xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
 

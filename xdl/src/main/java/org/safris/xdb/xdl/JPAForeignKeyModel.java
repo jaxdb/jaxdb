@@ -71,12 +71,12 @@ public class JPAForeignKeyModel {
     return inverseField;
   }
 
-  public void setMultiplicity(final $xdl_multiplicityType<?> multiplicity) {
-    fetchType = FetchType.valueOf(multiplicity.get_fetch$().getText());
-    association = $xdl_columnType._foreignKey._multiplicity._association$.MANYTOONE.getText().equals(multiplicity.get_association$().getText()) ? ManyToOne.class : ($xdl_columnType._foreignKey._multiplicity._association$.ONETOMANY.getText().equals(multiplicity.get_association$().getText()) ? OneToMany.class : OneToOne.class);
-    field = new Field(multiplicity.get_field(0).get_name$().getText(), multiplicity.get_field(0).get_cascade$().getText());
-    if (multiplicity.get_inverse() != null)
-      inverseField = new InverseField(multiplicity.get_inverse(0).get_name$().getText(), multiplicity.get_inverse(0).get_cascade$().getText(), fieldModel.getEntityModel().getName(), multiplicity.get_field(0).get_name$().getText());
+  public void setMultiplicity(final $xdl_joinType<?> joinType) {
+    fetchType = FetchType.valueOf(joinType.get_fetch$().getText());
+    association = $xdl_columnType._foreignKey._join._association$.MANYTOONE.getText().equals(joinType.get_association$().getText()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.ONETOMANY.getText().equals(joinType.get_association$().getText()) ? OneToMany.class : OneToOne.class);
+    field = new Field(joinType.get_field(0).get_name$().getText(), joinType.get_field(0).get_cascade$().getText());
+    if (joinType.get_inverse() != null)
+      inverseField = new InverseField(joinType.get_inverse(0).get_name$().getText(), joinType.get_inverse(0).get_cascade$().getText(), fieldModel.getEntityModel().getName(), joinType.get_field(0).get_name$().getText());
   }
 
   public boolean equals(final Object obj) {
