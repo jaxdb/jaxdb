@@ -44,7 +44,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceBinding;
@@ -106,18 +105,18 @@ public class JPABeanTransform extends XDLTransformer {
     schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
     final XDLModel xdlModel = new XDLModel();
     // Phase 1: Determine # of primary keys per table, and instantiate all JPAEntityModel objects
-    final Map<String,Set<String>> tableNameToPrimatyColumnNames = new HashMap<String,Set<String>>();
+    final Map<String,Map<String,GeneratedKey.Strategy>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,GeneratedKey.Strategy>>();
     for ($xdl_tableType<?> table : merged.get_table()) {
       if (table.get_skip$().getText())
         continue;
 
-      final Set<String> primaryColumnNames = new HashSet<String>();
+      final Map<String,GeneratedKey.Strategy> primaryColumnNames = new HashMap<String,GeneratedKey.Strategy>();
       tableNameToPrimatyColumnNames.put(table.get_name$().getText(), primaryColumnNames);
       if (table.get_constraints() != null && table.get_constraints(0).get_primaryKey() != null)
         for ($xdl_tableType._constraints._primaryKey._column primaryColumn : table.get_constraints(0).get_primaryKey(0).get_column())
-          primaryColumnNames.add(primaryColumn.get_name$().getText());
+          primaryColumnNames.put(primaryColumn.get_name$().getText(), GeneratedKey.Strategy.valueOf(primaryColumn.get_generation_strategy$().getText()));
 
-      xdlModel.addEntity(new JPAEntityModel(table.get_name$().getText(), table.get_abstract$().getText(), table.get_extends$() != null ? table.get_extends$().getText() : null, primaryColumnNames));
+      xdlModel.addEntity(new JPAEntityModel(table.get_name$().getText(), table.get_abstract$().getText(), table.get_extends$() != null ? table.get_extends$().getText() : null, primaryColumnNames.keySet()));
     }
 
     // Phase 2: Determine all foreign keys per table, and instantiate all FieldModel objects
@@ -125,7 +124,7 @@ public class JPABeanTransform extends XDLTransformer {
       if (table.get_skip$().getText())
         continue;
 
-      final Set<String> primaryColumnNames = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
+      final Map<String,GeneratedKey.Strategy> primaryColumnNames = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
       final JPAEntityModel entityModel = xdlModel.getEntity(table.get_name$().getText());
       if (table.get_column() != null) {
         // Add inverse fields from <foreignKey> elements in <column> elements
@@ -133,17 +132,21 @@ public class JPABeanTransform extends XDLTransformer {
           if (column instanceof $xdl_inherited)
             continue;
 
-          final JPAFieldModel.Column jpaFieldColumn = new JPAFieldModel.Column(column, primaryColumnNames.contains(column.get_name$().getText()));
-          final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, jpaFieldColumn);
+          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumnNames.get(column.get_name$().getText()));
+          final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
-            final JPAFieldModel immutableModel = fieldModel.clone();
-            immutableModel.setImmutable(true);
-            entityModel.addFieldModel(immutableModel);
-            fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(immutableModel));
+            final JPAFieldModel columnModel = fieldModel.clone();
+            if ($xdl_joinType._field._readOnly$.COLUMN.getText().equals(column.get_foreignKey(0).get_join(0).get_field(0).get_readOnly$().getText()))
+              columnModel.setImmutable(true);
+            else
+              fieldModel.setImmutable(true);
+
+            entityModel.addFieldModel(columnModel);
+            fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(columnModel));
 
             final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey(0);
             final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), foreignKey.get_column$().getText());
-            foreignKeyModel.setMultiplicity(foreignKey.get_join(0));
+            foreignKeyModel.setJoin(foreignKey.get_join(0));
             if (foreignKeyModel.getInverseField() != null)
               xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
 
@@ -176,7 +179,7 @@ public class JPABeanTransform extends XDLTransformer {
           entityModel.addFieldModel(fieldModel);
 
           final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), referencedColumnNames);
-          foreignKeyModel.setMultiplicity(foreignKey.get_join(0));
+          foreignKeyModel.setJoin(foreignKey.get_join(0));
           if (foreignKeyModel.getInverseField() != null)
             xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
 
@@ -209,7 +212,7 @@ public class JPABeanTransform extends XDLTransformer {
         if (isPrimary) {
           for (int i = 0; i < fieldModel.getColumns().size(); i++) {
             final JPAFieldModel.Column column = fieldModel.getColumns().get(i);
-            isPrimary = column.isPrimary();
+            isPrimary = column.getPrimaryKeyStrategy() != null;
             if (!isPrimary)
               break;
 
@@ -251,16 +254,23 @@ public class JPABeanTransform extends XDLTransformer {
       }
 
       final String tableClassName = Strings.toClassCase(entityModel.getName());
-      buffer.append(" class ").append(tableClassName);
+      buffer.append(" class ").append(tableClassName).append(" extends ");
       if (entityModel.getExtendsName() != null)
-        buffer.append(" extends ").append(Strings.toClassCase(entityModel.getExtendsName()));
+        buffer.append(Strings.toClassCase(entityModel.getExtendsName()));
+      else
+        buffer.append(org.safris.xdb.xdl.Entity.class.getName());
 
       if (!entityModel.isAbstract())
         buffer.append(" implements ").append(Serializable.class.getName());
 
       buffer.append(" {");
-      if (!entityModel.isAbstract())
+      if (!entityModel.isAbstract()) {
+        buffer.append("\n  static {\n");
+        buffer.append("    init(").append(tableClassName).append(".class);\n");
+        buffer.append("  }\n");
+
         buffer.append("\n  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
+      }
 
       // CONSTRUCTORS
       if (entityModel.getFieldModels().size() > 0) {
@@ -319,8 +329,11 @@ public class JPABeanTransform extends XDLTransformer {
            isPrimary = createImmutableIdField = false;
            }*/
 
-          if (fieldModel.isPrimary())
+          if (fieldModel.isPrimary()) {
             columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
+            if (fieldModel.getColumn(0).getPrimaryKeyStrategy() != null)
+              columnsBuffer.append("  @").append(GeneratedKey.class.getName()).append("(strategy=").append(GeneratedKey.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getPrimaryKeyStrategy()).append(")\n");
+          }
 
           final String columnDef;
           final String columnType;
@@ -441,7 +454,11 @@ public class JPABeanTransform extends XDLTransformer {
                 final String columnName = fieldModelColumn.getColumn().get_name$().getText();
                 final String referencedColumn = foreignKeyModel.getReferencedColumnNames().get(columnIndex);
                 final String nullable = String.valueOf(fieldModelColumn.getColumn().get_null$().getText());
-                joinColumns += ",\n      @" + JoinColumn.class.getName() + "(name=\"" + columnName + "\", referencedColumnName=\"" + referencedColumn + "\", nullable=" + nullable + ")";
+                joinColumns += ",\n      @" + JoinColumn.class.getName() + "(name=\"" + columnName + "\", referencedColumnName=\"" + referencedColumn + "\", nullable=" + nullable;
+                if (fieldModel.isImmutable())
+                  joinColumns += ", insertable=false, updatable=false";
+
+                joinColumns += ")";
               }
 
               columnsBuffer.append(joinColumns.substring(1)).append("\n    })\n");
@@ -451,7 +468,11 @@ public class JPABeanTransform extends XDLTransformer {
               final String columnName = fieldModelColumn.getColumn().get_name$().getText();
               final String referencedColumn = foreignKeyModel.getReferencedColumnName(0);
               final String nullable = String.valueOf(fieldModelColumn.getColumn().get_null$().getText());
-              columnsBuffer.append("  @").append(JoinColumn.class.getName()).append("(name=\"").append(columnName).append("\", referencedColumnName=\"").append(referencedColumn).append("\", nullable=").append(nullable).append(")\n");
+              columnsBuffer.append("  @").append(JoinColumn.class.getName()).append("(name=\"").append(columnName).append("\", referencedColumnName=\"").append(referencedColumn).append("\", nullable=").append(nullable);
+              if (fieldModel.isImmutable())
+                columnsBuffer.append(", insertable=false, updatable=false");
+
+              columnsBuffer.append(")\n");
             }
             else {
               throw new Error("this should not happen");
@@ -466,8 +487,8 @@ public class JPABeanTransform extends XDLTransformer {
             columnsBuffer.append(")\n");
           }
 
-          if (!fieldModel.isImmutable() && fieldModel.getColumns().size() == 1 && !fieldModel.getColumn(0).getColumn().get_null$().getText())
-            columnsBuffer.append("  @").append(NotNull.class.getName()).append("\n");
+          //if (!fieldModel.isImmutable() && fieldModel.getColumns().size() == 1 && !fieldModel.getColumn(0).getColumn().get_null$().getText())
+          //  columnsBuffer.append("  @").append(NotNull.class.getName()).append("\n");
 
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName);
           if (def != null)

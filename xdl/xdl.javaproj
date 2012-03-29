@@ -31,6 +31,14 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/Entity.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/GeneratedKey.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/JPABeanTransform.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -200,10 +208,6 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_joinType.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_multiplicityType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>

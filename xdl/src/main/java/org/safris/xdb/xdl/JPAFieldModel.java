@@ -95,19 +95,19 @@ public class JPAFieldModel implements Cloneable {
 
   public static class Column {
     private final $xdl_columnType<?> column;
-    private final boolean isPrimary;
+    private final GeneratedKey.Strategy primaryKeyStrategy;
 
-    public Column($xdl_columnType<?> column, boolean isPrimary) {
+    public Column(final $xdl_columnType<?> column, final GeneratedKey.Strategy primaryKeyStrategy) {
       this.column = column;
-      this.isPrimary = isPrimary;
+      this.primaryKeyStrategy = primaryKeyStrategy;
     }
 
     public $xdl_columnType<?> getColumn() {
       return column;
     }
 
-    public boolean isPrimary() {
-      return isPrimary;
+    public GeneratedKey.Strategy getPrimaryKeyStrategy() {
+      return primaryKeyStrategy;
     }
 
     public boolean equals(final Object obj) {
@@ -122,7 +122,7 @@ public class JPAFieldModel implements Cloneable {
     }
 
     public int hashCode() {
-      return column.get_name$().getText().hashCode() * (isPrimary ? 2 : -2);
+      return column.get_name$().getText().hashCode() * (primaryKeyStrategy != null ? primaryKeyStrategy.hashCode() : -22378);
     }
   }
 }
