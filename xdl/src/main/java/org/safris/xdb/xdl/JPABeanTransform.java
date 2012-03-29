@@ -105,18 +105,18 @@ public class JPABeanTransform extends XDLTransformer {
     schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
     final XDLModel xdlModel = new XDLModel();
     // Phase 1: Determine # of primary keys per table, and instantiate all JPAEntityModel objects
-    final Map<String,Map<String,GeneratedKey.Strategy>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,GeneratedKey.Strategy>>();
+    final Map<String,Set<String>> tableNameToPrimatyColumnNames = new HashMap<String,Set<String>>();
     for ($xdl_tableType<?> table : merged.get_table()) {
       if (table.get_skip$().getText())
         continue;
 
-      final Map<String,GeneratedKey.Strategy> primaryColumnNames = new HashMap<String,GeneratedKey.Strategy>();
+      final Set<String> primaryColumnNames = new HashSet<String>();
       tableNameToPrimatyColumnNames.put(table.get_name$().getText(), primaryColumnNames);
       if (table.get_constraints() != null && table.get_constraints(0).get_primaryKey() != null)
         for ($xdl_tableType._constraints._primaryKey._column primaryColumn : table.get_constraints(0).get_primaryKey(0).get_column())
-          primaryColumnNames.put(primaryColumn.get_name$().getText(), GeneratedKey.Strategy.valueOf(primaryColumn.get_generation_strategy$().getText()));
+          primaryColumnNames.add(primaryColumn.get_name$().getText());
 
-      xdlModel.addEntity(new JPAEntityModel(table.get_name$().getText(), table.get_abstract$().getText(), table.get_extends$() != null ? table.get_extends$().getText() : null, primaryColumnNames.keySet()));
+      xdlModel.addEntity(new JPAEntityModel(table.get_name$().getText(), table.get_abstract$().getText(), table.get_extends$() != null ? table.get_extends$().getText() : null, primaryColumnNames));
     }
 
     // Phase 2: Determine all foreign keys per table, and instantiate all FieldModel objects
@@ -124,7 +124,7 @@ public class JPABeanTransform extends XDLTransformer {
       if (table.get_skip$().getText())
         continue;
 
-      final Map<String,GeneratedKey.Strategy> primaryColumnNames = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
+      final Set<String> primaryColumnNames = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
       final JPAEntityModel entityModel = xdlModel.getEntity(table.get_name$().getText());
       if (table.get_column() != null) {
         // Add inverse fields from <foreignKey> elements in <column> elements
@@ -132,14 +132,33 @@ public class JPABeanTransform extends XDLTransformer {
           if (column instanceof $xdl_inherited)
             continue;
 
-          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumnNames.get(column.get_name$().getText()));
+          // Get generation strategy if it exists
+          final String generationStrategy;
+          if (column instanceof $xdl_varchar) {
+            final $xdl_varchar varchar = ($xdl_varchar)column;
+            generationStrategy = varchar.get_generation_strategy$() != null ? varchar.get_generation_strategy$().getText() : null;
+          }
+          else if (column instanceof $xdl_dateTime) {
+            final $xdl_dateTime dateTime = ($xdl_dateTime)column;
+            generationStrategy = dateTime.get_generation_strategy$() != null ? dateTime.get_generation_strategy$().getText() : null;
+          }
+          else if (column instanceof $xdl_date) {
+            final $xdl_date date = ($xdl_date)column;
+            generationStrategy = date.get_generation_strategy$() != null ? date.get_generation_strategy$().getText() : null;
+          }
+          else {
+            generationStrategy = null;
+          }
+
+          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumnNames.contains(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null);
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
-            if ($xdl_joinType._field._readOnly$.COLUMN.getText().equals(column.get_foreignKey(0).get_join(0).get_field(0).get_readOnly$().getText()))
-              columnModel.setImmutable(true);
-            else
+            final List<String> cascade = column.get_foreignKey(0).get_join(0).get_field(0).get_cascade$().getText();
+            if (cascade == null || (cascade.size() == 1 && $xdl_fieldType._cascade$.REFRESH.getText().equals(cascade.get(0))))
               fieldModel.setImmutable(true);
+            else
+              columnModel.setImmutable(true);
 
             entityModel.addFieldModel(columnModel);
             fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(columnModel));
@@ -212,7 +231,7 @@ public class JPABeanTransform extends XDLTransformer {
         if (isPrimary) {
           for (int i = 0; i < fieldModel.getColumns().size(); i++) {
             final JPAFieldModel.Column column = fieldModel.getColumns().get(i);
-            isPrimary = column.getPrimaryKeyStrategy() != null;
+            isPrimary = column.isPrimary();
             if (!isPrimary)
               break;
 
@@ -329,11 +348,11 @@ public class JPABeanTransform extends XDLTransformer {
            isPrimary = createImmutableIdField = false;
            }*/
 
-          if (fieldModel.isPrimary()) {
+          if (fieldModel.isPrimary())
             columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
-            if (fieldModel.getColumn(0).getPrimaryKeyStrategy() != null)
-              columnsBuffer.append("  @").append(GeneratedKey.class.getName()).append("(strategy=").append(GeneratedKey.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getPrimaryKeyStrategy()).append(")\n");
-          }
+
+          if (fieldModel.getColumn(0).getGenerationStrategy() != null)
+            columnsBuffer.append("  @").append(GeneratedValue.class.getName()).append("(strategy=").append(GeneratedValue.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerationStrategy()).append(")\n");
 
           final String columnDef;
           final String columnType;
