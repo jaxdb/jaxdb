@@ -144,6 +144,10 @@ public abstract class XDLTransformer {
     mergeTable(superTable);
     if (superTable.get_column() != null) {
       if (table.get_column() != null) {
+        for (int i = table.get_column().size() - 1; 0 <= i; i--)
+          if (table.get_column(i) instanceof $xdl_inherited)
+            table.get_column().remove(i);
+
         table.get_column().addAll(0, superTable.get_column());
       }
       else {

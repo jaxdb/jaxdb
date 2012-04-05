@@ -63,12 +63,8 @@
       <version>${dev:org.safris.commons.formatter}</version>
     </dependency>
     <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.easybeans.osgi</groupId>
-      <artifactId>easybeans-modules-persistence-eclipselink-1.x</artifactId>
+      <groupId>javax</groupId> 
+      <artifactId>javaee-api</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>

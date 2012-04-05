@@ -103,7 +103,19 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -115,7 +127,19 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Holiday.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -127,11 +151,27 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/HolidayDate.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Id.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Id.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Location.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Location.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -329,13 +369,16 @@
   </projectReferences>
   <references>
     <classpathReference>
-      <relativePath>..\..\..\..\..\..\.m2\repository\javax\persistence\persistence-api\1.0.2\persistence-api-1.0.2.jar</relativePath>
-    </classpathReference>
-    <classpathReference>
-      <relativePath>..\..\..\..\..\..\.m2\repository\org\eclipse\persistence\eclipselink\1.1.3\eclipselink-1.1.3.jar</relativePath>
+      <relativePath>..\..\..\..\..\..\.m2\repository\org\apache\openejb\javaee-api\6.0-3\javaee-api-6.0-3.jar</relativePath>
     </classpathReference>
     <classpathReference>
       <relativePath>..\..\..\..\..\..\.m2\repository\javax\validation\validation-api\1.0.0.GA\validation-api-1.0.0.GA.jar</relativePath>
+    </classpathReference>
+    <classpathReference>
+      <relativePath>..\..\..\..\..\..\.m2\repository\javax\javaee-api\6.0\javaee-api-6.0.jar</relativePath>
+    </classpathReference>
+    <classpathReference>
+      <relativePath>..\..\..\..\..\..\.m2\repository\javax\persistence\persistence-api\1.0.2\persistence-api-1.0.2.jar</relativePath>
     </classpathReference>
   </references>
   <startingPoints>

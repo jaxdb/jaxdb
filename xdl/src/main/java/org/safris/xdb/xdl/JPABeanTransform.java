@@ -33,6 +33,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
@@ -100,21 +101,97 @@ public class JPABeanTransform extends XDLTransformer {
     pkg = NamespaceBinding.getPackageFromNamespace(database.get_targetNamespace$().getText());
   }
 
+  private String[] parseType(final $xdl_columnType column, final StringBuffer columnsBuffer) {
+    final String columnType;
+    final String columnDef;
+    if (column instanceof $xdl_enum) {
+      final String enumName = Strings.toClassCase(column.get_name$().getText());
+      final StringBuffer enumBuffer = new StringBuffer();
+      //enumBuffer.append("package ").append(pkg).append(";\n\n");
+      enumBuffer.append("  public static enum ").append(enumName).append(" {\n");
+      final StringBuffer fieldBuffer = new StringBuffer();
+      for (String value : (($xdl_enum)column).get_values$().getText())
+        fieldBuffer.append(",\n    ").append(value.toUpperCase());//.append("(\"").append(value).append("\")");
+
+      enumBuffer.append(fieldBuffer.substring(2)).append(";\n");
+      /*enumBuffer.append("\n    private final ").append(String.class.getName()).append(" value;\n\n");
+       enumBuffer.append("    private ").append(enumName).append("(").append(String.class.getName()).append(" value) {\n");
+       enumBuffer.append("      this.value = value;\n    }\n");*/
+      //files.put(enumName, enumBuffer.toString());
+
+      // This was an attempt to have upper/lower-case enums convert propely between java and the db
+      /*enumBuffer.append("\n    public static ").append(enumName).append(" parseType(final ").append(String.class.getName()).append(" ").append(instanceName).append(") {\n");
+       enumBuffer.append("      return ").append(enumName).append(".valueOf(").append(instanceName).append(".toUpperCase());\n    }\n");*/
+
+      columnType = enumName;
+
+      if (columnsBuffer != null) {
+        columnsBuffer.append(enumBuffer).append("  }\n\n");
+        columnsBuffer.append("  @").append(Enumerated.class.getName()).append("(").append(EnumType.class.getName()).append(".STRING)\n");
+      }
+      columnDef = (($xdl_enum)column).get_default$() != null ? "\"" + (($xdl_enum)column).get_default$().getText() + "\"" : null;
+    }
+    else if (column instanceof $xdl_boolean) {
+      columnType = Boolean.class.getName();
+      columnDef = (($xdl_boolean)column).get_default$() != null ? String.valueOf((($xdl_boolean)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_varchar) {
+      columnType = String.class.getName();
+      columnDef = (($xdl_varchar)column).get_default$() != null ? "\"" + (($xdl_varchar)column).get_default$().getText() + "\"" : null;
+    }
+    else if (column instanceof $xdl_smallint) {
+      columnType = Short.class.getName();
+      columnDef = (($xdl_smallint)column).get_default$() != null ? String.valueOf((($xdl_smallint)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_int) {
+      columnType = Integer.class.getName();
+      columnDef = (($xdl_int)column).get_default$() != null ? String.valueOf((($xdl_int)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_bigint) {
+      columnType = Long.class.getName();
+      columnDef = (($xdl_bigint)column).get_default$() != null ? String.valueOf((($xdl_bigint)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_date) {
+      columnType = Date.class.getName();
+      columnDef = (($xdl_date)column).get_default$() != null ? String.valueOf((($xdl_date)column).get_default$().getText()) : null;
+      if (columnsBuffer != null)
+        columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)\n");
+    }
+    else if (column instanceof $xdl_dateTime) {
+      columnType = Date.class.getName();
+      columnDef = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
+      if (columnsBuffer != null)
+        columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)\n");
+    }
+    else {
+      columnType = null;
+      columnDef = null;
+    }
+
+    return new String[]{columnType, columnDef};
+  }
+
   private Map<String,String> parse() {
     final xs_schema schema = new xs_schema();
     schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
     final XDLModel xdlModel = new XDLModel();
     // Phase 1: Determine # of primary keys per table, and instantiate all JPAEntityModel objects
-    final Map<String,Set<String>> tableNameToPrimatyColumnNames = new HashMap<String,Set<String>>();
+    final Map<String,Map<String,$xdl_columnType>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,$xdl_columnType>>();
     for ($xdl_tableType<?> table : merged.get_table()) {
       if (table.get_skip$().getText())
         continue;
 
       final Set<String> primaryColumnNames = new HashSet<String>();
-      tableNameToPrimatyColumnNames.put(table.get_name$().getText(), primaryColumnNames);
-      if (table.get_constraints() != null && table.get_constraints(0).get_primaryKey() != null)
+      final Map<String,$xdl_columnType> primaryColumns = new HashMap<String,$xdl_columnType>();
+      tableNameToPrimatyColumnNames.put(table.get_name$().getText(), primaryColumns);
+      if (table.get_constraints() != null && table.get_constraints(0).get_primaryKey() != null) {
         for ($xdl_tableType._constraints._primaryKey._column primaryColumn : table.get_constraints(0).get_primaryKey(0).get_column())
           primaryColumnNames.add(primaryColumn.get_name$().getText());
+
+        for ($xdl_columnType column : table.get_column())
+          if (primaryColumnNames.contains(column.get_name$().getText()))
+            primaryColumns.put(column.get_name$().getText(), column);
+      }
 
       xdlModel.addEntity(new JPAEntityModel(table.get_name$().getText(), table.get_abstract$().getText(), table.get_extends$() != null ? table.get_extends$().getText() : null, primaryColumnNames));
     }
@@ -124,7 +201,7 @@ public class JPABeanTransform extends XDLTransformer {
       if (table.get_skip$().getText())
         continue;
 
-      final Set<String> primaryColumnNames = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
+      final Map<String,$xdl_columnType> primaryColumns = tableNameToPrimatyColumnNames.get(table.get_name$().getText());
       final JPAEntityModel entityModel = xdlModel.getEntity(table.get_name$().getText());
       if (table.get_column() != null) {
         // Add inverse fields from <foreignKey> elements in <column> elements
@@ -150,7 +227,7 @@ public class JPABeanTransform extends XDLTransformer {
             generationStrategy = null;
           }
 
-          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumnNames.contains(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null);
+          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null);
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
@@ -258,6 +335,8 @@ public class JPABeanTransform extends XDLTransformer {
 
     final Map<String,String> files = new HashMap<String,String>();
     for (JPAEntityModel entityModel : xdlModel.getEntities()) {
+      final Map<String,$xdl_columnType> primaryColumns = tableNameToPrimatyColumnNames.get(entityModel.getName());
+      final String tableClassName = Strings.toClassCase(entityModel.getName());
       final StringBuffer buffer = new StringBuffer();
       buffer.append("package ").append(pkg).append(";\n\n");
       if (entityModel.isAbstract()) {
@@ -268,11 +347,13 @@ public class JPABeanTransform extends XDLTransformer {
         buffer.append("@").append(Entity.class.getName()).append("\n");
         buffer.append("@").append(Table.class.getName()).append("(name=\"").append(entityModel.getName()).append("\")\n");
         //buffer.append("@").append(Cache.class.getName()).append("(expiry=0)\n");
+        if (primaryColumns != null && primaryColumns.size() > 0)
+          buffer.append("@").append(IdClass.class.getName()).append("(").append(tableClassName).append(".id.class)\n");
+
         buffer.append("@").append(Inheritance.class.getName()).append("(strategy=").append(InheritanceType.class.getName()).append(".TABLE_PER_CLASS)\n");
         buffer.append("public");
       }
 
-      final String tableClassName = Strings.toClassCase(entityModel.getName());
       buffer.append(" class ").append(tableClassName).append(" extends ");
       if (entityModel.getExtendsName() != null)
         buffer.append(Strings.toClassCase(entityModel.getExtendsName()));
@@ -284,11 +365,17 @@ public class JPABeanTransform extends XDLTransformer {
 
       buffer.append(" {");
       if (!entityModel.isAbstract()) {
+        if (primaryColumns != null && primaryColumns.size() > 0) {
+          buffer.append("\n  public static class id {");
+          for ($xdl_columnType column : primaryColumns.values())
+            buffer.append("\n    private " + parseType(column, null)[0] + " " + Strings.toInstanceCase(column.get_name$().getText()) + ";");
+
+          buffer.append("\n  }\n");
+        }
+        buffer.append("\n  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
         buffer.append("\n  static {\n");
         buffer.append("    init(").append(tableClassName).append(".class);\n");
         buffer.append("  }\n");
-
-        buffer.append("\n  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
       }
 
       // CONSTRUCTORS
@@ -354,68 +441,10 @@ public class JPABeanTransform extends XDLTransformer {
           if (fieldModel.getColumn(0).getGenerationStrategy() != null)
             columnsBuffer.append("  @").append(GeneratedValue.class.getName()).append("(strategy=").append(GeneratedValue.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerationStrategy()).append(")\n");
 
-          final String columnDef;
-          final String columnType;
           final $xdl_columnType<?> column = fieldModel.getColumn(0).getColumn();
-          if (column instanceof $xdl_enum) {
-            final String enumName = Strings.toClassCase(column.get_name$().getText());
-            final StringBuffer enumBuffer = new StringBuffer();
-            //enumBuffer.append("package ").append(pkg).append(";\n\n");
-            enumBuffer.append("  public static enum ").append(enumName).append(" {\n");
-            final StringBuffer fieldBuffer = new StringBuffer();
-            for (String value : (($xdl_enum)column).get_values$().getText())
-              fieldBuffer.append(",\n    ").append(value.toUpperCase());//.append("(\"").append(value).append("\")");
-
-            enumBuffer.append(fieldBuffer.substring(2)).append(";\n");
-            /*enumBuffer.append("\n    private final ").append(String.class.getName()).append(" value;\n\n");
-             enumBuffer.append("    private ").append(enumName).append("(").append(String.class.getName()).append(" value) {\n");
-             enumBuffer.append("      this.value = value;\n    }\n");*/
-            //files.put(enumName, enumBuffer.toString());
-
-            // This was an attempt to have upper/lower-case enums convert propely between java and the db
-            /*enumBuffer.append("\n    public static ").append(enumName).append(" parseType(final ").append(String.class.getName()).append(" ").append(instanceName).append(") {\n");
-             enumBuffer.append("      return ").append(enumName).append(".valueOf(").append(instanceName).append(".toUpperCase());\n    }\n");*/
-
-            columnType = enumName;
-
-            columnsBuffer.append(enumBuffer).append("  }\n\n");
-            columnsBuffer.append("  @").append(Enumerated.class.getName()).append("(").append(EnumType.class.getName()).append(".STRING)\n");
-            columnDef = (($xdl_enum)column).get_default$() != null ? "\"" + (($xdl_enum)column).get_default$().getText() + "\"" : null;
-          }
-          else if (column instanceof $xdl_boolean) {
-            columnType = Boolean.class.getName();
-            columnDef = (($xdl_boolean)column).get_default$() != null ? String.valueOf((($xdl_boolean)column).get_default$().getText()) : null;
-          }
-          else if (column instanceof $xdl_varchar) {
-            columnType = String.class.getName();
-            columnDef = (($xdl_varchar)column).get_default$() != null ? "\"" + (($xdl_varchar)column).get_default$().getText() + "\"" : null;
-          }
-          else if (column instanceof $xdl_smallint) {
-            columnType = Short.class.getName();
-            columnDef = (($xdl_smallint)column).get_default$() != null ? String.valueOf((($xdl_smallint)column).get_default$().getText()) : null;
-          }
-          else if (column instanceof $xdl_int) {
-            columnType = Integer.class.getName();
-            columnDef = (($xdl_int)column).get_default$() != null ? String.valueOf((($xdl_int)column).get_default$().getText()) : null;
-          }
-          else if (column instanceof $xdl_bigint) {
-            columnType = Long.class.getName();
-            columnDef = (($xdl_bigint)column).get_default$() != null ? String.valueOf((($xdl_bigint)column).get_default$().getText()) : null;
-          }
-          else if (column instanceof $xdl_date) {
-            columnType = Date.class.getName();
-            columnDef = (($xdl_date)column).get_default$() != null ? String.valueOf((($xdl_date)column).get_default$().getText()) : null;
-            columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)\n");
-          }
-          else if (column instanceof $xdl_dateTime) {
-            columnType = Date.class.getName();
-            columnDef = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
-            columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)\n");
-          }
-          else {
-            columnType = null;
-            columnDef = null;
-          }
+          final String[] parsedType = parseType(column, columnsBuffer);
+          final String columnType = parsedType[0];
+          final String columnDef = parsedType[1];
 
           final String def;
           final String type;
