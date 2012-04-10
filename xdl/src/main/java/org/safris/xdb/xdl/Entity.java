@@ -2,11 +2,13 @@ package org.safris.xdb.xdl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.Vector;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -16,7 +18,7 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Query;
 
 @MappedSuperclass
-public abstract class Entity {
+public abstract class Entity implements Cloneable {
   private static final Map<Class,List<Field>> classToPrimaryKeyFields = new HashMap<Class,List<Field>>();
   private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValues = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
 
@@ -125,4 +127,34 @@ public abstract class Entity {
 
     return deleted;
   }
+
+  public void detach() {
+    final Field[] fields = getClass().getDeclaredFields();
+    for (Field field : fields) {
+      if (field.getName().startsWith("_persistence")) {
+        field.setAccessible(true);
+        if (!field.getType().isPrimitive()) {
+          try {
+            field.set(this, null);
+          }
+          catch (IllegalAccessException e) {
+          }
+        }
+      }
+      else if (field.getType().isAssignableFrom(Vector.class)) {
+        field.setAccessible(true);
+        try {
+          final Vector vector = (Vector)field.get(this);
+          final Field elementDataField = Vector.class.getDeclaredField("elementData");
+          elementDataField.setAccessible(true);
+          final Object[] elementData = (Object[])elementDataField.get(vector);
+          field.set(this, elementData != null && elementData.length > 0 ? Arrays.asList(elementData) : null);
+        }
+        catch (Exception e) {
+        }
+      }
+    }
+  }
+
+  public abstract Entity clone();
 }
