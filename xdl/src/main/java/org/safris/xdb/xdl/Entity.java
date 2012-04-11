@@ -56,12 +56,14 @@ public abstract class Entity implements Cloneable {
       return true;
 
     try {
-      for (Field field : fieldToGeneratedValue.keySet())
+      for (Field field : fieldToGeneratedValue.keySet()) {
+        field.setAccessible(true);
         if (field.get(this) == null)
           return false;
+      }
     }
     catch (IllegalAccessException e) {
-      return false;
+      throw new RuntimeException("Implementation issue", e);
     }
 
     return true;
@@ -94,6 +96,7 @@ public abstract class Entity implements Cloneable {
       }
     }
     catch (IllegalAccessException e) {
+      throw new RuntimeException("Implementation issue", e);
     }
   }
 
@@ -115,6 +118,7 @@ public abstract class Entity implements Cloneable {
       }
     }
     catch (IllegalAccessException e) {
+      throw new RuntimeException("Implementation issue", e);
     }
 
     final boolean deleted = query.executeUpdate() == 1;
@@ -138,19 +142,23 @@ public abstract class Entity implements Cloneable {
             field.set(this, null);
           }
           catch (IllegalAccessException e) {
+            throw new RuntimeException("Implementation issue", e);
           }
         }
       }
-      else if (field.getType().isAssignableFrom(Vector.class)) {
+      else if (List.class.isAssignableFrom(field.getType())) {
         field.setAccessible(true);
         try {
-          final Vector vector = (Vector)field.get(this);
-          final Field elementDataField = Vector.class.getDeclaredField("elementData");
-          elementDataField.setAccessible(true);
-          final Object[] elementData = (Object[])elementDataField.get(vector);
-          field.set(this, elementData != null && elementData.length > 0 ? Arrays.asList(elementData) : null);
+          final List vector = (List)field.get(this);
+          if (vector != null && vector instanceof Vector) {
+            final Field elementDataField = Vector.class.getDeclaredField("elementData");
+            elementDataField.setAccessible(true);
+            final Object[] elementData = (Object[])elementDataField.get(vector);
+            field.set(this, elementData != null && elementData.length > 0 ? Arrays.asList(elementData) : null);
+          }
         }
         catch (Exception e) {
+          throw new RuntimeException("Implementation issue", e);
         }
       }
     }

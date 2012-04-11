@@ -109,6 +109,7 @@
           <xs:enumeration value="PERSIST"/>
           <xs:enumeration value="REFRESH"/>
           <xs:enumeration value="REMOVE"/>
+          <xs:enumeration value="DETACH"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:list>

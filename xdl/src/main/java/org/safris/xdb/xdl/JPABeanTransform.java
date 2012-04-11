@@ -560,7 +560,7 @@ public class JPABeanTransform extends XDLTransformer {
           final String cascadeString = getCascadeString(inverseField.getCascade());
           final Class association = inverseField.getInverseAssociation();
 
-          final String type = association == OneToMany.class ? List.class.getName() + "<" + Strings.toClassCase(tableName) + ">" : Strings.toClassCase(tableName);
+          final String type = association == OneToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(tableName) + ">" : Strings.toClassCase(tableName);
           columnsBuffer.append("\n  @").append(association.getName()).append("(targetEntity=").append(Strings.toClassCase(tableName)).append(".class, mappedBy=\"").append(inverseField.getMappedBy()).append("\"").append(cascadeString).append(")\n");
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n\n");
           columnsBuffer.append("  public void set").append(fieldName).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
@@ -606,7 +606,7 @@ public class JPABeanTransform extends XDLTransformer {
           columnsBuffer.append(inverseJoinColumns.substring(1)).append("\n    })\n");
 
           final String instanceName = Strings.toInstanceCase(relation.getForeignKey().getFieldName());
-          final String type = relation.getAssociation() == ManyToMany.class ? List.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
+          final String type = relation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");
 
           columnsBuffer.append("\n  public void set").append(Strings.toClassCase(relation.getForeignKey().getFieldName())).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
@@ -624,7 +624,7 @@ public class JPABeanTransform extends XDLTransformer {
           final String fieldName = Strings.toClassCase(inverseRelation.getForeignKey().getForeignKeyModel().getReferencedTableName());
           columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\"").append(cascadeString).append(")\n");
           final String instanceName = Strings.toInstanceCase(inverseRelation.getInverseForeignKey().getFieldName());
-          final String type = inverseRelation.getAssociation() == ManyToMany.class ? List.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
+          final String type = inverseRelation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");
 
           columnsBuffer.append("\n  public void set").append(Strings.toClassCase(inverseRelation.getInverseForeignKey().getFieldName())).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
