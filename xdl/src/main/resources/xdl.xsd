@@ -328,7 +328,7 @@
                 <xs:field xpath="@name"/>
               </xs:unique>
             </xs:element>
-            <xs:element name="foreignKey" minOccurs="0">
+            <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
               <xs:complexType>
                 <xs:sequence>
                   <xs:element name="column" maxOccurs="unbounded">

@@ -254,32 +254,33 @@ public class JPABeanTransform extends XDLTransformer {
 
         // Add inverse fields from <foreignKey> elements in <constraints> element
         if (table.get_constraints() != null && table.get_constraints(0).get_foreignKey() != null) {
-          final $xdl_tableType._constraints._foreignKey foreignKey = table.get_constraints(0).get_foreignKey(0);
-          final String referencedTableName = foreignKey.get_references$().getText();
-          final List<JPAFieldModel.Column> columns = new ArrayList<JPAFieldModel.Column>();
-          final List<String> referencedColumnNames = new ArrayList<String>();
-          final List<JPAFieldModel> realFieldModels = new ArrayList<JPAFieldModel>();
-          for ($xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
-            final JPAFieldModel fieldModel = entityModel.getFieldModel(column.get_name$().getText());
-            realFieldModels.add(fieldModel);
-            fieldModel.setImmutable(true);
-            if (fieldModel.getForeignKeyModel() != null)
-              throw new Error("Column has 2 foreignKey definitions: " + column.get_name$().getText());
+          for (final $xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints(0).get_foreignKey()) {
+            final String referencedTableName = foreignKey.get_references$().getText();
+            final List<JPAFieldModel.Column> columns = new ArrayList<JPAFieldModel.Column>();
+            final List<String> referencedColumnNames = new ArrayList<String>();
+            final List<JPAFieldModel> realFieldModels = new ArrayList<JPAFieldModel>();
+            for ($xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
+              final JPAFieldModel fieldModel = entityModel.getFieldModel(column.get_name$().getText());
+              realFieldModels.add(fieldModel);
+              fieldModel.setImmutable(true);
+              if (fieldModel.getForeignKeyModel() != null)
+                throw new Error("Column has 2 foreignKey definitions: " + column.get_name$().getText());
 
-            columns.add(fieldModel.getColumn(0));
-            referencedColumnNames.add(column.get_column$().getText());
+              columns.add(fieldModel.getColumn(0));
+              referencedColumnNames.add(column.get_column$().getText());
+            }
+
+            final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, columns);
+            fieldModel.setRealFieldModels(realFieldModels);
+            entityModel.addFieldModel(fieldModel);
+
+            final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), referencedColumnNames);
+            foreignKeyModel.setJoin(foreignKey.get_join(0));
+            if (foreignKeyModel.getInverseField() != null)
+              xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
+
+            fieldModel.setForeignKeyModel(foreignKeyModel);
           }
-
-          final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, columns);
-          fieldModel.setRealFieldModels(realFieldModels);
-          entityModel.addFieldModel(fieldModel);
-
-          final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey.get_id$() != null ? foreignKey.get_id$().getText() : null, foreignKey.get_references$().getText(), referencedColumnNames);
-          foreignKeyModel.setJoin(foreignKey.get_join(0));
-          if (foreignKeyModel.getInverseField() != null)
-            xdlModel.registerInverseField(foreignKey.get_references$().getText(), foreignKeyModel.getInverseField());
-
-          fieldModel.setForeignKeyModel(foreignKeyModel);
         }
 
         if (table.get_relation() != null) {

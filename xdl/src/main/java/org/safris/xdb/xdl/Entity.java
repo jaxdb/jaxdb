@@ -3,12 +3,14 @@ package org.safris.xdb.xdl;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
-import java.util.Vector;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -146,15 +148,24 @@ public abstract class Entity implements Cloneable {
           }
         }
       }
-      else if (List.class.isAssignableFrom(field.getType())) {
+      else if (Collection.class.isAssignableFrom(field.getType())) {
         field.setAccessible(true);
         try {
-          final List vector = (List)field.get(this);
-          if (vector != null && vector instanceof Vector) {
-            final Field elementDataField = Vector.class.getDeclaredField("elementData");
+          final Collection collection = (Collection)field.get(this);
+          if (collection == null || !collection.getClass().getName().startsWith("org.eclipse.persistence.indirection"))
+            continue;
+
+          if (collection instanceof List) {
+            final Field elementDataField = collection.getClass().getDeclaredField("elementData");
             elementDataField.setAccessible(true);
-            final Object[] elementData = (Object[])elementDataField.get(vector);
+            final Object[] elementData = (Object[])elementDataField.get(collection);
             field.set(this, elementData != null && elementData.length > 0 ? Arrays.asList(elementData) : null);
+          }
+          else if (collection instanceof Set) {
+            final Field delegateField = collection.getClass().getDeclaredField("delegate");
+            delegateField.setAccessible(true);
+            final Set delegate = (Set)delegateField.get(collection);
+            field.set(this, delegate != null && delegate.size() > 0 ? new HashSet(delegate) : null);
           }
         }
         catch (Exception e) {
