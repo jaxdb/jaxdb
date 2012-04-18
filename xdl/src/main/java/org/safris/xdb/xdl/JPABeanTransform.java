@@ -596,11 +596,10 @@ public class JPABeanTransform extends XDLTransformer {
 
           columnsBuffer.append("    inverseJoinColumns={");
           String inverseJoinColumns = "";
-          for (int i = 0; i < numPrimaryKeys; i++) {
-            final int columnIndex = Math.min(i, relation.getInverseForeignKey().getForeignKeyModel().getReferencedColumnNames().size() - 1);
-            final JPAFieldModel.Column fieldModelColumn = relation.getInverseForeignKey().getForeignKeyModel().getFieldModel().getColumns().get(columnIndex);
+          for (int i = 0; i < relation.getInverseForeignKey().getForeignKeyModel().getReferencedColumnNames().size(); i++) {
+            final JPAFieldModel.Column fieldModelColumn = relation.getInverseForeignKey().getForeignKeyModel().getFieldModel().getColumns().get(i);
             final String columnName = fieldModelColumn.getColumn().get_name$().getText();
-            final String referencedColumn = relation.getInverseForeignKey().getForeignKeyModel().getReferencedColumnNames().get(columnIndex);
+            final String referencedColumn = relation.getInverseForeignKey().getForeignKeyModel().getReferencedColumnNames().get(i);
             final String nullable = String.valueOf(fieldModelColumn.getColumn().get_null$().getText());
             inverseJoinColumns += ",\n      @" + JoinColumn.class.getName() + "(name=\"" + columnName + "\", referencedColumnName=\"" + referencedColumn + "\", nullable=" + nullable + ")";
           }
