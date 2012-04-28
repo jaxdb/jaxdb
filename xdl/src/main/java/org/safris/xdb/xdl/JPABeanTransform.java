@@ -288,9 +288,10 @@ public class JPABeanTransform extends XDLTransformer {
           for ($xdl_relationType<?> relation : relations) {
             final JPARelationModel.ForeignKey foreignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_field(0).get_id$().getText()), relation.get_field(0).get_name$().getText(), relation.get_field(0).get_cascade$().getText());
             final JPARelationModel.ForeignKey inverseForeignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation.get_inverse(0).get_id$().getText()), relation.get_inverse(0).get_name$().getText(), relation.get_inverse(0).get_cascade$().getText());
-            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.getText().equals(relation.get_association$().getText()) ? ManyToMany.class : null, FetchType.valueOf(relation.get_fetch$().getText()), foreignKey, inverseForeignKey);
+            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.getText().equals(relation.get_association$().getText()) ? ManyToMany.class : null, FetchType.valueOf(relation.get_field(0).get_fetch$().getText()), foreignKey, inverseForeignKey);
+            final JPARelationModel inverseRelationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.getText().equals(relation.get_association$().getText()) ? ManyToMany.class : null, FetchType.valueOf(relation.get_inverse(0).get_fetch$().getText()), foreignKey, inverseForeignKey);
             xdlModel.getEntity(foreignKey.getForeignKeyModel().getReferencedTableName()).addRelation(relationModel);
-            xdlModel.getEntity(inverseForeignKey.getForeignKeyModel().getReferencedTableName()).addInverseRelation(relationModel);
+            xdlModel.getEntity(inverseForeignKey.getForeignKeyModel().getReferencedTableName()).addInverseRelation(inverseRelationModel);
           }
         }
       }
@@ -622,7 +623,7 @@ public class JPABeanTransform extends XDLTransformer {
         for (JPARelationModel inverseRelation : inverseRelations) {
           final String cascadeString = getCascadeString(inverseRelation.getInverseForeignKey().getCascade());
           final String fieldName = Strings.toClassCase(inverseRelation.getForeignKey().getForeignKeyModel().getReferencedTableName());
-          columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\"").append(cascadeString).append(")\n");
+          columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\"").append(cascadeString).append(", fetch=").append(FetchType.class.getName()).append(".").append(inverseRelation.getFetchType()).append(cascadeString).append(")\n");
           final String instanceName = Strings.toInstanceCase(inverseRelation.getInverseForeignKey().getFieldName());
           final String type = inverseRelation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");

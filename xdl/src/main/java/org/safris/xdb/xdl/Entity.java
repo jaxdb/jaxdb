@@ -90,7 +90,7 @@ public abstract class Entity implements Cloneable {
 
         final GeneratedValue.Strategy strategy = fieldToGeneratedKeys.get(field);
         if (strategy == GeneratedValue.Strategy.UUID)
-          field.set(this, UUID.randomUUID().toString());
+          field.set(this, UUID.randomUUID().toString().toUpperCase());
         else if (strategy == GeneratedValue.Strategy.CREATION)
           field.set(this, new Date());
         else

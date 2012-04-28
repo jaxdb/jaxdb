@@ -78,7 +78,6 @@
       <xs:element name="inverse" type="xdl:fieldRefType" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute name="association" type="xs:NCName" fixed="ManyToMany" use="required"/>
-    <xs:attribute name="fetch" type="xdl:fetchType" use="required"/>
   </xs:complexType>
   
   <xs:complexType name="fieldType">
@@ -90,6 +89,7 @@
     <xs:complexContent>
       <xs:extension base="xdl:fieldType">
         <xs:attribute name="id" type="xs:NCName" use="required"/>
+        <xs:attribute name="fetch" type="xdl:fetchType" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
