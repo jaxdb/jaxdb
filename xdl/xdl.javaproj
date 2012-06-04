@@ -95,6 +95,182 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Address.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/AuditedId.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/AvailabilityBookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/BookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CalendarEvent.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CalendarEventTimeline.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ChangeCredentials.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CptService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Creation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CreationId.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Degree.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Holiday.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/HolidayDate.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Id.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Insurance.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Language.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/License.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Log.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Login.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Notification.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Patient.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientInvitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientLog.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientPhone.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientPhoto.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientSecurity.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Photo.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Provider.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderCptService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderDegree.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderInsurance.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderInvitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLanguage.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLicense.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLog.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderNotification.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderPatient.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderPhoto.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderSpecialty.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Service.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Specialty.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -251,6 +427,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_mediumint.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_numeric.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -280,6 +460,10 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_timestamp.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xmlbinding/org/safris/xdb/xdl/$xdl_tinyint.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -379,21 +563,21 @@
   </references>
   <startingPoints>
     <startingPoint>
-      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl</commandLineArguments>
+      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/entity.xdl</commandLineArguments>
       <name>DDLTransform</name>
       <target>org.safris.xdb.xdl.DDLTransform</target>
       <vmOtherOptions></vmOtherOptions>
       <workingDir></workingDir>
     </startingPoint>
     <startingPoint>
-      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl</commandLineArguments>
+      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/entity.xdl</commandLineArguments>
       <name>XSDTransform</name>
       <target>org.safris.xdb.xdl.XSDTransform</target>
       <vmOtherOptions></vmOtherOptions>
       <workingDir></workingDir>
     </startingPoint>
     <startingPoint>
-      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/calendar.xdl /Users/seva/Projects/org/safris/trunk/xdb/xdl/target/generated-sources/xdl</commandLineArguments>
+      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/entity.xdl /Users/seva/Projects/org/safris/trunk/xdb/xdl/target/generated-sources/xdl</commandLineArguments>
       <name>JPABeanTransform</name>
       <target>org.safris.xdb.xdl.JPABeanTransform</target>
       <vmOtherOptions></vmOtherOptions>

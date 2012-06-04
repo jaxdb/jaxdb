@@ -68,7 +68,7 @@ public class DDLTransform extends XDLTransformer {
             columnsBuffer.append("(").append(type.get_length$().getText()).append(")");
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            columnsBuffer.append(" DEFAULT '").append(type.get_default$().getText()).append("'");
         }
         else if (column instanceof $xdl_enum) {
           final $xdl_enum type = ($xdl_enum)column;
@@ -84,11 +84,35 @@ public class DDLTransform extends XDLTransformer {
           }
 
           if (type.get_default$() != null)
+            columnsBuffer.append(" DEFAULT '").append(type.get_default$().getText()).append("'");
+        }
+        else if (column instanceof $xdl_tinyint) {
+          final $xdl_tinyint type = ($xdl_tinyint)column;
+          columnsBuffer.append("TINYINT");
+          if (type.get_precision$() != null)
+            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+
+          if (type.get_unsigned$() != null)
+            columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
         }
         else if (column instanceof $xdl_smallint) {
           final $xdl_smallint type = ($xdl_smallint)column;
           columnsBuffer.append("SMALLINT");
+          if (type.get_precision$() != null)
+            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+
+          if (type.get_unsigned$() != null)
+            columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_default$() != null)
+            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+        }
+        else if (column instanceof $xdl_mediumint) {
+          final $xdl_mediumint type = ($xdl_mediumint)column;
+          columnsBuffer.append("MEDIUMINT");
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
@@ -133,6 +157,9 @@ public class DDLTransform extends XDLTransformer {
           columnsBuffer.append("DATETIME");
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+        }
+        else if (column instanceof $xdl_blob) {
+          columnsBuffer.append("BLOB");
         }
 
         if (column.get_null$() != null)

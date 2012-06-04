@@ -47,7 +47,7 @@ public abstract class XDLTransformer {
       throw new IllegalArgumentException("xdlFile == null");
 
     if (!xdlFile.exists())
-      throw new IllegalArgumentException("!xdlFile.exists()");
+      throw new IllegalArgumentException("!xdlFile.exists(): " + xdlFile.getAbsolutePath());
 
     if (outDir != null && !outDir.exists())
       throw new IllegalArgumentException("!outDir.exists()");
@@ -119,7 +119,7 @@ public abstract class XDLTransformer {
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
     for ($xdl_tableType<?> table : merged.get_table())
-      if (table.get_constraints() == null || table.get_constraints(0).get_primaryKey() == null || table.get_constraints(0).get_primaryKey(0).get_column() == null)
+      if (!table.get_abstract$().getText() && (table.get_constraints() == null || table.get_constraints(0).get_primaryKey() == null || table.get_constraints(0).get_primaryKey(0).get_column() == null))
         errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
 
     return errors;

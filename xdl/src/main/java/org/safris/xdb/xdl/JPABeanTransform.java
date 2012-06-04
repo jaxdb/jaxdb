@@ -18,6 +18,7 @@ package org.safris.xdb.xdl;
 
 import java.io.File;
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -129,7 +130,8 @@ public class JPABeanTransform extends XDLTransformer {
         columnsBuffer.append(enumBuffer).append("  }\n\n");
         columnsBuffer.append("  @").append(Enumerated.class.getName()).append("(").append(EnumType.class.getName()).append(".STRING)\n");
       }
-      columnDef = (($xdl_enum)column).get_default$() != null ? "\"" + (($xdl_enum)column).get_default$().getText() + "\"" : null;
+
+      columnDef = (($xdl_enum)column).get_default$() != null ? enumName + "." + (($xdl_enum)column).get_default$().getText().toUpperCase() : null;
     }
     else if (column instanceof $xdl_boolean) {
       columnType = Boolean.class.getName();
@@ -139,17 +141,25 @@ public class JPABeanTransform extends XDLTransformer {
       columnType = String.class.getName();
       columnDef = (($xdl_varchar)column).get_default$() != null ? "\"" + (($xdl_varchar)column).get_default$().getText() + "\"" : null;
     }
-    else if (column instanceof $xdl_smallint) {
+    else if (column instanceof $xdl_tinyint) {
       columnType = Short.class.getName();
+      columnDef = (($xdl_tinyint)column).get_default$() != null ? "(short)" + String.valueOf((($xdl_tinyint)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_smallint) {
+      columnType = Integer.class.getName();
       columnDef = (($xdl_smallint)column).get_default$() != null ? String.valueOf((($xdl_smallint)column).get_default$().getText()) : null;
     }
-    else if (column instanceof $xdl_int) {
+    else if (column instanceof $xdl_mediumint) {
       columnType = Integer.class.getName();
-      columnDef = (($xdl_int)column).get_default$() != null ? String.valueOf((($xdl_int)column).get_default$().getText()) : null;
+      columnDef = (($xdl_mediumint)column).get_default$() != null ? String.valueOf((($xdl_mediumint)column).get_default$().getText()) : null;
+    }
+    else if (column instanceof $xdl_int) {
+      columnType = Long.class.getName();
+      columnDef = (($xdl_int)column).get_default$() != null ? String.valueOf((($xdl_int)column).get_default$().getText()) + "L" : null;
     }
     else if (column instanceof $xdl_bigint) {
-      columnType = Long.class.getName();
-      columnDef = (($xdl_bigint)column).get_default$() != null ? String.valueOf((($xdl_bigint)column).get_default$().getText()) : null;
+      columnType = BigInteger.class.getName();
+      columnDef = (($xdl_bigint)column).get_default$() != null ? "new " + BigInteger.class.getName() + "(\"" + String.valueOf((($xdl_bigint)column).get_default$().getText()) + "\")" : null;
     }
     else if (column instanceof $xdl_date) {
       columnType = Date.class.getName();
@@ -162,6 +172,10 @@ public class JPABeanTransform extends XDLTransformer {
       columnDef = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
       if (columnsBuffer != null)
         columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)\n");
+    }
+    else if (column instanceof $xdl_blob) {
+      columnType = "byte[]";
+      columnDef = null;
     }
     else {
       columnType = null;
@@ -563,7 +577,7 @@ public class JPABeanTransform extends XDLTransformer {
           final Class association = inverseField.getInverseAssociation();
 
           final String type = association == OneToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(tableName) + ">" : Strings.toClassCase(tableName);
-          columnsBuffer.append("\n  @").append(association.getName()).append("(targetEntity=").append(Strings.toClassCase(tableName)).append(".class, mappedBy=\"").append(inverseField.getMappedBy()).append("\"").append(cascadeString).append(")\n");
+          columnsBuffer.append("\n  @").append(association.getName()).append("(targetEntity=").append(Strings.toClassCase(tableName)).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseField.getMappedBy())).append("\"").append(cascadeString).append(")\n");
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n\n");
           columnsBuffer.append("  public void set").append(fieldName).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
           columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
