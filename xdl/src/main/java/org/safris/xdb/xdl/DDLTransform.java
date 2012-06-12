@@ -173,8 +173,24 @@ public class DDLTransform extends XDLTransformer {
   private String parseConstraints(final String tableName, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType<ComplexType> table) {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table.get_constraints() != null) {
-      final List<$xdl_tableType._constraints> constraints = table.get_constraints();
-      final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get(0).get_primaryKey(0);
+      final $xdl_tableType._constraints constraints = table.get_constraints(0);
+      String uniqueString = "";
+      int uniqueIndex = 1;
+      final List<$xdl_tableType._constraints._unique> uniques = constraints.get_unique();
+      if (uniques != null) {
+        for ($xdl_tableType._constraints._unique unique : uniques) {
+          final List<$xdl_tableType._constraints._unique._column> columns = unique.get_column();
+          String columnsString = "";
+          for ($xdl_tableType._constraints._unique._column column : columns)
+            columnsString += ", " + column.get_name$().getText();
+
+          uniqueString += ",\n  CONSTRAINT " + table.get_name$().getText() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
+        }
+
+        contraintsBuffer.append(uniqueString);
+      }
+
+      final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get_primaryKey(0);
       if (primaryKey != null) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
         for ($xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {

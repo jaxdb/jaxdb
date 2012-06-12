@@ -492,8 +492,18 @@
             <xs:sequence maxOccurs="unbounded">
               <xs:element name="unique" minOccurs="0">
                 <xs:complexType>
-                  <xs:attribute name="column" type="xs:NCName" use="required"/>
+                  <xs:sequence maxOccurs="unbounded">
+                    <xs:element name="column">
+                      <xs:complexType>
+                        <xs:attribute name="name" type="xs:NCName" use="required"/>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
                 </xs:complexType>
+                <xs:unique name="uniqueColumnName1">
+                  <xs:selector xpath="./xdl:column"/>
+                  <xs:field xpath="@name"/>
+                </xs:unique>
               </xs:element>
               <xs:element name="index" minOccurs="0">
                 <xs:complexType>
@@ -508,7 +518,7 @@
                           </xs:element>
                         </xs:sequence>
                       </xs:complexType>
-                      <xs:unique name="uniqueColumnName">
+                      <xs:unique name="uniqueColumnName2">
                         <xs:selector xpath="./xdl:column"/>
                         <xs:field xpath="@name"/>
                       </xs:unique>
@@ -555,7 +565,7 @@
           <xs:field xpath="@name"/>
         </xs:key>
         <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
-          <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
+          <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
           <xs:field xpath="@column | @name"/>
         </xs:keyref>
         <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
