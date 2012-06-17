@@ -175,5 +175,29 @@ public abstract class Entity implements Cloneable {
     }
   }
 
+  public void attach(final EntityManager entityManager) {
+    if (entityManager.contains(this))
+      return;
+
+    final Entity clone = clone();
+    final Entity attached = entityManager.<Entity>merge(clone);
+    entityManager.refresh(attached);
+
+    final Field[] fields = getClass().getDeclaredFields();
+    for (Field field : fields) {
+      if (Collection.class.isAssignableFrom(field.getType())) {
+        field.setAccessible(true);
+        try {
+          final Collection collection = (Collection)field.get(attached);
+          if (collection != null && collection.getClass().getName().startsWith("org.eclipse.persistence.indirection") && field.get(this) == null)
+            field.set(this, collection);
+        }
+        catch (Exception e) {
+          throw new RuntimeException("Implementation issue", e);
+        }
+      }
+    }
+  }
+
   public abstract Entity clone();
 }

@@ -99,6 +99,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Alert.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/AuditedId.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -155,6 +159,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Invitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Language.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -183,11 +191,19 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientAlert.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientInvitation.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientLog.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientNotification.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -212,6 +228,10 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderAlert.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>

@@ -245,7 +245,7 @@ public class JPABeanTransform extends XDLTransformer {
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
-            final List<String> cascade = column.get_foreignKey(0).get_join(0).get_field(0).get_cascade$().getText();
+            final List<String> cascade = column.get_foreignKey(0).get_join() != null ? column.get_foreignKey(0).get_join(0).get_field(0).get_cascade$().getText() : null;
             if (cascade == null || (cascade.size() == 1 && $xdl_fieldType._cascade$.REFRESH.getText().equals(cascade.get(0))))
               fieldModel.setImmutable(true);
             else
@@ -402,9 +402,16 @@ public class JPABeanTransform extends XDLTransformer {
 
         // Fields
         for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
+          if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() == null)
+            continue;
+
           final JPAFieldModel.Column column = fieldModel.getColumn(0);
           final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName());
-          buffer.append("    this.").append(instanceName).append(" = copy.").append(instanceName).append(";\n");
+          buffer.append("    this.").append(instanceName).append(" = ");
+          if (column.getColumn() instanceof $xdl_date || column.getColumn() instanceof $xdl_dateTime)
+            buffer.append("copy.").append(instanceName).append(" != null ? new ").append(Date.class.getName()).append("(copy.").append(instanceName).append(".getTime()) : null;\n");
+          else
+            buffer.append("copy.").append(instanceName).append(";\n");
         }
 
         // Inverse Fields
@@ -467,15 +474,16 @@ public class JPABeanTransform extends XDLTransformer {
           final Class association;
           final FetchType fetch;
           final String fieldName;
-          final List<String> fieldCascade;
           if (fieldModel.getForeignKeyModel() != null) {
+            if (fieldModel.getForeignKeyModel().getField() == null)
+              continue;
+
             type = Strings.toClassCase(fieldModel.getForeignKeyModel().getReferencedTableName());
             def = null;
 
             association = fieldModel.getForeignKeyModel().getAssociation();
             fetch = fieldModel.getForeignKeyModel().getFetchType();
             fieldName = fieldModel.getForeignKeyModel().getField().getName();
-            fieldCascade = fieldModel.getForeignKeyModel().getField().getCascade();
           }
           else {
             type = columnType;
@@ -497,7 +505,7 @@ public class JPABeanTransform extends XDLTransformer {
            }*/
 
           final String instanceName = Strings.toInstanceCase(fieldName);
-          if (fieldModel.getForeignKeyModel() != null) {
+          if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() != null) {
             final JPAForeignKeyModel foreignKeyModel = fieldModel.getForeignKeyModel();
             final String cascadeString = getCascadeString(foreignKeyModel.getField().getCascade());
             columnsBuffer.append("  @").append(association.getName()).append("(targetEntity=").append(type).append(".class, fetch=").append(FetchType.class.getName()).append(".").append(fetch).append(cascadeString).append(")\n");
@@ -637,7 +645,7 @@ public class JPABeanTransform extends XDLTransformer {
         for (JPARelationModel inverseRelation : inverseRelations) {
           final String cascadeString = getCascadeString(inverseRelation.getInverseForeignKey().getCascade());
           final String fieldName = Strings.toClassCase(inverseRelation.getForeignKey().getForeignKeyModel().getReferencedTableName());
-          columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\"").append(cascadeString).append(", fetch=").append(FetchType.class.getName()).append(".").append(inverseRelation.getFetchType()).append(cascadeString).append(")\n");
+          columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\", fetch=").append(FetchType.class.getName()).append(".").append(inverseRelation.getFetchType()).append(cascadeString).append(")\n");
           final String instanceName = Strings.toInstanceCase(inverseRelation.getInverseForeignKey().getFieldName());
           final String type = inverseRelation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
           columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");
@@ -675,6 +683,9 @@ public class JPABeanTransform extends XDLTransformer {
         columnsBuffer.append("    final ").append(tableClassName).append(" that = (").append(tableClassName).append(")obj;\n");
         // Fields
         for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
+          if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() == null)
+            continue;
+
           final JPAFieldModel.Column column = fieldModel.getColumn(0);
           final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName()));
           columnsBuffer.append("    if (").append(instanceName).append(" != null ? !").append(instanceName).append(".equals(that.").append(instanceName).append(") : that.").append(instanceName).append(" != null)\n");
@@ -703,6 +714,9 @@ public class JPABeanTransform extends XDLTransformer {
 
       // Fields
       for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
+        if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() == null)
+          continue;
+
         final JPAFieldModel.Column column = fieldModel.getColumn(0);
         final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName()));
         columnsBuffer.append("    hashCode += ").append(instanceName).append(" != null ? ").append(instanceName).append(".hashCode() : -1;\n");

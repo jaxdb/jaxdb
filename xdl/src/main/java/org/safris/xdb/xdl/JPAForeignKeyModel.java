@@ -72,6 +72,9 @@ public class JPAForeignKeyModel {
   }
 
   public void setJoin(final $xdl_joinType<?> joinType) {
+    if (joinType == null)
+      return;
+
     fetchType = FetchType.valueOf(joinType.get_fetch$().getText());
     association = $xdl_columnType._foreignKey._join._association$.MANYTOONE.getText().equals(joinType.get_association$().getText()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.ONETOMANY.getText().equals(joinType.get_association$().getText()) ? OneToMany.class : OneToOne.class);
     field = new Field(joinType.get_field(0).get_name$().getText(), joinType.get_field(0).get_cascade$().getText());
