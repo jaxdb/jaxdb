@@ -92,7 +92,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
-          if (type.get_unsigned$() != null)
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
           if (type.get_default$() != null)
@@ -104,7 +104,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
-          if (type.get_unsigned$() != null)
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
           if (type.get_default$() != null)
@@ -116,7 +116,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
-          if (type.get_unsigned$() != null)
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
           if (type.get_default$() != null)
@@ -128,7 +128,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
-          if (type.get_unsigned$() != null)
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
           if (type.get_default$() != null)
@@ -140,7 +140,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_precision$() != null)
             columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
 
-          if (type.get_unsigned$() != null)
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
           if (type.get_default$() != null)

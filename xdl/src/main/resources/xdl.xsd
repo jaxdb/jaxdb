@@ -170,9 +170,10 @@
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
-        <xs:attribute name="points" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="decimal" type="xs:positiveInteger"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:float"/>
       </xs:extension>
     </xs:complexContent>
@@ -198,6 +199,7 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -237,6 +239,7 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -276,6 +279,7 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -315,6 +319,7 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -354,6 +359,7 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -386,12 +392,26 @@
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
         <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="decimal" type="xs:positiveInteger"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:float"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
+  <xs:complexType name="double">
+    <xs:complexContent>
+      <xs:extension base="xdl:columnType">
+        <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="decimal" type="xs:positiveInteger"/>
+        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
+        <xs:attribute name="default" type="xs:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <xs:complexType name="date">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
