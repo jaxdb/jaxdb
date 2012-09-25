@@ -141,9 +141,13 @@ public class JPABeanTransform extends XDLTransformer {
       columnType = String.class.getName();
       columnDef = (($xdl_varchar)column).get_default$() != null ? "\"" + (($xdl_varchar)column).get_default$().getText() + "\"" : null;
     }
+    else if (column instanceof $xdl_decimal) {
+      columnType = Double.class.getName();
+      columnDef = (($xdl_decimal)column).get_default$() != null ? (($xdl_decimal)column).get_default$().getText() + "D" : null;
+    }
     else if (column instanceof $xdl_tinyint) {
       columnType = Short.class.getName();
-      columnDef = (($xdl_tinyint)column).get_default$() != null ? "(short)" + String.valueOf((($xdl_tinyint)column).get_default$().getText()) : null;
+      columnDef = (($xdl_tinyint)column).get_default$() != null ? "(short)" + (($xdl_tinyint)column).get_default$().getText() : null;
     }
     else if (column instanceof $xdl_smallint) {
       columnType = Integer.class.getName();

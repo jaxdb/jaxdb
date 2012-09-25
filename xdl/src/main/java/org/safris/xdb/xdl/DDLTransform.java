@@ -86,6 +86,21 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT '").append(type.get_default$().getText()).append("'");
         }
+        else if (column instanceof $xdl_decimal) {
+          final $xdl_decimal type = ($xdl_decimal)column;
+          columnsBuffer.append("DECIMAL");
+          if (type.get_precision$() != null && type.get_decimal$() != null)
+            columnsBuffer.append("(").append(type.get_precision$().getText() + ", " + type.get_decimal$().getText()).append(")");
+
+          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+            columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
+
+          if (type.get_default$() != null)
+            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+        }
         else if (column instanceof $xdl_tinyint) {
           final $xdl_tinyint type = ($xdl_tinyint)column;
           columnsBuffer.append("TINYINT");
@@ -94,6 +109,9 @@ public class DDLTransform extends XDLTransformer {
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
 
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
@@ -107,6 +125,9 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
+
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
         }
@@ -118,6 +139,9 @@ public class DDLTransform extends XDLTransformer {
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
 
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
@@ -131,6 +155,9 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
 
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
+
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
         }
@@ -142,6 +169,9 @@ public class DDLTransform extends XDLTransformer {
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
             columnsBuffer.append(" UNSIGNED");
+
+          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+            columnsBuffer.append(" ZEROFILL");
 
           if (type.get_default$() != null)
             columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());

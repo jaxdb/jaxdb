@@ -583,7 +583,7 @@
   </references>
   <startingPoints>
     <startingPoint>
-      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/entity.xdl</commandLineArguments>
+      <commandLineArguments>/Users/seva/Work/LiveCare/src/server/HydilEntities/src/main/resources/entity.xdl</commandLineArguments>
       <name>DDLTransform</name>
       <target>org.safris.xdb.xdl.DDLTransform</target>
       <vmOtherOptions></vmOtherOptions>
