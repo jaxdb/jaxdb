@@ -80,13 +80,7 @@ public abstract class Entity implements Cloneable {
     return true;
   }
 
-  @PrePersist
-  @PreUpdate
-  private void generateValues() {
-    generateValuesOnInsert();
-    generateValuesOnUpdate();
-  }
-
+  //@PrePersist // NOTE: Bug in EclipseLink does not allow @PreUpdate to change fields that have already been marked as no diff
   private void generateValuesOnInsert() {
     final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnInsert = classToGeneratedValuesOnInsert.get(getClass());
     if (fieldToGeneratedValueOnInsert == null)
@@ -117,6 +111,8 @@ public abstract class Entity implements Cloneable {
     }
   }
 
+  //@PrePersist // NOTE: Bug in EclipseLink does not allow @PreUpdate to change fields that have already been marked as no diff
+  //@PreUpdate // NOTE: Bug in EclipseLink does not allow @PreUpdate to change fields that have already been marked as no diff
   private void generateValuesOnUpdate() {
     final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnUpdate = classToGeneratedValuesOnUpdate.get(getClass());
     if (fieldToGeneratedValueOnUpdate == null)
@@ -138,6 +134,21 @@ public abstract class Entity implements Cloneable {
     catch (IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
+  }
+
+  public void persist(final EntityManager entityManager) {
+    generateValuesOnInsert();
+    generateValuesOnUpdate();
+    entityManager.persist(this);
+  }
+
+  public <T>T merge(final EntityManager entityManager) {
+    generateValuesOnUpdate();
+    return entityManager.<T>merge((T)this);
+  }
+
+  public void refresh(final EntityManager entityManager) {
+    entityManager.refresh(this);
   }
 
   public boolean delete(final EntityManager entityManager) {
@@ -218,7 +229,7 @@ public abstract class Entity implements Cloneable {
       return;
 
     final Entity clone = clone();
-    final Entity attached = entityManager.<Entity>merge(clone);
+    final Entity attached = clone.merge(entityManager);
     entityManager.refresh(attached);
 
     final Field[] fields = getClass().getDeclaredFields();
