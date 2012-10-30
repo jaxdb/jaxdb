@@ -12,6 +12,7 @@ public @interface GeneratedValue {
 
   public static enum Strategy {
     UUID,
-    CREATION;
+    INSERT,
+    UPDATE;
   }
 }

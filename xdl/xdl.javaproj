@@ -95,279 +95,259 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Address.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Address.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Alert.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Alert.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/AuditedId.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/AuditedId.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/AvailabilityBookableType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/AvailabilityBookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/BookableType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Billing.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CalendarEvent.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/BookableType.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CalendarEventTimeline.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CalendarEvent.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ChangeCredentials.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CalendarEventTimeline.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CptService.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChangeCredentials.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Creation.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Charge.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/CreationId.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeCptService.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Degree.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeDiagnosis.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Holiday.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeInvoice.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/HolidayDate.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CptService.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Id.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Currency.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Insurance.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Degree.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Invitation.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Diagnosis.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Language.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Holiday.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/License.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/HolidayDate.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Log.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Id.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Login.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Insurance.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Notification.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Invitation.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Patient.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Language.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientAddress.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/License.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientAlert.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Login.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientInvitation.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Notification.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientLog.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Patient.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientNotification.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientAlert.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientPhone.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientCreditCard.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientPhoto.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientId.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/PatientSecurity.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientInvitation.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Photo.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientNotification.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Provider.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientPhone.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderAddress.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientPhoto.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderAlert.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientSecurity.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderCptService.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientSolicitation.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderDegree.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientVersion.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderInsurance.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Phone.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderInvitation.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Photo.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLanguage.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Provider.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLicense.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderAddress.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderLog.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderAlert.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderNotification.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderCptService.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderPatient.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderDegree.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderPhoto.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderInsurance.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderService.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderInvitation.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/ProviderSpecialty.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderLanguage.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Service.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderLicense.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/livecare/entity/Specialty.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderNotification.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatient.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableAvailability.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientAddress.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientBilling.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/BookableType.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientDiagnosis.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientPhone.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEvent.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientRespParty.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPhoto.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/CalendarEventTimeline.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderService.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderSpecialty.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Client.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderVersion.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Holiday.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Service.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Holiday.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/SimpleAddress.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/HolidayDate.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Specialty.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/HolidayDate.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Timestamp.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Id.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Id.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Location.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Location.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>target/generated-sources/xdl/com/hydil/spec/entity/calendar/Provider.java</incPathSpec>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampId.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -597,7 +577,7 @@
       <workingDir></workingDir>
     </startingPoint>
     <startingPoint>
-      <commandLineArguments>/Users/seva/Work/Hydil/app/HydilEntities/src/main/resources/entity.xdl /Users/seva/Projects/org/safris/trunk/xdb/xdl/target/generated-sources/xdl</commandLineArguments>
+      <commandLineArguments>/Users/seva/Work/LiveCare/src/server/HydilEntities/src/main/resources/entity.xdl /Users/seva/Projects/org/safris/trunk/xdb/xdl/target/generated-sources/xdl</commandLineArguments>
       <name>JPABeanTransform</name>
       <target>org.safris.xdb.xdl.JPABeanTransform</target>
       <vmOtherOptions></vmOtherOptions>

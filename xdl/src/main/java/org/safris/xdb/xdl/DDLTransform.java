@@ -47,157 +47,175 @@ public class DDLTransform extends XDLTransformer {
   }
 
   private String parseColumns(final $xdl_tableType<ComplexType> table) {
-    final StringBuffer columnsBuffer = new StringBuffer();
+    String ddl = "";
     if (table.get_column() != null) {
       for ($xdl_columnType column : table.get_column()) {
         if (column instanceof $xdl_inherited)
           continue;
 
+        String suffix = "";
         final String columnName = column.get_name$().getText();
-        columnsBuffer.append(",\n  ").append(columnName).append(" ");
+        ddl += ",\n  " + columnName + " ";
         if (column instanceof $xdl_boolean) {
           final $xdl_boolean type = ($xdl_boolean)column;
-          columnsBuffer.append("BOOL");
+          ddl += "BOOL";
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_varchar) {
           final $xdl_varchar type = ($xdl_varchar)column;
-          columnsBuffer.append("VARCHAR");
+          ddl += "VARCHAR";
           if (type.get_length$() != null)
-            columnsBuffer.append("(").append(type.get_length$().getText()).append(")");
+            ddl += "(" + type.get_length$().getText() + ")";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT '").append(type.get_default$().getText()).append("'");
+            ddl += " DEFAULT '" + type.get_default$().getText() + "'";
         }
         else if (column instanceof $xdl_enum) {
           final $xdl_enum type = ($xdl_enum)column;
-          columnsBuffer.append("ENUM");
+          ddl += "ENUM";
           if (type.get_values$() != null) {
-            columnsBuffer.append("(");
-            final StringBuffer values = new StringBuffer();
+            ddl += "(";
+            String values = "";
             for (String value : type.get_values$().getText())
-              values.append(", '").append(value).append("'");
+              values += ", '" + value + "'";
 
-            columnsBuffer.append(values.substring(2));
-            columnsBuffer.append(")");
+            ddl += values.substring(2);
+            ddl += ")";
           }
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT '").append(type.get_default$().getText()).append("'");
+            ddl += " DEFAULT '" + type.get_default$().getText() + "'";
         }
         else if (column instanceof $xdl_decimal) {
           final $xdl_decimal type = ($xdl_decimal)column;
-          columnsBuffer.append("DECIMAL");
+          ddl += "DECIMAL";
           if (type.get_precision$() != null && type.get_decimal$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText() + ", " + type.get_decimal$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ", " + type.get_decimal$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_tinyint) {
           final $xdl_tinyint type = ($xdl_tinyint)column;
-          columnsBuffer.append("TINYINT");
+          ddl += "TINYINT";
           if (type.get_precision$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
+
+          if (type.get_generation_strategy$() != null)
+            suffix += " " + type.get_generation_strategy$().getText();
         }
         else if (column instanceof $xdl_smallint) {
           final $xdl_smallint type = ($xdl_smallint)column;
-          columnsBuffer.append("SMALLINT");
+          ddl += "SMALLINT";
           if (type.get_precision$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
+
+          if (type.get_generation_strategy$() != null)
+            suffix += " " + type.get_generation_strategy$().getText();
         }
         else if (column instanceof $xdl_mediumint) {
           final $xdl_mediumint type = ($xdl_mediumint)column;
-          columnsBuffer.append("MEDIUMINT");
+          ddl += "MEDIUMINT";
           if (type.get_precision$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
+
+          if (type.get_generation_strategy$() != null)
+            suffix += " " + type.get_generation_strategy$().getText();
         }
         else if (column instanceof $xdl_int) {
           final $xdl_int type = ($xdl_int)column;
-          columnsBuffer.append("INT");
+          ddl += "INT";
           if (type.get_precision$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
+
+          if (type.get_generation_strategy$() != null)
+            suffix += " " + type.get_generation_strategy$().getText();
         }
         else if (column instanceof $xdl_bigint) {
           final $xdl_bigint type = ($xdl_bigint)column;
-          columnsBuffer.append("BIGINT");
+          ddl += "BIGINT";
           if (type.get_precision$() != null)
-            columnsBuffer.append("(").append(type.get_precision$().getText()).append(")");
+            ddl += "(" + type.get_precision$().getText() + ")";
 
           if (type.get_unsigned$() != null && type.get_unsigned$().getText())
-            columnsBuffer.append(" UNSIGNED");
+            ddl += " UNSIGNED";
 
           if (type.get_zerofill$() != null && type.get_zerofill$().getText())
-            columnsBuffer.append(" ZEROFILL");
+            ddl += " ZEROFILL";
 
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
+
+          if (type.get_generation_strategy$() != null)
+            suffix += " " + type.get_generation_strategy$().getText();
         }
         else if (column instanceof $xdl_date) {
           final $xdl_date type = ($xdl_date)column;
-          columnsBuffer.append("DATE");
+          ddl += "DATE";
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_dateTime) {
           final $xdl_dateTime type = ($xdl_dateTime)column;
-          columnsBuffer.append("DATETIME");
+          ddl += "DATETIME";
           if (type.get_default$() != null)
-            columnsBuffer.append(" DEFAULT ").append(type.get_default$().getText());
+            ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_blob) {
-          columnsBuffer.append("BLOB");
+          ddl += "BLOB";
         }
 
         if (column.get_null$() != null)
-          columnsBuffer.append(column.get_null$().getText() ? " NULL" : " NOT NULL");
+          ddl += column.get_null$().getText() ? " NULL" : " NOT NULL";
+
+        ddl += suffix;
       }
     }
 
-    return columnsBuffer.substring(2);
+    return ddl.substring(2);
   }
 
   private String parseConstraints(final String tableName, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType<ComplexType> table) {

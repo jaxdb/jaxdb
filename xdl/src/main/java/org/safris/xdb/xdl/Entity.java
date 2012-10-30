@@ -22,11 +22,13 @@ import javax.persistence.Query;
 @MappedSuperclass
 public abstract class Entity implements Cloneable {
   private static final Map<Class,List<Field>> classToPrimaryKeyFields = new HashMap<Class,List<Field>>();
-  private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValues = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
+  private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValuesOnInsert = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
+  private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValuesOnUpdate = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
 
   protected static void init(final Class entityClass) {
     final List<Field> primaryKeyFields = new ArrayList<Field>();
-    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValue = new HashMap<Field,GeneratedValue.Strategy>();
+    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnInsert = new HashMap<Field,GeneratedValue.Strategy>();
+    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnUpdate = new HashMap<Field,GeneratedValue.Strategy>();
     Class cls = entityClass;
     do {
       for (Field field : cls.getDeclaredFields()) {
@@ -34,8 +36,12 @@ public abstract class Entity implements Cloneable {
           primaryKeyFields.add(field);
 
         final GeneratedValue generatedValue = field.getAnnotation(GeneratedValue.class);
-        if (generatedValue != null)
-          fieldToGeneratedValue.put(field, generatedValue.strategy());
+        if (generatedValue != null) {
+          if (generatedValue.strategy() == GeneratedValue.Strategy.UPDATE)
+            fieldToGeneratedValueOnUpdate.put(field, generatedValue.strategy());
+          else
+            fieldToGeneratedValueOnInsert.put(field, generatedValue.strategy());
+        }
       }
     }
     while((cls = cls.getSuperclass()) != null);
@@ -43,8 +49,11 @@ public abstract class Entity implements Cloneable {
     if (primaryKeyFields.size() > 0)
       classToPrimaryKeyFields.put(entityClass, primaryKeyFields);
 
-    if (fieldToGeneratedValue.size() > 0)
-      classToGeneratedValues.put(entityClass, fieldToGeneratedValue);
+    if (fieldToGeneratedValueOnInsert.size() > 0)
+      classToGeneratedValuesOnInsert.put(entityClass, fieldToGeneratedValueOnInsert);
+
+    if (fieldToGeneratedValueOnUpdate.size() > 0)
+      classToGeneratedValuesOnUpdate.put(entityClass, fieldToGeneratedValueOnUpdate);
   }
 
   /**
@@ -52,13 +61,13 @@ public abstract class Entity implements Cloneable {
    *
    * @return true, if and only if all generated values are present or no generated values exist.
    */
-  public boolean hasGeneratedValues() {
-    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValue = classToGeneratedValues.get(getClass());
-    if (fieldToGeneratedValue == null)
+  public boolean hasGeneratedValuesOnInsert() {
+    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnInsert = classToGeneratedValuesOnInsert.get(getClass());
+    if (fieldToGeneratedValueOnInsert == null)
       return true;
 
     try {
-      for (Field field : fieldToGeneratedValue.keySet()) {
+      for (Field field : fieldToGeneratedValueOnInsert.keySet()) {
         field.setAccessible(true);
         if (field.get(this) == null)
           return false;
@@ -74,27 +83,56 @@ public abstract class Entity implements Cloneable {
   @PrePersist
   @PreUpdate
   private void generateValues() {
-    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValue = classToGeneratedValues.get(getClass());
-    if (fieldToGeneratedValue == null)
+    generateValuesOnInsert();
+    generateValuesOnUpdate();
+  }
+
+  private void generateValuesOnInsert() {
+    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnInsert = classToGeneratedValuesOnInsert.get(getClass());
+    if (fieldToGeneratedValueOnInsert == null)
       return;
 
     try {
-      for (Field field : fieldToGeneratedValue.keySet()) {
+      for (final Field field : fieldToGeneratedValueOnInsert.keySet()) {
         field.setAccessible(true);
         if (field.get(this) != null)
           continue;
 
-        final Map<Field,GeneratedValue.Strategy> fieldToGeneratedKeys = classToGeneratedValues.get(getClass());
-        if (fieldToGeneratedKeys == null)
-          continue;
-
-        final GeneratedValue.Strategy strategy = fieldToGeneratedKeys.get(field);
-        if (strategy == GeneratedValue.Strategy.UUID)
-          field.set(this, UUID.randomUUID().toString().toUpperCase());
-        else if (strategy == GeneratedValue.Strategy.CREATION)
-          field.set(this, new Date());
-        else
+        final GeneratedValue.Strategy strategy = fieldToGeneratedValueOnInsert.get(field);
+        if (strategy == GeneratedValue.Strategy.UUID) {
+          if (field.getType() == String.class)
+            field.set(this, UUID.randomUUID().toString().toUpperCase());
+        }
+        else if (strategy == GeneratedValue.Strategy.INSERT) {
+          if (field.getType() == Date.class)
+            field.set(this, new Date());
+        }
+        else {
           throw new UnsupportedOperationException("Unknown GeneratedValue.Strategy " + strategy);
+        }
+      }
+    }
+    catch (IllegalAccessException e) {
+      throw new RuntimeException("Implementation issue", e);
+    }
+  }
+
+  private void generateValuesOnUpdate() {
+    final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnUpdate = classToGeneratedValuesOnUpdate.get(getClass());
+    if (fieldToGeneratedValueOnUpdate == null)
+      return;
+
+    try {
+      for (final Field field : fieldToGeneratedValueOnUpdate.keySet()) {
+        field.setAccessible(true);
+        final GeneratedValue.Strategy strategy = fieldToGeneratedValueOnUpdate.get(field);
+        if (strategy == GeneratedValue.Strategy.UPDATE) {
+          if (field.getType() == Date.class)
+            field.set(this, new Date());
+        }
+        else {
+          throw new UnsupportedOperationException("Unknown GeneratedValue.Strategy " + strategy);
+        }
       }
     }
     catch (IllegalAccessException e) {
