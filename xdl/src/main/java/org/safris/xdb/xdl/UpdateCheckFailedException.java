@@ -16,20 +16,20 @@
 
 package org.safris.xdb.xdl;
 
-public class CheckNotSatisfiedException extends RuntimeException {
-  public CheckNotSatisfiedException() {
+public class UpdateCheckFailedException extends RuntimeException {
+  public UpdateCheckFailedException() {
     super();
   }
 
-  public CheckNotSatisfiedException(final String message) {
+  public UpdateCheckFailedException(final String message) {
     super(message);
   }
 
-  public CheckNotSatisfiedException(final Throwable cause) {
+  public UpdateCheckFailedException(final Throwable cause) {
     super(cause);
   }
 
-  public CheckNotSatisfiedException(final String message, final Throwable cause) {
+  public UpdateCheckFailedException(final String message, final Throwable cause) {
     super(message, cause);
   }
 }

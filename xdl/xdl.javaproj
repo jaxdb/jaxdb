@@ -71,6 +71,10 @@
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/UpdateCheckFailedException.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/XDLModel.java</incPathSpec>
     </javaFile2>
     <javaFile2>

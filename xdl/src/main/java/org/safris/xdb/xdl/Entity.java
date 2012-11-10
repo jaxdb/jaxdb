@@ -188,7 +188,7 @@ public abstract class Entity implements Cloneable {
         final Object currentValue = field.get(currentEntity);
         final Object newValue = field.get(this);
         if (currentValue != null ? !currentValue.equals(newValue) : newValue != null)
-          throw new CheckNotSatisfiedException(field.getName() + ": " + currentValue + " != " + newValue);
+          throw new UpdateCheckFailedException(field.getName() + ": " + currentValue + " != " + newValue);
       }
       catch (IllegalArgumentException e) {
         throw new RuntimeException("Implementation issue", e);
