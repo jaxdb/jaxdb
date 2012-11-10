@@ -27,6 +27,14 @@
   <includedFiles>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/CheckNotSatisfiedException.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/CodeGenUtil.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/DDLTransform.java</incPathSpec>
     </javaFile2>
     <javaFile2>
@@ -56,6 +64,10 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/JPARelationModel.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>src/main/java/org/safris/xdb/xdl/OnUpdate.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -344,6 +356,14 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Timestamp.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampBy.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampById.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>

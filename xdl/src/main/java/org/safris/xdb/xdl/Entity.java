@@ -1,6 +1,8 @@
 package org.safris.xdb.xdl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,20 +17,48 @@ import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PersistenceUnitUtil;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Query;
 
 @MappedSuperclass
 public abstract class Entity implements Cloneable {
+  private static final Map<Class,Class<?>> idClasses = new HashMap<Class,Class<?>>();
+  private static final Map<Class,Map<String,Method[]>> classToIdFieldMethods = new HashMap<Class,Map<String,Method[]>>();
   private static final Map<Class,List<Field>> classToPrimaryKeyFields = new HashMap<Class,List<Field>>();
   private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValuesOnInsert = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
   private static final Map<Class,Map<Field,GeneratedValue.Strategy>> classToGeneratedValuesOnUpdate = new HashMap<Class,Map<Field,GeneratedValue.Strategy>>();
+  private static final Map<Class,List<Field>> classToCheckValuesOnUpdate = new HashMap<Class,List<Field>>();
 
   protected static void init(final Class entityClass) {
+    final Map<String,Method[]> idFieldMethods = new HashMap<String,Method[]>();
+    classToIdFieldMethods.put(entityClass, idFieldMethods);
+
+    final String idClassName = entityClass.getName() + "$id";
+    final Class<?>[] innerClasses = entityClass.getDeclaredClasses();
+    for (final Class<?> innerClass : innerClasses) {
+      if (idClassName.equals(innerClass.getName())) {
+        idClasses.put(entityClass, innerClass);
+        final Method[] methods = innerClass.getDeclaredMethods();
+        for (final Method setMethod : methods)
+          if (setMethod.getName().startsWith("set"))
+            idFieldMethods.put(setMethod.getName().substring(3), new Method[]{setMethod, null});
+
+        break;
+      }
+    }
+
+    for (final Method getMethod : entityClass.getDeclaredMethods()) {
+      if (getMethod.getName().startsWith("get")) {
+        final Method[] method = idFieldMethods.get(getMethod.getName().substring(3));
+        if (method != null) {
+          method[1] = getMethod;
+        }
+      }
+    }
+
     final List<Field> primaryKeyFields = new ArrayList<Field>();
     final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnInsert = new HashMap<Field,GeneratedValue.Strategy>();
     final Map<Field,GeneratedValue.Strategy> fieldToGeneratedValueOnUpdate = new HashMap<Field,GeneratedValue.Strategy>();
+    final List<Field> checkFieldsOnUpdate = new ArrayList<Field>();
     Class cls = entityClass;
     do {
       for (Field field : cls.getDeclaredFields()) {
@@ -42,6 +72,12 @@ public abstract class Entity implements Cloneable {
           else
             fieldToGeneratedValueOnInsert.put(field, generatedValue.strategy());
         }
+
+        final OnUpdate onUpdate = field.getAnnotation(OnUpdate.class);
+        if (onUpdate != null) {
+          if (onUpdate.action() == OnUpdate.Action.CHECK_EQUALS)
+            checkFieldsOnUpdate.add(field);
+        }
       }
     }
     while((cls = cls.getSuperclass()) != null);
@@ -54,6 +90,9 @@ public abstract class Entity implements Cloneable {
 
     if (fieldToGeneratedValueOnUpdate.size() > 0)
       classToGeneratedValuesOnUpdate.put(entityClass, fieldToGeneratedValueOnUpdate);
+
+    if (checkFieldsOnUpdate.size() > 0)
+      classToCheckValuesOnUpdate.put(entityClass, checkFieldsOnUpdate);
   }
 
   /**
@@ -136,6 +175,51 @@ public abstract class Entity implements Cloneable {
     }
   }
 
+  private void checkValuesOnUpdate(final EntityManager entityManager) {
+    final List<Field> checkValuesOnUpdate = classToCheckValuesOnUpdate.get(getClass());
+    if (checkValuesOnUpdate == null)
+      return;
+
+    final Object id = createId();
+    for (final Field field : checkValuesOnUpdate) {
+      field.setAccessible(true);
+      final Entity currentEntity = (Entity)entityManager.find(getClass(), id);
+      try {
+        final Object currentValue = field.get(currentEntity);
+        final Object newValue = field.get(this);
+        if (currentValue != null ? !currentValue.equals(newValue) : newValue != null)
+          throw new CheckNotSatisfiedException(field.getName() + ": " + currentValue + " != " + newValue);
+      }
+      catch (IllegalArgumentException e) {
+        throw new RuntimeException("Implementation issue", e);
+      }
+      catch (IllegalAccessException e) {
+        throw new RuntimeException("Implementation issue", e);
+      }
+    }
+  }
+
+  private Object createId() {
+    Object id = null;
+    try {
+      id = idClasses.get(getClass()).newInstance();
+      final Map<String,Method[]> idFieldMethods = classToIdFieldMethods.get(getClass());
+      for (final Method[] idMethods : idFieldMethods.values())
+        idMethods[0].invoke(id, idMethods[1].invoke(this));
+    }
+    catch (InvocationTargetException e) {
+      throw new RuntimeException("Implementation issue", e);
+    }
+    catch (IllegalAccessException e) {
+      throw new RuntimeException("Implementation issue", e);
+    }
+    catch (InstantiationException e) {
+      throw new RuntimeException("Implementation issue", e);
+    }
+
+    return id;
+  }
+
   public void persist(final EntityManager entityManager) {
     generateValuesOnInsert();
     generateValuesOnUpdate();
@@ -143,6 +227,7 @@ public abstract class Entity implements Cloneable {
   }
 
   public <T>T merge(final EntityManager entityManager) {
+    checkValuesOnUpdate(entityManager);
     generateValuesOnUpdate();
     return entityManager.<T>merge((T)this);
   }

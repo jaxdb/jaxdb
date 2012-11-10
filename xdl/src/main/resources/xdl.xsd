@@ -46,6 +46,17 @@
     </xs:sequence>
     <xs:attribute name="name" type="xs:NCName" use="required"/>
     <xs:attribute name="null" type="xs:boolean" default="true"/>
+    <xs:attribute name="onUpdate">
+      <xs:simpleType>
+        <xs:list>
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="CHECK_EQUALS"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:list>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
   
   <xs:complexType name="joinType">

@@ -97,11 +97,13 @@ public class JPAFieldModel implements Cloneable {
     private final $xdl_columnType<?> column;
     private final boolean isPrimary;
     private final GeneratedValue.Strategy generationStrategy;
+    private final List<String> onUpdate;
 
-    public Column(final $xdl_columnType<?> column, final boolean isPrimary, final GeneratedValue.Strategy generationStrategy) {
+    public Column(final $xdl_columnType<?> column, final boolean isPrimary, final GeneratedValue.Strategy generationStrategy, final List<String> onUpdate) {
       this.column = column;
       this.isPrimary = isPrimary;
       this.generationStrategy = generationStrategy;
+      this.onUpdate = onUpdate;
     }
 
     public $xdl_columnType<?> getColumn() {
@@ -114,6 +116,10 @@ public class JPAFieldModel implements Cloneable {
 
     public GeneratedValue.Strategy getGenerationStrategy() {
       return generationStrategy;
+    }
+
+    public List<String> getOnUpdate() {
+      return onUpdate;
     }
 
     public boolean equals(final Object obj) {

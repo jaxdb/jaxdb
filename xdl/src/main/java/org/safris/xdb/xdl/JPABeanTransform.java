@@ -245,7 +245,9 @@ public class JPABeanTransform extends XDLTransformer {
             generationStrategy = null;
           }
 
-          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null);
+          final List<String> onUpdate = column.get_onUpdate$() != null ? column.get_onUpdate$().getText() : null;
+
+          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null, onUpdate);
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
@@ -386,11 +388,19 @@ public class JPABeanTransform extends XDLTransformer {
       buffer.append(" {");
       if (!entityModel.isAbstract()) {
         if (primaryColumns != null && primaryColumns.size() > 0) {
-          buffer.append("\n  public static class id {");
-          for ($xdl_columnType column : primaryColumns.values())
-            buffer.append("\n    private " + parseType(column, null)[0] + " " + Strings.toInstanceCase(column.get_name$().getText()) + ";");
+          buffer.append("\n  public static class id implements " + Serializable.class.getName() + " {");
+          buffer.append("\n    private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n\n");
+          final List<String> primaryFieldNames = new ArrayList<String>();
+          for ($xdl_columnType column : primaryColumns.values()) {
+            final String primaryFieldName = Strings.toCamelCase(column.get_name$().getText());
+            primaryFieldNames.add(primaryFieldName);
+            buffer.append("  " + CodeGenUtil.createField(parseType(column, null)[0], primaryFieldName, null).replace("\n", "\n  ")).append("\n");
+          }
 
-          buffer.append("\n  }\n");
+          buffer.append("  " + CodeGenUtil.createEquals(false, null, tableClassName + ".id", primaryFieldNames).replace("\n", "\n  ")).append("\n");
+          buffer.append("  " + CodeGenUtil.createHashCode(null, primaryFieldNames).replace("\n", "\n  "));
+
+          buffer.append("}\n");
         }
         buffer.append("\n  private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n");
         buffer.append("\n  static {\n");
@@ -451,23 +461,6 @@ public class JPABeanTransform extends XDLTransformer {
       final StringBuffer columnsBuffer = new StringBuffer();
       if (entityModel.getFieldModels().size() > 0) {
         for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
-          columnsBuffer.append("\n");
-          //final boolean isPrimary = fieldModel.getColumns().size() == 1 && fieldModel.getColumn(0).isPrimary() && fieldModel.getForeignKeyModel() == null;
-          //final boolean createImmutableIdField = false;
-          /*if (fieldModel.getColumns().size() == 1) {
-           isPrimary = fieldModel.getColumn(0).isPrimary();
-           createImmutableIdField = isPrimary && fieldModel.getColumn(0).getColumn().get_foreignKey() != null;
-           }
-           else {
-           isPrimary = createImmutableIdField = false;
-           }*/
-
-          if (fieldModel.isPrimary())
-            columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
-
-          if (fieldModel.getColumn(0).getGenerationStrategy() != null)
-            columnsBuffer.append("  @").append(GeneratedValue.class.getName()).append("(strategy=").append(GeneratedValue.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerationStrategy()).append(")\n");
-
           final $xdl_columnType<?> column = fieldModel.getColumn(0).getColumn();
           final String[] parsedType = parseType(column, columnsBuffer);
           final String columnType = parsedType[0];
@@ -497,18 +490,33 @@ public class JPABeanTransform extends XDLTransformer {
             fieldName = column.get_name$().getText();
           }
 
-          /*if (createImmutableIdField) {
-           final String instanceName = Strings.toInstanceCase(column.get_name$().getText());
-           final String nullable = String.valueOf(fieldModel.getColumn(0).getColumn().get_null$().getText());
-           columnsBuffer.append("  @").append(Column.class.getName()).append("(name=\"").append(column.get_name$().getText()).append("\", nullable=").append(nullable).append(", insertable=false, updatable=false)\n");
-           columnsBuffer.append("  private ").append(columnType).append(" ").append(instanceName).append(";\n\n");
-           columnsBuffer.append("  public void set").append(Strings.toClassCase(column.get_name$().getText())).append("(final ").append(columnType).append(" ").append(instanceName).append(") {\n");
-           columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
-           columnsBuffer.append("  public ").append(columnType).append(" get").append(Strings.toClassCase(column.get_name$().getText())).append("() {\n");
-           columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n\n");
+          columnsBuffer.append("\n");
+          //final boolean isPrimary = fieldModel.getColumns().size() == 1 && fieldModel.getColumn(0).isPrimary() && fieldModel.getForeignKeyModel() == null;
+          //final boolean createImmutableIdField = false;
+          /*if (fieldModel.getColumns().size() == 1) {
+           isPrimary = fieldModel.getColumn(0).isPrimary();
+           createImmutableIdField = isPrimary && fieldModel.getColumn(0).getColumn().get_foreignKey() != null;
+           }
+           else {
+           isPrimary = createImmutableIdField = false;
            }*/
 
-          final String instanceName = Strings.toInstanceCase(fieldName);
+          if (fieldModel.isPrimary())
+            columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
+
+          if (fieldModel.getColumn(0).getGenerationStrategy() != null)
+            columnsBuffer.append("  @").append(GeneratedValue.class.getName()).append("(strategy=").append(GeneratedValue.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerationStrategy()).append(")\n");
+
+          if (fieldModel.getColumn(0).getOnUpdate() != null)
+            for (final String action : fieldModel.getColumn(0).getOnUpdate())
+              columnsBuffer.append("  @").append(OnUpdate.class.getName()).append("(action=").append(OnUpdate.class.getName()).append(".Action.").append(action).append(")\n");
+
+          /*if (createImmutableIdField) {
+           final String nullable = String.valueOf(fieldModel.getColumn(0).getColumn().get_null$().getText());
+           columnsBuffer.append("  @").append(Column.class.getName()).append("(name=\"").append(column.get_name$().getText()).append("\", nullable=").append(nullable).append(", insertable=false, updatable=false)\n");
+           columnsBuffer.append(CodeGenUtil.createField(columnType, Strings.toClassCase(column.get_name$().getText()), null));
+           }*/
+
           if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() != null) {
             final JPAForeignKeyModel foreignKeyModel = fieldModel.getForeignKeyModel();
             final String cascadeString = getCascadeString(foreignKeyModel.getField().getCascade());
@@ -566,15 +574,7 @@ public class JPABeanTransform extends XDLTransformer {
           //if (!fieldModel.isImmutable() && fieldModel.getColumns().size() == 1 && !fieldModel.getColumn(0).getColumn().get_null$().getText())
           //  columnsBuffer.append("  @").append(NotNull.class.getName()).append("\n");
 
-          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName);
-          if (def != null)
-            columnsBuffer.append(" = ").append(def);
-          columnsBuffer.append(";\n\n");
-
-          columnsBuffer.append("  public void set").append(Strings.toClassCase(fieldName)).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
-          columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
-          columnsBuffer.append("  public ").append(type).append(" get").append(Strings.toClassCase(fieldName)).append("() {\n");
-          columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n");
+          columnsBuffer.append(CodeGenUtil.createField(type, fieldName, def));
         }
       }
 
@@ -584,17 +584,12 @@ public class JPABeanTransform extends XDLTransformer {
         for (JPAForeignKeyModel.InverseField inverseField : inverseFields) {
           final String tableName = inverseField.getReferencedTableName();
           final String fieldName = Strings.toClassCase(inverseField.getName());
-          final String instanceName = inverseField.getName();
           final String cascadeString = getCascadeString(inverseField.getCascade());
           final Class association = inverseField.getInverseAssociation();
 
           final String type = association == OneToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(tableName) + ">" : Strings.toClassCase(tableName);
           columnsBuffer.append("\n  @").append(association.getName()).append("(targetEntity=").append(Strings.toClassCase(tableName)).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseField.getMappedBy())).append("\"").append(cascadeString).append(")\n");
-          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n\n");
-          columnsBuffer.append("  public void set").append(fieldName).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
-          columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
-          columnsBuffer.append("  public ").append(type).append(" get").append(fieldName).append("() {\n");
-          columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n");
+          columnsBuffer.append(CodeGenUtil.createField(type, fieldName, null));
         }
       }
 
@@ -632,14 +627,8 @@ public class JPABeanTransform extends XDLTransformer {
           }
           columnsBuffer.append(inverseJoinColumns.substring(1)).append("\n    })\n");
 
-          final String instanceName = Strings.toInstanceCase(relation.getForeignKey().getFieldName());
           final String type = relation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
-          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");
-
-          columnsBuffer.append("\n  public void set").append(Strings.toClassCase(relation.getForeignKey().getFieldName())).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
-          columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
-          columnsBuffer.append("  public ").append(type).append(" get").append(Strings.toClassCase(relation.getForeignKey().getFieldName())).append("() {\n");
-          columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n");
+          columnsBuffer.append(CodeGenUtil.createField(type, Strings.toClassCase(relation.getForeignKey().getFieldName()), null));
         }
       }
 
@@ -650,14 +639,8 @@ public class JPABeanTransform extends XDLTransformer {
           final String cascadeString = getCascadeString(inverseRelation.getInverseForeignKey().getCascade());
           final String fieldName = Strings.toClassCase(inverseRelation.getForeignKey().getForeignKeyModel().getReferencedTableName());
           columnsBuffer.append("\n  @").append(inverseRelation.getAssociation().getName()).append("(targetEntity=").append(fieldName).append(".class, mappedBy=\"").append(Strings.toInstanceCase(inverseRelation.getForeignKey().getFieldName())).append("\", fetch=").append(FetchType.class.getName()).append(".").append(inverseRelation.getFetchType()).append(cascadeString).append(")\n");
-          final String instanceName = Strings.toInstanceCase(inverseRelation.getInverseForeignKey().getFieldName());
           final String type = inverseRelation.getAssociation() == ManyToMany.class ? Set.class.getName() + "<" + Strings.toClassCase(fieldName) + ">" : Strings.toClassCase(fieldName);
-          columnsBuffer.append("  private ").append(type).append(" ").append(instanceName).append(";\n");
-
-          columnsBuffer.append("\n  public void set").append(Strings.toClassCase(inverseRelation.getInverseForeignKey().getFieldName())).append("(final ").append(type).append(" ").append(instanceName).append(") {\n");
-          columnsBuffer.append("    this.").append(instanceName).append(" = ").append(instanceName).append(";\n  }\n\n");
-          columnsBuffer.append("  public ").append(type).append(" get").append(Strings.toClassCase(inverseRelation.getInverseForeignKey().getFieldName())).append("() {\n");
-          columnsBuffer.append("    return ").append(instanceName).append(";\n  }\n");
+          columnsBuffer.append(CodeGenUtil.createField(type, Strings.toClassCase(inverseRelation.getInverseForeignKey().getFieldName()), null));
         }
       }
 
@@ -667,33 +650,19 @@ public class JPABeanTransform extends XDLTransformer {
         columnsBuffer.append("    throw new ").append(RuntimeException.class.getName()).append("(\"Attempt to instantiate an abstract class.\");\n");
       else
         columnsBuffer.append("    return new ").append(tableClassName).append("(this);\n");
-      columnsBuffer.append("  }\n");
+      columnsBuffer.append("  }\n\n");
 
-      // EQUALS METHOD
-      columnsBuffer.append("\n  public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
-      if (!entityModel.isAbstract()) {
-        columnsBuffer.append("    if (obj == this)\n");
-        columnsBuffer.append("      return true;\n\n");
-      }
-
-      if (entityModel.getExtendsName() != null) {
-        columnsBuffer.append("    if (!super.equals(obj))\n");
-        columnsBuffer.append("      return false;\n\n");
-      }
-      columnsBuffer.append("    if (!(obj instanceof ").append(tableClassName).append("))\n");
-      columnsBuffer.append("      return false;\n\n");
-
+      // FIELDS FOR EQUALS & HASHCODE
+      final List<String> fields;
       if (entityModel.getFieldModels().size() > 0) {
-        columnsBuffer.append("    final ").append(tableClassName).append(" that = (").append(tableClassName).append(")obj;\n");
+        fields = new ArrayList<String>();
         // Fields
         for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
-          if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() == null)
-            continue;
-
-          final JPAFieldModel.Column column = fieldModel.getColumn(0);
-          final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName()));
-          columnsBuffer.append("    if (").append(instanceName).append(" != null ? !").append(instanceName).append(".equals(that.").append(instanceName).append(") : that.").append(instanceName).append(" != null)\n");
-          columnsBuffer.append("      return false;\n\n");
+          if (fieldModel.getForeignKeyModel() == null || fieldModel.getForeignKeyModel().getField() != null) {
+            final JPAFieldModel.Column column = fieldModel.getColumn(0);
+            final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName()));
+            fields.add(instanceName);
+          }
         }
 
         // Inverse Fields
@@ -705,37 +674,15 @@ public class JPABeanTransform extends XDLTransformer {
          }
          }*/
       }
-
-      columnsBuffer.append("    return true;\n");
-      columnsBuffer.append("  }\n");
-
-      // HASHCODE METHOD
-      columnsBuffer.append("\n  public int hashCode() {\n");
-      if (entityModel.getExtendsName() != null)
-        columnsBuffer.append("    int hashCode = super.hashCode();\n");
-      else
-        columnsBuffer.append("    int hashCode = 7;\n");
-
-      // Fields
-      for (JPAFieldModel fieldModel : entityModel.getFieldModels()) {
-        if (fieldModel.getForeignKeyModel() != null && fieldModel.getForeignKeyModel().getField() == null)
-          continue;
-
-        final JPAFieldModel.Column column = fieldModel.getColumn(0);
-        final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName()));
-        columnsBuffer.append("    hashCode += ").append(instanceName).append(" != null ? ").append(instanceName).append(".hashCode() : -1;\n");
+      else {
+        fields = null;
       }
 
-      // Inverse Fields
-      /*if (inverseFields != null) {
-       for (JPAForeignKeyModel.InverseField inverseField : inverseFields) {
-       final String instanceName = inverseField.getName();
-       columnsBuffer.append("    hashCode += ").append(instanceName).append(" != null ? ").append(instanceName).append(".hashCode() : -1;\n");
-       }
-       }*/
+      // EQUALS METHOD
+      columnsBuffer.append(CodeGenUtil.createEquals(entityModel.isAbstract(), entityModel.getExtendsName(), tableClassName, fields)).append("\n");
 
-      columnsBuffer.append("    return hashCode;\n");
-      columnsBuffer.append("  }\n");
+      // HASHCODE METHOD
+      columnsBuffer.append(CodeGenUtil.createHashCode(entityModel.getExtendsName(), fields));
 
       buffer.append(columnsBuffer);
 
