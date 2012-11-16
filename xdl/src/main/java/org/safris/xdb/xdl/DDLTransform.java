@@ -117,8 +117,8 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
 
-          if (type.get_generation_strategy$() != null)
-            suffix += " " + type.get_generation_strategy$().getText();
+          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_smallint) {
           final $xdl_smallint type = ($xdl_smallint)column;
@@ -135,8 +135,8 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
 
-          if (type.get_generation_strategy$() != null)
-            suffix += " " + type.get_generation_strategy$().getText();
+          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_mediumint) {
           final $xdl_mediumint type = ($xdl_mediumint)column;
@@ -153,8 +153,8 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
 
-          if (type.get_generation_strategy$() != null)
-            suffix += " " + type.get_generation_strategy$().getText();
+          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_int) {
           final $xdl_int type = ($xdl_int)column;
@@ -171,8 +171,8 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
 
-          if (type.get_generation_strategy$() != null)
-            suffix += " " + type.get_generation_strategy$().getText();
+          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_bigint) {
           final $xdl_bigint type = ($xdl_bigint)column;
@@ -189,8 +189,8 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
 
-          if (type.get_generation_strategy$() != null)
-            suffix += " " + type.get_generation_strategy$().getText();
+          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_date) {
           final $xdl_date type = ($xdl_date)column;

@@ -7,12 +7,12 @@ import java.lang.annotation.Target;
 
 @Target(value={ElementType.METHOD, ElementType.FIELD})
 @Retention(value=RetentionPolicy.RUNTIME)
-public @interface GeneratedValue {
+public @interface GenerateOnInsert {
   public Strategy strategy() default Strategy.UUID;
 
   public static enum Strategy {
-    UUID,
-    INSERT,
-    UPDATE;
+    DEFAULT,
+    TIMESTAMP,
+    UUID;
   }
 }

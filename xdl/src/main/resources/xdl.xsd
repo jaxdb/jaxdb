@@ -46,12 +46,12 @@
     </xs:sequence>
     <xs:attribute name="name" type="xs:NCName" use="required"/>
     <xs:attribute name="null" type="xs:boolean" default="true"/>
-    <xs:attribute name="onUpdate">
+    <xs:attribute name="checkOnUpdate">
       <xs:simpleType>
         <xs:list>
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
-              <xs:enumeration value="CHECK_EQUALS"/>
+              <xs:enumeration value="EQUALS"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:list>
@@ -156,7 +156,14 @@
       <xs:extension base="xdl:columnType">
         <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="default" type="xs:string"/>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="UUID"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="UUID"/>
@@ -235,10 +242,17 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -252,6 +266,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
+              <xs:minExclusive value="3"/>
               <xs:maxInclusive value="5"/>
             </xs:restriction>
           </xs:simpleType>
@@ -282,10 +297,17 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -299,6 +321,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
+              <xs:minExclusive value="5"/>
               <xs:maxInclusive value="8"/>
             </xs:restriction>
           </xs:simpleType>
@@ -329,10 +352,17 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -346,6 +376,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
+              <xs:minExclusive value="8"/>
               <xs:maxInclusive value="10"/>
             </xs:restriction>
           </xs:simpleType>
@@ -376,10 +407,17 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -393,6 +431,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
+              <xs:minExclusive value="10"/>
               <xs:maxInclusive value="20"/>
             </xs:restriction>
           </xs:simpleType>
@@ -423,10 +462,17 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
               <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -462,11 +508,17 @@
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
         <xs:attribute name="default" type="xs:date"/>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
-              <xs:enumeration value="INSERT"/>
-              <xs:enumeration value="UPDATE"/>
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -478,18 +530,24 @@
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
         <xs:attribute name="default" type="xs:dateTime"/>
-        <xs:attribute name="generation-strategy">
+        <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
-              <xs:enumeration value="INSERT"/>
-              <xs:enumeration value="UPDATE"/>
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
+  
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">

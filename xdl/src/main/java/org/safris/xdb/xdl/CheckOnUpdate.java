@@ -7,10 +7,10 @@ import java.lang.annotation.Target;
 
 @Target(value={ElementType.METHOD, ElementType.FIELD})
 @Retention(value=RetentionPolicy.RUNTIME)
-public @interface OnUpdate {
+public @interface CheckOnUpdate {
   public Action action();
 
   public static enum Action {
-    CHECK_EQUALS;
+    EQUALS;
   }
 }

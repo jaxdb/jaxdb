@@ -169,13 +169,13 @@ public class JPABeanTransform extends XDLTransformer {
       columnType = Date.class.getName();
       columnDef = (($xdl_date)column).get_default$() != null ? String.valueOf((($xdl_date)column).get_default$().getText()) : null;
       if (columnsBuffer != null)
-        columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)\n");
+        columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)");
     }
     else if (column instanceof $xdl_dateTime) {
       columnType = Date.class.getName();
       columnDef = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
       if (columnsBuffer != null)
-        columnsBuffer.append("  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)\n");
+        columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)");
     }
     else if (column instanceof $xdl_blob) {
       columnType = "byte[]";
@@ -228,26 +228,56 @@ public class JPABeanTransform extends XDLTransformer {
             continue;
 
           // Get generation strategy if it exists
-          final String generationStrategy;
+          final String generateOnInsert;
+          final String generateOnUpdate;
           if (column instanceof $xdl_varchar) {
             final $xdl_varchar varchar = ($xdl_varchar)column;
-            generationStrategy = varchar.get_generation_strategy$() != null ? varchar.get_generation_strategy$().getText() : null;
+            generateOnInsert = varchar.get_generateOnInsert$() != null ? varchar.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = varchar.get_generateOnUpdate$() != null ? varchar.get_generateOnUpdate$().getText() : null;
           }
           else if (column instanceof $xdl_dateTime) {
             final $xdl_dateTime dateTime = ($xdl_dateTime)column;
-            generationStrategy = dateTime.get_generation_strategy$() != null ? dateTime.get_generation_strategy$().getText() : null;
+            generateOnInsert = dateTime.get_generateOnInsert$() != null ? dateTime.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = dateTime.get_generateOnUpdate$() != null ? dateTime.get_generateOnUpdate$().getText() : null;
           }
           else if (column instanceof $xdl_date) {
             final $xdl_date date = ($xdl_date)column;
-            generationStrategy = date.get_generation_strategy$() != null ? date.get_generation_strategy$().getText() : null;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_tinyint) {
+            final $xdl_tinyint date = ($xdl_tinyint)column;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_smallint) {
+            final $xdl_smallint date = ($xdl_smallint)column;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_mediumint) {
+            final $xdl_mediumint date = ($xdl_mediumint)column;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_int) {
+            final $xdl_int date = ($xdl_int)column;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_bigint) {
+            final $xdl_bigint date = ($xdl_bigint)column;
+            generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
           }
           else {
-            generationStrategy = null;
+            generateOnInsert = null;
+            generateOnUpdate = null;
           }
 
-          final List<String> onUpdate = column.get_onUpdate$() != null ? column.get_onUpdate$().getText() : null;
+          final List<String> checkOnUpdate = column.get_checkOnUpdate$() != null ? column.get_checkOnUpdate$().getText() : null;
 
-          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column.get_name$().getText()), generationStrategy != null ? GeneratedValue.Strategy.valueOf(generationStrategy) : null, onUpdate);
+          final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column.get_name$().getText()), generateOnInsert != null && !"AUTO_INCREMENT".equals(generateOnInsert) ? GenerateOnInsert.Strategy.valueOf(generateOnInsert) : null, generateOnUpdate != null ? GenerateOnUpdate.Strategy.valueOf(generateOnUpdate) : null, checkOnUpdate);
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
           if (column.get_foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
@@ -504,12 +534,15 @@ public class JPABeanTransform extends XDLTransformer {
           if (fieldModel.isPrimary())
             columnsBuffer.append("  @").append(Id.class.getName()).append("\n");
 
-          if (fieldModel.getColumn(0).getGenerationStrategy() != null)
-            columnsBuffer.append("  @").append(GeneratedValue.class.getName()).append("(strategy=").append(GeneratedValue.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerationStrategy()).append(")\n");
+          if (fieldModel.getColumn(0).getGenerateOnInsert() != null)
+            columnsBuffer.append("  @").append(GenerateOnInsert.class.getName()).append("(strategy=").append(GenerateOnInsert.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerateOnInsert()).append(")\n");
 
-          if (fieldModel.getColumn(0).getOnUpdate() != null)
-            for (final String action : fieldModel.getColumn(0).getOnUpdate())
-              columnsBuffer.append("  @").append(OnUpdate.class.getName()).append("(action=").append(OnUpdate.class.getName()).append(".Action.").append(action).append(")\n");
+          if (fieldModel.getColumn(0).getGenerateOnUpdate() != null)
+            columnsBuffer.append("  @").append(GenerateOnUpdate.class.getName()).append("(strategy=").append(GenerateOnUpdate.class.getName()).append(".Strategy.").append(fieldModel.getColumn(0).getGenerateOnUpdate()).append(")\n");
+
+          if (fieldModel.getColumn(0).getCheckOnUpdate() != null)
+            for (final String action : fieldModel.getColumn(0).getCheckOnUpdate())
+              columnsBuffer.append("  @").append(CheckOnUpdate.class.getName()).append("(action=").append(CheckOnUpdate.class.getName()).append(".Action.").append(action).append(")\n");
 
           /*if (createImmutableIdField) {
            final String nullable = String.valueOf(fieldModel.getColumn(0).getColumn().get_null$().getText());

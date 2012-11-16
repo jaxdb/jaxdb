@@ -96,14 +96,16 @@ public class JPAFieldModel implements Cloneable {
   public static class Column {
     private final $xdl_columnType<?> column;
     private final boolean isPrimary;
-    private final GeneratedValue.Strategy generationStrategy;
-    private final List<String> onUpdate;
+    private final GenerateOnInsert.Strategy generationStrategy;
+    private final GenerateOnUpdate.Strategy generateOnUpdate;
+    private final List<String> checkOnUpdate;
 
-    public Column(final $xdl_columnType<?> column, final boolean isPrimary, final GeneratedValue.Strategy generationStrategy, final List<String> onUpdate) {
+    public Column(final $xdl_columnType<?> column, final boolean isPrimary, final GenerateOnInsert.Strategy generateOnInsert, final GenerateOnUpdate.Strategy generateOnUpdate, final List<String> checkOnUpdate) {
       this.column = column;
       this.isPrimary = isPrimary;
-      this.generationStrategy = generationStrategy;
-      this.onUpdate = onUpdate;
+      this.generationStrategy = generateOnInsert;
+      this.generateOnUpdate = generateOnUpdate;
+      this.checkOnUpdate = checkOnUpdate;
     }
 
     public $xdl_columnType<?> getColumn() {
@@ -114,12 +116,16 @@ public class JPAFieldModel implements Cloneable {
       return isPrimary;
     }
 
-    public GeneratedValue.Strategy getGenerationStrategy() {
+    public GenerateOnInsert.Strategy getGenerateOnInsert() {
       return generationStrategy;
     }
 
-    public List<String> getOnUpdate() {
-      return onUpdate;
+    public GenerateOnUpdate.Strategy getGenerateOnUpdate() {
+      return generateOnUpdate;
+    }
+
+    public List<String> getCheckOnUpdate() {
+      return checkOnUpdate;
     }
 
     public boolean equals(final Object obj) {
