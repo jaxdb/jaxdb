@@ -1,3 +1,19 @@
+/*  Copyright Safris Software 2011
+ *
+ *  This code is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.safris.xdb.xdl;
 
 import java.lang.reflect.Field;
@@ -238,19 +254,20 @@ public abstract class Entity implements Cloneable {
     }
   }
 
-  private void checkValuesOnUpdate(final EntityManager entityManager) {
+  private void checkValuesOnUpdate(final EntityManager entityManager) throws UpdateCheckFailedException {
     final List<Field> checkValuesOnUpdate = classToCheckValuesOnUpdate.get(getClass());
     if (checkValuesOnUpdate == null)
       return;
 
     final Entity currentEntity = (Entity)entityManager.find(getClass(), createId());
+    final List<Field> failedFields = new ArrayList<Field>();
     try {
       for (final Field field : checkValuesOnUpdate) {
         field.setAccessible(true);
         final Object currentValue = field.get(currentEntity);
         final Object newValue = field.get(this);
         if (currentValue != null ? !currentValue.equals(newValue) : newValue != null)
-          throw new UpdateCheckFailedException(field.getName() + ": " + currentValue + " != " + newValue);
+          failedFields.add(field);
       }
     }
     catch (IllegalArgumentException e) {
@@ -259,6 +276,9 @@ public abstract class Entity implements Cloneable {
     catch (IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
+
+    if (failedFields.size() != 0)
+      throw new UpdateCheckFailedException(new UpdateCheckFailedException.FailureDetail(currentEntity, failedFields.toArray(new Field[failedFields.size()])));
   }
 
   private Object createId() {
@@ -288,7 +308,7 @@ public abstract class Entity implements Cloneable {
     entityManager.persist(this);
   }
 
-  public <T>T update(final EntityManager entityManager) {
+  public <T>T update(final EntityManager entityManager) throws UpdateCheckFailedException {
     checkValuesOnUpdate(entityManager);
     generateOnUpdate(entityManager);
     return entityManager.<T>merge((T)this);
@@ -371,7 +391,7 @@ public abstract class Entity implements Cloneable {
     }
   }
 
-  public void attach(final EntityManager entityManager) {
+  public void attach(final EntityManager entityManager) throws UpdateCheckFailedException {
     if (entityManager.contains(this))
       return;
 
