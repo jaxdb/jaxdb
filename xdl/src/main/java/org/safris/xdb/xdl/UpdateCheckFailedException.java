@@ -18,7 +18,6 @@ package org.safris.xdb.xdl;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class UpdateCheckFailedException extends Exception {
@@ -52,7 +51,7 @@ public class UpdateCheckFailedException extends Exception {
   }
 
   private final FailureDetail[] failureDetails;
-  private final Entity[] entities;
+  private final List<? extends Entity> entities;
 
   public UpdateCheckFailedException(final Throwable cause, final FailureDetail ... failureDetail) {
     super(cause);
@@ -63,7 +62,7 @@ public class UpdateCheckFailedException extends Exception {
         if (failure != null)
           entities.add(failure.getEntity());
 
-      this.entities = entities.toArray(new Entity[entities.size()]);;
+      this.entities = entities;
     }
     else {
       this.entities = null;
@@ -74,11 +73,11 @@ public class UpdateCheckFailedException extends Exception {
     this(null, failureDetail);
   }
 
-  public UpdateCheckFailedException(final Throwable cause, final Collection<FailureDetail> failureDetail) {
+  public UpdateCheckFailedException(final Throwable cause, final List<FailureDetail> failureDetail) {
     this(cause, failureDetail.toArray(new UpdateCheckFailedException.FailureDetail[failureDetail.size()]));
   }
 
-  public UpdateCheckFailedException(final Collection<FailureDetail> failureDetail) {
+  public UpdateCheckFailedException(final List<FailureDetail> failureDetail) {
     this(null, failureDetail.toArray(new UpdateCheckFailedException.FailureDetail[failureDetail.size()]));
   }
 
@@ -86,7 +85,7 @@ public class UpdateCheckFailedException extends Exception {
     return failureDetails;
   }
 
-  public Entity[] getEntities() {
+  public List<? extends Entity> getEntities() {
     return entities;
   }
 }
