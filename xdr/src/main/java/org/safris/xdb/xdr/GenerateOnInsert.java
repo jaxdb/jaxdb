@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.xdr;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

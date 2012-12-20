@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,9 +47,19 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.ToolProvider;
+import org.safris.commons.jci.CharSequenceJavaFileObject;
+import org.safris.commons.jci.InMemoryCompiler;
+import org.safris.commons.jci.MemoryJavaFileManager;
+import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceBinding;
+import org.safris.xdb.xdr.CheckOnUpdate;
+import org.safris.xdb.xdr.GenerateOnInsert;
+import org.safris.xdb.xdr.GenerateOnUpdate;
 import org.w3.x2001.xmlschema.xs_schema;
 
 public class JPABeanTransform extends XDLTransformer {
@@ -62,9 +73,26 @@ public class JPABeanTransform extends XDLTransformer {
       final JPABeanTransform creator = new JPABeanTransform(database);
       final Map<String,String> files = creator.parse();
 
+      final Collection<File> classpath = new ArrayList<File>(1);
+      final File bindingLocationBase = Resources.getLocationBase(Entity.class);
+      if (bindingLocationBase != null)
+        classpath.add(bindingLocationBase);
+
+      final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+      final MemoryJavaFileManager fileManager = new MemoryJavaFileManager(compiler.getStandardFileManager(null, null, null));
       final File packageDir = outDir != null ? new File(outDir, creator.pkg.replace('.', '/')) : null;
-      for (Map.Entry<String,String> entry : files.entrySet())
-        writeOutput(entry.getValue(), packageDir != null ? new File(packageDir, entry.getKey() + ".java") : null);
+      final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
+      for (final Map.Entry<String,String> entry : files.entrySet()) {
+        //writeOutput(entry.getValue(), packageDir != null ? new File(packageDir, entry.getKey() + ".java") : null);
+        javaFiles.add(new CharSequenceJavaFileObject(creator.pkg + "." + entry.getKey(), entry.getValue()));
+      }
+
+      final Collection<String> options = new ArrayList<String>();
+      options.add("-classpath");
+      options.add(Resources.getLocationBase(Table.class).getAbsolutePath() + File.pathSeparator + Resources.getLocationBase(org.safris.xdb.xdr.Entity.class).getAbsolutePath());
+      options.add("-nowarn");
+
+      InMemoryCompiler.compile(compiler, fileManager, options, javaFiles, outDir);
     }
     catch (Exception e) {
       throw new RuntimeException(e);
@@ -410,7 +438,7 @@ public class JPABeanTransform extends XDLTransformer {
       if (entityModel.getExtendsName() != null)
         buffer.append(Strings.toClassCase(entityModel.getExtendsName()));
       else
-        buffer.append(org.safris.xdb.xdl.Entity.class.getName());
+        buffer.append(org.safris.xdb.xdr.Entity.class.getName());
 
       if (!entityModel.isAbstract())
         buffer.append(" implements ").append(Serializable.class.getName());

@@ -53,6 +53,11 @@
   </build>
   <dependencies>
     <dependency>
+      <groupId>org.safris.xdb</groupId>
+      <artifactId>xdr</artifactId>
+      <version>${dev:org.safris.xdb.xdr}</version>
+    </dependency>
+    <dependency>
       <groupId>org.safris.xml.toolkit</groupId>
       <artifactId>binding</artifactId>
       <version>${dev:org.safris.xml.toolkit.binding}</version>
@@ -61,6 +66,11 @@
       <groupId>org.safris.commons</groupId>
       <artifactId>formatter</artifactId>
       <version>${dev:org.safris.commons.formatter}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>jci</artifactId>
+      <version>${dev:org.safris.commons.jci}</version>
     </dependency>
     <dependency>
       <groupId>javax</groupId> 

@@ -19,6 +19,8 @@ package org.safris.xdb.xdl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.safris.xdb.xdr.GenerateOnInsert;
+import org.safris.xdb.xdr.GenerateOnUpdate;
 
 public class JPAFieldModel implements Cloneable {
   private final JPAEntityModel entityModel;

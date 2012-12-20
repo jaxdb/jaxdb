@@ -21,20 +21,18 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org</groupId>
-    <artifactId>safris</artifactId>
-    <version>${dev:org.safris}</version>
+    <groupId>org.safris</groupId>
+    <artifactId>xdb</artifactId>
+    <version>${dev:org.safris.xdb}</version>
   </parent>
-  <groupId>org.safris</groupId>
-  <artifactId>xdb</artifactId>
-  <version>${dev:org.safris.xdb}</version>
-  <packaging>pom</packaging>
+  <groupId>org.safris.xdb</groupId>
+  <artifactId>xdr</artifactId>
+  <version>${dev:org.safris.xdb.xdr}</version>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>
-    Ant stuff.
-  </description>
-  <modules>
-    <module>xdr</module>
-    <module>xdl</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>javax</groupId> 
+      <artifactId>javaee-api</artifactId>
+    </dependency>
+  </dependencies>
 </project>

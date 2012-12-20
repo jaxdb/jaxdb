@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.xdr;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -23,10 +23,12 @@ import java.lang.annotation.Target;
 
 @Target(value={ElementType.METHOD, ElementType.FIELD})
 @Retention(value=RetentionPolicy.RUNTIME)
-public @interface CheckOnUpdate {
-  public Action action();
+public @interface GenerateOnUpdate {
+  public Strategy strategy() default GenerateOnUpdate.Strategy.UUID;
 
-  public static enum Action {
-    EQUALS;
+  public enum Strategy {
+    INCREMENT,
+    TIMESTAMP,
+    UUID;
   }
 }

@@ -27,19 +27,11 @@
   <includedFiles>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/CheckOnUpdate.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/CodeGenUtil.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/DDLTransform.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/Entity.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -68,10 +60,6 @@
     <javaFile2>
       <buildAction>COMPILE</buildAction>
       <incPathSpec>src/main/java/org/safris/xdb/xdl/JPARelationModel.java</incPathSpec>
-    </javaFile2>
-    <javaFile2>
-      <buildAction>COMPILE</buildAction>
-      <incPathSpec>src/main/java/org/safris/xdb/xdl/UpdateCheckFailedException.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -108,6 +96,266 @@
     <javaFile2>
       <buildAction>NONE</buildAction>
       <incPathSpec>target/classes/XMLSchemaAPI.xsd</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Address.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Alert.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/AvailabilityBookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Billing.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/BookableType.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CalendarEvent.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CalendarEventTimeline.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChangeCredentials.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Charge.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeCptService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeDiagnosis.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ChargeInvoice.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/CptService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Currency.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Degree.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Diagnosis.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Holiday.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/HolidayDate.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Id.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Insurance.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Invitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Language.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/License.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Login.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Notification.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Patient.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientAlert.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientCreditCard.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientId.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientInvitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientNotification.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientPhone.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientPhoto.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientSecurity.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientSolicitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/PatientVersion.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Phone.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Photo.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Provider.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderAlert.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderCptService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderDegree.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderInsurance.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderInvitation.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderLanguage.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderLicense.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderNotification.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatient.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientBilling.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientDiagnosis.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientPhone.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPatientRespParty.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderPhoto.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderService.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderSpecialty.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/ProviderVersion.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Service.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/SimpleAddress.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Specialty.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/Timestamp.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampBy.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampById.java</incPathSpec>
+    </javaFile2>
+    <javaFile2>
+      <buildAction>COMPILE</buildAction>
+      <incPathSpec>target/generated-sources/xdl/com/livecare/entity/TimestampId.java</incPathSpec>
     </javaFile2>
     <javaFile2>
       <buildAction>COMPILE</buildAction>
@@ -305,6 +553,16 @@
       <name>org.safris.commons:formatter</name>
       <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
       <projectGuid>{CA403C4A-02A4-3CDA-B7DE-60529A77E290}</projectGuid>
+    </projectReference>
+    <projectReference>
+      <name>org.safris.commons:jci</name>
+      <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
+      <projectGuid>{B3B619EF-DFA7-3D03-A441-B784EE48989F}</projectGuid>
+    </projectReference>
+    <projectReference>
+      <name>org.safris.xdb:xdr</name>
+      <packageGuid>{85B0C3CB-4F8C-465B-A944-62ABB0F7F898}</packageGuid>
+      <projectGuid>{D495D461-8876-37AC-85CF-D5C332E77777}</projectGuid>
     </projectReference>
   </projectReferences>
   <references>
