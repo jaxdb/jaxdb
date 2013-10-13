@@ -124,6 +124,8 @@ public class XSDTransform extends XDLTransformer {
         else if (column instanceof $xdl_date)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "date");
         else if (column instanceof $xdl_dateTime)
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), "time");
+        else if (column instanceof $xdl_time)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "dateTime");
         else if (column instanceof $xdl_blob)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "base64Binary");

@@ -199,6 +199,12 @@ public class JPABeanTransform extends XDLTransformer {
       if (columnsBuffer != null)
         columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)");
     }
+    else if (column instanceof $xdl_time) {
+      columnType = Date.class.getName();
+      columnDef = (($xdl_time)column).get_default$() != null ? String.valueOf((($xdl_time)column).get_default$().getText()) : null;
+      if (columnsBuffer != null)
+        columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)");
+    }
     else if (column instanceof $xdl_dateTime) {
       columnType = Date.class.getName();
       columnDef = (($xdl_dateTime)column).get_default$() != null ? String.valueOf((($xdl_dateTime)column).get_default$().getText()) : null;
@@ -263,15 +269,20 @@ public class JPABeanTransform extends XDLTransformer {
             generateOnInsert = varchar.get_generateOnInsert$() != null ? varchar.get_generateOnInsert$().getText() : null;
             generateOnUpdate = varchar.get_generateOnUpdate$() != null ? varchar.get_generateOnUpdate$().getText() : null;
           }
-          else if (column instanceof $xdl_dateTime) {
-            final $xdl_dateTime dateTime = ($xdl_dateTime)column;
-            generateOnInsert = dateTime.get_generateOnInsert$() != null ? dateTime.get_generateOnInsert$().getText() : null;
-            generateOnUpdate = dateTime.get_generateOnUpdate$() != null ? dateTime.get_generateOnUpdate$().getText() : null;
-          }
           else if (column instanceof $xdl_date) {
             final $xdl_date date = ($xdl_date)column;
             generateOnInsert = date.get_generateOnInsert$() != null ? date.get_generateOnInsert$().getText() : null;
             generateOnUpdate = date.get_generateOnUpdate$() != null ? date.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_time) {
+            final $xdl_time time = ($xdl_time)column;
+            generateOnInsert = time.get_generateOnInsert$() != null ? time.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = time.get_generateOnUpdate$() != null ? time.get_generateOnUpdate$().getText() : null;
+          }
+          else if (column instanceof $xdl_dateTime) {
+            final $xdl_dateTime dateTime = ($xdl_dateTime)column;
+            generateOnInsert = dateTime.get_generateOnInsert$() != null ? dateTime.get_generateOnInsert$().getText() : null;
+            generateOnUpdate = dateTime.get_generateOnUpdate$() != null ? dateTime.get_generateOnUpdate$().getText() : null;
           }
           else if (column instanceof $xdl_tinyint) {
             final $xdl_tinyint date = ($xdl_tinyint)column;
@@ -480,7 +491,7 @@ public class JPABeanTransform extends XDLTransformer {
           final JPAFieldModel.Column column = fieldModel.getColumn(0);
           final String instanceName = fieldModel.getForeignKeyModel() == null ? Strings.toInstanceCase(column.getColumn().get_name$().getText()) : Strings.toInstanceCase(fieldModel.getForeignKeyModel().getField().getName());
           buffer.append("    this.").append(instanceName).append(" = ");
-          if (column.getColumn() instanceof $xdl_date || column.getColumn() instanceof $xdl_dateTime)
+          if (column.getColumn() instanceof $xdl_date || column.getColumn() instanceof $xdl_time || column.getColumn() instanceof $xdl_dateTime)
             buffer.append("copy.").append(instanceName).append(" != null ? new ").append(Date.class.getName()).append("(copy.").append(instanceName).append(".getTime()) : null;\n");
           else
             buffer.append("copy.").append(instanceName).append(";\n");

@@ -198,6 +198,12 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
         }
+        else if (column instanceof $xdl_time) {
+          final $xdl_time type = ($xdl_time)column;
+          ddl += "TIME";
+          if (type.get_default$() != null)
+            ddl += " TIME " + type.get_default$().getText();
+        }
         else if (column instanceof $xdl_dateTime) {
           final $xdl_dateTime type = ($xdl_dateTime)column;
           ddl += "DATETIME";
