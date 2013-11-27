@@ -68,7 +68,7 @@ public class JPAEntityModel {
 
   public void addFieldModel(final JPAFieldModel fieldModel) {
     fieldModelsList.add(fieldModel);
-    for (JPAFieldModel.Column column : fieldModel.getColumns())
+    for (final JPAFieldModel.Column column : fieldModel.getColumns())
       fieldModelsMap.put(column.getColumn().get_name$().getText(), fieldModel);
   }
 

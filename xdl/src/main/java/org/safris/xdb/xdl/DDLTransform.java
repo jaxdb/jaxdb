@@ -49,7 +49,7 @@ public class DDLTransform extends XDLTransformer {
   private String parseColumns(final $xdl_tableType<ComplexType> table) {
     String ddl = "";
     if (table.get_column() != null) {
-      for ($xdl_columnType column : table.get_column()) {
+      for (final $xdl_columnType column : table.get_column()) {
         if (column instanceof $xdl_inherited)
           continue;
 
@@ -77,7 +77,7 @@ public class DDLTransform extends XDLTransformer {
           if (type.get_values$() != null) {
             ddl += "(";
             String values = "";
-            for (String value : type.get_values$().getText())
+            for (final String value : type.get_values$().getText())
               values += ", '" + value + "'";
 
             ddl += values.substring(2);
@@ -232,10 +232,10 @@ public class DDLTransform extends XDLTransformer {
       int uniqueIndex = 1;
       final List<$xdl_tableType._constraints._unique> uniques = constraints.get_unique();
       if (uniques != null) {
-        for ($xdl_tableType._constraints._unique unique : uniques) {
+        for (final $xdl_tableType._constraints._unique unique : uniques) {
           final List<$xdl_tableType._constraints._unique._column> columns = unique.get_column();
           String columnsString = "";
-          for ($xdl_tableType._constraints._unique._column column : columns)
+          for (final $xdl_tableType._constraints._unique._column column : columns)
             columnsString += ", " + column.get_name$().getText();
 
           uniqueString += ",\n  CONSTRAINT " + table.get_name$().getText() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
@@ -247,7 +247,7 @@ public class DDLTransform extends XDLTransformer {
       final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get_primaryKey(0);
       if (primaryKey != null) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
-        for ($xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {
+        for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {
           final String primaryKeyColumn = primaryColumn.get_name$().getText();
           final $xdl_columnType column = columnNameToColumn.get(primaryKeyColumn);
           if (column.get_null$().getText()) {
@@ -263,7 +263,7 @@ public class DDLTransform extends XDLTransformer {
     }
 
     if (table.get_column() != null) {
-      for ($xdl_columnType<?> column : table.get_column()) {
+      for (final $xdl_columnType<?> column : table.get_column()) {
         if (column.get_foreignKey() != null) {
           final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey(0);
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(column.get_name$().getText());
@@ -279,10 +279,10 @@ public class DDLTransform extends XDLTransformer {
       }
 
       if (table.get_constraints() != null && table.get_constraints(0).get_foreignKey() != null) {
-        for ($xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints(0).get_foreignKey()) {
+        for (final $xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints(0).get_foreignKey()) {
           String columns = "";
           String referencedColumns = "";
-          for ($xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
+          for (final $xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
             columns += ", " + column.get_name$().getText();
             referencedColumns += ", " + column.get_column$().getText();
           }
@@ -312,7 +312,7 @@ public class DDLTransform extends XDLTransformer {
 
     names.add(tableName);
     if (table.get_column() != null) {
-      for ($xdl_columnType<?> column : table.get_column()) {
+      for (final $xdl_columnType<?> column : table.get_column()) {
         final $xdl_columnType existing = columnNameToColumn.get(column.get_name$().getText());
         if (existing != null && !(column instanceof $xdl_inherited)) {
           System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column.get_name$().getText() + " only xsi:type=\"xdl:inherited\" is alowed when overriding a column.");
@@ -360,14 +360,14 @@ public class DDLTransform extends XDLTransformer {
 
   private String parse() throws Exception {
     final Set<String> skipTables = new HashSet<String>();
-    for ($xdl_tableType table : merged.get_table()) {
+    for (final $xdl_tableType table : merged.get_table()) {
       if (table.get_skip$().getText())
         skipTables.add(table.get_name$().getText());
       else if (!table.get_abstract$().getText())
         dropStatements.put(table.get_name$().getText(), createDropStatement(table));
     }
 
-    for ($xdl_tableType table : merged.get_table())
+    for (final $xdl_tableType table : merged.get_table())
       if (!table.get_abstract$().getText())
         createStatements.put(table.get_name$().getText(), parseTable(table));
 
@@ -377,7 +377,7 @@ public class DDLTransform extends XDLTransformer {
       if(dropStatements.containsKey(sortedTableOrder.get(i)))
          tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
 
-    for (String tableName : sortedTableOrder)
+    for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))
         tablesBuffer.append("\n").append(createStatements.get(tableName));
 

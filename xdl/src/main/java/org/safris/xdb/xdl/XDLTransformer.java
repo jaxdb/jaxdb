@@ -101,15 +101,15 @@ public abstract class XDLTransformer {
     }
 
     // First, register the table names to be referencable by the @extends attribute
-    for ($xdl_tableType table : merged.get_table())
+    for (final $xdl_tableType table : merged.get_table())
       tableNameToTable.put(table.get_name$().getText(), table);
 
-    for ($xdl_tableType table : merged.get_table())
+    for (final $xdl_tableType table : merged.get_table())
       mergeTable(table);
 
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
-      for (String error : errors)
+      for (final String error : errors)
         System.err.println("[ERROR] " + error);
 
       System.exit(1);
@@ -118,7 +118,7 @@ public abstract class XDLTransformer {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for ($xdl_tableType<?> table : merged.get_table())
+    for (final $xdl_tableType<?> table : merged.get_table())
       if (!table.get_abstract$().getText() && (table.get_constraints() == null || table.get_constraints(0).get_primaryKey() == null || table.get_constraints(0).get_primaryKey(0).get_column() == null))
         errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
 
@@ -152,7 +152,7 @@ public abstract class XDLTransformer {
       }
       else {
         final List<$xdl_columnType<? extends ComplexType>> columns = superTable.get_column();
-        for ($xdl_columnType<? extends ComplexType> column : columns)
+        for (final $xdl_columnType<? extends ComplexType> column : columns)
           table.add_column(column);
       }
     }

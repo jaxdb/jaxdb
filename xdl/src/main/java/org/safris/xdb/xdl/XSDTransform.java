@@ -53,7 +53,7 @@ public class XSDTransform extends XDLTransformer {
     final xs_schema schema = new xs_schema();
     schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
 
-    for ($xdl_tableType<?> table : unmerged.get_table()) {
+    for (final $xdl_tableType<?> table : unmerged.get_table()) {
       if (table.get_abstract$().getText()) {
         final $xs_complexType complexType = parseTable(table, new xs_schema._complexType());
         complexType.set_name$(new $xs_complexType._name$(table.get_name$().getText()));
@@ -90,7 +90,7 @@ public class XSDTransform extends XDLTransformer {
     if (table.get_column() == null)
       return retType;
 
-    for ($xdl_columnType column : table.get_column()) {
+    for (final $xdl_columnType column : table.get_column()) {
       final $xs_complexType._attribute attribute = new $xs_complexType._attribute();
       attribute.set_name$(new $xs_complexType._attribute._name$(column.get_name$().getText()));
 
@@ -98,7 +98,7 @@ public class XSDTransform extends XDLTransformer {
         final $xs_simpleType._restriction restriction = new $xs_simpleType._restriction();
         restriction.set_base$(new $xs_simpleType._restriction._base$(new QName(NamespaceURI.XS.getNamespaceURI(), "NCName")));
         final List<String> values = (($xdl_enum)column).get_values$().getText();
-        for (String value : values) {
+        for (final String value : values) {
           final $xs_simpleType._restriction._enumeration enumeration = new $xs_simpleType._restriction._enumeration();
           enumeration.set_value$(new $xs_simpleType._restriction._enumeration._value$(value));
           restriction.add_enumeration(enumeration);
