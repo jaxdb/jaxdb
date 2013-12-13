@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.safris.commons.util.TopologicalSort;
 import org.safris.xml.generator.compiler.runtime.ComplexType;
 
@@ -46,10 +47,10 @@ public class DDLTransform extends XDLTransformer {
     super(database);
   }
 
-  private String parseColumns(final $xdl_tableType<ComplexType> table) {
+  private String parseColumns(final $xdl_tableType<? extends ComplexType> table) {
     String ddl = "";
     if (table.get_column() != null) {
-      for (final $xdl_columnType column : table.get_column()) {
+      for (final $xdl_columnType<?> column : table.get_column()) {
         if (column instanceof $xdl_inherited)
           continue;
 
@@ -57,13 +58,13 @@ public class DDLTransform extends XDLTransformer {
         final String columnName = column.get_name$().getText();
         ddl += ",\n  " + columnName + " ";
         if (column instanceof $xdl_boolean) {
-          final $xdl_boolean type = ($xdl_boolean)column;
+          final $xdl_boolean<?> type = ($xdl_boolean<?>)column;
           ddl += "BOOL";
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_varchar) {
-          final $xdl_varchar type = ($xdl_varchar)column;
+          final $xdl_varchar<?> type = ($xdl_varchar<?>)column;
           ddl += "VARCHAR";
           if (type.get_length$() != null)
             ddl += "(" + type.get_length$().getText() + ")";
@@ -72,7 +73,7 @@ public class DDLTransform extends XDLTransformer {
             ddl += " DEFAULT '" + type.get_default$().getText() + "'";
         }
         else if (column instanceof $xdl_enum) {
-          final $xdl_enum type = ($xdl_enum)column;
+          final $xdl_enum<?> type = ($xdl_enum<?>)column;
           ddl += "ENUM";
           if (type.get_values$() != null) {
             ddl += "(";
@@ -88,7 +89,7 @@ public class DDLTransform extends XDLTransformer {
             ddl += " DEFAULT '" + type.get_default$().getText() + "'";
         }
         else if (column instanceof $xdl_decimal) {
-          final $xdl_decimal type = ($xdl_decimal)column;
+          final $xdl_decimal<?> type = ($xdl_decimal<?>)column;
           ddl += "DECIMAL";
           if (type.get_precision$() != null && type.get_decimal$() != null)
             ddl += "(" + type.get_precision$().getText() + ", " + type.get_decimal$().getText() + ")";
@@ -103,7 +104,7 @@ public class DDLTransform extends XDLTransformer {
             ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_tinyint) {
-          final $xdl_tinyint type = ($xdl_tinyint)column;
+          final $xdl_tinyint<?> type = ($xdl_tinyint<?>)column;
           ddl += "TINYINT";
           if (type.get_precision$() != null)
             ddl += "(" + type.get_precision$().getText() + ")";
@@ -121,7 +122,7 @@ public class DDLTransform extends XDLTransformer {
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_smallint) {
-          final $xdl_smallint type = ($xdl_smallint)column;
+          final $xdl_smallint<?> type = ($xdl_smallint<?>)column;
           ddl += "SMALLINT";
           if (type.get_precision$() != null)
             ddl += "(" + type.get_precision$().getText() + ")";
@@ -139,7 +140,7 @@ public class DDLTransform extends XDLTransformer {
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_mediumint) {
-          final $xdl_mediumint type = ($xdl_mediumint)column;
+          final $xdl_mediumint<?> type = ($xdl_mediumint<?>)column;
           ddl += "MEDIUMINT";
           if (type.get_precision$() != null)
             ddl += "(" + type.get_precision$().getText() + ")";
@@ -157,7 +158,7 @@ public class DDLTransform extends XDLTransformer {
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_int) {
-          final $xdl_int type = ($xdl_int)column;
+          final $xdl_int<?> type = ($xdl_int<?>)column;
           ddl += "INT";
           if (type.get_precision$() != null)
             ddl += "(" + type.get_precision$().getText() + ")";
@@ -175,7 +176,7 @@ public class DDLTransform extends XDLTransformer {
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_bigint) {
-          final $xdl_bigint type = ($xdl_bigint)column;
+          final $xdl_bigint<?> type = ($xdl_bigint<?>)column;
           ddl += "BIGINT";
           if (type.get_precision$() != null)
             ddl += "(" + type.get_precision$().getText() + ")";
@@ -193,19 +194,19 @@ public class DDLTransform extends XDLTransformer {
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
         }
         else if (column instanceof $xdl_date) {
-          final $xdl_date type = ($xdl_date)column;
+          final $xdl_date<?> type = ($xdl_date<?>)column;
           ddl += "DATE";
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_time) {
-          final $xdl_time type = ($xdl_time)column;
+          final $xdl_time<?> type = ($xdl_time<?>)column;
           ddl += "TIME";
           if (type.get_default$() != null)
             ddl += " TIME " + type.get_default$().getText();
         }
         else if (column instanceof $xdl_dateTime) {
-          final $xdl_dateTime type = ($xdl_dateTime)column;
+          final $xdl_dateTime<?> type = ($xdl_dateTime<?>)column;
           ddl += "DATETIME";
           if (type.get_default$() != null)
             ddl += " DEFAULT " + type.get_default$().getText();
@@ -224,7 +225,7 @@ public class DDLTransform extends XDLTransformer {
     return ddl.substring(2);
   }
 
-  private String parseConstraints(final String tableName, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType<ComplexType> table) {
+  private String parseConstraints(final String tableName, final Map<String,$xdl_columnType<?>> columnNameToColumn, final $xdl_tableType<? extends ComplexType> table) {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table.get_constraints() != null) {
       final $xdl_tableType._constraints constraints = table.get_constraints(0);
@@ -249,7 +250,7 @@ public class DDLTransform extends XDLTransformer {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
         for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {
           final String primaryKeyColumn = primaryColumn.get_name$().getText();
-          final $xdl_columnType column = columnNameToColumn.get(primaryKeyColumn);
+          final $xdl_columnType<?> column = columnNameToColumn.get(primaryKeyColumn);
           if (column.get_null$().getText()) {
             System.err.println("[ERROR] Column " + tableName + "." + column.get_name$() + " must be NOT NULL to be a PRIMARY KEY.");
             System.exit(1);
@@ -302,8 +303,46 @@ public class DDLTransform extends XDLTransformer {
 
     return contraintsBuffer.toString();
   }
+  
+  private static String getTriggerName(final String tableName, final $xdl_tableType._triggers._trigger trigger, final String action) {
+    return tableName + "_" + trigger.get_time$().getText().toLowerCase() + "_" + action.toLowerCase();
+  }
 
-  private void registerColumns(final Set<String> names, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType<ComplexType> table) {
+  private String parseTriggers(final String tableName, final List<$xdl_tableType._triggers._trigger> triggers) {
+    String buffer = "";
+    for (final $xdl_tableType._triggers._trigger trigger : triggers) {
+      for (final String action : trigger.get_actions$().getText()) {
+        buffer += "\nDELIMITER |\n";
+        buffer += "CREATE TRIGGER " + DDLTransform.getTriggerName(tableName, trigger, action) + " " + trigger.get_time$().getText() + " " + action + " ON " + tableName + "\n";
+        buffer += "  FOR EACH ROW\n";
+        buffer += "  BEGIN\n";
+        
+        final String text = trigger.getText().toString();
+        // FIXME: This does not work because the whitespace is trimmed before we can check it
+        int i = 0, j = -1;
+        while (i < text.length()) {
+          char c = text.charAt(i++);
+          if (c == '\n' || c == '\r')
+            continue;
+          
+          j++;
+          //System.err.println(c);
+          if (c != ' ' && c != '\t')
+            break;
+        }
+        
+        //System.err.println("XXXX: " + i + " " + j);
+        buffer += "    " + text.trim().replace("\n" + text.substring(0, j), "\n    ") + "\n";
+        buffer += "  END;\n";
+        buffer += "|\n";
+        buffer += "DELIMITER ;";
+      }
+    }
+    
+    return buffer.substring(1);
+  }
+
+  private void registerColumns(final Set<String> names, final Map<String,$xdl_columnType<?>> columnNameToColumn, final $xdl_tableType<? extends ComplexType> table) {
     final String tableName = table.get_name$().getText();
     if (names.contains(tableName)) {
       System.err.println("[ERROR] Circular dependency detected for table: " + tableName);
@@ -313,7 +352,7 @@ public class DDLTransform extends XDLTransformer {
     names.add(tableName);
     if (table.get_column() != null) {
       for (final $xdl_columnType<?> column : table.get_column()) {
-        final $xdl_columnType existing = columnNameToColumn.get(column.get_name$().getText());
+        final $xdl_columnType<?> existing = columnNameToColumn.get(column.get_name$().getText());
         if (existing != null && !(column instanceof $xdl_inherited)) {
           System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column.get_name$().getText() + " only xsi:type=\"xdl:inherited\" is alowed when overriding a column.");
           System.exit(1);
@@ -324,10 +363,10 @@ public class DDLTransform extends XDLTransformer {
     }
   }
 
-  private String parseTable(final $xdl_tableType table) {
+  private String parseTable(final $xdl_tableType<? extends ComplexType> table) {
     insertDependency(table.get_name$().getText(), null);
     // Next, register the column names to be referencable by the @primaryKey element
-    final Map<String,$xdl_columnType> columnNameToColumn = new HashMap<String,$xdl_columnType>();
+    final Map<String,$xdl_columnType<?>> columnNameToColumn = new HashMap<String,$xdl_columnType<?>>();
     final Set<String> names = new HashSet<String>();
     registerColumns(names, columnNameToColumn, table);
 
@@ -337,6 +376,10 @@ public class DDLTransform extends XDLTransformer {
     tableBuffer.append(parseColumns(table));
     tableBuffer.append(parseConstraints(tableName, columnNameToColumn, table));
     tableBuffer.append("\n);");
+
+    if (table.get_triggers() != null)
+      tableBuffer.append("\n").append(parseTriggers(tableName, table.get_triggers().get(0).get_trigger()));
+    
     return tableBuffer.toString();
   }
 
@@ -354,28 +397,35 @@ public class DDLTransform extends XDLTransformer {
   private final Map<String,String> dropStatements = new HashMap<String,String>();
   private final Map<String,String> createStatements = new HashMap<String,String>();
 
-  private String createDropStatement(final $xdl_tableType table) {
-    return "DROP TABLE IF EXISTS " + table.get_name$().getText() + ";";
+  private String createDropStatement(final $xdl_tableType<? extends ComplexType> table) {
+    String buffer = "";
+    if (table.get_triggers() != null)
+      for (final $xdl_tableType._triggers._trigger trigger : table.get_triggers().get(0).get_trigger())
+        for (final String action : trigger.get_actions$().getText())
+          buffer += "\nDROP TRIGGER IF EXISTS " + DDLTransform.getTriggerName(table.get_name$().getText(), trigger, action) + ";";
+
+    buffer += "\nDROP TABLE IF EXISTS " + table.get_name$().getText() + ";";
+    return buffer.substring(1);
   }
 
   private String parse() throws Exception {
     final Set<String> skipTables = new HashSet<String>();
-    for (final $xdl_tableType table : merged.get_table()) {
+    for (final $xdl_tableType<? extends ComplexType> table : merged.get_table()) {
       if (table.get_skip$().getText())
         skipTables.add(table.get_name$().getText());
       else if (!table.get_abstract$().getText())
         dropStatements.put(table.get_name$().getText(), createDropStatement(table));
     }
 
-    for (final $xdl_tableType table : merged.get_table())
+    for (final $xdl_tableType<? extends ComplexType> table : merged.get_table())
       if (!table.get_abstract$().getText())
         createStatements.put(table.get_name$().getText(), parseTable(table));
 
     final StringBuffer tablesBuffer = new StringBuffer();
     final List<String> sortedTableOrder = TopologicalSort.sort(dependencyGraph);
     for (int i = sortedTableOrder.size() - 1; 0 <= i; i--)
-      if(dropStatements.containsKey(sortedTableOrder.get(i)))
-         tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
+      if (dropStatements.containsKey(sortedTableOrder.get(i)))
+        tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
 
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))

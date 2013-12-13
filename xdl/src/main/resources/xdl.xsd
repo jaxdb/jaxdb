@@ -44,7 +44,7 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:NCName" use="required"/>
+    <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="null" type="xs:boolean" default="true"/>
     <xs:attribute name="checkOnUpdate">
       <xs:simpleType>
@@ -85,7 +85,7 @@
   </xs:complexType>
 
   <xs:complexType name="fieldType">
-    <xs:attribute name="name" type="xs:NCName" use="required"/>
+    <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="cascade" type="xdl:cascadeType" use="required"/>
   </xs:complexType>
 
@@ -585,7 +585,14 @@
   </xs:complexType>
 
   <!-- TODO: Define INTERVAL -->
-
+  
+  <xs:simpleType name="nameType">
+    <xs:restriction base="xs:NCName">
+      <!-- http://dev.mysql.com/doc/refman/5.0/en/identifiers.html -->
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
   <xs:complexType name="tableType">
     <xs:sequence>
       <xs:element name="column" type="xdl:columnType" minOccurs="0" maxOccurs="unbounded"/>
@@ -597,7 +604,7 @@
                 <xs:sequence maxOccurs="unbounded">
                   <xs:element name="column">
                     <xs:complexType>
-                      <xs:attribute name="name" type="xs:NCName" use="required"/>
+                      <xs:attribute name="name" type="xdl:nameType" use="required"/>
                     </xs:complexType>
                   </xs:element>
                 </xs:sequence>
@@ -612,8 +619,8 @@
                 <xs:sequence>
                   <xs:element name="column" maxOccurs="unbounded">
                     <xs:complexType>
-                      <xs:attribute name="name" type="xs:NCName" use="required"/>
-                      <xs:attribute name="column" type="xs:NCName" use="required"/>
+                      <xs:attribute name="name" type="xdl:nameType" use="required"/>
+                      <xs:attribute name="column" type="xdl:nameType" use="required"/>
                     </xs:complexType>
                   </xs:element>
                   <xs:element name="join" type="xdl:joinType"/>
@@ -635,7 +642,7 @@
                   <xs:sequence maxOccurs="unbounded">
                     <xs:element name="column">
                       <xs:complexType>
-                        <xs:attribute name="name" type="xs:NCName" use="required"/>
+                        <xs:attribute name="name" type="xdl:nameType" use="required"/>
                       </xs:complexType>
                     </xs:element>
                   </xs:sequence>
@@ -653,7 +660,7 @@
                         <xs:sequence maxOccurs="unbounded">
                           <xs:element name="column">
                             <xs:complexType>
-                              <xs:attribute name="name" type="xs:NCName" use="required"/>
+                              <xs:attribute name="name" type="xdl:nameType" use="required"/>
                             </xs:complexType>
                           </xs:element>
                         </xs:sequence>
@@ -681,8 +688,39 @@
         </xs:unique>
       </xs:element>
       <xs:element name="relation" type="xdl:relationType" minOccurs="0"/>
+      <xs:element name="triggers" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="trigger">
+              <xs:complexType mixed="true">
+                <xs:attribute name="time" use="required">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:token">
+                      <xs:enumeration value="BEFORE"/>
+                      <xs:enumeration value="AFTER"/>
+                    </xs:restriction>
+                  </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="actions" use="required">
+                  <xs:simpleType>
+                    <xs:list>
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:enumeration value="INSERT"/>
+                          <xs:enumeration value="UPDATE"/>
+                          <xs:enumeration value="DELETE"/>
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:list>
+                  </xs:simpleType>
+                </xs:attribute>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:NCName" use="required"/>
+    <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="abstract" type="xs:boolean" default="false"/>
     <xs:attribute name="extends" type="xs:NCName"/>
     <xs:attribute name="skip" type="xs:boolean" default="false"/>
@@ -714,7 +752,7 @@
         </xs:keyref>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="name" type="xs:NCName" use="required"/>
+    <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="targetNamespace" type="xs:anyURI" use="required"/>
   </xs:complexType>
 
