@@ -18,18 +18,19 @@ package org.safris.xdb.xdl;
 
 import java.util.Collections;
 import java.util.List;
+
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
-public class JPAForeignKeyModel {
+public final class JPAForeignKeyModel {
   private final JPAFieldModel fieldModel;
   private final String id;
   private final String referencedTableName;
   private final List<String> referencedColumnNames;
-  private Class association;
+  private Class<?> association;
   private FetchType fetchType;
   private Field field;
   private InverseField inverseField;
@@ -67,11 +68,11 @@ public class JPAForeignKeyModel {
     return referencedColumnNames != null && -1 < index && index < referencedColumnNames.size() ? referencedColumnNames.get(index) : null;
   }
 
-  public Class getAssociation() {
+  public final Class<?> getAssociation() {
     return association;
   }
 
-  public Class getInverseAssociation() {
+  public final Class<?> getInverseAssociation() {
     return association == ManyToMany.class ? ManyToMany.class : (association == ManyToOne.class ? OneToMany.class : (association == OneToMany.class ? ManyToOne.class : OneToOne.class));
   }
 
@@ -87,15 +88,15 @@ public class JPAForeignKeyModel {
     return inverseField;
   }
 
-  public void setJoin(final $xdl_joinType<?> joinType) {
+  public void setJoin(final $xdl_joinType joinType) {
     if (joinType == null)
       return;
 
-    fetchType = FetchType.valueOf(joinType.get_fetch$().getText());
-    association = $xdl_columnType._foreignKey._join._association$.MANYTOONE.getText().equals(joinType.get_association$().getText()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.ONETOMANY.getText().equals(joinType.get_association$().getText()) ? OneToMany.class : OneToOne.class);
-    field = new Field(joinType.get_field(0).get_name$().getText(), joinType.get_field(0).get_cascade$().getText());
-    if (joinType.get_inverse() != null)
-      inverseField = new InverseField(joinType.get_inverse(0).get_name$().getText(), joinType.get_inverse(0).get_cascade$().getText(), fieldModel.getEntityModel().getName(), joinType.get_field(0).get_name$().getText());
+    fetchType = FetchType.valueOf(joinType._fetch$().text());
+    association = $xdl_columnType._foreignKey._join._association$.MANYTOONE.text().equals(joinType._association$().text()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.ONETOMANY.text().equals(joinType._association$().text()) ? OneToMany.class : OneToOne.class);
+    field = new Field(joinType._field(0)._name$().text(), joinType._field(0)._cascade$().text());
+    if (joinType._inverse() != null)
+      inverseField = new InverseField(joinType._inverse(0)._name$().text(), joinType._inverse(0)._cascade$().text(), fieldModel.getEntityModel().getName(), joinType._field(0)._name$().text());
   }
 
   public boolean equals(final Object obj) {
@@ -152,10 +153,10 @@ public class JPAForeignKeyModel {
     }
   }
 
-  public class InverseField extends Field {
+  public final class InverseField extends Field {
     private final String referencedTableName;
     private final String mappedBy;
-    private final Class inverseAssociation;
+    private final Class<?> inverseAssociation;
 
     public InverseField(final String name, final List<String> cascade, final String referencedTableName, final String mappedBy) {
       super(name, cascade);
@@ -172,7 +173,7 @@ public class JPAForeignKeyModel {
       return mappedBy;
     }
 
-    public Class getInverseAssociation() {
+    public final Class<?> getInverseAssociation() {
       return inverseAssociation;
     }
 

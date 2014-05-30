@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class XDLModel {
-  private List<JPAEntityModel> entitiesList = new ArrayList<JPAEntityModel>();
-  private Map<String,JPAEntityModel> entitiesMap = new HashMap<String,JPAEntityModel>();
-  private Map<String,List<JPAForeignKeyModel.InverseField>> inverseFieldsPerTable = new HashMap<String,List<JPAForeignKeyModel.InverseField>>();
+public final class XDLModel {
+  private final List<JPAEntityModel> entitiesList = new ArrayList<JPAEntityModel>();
+  private final Map<String,JPAEntityModel> entitiesMap = new HashMap<String,JPAEntityModel>();
+  private final Map<String,List<JPAForeignKeyModel.InverseField>> inverseFieldsPerTable = new HashMap<String,List<JPAForeignKeyModel.InverseField>>();
 
   public void addEntity(final JPAEntityModel entity) {
     entitiesMap.put(entity.getName(), entity);
@@ -59,8 +59,7 @@ public class XDLModel {
       return false;
 
     final XDLModel that = (XDLModel)obj;
-    return (entitiesList != null ? entitiesList.equals(that.entitiesList) : that.entitiesList == null) &&
-      (inverseFieldsPerTable != null ? inverseFieldsPerTable.equals(that.inverseFieldsPerTable) : that.inverseFieldsPerTable == null);
+    return (entitiesList != null ? entitiesList.equals(that.entitiesList) : that.entitiesList == null) && (inverseFieldsPerTable != null ? inverseFieldsPerTable.equals(that.inverseFieldsPerTable) : that.inverseFieldsPerTable == null);
   }
 
   public int hashCode() {

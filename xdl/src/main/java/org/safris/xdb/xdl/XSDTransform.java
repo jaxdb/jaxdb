@@ -18,7 +18,9 @@ package org.safris.xdb.xdl;
 
 import java.io.File;
 import java.util.List;
+
 import javax.xml.namespace.QName;
+
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.dom.DOMStyle;
 import org.safris.commons.xml.dom.DOMs;
@@ -26,7 +28,7 @@ import org.w3.x2001.xmlschema.$xs_complexType;
 import org.w3.x2001.xmlschema.$xs_simpleType;
 import org.w3.x2001.xmlschema.xs_schema;
 
-public class XSDTransform extends XDLTransformer {
+public final class XSDTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
     createXSD(new File(args[0]), null);
   }
@@ -38,9 +40,9 @@ public class XSDTransform extends XDLTransformer {
       final XSDTransform creator = new XSDTransform(database);
       final xs_schema schema = creator.parse();
 
-      writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.unmerged.get_name$().getText() + ".xsd") : null);
+      writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.unmerged._name$().text() + ".xsd") : null);
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -51,63 +53,63 @@ public class XSDTransform extends XDLTransformer {
 
   private xs_schema parse() {
     final xs_schema schema = new xs_schema();
-    schema.set_targetNamespace$(new xs_schema._targetNamespace$(unmerged.get_targetNamespace$().getText()));
+    schema._targetNamespace$(new xs_schema._targetNamespace$(unmerged._targetNamespace$().text()));
 
-    for (final $xdl_tableType<?> table : unmerged.get_table()) {
-      if (table.get_abstract$().getText()) {
+    for (final $xdl_tableType table : unmerged._table()) {
+      if (table._abstract$().text()) {
         final $xs_complexType complexType = parseTable(table, new xs_schema._complexType());
-        complexType.set_name$(new $xs_complexType._name$(table.get_name$().getText()));
-        schema.add_complexType(complexType);
+        complexType._name$(new $xs_complexType._name$(table._name$().text()));
+        schema._complexType(complexType);
       }
       else {
         final xs_schema._element element = new xs_schema._element();
-        element.set_type$(new xs_schema._element._type$(new QName(unmerged.get_targetNamespace$().getText(), table.get_name$().getText(), unmerged.get_name$().getText())));
-        element.set_name$(new xs_schema._element._name$(table.get_name$().getText()));
-        schema.add_element(element);
+        element._type$(new xs_schema._element._type$(new QName(unmerged._targetNamespace$().text(), table._name$().text(), unmerged._name$().text())));
+        element._name$(new xs_schema._element._name$(table._name$().text()));
+        schema._element(element);
 
         final $xs_complexType complexType = parseTable(table, new xs_schema._element._complexType());
-        complexType.set_name$(new $xs_complexType._name$(table.get_name$().getText()));
-        schema.add_complexType(complexType);
+        complexType._name$(new $xs_complexType._name$(table._name$().text()));
+        schema._complexType(complexType);
       }
     }
 
     return schema;
   }
 
-  private $xs_complexType parseTable(final $xdl_tableType<?> table, $xs_complexType complexType) {
+  private $xs_complexType parseTable(final $xdl_tableType table, $xs_complexType complexType) {
     final $xs_complexType retType = complexType;
-    if (table.get_extends$() != null) {
+    if (table._extends$() != null) {
       final $xs_complexType._complexContent complexContent = new $xs_complexType._complexContent();
-      complexType.add_complexContent(complexContent);
+      complexType._complexContent(complexContent);
 
       final $xs_complexType._complexContent._extension extension = new $xs_complexType._complexContent._extension();
-      complexContent.add_extension(extension);
-      extension.set_base$(new $xs_complexType._complexContent._extension._base$(new QName(unmerged.get_targetNamespace$().getText(), table.get_extends$().getText(), unmerged.get_name$().getText())));
+      complexContent._extension(extension);
+      extension._base$(new $xs_complexType._complexContent._extension._base$(new QName(unmerged._targetNamespace$().text(), table._extends$().text(), unmerged._name$().text())));
 
       complexType = extension;
     }
 
-    if (table.get_column() == null)
+    if (table._column() == null)
       return retType;
 
-    for (final $xdl_columnType column : table.get_column()) {
+    for (final $xdl_columnType column : table._column()) {
       final $xs_complexType._attribute attribute = new $xs_complexType._attribute();
-      attribute.set_name$(new $xs_complexType._attribute._name$(column.get_name$().getText()));
+      attribute._name$(new $xs_complexType._attribute._name$(column._name$().text()));
 
       if (column instanceof $xdl_enum) {
         final $xs_simpleType._restriction restriction = new $xs_simpleType._restriction();
-        restriction.set_base$(new $xs_simpleType._restriction._base$(new QName(NamespaceURI.XS.getNamespaceURI(), "NCName")));
-        final List<String> values = (($xdl_enum)column).get_values$().getText();
+        restriction._base$(new $xs_simpleType._restriction._base$(new QName(NamespaceURI.XS.getNamespaceURI(), "NCName")));
+        final List<String> values = (($xdl_enum)column)._values$().text();
         for (final String value : values) {
           final $xs_simpleType._restriction._enumeration enumeration = new $xs_simpleType._restriction._enumeration();
-          enumeration.set_value$(new $xs_simpleType._restriction._enumeration._value$(value));
-          restriction.add_enumeration(enumeration);
+          enumeration._value$(new $xs_simpleType._restriction._enumeration._value$(value));
+          restriction._enumeration(enumeration);
         }
 
         final $xs_simpleType simpleType = new $xs_complexType._attribute._simpleType();
-        simpleType.add_restriction(restriction);
+        simpleType._restriction(restriction);
 
-        attribute.add_simpleType(simpleType);
+        attribute._simpleType(simpleType);
       }
       else {
         final QName type;
@@ -132,13 +134,13 @@ public class XSDTransform extends XDLTransformer {
         else
           type = null;
 
-        attribute.set_type$(new $xs_complexType._attribute._type$(type));
+        attribute._type$(new $xs_complexType._attribute._type$(type));
       }
 
-      if (!column.get_null$().getText())
-        attribute.set_use$(new $xs_complexType._attribute._use$($xs_complexType._attribute._use$.REQUIRED));
+      if (!column._null$().text())
+        attribute._use$(new $xs_complexType._attribute._use$($xs_complexType._attribute._use$.REQUIRED));
 
-      complexType.add_attribute(attribute);
+      complexType._attribute(attribute);
     }
 
     return retType;

@@ -200,7 +200,17 @@
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
-        <xs:attribute name="values" type="xs:NMTOKENS" use="required"/>
+        <xs:attribute name="values" use="required">
+          <xs:simpleType>
+            <xs:list>
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:pattern value="[^ ]*"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:list>
+          </xs:simpleType>
+        </xs:attribute>
         <xs:attribute name="default" type="xs:NMTOKEN"/>
       </xs:extension>
     </xs:complexContent>
@@ -266,7 +276,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
-              <xs:minExclusive value="3"/>
+              <xs:minInclusive value="3"/>
               <xs:maxInclusive value="5"/>
             </xs:restriction>
           </xs:simpleType>
@@ -321,7 +331,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
-              <xs:minExclusive value="5"/>
+              <xs:minInclusive value="5"/>
               <xs:maxInclusive value="8"/>
             </xs:restriction>
           </xs:simpleType>
@@ -376,7 +386,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
-              <xs:minExclusive value="8"/>
+              <xs:minInclusive value="8"/>
               <xs:maxInclusive value="10"/>
             </xs:restriction>
           </xs:simpleType>
@@ -431,7 +441,7 @@
         <xs:attribute name="precision" use="required">
           <xs:simpleType>
             <xs:restriction base="xs:positiveInteger">
-              <xs:minExclusive value="10"/>
+              <xs:minInclusive value="10"/>
               <xs:maxInclusive value="20"/>
             </xs:restriction>
           </xs:simpleType>

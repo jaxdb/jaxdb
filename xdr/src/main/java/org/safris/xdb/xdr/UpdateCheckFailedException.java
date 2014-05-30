@@ -20,8 +20,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateCheckFailedException extends Exception {
-  public static class FailureDetail {
+public final class UpdateCheckFailedException extends Exception {
+  private static final long serialVersionUID = -7183235643145536604L;
+
+  public static final class FailureDetail {
     private final Entity entity;
     private final Field[] fields;
 

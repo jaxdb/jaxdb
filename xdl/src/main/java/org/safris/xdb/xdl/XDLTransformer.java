@@ -25,11 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
-import org.safris.xdb.xdl.$xdl_tableType;
 import org.safris.xml.generator.compiler.runtime.Bindings;
-import org.safris.xml.generator.compiler.runtime.ComplexType;
 import org.xml.sax.InputSource;
 
 public abstract class XDLTransformer {
@@ -37,7 +36,7 @@ public abstract class XDLTransformer {
     try {
       PackageLoader.getSystemPackageLoader().loadPackage(xdl_database.class.getPackage().getName());
     }
-    catch (PackageNotFoundException e) {
+    catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
@@ -53,12 +52,12 @@ public abstract class XDLTransformer {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try {
-      final InputStream in = xdlFile.toURL().openStream();
+      final InputStream in = xdlFile.toURI().toURL().openStream();
       final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
       in.close();
       return database;
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -81,7 +80,7 @@ public abstract class XDLTransformer {
         out.close();
       }
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -96,31 +95,31 @@ public abstract class XDLTransformer {
     try {
       merged = (xdl_database)Bindings.clone(database);
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new Error(e);
     }
 
     // First, register the table names to be referencable by the @extends attribute
-    for (final $xdl_tableType table : merged.get_table())
-      tableNameToTable.put(table.get_name$().getText(), table);
+    for (final $xdl_tableType table : merged._table())
+      tableNameToTable.put(table._name$().text(), table);
 
-    for (final $xdl_tableType table : merged.get_table())
+    for (final $xdl_tableType table : merged._table())
       mergeTable(table);
 
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
       for (final String error : errors)
-        System.err.println("[ERROR] " + error);
+        System.err.println("[WARNING] " + error);
 
-      System.exit(1);
+      //System.exit(1);
     }
   }
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for (final $xdl_tableType<?> table : merged.get_table())
-      if (!table.get_abstract$().getText() && (table.get_constraints() == null || table.get_constraints(0).get_primaryKey() == null || table.get_constraints(0).get_primaryKey(0).get_column() == null))
-        errors.add("Table " + table.get_name$().getText() + " does not have a primary key.");
+    for (final $xdl_tableType table : merged._table())
+      if (!table._abstract$().text() && (table._constraints(0) == null || table._constraints(0)._primaryKey() == null || table._constraints(0)._primaryKey(0)._column() == null))
+        errors.add("Table " + table._name$().text() + " does not have a primary key.");
 
     return errors;
   }
@@ -128,49 +127,49 @@ public abstract class XDLTransformer {
   private final Set<String> mergedTables = new HashSet<String>();
 
   private void mergeTable(final $xdl_tableType table) {
-    if (mergedTables.contains(table.get_name$().getText()))
+    if (mergedTables.contains(table._name$().text()))
       return;
 
-    mergedTables.add(table.get_name$().getText());
-    if (table.get_extends$() == null)
+    mergedTables.add(table._name$().text());
+    if (table._extends$().isNull())
       return;
 
-    final $xdl_tableType superTable = tableNameToTable.get(table.get_extends$().getText());
-    if (!superTable.get_abstract$().getText()) {
-      System.err.println("[ERROR] Table " + superTable.get_name$().getText() + " must be abstract to be inherited by " + table.get_name$().getText());
+    final $xdl_tableType superTable = tableNameToTable.get(table._extends$().text());
+    if (!superTable._abstract$().text()) {
+      System.err.println("[ERROR] Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
       System.exit(1);
     }
 
     mergeTable(superTable);
-    if (superTable.get_column() != null) {
-      if (table.get_column() != null) {
-        for (int i = table.get_column().size() - 1; 0 <= i; i--)
-          if (table.get_column(i) instanceof $xdl_inherited)
-            table.get_column().remove(i);
+    if (superTable._column() != null) {
+      if (table._column() != null) {
+        for (int i = table._column().size() - 1; 0 <= i; i--)
+          if (table._column(i) instanceof $xdl_inherited)
+            table._column().remove(i);
 
-        table.get_column().addAll(0, superTable.get_column());
+        table._column().addAll(0, superTable._column());
       }
       else {
-        final List<$xdl_columnType<? extends ComplexType>> columns = superTable.get_column();
-        for (final $xdl_columnType<? extends ComplexType> column : columns)
-          table.add_column(column);
+        final List<$xdl_columnType> columns = superTable._column();
+        for (final $xdl_columnType column : columns)
+          table._column(column);
       }
     }
 
-    if (superTable.get_constraints() == null)
+    if (superTable._constraints() == null)
       return;
 
-    final List<$xdl_tableType._constraints> constraints = superTable.get_constraints();
-    if (table.get_constraints() == null) {
-      table.add_constraints(constraints.get(0));
+    final List<$xdl_tableType._constraints> constraints = superTable._constraints();
+    if (table._constraints() == null) {
+      table._constraints(constraints.get(0));
       return;
     }
 
-    if (constraints.get(0).get_primaryKey() == null)
+    if (constraints.get(0)._primaryKey() == null)
       return;
 
-    final List<$xdl_tableType._constraints> constraints2 = table.get_constraints();
+    final List<$xdl_tableType._constraints> constraints2 = table._constraints();
     if (constraints2 != null)
-      constraints2.get(0).add_primaryKey(constraints.get(0).get_primaryKey(0));
+      constraints2.get(0)._primaryKey(constraints.get(0)._primaryKey(0));
   }
 }

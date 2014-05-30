@@ -24,199 +24,256 @@ import java.util.Map;
 import java.util.Set;
 
 import org.safris.commons.util.TopologicalSort;
-import org.safris.xml.generator.compiler.runtime.ComplexType;
 
-public class DDLTransform extends XDLTransformer {
+public final class DDLTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
-    createDDL(new File(args[0]), null);
+    if (args.length != 2) {
+      System.err.println("<MySQL|Derby> <XDL_FILE>");
+      System.exit(1);
+    }
+      
+    createDDL(new File(args[1]), "MySQL".equals(args[0]) ? DBVendor.MY_SQL : "Derby".equals(args[0]) ? DBVendor.DERBY : null, null);
   }
 
-  public static void createDDL(final File xdlFile, final File outDir) {
+  public static List<String> getTableOrder(final File xdlFile) {
+    return DDLTransform.createDDL(xdlFile, DBVendor.MY_SQL, null, false);
+  }
+  
+  public static void createDDL(final File xdlFile, final DBVendor vendor, final File outDir) {
+    DDLTransform.createDDL(xdlFile, vendor, outDir, true);
+  }
+  
+  public static DDLTransform transformDDL(final File xdlFile) {
+    final xdl_database database = parseArguments(xdlFile, null);
+    try {
+      return new DDLTransform(database);
+    }
+    catch (final Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+  
+  private static List<String> createDDL(final File xdlFile, final DBVendor vendor, final File outDir, final boolean output) {
     final xdl_database database = parseArguments(xdlFile, outDir);
     try {
       final DDLTransform creator = new DDLTransform(database);
-      final String sql = creator.parse();
-      writeOutput(sql, outDir != null ? new File(outDir, creator.merged.get_name$().getText() + ".sql") : null);
+      final String sql = creator.parse(vendor);
+      if (output)
+        writeOutput(sql, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
+      
+      return creator.getSortedTableOrder();
     }
-    catch (Exception e) {
+    catch (final Exception e) {
       throw new RuntimeException(e);
     }
+  }
+  
+  private static String toEnumValue(String value) {
+    value = value.replaceAll("\\\\\\\\", "\\\\"); // \\ is \
+    value = value.replaceAll("\\\\_", " "); // \_ is <space>
+    value = value.replaceAll("\\\\", ""); // anything else escaped is itself
+    value = value.replace("'", "\\'"); // ' must be \'
+    return value;
   }
 
   private DDLTransform(final xdl_database database) throws Exception {
     super(database);
   }
+  
+  private static void checkValidNumber(final String var, final Integer precision, final Integer decimal) {
+    if (precision < decimal) {
+      System.err.println("[ERROR] ERROR 1427 (42000): For decimal(M,D), M must be >= D (column '" + var + "').");
+      System.exit(1);
+    }
+  }
 
-  private String parseColumns(final $xdl_tableType<? extends ComplexType> table) {
+  private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
+
+  public Map<String,Integer> getColumnCount() {
+    return columnCount;
+  }
+
+  private String parseColumns(final DBVendor vendor, final $xdl_tableType table) {
     String ddl = "";
-    if (table.get_column() != null) {
-      for (final $xdl_columnType<?> column : table.get_column()) {
+    if (table._column() != null) {
+      columnCount.put(table._name$().text(), table._column().size());
+      for (final $xdl_columnType column : table._column()) {
         if (column instanceof $xdl_inherited)
           continue;
 
         String suffix = "";
-        final String columnName = column.get_name$().getText();
+        final String columnName = column._name$().text();
         ddl += ",\n  " + columnName + " ";
         if (column instanceof $xdl_boolean) {
-          final $xdl_boolean<?> type = ($xdl_boolean<?>)column;
-          ddl += "BOOL";
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          final $xdl_boolean type = ($xdl_boolean)column;
+          ddl += vendor != DBVendor.DERBY ? "BOOL" : "BOOLEAN";
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_varchar) {
-          final $xdl_varchar<?> type = ($xdl_varchar<?>)column;
+          final $xdl_varchar type = ($xdl_varchar)column;
           ddl += "VARCHAR";
-          if (type.get_length$() != null)
-            ddl += "(" + type.get_length$().getText() + ")";
+          if (type._length$() != null)
+            ddl += "(" + type._length$().text() + ")";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT '" + type.get_default$().getText() + "'";
+          if (type._default$() != null)
+            ddl += " DEFAULT '" + type._default$().text() + "'";
         }
         else if (column instanceof $xdl_enum) {
-          final $xdl_enum<?> type = ($xdl_enum<?>)column;
-          ddl += "ENUM";
-          if (type.get_values$() != null) {
-            ddl += "(";
+          final $xdl_enum type = ($xdl_enum)column;
+          ddl += vendor != DBVendor.DERBY ? "ENUM" : "VARCHAR";
+          ddl += "(";
+          if (vendor == DBVendor.DERBY) {
+            int maxLength = 0;
+            if (type._values$() != null)
+              for (final String value : type._values$().text())
+                maxLength = Math.max(maxLength, value.length());
+            
+            ddl += String.valueOf(maxLength);
+          }
+          else if (type._values$() != null) {
             String values = "";
-            for (final String value : type.get_values$().getText())
-              values += ", '" + value + "'";
-
+            for (final String value : type._values$().text()) 
+              values += ", '" + DDLTransform.toEnumValue(value) + "'";
+            
             ddl += values.substring(2);
-            ddl += ")";
           }
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT '" + type.get_default$().getText() + "'";
+          ddl += ")";
+          if (type._default$() != null)
+            ddl += " DEFAULT '" + type._default$().text() + "'";
         }
         else if (column instanceof $xdl_decimal) {
-          final $xdl_decimal<?> type = ($xdl_decimal<?>)column;
+          final $xdl_decimal type = ($xdl_decimal)column;
           ddl += "DECIMAL";
-          if (type.get_precision$() != null && type.get_decimal$() != null)
-            ddl += "(" + type.get_precision$().getText() + ", " + type.get_decimal$().getText() + ")";
+          if (type._precision$() != null && type._decimal$() != null) {
+            DDLTransform.checkValidNumber(column._name$().text(), type._precision$().text(), type._decimal$().text());
+            ddl += "(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
+          }
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_tinyint) {
-          final $xdl_tinyint<?> type = ($xdl_tinyint<?>)column;
-          ddl += "TINYINT";
-          if (type.get_precision$() != null)
-            ddl += "(" + type.get_precision$().getText() + ")";
+          final $xdl_tinyint type = ($xdl_tinyint)column;
+          ddl += vendor != DBVendor.DERBY ? "TINYINT" : "SMALLINT";
+          if (type._precision$() != null && vendor != DBVendor.DERBY)
+            ddl += "(" + type._precision$().text() + ")";
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
 
-          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
-            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
+          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_smallint) {
-          final $xdl_smallint<?> type = ($xdl_smallint<?>)column;
-          ddl += "SMALLINT";
-          if (type.get_precision$() != null)
-            ddl += "(" + type.get_precision$().getText() + ")";
+          final $xdl_smallint type = ($xdl_smallint)column;
+          ddl += vendor != DBVendor.DERBY ? "SMALLINT" : type._unsigned$() != null && type._unsigned$().text() ? "INTEGER" : "SMALLINT";
+          if (type._precision$() != null && vendor != DBVendor.DERBY)
+            ddl += "(" + type._precision$().text() + ")";
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
 
-          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
-            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
+          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_mediumint) {
-          final $xdl_mediumint<?> type = ($xdl_mediumint<?>)column;
-          ddl += "MEDIUMINT";
-          if (type.get_precision$() != null)
-            ddl += "(" + type.get_precision$().getText() + ")";
+          final $xdl_mediumint type = ($xdl_mediumint)column;
+          ddl += vendor != DBVendor.DERBY ? "MEDIUMINT" : "INTEGER";
+          if (vendor != DBVendor.DERBY && type._precision$() != null)
+            ddl += "(" + type._precision$().text() + ")";
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
 
-          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
-            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
+          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_int) {
-          final $xdl_int<?> type = ($xdl_int<?>)column;
-          ddl += "INT";
-          if (type.get_precision$() != null)
-            ddl += "(" + type.get_precision$().getText() + ")";
+          final $xdl_int type = ($xdl_int)column;
+          ddl += vendor != DBVendor.DERBY ? "INT" : "INTEGER";
+          if (type._precision$() != null)
+            ddl += "(" + type._precision$().text() + ")";
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
 
-          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
-            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
+          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_bigint) {
-          final $xdl_bigint<?> type = ($xdl_bigint<?>)column;
+          final $xdl_bigint type = ($xdl_bigint)column;
           ddl += "BIGINT";
-          if (type.get_precision$() != null)
-            ddl += "(" + type.get_precision$().getText() + ")";
+          if (vendor != DBVendor.DERBY && type._precision$() != null)
+            ddl += "(" + type._precision$().text() + ")";
 
-          if (type.get_unsigned$() != null && type.get_unsigned$().getText())
+          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type.get_zerofill$() != null && type.get_zerofill$().getText())
+          if (type._zerofill$() != null && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
 
-          if (type.get_generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText().equals(type.get_generateOnInsert$().getText()))
-            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.getText();
+          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+            suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_date) {
-          final $xdl_date<?> type = ($xdl_date<?>)column;
+          final $xdl_date type = ($xdl_date)column;
           ddl += "DATE";
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_time) {
-          final $xdl_time<?> type = ($xdl_time<?>)column;
+          final $xdl_time type = ($xdl_time)column;
           ddl += "TIME";
-          if (type.get_default$() != null)
-            ddl += " TIME " + type.get_default$().getText();
+          if (type._default$() != null)
+            ddl += " TIME " + type._default$().text();
         }
         else if (column instanceof $xdl_dateTime) {
-          final $xdl_dateTime<?> type = ($xdl_dateTime<?>)column;
-          ddl += "DATETIME";
-          if (type.get_default$() != null)
-            ddl += " DEFAULT " + type.get_default$().getText();
+          final $xdl_dateTime type = ($xdl_dateTime)column;
+          ddl += vendor != DBVendor.DERBY ? "DATETIME" : "DATE";
+          if (type._default$() != null)
+            ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_blob) {
           ddl += "BLOB";
         }
 
-        if (column.get_null$() != null)
-          ddl += column.get_null$().getText() ? " NULL" : " NOT NULL";
+        if (column._null$() != null)
+          ddl += !column._null$().text() ? " NOT NULL" : (vendor != DBVendor.DERBY ? " NULL" : "");
 
         ddl += suffix;
       }
@@ -225,34 +282,34 @@ public class DDLTransform extends XDLTransformer {
     return ddl.substring(2);
   }
 
-  private String parseConstraints(final String tableName, final Map<String,$xdl_columnType<?>> columnNameToColumn, final $xdl_tableType<? extends ComplexType> table) {
+  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType table) {
     final StringBuffer contraintsBuffer = new StringBuffer();
-    if (table.get_constraints() != null) {
-      final $xdl_tableType._constraints constraints = table.get_constraints(0);
+    if (table._constraints() != null) {
+      final $xdl_tableType._constraints constraints = table._constraints(0);
       String uniqueString = "";
       int uniqueIndex = 1;
-      final List<$xdl_tableType._constraints._unique> uniques = constraints.get_unique();
+      final List<$xdl_tableType._constraints._unique> uniques = constraints._unique();
       if (uniques != null) {
         for (final $xdl_tableType._constraints._unique unique : uniques) {
-          final List<$xdl_tableType._constraints._unique._column> columns = unique.get_column();
+          final List<$xdl_tableType._constraints._unique._column> columns = unique._column();
           String columnsString = "";
           for (final $xdl_tableType._constraints._unique._column column : columns)
-            columnsString += ", " + column.get_name$().getText();
+            columnsString += ", " + column._name$().text();
 
-          uniqueString += ",\n  CONSTRAINT " + table.get_name$().getText() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
+          uniqueString += ",\n  CONSTRAINT " + table._name$().text() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
         }
 
         contraintsBuffer.append(uniqueString);
       }
 
-      final $xdl_tableType._constraints._primaryKey primaryKey = constraints.get_primaryKey(0);
+      final $xdl_tableType._constraints._primaryKey primaryKey = constraints._primaryKey(0);
       if (primaryKey != null) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
-        for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey.get_column()) {
-          final String primaryKeyColumn = primaryColumn.get_name$().getText();
-          final $xdl_columnType<?> column = columnNameToColumn.get(primaryKeyColumn);
-          if (column.get_null$().getText()) {
-            System.err.println("[ERROR] Column " + tableName + "." + column.get_name$() + " must be NOT NULL to be a PRIMARY KEY.");
+        for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey._column()) {
+          final String primaryKeyColumn = primaryColumn._name$().text();
+          final $xdl_columnType column = columnNameToColumn.get(primaryKeyColumn);
+          if (column._null$().text()) {
+            System.err.println("[ERROR] Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
             System.exit(1);
           }
 
@@ -263,40 +320,40 @@ public class DDLTransform extends XDLTransformer {
       }
     }
 
-    if (table.get_column() != null) {
-      for (final $xdl_columnType<?> column : table.get_column()) {
-        if (column.get_foreignKey() != null) {
-          final $xdl_columnType._foreignKey foreignKey = column.get_foreignKey(0);
-          contraintsBuffer.append(",\n  FOREIGN KEY (").append(column.get_name$().getText());
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
-          insertDependency(tableName, foreignKey.get_references$().getText());
-          contraintsBuffer.append(" (").append(foreignKey.get_column$().getText()).append(")");
-          if (foreignKey.get_onUpdate$() != null)
-            contraintsBuffer.append(" ON UPDATE ").append(foreignKey.get_onUpdate$().getText());
+    if (table._column() != null) {
+      for (final $xdl_columnType column : table._column()) {
+        if (column._foreignKey() != null) {
+          final $xdl_columnType._foreignKey foreignKey = column._foreignKey(0);
+          contraintsBuffer.append(",\n  FOREIGN KEY (").append(column._name$().text());
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
+          insertDependency(tableName, foreignKey._references$().text());
+          contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
+          if (foreignKey._onDelete$() != null)
+            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
 
-          if (foreignKey.get_onDelete$() != null)
-            contraintsBuffer.append(" ON DELETE ").append(foreignKey.get_onDelete$().getText());
+          if (vendor != DBVendor.DERBY && foreignKey._onUpdate$() != null)
+            contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
       }
 
-      if (table.get_constraints() != null && table.get_constraints(0).get_foreignKey() != null) {
-        for (final $xdl_tableType._constraints._foreignKey foreignKey : table.get_constraints(0).get_foreignKey()) {
+      if (table._constraints() != null && table._constraints(0)._foreignKey() != null) {
+        for (final $xdl_tableType._constraints._foreignKey foreignKey : table._constraints(0)._foreignKey()) {
           String columns = "";
           String referencedColumns = "";
-          for (final $xdl_tableType._constraints._foreignKey._column column : foreignKey.get_column()) {
-            columns += ", " + column.get_name$().getText();
-            referencedColumns += ", " + column.get_column$().getText();
+          for (final $xdl_tableType._constraints._foreignKey._column column : foreignKey._column()) {
+            columns += ", " + column._name$().text();
+            referencedColumns += ", " + column._column$().text();
           }
 
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey.get_references$().getText());
-          insertDependency(tableName, foreignKey.get_references$().getText());
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
+          insertDependency(tableName, foreignKey._references$().text());
           contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
-          if (foreignKey.get_onUpdate$() != null)
-            contraintsBuffer.append(" ON UPDATE ").append(foreignKey.get_onUpdate$().getText());
+          if (foreignKey._onDelete$() != null)
+            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
 
-          if (foreignKey.get_onDelete$() != null)
-            contraintsBuffer.append(" ON DELETE ").append(foreignKey.get_onDelete$().getText());
+          if (vendor != DBVendor.DERBY && foreignKey._onUpdate$() != null)
+            contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
       }
     }
@@ -305,19 +362,19 @@ public class DDLTransform extends XDLTransformer {
   }
   
   private static String getTriggerName(final String tableName, final $xdl_tableType._triggers._trigger trigger, final String action) {
-    return tableName + "_" + trigger.get_time$().getText().toLowerCase() + "_" + action.toLowerCase();
+    return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
   private String parseTriggers(final String tableName, final List<$xdl_tableType._triggers._trigger> triggers) {
     String buffer = "";
     for (final $xdl_tableType._triggers._trigger trigger : triggers) {
-      for (final String action : trigger.get_actions$().getText()) {
+      for (final String action : trigger._actions$().text()) {
         buffer += "\nDELIMITER |\n";
-        buffer += "CREATE TRIGGER " + DDLTransform.getTriggerName(tableName, trigger, action) + " " + trigger.get_time$().getText() + " " + action + " ON " + tableName + "\n";
+        buffer += "CREATE TRIGGER " + DDLTransform.getTriggerName(tableName, trigger, action) + " " + trigger._time$().text() + " " + action + " ON " + tableName + "\n";
         buffer += "  FOR EACH ROW\n";
         buffer += "  BEGIN\n";
         
-        final String text = trigger.getText().toString();
+        final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
         int i = 0, j = -1;
         while (i < text.length()) {
@@ -342,48 +399,53 @@ public class DDLTransform extends XDLTransformer {
     return buffer.substring(1);
   }
 
-  private void registerColumns(final Set<String> names, final Map<String,$xdl_columnType<?>> columnNameToColumn, final $xdl_tableType<? extends ComplexType> table) {
-    final String tableName = table.get_name$().getText();
+  private void registerColumns(final Set<String> names, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType table) {
+    final String tableName = table._name$().text();
     if (names.contains(tableName)) {
       System.err.println("[ERROR] Circular dependency detected for table: " + tableName);
       System.exit(1);
     }
 
     names.add(tableName);
-    if (table.get_column() != null) {
-      for (final $xdl_columnType<?> column : table.get_column()) {
-        final $xdl_columnType<?> existing = columnNameToColumn.get(column.get_name$().getText());
+    if (table._column() != null) {
+      for (final $xdl_columnType column : table._column()) {
+        final $xdl_columnType existing = columnNameToColumn.get(column._name$().text());
         if (existing != null && !(column instanceof $xdl_inherited)) {
-          System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column.get_name$().getText() + " only xsi:type=\"xdl:inherited\" is alowed when overriding a column.");
+          System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column._name$().text() + " only xsi:type=\"xdl:inherited\" is alowed when overriding a column.");
           System.exit(1);
         }
 
-        columnNameToColumn.put(column.get_name$().getText(), column);
+        columnNameToColumn.put(column._name$().text(), column);
       }
     }
   }
-
-  private String parseTable(final $xdl_tableType<? extends ComplexType> table) {
-    insertDependency(table.get_name$().getText(), null);
+  
+  private String parseTable(final DBVendor vendor, final $xdl_tableType table) {
+    insertDependency(table._name$().text(), null);
     // Next, register the column names to be referencable by the @primaryKey element
-    final Map<String,$xdl_columnType<?>> columnNameToColumn = new HashMap<String,$xdl_columnType<?>>();
+    final Map<String,$xdl_columnType> columnNameToColumn = new HashMap<String,$xdl_columnType>();
     final Set<String> names = new HashSet<String>();
     registerColumns(names, columnNameToColumn, table);
 
-    final String tableName = table.get_name$().getText();
+    final String tableName = table._name$().text();
     final StringBuffer tableBuffer = new StringBuffer();
     tableBuffer.append("CREATE TABLE ").append(tableName).append(" (\n");
-    tableBuffer.append(parseColumns(table));
-    tableBuffer.append(parseConstraints(tableName, columnNameToColumn, table));
+    tableBuffer.append(parseColumns(vendor, table));
+    tableBuffer.append(parseConstraints(vendor, tableName, columnNameToColumn, table));
     tableBuffer.append("\n);");
 
-    if (table.get_triggers() != null)
-      tableBuffer.append("\n").append(parseTriggers(tableName, table.get_triggers().get(0).get_trigger()));
+    if (table._triggers() != null)
+      tableBuffer.append("\n").append(parseTriggers(tableName, table._triggers().get(0)._trigger()));
     
     return tableBuffer.toString();
   }
 
   private final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
+  private List<String> sortedTableOrder;
+
+  public List<String> getSortedTableOrder() {
+    return sortedTableOrder;
+  }
 
   private void insertDependency(final String target, final String source) {
     Set<String> dependants = dependencyGraph.get(target);
@@ -397,35 +459,42 @@ public class DDLTransform extends XDLTransformer {
   private final Map<String,String> dropStatements = new HashMap<String,String>();
   private final Map<String,String> createStatements = new HashMap<String,String>();
 
-  private String createDropStatement(final $xdl_tableType<? extends ComplexType> table) {
+  private String createDropStatement(final $xdl_tableType table) {
     String buffer = "";
-    if (table.get_triggers() != null)
-      for (final $xdl_tableType._triggers._trigger trigger : table.get_triggers().get(0).get_trigger())
-        for (final String action : trigger.get_actions$().getText())
-          buffer += "\nDROP TRIGGER IF EXISTS " + DDLTransform.getTriggerName(table.get_name$().getText(), trigger, action) + ";";
+    if (table._triggers() != null)
+      for (final $xdl_tableType._triggers._trigger trigger : table._triggers().get(0)._trigger())
+        for (final String action : trigger._actions$().text())
+          buffer += "\nDROP TRIGGER IF EXISTS " + DDLTransform.getTriggerName(table._name$().text(), trigger, action) + ";";
 
-    buffer += "\nDROP TABLE IF EXISTS " + table.get_name$().getText() + ";";
+    buffer += "\nDROP TABLE IF EXISTS " + table._name$().text() + ";";
     return buffer.substring(1);
   }
 
-  private String parse() throws Exception {
+  public String parse(final DBVendor vendor) throws Exception {
+    final boolean createDropStatements = vendor != DBVendor.DERBY;
+    
     final Set<String> skipTables = new HashSet<String>();
-    for (final $xdl_tableType<? extends ComplexType> table : merged.get_table()) {
-      if (table.get_skip$().getText())
-        skipTables.add(table.get_name$().getText());
-      else if (!table.get_abstract$().getText())
-        dropStatements.put(table.get_name$().getText(), createDropStatement(table));
+    for (final $xdl_tableType table : merged._table()) {
+      if (table._skip$().text())
+        skipTables.add(table._name$().text());
+      else if (!table._abstract$().text() && createDropStatements)
+        dropStatements.put(table._name$().text(), createDropStatement(table));
     }
 
-    for (final $xdl_tableType<? extends ComplexType> table : merged.get_table())
-      if (!table.get_abstract$().getText())
-        createStatements.put(table.get_name$().getText(), parseTable(table));
+    for (final $xdl_tableType table : merged._table())
+      if (!table._abstract$().text())
+        createStatements.put(table._name$().text(), parseTable(vendor, table));
 
     final StringBuffer tablesBuffer = new StringBuffer();
-    final List<String> sortedTableOrder = TopologicalSort.sort(dependencyGraph);
-    for (int i = sortedTableOrder.size() - 1; 0 <= i; i--)
-      if (dropStatements.containsKey(sortedTableOrder.get(i)))
-        tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
+    if (vendor == DBVendor.DERBY) {
+      tablesBuffer.append("\nCREATE SCHEMA " + merged._name$().text() + ";\n");
+    }
+    
+    sortedTableOrder = TopologicalSort.sort(dependencyGraph);
+    if (createDropStatements)
+      for (int i = sortedTableOrder.size() - 1; 0 <= i; i--)
+        if (dropStatements.containsKey(sortedTableOrder.get(i)))
+          tablesBuffer.append("\n").append(dropStatements.get(sortedTableOrder.get(i)));
 
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))

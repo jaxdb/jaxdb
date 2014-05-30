@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
@@ -38,14 +39,14 @@ import javax.persistence.Query;
 
 @MappedSuperclass
 public abstract class Entity implements Cloneable {
-  private static final Map<Class,Class<?>> idClasses = new HashMap<Class,Class<?>>();
-  private static final Map<Class,Map<String,Method[]>> classToIdFieldMethods = new HashMap<Class,Map<String,Method[]>>();
-  private static final Map<Class,List<Field>> classToPrimaryKeyFields = new HashMap<Class,List<Field>>();
-  private static final Map<Class,Map<Method[],GenerateOnInsert.Strategy>> classToGenerateOnInsert = new HashMap<Class,Map<Method[],GenerateOnInsert.Strategy>>();
-  private static final Map<Class,Map<Method[],GenerateOnUpdate.Strategy>> classToGenerateOnUpdate = new HashMap<Class,Map<Method[],GenerateOnUpdate.Strategy>>();
-  private static final Map<Class,List<Field>> classToCheckValuesOnUpdate = new HashMap<Class,List<Field>>();
+  private static final Map<Class<?>,Class<?>> idClasses = new HashMap<Class<?>,Class<?>>();
+  private static final Map<Class<?>,Map<String,Method[]>> classToIdFieldMethods = new HashMap<Class<?>,Map<String,Method[]>>();
+  private static final Map<Class<?>,List<Field>> classToPrimaryKeyFields = new HashMap<Class<?>,List<Field>>();
+  private static final Map<Class<?>,Map<Method[],GenerateOnInsert.Strategy>> classToGenerateOnInsert = new HashMap<Class<?>,Map<Method[],GenerateOnInsert.Strategy>>();
+  private static final Map<Class<?>,Map<Method[],GenerateOnUpdate.Strategy>> classToGenerateOnUpdate = new HashMap<Class<?>,Map<Method[],GenerateOnUpdate.Strategy>>();
+  private static final Map<Class<?>,List<Field>> classToCheckValuesOnUpdate = new HashMap<Class<?>,List<Field>>();
 
-  protected static void init(final Class entityClass) {
+  protected static void init(final Class<?> entityClass) {
     final Map<String,Method[]> idFieldMethods = new HashMap<String,Method[]>();
     classToIdFieldMethods.put(entityClass, idFieldMethods);
 
@@ -82,7 +83,7 @@ public abstract class Entity implements Cloneable {
     final Map<Method[],GenerateOnInsert.Strategy> fieldToGenerateOnInsert = new HashMap<Method[],GenerateOnInsert.Strategy>();
     final Map<Method[],GenerateOnUpdate.Strategy> fieldToGenerateOnUpdate = new HashMap<Method[],GenerateOnUpdate.Strategy>();
     final List<Field> checkFieldsOnUpdate = new ArrayList<Field>();
-    Class cls = entityClass;
+    Class<?> cls = entityClass;
     do {
       for (final Field field : cls.getDeclaredFields()) {
         if (field.getAnnotation(Id.class) != null)
@@ -142,10 +143,10 @@ public abstract class Entity implements Cloneable {
           return false;
       }
     }
-    catch (InvocationTargetException e) {
+    catch (final InvocationTargetException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
 
@@ -183,10 +184,10 @@ public abstract class Entity implements Cloneable {
         }
       }
     }
-    catch (InvocationTargetException e) {
+    catch (final InvocationTargetException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
   }
@@ -246,10 +247,10 @@ public abstract class Entity implements Cloneable {
         }
       }
     }
-    catch (InvocationTargetException e) {
+    catch (final InvocationTargetException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
   }
@@ -270,10 +271,10 @@ public abstract class Entity implements Cloneable {
           failedFields.add(field);
       }
     }
-    catch (IllegalArgumentException e) {
+    catch (final IllegalArgumentException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
 
@@ -289,13 +290,13 @@ public abstract class Entity implements Cloneable {
       for (final Method[] idMethods : idFieldMethods.values())
         idMethods[1].invoke(id, idMethods[0].invoke(this));
     }
-    catch (InvocationTargetException e) {
+    catch (final InvocationTargetException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
-    catch (InstantiationException e) {
+    catch (final InstantiationException e) {
       throw new RuntimeException("Implementation issue", e);
     }
 
@@ -335,7 +336,7 @@ public abstract class Entity implements Cloneable {
         query.setParameter(i + 1, field.get(this));
       }
     }
-    catch (IllegalAccessException e) {
+    catch (final IllegalAccessException e) {
       throw new RuntimeException("Implementation issue", e);
     }
 
@@ -352,14 +353,14 @@ public abstract class Entity implements Cloneable {
 
   public void detach() {
     final Field[] fields = getClass().getDeclaredFields();
-    for (Field field : fields) {
+    for (final Field field : fields) {
       if (field.getName().startsWith("_persistence")) {
         field.setAccessible(true);
         if (!field.getType().isPrimitive()) {
           try {
             field.set(this, null);
           }
-          catch (IllegalAccessException e) {
+          catch (final IllegalAccessException e) {
             throw new RuntimeException("Implementation issue", e);
           }
         }
@@ -367,7 +368,7 @@ public abstract class Entity implements Cloneable {
       else if (Collection.class.isAssignableFrom(field.getType())) {
         field.setAccessible(true);
         try {
-          final Collection collection = (Collection)field.get(this);
+          final Collection<?> collection = (Collection<?>)field.get(this);
           if (collection == null || !collection.getClass().getName().startsWith("org.eclipse.persistence.indirection"))
             continue;
 
@@ -380,11 +381,11 @@ public abstract class Entity implements Cloneable {
           else if (collection instanceof Set) {
             final Field delegateField = collection.getClass().getDeclaredField("delegate");
             delegateField.setAccessible(true);
-            final Set delegate = (Set)delegateField.get(collection);
-            field.set(this, delegate != null && delegate.size() > 0 ? new HashSet(delegate) : null);
+            final Set<?> delegate = (Set<?>)delegateField.get(collection);
+            field.set(this, delegate != null && delegate.size() > 0 ? new HashSet<>(delegate) : null);
           }
         }
-        catch (Exception e) {
+        catch (final Exception e) {
           throw new RuntimeException("Implementation issue", e);
         }
       }
@@ -400,15 +401,15 @@ public abstract class Entity implements Cloneable {
     entityManager.refresh(attached);
 
     final Field[] fields = getClass().getDeclaredFields();
-    for (Field field : fields) {
+    for (final Field field : fields) {
       if (Collection.class.isAssignableFrom(field.getType())) {
         field.setAccessible(true);
         try {
-          final Collection collection = (Collection)field.get(attached);
+          final Collection<?> collection = (Collection<?>)field.get(attached);
           if (collection != null && collection.getClass().getName().startsWith("org.eclipse.persistence.indirection") && field.get(this) == null)
             field.set(this, collection);
         }
-        catch (Exception e) {
+        catch (final Exception e) {
           throw new RuntimeException("Implementation issue", e);
         }
       }

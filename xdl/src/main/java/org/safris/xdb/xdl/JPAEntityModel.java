@@ -22,10 +22,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.safris.xdb.xdl.JPAFieldModel;
-import org.safris.xdb.xdl.JPARelationModel;
 
-public class JPAEntityModel {
+public final class JPAEntityModel {
   private final String name;
   private final boolean isAbstract;
   private final String extendsName;
@@ -69,7 +67,7 @@ public class JPAEntityModel {
   public void addFieldModel(final JPAFieldModel fieldModel) {
     fieldModelsList.add(fieldModel);
     for (final JPAFieldModel.Column column : fieldModel.getColumns())
-      fieldModelsMap.put(column.getColumn().get_name$().getText(), fieldModel);
+      fieldModelsMap.put(column.getColumn()._name$().text(), fieldModel);
   }
 
   public LinkedHashSet<JPAFieldModel> getFieldModels() {

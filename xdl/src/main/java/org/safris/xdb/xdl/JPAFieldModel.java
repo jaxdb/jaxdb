@@ -19,10 +19,11 @@ package org.safris.xdb.xdl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.safris.xdb.xdr.GenerateOnInsert;
 import org.safris.xdb.xdr.GenerateOnUpdate;
 
-public class JPAFieldModel implements Cloneable {
+public final class JPAFieldModel implements Cloneable {
   private final JPAEntityModel entityModel;
   private final List<Column> columns;
   private JPAForeignKeyModel foreignKeyModel;
@@ -68,7 +69,7 @@ public class JPAFieldModel implements Cloneable {
     return foreignKeyModel;
   }
 
-  public void setPrimary(boolean isPrimary) {
+  public void setPrimary(final boolean isPrimary) {
     this.isPrimary = isPrimary;
   }
 
@@ -76,7 +77,7 @@ public class JPAFieldModel implements Cloneable {
     return isPrimary;
   }
 
-  public void setImmutable(boolean isImmutable) {
+  public void setImmutable(final boolean isImmutable) {
     this.isImmutable = isImmutable;
   }
 
@@ -111,14 +112,14 @@ public class JPAFieldModel implements Cloneable {
     return columns.hashCode() + (foreignKeyModel != null ? foreignKeyModel.hashCode() : -139625) + (isImmutable ? 324 : -7483);
   }
 
-  public static class Column {
-    private final $xdl_columnType<?> column;
+  public static final class Column {
+    private final $xdl_columnType column;
     private final boolean isPrimary;
     private final GenerateOnInsert.Strategy generationStrategy;
     private final GenerateOnUpdate.Strategy generateOnUpdate;
     private final List<String> checkOnUpdate;
 
-    public Column(final $xdl_columnType<?> column, final boolean isPrimary, final GenerateOnInsert.Strategy generateOnInsert, final GenerateOnUpdate.Strategy generateOnUpdate, final List<String> checkOnUpdate) {
+    public Column(final $xdl_columnType column, final boolean isPrimary, final GenerateOnInsert.Strategy generateOnInsert, final GenerateOnUpdate.Strategy generateOnUpdate, final List<String> checkOnUpdate) {
       this.column = column;
       this.isPrimary = isPrimary;
       this.generationStrategy = generateOnInsert;
@@ -126,7 +127,7 @@ public class JPAFieldModel implements Cloneable {
       this.checkOnUpdate = checkOnUpdate;
     }
 
-    public $xdl_columnType<?> getColumn() {
+    public $xdl_columnType getColumn() {
       return column;
     }
 
@@ -158,7 +159,7 @@ public class JPAFieldModel implements Cloneable {
     }
 
     public int hashCode() {
-      return column.get_name$().getText().hashCode() * (generationStrategy != null ? generationStrategy.hashCode() : -22378);
+      return column._name$().text().hashCode() * (generationStrategy != null ? generationStrategy.hashCode() : -22378);
     }
   }
 }
