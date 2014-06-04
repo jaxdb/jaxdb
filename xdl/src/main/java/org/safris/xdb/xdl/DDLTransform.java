@@ -107,16 +107,16 @@ public final class DDLTransform extends XDLTransformer {
         if (column instanceof $xdl_boolean) {
           final $xdl_boolean type = ($xdl_boolean)column;
           ddl += vendor != DBVendor.DERBY ? "BOOL" : "BOOLEAN";
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_varchar) {
           final $xdl_varchar type = ($xdl_varchar)column;
           ddl += "VARCHAR";
-          if (type._length$() != null)
+          if (!type._length$().isNull())
             ddl += "(" + type._length$().text() + ")";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT '" + type._default$().text() + "'";
         }
         else if (column instanceof $xdl_enum) {
@@ -125,13 +125,13 @@ public final class DDLTransform extends XDLTransformer {
           ddl += "(";
           if (vendor == DBVendor.DERBY) {
             int maxLength = 0;
-            if (type._values$() != null)
+            if (!type._values$().isNull())
               for (final String value : type._values$().text())
                 maxLength = Math.max(maxLength, value.length());
             
             ddl += String.valueOf(maxLength);
           }
-          else if (type._values$() != null) {
+          else if (!type._values$().isNull()) {
             String values = "";
             for (final String value : type._values$().text()) 
               values += ", '" + DDLTransform.toEnumValue(value) + "'";
@@ -140,139 +140,139 @@ public final class DDLTransform extends XDLTransformer {
           }
 
           ddl += ")";
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT '" + type._default$().text() + "'";
         }
         else if (column instanceof $xdl_decimal) {
           final $xdl_decimal type = ($xdl_decimal)column;
           ddl += "DECIMAL";
-          if (type._precision$() != null && type._decimal$() != null) {
+          if (!type._precision$().isNull() && !type._decimal$().isNull()) {
             DDLTransform.checkValidNumber(column._name$().text(), type._precision$().text(), type._decimal$().text());
             ddl += "(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
           }
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_tinyint) {
           final $xdl_tinyint type = ($xdl_tinyint)column;
           ddl += vendor != DBVendor.DERBY ? "TINYINT" : "SMALLINT";
-          if (type._precision$() != null && vendor != DBVendor.DERBY)
+          if (!type._precision$().isNull() && vendor != DBVendor.DERBY)
             ddl += "(" + type._precision$().text() + ")";
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
 
-          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (!type._generateOnInsert$().isNull() && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_smallint) {
           final $xdl_smallint type = ($xdl_smallint)column;
-          ddl += vendor != DBVendor.DERBY ? "SMALLINT" : type._unsigned$() != null && type._unsigned$().text() ? "INTEGER" : "SMALLINT";
-          if (type._precision$() != null && vendor != DBVendor.DERBY)
+          ddl += vendor != DBVendor.DERBY ? "SMALLINT" : !type._unsigned$().isNull() && type._unsigned$().text() ? "INTEGER" : "SMALLINT";
+          if (!type._precision$().isNull() && vendor != DBVendor.DERBY)
             ddl += "(" + type._precision$().text() + ")";
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
 
-          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (!type._generateOnInsert$().isNull() && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_mediumint) {
           final $xdl_mediumint type = ($xdl_mediumint)column;
           ddl += vendor != DBVendor.DERBY ? "MEDIUMINT" : "INTEGER";
-          if (vendor != DBVendor.DERBY && type._precision$() != null)
+          if (vendor != DBVendor.DERBY && !type._precision$().isNull())
             ddl += "(" + type._precision$().text() + ")";
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
 
-          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (!type._generateOnInsert$().isNull() && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_int) {
           final $xdl_int type = ($xdl_int)column;
           ddl += vendor != DBVendor.DERBY ? "INT" : "INTEGER";
-          if (type._precision$() != null)
+          if (!type._precision$().isNull())
             ddl += "(" + type._precision$().text() + ")";
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
 
-          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (!type._generateOnInsert$().isNull() && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_bigint) {
           final $xdl_bigint type = ($xdl_bigint)column;
           ddl += "BIGINT";
-          if (vendor != DBVendor.DERBY && type._precision$() != null)
+          if (vendor != DBVendor.DERBY && !type._precision$().isNull())
             ddl += "(" + type._precision$().text() + ")";
 
-          if (type._unsigned$() != null && type._unsigned$().text() && vendor != DBVendor.DERBY)
+          if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
             ddl += " UNSIGNED";
 
-          if (type._zerofill$() != null && type._zerofill$().text())
+          if (!type._zerofill$().isNull() && type._zerofill$().text())
             ddl += " ZEROFILL";
 
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
 
-          if (type._generateOnInsert$() != null && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (!type._generateOnInsert$().isNull() && $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text().equals(type._generateOnInsert$().text()))
             suffix += " " + $xdl_tinyint._generateOnInsert$.AUTO__INCREMENT.text();
         }
         else if (column instanceof $xdl_date) {
           final $xdl_date type = ($xdl_date)column;
           ddl += "DATE";
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_time) {
           final $xdl_time type = ($xdl_time)column;
           ddl += "TIME";
-          if (type._default$() != null)
-            ddl += " TIME " + type._default$().text();
+          if (!type._default$().isNull())
+            ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_dateTime) {
           final $xdl_dateTime type = ($xdl_dateTime)column;
           ddl += vendor != DBVendor.DERBY ? "DATETIME" : "DATE";
-          if (type._default$() != null)
+          if (!type._default$().isNull())
             ddl += " DEFAULT " + type._default$().text();
         }
         else if (column instanceof $xdl_blob) {
           ddl += "BLOB";
         }
 
-        if (column._null$() != null)
+        if (!column._null$().isNull())
           ddl += !column._null$().text() ? " NOT NULL" : (vendor != DBVendor.DERBY ? " NULL" : "");
 
         ddl += suffix;
@@ -303,7 +303,7 @@ public final class DDLTransform extends XDLTransformer {
       }
 
       final $xdl_tableType._constraints._primaryKey primaryKey = constraints._primaryKey(0);
-      if (primaryKey != null) {
+      if (!primaryKey.isNull()) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
         for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey._column()) {
           final String primaryKeyColumn = primaryColumn._name$().text();
@@ -328,10 +328,10 @@ public final class DDLTransform extends XDLTransformer {
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           insertDependency(tableName, foreignKey._references$().text());
           contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
-          if (foreignKey._onDelete$() != null)
+          if (!foreignKey._onDelete$().isNull())
             contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
 
-          if (vendor != DBVendor.DERBY && foreignKey._onUpdate$() != null)
+          if (vendor != DBVendor.DERBY && !foreignKey._onUpdate$().isNull())
             contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
       }
@@ -349,10 +349,10 @@ public final class DDLTransform extends XDLTransformer {
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           insertDependency(tableName, foreignKey._references$().text());
           contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
-          if (foreignKey._onDelete$() != null)
+          if (!foreignKey._onDelete$().isNull())
             contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
 
-          if (vendor != DBVendor.DERBY && foreignKey._onUpdate$() != null)
+          if (vendor != DBVendor.DERBY && !foreignKey._onUpdate$().isNull())
             contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
       }

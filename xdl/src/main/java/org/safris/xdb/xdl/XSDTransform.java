@@ -78,7 +78,7 @@ public final class XSDTransform extends XDLTransformer {
 
   private $xs_complexType parseTable(final $xdl_tableType table, $xs_complexType complexType) {
     final $xs_complexType retType = complexType;
-    if (table._extends$() != null) {
+    if (!table._extends$().isNull()) {
       final $xs_complexType._complexContent complexContent = new $xs_complexType._complexContent();
       complexType._complexContent(complexContent);
 
