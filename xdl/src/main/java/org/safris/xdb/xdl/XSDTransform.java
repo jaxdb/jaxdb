@@ -98,7 +98,7 @@ public final class XSDTransform extends XDLTransformer {
 
       if (column instanceof $xdl_enum) {
         final $xs_simpleType._restriction restriction = new $xs_simpleType._restriction();
-        restriction._base$(new $xs_simpleType._restriction._base$(new QName(NamespaceURI.XS.getNamespaceURI(), "NCName")));
+        restriction._base$(new $xs_simpleType._restriction._base$(new QName(NamespaceURI.XS.getNamespaceURI(), "string")));
         final List<String> values = (($xdl_enum)column)._values$().text();
         for (final String value : values) {
           final $xs_simpleType._restriction._enumeration enumeration = new $xs_simpleType._restriction._enumeration();
@@ -117,9 +117,11 @@ public final class XSDTransform extends XDLTransformer {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "boolean");
         else if (column instanceof $xdl_varchar)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "string");
-        else if (column instanceof $xdl_smallint)
+        else if (column instanceof $xdl_smallint || column instanceof $xdl_tinyint)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "short");
-        else if (column instanceof $xdl_int)
+        else if (column instanceof $xdl_decimal)
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), "double");
+        else if (column instanceof $xdl_int || column instanceof $xdl_mediumint)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "integer");
         else if (column instanceof $xdl_bigint)
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "long");
