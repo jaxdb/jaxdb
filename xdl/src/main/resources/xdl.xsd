@@ -24,7 +24,7 @@
   <xs:complexType name="columnType" abstract="true">
     <xs:sequence minOccurs="0">
       <xs:element name="documentation" type="xs:string" minOccurs="0"/>
-      <xs:element name="foreignKey" minOccurs="0">
+      <xs:element name="foreignKey" minOccurs="0" type="xdl:foreignKeyType">
         <xs:annotation>
           <xs:documentation>
             There is a great potential to be able to have schema validation on the content entered into this element.
@@ -32,17 +32,9 @@
             queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
           </xs:documentation>
         </xs:annotation>
-        <xs:complexType>
-          <xs:sequence minOccurs="0">
-            <xs:element name="join" type="xdl:joinType"/>
-          </xs:sequence>
-          <xs:attribute name="id" type="xs:string"/>
-          <xs:attribute name="references" type="xs:NCName" use="required"/>
-          <xs:attribute name="column" type="xs:NCName" use="required"/>
-          <xs:attribute name="onDelete" type="xdl:referentialAction" default="CASCADE"/>
-          <xs:attribute name="onUpdate" type="xdl:referentialAction" default="CASCADE"/>
-        </xs:complexType>
       </xs:element>
+      <xs:element name="index" minOccurs="0" type="xdl:indexType"/>
+      <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
     </xs:sequence>
     <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="null" type="xs:boolean" default="true"/>
@@ -57,6 +49,17 @@
         </xs:list>
       </xs:simpleType>
     </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="foreignKeyType">
+    <xs:sequence minOccurs="0">
+      <xs:element name="join" type="xdl:joinType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="references" type="xs:NCName" use="required"/>
+    <xs:attribute name="column" type="xs:NCName" use="required"/>
+    <xs:attribute name="onDelete" type="xdl:referentialAction" default="CASCADE"/>
+    <xs:attribute name="onUpdate" type="xdl:referentialAction" default="CASCADE"/>
   </xs:complexType>
 
   <xs:complexType name="joinType">
@@ -128,6 +131,22 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:complexType name="indexType">
+    <xs:attribute name="unique" type="xs:boolean" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="BTREE"/>
+          <xs:enumeration value="HASH"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="checkType">
+    <xs:attribute name="condition" type="xs:string" use="required"/>
+  </xs:complexType>
+  
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
@@ -174,17 +193,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="numeric">
-    <xs:complexContent>
-      <xs:extension base="xdl:columnType">
-        <xs:attribute name="points" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:float"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
@@ -192,7 +200,10 @@
         <xs:attribute name="decimal" type="xs:positiveInteger"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:float"/>
+        <xs:attribute name="default" type="xs:decimal"/>
+        <!-- TODO: Implement in DDL layer. -->
+        <xs:attribute name="min" type="xs:decimal"/>
+        <xs:attribute name="max" type="xs:decimal"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -236,6 +247,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -291,6 +303,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -346,6 +359,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -401,6 +415,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -456,6 +471,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -497,22 +513,27 @@
         <xs:attribute name="decimal" type="xs:positiveInteger"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:float"/>
+        <xs:attribute name="default" type="xs:decimal"/>
+        <!-- TODO: Implement in DDL layer. -->
+        <xs:attribute name="min" type="xs:decimal"/>
+        <xs:attribute name="max" type="xs:decimal"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="double">
+  <!--<xs:complexType name="double">
     <xs:complexContent>
       <xs:extension base="xdl:columnType">
         <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="decimal" type="xs:positiveInteger"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:float"/>
+        <xs:attribute name="default" type="xs:decimal"/>
+        <xs:attribute name="min" type="xs:decimal"/>
+        <xs:attribute name="max" type="xs:decimal"/>
       </xs:extension>
     </xs:complexContent>
-  </xs:complexType>
+  </xs:complexType>-->
 
   <xs:complexType name="date">
     <xs:complexContent>
@@ -626,19 +647,18 @@
             </xs:element>
             <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
               <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="column" maxOccurs="unbounded">
-                    <xs:complexType>
-                      <xs:attribute name="name" type="xdl:nameType" use="required"/>
-                      <xs:attribute name="column" type="xdl:nameType" use="required"/>
-                    </xs:complexType>
-                  </xs:element>
-                  <xs:element name="join" type="xdl:joinType"/>
-                </xs:sequence>
-                <xs:attribute name="id" type="xs:NCName"/>
-                <xs:attribute name="references" type="xs:NCName" use="required"/>
-                <xs:attribute name="onDelete" type="xdl:referentialAction" default="CASCADE"/>
-                <xs:attribute name="onUpdate" type="xdl:referentialAction" default="CASCADE"/>
+                <xs:complexContent>
+                  <xs:extension base="xdl:foreignKeyType">
+                    <xs:sequence>
+                      <xs:element name="column" maxOccurs="unbounded">
+                        <xs:complexType>
+                          <xs:attribute name="name" type="xdl:nameType" use="required"/>
+                          <xs:attribute name="column" type="xdl:nameType" use="required"/>
+                        </xs:complexType>
+                      </xs:element>
+                    </xs:sequence>
+                  </xs:extension>
+                </xs:complexContent>
               </xs:complexType>
             </xs:element>
             <xs:element name="autoIncrement" minOccurs="0">
@@ -684,11 +704,7 @@
                   <xs:attribute name="unique" type="xs:boolean" default="false"/>
                 </xs:complexType>
               </xs:element>
-              <xs:element name="check" minOccurs="0">
-                <xs:complexType>
-                  <xs:attribute name="condition" type="xs:string" use="required"/>
-                </xs:complexType>
-              </xs:element>
+              <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
             </xs:sequence>
           </xs:sequence>
         </xs:complexType>
@@ -729,13 +745,32 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="index" minOccurs="0">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="xdl:indexType">
+              <xs:sequence maxOccurs="unbounded">
+                <xs:element name="column">
+                  <xs:complexType>
+                    <xs:attribute name="name" type="xdl:nameType" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+        <xs:unique name="indexColumn">
+          <xs:selector xpath="./xdl:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
     </xs:sequence>
     <xs:attribute name="name" type="xdl:nameType" use="required"/>
     <xs:attribute name="abstract" type="xs:boolean" default="false"/>
     <xs:attribute name="extends" type="xs:NCName"/>
     <xs:attribute name="skip" type="xs:boolean" default="false"/>
   </xs:complexType>
-
+  
   <xs:complexType name="databaseType">
     <xs:sequence>
       <xs:element name="source" minOccurs="0" maxOccurs="unbounded">

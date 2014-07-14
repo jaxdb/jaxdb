@@ -331,7 +331,7 @@ public final class JPABeanTransform extends XDLTransformer {
             entityModel.addFieldModel(columnModel);
             fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(columnModel));
 
-            final $xdl_columnType._foreignKey foreignKey = column._foreignKey(0);
+            final $xdl_foreignKeyType foreignKey = column._foreignKey(0);
             final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey._id$() != null ? foreignKey._id$().text() : null, foreignKey._references$().text(), foreignKey._column$().text());
             foreignKeyModel.setJoin(foreignKey._join(0));
             if (foreignKeyModel.getInverseField() != null)

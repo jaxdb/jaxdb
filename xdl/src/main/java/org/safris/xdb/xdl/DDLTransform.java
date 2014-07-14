@@ -323,7 +323,7 @@ public final class DDLTransform extends XDLTransformer {
     if (table._column() != null) {
       for (final $xdl_columnType column : table._column()) {
         if (column._foreignKey() != null) {
-          final $xdl_columnType._foreignKey foreignKey = column._foreignKey(0);
+          final $xdl_foreignKeyType foreignKey = column._foreignKey(0);
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(column._name$().text());
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           insertDependency(tableName, foreignKey._references$().text());
@@ -355,6 +355,47 @@ public final class DDLTransform extends XDLTransformer {
           if (vendor != DBVendor.DERBY && !foreignKey._onUpdate$().isNull())
             contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
+      }
+      
+      for (final $xdl_columnType column : table._column()) {
+        String minCheck = null;
+        String maxCheck = null;
+        if (column instanceof $xdl_tinyint) {
+          final $xdl_tinyint type = ($xdl_tinyint)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        else if (column instanceof $xdl_smallint) {
+          final $xdl_smallint type = ($xdl_smallint)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        else if (column instanceof $xdl_mediumint) {
+          final $xdl_mediumint type = ($xdl_mediumint)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        else if (column instanceof $xdl_int) {
+          final $xdl_int type = ($xdl_int)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        else if (column instanceof $xdl_float) {
+          final $xdl_float type = ($xdl_float)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        else if (column instanceof $xdl_decimal) {
+          final $xdl_decimal type = ($xdl_decimal)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
+        
+        if (minCheck != null)
+          contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " >= " + minCheck + ")");
+
+        if (maxCheck != null)
+          contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " <= " + maxCheck + ")");
       }
     }
 
