@@ -20,35 +20,42 @@
   targetNamespace="http://xdb.safris.org/xdl.xsd"
   xmlns:xdl="http://xdb.safris.org/xdl.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-
-  <xs:complexType name="columnType" abstract="true">
-    <xs:sequence minOccurs="0">
-      <xs:element name="documentation" type="xs:string" minOccurs="0"/>
-      <xs:element name="foreignKey" minOccurs="0" type="xdl:foreignKeyType">
-        <xs:annotation>
-          <xs:documentation>
-            There is a great potential to be able to have schema validation on the content entered into this element.
-            However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
-            queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="index" minOccurs="0" type="xdl:indexType"/>
-      <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
-    </xs:sequence>
+  
+  <xs:complexType name="namedType">
     <xs:attribute name="name" type="xdl:nameType" use="required"/>
-    <xs:attribute name="null" type="xs:boolean" default="true"/>
-    <xs:attribute name="checkOnUpdate">
-      <xs:simpleType>
-        <xs:list>
+  </xs:complexType>
+  
+  <xs:complexType name="columnType" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="xdl:namedType">
+        <xs:sequence minOccurs="0">
+          <xs:element name="documentation" type="xs:string" minOccurs="0"/>
+          <xs:element name="foreignKey" minOccurs="0" type="xdl:foreignKeyType">
+            <xs:annotation>
+              <xs:documentation>
+                There is a great potential to be able to have schema validation on the content entered into this element.
+                However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
+                queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="index" minOccurs="0" type="xdl:indexType"/>
+          <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
+        </xs:sequence>
+        <xs:attribute name="null" type="xs:boolean" default="true"/>
+        <xs:attribute name="checkOnUpdate">
           <xs:simpleType>
-            <xs:restriction base="xs:NCName">
-              <xs:enumeration value="EQUALS"/>
-            </xs:restriction>
+            <xs:list>
+              <xs:simpleType>
+                <xs:restriction base="xs:NCName">
+                  <xs:enumeration value="EQUALS"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:list>
           </xs:simpleType>
-        </xs:list>
-      </xs:simpleType>
-    </xs:attribute>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="foreignKeyType">
@@ -88,8 +95,11 @@
   </xs:complexType>
 
   <xs:complexType name="fieldType">
-    <xs:attribute name="name" type="xdl:nameType" use="required"/>
-    <xs:attribute name="cascade" type="xdl:cascadeType" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="xdl:namedType">
+        <xs:attribute name="cascade" type="xdl:cascadeType" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="fieldRefType">
@@ -201,7 +211,6 @@
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:decimal"/>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min" type="xs:decimal"/>
         <xs:attribute name="max" type="xs:decimal"/>
       </xs:extension>
@@ -247,7 +256,6 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -303,7 +311,6 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -359,7 +366,6 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -415,7 +421,6 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -471,7 +476,6 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min">
           <xs:simpleType>
             <xs:restriction base="xs:integer">
@@ -514,7 +518,6 @@
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="zerofill" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:decimal"/>
-        <!-- TODO: Implement in DDL layer. -->
         <xs:attribute name="min" type="xs:decimal"/>
         <xs:attribute name="max" type="xs:decimal"/>
       </xs:extension>
@@ -625,180 +628,155 @@
   </xs:simpleType>
   
   <xs:complexType name="tableType">
-    <xs:sequence>
-      <xs:element name="column" type="xdl:columnType" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="constraints" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="primaryKey" minOccurs="0">
-              <xs:complexType>
-                <xs:sequence maxOccurs="unbounded">
-                  <xs:element name="column">
-                    <xs:complexType>
-                      <xs:attribute name="name" type="xdl:nameType" use="required"/>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-              </xs:complexType>
-              <xs:unique name="primaryKeyColumn">
-                <xs:selector xpath="./xdl:column"/>
-                <xs:field xpath="@name"/>
-              </xs:unique>
-            </xs:element>
-            <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:complexContent>
-                  <xs:extension base="xdl:foreignKeyType">
-                    <xs:sequence>
-                      <xs:element name="column" maxOccurs="unbounded">
-                        <xs:complexType>
-                          <xs:attribute name="name" type="xdl:nameType" use="required"/>
-                          <xs:attribute name="column" type="xdl:nameType" use="required"/>
-                        </xs:complexType>
-                      </xs:element>
+    <xs:complexContent>
+      <xs:extension base="xdl:namedType">
+        <xs:sequence>
+          <xs:element name="column" type="xdl:columnType" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="constraints" minOccurs="0">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="primaryKey" minOccurs="0">
+                  <xs:complexType>
+                    <xs:sequence maxOccurs="unbounded">
+                      <xs:element name="column" type="xdl:namedType"/>
                     </xs:sequence>
-                  </xs:extension>
-                </xs:complexContent>
-              </xs:complexType>
-            </xs:element>
-            <xs:element name="autoIncrement" minOccurs="0">
-              <xs:complexType>
-                <xs:attribute name="column" type="xs:NCName" use="required"/>
-              </xs:complexType>
-            </xs:element>
-            <xs:sequence maxOccurs="unbounded">
-              <xs:element name="unique" minOccurs="0">
-                <xs:complexType>
-                  <xs:sequence maxOccurs="unbounded">
-                    <xs:element name="column">
-                      <xs:complexType>
-                        <xs:attribute name="name" type="xdl:nameType" use="required"/>
-                      </xs:complexType>
-                    </xs:element>
-                  </xs:sequence>
-                </xs:complexType>
-                <xs:unique name="uniqueColumnName1">
-                  <xs:selector xpath="./xdl:column"/>
-                  <xs:field xpath="@name"/>
-                </xs:unique>
-              </xs:element>
-              <xs:element name="index" minOccurs="0">
-                <xs:complexType>
-                  <xs:all>
-                    <xs:element name="columns">
-                      <xs:complexType>
-                        <xs:sequence maxOccurs="unbounded">
-                          <xs:element name="column">
+                  </xs:complexType>
+                  <xs:unique name="primaryKeyColumn">
+                    <xs:selector xpath="./xdl:column"/>
+                    <xs:field xpath="@name"/>
+                  </xs:unique>
+                </xs:element>
+                <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:complexContent>
+                      <xs:extension base="xdl:foreignKeyType">
+                        <xs:sequence>
+                          <xs:element name="column" maxOccurs="unbounded">
                             <xs:complexType>
-                              <xs:attribute name="name" type="xdl:nameType" use="required"/>
+                              <xs:complexContent>
+                                <xs:extension base="xdl:namedType">
+                                  <xs:attribute name="column" type="xdl:nameType" use="required"/>
+                                </xs:extension>
+                              </xs:complexContent>
                             </xs:complexType>
                           </xs:element>
                         </xs:sequence>
-                      </xs:complexType>
-                      <xs:unique name="uniqueColumnName2">
-                        <xs:selector xpath="./xdl:column"/>
-                        <xs:field xpath="@name"/>
-                      </xs:unique>
-                    </xs:element>
-                  </xs:all>
-                  <xs:attribute name="unique" type="xs:boolean" default="false"/>
-                </xs:complexType>
-              </xs:element>
-              <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
-            </xs:sequence>
-          </xs:sequence>
-        </xs:complexType>
-        <xs:unique name="uniqueUniqueColumn">
-          <xs:selector xpath="./xdl:unique"/>
-          <xs:field xpath="@column"/>
-        </xs:unique>
-      </xs:element>
-      <xs:element name="relation" type="xdl:relationType" minOccurs="0"/>
-      <xs:element name="triggers" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="trigger">
-              <xs:complexType mixed="true">
-                <xs:attribute name="time" use="required">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:token">
-                      <xs:enumeration value="BEFORE"/>
-                      <xs:enumeration value="AFTER"/>
-                    </xs:restriction>
-                  </xs:simpleType>
-                </xs:attribute>
-                <xs:attribute name="actions" use="required">
-                  <xs:simpleType>
-                    <xs:list>
+                      </xs:extension>
+                    </xs:complexContent>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="autoIncrement" minOccurs="0">
+                  <xs:complexType>
+                    <xs:attribute name="column" type="xs:NCName" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+                <xs:sequence maxOccurs="unbounded">
+                  <xs:element name="unique" minOccurs="0">
+                    <xs:complexType>
+                      <xs:sequence maxOccurs="unbounded">
+                        <xs:element name="column" type="xdl:namedType"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                    <xs:unique name="uniqueColumnName1">
+                      <xs:selector xpath="./xdl:column"/>
+                      <xs:field xpath="@name"/>
+                    </xs:unique>
+                  </xs:element>
+                  <xs:element name="check" minOccurs="0" type="xdl:checkType"/>
+                </xs:sequence>
+              </xs:sequence>
+            </xs:complexType>
+            <xs:unique name="uniqueUniqueColumn">
+              <xs:selector xpath="./xdl:unique"/>
+              <xs:field xpath="@column"/>
+            </xs:unique>
+          </xs:element>
+          <xs:element name="relation" type="xdl:relationType" minOccurs="0"/>
+          <xs:element name="triggers" minOccurs="0" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence minOccurs="1" maxOccurs="unbounded">
+                <xs:element name="trigger">
+                  <xs:complexType mixed="true">
+                    <xs:attribute name="time" use="required">
                       <xs:simpleType>
                         <xs:restriction base="xs:token">
-                          <xs:enumeration value="INSERT"/>
-                          <xs:enumeration value="UPDATE"/>
-                          <xs:enumeration value="DELETE"/>
+                          <xs:enumeration value="BEFORE"/>
+                          <xs:enumeration value="AFTER"/>
                         </xs:restriction>
                       </xs:simpleType>
-                    </xs:list>
-                  </xs:simpleType>
-                </xs:attribute>
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="index" minOccurs="0">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="xdl:indexType">
-              <xs:sequence maxOccurs="unbounded">
-                <xs:element name="column">
-                  <xs:complexType>
-                    <xs:attribute name="name" type="xdl:nameType" use="required"/>
+                    </xs:attribute>
+                    <xs:attribute name="actions" use="required">
+                      <xs:simpleType>
+                        <xs:list>
+                          <xs:simpleType>
+                            <xs:restriction base="xs:token">
+                              <xs:enumeration value="INSERT"/>
+                              <xs:enumeration value="UPDATE"/>
+                              <xs:enumeration value="DELETE"/>
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:list>
+                      </xs:simpleType>
+                    </xs:attribute>
                   </xs:complexType>
                 </xs:element>
               </xs:sequence>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
-        <xs:unique name="indexColumn">
-          <xs:selector xpath="./xdl:column"/>
-          <xs:field xpath="@name"/>
-        </xs:unique>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="name" type="xdl:nameType" use="required"/>
-    <xs:attribute name="abstract" type="xs:boolean" default="false"/>
-    <xs:attribute name="extends" type="xs:NCName"/>
-    <xs:attribute name="skip" type="xs:boolean" default="false"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="index" minOccurs="0">
+            <xs:complexType>
+              <xs:complexContent>
+                <xs:extension base="xdl:indexType">
+                  <xs:sequence maxOccurs="unbounded">
+                    <xs:element name="column" type="xdl:namedType"/>
+                  </xs:sequence>
+                </xs:extension>
+              </xs:complexContent>
+            </xs:complexType>
+            <xs:unique name="indexColumn">
+              <xs:selector xpath="./xdl:column"/>
+              <xs:field xpath="@name"/>
+            </xs:unique>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+        <xs:attribute name="extends" type="xs:NCName"/>
+        <xs:attribute name="skip" type="xs:boolean" default="false"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="databaseType">
-    <xs:sequence>
-      <xs:element name="source" minOccurs="0" maxOccurs="unbounded">
-        <xs:complexType>
-          <xs:attribute name="xdb" type="xs:anyURI" use="required"/>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="table" type="xdl:tableType" minOccurs="0" maxOccurs="unbounded">
-        <!--<xs:unique name="primaryKey">
-          <xs:selector xpath="*"/>
-          <xs:field xpath="@primary"/>
-        </xs:unique>-->
-        <xs:key name="keyColumnName">
-          <xs:selector xpath="./xdl:column"/>
-          <xs:field xpath="@name"/>
-        </xs:key>
-        <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
-          <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
-          <xs:field xpath="@column | @name"/>
-        </xs:keyref>
-        <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
-          <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column"/>
-          <xs:field xpath="@name"/>
-        </xs:keyref>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="name" type="xdl:nameType" use="required"/>
-    <xs:attribute name="targetNamespace" type="xs:anyURI" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="xdl:namedType">
+        <xs:sequence>
+          <xs:element name="source" minOccurs="0" maxOccurs="unbounded">
+            <xs:complexType>
+              <xs:attribute name="xdb" type="xs:anyURI" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="table" type="xdl:tableType" minOccurs="0" maxOccurs="unbounded">
+            <!--<xs:unique name="primaryKey">
+              <xs:selector xpath="*"/>
+              <xs:field xpath="@primary"/>
+            </xs:unique>-->
+            <xs:key name="keyColumnName">
+              <xs:selector xpath="./xdl:column"/>
+              <xs:field xpath="@name"/>
+            </xs:key>
+            <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
+              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
+              <xs:field xpath="@column | @name"/>
+            </xs:keyref>
+            <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
+              <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="targetNamespace" type="xs:anyURI" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="database" type="xdl:databaseType">

@@ -84,14 +84,9 @@ public abstract class XDLTransformer {
       throw new RuntimeException(e);
     }
   }
-
-  protected final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
-
-  protected final xdl_database unmerged;
-  protected final xdl_database merged;
-
-  public XDLTransformer(final xdl_database database) {
-    this.unmerged = database;
+  
+  protected static xdl_database merge(final xdl_database database) {
+    final xdl_database merged;
     try {
       merged = (xdl_database)Bindings.clone(database);
     }
@@ -99,13 +94,24 @@ public abstract class XDLTransformer {
       throw new Error(e);
     }
 
+    final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
     // First, register the table names to be referencable by the @extends attribute
     for (final $xdl_tableType table : merged._table())
       tableNameToTable.put(table._name$().text(), table);
 
     for (final $xdl_tableType table : merged._table())
-      mergeTable(table);
+      mergeTable(table, tableNameToTable, new HashSet<String>());
+    
+    return merged;
+  }
 
+  protected final xdl_database unmerged;
+  protected final xdl_database merged;
+
+  public XDLTransformer(final xdl_database database) {
+    this.unmerged = database;
+    this.merged = merge(database);
+    
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
       for (final String error : errors)
@@ -124,9 +130,7 @@ public abstract class XDLTransformer {
     return errors;
   }
 
-  private final Set<String> mergedTables = new HashSet<String>();
-
-  private void mergeTable(final $xdl_tableType table) {
+  private static void mergeTable(final $xdl_tableType table, final Map<String,$xdl_tableType> tableNameToTable, final Set<String> mergedTables) {
     if (mergedTables.contains(table._name$().text()))
       return;
 
@@ -140,7 +144,7 @@ public abstract class XDLTransformer {
       System.exit(1);
     }
 
-    mergeTable(superTable);
+    mergeTable(superTable, tableNameToTable, mergedTables);
     if (superTable._column() != null) {
       if (table._column() != null) {
         for (int i = table._column().size() - 1; 0 <= i; i--)
@@ -150,8 +154,7 @@ public abstract class XDLTransformer {
         table._column().addAll(0, superTable._column());
       }
       else {
-        final List<$xdl_columnType> columns = superTable._column();
-        for (final $xdl_columnType column : columns)
+        for (final $xdl_columnType column : superTable._column())
           table._column(column);
       }
     }

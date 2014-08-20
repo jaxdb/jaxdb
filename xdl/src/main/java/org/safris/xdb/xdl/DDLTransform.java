@@ -24,6 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.safris.commons.util.TopologicalSort;
+import org.safris.xdb.xdl.$xdl_tableType._index;
+import org.safris.xml.generator.compiler.runtime.BindingList;
 
 public final class DDLTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
@@ -33,6 +35,21 @@ public final class DDLTransform extends XDLTransformer {
     }
       
     createDDL(new File(args[1]), "MySQL".equals(args[0]) ? DBVendor.MY_SQL : "Derby".equals(args[0]) ? DBVendor.DERBY : null, null);
+  }
+  
+  private static String getIndexName(final $xdl_tableType table, final _index index) {
+    return getIndexName(table, index, index._column().toArray(new $xdl_namedType[index._column().size()]));
+  }
+
+  private static String getIndexName(final $xdl_tableType table, final $xdl_indexType index, final $xdl_namedType ... column) {
+    if (index == null || column.length == 0)
+      return null;
+    
+    String name = "";
+    for (final $xdl_namedType c : column)
+      name += "_" + c._name$().text();
+
+    return "idx_" + table._name$().text() + name;
   }
 
   public static List<String> getTableOrder(final File xdlFile) {
@@ -291,9 +308,9 @@ public final class DDLTransform extends XDLTransformer {
       final List<$xdl_tableType._constraints._unique> uniques = constraints._unique();
       if (uniques != null) {
         for (final $xdl_tableType._constraints._unique unique : uniques) {
-          final List<$xdl_tableType._constraints._unique._column> columns = unique._column();
+          final List<$xdl_namedType> columns = unique._column();
           String columnsString = "";
-          for (final $xdl_tableType._constraints._unique._column column : columns)
+          for (final $xdl_namedType column : columns)
             columnsString += ", " + column._name$().text();
 
           uniqueString += ",\n  CONSTRAINT " + table._name$().text() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
@@ -305,7 +322,7 @@ public final class DDLTransform extends XDLTransformer {
       final $xdl_tableType._constraints._primaryKey primaryKey = constraints._primaryKey(0);
       if (!primaryKey.isNull()) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
-        for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : primaryKey._column()) {
+        for (final $xdl_namedType primaryColumn : primaryKey._column()) {
           final String primaryKeyColumn = primaryColumn._name$().text();
           final $xdl_columnType column = columnNameToColumn.get(primaryKeyColumn);
           if (column._null$().text()) {
@@ -469,16 +486,41 @@ public final class DDLTransform extends XDLTransformer {
     registerColumns(names, columnNameToColumn, table);
 
     final String tableName = table._name$().text();
-    final StringBuffer tableBuffer = new StringBuffer();
-    tableBuffer.append("CREATE TABLE ").append(tableName).append(" (\n");
-    tableBuffer.append(parseColumns(vendor, table));
-    tableBuffer.append(parseConstraints(vendor, tableName, columnNameToColumn, table));
-    tableBuffer.append("\n);");
+    final StringBuffer buffer = new StringBuffer();
+    buffer.append("CREATE TABLE ").append(tableName).append(" (\n");
+    buffer.append(parseColumns(vendor, table));
+    buffer.append(parseConstraints(vendor, tableName, columnNameToColumn, table));
+    buffer.append("\n);");
 
     if (table._triggers() != null)
-      tableBuffer.append("\n").append(parseTriggers(tableName, table._triggers().get(0)._trigger()));
+      buffer.append("\n").append(parseTriggers(tableName, table._triggers().get(0)._trigger()));
     
-    return tableBuffer.toString();
+    return buffer.toString();
+  }
+  
+  private static String csvNames(final BindingList<$xdl_namedType> names) {
+    if (names.size() == 0)
+      return "";
+    
+    String csv = "";
+    for (final $xdl_namedType name : names)
+      csv += ", " + name._name$().text();
+    
+    return csv.length() > 0 ? csv.substring(2) : csv;
+  }
+  
+  private String parseIndexes(final $xdl_tableType table) {
+    String buffer = "";
+    if (table._index() != null)
+      for (final _index index : table._index())
+        buffer += "\nCREATE " + (!index._unique$().isNull() && index._unique$().text() ? "UNIQUE " : "") + "INDEX " + getIndexName(table, index) + " USING " + index._type$().text() + " ON " + table._name$().text() + " (" + csvNames(index._column()) + ");";
+
+    if (table._column() != null)
+      for (final $xdl_columnType column : table._column())
+        if (column._index() != null)
+          buffer += "\nCREATE " + (!column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "") + "INDEX " + getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ");";
+    
+    return buffer;
   }
 
   private final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
@@ -498,16 +540,26 @@ public final class DDLTransform extends XDLTransformer {
   }
 
   private final Map<String,String> dropStatements = new HashMap<String,String>();
-  private final Map<String,String> createStatements = new HashMap<String,String>();
+  private final Map<String,String> createTableStatements = new HashMap<String,String>();
+  private final Map<String,String> createIndexStatements = new HashMap<String,String>();
 
   private String createDropStatement(final $xdl_tableType table) {
     String buffer = "";
+    if (table._index() != null)
+      for (final _index index : table._index())
+        buffer += "\nDROP INDEX " + getIndexName(table, index) + " ON " + table._name$().text() + ";";
+
+    if (table._column() != null)
+      for (final $xdl_columnType column : table._column())
+        if (column._index() != null)
+          buffer += "\nDROP INDEX " + getIndexName(table, column._index(0), column) + " ON " + table._name$().text() + ";";
+    
     if (table._triggers() != null)
       for (final $xdl_tableType._triggers._trigger trigger : table._triggers().get(0)._trigger())
         for (final String action : trigger._actions$().text())
           buffer += "\nDROP TRIGGER IF EXISTS " + DDLTransform.getTriggerName(table._name$().text(), trigger, action) + ";";
 
-    buffer += "\nDROP TABLE IF EXISTS " + table._name$().text() + ";";
+    buffer += "\nDROP TABLE IF EXISTS " + table._name$().text() + ";\n";
     return buffer.substring(1);
   }
 
@@ -515,21 +567,23 @@ public final class DDLTransform extends XDLTransformer {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
     
     final Set<String> skipTables = new HashSet<String>();
-    for (final $xdl_tableType table : merged._table()) {
+    for (final $xdl_tableType table : merged._table())
       if (table._skip$().text())
         skipTables.add(table._name$().text());
       else if (!table._abstract$().text() && createDropStatements)
         dropStatements.put(table._name$().text(), createDropStatement(table));
-    }
 
     for (final $xdl_tableType table : merged._table())
       if (!table._abstract$().text())
-        createStatements.put(table._name$().text(), parseTable(vendor, table));
+        createTableStatements.put(table._name$().text(), parseTable(vendor, table));
+
+    for (final $xdl_tableType table : merged._table())
+      if (!table._abstract$().text())
+        createIndexStatements.put(table._name$().text(), parseIndexes(table));
 
     final StringBuffer tablesBuffer = new StringBuffer();
-    if (vendor == DBVendor.DERBY) {
+    if (vendor == DBVendor.DERBY)
       tablesBuffer.append("\nCREATE SCHEMA " + merged._name$().text() + ";\n");
-    }
     
     sortedTableOrder = TopologicalSort.sort(dependencyGraph);
     if (createDropStatements)
@@ -539,7 +593,11 @@ public final class DDLTransform extends XDLTransformer {
 
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))
-        tablesBuffer.append("\n").append(createStatements.get(tableName));
+        tablesBuffer.append("\n").append(createTableStatements.get(tableName));
+    
+    for (final String tableName : sortedTableOrder)
+      if (!skipTables.contains(tableName))
+        tablesBuffer.append("\n").append(createIndexStatements.get(tableName));
 
     return tablesBuffer.substring(1);
   }

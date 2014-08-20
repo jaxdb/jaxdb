@@ -161,55 +161,55 @@ public final class JPABeanTransform extends XDLTransformer {
         columnsBuffer.append("  @").append(Enumerated.class.getName()).append("(").append(EnumType.class.getName()).append(".STRING)\n");
       }
 
-      columnDef = (($xdl_enum)column)._default$() != null ? enumName + "." + (($xdl_enum)column)._default$().text().toUpperCase() : null;
+      columnDef = (($xdl_enum)column)._default$().isNull() ? enumName + "." + (($xdl_enum)column)._default$().text().toUpperCase() : null;
     }
     else if (column instanceof $xdl_boolean) {
       columnType = Boolean.class.getName();
-      columnDef = (($xdl_boolean)column)._default$() != null ? String.valueOf((($xdl_boolean)column)._default$().text()) : null;
+      columnDef = !(($xdl_boolean)column)._default$().isNull() ? String.valueOf((($xdl_boolean)column)._default$().text()) : null;
     }
     else if (column instanceof $xdl_varchar) {
       columnType = String.class.getName();
-      columnDef = (($xdl_varchar)column)._default$() != null ? "\"" + (($xdl_varchar)column)._default$().text() + "\"" : null;
+      columnDef = !(($xdl_varchar)column)._default$().isNull() ? "\"" + (($xdl_varchar)column)._default$().text() + "\"" : null;
     }
     else if (column instanceof $xdl_decimal) {
       columnType = Double.class.getName();
-      columnDef = (($xdl_decimal)column)._default$() != null ? (($xdl_decimal)column)._default$().text() + "D" : null;
+      columnDef = !(($xdl_decimal)column)._default$().isNull() ? (($xdl_decimal)column)._default$().text() + "D" : null;
     }
     else if (column instanceof $xdl_tinyint) {
       columnType = Short.class.getName();
-      columnDef = (($xdl_tinyint)column)._default$() != null ? "(short)" + (($xdl_tinyint)column)._default$().text() : null;
+      columnDef = !(($xdl_tinyint)column)._default$().isNull() ? "(short)" + (($xdl_tinyint)column)._default$().text() : null;
     }
     else if (column instanceof $xdl_smallint) {
       columnType = Integer.class.getName();
-      columnDef = (($xdl_smallint)column)._default$() != null ? String.valueOf((($xdl_smallint)column)._default$().text()) : null;
+      columnDef = !(($xdl_smallint)column)._default$().isNull() ? String.valueOf((($xdl_smallint)column)._default$().text()) : null;
     }
     else if (column instanceof $xdl_mediumint) {
       columnType = Integer.class.getName();
-      columnDef = (($xdl_mediumint)column)._default$() != null ? String.valueOf((($xdl_mediumint)column)._default$().text()) : null;
+      columnDef = !(($xdl_mediumint)column)._default$().isNull() ? String.valueOf((($xdl_mediumint)column)._default$().text()) : null;
     }
     else if (column instanceof $xdl_int) {
       columnType = Long.class.getName();
-      columnDef = (($xdl_int)column)._default$() != null ? String.valueOf((($xdl_int)column)._default$().text()) + "L" : null;
+      columnDef = !(($xdl_int)column)._default$().isNull() ? String.valueOf((($xdl_int)column)._default$().text()) + "L" : null;
     }
     else if (column instanceof $xdl_bigint) {
       columnType = BigInteger.class.getName();
-      columnDef = (($xdl_bigint)column)._default$() != null ? "new " + BigInteger.class.getName() + "(\"" + String.valueOf((($xdl_bigint)column)._default$().text()) + "\")" : null;
+      columnDef = !(($xdl_bigint)column)._default$().isNull() ? "new " + BigInteger.class.getName() + "(\"" + String.valueOf((($xdl_bigint)column)._default$().text()) + "\")" : null;
     }
     else if (column instanceof $xdl_date) {
       columnType = Date.class.getName();
-      columnDef = (($xdl_date)column)._default$() != null ? String.valueOf((($xdl_date)column)._default$().text()) : null;
+      columnDef = !(($xdl_date)column)._default$().isNull() ? String.valueOf((($xdl_date)column)._default$().text()) : null;
       if (columnsBuffer != null)
         columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".DATE)");
     }
     else if (column instanceof $xdl_time) {
       columnType = Date.class.getName();
-      columnDef = (($xdl_time)column)._default$() != null ? String.valueOf((($xdl_time)column)._default$().text()) : null;
+      columnDef = !(($xdl_time)column)._default$().isNull() ? String.valueOf((($xdl_time)column)._default$().text()) : null;
       if (columnsBuffer != null)
         columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)");
     }
     else if (column instanceof $xdl_dateTime) {
       columnType = Date.class.getName();
-      columnDef = (($xdl_dateTime)column)._default$() != null ? String.valueOf((($xdl_dateTime)column)._default$().text()) : null;
+      columnDef = !(($xdl_dateTime)column)._default$().isNull() ? String.valueOf((($xdl_dateTime)column)._default$().text()) : null;
       if (columnsBuffer != null)
         columnsBuffer.append("\n  @").append(Temporal.class.getName()).append("(").append(TemporalType.class.getName()).append(".TIMESTAMP)");
     }
@@ -239,7 +239,7 @@ public final class JPABeanTransform extends XDLTransformer {
       final Map<String,$xdl_columnType> primaryColumns = new HashMap<String,$xdl_columnType>();
       tableNameToPrimatyColumnNames.put(table._name$().text(), primaryColumns);
       if (table._constraints() != null && table._constraints(0)._primaryKey() != null) {
-        for (final $xdl_tableType._constraints._primaryKey._column primaryColumn : table._constraints(0)._primaryKey(0)._column())
+        for (final $xdl_namedType primaryColumn : table._constraints(0)._primaryKey(0)._column())
           primaryColumnNames.add(primaryColumn._name$().text());
 
         for (final $xdl_columnType column : table._column())
@@ -247,7 +247,7 @@ public final class JPABeanTransform extends XDLTransformer {
             primaryColumns.put(column._name$().text(), column);
       }
 
-      xdlModel.addEntity(new JPAEntityModel(table._name$().text(), table._abstract$().text(), table._extends$() != null ? table._extends$().text() : null, primaryColumnNames));
+      xdlModel.addEntity(new JPAEntityModel(table._name$().text(), table._abstract$().text(), !table._extends$().isNull() ? table._extends$().text() : null, primaryColumnNames));
     }
 
     // Phase 2: Determine all foreign keys per table, and instantiate all FieldModel objects
@@ -268,55 +268,55 @@ public final class JPABeanTransform extends XDLTransformer {
           final String generateOnUpdate;
           if (column instanceof $xdl_varchar) {
             final $xdl_varchar varchar = ($xdl_varchar)column;
-            generateOnInsert = varchar._generateOnInsert$() != null ? varchar._generateOnInsert$().text() : null;
-            generateOnUpdate = varchar._generateOnUpdate$() != null ? varchar._generateOnUpdate$().text() : null;
+            generateOnInsert = !varchar._generateOnInsert$().isNull() ? varchar._generateOnInsert$().text() : null;
+            generateOnUpdate = !varchar._generateOnUpdate$().isNull() ? varchar._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_date) {
             final $xdl_date date = ($xdl_date)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_time) {
             final $xdl_time time = ($xdl_time)column;
-            generateOnInsert = time._generateOnInsert$() != null ? time._generateOnInsert$().text() : null;
-            generateOnUpdate = time._generateOnUpdate$() != null ? time._generateOnUpdate$().text() : null;
+            generateOnInsert = !time._generateOnInsert$().isNull() ? time._generateOnInsert$().text() : null;
+            generateOnUpdate = !time._generateOnUpdate$().isNull() ? time._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_dateTime) {
             final $xdl_dateTime dateTime = ($xdl_dateTime)column;
-            generateOnInsert = dateTime._generateOnInsert$() != null ? dateTime._generateOnInsert$().text() : null;
-            generateOnUpdate = dateTime._generateOnUpdate$() != null ? dateTime._generateOnUpdate$().text() : null;
+            generateOnInsert = !dateTime._generateOnInsert$().isNull() ? dateTime._generateOnInsert$().text() : null;
+            generateOnUpdate = !dateTime._generateOnUpdate$().isNull() ? dateTime._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_tinyint) {
             final $xdl_tinyint date = ($xdl_tinyint)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_smallint) {
             final $xdl_smallint date = ($xdl_smallint)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_mediumint) {
             final $xdl_mediumint date = ($xdl_mediumint)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_int) {
             final $xdl_int date = ($xdl_int)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else if (column instanceof $xdl_bigint) {
             final $xdl_bigint date = ($xdl_bigint)column;
-            generateOnInsert = date._generateOnInsert$() != null ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = date._generateOnUpdate$() != null ? date._generateOnUpdate$().text() : null;
+            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
+            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
           else {
             generateOnInsert = null;
             generateOnUpdate = null;
           }
 
-          final List<String> checkOnUpdate = column._checkOnUpdate$() != null ? column._checkOnUpdate$().text() : null;
+          final List<String> checkOnUpdate = !column._checkOnUpdate$().isNull() ? column._checkOnUpdate$().text() : null;
 
           final JPAFieldModel.Column fieldColumn = new JPAFieldModel.Column(column, primaryColumns.containsKey(column._name$().text()), generateOnInsert != null && !"AUTO_INCREMENT".equals(generateOnInsert) ? GenerateOnInsert.Strategy.valueOf(generateOnInsert) : null, generateOnUpdate != null ? GenerateOnUpdate.Strategy.valueOf(generateOnUpdate) : null, checkOnUpdate);
           final JPAFieldModel fieldModel = new JPAFieldModel(entityModel, fieldColumn);
@@ -332,7 +332,7 @@ public final class JPABeanTransform extends XDLTransformer {
             fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(columnModel));
 
             final $xdl_foreignKeyType foreignKey = column._foreignKey(0);
-            final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey._id$() != null ? foreignKey._id$().text() : null, foreignKey._references$().text(), foreignKey._column$().text());
+            final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, !foreignKey._id$().isNull() ? foreignKey._id$().text() : null, foreignKey._references$().text(), foreignKey._column$().text());
             foreignKeyModel.setJoin(foreignKey._join(0));
             if (foreignKeyModel.getInverseField() != null)
               xdlModel.registerInverseField(foreignKey._references$().text(), foreignKeyModel.getInverseField());
@@ -365,7 +365,7 @@ public final class JPABeanTransform extends XDLTransformer {
             fieldModel.setRealFieldModels(realFieldModels);
             entityModel.addFieldModel(fieldModel);
 
-            final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, foreignKey._id$() != null ? foreignKey._id$().text() : null, foreignKey._references$().text(), referencedColumnNames);
+            final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, !foreignKey._id$().isNull() ? foreignKey._id$().text() : null, foreignKey._references$().text(), referencedColumnNames);
             foreignKeyModel.setJoin(foreignKey._join(0));
             if (foreignKeyModel.getInverseField() != null)
               xdlModel.registerInverseField(foreignKey._references$().text(), foreignKeyModel.getInverseField());

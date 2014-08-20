@@ -32,22 +32,76 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xdb</artifactId>
+        <version>${dev:org.safris.maven.plugin.xdb}</version>
+        <executions>
+          <execution>
+            <id>xdb</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>ddl</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+                <destdir>${project.build.directory}/generated-test-resources/xdl</destdir>
+                <schemas>
+                  <schema>${basedir}/src/test/resources/entity.xdl</schema>
+                </schemas>
+              </manifest>
+            </configuration>
+          </execution>
+          <!--<execution>
+            <id>sources</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>jpa</goal>
+            </goals>
+            <configuration>
+              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+                <destdir>${project.build.directory}/generated-test-sources/xdl</destdir>
+                <schemas>
+                  <schema>${basedir}/src/test/resources/xdl/entity.xdl</schema>
+                </schemas>
+              </manifest>
+            </configuration>
+          </execution>-->
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.safris.maven.plugin.xml</groupId>
         <artifactId>binding</artifactId>
         <version>${dev:org.safris.maven.plugin.xml.binding}</version>
         <executions>
           <execution>
+            <id>generate-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
+            <configuration>
+              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+                <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${basedir}/src/main/resources/manifest.xml"/>
+              </manifest>
+            </configuration>
+          </execution>
+          <execution>
+            <id>generate-test-sources</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+                <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xmlbinding</destdir>
+                <schemas>
+                  <schema>${basedir}/target/generated-test-resources/xdl/livecare.xsd</schema>
+                </schemas>
+              </manifest>
+            </configuration>
           </execution>
         </executions>
-        <configuration>
-          <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-            <link xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="${basedir}/src/main/resources/manifest.xml"/>
-          </manifest>
-        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -73,8 +127,8 @@
       <version>${dev:org.safris.commons.jci}</version>
     </dependency>
     <dependency>
-      <groupId>javax</groupId> 
-      <artifactId>javaee-api</artifactId>
+      <groupId>javax.persistence</groupId>
+      <artifactId>persistence-api</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
