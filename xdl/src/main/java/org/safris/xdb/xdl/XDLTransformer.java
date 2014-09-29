@@ -99,8 +99,9 @@ public abstract class XDLTransformer {
     for (final $xdl_tableType table : merged._table())
       tableNameToTable.put(table._name$().text(), table);
 
+    final Set<String> mergedTables = new HashSet<String>();
     for (final $xdl_tableType table : merged._table())
-      mergeTable(table, tableNameToTable, new HashSet<String>());
+      mergeTable(table, tableNameToTable, mergedTables);
     
     return merged;
   }
@@ -138,6 +139,10 @@ public abstract class XDLTransformer {
     if (table._extends$().isNull())
       return;
 
+    if (table._name$().text().equals("invitation")) {
+      int idsao = 0;
+    }
+    
     final $xdl_tableType superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
       System.err.println("[ERROR] Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());

@@ -457,14 +457,14 @@ public final class DDLTransform extends XDLTransformer {
     return buffer.substring(1);
   }
 
-  private void registerColumns(final Set<String> names, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType table) {
+  private void registerColumns(final Set<String> tableNames, final Map<String,$xdl_columnType> columnNameToColumn, final $xdl_tableType table) {
     final String tableName = table._name$().text();
-    if (names.contains(tableName)) {
+    if (tableNames.contains(tableName)) {
       System.err.println("[ERROR] Circular dependency detected for table: " + tableName);
       System.exit(1);
     }
 
-    names.add(tableName);
+    tableNames.add(tableName);
     if (table._column() != null) {
       for (final $xdl_columnType column : table._column()) {
         final $xdl_columnType existing = columnNameToColumn.get(column._name$().text());
@@ -478,12 +478,11 @@ public final class DDLTransform extends XDLTransformer {
     }
   }
   
-  private String parseTable(final DBVendor vendor, final $xdl_tableType table) {
+  private String parseTable(final DBVendor vendor, final $xdl_tableType table, final Set<String> tableNames) {
     insertDependency(table._name$().text(), null);
     // Next, register the column names to be referencable by the @primaryKey element
     final Map<String,$xdl_columnType> columnNameToColumn = new HashMap<String,$xdl_columnType>();
-    final Set<String> names = new HashSet<String>();
-    registerColumns(names, columnNameToColumn, table);
+    registerColumns(tableNames, columnNameToColumn, table);
 
     final String tableName = table._name$().text();
     final StringBuffer buffer = new StringBuffer();
@@ -573,9 +572,10 @@ public final class DDLTransform extends XDLTransformer {
       else if (!table._abstract$().text() && createDropStatements)
         dropStatements.put(table._name$().text(), createDropStatement(table));
 
+    final Set<String> tableNames = new HashSet<String>();
     for (final $xdl_tableType table : merged._table())
       if (!table._abstract$().text())
-        createTableStatements.put(table._name$().text(), parseTable(vendor, table));
+        createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
     for (final $xdl_tableType table : merged._table())
       if (!table._abstract$().text())
