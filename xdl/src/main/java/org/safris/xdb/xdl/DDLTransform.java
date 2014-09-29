@@ -469,7 +469,7 @@ public final class DDLTransform extends XDLTransformer {
       for (final $xdl_columnType column : table._column()) {
         final $xdl_columnType existing = columnNameToColumn.get(column._name$().text());
         if (existing != null && !(column instanceof $xdl_inherited)) {
-          System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column._name$().text() + " only xsi:type=\"xdl:inherited\" is alowed when overriding a column.");
+          System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + column._name$().text() + " only xsi:type=\"xdl:inherited\" is allowed when overriding a column.");
           System.exit(1);
         }
 
