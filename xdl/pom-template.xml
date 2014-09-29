@@ -31,7 +31,7 @@
   <name>${project.groupId}.${project.artifactId}</name>
   <build>
     <plugins>
-      <plugin>
+      <!--<plugin>
         <groupId>org.safris.maven.plugin</groupId>
         <artifactId>xdb</artifactId>
         <version>${dev:org.safris.maven.plugin.xdb}</version>
@@ -52,7 +52,7 @@
               </manifest>
             </configuration>
           </execution>
-          <!--<execution>
+          <execution>
             <id>sources</id>
             <phase>generate-test-sources</phase>
             <goals>
@@ -66,9 +66,9 @@
                 </schemas>
               </manifest>
             </configuration>
-          </execution>-->
+          </execution>
         </executions>
-      </plugin>
+      </plugin>-->
       <plugin>
         <groupId>org.safris.maven.plugin.xml</groupId>
         <artifactId>binding</artifactId>
