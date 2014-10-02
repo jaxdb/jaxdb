@@ -1,4 +1,4 @@
-package org.safris.xdb.xdl;
+package org.safris.xdb.xde;
 
 import static org.junit.Assert.assertEquals;
 
@@ -8,7 +8,8 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.safris.commons.lang.Resources;
-import org.safris.xdb.xdl.EntityBridgeUtil.Assignment;
+import org.safris.xdb.xde.EntityBridgeUtil.Assignment;
+import org.safris.xdb.xdl.xdl_database;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.xml.sax.InputSource;
 

@@ -26,28 +26,50 @@
     <version>${dev:org.safris.xdb}</version>
   </parent>
   <groupId>org.safris.xdb</groupId>
-  <artifactId>xdl</artifactId>
-  <version>${dev:org.safris.xdb.xdl}</version>
+  <artifactId>xde</artifactId>
+  <version>${dev:org.safris.xdb.xde}</version>
   <name>${project.groupId}.${project.artifactId}</name>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xdb</artifactId>
+        <version>${dev:org.safris.maven.plugin.xdb}</version>
+        <executions>
+          <execution>
+            <id>xdb</id>
+            <phase>generate-test-sources</phase>
+            <goals>
+              <goal>ddl</goal>
+              <goal>xsd</goal>
+            </goals>
+            <configuration>
+              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+                <destdir>${project.build.directory}/generated-test-resources/xdl</destdir>
+                <schemas>
+                  <schema>${basedir}/src/test/resources/entity.xdl</schema>
+                </schemas>
+              </manifest>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.safris.maven.plugin.xml</groupId>
         <artifactId>binding</artifactId>
         <version>${dev:org.safris.maven.plugin.xml.binding}</version>
         <executions>
           <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <id>generate-test-sources</id>
+            <phase>generate-test-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
             <configuration>
               <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-                <destdir explodeJars="true">${project.build.directory}/generated-sources/xmlbinding</destdir>
+                <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xmlbinding</destdir>
                 <schemas>
-                  <schema>${basedir}/src/main/resources/xdl.xsd</schema>
-                  <schema>${basedir}/src/main/resources/XMLSchemaAPI.xsd</schema>
+                  <schema>${basedir}/target/generated-test-resources/xdl/livecare.xsd</schema>
                 </schemas>
               </manifest>
             </configuration>
@@ -59,8 +81,8 @@
   <dependencies>
     <dependency>
       <groupId>org.safris.xdb</groupId>
-      <artifactId>xdr</artifactId>
-      <version>${dev:org.safris.xdb.xdr}</version>
+      <artifactId>xdl</artifactId>
+      <version>${dev:org.safris.xdb.xdl}</version>
     </dependency>
     <dependency>
       <groupId>org.safris.xml.toolkit</groupId>

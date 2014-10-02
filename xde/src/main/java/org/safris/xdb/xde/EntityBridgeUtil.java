@@ -1,4 +1,20 @@
-package org.safris.xdb.xdl;
+/*  Copyright Safris Software 2014
+ *  
+ *  This code is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *  
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.safris.xdb.xde;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -9,6 +25,9 @@ import java.util.Map;
 
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.NamespaceBinding;
+import org.safris.xdb.xdl.$xdl_columnType;
+import org.safris.xdb.xdl.$xdl_tableType;
+import org.safris.xdb.xdl.xdl_database;
 
 final class EntityBridgeUtil {
   protected static final class Assignment {

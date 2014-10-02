@@ -14,11 +14,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.xde;
 
-import static org.safris.xdb.xdl.EntityBridgeUtil.parseBindings;
-import static org.safris.xdb.xdl.EntityBridgeUtil.parseParts;
-import static org.safris.xdb.xdl.EntityBridgeUtil.prototypeAssignments;
+import static org.safris.xdb.xde.EntityBridgeUtil.parseBindings;
+import static org.safris.xdb.xde.EntityBridgeUtil.parseParts;
+import static org.safris.xdb.xde.EntityBridgeUtil.prototypeAssignments;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -26,7 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.safris.xdb.xdl.EntityBridgeUtil.Assignment;
+import org.safris.xdb.xde.EntityBridgeUtil.Assignment;
+import org.safris.xdb.xdl.XDLTransformer;
+import org.safris.xdb.xdl.xdl_database;
 
 public final class EntityBridge {
   private static final Map<xdl_database,EntityBridge> instances = new HashMap<xdl_database,EntityBridge>();

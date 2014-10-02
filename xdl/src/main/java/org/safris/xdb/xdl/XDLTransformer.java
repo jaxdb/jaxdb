@@ -85,7 +85,8 @@ public abstract class XDLTransformer {
     }
   }
   
-  protected static xdl_database merge(final xdl_database database) {
+  // FIXME: This should not be public! But it's been set this way to be usable by xde package.
+  public static xdl_database merge(final xdl_database database) {
     final xdl_database merged;
     try {
       merged = (xdl_database)Bindings.clone(database);
