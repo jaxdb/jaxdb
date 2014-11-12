@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -19,6 +19,7 @@ package org.safris.xdb.xdl;
 import java.io.File;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -70,7 +71,14 @@ public final class JPABeanTransform extends XDLTransformer {
   }
 
   public static void createJPABeans(final File xdlFile, final File outDir) {
-    final xdl_database database = parseArguments(xdlFile, null);
+    final xdl_database database;
+    try {
+      database = parseArguments(xdlFile.toURI().toURL(), null);
+    }
+    catch (final MalformedURLException e) {
+      throw new Error(e);
+    }
+
     try {
       final JPABeanTransform creator = new JPABeanTransform(database);
       final Map<String,String> files = creator.parse();

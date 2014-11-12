@@ -100,12 +100,21 @@
       <version>${dev:org.safris.commons.jci}</version>
     </dependency>
     <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>sql</artifactId>
+      <version>${dev:org.safris.commons.sql}</version>
+    </dependency>
+    <dependency>
       <groupId>javax.persistence</groupId>
       <artifactId>persistence-api</artifactId>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
     </dependency>
   </dependencies>
 </project>

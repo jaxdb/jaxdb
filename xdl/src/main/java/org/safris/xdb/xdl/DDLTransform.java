@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -17,6 +17,7 @@
 package org.safris.xdb.xdl;
 
 import java.io.File;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -33,10 +34,10 @@ public final class DDLTransform extends XDLTransformer {
       System.err.println("<MySQL|Derby> <XDL_FILE>");
       System.exit(1);
     }
-      
-    createDDL(new File(args[1]), "MySQL".equals(args[0]) ? DBVendor.MY_SQL : "Derby".equals(args[0]) ? DBVendor.DERBY : null, null);
+
+    createDDL(new File(args[1]).toURI().toURL(), "MySQL".equals(args[0]) ? DBVendor.MY_SQL : "Derby".equals(args[0]) ? DBVendor.DERBY : null, null);
   }
-  
+
   private static String getIndexName(final $xdl_tableType table, final _index index) {
     return getIndexName(table, index, index._column().toArray(new $xdl_namedType[index._column().size()]));
   }
@@ -44,7 +45,7 @@ public final class DDLTransform extends XDLTransformer {
   private static String getIndexName(final $xdl_tableType table, final $xdl_indexType index, final $xdl_namedType ... column) {
     if (index == null || column.length == 0)
       return null;
-    
+
     String name = "";
     for (final $xdl_namedType c : column)
       name += "_" + c._name$().text();
@@ -52,16 +53,16 @@ public final class DDLTransform extends XDLTransformer {
     return "idx_" + table._name$().text() + name;
   }
 
-  public static List<String> getTableOrder(final File xdlFile) {
-    return DDLTransform.createDDL(xdlFile, DBVendor.MY_SQL, null, false);
+  public static List<String> getTableOrder(final URL url) {
+    return DDLTransform.createDDL(url, DBVendor.MY_SQL, null, false);
   }
-  
-  public static void createDDL(final File xdlFile, final DBVendor vendor, final File outDir) {
-    DDLTransform.createDDL(xdlFile, vendor, outDir, true);
+
+  public static void createDDL(final URL url, final DBVendor vendor, final File outDir) {
+    DDLTransform.createDDL(url, vendor, outDir, true);
   }
-  
-  public static DDLTransform transformDDL(final File xdlFile) {
-    final xdl_database database = parseArguments(xdlFile, null);
+
+  public static DDLTransform transformDDL(final URL url) {
+    final xdl_database database = parseArguments(url, null);
     try {
       return new DDLTransform(database);
     }
@@ -69,22 +70,22 @@ public final class DDLTransform extends XDLTransformer {
       throw new RuntimeException(e);
     }
   }
-  
-  private static List<String> createDDL(final File xdlFile, final DBVendor vendor, final File outDir, final boolean output) {
-    final xdl_database database = parseArguments(xdlFile, outDir);
+
+  private static List<String> createDDL(final URL url, final DBVendor vendor, final File outDir, final boolean output) {
+    final xdl_database database = parseArguments(url, outDir);
     try {
       final DDLTransform creator = new DDLTransform(database);
       final String sql = creator.parse(vendor);
       if (output)
         writeOutput(sql, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
-      
+
       return creator.getSortedTableOrder();
     }
     catch (final Exception e) {
       throw new RuntimeException(e);
     }
   }
-  
+
   private static String toEnumValue(String value) {
     value = value.replaceAll("\\\\\\\\", "\\\\"); // \\ is \
     value = value.replaceAll("\\\\_", " "); // \_ is <space>
@@ -96,7 +97,7 @@ public final class DDLTransform extends XDLTransformer {
   private DDLTransform(final xdl_database database) throws Exception {
     super(database);
   }
-  
+
   private static void checkValidNumber(final String var, final Integer precision, final Integer decimal) {
     if (precision < decimal) {
       System.err.println("[ERROR] ERROR 1427 (42000): For decimal(M,D), M must be >= D (column '" + var + "').");
@@ -145,14 +146,14 @@ public final class DDLTransform extends XDLTransformer {
             if (!type._values$().isNull())
               for (final String value : type._values$().text())
                 maxLength = Math.max(maxLength, value.length());
-            
+
             ddl += String.valueOf(maxLength);
           }
           else if (!type._values$().isNull()) {
             String values = "";
-            for (final String value : type._values$().text()) 
+            for (final String value : type._values$().text())
               values += ", '" + DDLTransform.toEnumValue(value) + "'";
-            
+
             ddl += values.substring(2);
           }
 
@@ -373,7 +374,7 @@ public final class DDLTransform extends XDLTransformer {
             contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
         }
       }
-      
+
       for (final $xdl_columnType column : table._column()) {
         String minCheck = null;
         String maxCheck = null;
@@ -407,7 +408,7 @@ public final class DDLTransform extends XDLTransformer {
           minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
           maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
         }
-        
+
         if (minCheck != null)
           contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " >= " + minCheck + ")");
 
@@ -418,7 +419,7 @@ public final class DDLTransform extends XDLTransformer {
 
     return contraintsBuffer.toString();
   }
-  
+
   private static String getTriggerName(final String tableName, final $xdl_tableType._triggers._trigger trigger, final String action) {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
@@ -431,7 +432,7 @@ public final class DDLTransform extends XDLTransformer {
         buffer += "CREATE TRIGGER " + DDLTransform.getTriggerName(tableName, trigger, action) + " " + trigger._time$().text() + " " + action + " ON " + tableName + "\n";
         buffer += "  FOR EACH ROW\n";
         buffer += "  BEGIN\n";
-        
+
         final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
         int i = 0, j = -1;
@@ -439,13 +440,13 @@ public final class DDLTransform extends XDLTransformer {
           char c = text.charAt(i++);
           if (c == '\n' || c == '\r')
             continue;
-          
+
           j++;
           //System.err.println(c);
           if (c != ' ' && c != '\t')
             break;
         }
-        
+
         //System.err.println("XXXX: " + i + " " + j);
         buffer += "    " + text.trim().replace("\n" + text.substring(0, j), "\n    ") + "\n";
         buffer += "  END;\n";
@@ -453,7 +454,7 @@ public final class DDLTransform extends XDLTransformer {
         buffer += "DELIMITER ;";
       }
     }
-    
+
     return buffer.substring(1);
   }
 
@@ -477,7 +478,7 @@ public final class DDLTransform extends XDLTransformer {
       }
     }
   }
-  
+
   private String parseTable(final DBVendor vendor, final $xdl_tableType table, final Set<String> tableNames) {
     insertDependency(table._name$().text(), null);
     // Next, register the column names to be referencable by the @primaryKey element
@@ -493,21 +494,21 @@ public final class DDLTransform extends XDLTransformer {
 
     if (table._triggers() != null)
       buffer.append("\n").append(parseTriggers(tableName, table._triggers().get(0)._trigger()));
-    
+
     return buffer.toString();
   }
-  
+
   private static String csvNames(final BindingList<$xdl_namedType> names) {
     if (names.size() == 0)
       return "";
-    
+
     String csv = "";
     for (final $xdl_namedType name : names)
       csv += ", " + name._name$().text();
-    
+
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
-  
+
   private String parseIndexes(final $xdl_tableType table) {
     String buffer = "";
     if (table._index() != null)
@@ -518,7 +519,7 @@ public final class DDLTransform extends XDLTransformer {
       for (final $xdl_columnType column : table._column())
         if (column._index() != null)
           buffer += "\nCREATE " + (!column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "") + "INDEX " + getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ");";
-    
+
     return buffer;
   }
 
@@ -552,7 +553,7 @@ public final class DDLTransform extends XDLTransformer {
       for (final $xdl_columnType column : table._column())
         if (column._index() != null)
           buffer += "\nDROP INDEX " + getIndexName(table, column._index(0), column) + " ON " + table._name$().text() + ";";
-    
+
     if (table._triggers() != null)
       for (final $xdl_tableType._triggers._trigger trigger : table._triggers().get(0)._trigger())
         for (final String action : trigger._actions$().text())
@@ -564,7 +565,7 @@ public final class DDLTransform extends XDLTransformer {
 
   public String parse(final DBVendor vendor) throws Exception {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
-    
+
     final Set<String> skipTables = new HashSet<String>();
     for (final $xdl_tableType table : merged._table())
       if (table._skip$().text())
@@ -584,7 +585,7 @@ public final class DDLTransform extends XDLTransformer {
     final StringBuffer tablesBuffer = new StringBuffer();
     if (vendor == DBVendor.DERBY)
       tablesBuffer.append("\nCREATE SCHEMA " + merged._name$().text() + ";\n");
-    
+
     sortedTableOrder = TopologicalSort.sort(dependencyGraph);
     if (createDropStatements)
       for (int i = sortedTableOrder.size() - 1; 0 <= i; i--)
@@ -594,7 +595,7 @@ public final class DDLTransform extends XDLTransformer {
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))
         tablesBuffer.append("\n").append(createTableStatements.get(tableName));
-    
+
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))
         tablesBuffer.append("\n").append(createIndexStatements.get(tableName));

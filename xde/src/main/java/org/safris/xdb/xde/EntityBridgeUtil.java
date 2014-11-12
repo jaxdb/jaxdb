@@ -1,15 +1,15 @@
 /* Copyright (c) 2014 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -42,10 +42,10 @@ final class EntityBridgeUtil {
       public boolean hasNext() {
         if (entryIterator != null && entryIterator.hasNext())
           return true;
-        
+
         if (!assignmentIterator.hasNext())
           return false;
-        
+
         entryIterator = assignmentIterator.next().entries.values().iterator();
         return entryIterator.hasNext();
       }
@@ -59,7 +59,7 @@ final class EntityBridgeUtil {
           entryIterator.remove();
       }
     }
-    
+
     protected static final class Entry {
       public final Method method;
       public final Class<?> type;
@@ -69,15 +69,15 @@ final class EntityBridgeUtil {
         this.type = type;
       }
     }
-    
+
     public final Class<?> binding;
     public final LinkedHashMap<String,Entry> entries = new LinkedHashMap<String,Entry>();
-    
+
     public Assignment(final Class<?> binding) {
       this.binding = binding;
     }
   }
-  
+
   private static Class<?> lookupBinding(final xdl_database database, final String tableName) {
     final String packageName = NamespaceBinding.getPackageFromNamespace(database._targetNamespace$().text());
     final String prefix = database._name$().text();
@@ -89,33 +89,33 @@ final class EntityBridgeUtil {
       throw new RuntimeException(e);
     }
   }
-  
+
   protected static Map<Class<?>,Assignment> prototypeAssignments(final xdl_database database) {
     final Map<Class<?>,Assignment> bindingToAssignment = new HashMap<Class<?>,Assignment>();
     for (final $xdl_tableType table : database._table()) {
       if (table._abstract$() != null && table._abstract$().text())
         continue;
-      
+
       final Class<?> binding = lookupBinding(database, table._name$().text());
       final Map<String,Method> methodNameToMethod = new HashMap<String,Method>();
       final Method[] methods = binding.getMethods();
       for (final Method method : methods)
         if (method.getParameterTypes().length == 1)
           methodNameToMethod.put(method.getName(), method);
-      
+
       final Assignment assignment = new Assignment(binding);
       for (final $xdl_columnType column : table._column()) {
         final Method method = methodNameToMethod.get("_" + column._name$().text() + "$");
         final Class<?> type = method.getParameterTypes()[0];
         assignment.entries.put(column._name$().text(), new Assignment.Entry(method, type));
       }
-      
+
       bindingToAssignment.put(binding, assignment);
     }
-    
+
     return bindingToAssignment;
   }
-  
+
   protected static Map<String,Class<?>> parseBindings(final xdl_database database, final String sql) {
     final String from = sql.replaceAll("((^.*\\sFROM\\s+)|(\\s+WHERE\\s.*$))", "");
     final String[] parts = from.split(",");
@@ -127,14 +127,14 @@ final class EntityBridgeUtil {
       else
         map.put(alias[0], lookupBinding(database, alias[0]));
     }
-    
+
     return map;
   }
 
   protected static String[] parseParts(final String[] parts, final Map<String,Class<?>> aliasToBinding) {
     if (parts.length == 2)
       return parts;
-    
+
     if (aliasToBinding.size() == 1)
       return new String[] {aliasToBinding.keySet().iterator().next(), parts[0]};
 

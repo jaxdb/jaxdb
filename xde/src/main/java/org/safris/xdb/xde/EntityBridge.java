@@ -1,15 +1,15 @@
 /* Copyright (c) 2014 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -32,17 +32,17 @@ import org.safris.xdb.xdl.xdl_database;
 
 public final class EntityBridge {
   private static final Map<xdl_database,EntityBridge> instances = new HashMap<xdl_database,EntityBridge>();
-  
+
   protected static EntityBridge getInstance(final xdl_database database) {
     EntityBridge instance = instances.get(database);
     if (instance != null)
       return instance;
-    
+
     synchronized (instances) {
       instance = instances.get(database);
       if (instance != null)
         return instance;
-      
+
       instances.put(database, instance = new EntityBridge(XDLTransformer.merge(database)));
       return instance;
     }
@@ -50,12 +50,12 @@ public final class EntityBridge {
 
   private final xdl_database database;
   private final Map<Class<?>,Assignment> bindingToAssignment;
-  
+
   private EntityBridge(final xdl_database database) {
     this.database = database;
     this.bindingToAssignment = prototypeAssignments(database);
   }
-  
+
   protected List<Assignment> parseAssignments(final String sql) {
     final Map<String,Class<?>> aliasToBinding = parseBindings(database, sql);
     final String select = sql.replaceAll("((^\\s*SELECT\\s*(DISTINCT)?\\s+)|(\\s+FROM\\s.*$))", "");
@@ -71,7 +71,7 @@ public final class EntityBridge {
         final Assignment assignment = new Assignment(binding);
         for (final String column : columns)
           assignment.entries.put(column, prototype.entries.get(column));
-        
+
         assignments.add(assignment);
         columns.clear();
         if (parts == null)
@@ -89,7 +89,7 @@ public final class EntityBridge {
         lastAlias = parts[0];
       }
     }
-    
+
     return assignments;
   }
 

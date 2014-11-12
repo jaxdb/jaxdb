@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="livecare" targetNamespace="http://livecare.com/entity.xsd" xmlns="http://xdb.safris.org/xdl.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xdb.safris.org/xdl.xsd /Users/seva/Work/safris/xdb/xdl/src/main/resources/xdl.xsd">
+<database name="livecare" targetNamespace="http://livecare.com/entity.xsd" xmlns="http://xdb.safris.org/xdl.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xdb.safris.org/xdl.xsd http://xdb.safris.org/xdl.xsd">
   <table name="id" abstract="true">
     <column name="id" xsi:type="varchar" length="36" null="false" generateOnInsert="UUID"/>
     <constraints>

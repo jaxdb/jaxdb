@@ -1,15 +1,15 @@
 /* Copyright (c) 2012 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -19,6 +19,7 @@ package org.safris.xdb.xdl;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,18 +42,15 @@ public abstract class XDLTransformer {
     }
   }
 
-  protected static xdl_database parseArguments(final File xdlFile, final File outDir) {
-    if (xdlFile == null)
-      throw new IllegalArgumentException("xdlFile == null");
-
-    if (!xdlFile.exists())
-      throw new IllegalArgumentException("!xdlFile.exists(): " + xdlFile.getAbsolutePath());
+  protected static xdl_database parseArguments(final URL url, final File outDir) {
+    if (url == null)
+      throw new IllegalArgumentException("url == null");
 
     if (outDir != null && !outDir.exists())
       throw new IllegalArgumentException("!outDir.exists()");
 
     try {
-      final InputStream in = xdlFile.toURI().toURL().openStream();
+      final InputStream in = url.openStream();
       final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
       in.close();
       return database;
@@ -84,7 +82,7 @@ public abstract class XDLTransformer {
       throw new RuntimeException(e);
     }
   }
-  
+
   // FIXME: This should not be public! But it's been set this way to be usable by xde package.
   public static xdl_database merge(final xdl_database database) {
     final xdl_database merged;
@@ -103,7 +101,7 @@ public abstract class XDLTransformer {
     final Set<String> mergedTables = new HashSet<String>();
     for (final $xdl_tableType table : merged._table())
       mergeTable(table, tableNameToTable, mergedTables);
-    
+
     return merged;
   }
 
@@ -113,7 +111,7 @@ public abstract class XDLTransformer {
   public XDLTransformer(final xdl_database database) {
     this.unmerged = database;
     this.merged = merge(database);
-    
+
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
       for (final String error : errors)
@@ -143,7 +141,7 @@ public abstract class XDLTransformer {
     if (table._name$().text().equals("invitation")) {
       int idsao = 0;
     }
-    
+
     final $xdl_tableType superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
       System.err.println("[ERROR] Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
