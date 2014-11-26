@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (c) 2014 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+
+<database name="library" xmlns="http://xdb.safris.org/xdl.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xdb.safris.org/xdl.xsd http://xdb.safris.org/xdl.xsd">
+  <table name="timestamp" abstract="true">
+    <column name="modified_on" xsi:type="dateTime" null="false" generateOnUpdate="TIMESTAMP"/>
+    <column name="created_on" xsi:type="dateTime" null="false" generateOnInsert="TIMESTAMP"/>
+    <column name="version" xsi:type="int" precision="10" unsigned="true" default="0" null="false" generateOnUpdate="INCREMENT" checkOnUpdate="EQUALS"/>
+  </table>
+  <table name="timestamp_id" abstract="true" extends="timestamp">
+    <column name="id" xsi:type="varchar" length="36" null="false" generateOnInsert="UUID"/>
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="address" abstract="true" extends="timestamp_id">
+    <column name="address1" xsi:type="varchar" length="255" null="false"/>
+    <column name="address2" xsi:type="varchar" length="255" default="" null="false"/>
+    <column name="city" xsi:type="varchar" length="255" null="false"/>
+    <column name="locality" xsi:type="varchar" length="255" null="true"/>
+    <column name="postal_code" xsi:type="varchar" length="255" null="false"/>
+    <column name="country" xsi:type="enum" values="AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW" null="false"/>
+  </table>
+  <table name="library" extends="address">
+    <column name="name" xsi:type="varchar" length="255" null="false"/>
+    <column name="website" xsi:type="varchar" length="32" null="true"/>
+    <column name="email" xsi:type="varchar" length="32" null="false"/>
+    <column name="phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
+    <column name="open_week_days" xsi:type="tinyint" unsigned="true" precision="3" min="0" max="255" null="true"/>
+    <column name="open_time" xsi:type="time" null="false"/>
+    <column name="close_time" xsi:type="time" null="false"/>
+  </table>
+  <table name="book" extends="timestamp_id">
+    <column name="library_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="library" column="id"/>
+    </column>
+    <column name="title" xsi:type="varchar" length="255" null="false"/>
+    <column name="author" xsi:type="varchar" length="255" null="false"/>
+    <column name="publisher" xsi:type="varchar" length="255" default="" null="false"/>
+    <column name="publish_year" xsi:type="smallint" precision="4" unsigned="true" null="false"/>
+    <column name="aisle" xsi:type="tinyint" precision="2" unsigned="true" null="false"/>
+    <column name="shelf" xsi:type="tinyint" precision="1" unsigned="true" null="false"/>
+  </table>
+  <table name="card" extends="address">
+    <column name="given_name" xsi:type="varchar" length="32" null="false"/>
+    <column name="family_name" xsi:type="varchar" length="32" null="false"/>
+    <column name="gender" xsi:type="enum" values="M F" null="false"/>
+    <column name="photo" xsi:type="blob" null="true"/>
+    <column name="email" xsi:type="varchar" length="32" null="false"/>
+    <column name="phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
+  </table>
+  <table name="book_card" extends="timestamp">
+    <column name="book_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="book" column="id"/>
+    </column>
+    <column name="card_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="card" column="id"/>
+    </column>
+    <column name="due" xsi:type="dateTime" null="false"/>
+  </table>
+</database>

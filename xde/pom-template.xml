@@ -47,7 +47,7 @@
               <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
                 <destdir>${project.build.directory}/generated-test-resources/xdl</destdir>
                 <schemas>
-                  <schema>${basedir}/src/test/resources/entity.xdl</schema>
+                  <schema>${basedir}/src/test/resources/library.xdl</schema>
                 </schemas>
               </manifest>
             </configuration>
@@ -69,7 +69,7 @@
               <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
                 <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xmlbinding</destdir>
                 <schemas>
-                  <schema>${basedir}/target/generated-test-resources/xdl/livecare.xsd</schema>
+                  <schema>${basedir}/target/generated-test-resources/xdl/library.xsd</schema>
                 </schemas>
               </manifest>
             </configuration>

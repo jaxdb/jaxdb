@@ -42,6 +42,12 @@ public abstract class XDLTransformer {
     }
   }
 
+  private static final String packagePrefix = "xdb.xdl";
+
+  protected static String getPackageName(final xdl_database database) {
+    return packagePrefix + "." + database._name$().text();
+  }
+
   protected static xdl_database parseArguments(final URL url, final File outDir) {
     if (url == null)
       throw new IllegalArgumentException("url == null");

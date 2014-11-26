@@ -60,7 +60,7 @@ public final class XSDTransform extends XDLTransformer {
 
   private xs_schema parse() {
     final xs_schema schema = new xs_schema();
-    schema._targetNamespace$(new xs_schema._targetNamespace$(unmerged._targetNamespace$().text()));
+    schema._targetNamespace$(new xs_schema._targetNamespace$(getPackageName(unmerged)));
 
     for (final $xdl_tableType table : unmerged._table()) {
       if (table._abstract$().text()) {
@@ -70,7 +70,7 @@ public final class XSDTransform extends XDLTransformer {
       }
       else {
         final xs_schema._element element = new xs_schema._element();
-        element._type$(new xs_schema._element._type$(new QName(unmerged._targetNamespace$().text(), table._name$().text(), unmerged._name$().text())));
+        element._type$(new xs_schema._element._type$(new QName(getPackageName(unmerged), table._name$().text(), unmerged._name$().text())));
         element._name$(new xs_schema._element._name$(table._name$().text()));
         schema._element(element);
 
@@ -91,7 +91,7 @@ public final class XSDTransform extends XDLTransformer {
 
       final $xs_complexType._complexContent._extension extension = new $xs_complexType._complexContent._extension();
       complexContent._extension(extension);
-      extension._base$(new $xs_complexType._complexContent._extension._base$(new QName(unmerged._targetNamespace$().text(), table._extends$().text(), unmerged._name$().text())));
+      extension._base$(new $xs_complexType._complexContent._extension._base$(new QName(getPackageName(unmerged), table._extends$().text(), unmerged._name$().text())));
 
       complexType = extension;
     }

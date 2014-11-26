@@ -1,27 +1,32 @@
+/* Copyright (c) 2014 Seva Safris
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * You should have received a copy of The MIT License (MIT) along with this
+ * program. If not, see <http://opensource.org/licenses/MIT/>.
+ */
+
 package org.safris.xdb.xdl;
 
-public final class DBVendor {
-  public static DBVendor MY_SQL = new DBVendor("MySQL");
-  public static DBVendor DERBY = new DBVendor("Derby");
-  
+public enum DBVendor {
+  DERBY("Derby"),
+  MY_SQL("MySQL");
+
   private final String name;
 
   private DBVendor(final String name) {
     this.name = name;
   }
 
-  public boolean equals(final Object obj) {
-    if (this == obj)
-      return true;
-
-    if (obj instanceof DBVendor)
-      return false;
-
-    final DBVendor that = (DBVendor)obj;
-    return name != null ? name.equals(that.name) : that.name == null;
-  }
-
-  public int hashCode() {
-    return name != null ? name.hashCode() * 3 : -323;
+  public String toString() {
+    return name;
   }
 }

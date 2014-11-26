@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<database name="livecare" targetNamespace="http://livecare.com/entity.xsd" xmlns="http://xdb.safris.org/xdl.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xdb.safris.org/xdl.xsd http://xdb.safris.org/xdl.xsd">
+<!--
+  Copyright (c) 2014 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+
+<database name="hospital" xmlns="http://xdb.safris.org/xdl.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xdb.safris.org/xdl.xsd http://xdb.safris.org/xdl.xsd">
   <table name="id" abstract="true">
     <column name="id" xsi:type="varchar" length="36" null="false" generateOnInsert="UUID"/>
     <constraints>
@@ -21,23 +38,6 @@
     <column name="created_by_id" xsi:type="varchar" length="36" null="false"/>
     <column name="modified_by_id" xsi:type="varchar" length="36" null="false"/>
   </table>
-  <!-- NOT USED AS OF NOW -->
-  <!--<table name="timestamp_by_provider" abstract="true" extends="timestamp_version">
-    <column name="created_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-    <column name="modified_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-  </table>
-  <table name="timestamp_by_patient" abstract="true" extends="timestamp_version">
-    <column name="created_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-    <column name="modified_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-  </table>-->
   <table name="timestamp_id" abstract="true" extends="id">
     <column name="created_on" xsi:type="dateTime" null="false" generateOnInsert="TIMESTAMP"/>
     <column name="modified_on" xsi:type="dateTime" null="false" generateOnUpdate="TIMESTAMP"/>
@@ -47,63 +47,7 @@
     <column name="created_by_id" xsi:type="varchar" length="36" null="false"/>
     <column name="modified_by_id" xsi:type="varchar" length="36" null="false"/>
   </table>
-  <!-- NOT USED AS OF NOW -->
-  <!--<table name="timestamp_by_provider_id" abstract="true" extends="timestamp_id">
-    <column name="created_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-    <column name="modified_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-  </table>
-  <table name="timestamp_by_patient_id" abstract="true" extends="timestamp_id">
-    <column name="created_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-    <column name="modified_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-  </table>-->
-  <table name="invitation" abstract="true" extends="timestamp_id">
-    <column name="code" xsi:type="varchar" length="11" null="false"/>
-      <column name="completed" xsi:type="boolean" default="false" null="false"/>
-    <column name="invalidated" xsi:type="boolean" default="false" null="false"/>
-    <column name="expiration" xsi:type="date" null="false"/>
-  </table>
-  <table name="provider_invitation" extends="invitation">
-    <column name="email" xsi:type="varchar" length="32" null="false"/>
-  </table>
-  <table name="patient_invitation" extends="invitation">
-    <column name="created_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-    <column name="email" xsi:type="varchar" length="32" null="true"/>
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
-    </column>
-  </table>
-  <table name="patient_solicitation" extends="timestamp_id">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
-    </column>
-    <column name="given_name" xsi:type="varchar" length="32" null="false"/>
-    <column name="alt_name" xsi:type="varchar" length="32" null="true"/>
-    <column name="family_name" xsi:type="varchar" length="32" null="false"/>
-    <column name="gender" xsi:type="enum" values="M F" null="false"/>
-    <column name="dob" xsi:type="date" null="false"/>
-    <column name="email" xsi:type="varchar" length="32" null="false"/>
-    <column name="phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
-    <column name="note" xsi:type="varchar" length="4096" default="" null="false"/>
-    <column name="insurance_name" xsi:type="varchar" length="255" null="true"/>
-    <column name="insurance_plan" xsi:type="varchar" length="255" null="true"/>
-    <column name="status" xsi:type="enum" values="ACCEPTED DECLINED ARCHIVED"/>
-    <triggers>
-      <trigger time="BEFORE" actions="INSERT UPDATE">
-        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.provider_id, 'patient_solicitation', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
-      </trigger>
-    </triggers>
-  </table>
-  <table name="provider" extends="timestamp_version">
+  <table name="doctor" extends="timestamp_version">
     <column name="id" xsi:type="varchar" length="36" null="false">
       <foreignKey references="login" column="id"/>
     </column>
@@ -113,12 +57,9 @@
     <column name="family_name" xsi:type="varchar" length="32" null="false"/>
     <column name="gender" xsi:type="enum" values="M F" null="false"/>
     <column name="website" xsi:type="varchar" length="32" null="true"/>
-    <column name="practice_name" xsi:type="varchar" length="128" null="true"/>
-    <column name="practice_type" xsi:type="tinyint" unsigned="true" precision="3" min="0" max="255" default="0" null="false"/>
-    <column name="in_practice_since" xsi:type="smallint" unsigned="true" precision="4" min="1900" null="false"/>
     <column name="allow_patient_cancel" xsi:type="boolean" default="false" null="false"/>
     <column name="cancel_cutoff" xsi:type="tinyint" unsigned="true" precision="1" min="1" max="7" null="false"/>
-    <column name="payment_method" xsi:type="enum" values="CREDIT_CARD INSURANCE MANUAL CHECK CASH" default="CHECK" null="false"/>
+    <column name="payment_method" xsi:type="enum" values="CREDIT_CARD MANUAL CHECK CASH" default="CHECK" null="false"/>
     <column name="education" xsi:type="varchar" length="4096" default="" null="false"/>
     <column name="awards" xsi:type="varchar" length="4096" default="" null="false"/>
     <column name="memberships" xsi:type="varchar" length="4096" default="" null="false"/>
@@ -128,20 +69,10 @@
     <column name="affiliations" xsi:type="varchar" length="4096" default="" null="false"/>
     <column name="accepted_locations" xsi:type="tinyint" unsigned="true" precision="3" min="0" max="255" null="false"/>
     <column name="authed_locations" xsi:type="tinyint" unsigned="true" precision="3" min="0" max="255" default="6" null="false"/>
-    <column name="visibility" xsi:type="enum" values="PATIENTS LIVECARE PUBLIC" default="PATIENTS" null="false"/>
+    <column name="visibility" xsi:type="enum" values="PATIENTS PUBLIC" default="PATIENTS" null="false"/>
     <column name="sms_phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
     <column name="callback_phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
     <column name="skype_id" xsi:type="varchar" length="128" null="true"/>
-    <column name="solicit_response_subj" xsi:type="varchar" length="1024" default="Appointment Request Received" null="false"/>
-    <column name="solicit_response_body" xsi:type="varchar" length="4096" default="I have received your appointment request from LiveCare, and will respond to you at my earliest convenience." null="false"/>
-    <column name="solicit_accept_subj" xsi:type="varchar" length="1024" default="Schedule an Appointment" null="false"/>
-    <column name="solicit_accept_body" xsi:type="varchar" length="4096" default="I have accepted your request for an appointment." null="false"/>
-    <column name="solicit_decline_subj" xsi:type="varchar" length="1024" default="Responding to Your Request" null="false"/>
-    <column name="solicit_decline_body" xsi:type="varchar" length="4096" default="Unfortunately, I am not accepting new patients at this time. Nonetheless, thank you for your interest." null="false"/>
-    <column name="solicit_reaccept_subj" xsi:type="varchar" length="1024" default="Schedule an Appointment" null="false"/>
-    <column name="solicit_reaccept_body" xsi:type="varchar" length="4096" default="After further review, I have accepted your request for an appointment." null="false"/>
-    <column name="invitation_email_subj" xsi:type="varchar" length="1024" default="Connect with me on LiveCare" null="false"/>
-    <column name="invitation_email_body" xsi:type="varchar" length="4096" default="You can now schedule appointments with me online at LiveCare." null="false"/>
     <column name="time_zone" xsi:type="varchar" length="64" null="false"/>
     <column name="time_zone_update" xsi:type="enum" values="AUTO ASK MANUAL" null="false" default="ASK"/>
     <column name="auto_logout" xsi:type="tinyint" unsigned="true" precision="3" null="false" default="30"/>
@@ -152,165 +83,24 @@
     </constraints>
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
-        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.id, 'provider', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
+        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.id, 'doctor', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
-  </table>
-  <table name="notifier_type" extends="timestamp_id">
-    <column name="cls" xsi:type="varchar" length="255" null="false"/>
-    <constraints>
-      <unique>
-        <column name="cls"/>
-      </unique>
-    </constraints>
-  </table>
-  <table name="notification_type" extends="timestamp_id">
-    <column name="cls" xsi:type="varchar" length="255" null="false"/>
-    <constraints>
-      <unique>
-        <column name="cls"/>
-      </unique>
-    </constraints>
-  </table>
-  <table name="notification_type_config">
-    <column name="notification_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notification_type" references="notification_type" column="id"/>
-    </column>
-    <column name="user_type" xsi:type="enum" values="PATIENT PROVIDER" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="notification_type_id"/>
-        <column name="user_type"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="notification_type_notifier_type" extends="timestamp_version">
-    <column name="login_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="login" references="login" column="id"/>
-    </column>
-    <column name="notification_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notification_type" references="notification_type" column="id"/>
-    </column>
-    <column name="notifier_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notifier_type" references="notifier_type" column="id"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="login_id"/>
-        <column name="notification_type_id"/>
-        <column name="notifier_type_id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="notification_type_variable" extends="timestamp_version">
-    <column name="login_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="login" references="login" column="id"/>
-    </column>
-    <column name="notification_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notification_type" references="notification_type" column="id"/>
-    </column>
-    <column name="name" xsi:type="varchar" length="255" null="false"/>
-    <column name="value" xsi:type="varchar" length="255" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="login_id"/>
-        <column name="notification_type_id"/>
-        <column name="name"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="notification_type_receipt" extends="timestamp">
-    <column name="login_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="login" references="login" column="id"/>
-    </column>
-    <column name="item_id" xsi:type="varchar" length="40" null="false"/>
-    <column name="version" xsi:type="int" precision="10" unsigned="true" default="0" null="false"/>
-    <column name="notification_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notification_type" references="notification_type" column="id"/>
-    </column>
-    <column name="notifier_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notifier_type" references="notifier_type" column="id"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="login_id"/>
-        <column name="item_id"/>
-        <column name="version"/>
-        <column name="notification_type_id"/>
-        <column name="notifier_type_id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="notification" extends="timestamp_id">
-    <column name="notification_type_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="notification_type" references="notification_type" column="id"/>
-    </column>
-    <column name="initiated_by_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="login" references="login" column="id"/>
-    </column>
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
-    </column>
-    <column name="patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="patient" references="patient" column="id"/>
-    </column>
-    <column name="expires_on" xsi:type="dateTime" null="false"/>
   </table>
   <table name="service" extends="id">
     <column name="label" xsi:type="varchar" length="255" null="false"/>
   </table>
-  <table name="provider_service">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
+  <table name="doctor_service">
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="service_id" xsi:type="varchar" length="36" null="false">
       <foreignKey id="service" references="service" column="id"/>
     </column>
     <constraints>
       <primaryKey>
-        <column name="provider_id"/>
+        <column name="doctor_id"/>
         <column name="service_id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="specialty" extends="id">
-    <column name="label" xsi:type="varchar" length="255" null="false"/>
-  </table>
-  <table name="provider_specialty">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
-    </column>
-    <column name="specialty_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="specialty" references="specialty" column="id"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="provider_id"/>
-        <column name="specialty_id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="insurance" extends="id">
-    <column name="carrier" xsi:type="varchar" length="255" null="false"/>
-    <column name="plan" xsi:type="varchar" length="255" null="true"/>
-    <constraints>
-      <unique>
-        <column name="carrier"/>
-        <column name="plan"/>
-      </unique>
-    </constraints>
-  </table>
-  <table name="provider_insurance">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
-    </column>
-    <column name="insurance_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="insurance" references="insurance" column="id"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="provider_id"/>
-        <column name="insurance_id"/>
       </primaryKey>
     </constraints>
   </table>
@@ -323,63 +113,17 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="provider_degree">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
+  <table name="doctor_degree">
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="degree_code" xsi:type="varchar" length="8" null="false">
       <foreignKey id="degree" references="degree" column="code"/>
     </column>
     <constraints>
       <primaryKey>
-        <column name="provider_id"/>
+        <column name="doctor_id"/>
         <column name="degree_code"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="license">
-    <column name="code" xsi:type="varchar" length="8" null="false"/>
-    <column name="name" xsi:type="varchar" length="8" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="code"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="provider_license">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
-    </column>
-    <column name="license_code" xsi:type="varchar" length="8" null="false">
-      <foreignKey id="license" references="license" column="code"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="provider_id"/>
-        <column name="license_code"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="cpt_service">
-    <column name="code" xsi:type="varchar" length="8" null="false"/>
-    <column name="description" xsi:type="varchar" length="255" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="code"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="provider_cpt_service">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
-    </column>
-    <column name="cpt_code" xsi:type="varchar" length="8" null="false">
-      <foreignKey references="cpt_service" column="code"/>
-    </column>
-    <constraints>
-      <primaryKey>
-        <column name="provider_id"/>
-        <column name="cpt_code"/>
       </primaryKey>
     </constraints>
   </table>
@@ -415,35 +159,19 @@
       </trigger>
     </triggers>
   </table>
-  <table name="patient_security" extends="timestamp_version">
-    <column name="id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-    <column name="security_question_1" xsi:type="varchar" length="128" null="false"/>
-    <column name="security_question_2" xsi:type="varchar" length="128" null="false"/>
-    <column name="security_question_3" xsi:type="varchar" length="128" null="false"/>
-    <column name="security_answer_1" xsi:type="varchar" length="128" null="false"/>
-    <column name="security_answer_2" xsi:type="varchar" length="128" null="false"/>
-    <column name="security_answer_3" xsi:type="varchar" length="128" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="id"/>
-      </primaryKey>
-    </constraints>
-  </table>
-  <table name="provider_patient" extends="patient_id">
+  <table name="doctor_patient" extends="patient_id">
     <column name="id" xsi:type="varchar" length="36" null="false" generateOnInsert="UUID"/>
     <column name="email" xsi:type="varchar" length="32" null="true"/>
     <column name="gender" xsi:type="enum" values="M F" null="true"/>
     <column name="dob" xsi:type="date" null="true"/>
     <column name="dod" xsi:type="date" null="true"/>
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="patient_id" xsi:type="varchar" length="36" null="true"/>
     <column name="emergency_contact_name" xsi:type="varchar" length="128" null="true"/>
     <column name="emergency_contact_phone" xsi:type="bigint" precision="20" unsigned="true" null="true"/>
-    <column name="referring_provider" xsi:type="varchar" length="128" null="true"/>
+    <column name="referring_doctor" xsi:type="varchar" length="128" null="true"/>
     <column name="note" xsi:type="varchar" length="4096" default="" null="false"/>
     <column name="is_active" xsi:type="boolean" default="false" null="false"/>
     <column name="medical_record_number" xsi:type="varchar" length="128" null="true"/>
@@ -462,7 +190,7 @@
     </constraints>
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
-        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.provider_id, 'provider_patient', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
+        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.doctor_id, 'doctor_patient', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
       </trigger>
     </triggers>
   </table>
@@ -475,9 +203,9 @@
       <foreignKey references="patient" column="id"/>
     </column>
   </table>
-  <table name="provider_patient_diagnosis" extends="timestamp_id">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+  <table name="doctor_patient_diagnosis" extends="timestamp_id">
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="icd9" xsi:type="varchar" length="16" null="false">
       <foreignKey references="diagnosis" column="icd9"/>
@@ -504,8 +232,8 @@
     <column name="cvv" xsi:type="smallint" precision="4" unsigned="true" null="false"/>
   </table>
   <table name="charge" extends="timestamp_by_id">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="calendar_event_id" xsi:type="varchar" length="36" null="true">
       <foreignKey references="calendar_event" column="id"/>
@@ -543,15 +271,7 @@
       <foreignKey references="charge" column="id"/>
     </column>
     <column name="diagnosis_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient_diagnosis" column="id"/>
-    </column>
-  </table>
-  <table name="charge_cpt_service" extends="timestamp_id">
-    <column name="charge_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="charge" column="id"/>
-    </column>
-    <column name="cpt_code" xsi:type="varchar" length="8" null="false">
-      <foreignKey references="cpt_service" column="code"/>
+      <foreignKey references="doctor_patient_diagnosis" column="id"/>
     </column>
   </table>
   <table name="currency">
@@ -564,9 +284,9 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="provider_patient_phone" extends="phone">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+  <table name="doctor_patient_phone" extends="phone">
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="priority" xsi:type="tinyint" precision="3" unsigned="true" null="false"/>
   </table>
@@ -594,18 +314,6 @@
       </unique>
     </constraints>
   </table>
-  <table name="change_credentials" extends="timestamp_version">
-    <column name="id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="login" column="id"/>
-    </column>
-    <column name="new_email" xsi:type="varchar" length="32" null="false"/>
-    <column name="new_password" xsi:type="varchar" length="64" null="false"/>
-    <constraints>
-      <primaryKey>
-        <column name="id"/>
-      </primaryKey>
-    </constraints>
-  </table>
   <!-- http://multitree.org/codes.html -->
   <table name="language">
     <column name="code" xsi:type="varchar" length="8" null="false"/>
@@ -616,16 +324,16 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="provider_language">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey id="provider" references="provider" column="id"/>
+  <table name="doctor_language">
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey id="doctor" references="doctor" column="id"/>
     </column>
     <column name="language_code" xsi:type="varchar" length="8" null="false">
       <foreignKey id="language" references="language" column="code"/>
     </column>
     <constraints>
       <primaryKey>
-        <column name="provider_id"/>
+        <column name="doctor_id"/>
         <column name="language_code"/>
       </primaryKey>
     </constraints>
@@ -641,35 +349,30 @@
   <table name="simple_address" extends="timestamp_id" abstract="true">
     <column name="address" xsi:type="varchar" length="255" null="false"/>
   </table>
-  <table name="provider_address" extends="simple_address">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
+  <table name="doctor_address" extends="simple_address">
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor" column="id"/>
     </column>
     <column name="name" xsi:type="varchar" length="255" null="false"/>
     <column name="principal" xsi:type="boolean" default="false" null="false"/>
     <column name="phone" xsi:type="bigint" precision="20" unsigned="true" null="false"/>
   </table>
-  <table name="provider_patient_address" extends="simple_address">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+  <table name="doctor_patient_address" extends="simple_address">
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
   </table>
-  <!--<table name="patient_address" extends="address">
-    <column name="patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="patient" column="id"/>
-    </column>
-  </table>-->
   <table name="billing" abstract="true" extends="address">
     <column name="cc" xsi:type="bigint" precision="16" unsigned="true" null="true"/>
   </table>
-  <table name="provider_patient_billing" extends="billing">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+  <table name="doctor_patient_billing" extends="billing">
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
   </table>
-  <table name="provider_patient_resp_party" extends="billing">
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider_patient" column="id"/>
+  <table name="doctor_patient_resp_party" extends="billing">
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="given_name" xsi:type="varchar" length="32" null="false"/>
     <column name="family_name" xsi:type="varchar" length="32" null="false"/>
@@ -680,8 +383,8 @@
     <column name="next_id" xsi:type="varchar" length="36" null="true"/>
     <column name="group_id" xsi:type="varchar" length="36" null="true"/>
     <column name="type" xsi:type="enum" values="APPOINTMENT SLOT BLOCK_OFF" null="false"/>
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor" column="id"/>
     </column>
     <column name="start_time" xsi:type="dateTime" null="false"/>
     <column name="end_time" xsi:type="dateTime" null="false"/>
@@ -689,7 +392,7 @@
     <column name="description" xsi:type="varchar" length="255" null="true"/>
     <column name="cancelled_by_id" xsi:type="varchar" length="36" null="true"/>
     <column name="locked_by_id" xsi:type="varchar" length="36" null="true">
-      <foreignKey references="provider" column="id"/>
+      <foreignKey references="doctor" column="id"/>
     </column>
     <column name="repeats_daily" xsi:type="boolean" default="false" null="false"/>
     <column name="repeat_weekly_days" xsi:type="tinyint" unsigned="true" precision="3" min="0" max="255" null="true"/>
@@ -704,7 +407,7 @@
     <column name="repeat_end_date" xsi:type="dateTime" null="true"/>
     <column name="location" xsi:type="tinyint" unsigned="true" precision="3" min="1" max="255" null="true"/>
     <column name="address_id" xsi:type="varchar" length="36" null="true">
-      <foreignKey references="provider_address" column="id"/>
+      <foreignKey references="doctor_address" column="id"/>
     </column>
     <column name="block_before" xsi:type="tinyint" unsigned="true" precision="3" min="5" max="30" null="true"/>
     <column name="block_after" xsi:type="tinyint" unsigned="true" precision="3" min="5" max="30" null="true"/>
@@ -712,15 +415,15 @@
     <column name="currency_code" xsi:type="varchar" length="3" null="true">
       <foreignKey references="currency" column="code"/>
     </column>
-    <column name="provider_patient_id" xsi:type="varchar" length="36" null="true">
-      <foreignKey references="provider_patient" column="id"/>
+    <column name="doctor_patient_id" xsi:type="varchar" length="36" null="true">
+      <foreignKey references="doctor_patient" column="id"/>
     </column>
     <column name="patient_contact" xsi:type="varchar" length="64" null="true"/>
     <triggers>
       <trigger time="BEFORE" actions="INSERT UPDATE">
         DECLARE patient_id VARCHAR(36);
-        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.provider_id, 'calendar_event', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
-        SET patient_id := (SELECT patient_id FROM provider_patient WHERE provider_patient_id = NEW.provider_patient_id);
+        INSERT INTO table_version (login_id, name, value, modified_on) VALUES (NEW.doctor_id, 'calendar_event', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
+        SET patient_id := (SELECT patient_id FROM doctor_patient WHERE doctor_patient_id = NEW.doctor_patient_id);
         IF patient_id IS NOT NULL THEN
           INSERT INTO table_version (login_id, name, value, modified_on) VALUES (patient_id, 'calendar_event', 0, SYSDATE()) ON DUPLICATE KEY UPDATE value = value + 1, modified_on = SYSDATE();
         END IF;
@@ -728,8 +431,8 @@
     </triggers>
   </table>
   <table name="bookable_type" extends="timestamp_id">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor" column="id"/>
     </column>
     <column name="reason" xsi:type="varchar" length="128" default="" null="false"/>
     <column name="duration" xsi:type="smallint" unsigned="true" precision="4" null="false"/>
@@ -741,7 +444,7 @@
     </column>
     <constraints>
       <unique>
-        <column name="provider_id"/>
+        <column name="doctor_id"/>
         <column name="duration"/>
         <column name="reason"/>
       </unique>
@@ -767,7 +470,7 @@
     </column>
     <column name="timestamp" xsi:type="dateTime" null="false"/>
     <column name="patient_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELLED" null="false"/>
-    <column name="provider_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELLED" null="false"/>
+    <column name="doctor_state" xsi:type="enum" values="UNKNOWN CALLED_1 CALLED_2 CALLED_3 WAITING DISCONNECTED CANCELLED" null="false"/>
     <column name="copay_charged" xsi:type="boolean" null="false"/>
     <column name="fee_charged" xsi:type="boolean" null="false"/>
     <column name="appointment_start" xsi:type="dateTime" null="false"/>
@@ -799,13 +502,13 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="provider_photo" extends="photo">
-    <column name="provider_id" xsi:type="varchar" length="36" null="false">
-      <foreignKey references="provider" column="id"/>
+  <table name="doctor_photo" extends="photo">
+    <column name="doctor_id" xsi:type="varchar" length="36" null="false">
+      <foreignKey references="doctor" column="id"/>
     </column>
     <constraints>
       <primaryKey>
-        <column name="provider_id"/>
+        <column name="doctor_id"/>
       </primaryKey>
     </constraints>
   </table>

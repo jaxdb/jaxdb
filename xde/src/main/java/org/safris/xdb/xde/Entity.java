@@ -17,8 +17,7 @@
 package org.safris.xdb.xde;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.Field;
-import java.sql.Connection;
+import java.math.BigInteger;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,18 +25,23 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.safris.commons.lang.reflect.Classes;
-import org.safris.commons.sql.ConnectionProxy;
+import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.xdl.DDL;
 
 public abstract class Entity {
+  protected Entity(final Column<?>[] column, final Column<?>[] primary) {
+  }
+
+  protected Entity(final Entity entity) {
+  }
+
+  protected Entity() {
+  }
+
   private static void setValue(final PreparedStatement statement, final int index, final Object value, final int sqlType) throws SQLException {
     if (value == null)
       statement.setNull(index, sqlType);
-    else if (sqlType == Types.BIGINT)
-      statement.setObject(index, value);
     else if (sqlType == Types.BLOB)
       statement.setBinaryStream(index, new ByteArrayInputStream((byte[])value));
     else if (sqlType == Types.BOOLEAN)
@@ -50,162 +54,128 @@ public abstract class Entity {
       statement.setDouble(index, (Double)value);
     else if (sqlType == Types.FLOAT)
       statement.setFloat(index, (Float)value);
-    else if (sqlType == Types.INTEGER)
-      statement.setInt(index, (Integer)value);
-    else if (sqlType == Types.SMALLINT)
+    else if (sqlType == Types.TINYINT)
       statement.setShort(index, (Short)value);
+    else if (sqlType == Types.SMALLINT)
+      statement.setInt(index, (Integer)value);
+    else if (sqlType == Types.INTEGER)
+      statement.setLong(index, (Long)value);
+    else if (sqlType == Types.BIGINT)
+      statement.setObject(index, value);
     else if (sqlType == Types.TIME)
       statement.setTime(index, (Time)value);
     else if (sqlType == Types.TIMESTAMP)
-      statement.setTimestamp(index, new Timestamp(((Date)value).getTime()));
+      statement.setTimestamp(index, (Timestamp)value);
     else if (sqlType == Types.VARCHAR)
       statement.setString(index, (String)value);
     else
       throw new IllegalArgumentException("Unknown type: " + sqlType);
   }
 
-  private static ConnectionProxy getConnectionProxy(final Connection connection) {
-    return connection instanceof ConnectionProxy ? (ConnectionProxy)connection : ConnectionProxy.getInstance(connection);
-  }
-
-  private static Map<Class<?>,Field[]> classToFields = new HashMap<Class<?>,Field[]>();
-
-  private Field[] getDeclaredFields() {
-    Field[] fields = classToFields.get(getClass());
-    if (fields != null)
-      return fields;
-
-    synchronized (getClass()) {
-      if ((fields = classToFields.get(getClass())) != null)
-        return fields;
-
-      classToFields.put(getClass(), fields = Classes.getDeclaredFieldsWithAnnotationDeep(getClass(), Column.class));
-      return fields;
-    }
-  }
-
-
   /**
    * SELECT single row of column values for this Entity matching conditions of primary key(s)
    */
-  public boolean select(final Connection connection) throws SQLException {
-    try {
-      final Table table = getClass().getAnnotation(Table.class);
-      final Field[] fields = getDeclaredFields();
-      String sql = "SELECT ";
-      String columns = "";
-      String where = "";
-      for (final Field field : fields) {
-        final Column column = field.getAnnotation(Column.class);
-        if (column.primary())
-          where += " AND " + column.name() + " = ?";
+  public boolean select() throws SQLException {
+    final Column<?>[] columns = column();
+    String sql = "SELECT ";
+    String select = "";
+    String where = "";
+    for (final Column<?> column : columns)
+      if (column.primary)
+        where += " AND " + column.name + " = ?";
+      else
+        select += ", " + column.name;
+
+    sql += select.substring(2) + " FROM " + name() + " WHERE " + where.substring(5);
+    final PreparedStatement statement = Schema.getConnection(schema()).prepareStatement(sql);
+    int index = 0;
+    for (final Column<?> column : columns)
+      if (column.primary)
+        setValue(statement, ++index, column.get(), column.sqlType);
+
+    System.err.println(statement.toString());
+    final ResultSet resultSet = statement.executeQuery();
+    if (!resultSet.next())
+      return false;
+
+    index = 0;
+    for (final Column column : columns)
+      if (!column.primary)
+        if (column.type.isEnum())
+          column.set(Enum.valueOf(column.type, (String)resultSet.getObject(++index, String.class)));
+        else if (column.type == BigInteger.class) {
+          final Object value = resultSet.getObject(++index);
+          column.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
+        }
         else
-          columns += ", " + column.name();
-      }
+          column.set(resultSet.getObject(++index, column.type));
 
-      sql += columns.substring(2) + " FROM " + table.name() + " WHERE " + where.substring(5);
-      final PreparedStatement statement = Entity.getConnectionProxy(connection).prepareStatement(sql);
-      int index = 0;
-      for (final Field field : fields) {
-        field.setAccessible(true);
-        final Column column = field.getAnnotation(Column.class);
-        if (column.primary())
-          setValue(statement, ++index, field.get(this), column.type());
-      }
-
-      System.err.println(statement.toString());
-      final ResultSet resultSet = statement.executeQuery();
-      if (!resultSet.next())
-        return false;
-
-      index = 0;
-      for (final Field field : fields) {
-        final Column column = field.getAnnotation(Column.class);
-        if (!column.primary())
-          field.set(this, resultSet.getObject(++index, field.getType()));
-      }
-
-      return true;
-    }
-    catch (final IllegalAccessException e) {
-      throw new Error(e);
-    }
+    return true;
   }
 
   /**
    * INSERT single row of column values for this Entity
    */
-  public int insert(final Connection connection) throws SQLException {
-    try {
-      final Table table = getClass().getAnnotation(Table.class);
-      final Field[] fields = getDeclaredFields();
-      String sql = "INSERT INTO " + table.name();
-      String columns = "";
-      String values = "";
-      for (final Field field : fields) {
-        final Column column = field.getAnnotation(Column.class);
-        columns += ", " + column.name();
-        values += ", ?";
-      }
-
-      sql += " (" + columns.substring(2) + ") VALUES (" + values.substring(2) + ")";
-      final PreparedStatement statement = Entity.getConnectionProxy(connection).prepareStatement(sql);
-      for (int i = 0; i < fields.length;) {
-        final Field field = fields[i++];
-        field.setAccessible(true);
-        final Column column = field.getAnnotation(Column.class);
-        setValue(statement, i, field.get(this), column.type());
-      }
-
-      System.err.println(statement.toString());
-      return statement.executeUpdate();
+  public int insert() throws SQLException {
+    String sql = "INSERT INTO " + name();
+    String columns = "";
+    String values = "";
+    for (final Column<?> column : column()) {
+      columns += ", " + column.name;
+      values += ", ?";
     }
-    catch (final IllegalAccessException e) {
-      throw new Error(e);
+
+    sql += " (" + columns.substring(2) + ") VALUES (" + values.substring(2) + ")";
+    final PreparedStatement statement = Schema.getConnection(schema()).prepareStatement(sql);
+    for (int i = 0; i < column().length;) {
+      final Column<?> column = column()[i++];
+      setValue(statement, i, column.get(), column.sqlType);
     }
+
+    System.err.println(statement.toString());
+    return statement.executeUpdate();
   }
 
   /**
    * UPDATE column values for this Entity matching conditions of primary key(s)
    */
-  public int update(final Connection connection) throws SQLException {
-    try {
-      final Table table = getClass().getAnnotation(Table.class);
-      final Field[] fields = getDeclaredFields();
-      String sql = "UPDATE " + table.name() + " SET ";
-      String columns = "";
-      String where = "";
-      for (final Field field : fields) {
-        final Column column = field.getAnnotation(Column.class);
-        if (column.primary())
-          where += " AND " + column.name() + " = ?";
-        else
-          columns += ", " + column.name() + " = ?";
-      }
+  public int update() throws SQLException {
+    String sql = "UPDATE " + name() + " SET ";
+    String columns = "";
+    String where = "";
+    for (final Column<?> column : column())
+      if (column.primary)
+        where += " AND " + column.name + " = ?";
+      else
+        columns += ", " + column.name + " = ?";
 
-      sql += columns.substring(2) + " WHERE " + where.substring(5);
-      final PreparedStatement statement = Entity.getConnectionProxy(connection).prepareStatement(sql);
-      // set the updated columns first
-      int index = 0;
-      for (final Field field : fields) {
-        field.setAccessible(true);
-        final Column column = field.getAnnotation(Column.class);
-        if (!column.primary())
-          setValue(statement, ++index, field.get(this), column.type());
-      }
+    sql += columns.substring(2) + " WHERE " + where.substring(5);
+    final PreparedStatement statement = Schema.getConnection(schema()).prepareStatement(sql);
+    // set the updated columns first
+    int index = 0;
+    for (final Column<?> column : column())
+      if (!column.primary)
+        setValue(statement, ++index, column.get(), column.sqlType);
 
-      // then the conditional columns
-      for (final Field field : fields) {
-        final Column column = field.getAnnotation(Column.class);
-        if (column.primary())
-          setValue(statement, ++index, field.get(this), column.type());
-      }
+    // then the conditional columns
+    for (final Column<?> column : column())
+      if (column.primary)
+        setValue(statement, ++index, column.get(), column.sqlType);
 
-      System.err.println(statement.toString());
-      return statement.executeUpdate();
-    }
-    catch (final IllegalAccessException e) {
-      throw new Error(e);
-    }
+    System.err.println(statement.toString());
+    return statement.executeUpdate();
+  }
+
+  protected abstract String name();
+  protected abstract Column<?>[] column();
+  protected abstract Column<?>[] primary();
+  protected abstract DDL[] ddl();
+
+  protected Class<? extends Schema> schema() {
+    return (Class<? extends Schema>)getClass().getEnclosingClass();
+  }
+
+  public String[] ddl(final DBVendor vendor, final DDL.Type type) {
+    return ddl()[vendor.ordinal()].get(type);
   }
 }

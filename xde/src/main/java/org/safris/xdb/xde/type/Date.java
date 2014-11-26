@@ -1,11 +1,14 @@
 package org.safris.xdb.xde.type;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class Date extends java.sql.Date {
+  private static final long serialVersionUID = -5190995792523088722L;
+  private static final int MILLISECONDS_IN_DAY = 24 * 60 * 60 * 1000;
 
-@Target(value={ElementType.FIELD})
-@Retention(value=RetentionPolicy.RUNTIME)
-public @interface Date {
+  public Date(final long date) {
+    super((date / MILLISECONDS_IN_DAY) * MILLISECONDS_IN_DAY);
+  }
+
+  public void setTime(final long date) {
+    super.setTime((date / MILLISECONDS_IN_DAY) * MILLISECONDS_IN_DAY);
+  }
 }

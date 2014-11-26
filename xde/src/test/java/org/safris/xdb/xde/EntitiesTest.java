@@ -16,138 +16,82 @@
 
 package org.safris.xdb.xde;
 
-import java.lang.reflect.Field;
-import java.net.URL;
+import static org.safris.xdb.xde.cql.DML.SELECT;
+import static org.safris.xdb.xde.cql.LogicalCondition.EQ;
+
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.UUID;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
-import org.safris.commons.lang.reflect.Classes;
-import org.safris.xdb.xde.EntityBridgeUtil.Assignment;
-import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xdl.DDLTransform;
-import org.safris.xdb.xdl.xdl_database;
-import org.safris.xml.generator.compiler.runtime.Bindings;
-import org.xml.sax.InputSource;
+import org.safris.xdb.xde.cql.SELECT;
 
-import xdb.xde.Livecare;
-
-import com.livecare.entity.livecare_patient;
-import com.livecare.entity.livecare_provider;
-import com.livecare.entity.livecare_provider_patient;
+import xdb.xde.library;
+import xdb.xde.library.Address.Country;
 
 public class EntitiesTest {
-  private static Connection createConnection() throws SQLException {
-    return DriverManager.getConnection("jdbc:derby:memory:" + Strings.getRandomAlphaString(6) + ";create=true");
-  }
+  static {
+    EntityDataSources.register(library.class, new EntityDataSource() {
+      private Connection connection;
 
-  private static void x() throws SQLException {
-    final Connection connection = createConnection();
-    final Statement statement = connection.createStatement();
-    System.err.println(connection.getWarnings());
-    statement.executeUpdate("CREATE TABLE foo (bar VARCHAR(255))");
-    statement.executeUpdate("INSERT INTO foo VALUES ('success')");
-    final ResultSet resultSet = statement.executeQuery("SELECT * FROM foo");
-    while (resultSet.next())
-
-      System.out.println(resultSet.getString(1));
-
-    statement.close();
-    connection.close();
-  }
-
-  private static void createSchema(final Connection connection, final String ddl) throws SQLException {
-    final String[] sqls = ddl.split(";\n");
-    final Statement statement = connection.createStatement();
-    sqls[sqls.length - 1] = sqls[sqls.length - 1].substring(0, sqls[sqls.length - 1].length() - 1);
-    int i = -1;
-    try {
-      while (++i < sqls.length)
-        if ((sqls[i] = sqls[i].trim()).length() > 0) {
-          System.err.println(sqls[i]);
-          statement.executeUpdate(sqls[i]);
+      public Connection getConnection() {
+        try {
+          return connection == null ? connection = DriverManager.getConnection("jdbc:derby:memory:" + Strings.getRandomAlphaString(6) + ";create=true") : connection;
         }
-    }
-    catch (final Exception e) {
-      throw new SQLException(sqls[--i], e);
-    }
+        catch (final SQLException e) {
+          throw new Error(e);
+        }
+      }
+    });
   }
 
   @Test
-  @Ignore
-  public void test2() throws Exception {
-    final URL url = Resources.getResource("/entity.xdl").getURL();
-    final DDLTransform ddlTransform = DDLTransform.transformDDL(url);
-    final String ddl = ddlTransform.parse(DBVendor.DERBY);
+  public void testCreateTable() throws SQLException {
+    library.createDDL();
+    final library.Library original = new library.Library();
+    original.id.set(UUID.randomUUID().toString().toUpperCase());
+    original.name.set("Main Library");
+    original.address1.set("100 Larkin St.");
+    original.city.set("San Francisco");
+    original.locality.set("California");
+    original.postalCode.set("94102");
+    original.country.set(Country.US);
+    original.openTime.set(new Time(9, 0, 0));
+    original.closeTime.set(new Time(20, 0, 0));
+    original.openWeekDays.set((short)127);
+    original.phone.set(new BigInteger("14155574400"));
+    original.email.set("info@sfpl.org");
+    original.website.set("sfpl.org");
+    original.createdOn.set(new Timestamp(System.currentTimeMillis()));
+    original.modifiedOn.set(new Timestamp(System.currentTimeMillis()));
+    original.version.set(1L);
+    original.insert();
 
-    final Connection connection = createConnection();
-    //createSchema(connection, ddl);
+    original.openTime.set(new Time(10, 0, 0));
+    original.update();
 
-    Statement statement = connection.createStatement();
-    String y = "CREATE SCHEMA livecare\n";
-    statement.executeUpdate(y);
+    final library.Library copy = new library.Library();
+    copy.id.set(original.id.get());
+    copy.select();
+    //System.out.println("  " + ToStrings.toString(mainLibrary));
+    //System.out.println(ToStrings.toString(copy));
+    Assert.assertEquals(original, copy);
 
-    String x = "CREATE TABLE diagnosis (\n";
-    x += "icd9 VARCHAR(16) NOT NULL,\n";
-    x += "description VARCHAR(255) NOT NULL,\n";
-    x += "PRIMARY KEY (icd9)\n";
-    x += ")";
-    statement.executeUpdate(x);
+    final library.Library a = new library.Library();
+    final SELECT select = SELECT(a).
+      FROM(a).
+      WHERE(EQ(a.id, original.id));
 
-    final Livecare.Diagnosis diagnosis = new Livecare.Diagnosis();
-    diagnosis.setIcd9("icd9");
-    diagnosis.setDescription("description");
-    diagnosis.insert(connection);
-    diagnosis.setDescription("changed");
-    diagnosis.update(connection);
-    diagnosis.select(connection);
-  }
-
-  @Test
-  public void testEntities2() throws Exception {
-    final String sql = "SELECT pr, pp, p FROM Provider pr, ProviderPatient pp, Patient p WHERE pr.gender = 'M' AND pr.id = pp.providerId AND p.id = pp.patientId";
-    System.err.println(EntityUtil.compile(Livecare.class, sql));
-  }
-
-  @Test
-  @Ignore
-  public void testEntities() throws Exception {
-    final xdl_database database = (xdl_database)Bindings.parse(new InputSource(Resources.getResource("/entity.xdl").getURL().openStream()));
-    final String sql = "SELECT patient.*, pr.given_name, pr.website, pr.*, pp.*, pp.id, pp.emergency_contact_name FROM provider pr, provider_patient pp, patient WHERE pr.gender = 'M' AND pr.id = pp.provider_id AND patient.id = pp.patient_id";
-    final Map<String,Class<?>> aliasToBinding = EntityBridgeUtil.parseBindings(database, sql);
-    Assert.assertEquals(livecare_provider.class, aliasToBinding.get("pr"));
-    Assert.assertEquals(livecare_provider_patient.class, aliasToBinding.get("pp"));
-    Assert.assertEquals(livecare_patient.class, aliasToBinding.get("patient"));
-
-    final EntityBridge entities = EntityBridge.getInstance(database);
-    final List<Assignment> assignments = entities.parseAssignments(sql);
-    Assert.assertEquals(5, assignments.size());
-    Assignment assignment = assignments.get(0);
-    Assert.assertEquals(livecare_patient.class, assignment.binding);
-    Assert.assertEquals(17, assignment.entries.size());
-    assignment = assignments.get(1);
-    Assert.assertEquals(livecare_provider.class, assignment.binding);
-    Assert.assertEquals(2, assignment.entries.size());
-    assignment = assignments.get(2);
-    Assert.assertEquals(livecare_provider.class, assignment.binding);
-    Assert.assertEquals(42, assignment.entries.size());
-    assignment = assignments.get(3);
-    Assert.assertEquals(livecare_provider_patient.class, assignment.binding);
-    Assert.assertEquals(31, assignment.entries.size());
-    assignment = assignments.get(4);
-    Assert.assertEquals(livecare_provider_patient.class, assignment.binding);
-    Assert.assertEquals(2, assignment.entries.size());
-    // FIXME: Weak tests here! :| Should check the order of columns too
+    final List<Entity[]> results = select.execute();
+    Assert.assertEquals(1, results.size());
+    Assert.assertEquals(1, results.get(0).length);
+    Assert.assertEquals(original, results.get(0)[0]);
   }
 }

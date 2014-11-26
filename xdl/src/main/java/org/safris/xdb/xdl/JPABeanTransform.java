@@ -137,7 +137,7 @@ public final class JPABeanTransform extends XDLTransformer {
 
   private JPABeanTransform(final xdl_database database) throws Exception {
     super(database);
-    pkg = NamespaceBinding.getPackageFromNamespace(database._targetNamespace$().text());
+    pkg = NamespaceBinding.getPackageFromNamespace(getPackageName(database));
   }
 
   private String[] parseType(final $xdl_columnType column, final StringBuffer columnsBuffer) {
@@ -235,7 +235,7 @@ public final class JPABeanTransform extends XDLTransformer {
 
   private Map<String,String> parse() {
     final xs_schema schema = new xs_schema();
-    schema._targetNamespace$(new xs_schema._targetNamespace$(unmerged._targetNamespace$().text()));
+    schema._targetNamespace$(new xs_schema._targetNamespace$(getPackageName(unmerged)));
     final XDLModel xdlModel = new XDLModel();
     // Phase 1: Determine # of primary keys per table, and instantiate all JPAEntityModel objects
     final Map<String,Map<String,$xdl_columnType>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,$xdl_columnType>>();

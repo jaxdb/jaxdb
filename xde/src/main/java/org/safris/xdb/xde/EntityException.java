@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2008 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,13 +16,22 @@
 
 package org.safris.xdb.xde;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class EntityException extends RuntimeException {
+  private static final long serialVersionUID = 1944703505964795209L;
 
-@Target(value={ElementType.TYPE})
-@Retention(value=RetentionPolicy.RUNTIME)
-public @interface Table {
-  public String name();
+  public EntityException() {
+    super();
+  }
+
+  public EntityException(final String message) {
+    super(message);
+  }
+
+  public EntityException(final Throwable cause) {
+    super(cause);
+  }
+
+  public EntityException(final String message, final Throwable cause) {
+    super(message, cause);
+  }
 }
