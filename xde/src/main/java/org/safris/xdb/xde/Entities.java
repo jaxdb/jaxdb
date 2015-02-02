@@ -113,9 +113,6 @@ public final class Entities {
 
   private static final Entity identity(final Class<? extends Entity> entity) {
     try {
-      if (entity == null) {
-        int i = 0;
-      }
       final Field field = entity.getDeclaredField("identity");
       field.setAccessible(true);
       return (Entity)field.get(null);

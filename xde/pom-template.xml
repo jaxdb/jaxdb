@@ -60,7 +60,7 @@
         <version>${dev:org.safris.maven.plugin.xml.binding}</version>
         <executions>
           <execution>
-            <id>generate-test-sources</id>
+            <id>binding</id>
             <phase>generate-test-sources</phase>
             <goals>
               <goal>generate</goal>
