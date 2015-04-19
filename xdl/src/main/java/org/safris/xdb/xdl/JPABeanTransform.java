@@ -387,8 +387,8 @@ public final class JPABeanTransform extends XDLTransformer {
           for (final $xdl_relationType relation : relations) {
             final JPARelationModel.ForeignKey foreignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation._field(0)._id$().text()), relation._field(0)._name$().text(), relation._field(0)._cascade$().text());
             final JPARelationModel.ForeignKey inverseForeignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation._inverse(0)._id$().text()), relation._inverse(0)._name$().text(), relation._inverse(0)._cascade$().text());
-            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._field(0)._fetch$().text()), foreignKey, inverseForeignKey);
-            final JPARelationModel inverseRelationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.MANYTOMANY.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._inverse(0)._fetch$().text()), foreignKey, inverseForeignKey);
+            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._field(0)._fetch$().text()), foreignKey, inverseForeignKey);
+            final JPARelationModel inverseRelationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._inverse(0)._fetch$().text()), foreignKey, inverseForeignKey);
             xdlModel.getEntity(foreignKey.getForeignKeyModel().getReferencedTableName()).addRelation(relationModel);
             xdlModel.getEntity(inverseForeignKey.getForeignKeyModel().getReferencedTableName()).addInverseRelation(inverseRelationModel);
           }

@@ -147,7 +147,7 @@ public final class XSDTransform extends XDLTransformer {
       }
 
       if (!column._null$().text())
-        attribute._use$(new $xs_complexType._attribute._use$($xs_complexType._attribute._use$.REQUIRED));
+        attribute._use$(new $xs_complexType._attribute._use$($xs_complexType._attribute._use$.required));
 
       complexType._attribute(attribute);
     }

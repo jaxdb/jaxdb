@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -93,7 +93,7 @@ public final class JPAForeignKeyModel {
       return;
 
     fetchType = FetchType.valueOf(joinType._fetch$().text());
-    association = $xdl_columnType._foreignKey._join._association$.MANYTOONE.text().equals(joinType._association$().text()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.ONETOMANY.text().equals(joinType._association$().text()) ? OneToMany.class : OneToOne.class);
+    association = $xdl_columnType._foreignKey._join._association$.ManyToOne.text().equals(joinType._association$().text()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.OneToMany.text().equals(joinType._association$().text()) ? OneToMany.class : OneToOne.class);
     field = new Field(joinType._field(0)._name$().text(), joinType._field(0)._cascade$().text());
     if (joinType._inverse() != null)
       inverseField = new InverseField(joinType._inverse(0)._name$().text(), joinType._inverse(0)._cascade$().text(), fieldModel.getEntityModel().getName(), joinType._field(0)._name$().text());
