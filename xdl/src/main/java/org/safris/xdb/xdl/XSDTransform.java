@@ -62,7 +62,7 @@ public final class XSDTransform extends XDLTransformer {
     final xs_schema schema = new xs_schema();
     schema._targetNamespace$(new xs_schema._targetNamespace$(getPackageName(unmerged)));
 
-    for (final $xdl_tableType table : unmerged._table()) {
+    for (final $xdl_table table : unmerged._table()) {
       if (table._abstract$().text()) {
         final $xs_complexType complexType = parseTable(table, new xs_schema._complexType());
         complexType._name$(new $xs_complexType._name$(table._name$().text()));
@@ -83,7 +83,7 @@ public final class XSDTransform extends XDLTransformer {
     return schema;
   }
 
-  private $xs_complexType parseTable(final $xdl_tableType table, $xs_complexType complexType) {
+  private $xs_complexType parseTable(final $xdl_table table, $xs_complexType complexType) {
     final $xs_complexType retType = complexType;
     if (!table._extends$().isNull()) {
       final $xs_complexType._complexContent complexContent = new $xs_complexType._complexContent();
@@ -99,7 +99,7 @@ public final class XSDTransform extends XDLTransformer {
     if (table._column() == null)
       return retType;
 
-    for (final $xdl_columnType column : table._column()) {
+    for (final $xdl_column column : table._column()) {
       final $xs_complexType._attribute attribute = new $xs_complexType._attribute();
       attribute._name$(new $xs_complexType._attribute._name$(column._name$().text()));
 
@@ -120,28 +120,38 @@ public final class XSDTransform extends XDLTransformer {
       }
       else {
         final QName type;
-        if (column instanceof $xdl_boolean)
+        if (column instanceof $xdl_boolean) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "boolean");
-        else if (column instanceof $xdl_varchar)
+        }
+        else if (column instanceof $xdl_char) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "string");
-        else if (column instanceof $xdl_smallint || column instanceof $xdl_tinyint)
-          type = new QName(NamespaceURI.XS.getNamespaceURI(), "short");
-        else if (column instanceof $xdl_decimal)
+        }
+        else if (column instanceof $xdl_integer) {
+          final $xdl_integer col = ($xdl_integer)column;
+          final int noBytes = SQLDataTypes.getNumericByteCount(col._precision$().text(), col._unsigned$().text(), col._min$().text(), col._max$().text());
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), noBytes <= 2 ? "short" : noBytes <= 4 ? "integer" : "long");
+        }
+        else if (column instanceof $xdl_decimal) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "double");
-        else if (column instanceof $xdl_int || column instanceof $xdl_mediumint)
-          type = new QName(NamespaceURI.XS.getNamespaceURI(), "integer");
-        else if (column instanceof $xdl_bigint)
-          type = new QName(NamespaceURI.XS.getNamespaceURI(), "long");
-        else if (column instanceof $xdl_date)
+        }
+        else if (column instanceof $xdl_float) {
+          type = new QName(NamespaceURI.XS.getNamespaceURI(), (($xdl_float)column)._double$().text() ? "double" : "float");
+        }
+        else if (column instanceof $xdl_date) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "date");
-        else if (column instanceof $xdl_dateTime)
+        }
+        else if (column instanceof $xdl_dateTime) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "time");
-        else if (column instanceof $xdl_time)
+        }
+        else if (column instanceof $xdl_time) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "dateTime");
-        else if (column instanceof $xdl_blob)
+        }
+        else if (column instanceof $xdl_blob) {
           type = new QName(NamespaceURI.XS.getNamespaceURI(), "base64Binary");
-        else
+        }
+        else {
           type = null;
+        }
 
         attribute._type$(new $xs_complexType._attribute._type$(type));
       }

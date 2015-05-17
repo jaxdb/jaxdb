@@ -88,15 +88,15 @@ public final class JPAForeignKeyModel {
     return inverseField;
   }
 
-  public void setJoin(final $xdl_joinType joinType) {
-    if (joinType == null)
+  public void setJoin(final $xdl_join join) {
+    if (join == null)
       return;
 
-    fetchType = FetchType.valueOf(joinType._fetch$().text());
-    association = $xdl_columnType._foreignKey._join._association$.ManyToOne.text().equals(joinType._association$().text()) ? ManyToOne.class : ($xdl_columnType._foreignKey._join._association$.OneToMany.text().equals(joinType._association$().text()) ? OneToMany.class : OneToOne.class);
-    field = new Field(joinType._field(0)._name$().text(), joinType._field(0)._cascade$().text());
-    if (joinType._inverse() != null)
-      inverseField = new InverseField(joinType._inverse(0)._name$().text(), joinType._inverse(0)._cascade$().text(), fieldModel.getEntityModel().getName(), joinType._field(0)._name$().text());
+    fetchType = FetchType.valueOf(join._fetch$().text());
+    association = $xdl_column._foreignKey._join._association$.ManyToOne.text().equals(join._association$().text()) ? ManyToOne.class : ($xdl_column._foreignKey._join._association$.OneToMany.text().equals(join._association$().text()) ? OneToMany.class : OneToOne.class);
+    field = new Field(join._field(0)._name$().text(), join._field(0)._cascade$().text());
+    if (join._inverse() != null)
+      inverseField = new InverseField(join._inverse(0)._name$().text(), join._inverse(0)._cascade$().text(), fieldModel.getEntityModel().getName(), join._field(0)._name$().text());
   }
 
   public boolean equals(final Object obj) {

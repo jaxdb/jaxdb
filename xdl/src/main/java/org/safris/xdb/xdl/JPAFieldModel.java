@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -113,13 +113,13 @@ public final class JPAFieldModel implements Cloneable {
   }
 
   public static final class Column {
-    private final $xdl_columnType column;
+    private final $xdl_column column;
     private final boolean isPrimary;
     private final GenerateOnInsert.Strategy generationStrategy;
     private final GenerateOnUpdate.Strategy generateOnUpdate;
     private final List<String> checkOnUpdate;
 
-    public Column(final $xdl_columnType column, final boolean isPrimary, final GenerateOnInsert.Strategy generateOnInsert, final GenerateOnUpdate.Strategy generateOnUpdate, final List<String> checkOnUpdate) {
+    public Column(final $xdl_column column, final boolean isPrimary, final GenerateOnInsert.Strategy generateOnInsert, final GenerateOnUpdate.Strategy generateOnUpdate, final List<String> checkOnUpdate) {
       this.column = column;
       this.isPrimary = isPrimary;
       this.generationStrategy = generateOnInsert;
@@ -127,7 +127,7 @@ public final class JPAFieldModel implements Cloneable {
       this.checkOnUpdate = checkOnUpdate;
     }
 
-    public $xdl_columnType getColumn() {
+    public $xdl_column getColumn() {
       return column;
     }
 

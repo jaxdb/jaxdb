@@ -140,7 +140,7 @@ public final class JPABeanTransform extends XDLTransformer {
     pkg = NamespaceBinding.getPackageFromNamespace(getPackageName(database));
   }
 
-  private String[] parseType(final $xdl_columnType column, final StringBuffer columnsBuffer) {
+  private String[] parseType(final $xdl_column column, final StringBuffer columnsBuffer) {
     final String columnType;
     final String columnDef;
     if (column instanceof $xdl_enum) {
@@ -175,33 +175,24 @@ public final class JPABeanTransform extends XDLTransformer {
       columnType = Boolean.class.getName();
       columnDef = !(($xdl_boolean)column)._default$().isNull() ? String.valueOf((($xdl_boolean)column)._default$().text()) : null;
     }
-    else if (column instanceof $xdl_varchar) {
+    else if (column instanceof $xdl_char) {
       columnType = String.class.getName();
-      columnDef = !(($xdl_varchar)column)._default$().isNull() ? "\"" + (($xdl_varchar)column)._default$().text() + "\"" : null;
+      columnDef = !(($xdl_char)column)._default$().isNull() ? "\"" + (($xdl_char)column)._default$().text() + "\"" : null;
     }
     else if (column instanceof $xdl_decimal) {
       columnType = Double.class.getName();
       columnDef = !(($xdl_decimal)column)._default$().isNull() ? (($xdl_decimal)column)._default$().text() + "D" : null;
     }
-    else if (column instanceof $xdl_tinyint) {
+    else if (column instanceof $xdl_integer) {
       columnType = Short.class.getName();
-      columnDef = !(($xdl_tinyint)column)._default$().isNull() ? "(short)" + (($xdl_tinyint)column)._default$().text() : null;
-    }
-    else if (column instanceof $xdl_smallint) {
-      columnType = Integer.class.getName();
-      columnDef = !(($xdl_smallint)column)._default$().isNull() ? String.valueOf((($xdl_smallint)column)._default$().text()) : null;
-    }
-    else if (column instanceof $xdl_mediumint) {
-      columnType = Integer.class.getName();
-      columnDef = !(($xdl_mediumint)column)._default$().isNull() ? String.valueOf((($xdl_mediumint)column)._default$().text()) : null;
-    }
-    else if (column instanceof $xdl_int) {
-      columnType = Long.class.getName();
-      columnDef = !(($xdl_int)column)._default$().isNull() ? String.valueOf((($xdl_int)column)._default$().text()) + "L" : null;
-    }
-    else if (column instanceof $xdl_bigint) {
-      columnType = BigInteger.class.getName();
-      columnDef = !(($xdl_bigint)column)._default$().isNull() ? "new " + BigInteger.class.getName() + "(\"" + String.valueOf((($xdl_bigint)column)._default$().text()) + "\")" : null;
+      final $xdl_integer type = ($xdl_integer)column;
+      final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+      if (noBytes == 1)
+        columnDef = !type._default$().isNull() ? "(short)" + (($xdl_integer)column)._default$().text() : null;
+      else if (noBytes > 4)
+        columnDef = !type._default$().isNull() ? "new " + BigInteger.class.getName() + "(\"" + type._default$().text() + "\")" : null;
+      else
+        columnDef = !type._default$().isNull() ? "" + type._default$().text() : null;
     }
     else if (column instanceof $xdl_date) {
       columnType = Date.class.getName();
@@ -238,19 +229,19 @@ public final class JPABeanTransform extends XDLTransformer {
     schema._targetNamespace$(new xs_schema._targetNamespace$(getPackageName(unmerged)));
     final XDLModel xdlModel = new XDLModel();
     // Phase 1: Determine # of primary keys per table, and instantiate all JPAEntityModel objects
-    final Map<String,Map<String,$xdl_columnType>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,$xdl_columnType>>();
-    for (final $xdl_tableType table : merged._table()) {
+    final Map<String,Map<String,$xdl_column>> tableNameToPrimatyColumnNames = new HashMap<String,Map<String,$xdl_column>>();
+    for (final $xdl_table table : merged._table()) {
       if (table._skip$().text())
         continue;
 
       final Set<String> primaryColumnNames = new HashSet<String>();
-      final Map<String,$xdl_columnType> primaryColumns = new HashMap<String,$xdl_columnType>();
+      final Map<String,$xdl_column> primaryColumns = new HashMap<String,$xdl_column>();
       tableNameToPrimatyColumnNames.put(table._name$().text(), primaryColumns);
       if (table._constraints() != null && table._constraints(0)._primaryKey() != null) {
-        for (final $xdl_namedType primaryColumn : table._constraints(0)._primaryKey(0)._column())
+        for (final $xdl_named primaryColumn : table._constraints(0)._primaryKey(0)._column())
           primaryColumnNames.add(primaryColumn._name$().text());
 
-        for (final $xdl_columnType column : table._column())
+        for (final $xdl_column column : table._column())
           if (primaryColumnNames.contains(column._name$().text()))
             primaryColumns.put(column._name$().text(), column);
       }
@@ -259,23 +250,23 @@ public final class JPABeanTransform extends XDLTransformer {
     }
 
     // Phase 2: Determine all foreign keys per table, and instantiate all FieldModel objects
-    for (final $xdl_tableType table : unmerged._table()) {
+    for (final $xdl_table table : unmerged._table()) {
       if (table._skip$().text())
         continue;
 
-      final Map<String,$xdl_columnType> primaryColumns = tableNameToPrimatyColumnNames.get(table._name$().text());
+      final Map<String,$xdl_column> primaryColumns = tableNameToPrimatyColumnNames.get(table._name$().text());
       final JPAEntityModel entityModel = xdlModel.getEntity(table._name$().text());
       if (table._column() != null) {
         // Add inverse fields from <foreignKey> elements in <column> elements
-        for (final $xdl_columnType column : table._column()) {
+        for (final $xdl_column column : table._column()) {
           if (column instanceof $xdl_inherited)
             continue;
 
           // Get generation strategy if it exists
           final String generateOnInsert;
           final String generateOnUpdate;
-          if (column instanceof $xdl_varchar) {
-            final $xdl_varchar varchar = ($xdl_varchar)column;
+          if (column instanceof $xdl_char) {
+            final $xdl_char varchar = ($xdl_char)column;
             generateOnInsert = !varchar._generateOnInsert$().isNull() ? varchar._generateOnInsert$().text() : null;
             generateOnUpdate = !varchar._generateOnUpdate$().isNull() ? varchar._generateOnUpdate$().text() : null;
           }
@@ -294,28 +285,8 @@ public final class JPABeanTransform extends XDLTransformer {
             generateOnInsert = !dateTime._generateOnInsert$().isNull() ? dateTime._generateOnInsert$().text() : null;
             generateOnUpdate = !dateTime._generateOnUpdate$().isNull() ? dateTime._generateOnUpdate$().text() : null;
           }
-          else if (column instanceof $xdl_tinyint) {
-            final $xdl_tinyint date = ($xdl_tinyint)column;
-            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
-          }
-          else if (column instanceof $xdl_smallint) {
-            final $xdl_smallint date = ($xdl_smallint)column;
-            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
-          }
-          else if (column instanceof $xdl_mediumint) {
-            final $xdl_mediumint date = ($xdl_mediumint)column;
-            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
-          }
-          else if (column instanceof $xdl_int) {
-            final $xdl_int date = ($xdl_int)column;
-            generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
-            generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
-          }
-          else if (column instanceof $xdl_bigint) {
-            final $xdl_bigint date = ($xdl_bigint)column;
+          else if (column instanceof $xdl_integer) {
+            final $xdl_integer date = ($xdl_integer)column;
             generateOnInsert = !date._generateOnInsert$().isNull() ? date._generateOnInsert$().text() : null;
             generateOnUpdate = !date._generateOnUpdate$().isNull() ? date._generateOnUpdate$().text() : null;
           }
@@ -331,7 +302,7 @@ public final class JPABeanTransform extends XDLTransformer {
           if (column._foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
             final List<String> cascade = column._foreignKey(0)._join() != null ? column._foreignKey(0)._join(0)._field(0)._cascade$().text() : null;
-            if (cascade == null || (cascade.size() == 1 && $xdl_fieldType._cascade$.REFRESH.text().equals(cascade.get(0))))
+            if (cascade == null || (cascade.size() == 1 && $xdl_field._cascade$.REFRESH.text().equals(cascade.get(0))))
               fieldModel.setImmutable(true);
             else
               columnModel.setImmutable(true);
@@ -339,7 +310,7 @@ public final class JPABeanTransform extends XDLTransformer {
             entityModel.addFieldModel(columnModel);
             fieldModel.setRealFieldModels(Collections.<JPAFieldModel>singletonList(columnModel));
 
-            final $xdl_foreignKeyType foreignKey = column._foreignKey(0);
+            final $xdl_foreignKey foreignKey = column._foreignKey(0);
             final JPAForeignKeyModel foreignKeyModel = new JPAForeignKeyModel(fieldModel, !foreignKey._id$().isNull() ? foreignKey._id$().text() : null, foreignKey._references$().text(), foreignKey._column$().text());
             foreignKeyModel.setJoin(foreignKey._join(0));
             if (foreignKeyModel.getInverseField() != null)
@@ -353,12 +324,12 @@ public final class JPABeanTransform extends XDLTransformer {
 
         // Add inverse fields from <foreignKey> elements in <constraints> element
         if (table._constraints() != null && table._constraints(0)._foreignKey() != null) {
-          for (final $xdl_tableType._constraints._foreignKey foreignKey : table._constraints(0)._foreignKey()) {
+          for (final $xdl_table._constraints._foreignKey foreignKey : table._constraints(0)._foreignKey()) {
             //final String referencedTableName = foreignKey._references$().text();
             final List<JPAFieldModel.Column> columns = new ArrayList<JPAFieldModel.Column>();
             final List<String> referencedColumnNames = new ArrayList<String>();
             final List<JPAFieldModel> realFieldModels = new ArrayList<JPAFieldModel>();
-            for (final $xdl_tableType._constraints._foreignKey._column column : foreignKey._column()) {
+            for (final $xdl_table._constraints._foreignKey._column column : foreignKey._column()) {
               final JPAFieldModel fieldModel = entityModel.getFieldModel(column._name$().text());
               realFieldModels.add(fieldModel);
               fieldModel.setImmutable(true);
@@ -383,12 +354,12 @@ public final class JPABeanTransform extends XDLTransformer {
         }
 
         if (table._relation() != null) {
-          final List<$xdl_relationType> relations = table._relation();
-          for (final $xdl_relationType relation : relations) {
+          final List<$xdl_relation> relations = table._relation();
+          for (final $xdl_relation relation : relations) {
             final JPARelationModel.ForeignKey foreignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation._field(0)._id$().text()), relation._field(0)._name$().text(), relation._field(0)._cascade$().text());
             final JPARelationModel.ForeignKey inverseForeignKey = new JPARelationModel.ForeignKey(entityModel.getForeignKeyModel(relation._inverse(0)._id$().text()), relation._inverse(0)._name$().text(), relation._inverse(0)._cascade$().text());
-            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._field(0)._fetch$().text()), foreignKey, inverseForeignKey);
-            final JPARelationModel inverseRelationModel = new JPARelationModel(entityModel.getName(), $xdl_relationType._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._inverse(0)._fetch$().text()), foreignKey, inverseForeignKey);
+            final JPARelationModel relationModel = new JPARelationModel(entityModel.getName(), $xdl_relation._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._field(0)._fetch$().text()), foreignKey, inverseForeignKey);
+            final JPARelationModel inverseRelationModel = new JPARelationModel(entityModel.getName(), $xdl_relation._association$.ManyToMany.text().equals(relation._association$().text()) ? ManyToMany.class : null, FetchType.valueOf(relation._inverse(0)._fetch$().text()), foreignKey, inverseForeignKey);
             xdlModel.getEntity(foreignKey.getForeignKeyModel().getReferencedTableName()).addRelation(relationModel);
             xdlModel.getEntity(inverseForeignKey.getForeignKeyModel().getReferencedTableName()).addInverseRelation(inverseRelationModel);
           }
@@ -436,7 +407,7 @@ public final class JPABeanTransform extends XDLTransformer {
 
     final Map<String,String> files = new HashMap<String,String>();
     for (final JPAEntityModel entityModel : xdlModel.getEntities()) {
-      final Map<String,$xdl_columnType> primaryColumns = tableNameToPrimatyColumnNames.get(entityModel.getName());
+      final Map<String,$xdl_column> primaryColumns = tableNameToPrimatyColumnNames.get(entityModel.getName());
       final String tableClassName = Strings.toClassCase(entityModel.getName());
       final StringBuffer buffer = new StringBuffer();
       buffer.append("package ").append(pkg).append(";\n\n");
@@ -470,7 +441,7 @@ public final class JPABeanTransform extends XDLTransformer {
           buffer.append("\n  public static final class id implements " + Serializable.class.getName() + " {");
           buffer.append("\n    private static final long serialVersionUID = ").append(Long.parseLong(Random.numeric(18))).append("L;\n\n");
           final List<String> primaryFieldNames = new ArrayList<String>();
-          for (final $xdl_columnType column : primaryColumns.values()) {
+          for (final $xdl_column column : primaryColumns.values()) {
             final String primaryFieldName = Strings.toCamelCase(column._name$().text());
             primaryFieldNames.add(primaryFieldName);
             buffer.append("  " + CodeGenUtil.createField(parseType(column, null)[0], primaryFieldName, null).replace("\n", "\n  ")).append("\n");
@@ -540,7 +511,7 @@ public final class JPABeanTransform extends XDLTransformer {
       final StringBuffer columnsBuffer = new StringBuffer();
       if (entityModel.getFieldModels().size() > 0) {
         for (final JPAFieldModel fieldModel : entityModel.getFieldModels()) {
-          final $xdl_columnType column = fieldModel.getColumn(0).getColumn();
+          final $xdl_column column = fieldModel.getColumn(0).getColumn();
           final String[] parsedType = parseType(column, columnsBuffer);
           final String columnType = parsedType[0];
           final String columnDef = parsedType[1];

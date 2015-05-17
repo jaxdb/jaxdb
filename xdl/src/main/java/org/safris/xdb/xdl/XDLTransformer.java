@@ -99,13 +99,13 @@ public abstract class XDLTransformer {
       throw new Error(e);
     }
 
-    final Map<String,$xdl_tableType> tableNameToTable = new HashMap<String,$xdl_tableType>();
+    final Map<String,$xdl_table> tableNameToTable = new HashMap<String,$xdl_table>();
     // First, register the table names to be referencable by the @extends attribute
-    for (final $xdl_tableType table : merged._table())
+    for (final $xdl_table table : merged._table())
       tableNameToTable.put(table._name$().text(), table);
 
     final Set<String> mergedTables = new HashSet<String>();
-    for (final $xdl_tableType table : merged._table())
+    for (final $xdl_table table : merged._table())
       mergeTable(table, tableNameToTable, mergedTables);
 
     return merged;
@@ -129,14 +129,14 @@ public abstract class XDLTransformer {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for (final $xdl_tableType table : merged._table())
+    for (final $xdl_table table : merged._table())
       if (!table._abstract$().text() && (table._constraints(0) == null || table._constraints(0)._primaryKey() == null || table._constraints(0)._primaryKey(0)._column() == null))
         errors.add("Table " + table._name$().text() + " does not have a primary key.");
 
     return errors;
   }
 
-  private static void mergeTable(final $xdl_tableType table, final Map<String,$xdl_tableType> tableNameToTable, final Set<String> mergedTables) {
+  private static void mergeTable(final $xdl_table table, final Map<String,$xdl_table> tableNameToTable, final Set<String> mergedTables) {
     if (mergedTables.contains(table._name$().text()))
       return;
 
@@ -144,11 +144,7 @@ public abstract class XDLTransformer {
     if (table._extends$().isNull())
       return;
 
-    if (table._name$().text().equals("invitation")) {
-      int idsao = 0;
-    }
-
-    final $xdl_tableType superTable = tableNameToTable.get(table._extends$().text());
+    final $xdl_table superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
       System.err.println("[ERROR] Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
       System.exit(1);
@@ -164,7 +160,7 @@ public abstract class XDLTransformer {
         table._column().addAll(0, superTable._column());
       }
       else {
-        for (final $xdl_columnType column : superTable._column())
+        for (final $xdl_column column : superTable._column())
           table._column(column);
       }
     }
@@ -172,7 +168,7 @@ public abstract class XDLTransformer {
     if (superTable._constraints() == null)
       return;
 
-    final List<$xdl_tableType._constraints> constraints = superTable._constraints();
+    final List<$xdl_table._constraints> constraints = superTable._constraints();
     if (table._constraints() == null) {
       table._constraints(constraints.get(0));
       return;
@@ -181,7 +177,7 @@ public abstract class XDLTransformer {
     if (constraints.get(0)._primaryKey() == null)
       return;
 
-    final List<$xdl_tableType._constraints> constraints2 = table._constraints();
+    final List<$xdl_table._constraints> constraints2 = table._constraints();
     if (constraints2 != null)
       constraints2.get(0)._primaryKey(constraints.get(0)._primaryKey(0));
   }
