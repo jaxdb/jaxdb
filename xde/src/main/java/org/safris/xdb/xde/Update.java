@@ -26,8 +26,8 @@ import org.safris.xdb.xde.csql.expression.CASE;
 class Update {
   private static abstract class Execute<T> extends cSQL<T> {
     public int execute() throws SQLException {
-      final cSQL<?> table = getParentRoot(this);
-      final Class<? extends Schema> schema = ((Table)table).schema();
+      final cSQL<?> update = getParentRoot(this);
+      final Class<? extends Schema> schema = (((UPDATE<?>)update).table).schema();
       final Connection connection = Schema.getConnection(schema);
       final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
       serialize(serialization);
@@ -97,7 +97,7 @@ class Update {
     }
 
     protected cSQL<?> parent() {
-      return table;
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {

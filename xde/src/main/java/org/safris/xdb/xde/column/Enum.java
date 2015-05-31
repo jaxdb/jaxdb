@@ -35,6 +35,10 @@ public final class Enum<T extends java.lang.Enum<?>> extends Column<T> {
     super(sqlType, type, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected Enum(final Enum<T> column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

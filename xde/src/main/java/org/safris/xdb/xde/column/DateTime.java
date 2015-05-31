@@ -37,6 +37,10 @@ public final class DateTime extends Column<LocalDateTime> {
     super(sqlType, LocalDateTime.class, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected DateTime(final DateTime column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

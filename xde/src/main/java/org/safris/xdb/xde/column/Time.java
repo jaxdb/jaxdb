@@ -36,6 +36,10 @@ public final class Time extends Column<LocalTime> {
     super(sqlType, LocalTime.class, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected Time(final Time column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

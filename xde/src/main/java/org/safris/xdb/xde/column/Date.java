@@ -36,6 +36,10 @@ public final class Date extends Column<LocalDate> {
     super(sqlType, LocalDate.class, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected Date(final Date column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

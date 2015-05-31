@@ -16,11 +16,11 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.cSQL;
 import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.csql.cSQL;
 
 public interface FROM<T extends cSQL<?>> extends WHERE<T> {
   public <B extends cSQL<?>>WHERE<B> WHERE(final Condition<?> condition);

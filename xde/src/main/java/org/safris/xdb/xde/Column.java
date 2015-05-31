@@ -31,8 +31,9 @@ import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.xde.csql.select.ORDER_BY;
+import org.safris.xdb.xde.csql.select.SELECT;
 
-public abstract class Column<T> extends cSQL<T> implements ORDER_BY.Column<T> {
+public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.Column<T>, SELECT.Column<T> {
   private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
 
   static {
@@ -88,6 +89,7 @@ public abstract class Column<T> extends cSQL<T> implements ORDER_BY.Column<T> {
 
   protected Column(final Column<T> column) {
     this(column.sqlType, column.type, column.owner, column.csqlName, column.name, column.value, column.unique, column.primary, column.nullable);
+    this.value = column.value;
   }
 
   private T value;
@@ -124,6 +126,18 @@ public abstract class Column<T> extends cSQL<T> implements ORDER_BY.Column<T> {
 
   protected abstract void set(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract T get(final ResultSet resultSet, final int columnIndex) throws SQLException;
+
+  public Column<?> clone() {
+    try {
+      return getClass().getConstructor(getClass()).newInstance(this);
+    }
+    catch (final InstantiationException e) {
+      throw new Error(e);
+    }
+    catch (final ReflectiveOperationException e) {
+      throw new Error(e);
+    }
+  }
 
   public String toString() {
     final String alias = cSQL.tableAlias(owner, false);

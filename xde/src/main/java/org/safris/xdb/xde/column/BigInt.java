@@ -46,6 +46,14 @@ public final class BigInt extends Column<BigInteger> {
     this.max = max;
   }
 
+  protected BigInt(final BigInt column) {
+    super(column);
+    this.precision = column.precision;
+    this.unsigned = column.unsigned;
+    this.min = column.min;
+    this.max = column.max;
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

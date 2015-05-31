@@ -16,8 +16,8 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.cSQL;
 import org.safris.xdb.xde.Condition;
+import org.safris.xdb.xde.csql.cSQL;
 
 public interface JOIN<T extends cSQL<?>> extends FROM<T> {
   public <B extends cSQL<?>>ON<B> ON(final Condition<?> condition);

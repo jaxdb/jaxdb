@@ -21,6 +21,7 @@ import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
 import org.safris.xdb.xde.csql.insert.INSERT;
 import org.safris.xdb.xde.csql.select.ORDER_BY;
+import org.safris.xdb.xde.csql.select.SELECT;
 import org.safris.xdb.xde.csql.select.SELECT_FROM;
 import org.safris.xdb.xde.csql.update.UPDATE_SET;
 
@@ -138,23 +139,43 @@ public abstract class DML extends cSQL<Object> {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends cSQL<?>>SELECT_FROM<T> SELECT(final T ... table) {
-    return SELECT(null, null, table);
+  public static <T extends Table>SELECT_FROM<T> SELECT(final T ... tables) {
+    return DML.<T>SELECT(null, null, tables);
   }
 
   @SafeVarargs
-  public static <T extends cSQL<?>>SELECT_FROM<T> SELECT(final ALL all, final T ... table) {
-    return SELECT(all, null, table);
+  public static <T extends Table>SELECT_FROM<T> SELECT(final ALL all, final T ... tables) {
+    return DML.<T>SELECT(all, null, tables);
   }
 
   @SafeVarargs
-  public static <T extends cSQL<?>>SELECT_FROM<T> SELECT(final DISTINCT distinct, final T ... table) {
-    return SELECT(null, distinct, table);
+  public static <T extends Table>SELECT_FROM<T> SELECT(final DISTINCT distinct, final T ... tables) {
+    return DML.<T>SELECT(null, distinct, tables);
   }
 
   @SafeVarargs
-  public static <T extends cSQL<?>>SELECT_FROM<T> SELECT(final ALL all, final DISTINCT distinct, final T ... table) {
-    return new Select.SELECT<T>(all,distinct, table);
+  public static <T extends Table>SELECT_FROM<T> SELECT(final ALL all, final DISTINCT distinct, final T ... tables) {
+    return new Select.SELECT<T>(all, distinct, tables);
+  }
+
+  @SafeVarargs
+  public static <T extends SELECT.Column<?>>SELECT_FROM<T> SELECT(final T ... columns) {
+    return DML.<T>SELECT(null, null, columns);
+  }
+
+  @SafeVarargs
+  public static <T extends SELECT.Column<?>>SELECT_FROM<T> SELECT(final ALL all, final T ... columns) {
+    return DML.<T>SELECT(all, null, columns);
+  }
+
+  @SafeVarargs
+  public static <T extends SELECT.Column<?>>SELECT_FROM<T> SELECT(final DISTINCT distinct, final T ... columns) {
+    return DML.<T>SELECT(null, distinct, columns);
+  }
+
+  @SafeVarargs
+  public static <T extends SELECT.Column<?>>SELECT_FROM<T> SELECT(final ALL all, final DISTINCT distinct, final T ... columns) {
+    return new Select.SELECT<T>(all, distinct, columns);
   }
 
   /** CASE **/
@@ -376,14 +397,14 @@ public abstract class DML extends cSQL<Object> {
 
   @SafeVarargs
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static BooleanCondition<?> AND(final Condition<?> ... condition) {
-    return new BooleanCondition(Operator.AND, condition);
+  public static BooleanCondition<?> AND(final Condition<?> ... conditions) {
+    return new BooleanCondition(Operator.AND, conditions);
   }
 
   @SafeVarargs
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static BooleanCondition<?> OR(final Condition<?> ... condition) {
-    return new BooleanCondition(Operator.OR, condition);
+  public static BooleanCondition<?> OR(final Condition<?> ... conditions) {
+    return new BooleanCondition(Operator.OR, conditions);
   }
 
   public static <T>LogicalCondition<T> GT(final Column<T> a, final Column<T> b) {

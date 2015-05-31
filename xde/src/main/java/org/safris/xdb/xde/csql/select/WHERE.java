@@ -16,9 +16,8 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.cSQL;
-import org.safris.xdb.xde.Column;
+import org.safris.xdb.xde.csql.cSQL;
 
 public interface WHERE<T extends cSQL<?>> extends HAVING<T> {
-  public GROUP_BY<T> GROUP_BY(final Column<?> column);
+  public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column);
 }

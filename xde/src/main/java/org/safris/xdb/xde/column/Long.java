@@ -44,6 +44,14 @@ public final class Long extends Column<java.lang.Long> {
     this.max = max;
   }
 
+  protected Long(final Long column) {
+    super(column);
+    this.precision = column.precision;
+    this.unsigned = column.unsigned;
+    this.min = column.min;
+    this.max = column.max;
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

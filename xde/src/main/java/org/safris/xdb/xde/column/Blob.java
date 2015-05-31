@@ -36,6 +36,10 @@ public final class Blob extends Column<byte[]> {
     super(sqlType, byte[].class, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected Blob(final Blob column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

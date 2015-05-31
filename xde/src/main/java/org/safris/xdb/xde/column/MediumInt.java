@@ -44,6 +44,14 @@ public final class MediumInt extends Column<Integer> {
     this.max = max;
   }
 
+  protected MediumInt(final MediumInt column) {
+    super(column);
+    this.precision = column.precision;
+    this.unsigned = column.unsigned;
+    this.min = column.min;
+    this.max = column.max;
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

@@ -23,14 +23,14 @@ import java.sql.Statement;
 
 class Insert {
   protected static class INSERT extends cSQL<Table> implements org.safris.xdb.xde.csql.insert.INSERT {
-    private final Table table;
+    protected final Table table;
 
     protected INSERT(final Table table) {
       this.table = table;
     }
 
     protected cSQL<?> parent() {
-      return table;
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {
@@ -58,8 +58,8 @@ class Insert {
     }
 
     public int execute() throws SQLException {
-      final cSQL<?> table = getParentRoot(this);
-      final Class<? extends Schema> schema = ((Table)table).schema();
+      final cSQL<?> insert = getParentRoot(this);
+      final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
       final Connection connection = Schema.getConnection(schema);
       final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
       serialize(serialization);

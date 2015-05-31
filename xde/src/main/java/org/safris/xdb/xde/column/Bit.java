@@ -40,6 +40,12 @@ public final class Bit extends Column<String> {
     this.varyant = varyant;
   }
 
+  protected Bit(final Bit column) {
+    super(column);
+    this.length = column.length;
+    this.varyant = column.varyant;
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

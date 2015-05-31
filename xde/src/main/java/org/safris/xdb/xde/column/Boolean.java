@@ -35,6 +35,10 @@ public final class Boolean extends Column<java.lang.Boolean> {
     super(sqlType, java.lang.Boolean.class, owner, csqlName, name, _default, unique, primary, nullable);
   }
 
+  protected Boolean(final Boolean column) {
+    super(column);
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }

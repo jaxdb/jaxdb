@@ -19,73 +19,133 @@ package org.safris.xdb.xde;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.commons.lang.Pair;
 import org.safris.xdb.xde.DML.ALL;
 import org.safris.xdb.xde.DML.DISTINCT;
 import org.safris.xdb.xde.DML.Direction;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
+import org.safris.xdb.xde.csql.Selectable;
 import org.safris.xdb.xdl.DBVendor;
 
 class Select {
-  private static abstract class Execute<T extends cSQL<?>> extends cSQL<T> {
-    public final <B extends cSQL<?>>List<B[]> execute() throws SQLException {
-      final cSQL<?> table = getParentRoot(this);
-      final Class<? extends Schema> schema = ((Table)table).schema();
+  private static void serialize(final List<Pair<Column<?>,Integer>> columns, final Selectable selectable) {
+    if (selectable instanceof Table) {
+      final Table table = (Table)selectable;
+      for (int i = 0; i < table.column().length; i++)
+        columns.add(new Pair<Column<?>,Integer>(table.column()[i], i));
+    }
+
+    if (selectable instanceof Aggregate<?>) {
+      final Aggregate<?> aggregate = (Aggregate<?>)selectable;
+      columns.add(new Pair<Column<?>,Integer>((Column<?>)aggregate.parent(), -1));
+    }
+
+    if (selectable instanceof Column<?>) {
+      final Column<?> column = (Column<?>)selectable;
+      columns.add(new Pair<Column<?>,Integer>(column, -1));
+    }
+
+    throw new UnsupportedOperationException("Unknown selectable type: " + selectable.getClass().getName());
+  }
+
+  private static abstract class Execute<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>List<B[]> execute() throws SQLException {
+      final SELECT<?> select = (SELECT<?>)getParentRoot(this);
+      final Class<? extends Schema> schema = select.from().tables[0].schema();
       final Connection connection = Schema.getConnection(schema);
       final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+
       serialize(serialization);
       clearAliases();
+
+      final ResultSet resultSet;
       if (serialization.prototype == PreparedStatement.class) {
         final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
         serialization.set(statement);
-        final ResultSet resultSet = statement.executeQuery();
-        return null;
+        resultSet = statement.executeQuery();
       }
       else if (serialization.prototype == Statement.class) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
-        return null;
+        resultSet = statement.executeQuery(serialization.sql.toString());
       }
       else {
         throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
       }
+
+      final List<Pair<Column<?>,Integer>> columns = new ArrayList<Pair<Column<?>,Integer>>();
+      for (final Selectable selectable : select.selectables)
+        Select.serialize(columns, selectable);
+
+      final ResultSetMetaData metaData = resultSet.getMetaData();
+      final int noColumns = metaData.getColumnCount();
+      Table tablePrototype = null;
+      Table table = null;
+      final List<B[]> rows = new ArrayList<B[]>();
+      while (resultSet.next()) {
+        final Selectable[] row = new Selectable[select.selectables.length];
+        rows.add((B[])row);
+        int index = 0;
+        for (int i = 0; i < noColumns; i++) {
+          final Pair<Column<?>,Integer> columnPrototype = columns.get(i);
+          final Column column;
+          if (columnPrototype.b == -1) {
+            column = columnPrototype.a.clone();
+            row[index++] = column;
+          }
+          else {
+            if (tablePrototype == null || tablePrototype != columnPrototype.a.owner) {
+              tablePrototype = columnPrototype.a.owner;
+              table = tablePrototype.newInstance();
+              row[index++] = table;
+            }
+
+            column = table.column()[columnPrototype.b];
+          }
+
+          column.set(column.get(resultSet, i + 1));
+        }
+      }
+
+      return rows;
     }
   }
 
-  protected static abstract class FROM_JOIN_ON<T extends cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected static abstract class FROM_JOIN_ON<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
     protected final cSQL<?> parent;
 
     protected FROM_JOIN_ON(final cSQL<?> parent) {
       this.parent = parent;
     }
 
-    public final <B extends cSQL<?>>WHERE<B> WHERE(final Condition<?> condition) {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>WHERE<B> WHERE(final Condition<?> condition) {
       return new WHERE<B>(this, condition);
     }
 
-    public final <B extends cSQL<?>>JOIN<B> JOIN(final Table table) {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final Table table) {
       return new JOIN<B>(this, null, null, table);
     }
 
-    public final <B extends cSQL<?>>JOIN<B> JOIN(final TYPE type, final Table table) {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final TYPE type, final Table table) {
       return new JOIN<B>(this, null, type, table);
     }
 
-    public final <B extends cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final Table table) {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final Table table) {
       return new JOIN<B>(this, natural, null, table);
     }
 
-    public final <B extends cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table) {
+    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table) {
       return new JOIN<B>(this, natural, type, table);
     }
   }
 
-  protected final static class FROM<T extends cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected final static class FROM<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
     private final Table[] tables;
 
     protected FROM(final cSQL<?> parent, final Table ... tables) {
@@ -93,11 +153,11 @@ class Select {
       this.tables = tables;
     }
 
-    public GROUP_BY<T> GROUP_BY(final Column<?> column) {
+    public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column) {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -125,16 +185,16 @@ class Select {
     }
   }
 
-  protected final static class GROUP_BY<T extends cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.GROUP_BY<T> {
+  protected final static class GROUP_BY<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.GROUP_BY<T> {
     private final cSQL<?> parent;
-    private final Column<?> column;
+    private final org.safris.xdb.xde.Column<?> column;
 
-    protected GROUP_BY(final cSQL<?> parent, final Column<?> column) {
+    protected GROUP_BY(final cSQL<?> parent, final org.safris.xdb.xde.Column<?> column) {
       this.parent = parent;
       this.column = column;
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -156,7 +216,7 @@ class Select {
     }
   }
 
-  protected final static class HAVING<T extends cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.HAVING<T> {
+  protected final static class HAVING<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.HAVING<T> {
     private final cSQL<?> parent;
     private final Condition<?> condition;
 
@@ -165,7 +225,7 @@ class Select {
       this.condition = condition;
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column) {
       return new ORDER_BY<B>(this, column);
     }
 
@@ -185,7 +245,7 @@ class Select {
     }
   }
 
-  protected final static class JOIN<T extends cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.JOIN<T> {
+  protected final static class JOIN<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.JOIN<T> {
     private final NATURAL natural;
     private final TYPE type;
     private final Table table;
@@ -197,15 +257,15 @@ class Select {
       this.table = table;
     }
 
-    public <B extends cSQL<?>>ON<B> ON(final Condition<?> condition) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ON<B> ON(final Condition<?> condition) {
       return new ON<B>(this, condition);
     }
 
-    public GROUP_BY<T> GROUP_BY(final Column<?> column) {
+    public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column) {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -230,7 +290,7 @@ class Select {
     }
   }
 
-  protected final static class ON<T extends cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.ON<T> {
+  protected final static class ON<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.ON<T> {
     private final Condition<?> condition;
 
     protected ON(final cSQL<?> parent, final Condition<?> condition) {
@@ -238,11 +298,11 @@ class Select {
       this.condition = condition;
     }
 
-    public GROUP_BY<T> GROUP_BY(final Column<?> column) {
+    public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column) {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -263,7 +323,7 @@ class Select {
     }
   }
 
-  protected final static class ORDER_BY<T extends cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.ORDER_BY<T> {
+  protected final static class ORDER_BY<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.ORDER_BY<T> {
     private final cSQL<?> parent;
     private final ORDER_BY.Column<?>[] columns;
 
@@ -306,16 +366,17 @@ class Select {
     }
   }
 
-  protected final static class SELECT<T extends cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select.SELECT_FROM<T> {
+  protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select.SELECT_FROM<T> {
     private final ALL all;
     private final DISTINCT distinct;
-    private final T[] csqls;
+    protected final Selectable[] selectables;
+    private FROM<T> from;
 
     @SafeVarargs
-    public SELECT(final ALL all, final DISTINCT distinct, final T ... csqls) {
+    public SELECT(final ALL all, final DISTINCT distinct, final Selectable ... selections) {
       this.all = all;
       this.distinct = distinct;
-      this.csqls = csqls;
+      this.selectables = selections;
     }
 
     public FROM<T> FROM(final Table ... table) {
@@ -323,23 +384,27 @@ class Select {
     }
 
     protected cSQL<?> parent() {
-      return csqls.length != 0 ? csqls[0] : null;
+      return null;
+    }
+
+    protected FROM<T> from() {
+      return from;
     }
 
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL) {
         serialization.sql.append("SELECT ").append(all != null ? all + " " : "").append(distinct != null ? distinct + " " : "");
-        for (int i = 0; i < csqls.length; i++) {
-          final T csql = csqls[i];
+        for (int i = 0; i < selectables.length; i++) {
+          final cSQL<?> csql = (cSQL<?>)selectables[i];
           if (i > 0)
             serialization.sql.append(", ");
 
           if (csql instanceof Table) {
             final Table table = (Table)csql;
             final String alias = tableAlias(table, true);
-            final Column<?>[] columns = table.column();
+            final org.safris.xdb.xde.Column<?>[] columns = table.column();
             for (int j = 0; j < columns.length; j++) {
-              final Column<?> column = columns[j];
+              final org.safris.xdb.xde.Column<?> column = columns[j];
               if (j > 0)
                 serialization.sql.append(", ");
 
@@ -347,8 +412,8 @@ class Select {
             }
           }
           else if (csql instanceof Column<?>) {
-            tableAlias(((Column<?>)csql).owner, true);
-            final Column<?> column = (Column<?>)csql;
+            tableAlias(((org.safris.xdb.xde.Column<?>)csql).owner, true);
+            final org.safris.xdb.xde.Column<?> column = (org.safris.xdb.xde.Column<?>)csql;
             column.serialize(serialization);
           }
           else if (csql instanceof Aggregate<?>) {
@@ -363,15 +428,15 @@ class Select {
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
     }
 
-    public <B extends cSQL<?>> List<B[]> execute() throws SQLException {
-      if (csqls.length == 1) {
-        final Table table = (Table)this.csqls[0];
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>> List<B[]> execute() throws SQLException {
+      if (selectables.length == 1) {
+        final Table table = (Table)this.selectables[0];
         final Table out = table.newInstance();
-        final Column<?>[] columns = table.column();
+        final org.safris.xdb.xde.Column<?>[] columns = table.column();
         String sql = "SELECT ";
         String select = "";
         String where = "";
-        for (final Column<?> column : columns)
+        for (final org.safris.xdb.xde.Column<?> column : columns)
           if (column.primary)
             where += " AND " + column.name + " = ?";
           else
@@ -380,7 +445,7 @@ class Select {
         sql += select.substring(2) + " FROM " + table.name() + " WHERE " + where.substring(5);
         final PreparedStatement statement = Schema.getConnection(table.schema()).prepareStatement(sql);
         int index = 0;
-        for (final Column<?> column : columns)
+        for (final org.safris.xdb.xde.Column<?> column : columns)
           if (column.primary)
             column.set(statement, ++index);
 
@@ -390,7 +455,7 @@ class Select {
           return null;
 
         index = 0;
-        for (final Column column : out.column())
+        for (final org.safris.xdb.xde.Column column : out.column())
           if (!column.primary)
             column.set(column.get(resultSet, ++index));
 
@@ -404,7 +469,7 @@ class Select {
     }
   }
 
-  protected final static class WHERE<T extends cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.WHERE<T> {
+  protected final static class WHERE<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.WHERE<T> {
     private final cSQL<?> parent;
     private final Condition<?> condition;
 
@@ -413,11 +478,11 @@ class Select {
       this.condition = condition;
     }
 
-    public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
-    public GROUP_BY<T> GROUP_BY(final Column<?> column) {
+    public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column) {
       return new GROUP_BY<T>(this, column);
     }
 

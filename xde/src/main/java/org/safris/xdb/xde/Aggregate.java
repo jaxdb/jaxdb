@@ -16,9 +16,9 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xde.cSQL;
+import org.safris.xdb.xde.csql.select.SELECT;
 
-public abstract class Aggregate<T> extends cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
+public abstract class Aggregate<T> extends cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T>, SELECT.Column<T> {
   protected final DML.SetQualifier qualifier;
   protected final Column<T> column;
 

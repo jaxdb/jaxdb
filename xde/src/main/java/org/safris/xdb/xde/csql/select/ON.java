@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.cSQL;
+import org.safris.xdb.xde.csql.cSQL;
 
 public interface ON<T extends cSQL<?>> extends FROM<T> {
 }

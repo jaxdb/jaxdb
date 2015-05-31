@@ -45,6 +45,14 @@ public final class Float extends Column<java.lang.Float> {
     this.max = max;
   }
 
+  protected Float(final Float column) {
+    super(column);
+    this.precision = column.precision;
+    this.unsigned = column.unsigned;
+    this.min = column.min;
+    this.max = column.max;
+  }
+
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
