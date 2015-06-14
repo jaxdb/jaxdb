@@ -218,8 +218,14 @@ public final class DDLTransform extends XDLTransformer {
     }
     else if (column instanceof $xdl_dateTime) {
       final $xdl_dateTime type = ($xdl_dateTime)column;
-      ddl += vendor != DBVendor.DERBY ? "DATETIME" : "TIMESTAMP";
-      ddl += "(" + type._precision$().text() + ")";
+      if (vendor == DBVendor.DERBY) {
+        ddl += "TIMESTAMP";
+      }
+      else {
+        ddl += "DATETIME";
+        ddl += "(" + type._precision$().text() + ")";
+      }
+
       if (!type._default$().isNull())
         ddl += " DEFAULT " + type._default$().text();
     }

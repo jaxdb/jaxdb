@@ -46,28 +46,22 @@ public abstract class Schema {
   }
 
   protected static void createDDL(final Connection connection, final Table[] identity) throws SQLException {
-    final DBVendor settings = getDBVendor(connection);
-
+    final DBVendor vendor = getDBVendor(connection);
     final Statement statement = connection.createStatement();
     for (final org.safris.xdb.xde.Table entity : identity) {
-      final String[] sqls = entity.ddl(settings, DDL.Type.CREATE);
-      for (final String sql : sqls) {
-        System.out.println(sql);
+      final String[] sqls = entity.ddl(vendor, DDL.Type.CREATE);
+      for (final String sql : sqls)
         statement.execute(sql);
-      }
     }
   }
 
   protected static void dropDDL(final Connection connection, final Table[] identity) throws SQLException {
-    final DBVendor settings = getDBVendor(connection);
-
+    final DBVendor vendor = getDBVendor(connection);
     final Statement statement = connection.createStatement();
     for (int i = identity.length - 1; i >= 0; --i) {
-      final String[] sqls = identity[i].ddl(settings, DDL.Type.DROP);
-      for (final String sql : sqls) {
-        System.out.println(sql);
+      final String[] sqls = identity[i].ddl(vendor, DDL.Type.DROP);
+      for (final String sql : sqls)
         statement.execute(sql);
-      }
     }
   }
 }
