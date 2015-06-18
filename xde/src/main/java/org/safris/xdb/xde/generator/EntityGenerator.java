@@ -270,7 +270,7 @@ public class EntityGenerator {
   private static int getColumnCount($xdl_table table, final boolean deep) {
     int count = 0;
     do {
-      count += table._column().size();
+      count += table._column() != null ? table._column().size() : 0;
     }
     while (deep && (table = tableNameToTable.get(table._extends$().text())) != null);
     return count;
@@ -320,32 +320,41 @@ public class EntityGenerator {
       out += "    }\n\n";
 
       // Constructor with params
-      out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
-      String params = "";
-      for (int i = 0; i < table._column().size(); i++) {
-        final $xdl_column column = table._column().get(i);
-        params += ", " + makeParam(table, column);
-      }
-      out += params.substring(2) + ") {\n";
-      out += "      this();\n";
       String set = "";
-      for (int i = 0; i < table._column().size(); i++) {
-        final $xdl_column column = table._column().get(i);
-        final String columnName = Strings.toCamelCase(column._name$().text());
-        set += "\n      this." + columnName + ".set(" + columnName + ");";
+      if (table._column() != null) {
+        out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
+        String params = "";
+        for (int i = 0; i < table._column().size(); i++) {
+          final $xdl_column column = table._column().get(i);
+          params += ", " + makeParam(table, column);
+        }
+
+        out += params.substring(2) + ") {\n";
+        out += "      this();\n";
+        for (int i = 0; i < table._column().size(); i++) {
+          final $xdl_column column = table._column().get(i);
+          final String columnName = Strings.toCamelCase(column._name$().text());
+          set += "\n      this." + columnName + ".set(" + columnName + ");";
+        }
+
+        out += set.substring(1) + "\n    }\n\n";
       }
-      out += set.substring(1) + "\n    }\n\n";
 
       // Copy constructor
       out += "    public " + Strings.toTitleCase(table._name$().text()) + "(final " + Strings.toTitleCase(table._name$().text()) + " copy) {\n";
       out += "      this();\n";
       set = "";
-      for (int i = 0; i < table._column().size(); i++) {
-        final $xdl_column column = table._column().get(i);
-        final String columnName = Strings.toCamelCase(column._name$().text());
-        set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
+      if (table._column() != null) {
+        for (int i = 0; i < table._column().size(); i++) {
+          final $xdl_column column = table._column().get(i);
+          final String columnName = Strings.toCamelCase(column._name$().text());
+          set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
+        }
+
+        out += set.substring(1) + "\n";
       }
-      out += set.substring(1) + "\n    }\n\n";
+
+      out += "    }\n\n";
     }
 
     String defs = "";
@@ -358,30 +367,45 @@ public class EntityGenerator {
 
     defs = "";
     int primaryIndex = 0;
-    for (int i = 0; i < table._column().size(); i++) {
-      final $xdl_column column = table._column().get(i);
-      final String columnName = Strings.toCamelCase(column._name$().text());
-      defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
+    if (table._column() != null) {
+      for (int i = 0; i < table._column().size(); i++) {
+        final $xdl_column column = table._column().get(i);
+        final String columnName = Strings.toCamelCase(column._name$().text());
+        defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
+      }
+
+      out += defs.substring(1) + "\n";
     }
 
-    out += defs.substring(1) + "\n    }\n";
+    out += "    }\n";
 
-    for (int i = 0; i < table._column().size(); i++) {
-      final $xdl_column column = table._column().get(i);
-      out += makeColumn(table, column, i == table._column().size());
+    if (table._column() != null) {
+      for (int i = 0; i < table._column().size(); i++) {
+        final $xdl_column column = table._column().get(i);
+        out += makeColumn(table, column, i == table._column().size());
+      }
+
+      out += "\n";
     }
 
-    out += "\n\n";
+    out += "\n";
     out += "    public boolean equals(final " + Object.class.getName() + " obj) {\n";
     out += "      if (obj == this)\n        return true;\n\n";
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
-    out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
 
     String eq = "";
-    for (final $xdl_column column : table._column())
-      eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
+    if (table._column() != null) {
+      out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
+      for (final $xdl_column column : table._column())
+        eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
 
-    out += "      return " + eq.substring(4) + ";\n    }";
+      out += "      return " + eq.substring(4) + ";";
+    }
+    else {
+      out += "      return true;";
+    }
+
+    out += "\n    }";
     out += "\n  }";
     return out;
   }

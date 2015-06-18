@@ -269,7 +269,10 @@ public final class DDLTransform extends XDLTransformer {
 
   private String parseColumns(final DBVendor vendor, final $xdl_table table) {
     String ddl = "";
-    columnCount.put(table._name$().text(), table._column().size());
+    columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
+    if (table._column() == null)
+      return "";
+
     for (final $xdl_column column : table._column())
       if (!(column instanceof $xdl_inherited))
         ddl += ",\n  " + parseColumn(column, vendor);
