@@ -17,12 +17,13 @@
 package org.safris.xdb.xdl;
 
 import java.io.File;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.safris.commons.xml.NamespaceURI;
+import org.safris.commons.xml.XMLException;
 import org.safris.commons.xml.dom.DOMStyle;
 import org.safris.commons.xml.dom.DOMs;
 import org.w3.x2001.xmlschema.$xs_complexType;
@@ -34,27 +35,15 @@ public final class XSDTransform extends XDLTransformer {
     createXSD(new File(args[0]), null);
   }
 
-  public static void createXSD(final File xdlFile, final File outDir) {
-    final xdl_database database;
-    try {
-      database = parseArguments(xdlFile.toURI().toURL(), outDir);
-    }
-    catch (final MalformedURLException e) {
-      throw new Error(e);
-    }
+  public static void createXSD(final File xdlFile, final File outDir) throws IOException, XMLException {
+    final xdl_database database = parseArguments(xdlFile.toURI().toURL(), outDir);
+    final XSDTransform creator = new XSDTransform(database);
+    final xs_schema schema = creator.parse();
 
-    try {
-      final XSDTransform creator = new XSDTransform(database);
-      final xs_schema schema = creator.parse();
-
-      writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.unmerged._name$().text() + ".xsd") : null);
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
+    writeOutput(DOMs.domToString(schema.marshal(), DOMStyle.INDENT), outDir != null ? new File(outDir, creator.unmerged._name$().text() + ".xsd") : null);
   }
 
-  private XSDTransform(final xdl_database database) throws Exception {
+  private XSDTransform(final xdl_database database) {
     super(database);
   }
 

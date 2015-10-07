@@ -18,6 +18,7 @@ package org.safris.xdb.xdl;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
+import org.safris.commons.xml.XMLException;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.xml.sax.InputSource;
 
@@ -48,22 +50,17 @@ public abstract class XDLTransformer {
     return packagePrefix + "." + database._name$().text();
   }
 
-  protected static xdl_database parseArguments(final URL url, final File outDir) {
+  protected static xdl_database parseArguments(final URL url, final File outDir) throws IOException, XMLException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 
     if (outDir != null && !outDir.exists())
       throw new IllegalArgumentException("!outDir.exists()");
 
-    try {
-      final InputStream in = url.openStream();
-      final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
-      in.close();
-      return database;
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
+    final InputStream in = url.openStream();
+    final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
+    in.close();
+    return database;
   }
 
   protected static void writeOutput(final String output, final File file) {

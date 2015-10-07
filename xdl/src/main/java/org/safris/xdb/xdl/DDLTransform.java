@@ -17,6 +17,7 @@
 package org.safris.xdb.xdl;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,47 +28,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.safris.commons.util.TopologicalSort;
-import org.safris.xml.generator.compiler.runtime.BindingList;
+import org.safris.commons.xml.XMLException;
 
 public final class DDLTransform extends XDLTransformer {
   private static final String[] reservedWords = new String[] {"ABSOLUTE", "ACTION", "ADD", "AFTER", "ALL", "ALLOCATE", "ALTER", "AND", "ANY", "ARE", "ARRAY", "AS", "ASC", "ASSERTION", "AT", "AUTHORIZATION", "BEFORE", "BEGIN", "BETWEEN", "BINARY", "BIT", "BLOB", "BOOLEAN", "BOTH", "BREADTH", "BY", "CALL", "CASCADE", "CASCADED", "CASE", "CAST", "CATALOG", "CHAR", "CHARACTER", "CHECK", "CLOB", "CLOSE", "COLLATE", "COLLATION", "COLUMN", "COMMIT", "CONDITION", "CONNECT", "CONNECTION", "CONSTRAINT", "CONSTRAINTS", "CONSTRUCTOR", "CONTINUE", "CORRESPONDING", "CREATE", "CROSS", "CUBE", "CURRENT", "CURRENT_DATE", "CURRENT_DEFAULT_TRANSFORM_GROUP", "CURRENT_TRANSFORM_GROUP_FOR_TYPE", "CURRENT_PATH", "CURRENT_ROLE", "CURRENT_TIME", "CURRENT_TIMESTAMP", "CURRENT_USER", "CURSOR", "CYCLE", "DATA", "DATE", "DAY", "DEALLOCATE", "DEC", "DECIMAL", "DECLARE", "DEFAULT", "DEFERRABLE", "DEFERRED", "DELETE", "DEPTH", "DEREF", "DESC", "DESCRIBE", "DESCRIPTOR", "DETERMINISTIC", "DIAGNOSTICS", "DISCONNECT", "DISTINCT", "DO", "DOMAIN", "DOUBLE", "DROP", "DYNAMIC", "EACH", "ELSE", "ELSEIF", "END", "END-EXEC", "EQUALS", "ESCAPE", "EXCEPT", "EXCEPTION", "EXEC", "EXECUTE", "EXISTS", "EXIT", "EXTERNAL", "FALSE", "FETCH", "FIRST", "FLOAT", "FOR", "FOREIGN", "FOUND", "FROM", "FREE", "FULL", "FUNCTION", "GENERAL", "GET", "GLOBAL", "GO", "GOTO", "GRANT", "GROUP", "GROUPING", "HANDLE", "HAVING", "HOLD", "HOUR", "IDENTITY", "IF", "IMMEDIATE", "IN", "INDICATOR", "INITIALLY", "INNER", "INOUT", "INPUT", "INSERT", "INT", "INTEGER", "INTERSECT", "INTERVAL", "INTO", "IS", "ISOLATION", "JOIN", "KEY", "LANGUAGE", "LARGE", "LAST", "LATERAL", "LEADING", "LEAVE", "LEFT", "LEVEL", "LIKE", "LOCAL", "LOCALTIME", "LOCALTIMESTAMP", "LOCATOR", "LOOP", "MAP", "MATCH", "METHOD", "MINUTE", "MODIFIES", "MODULE", "MONTH", "NAMES", "NATIONAL", "NATURAL", "NCHAR", "NCLOB", "NESTING", "NEW", "NEXT", "NO", "NONE", "NOT", "NULL", "NUMERIC", "OBJECT", "OF", "OLD", "ON", "ONLY", "OPEN", "OPTION", "OR", "ORDER", "ORDINALITY", "OUT", "OUTER", "OUTPUT", "OVERLAPS", "PAD", "PARAMETER", "PARTIAL", "PATH", "PRECISION", "PREPARE", "PRESERVE", "PRIMARY", "PRIOR", "PRIVILEGES", "PROCEDURE", "PUBLIC", "READ", "READS", "REAL", "RECURSIVE", "REDO", "REF", "REFERENCES", "REFERENCING", "RELATIVE", "RELEASE", "REPEAT", "RESIGNAL", "RESTRICT", "RESULT", "RETURN", "RETURNS", "REVOKE", "RIGHT", "ROLE", "ROLLBACK", "ROLLUP", "ROUTINE", "ROW", "ROWS", "SAVEPOINT", "SCHEMA", "SCROLL", "SEARCH", "SECOND", "SECTION", "SELECT", "SESSION", "SESSION_USER", "SET", "SETS", "SIGNAL", "SIMILAR", "SIZE", "SMALLINT", "SOME", "SPACE", "SPECIFIC", "SPECIFICTYPE", "SQL", "SQLEXCEPTION", "SQLSTATE", "SQLWARNING", "START", "STATE", "STATIC", "SYSTEM_USER", "TABLE", "TEMPORARY", "THEN", "TIME", "TIMESTAMP", "TIMEZONE_HOUR", "TIMEZONE_MINUTE", "TO", "TRAILING", "TRANSACTION", "TRANSLATION", "TREAT", "TRIGGER", "TRUE", "UNDER", "UNDO", "UNION", "UNIQUE", "UNKNOWN", "UNNEST", "UNTIL", "UPDATE", "USAGE", "USER", "USING", "VALUE", "VALUES", "VARCHAR", "VARYING", "VIEW", "WHEN", "WHENEVER", "WHERE", "WHILE", "WITH", "WITHOUT", "WORK", "WRITE", "YEAR", "ZONE"};
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
-      System.err.println("<MySQL|Derby> <XDL_FILE>");
+      System.err.println("<Derby|MySQL|PostgreSQL> <XDL_FILE>");
       System.exit(1);
     }
 
-    createDDL(new File(args[1]).toURI().toURL(), "MySQL".equals(args[0]) ? DBVendor.MY_SQL : "Derby".equals(args[0]) ? DBVendor.DERBY : null, null);
+    createDDL(new File(args[1]).toURI().toURL(), DBVendor.parse(args[0]), null);
   }
 
-  private static String getIndexName(final $xdl_table table, final $xdl_table._index index) {
-    return getIndexName(table, index, index._column().toArray(new $xdl_named[index._column().size()]));
-  }
-
-  private static String getIndexName(final $xdl_table table, final $xdl_index index, final $xdl_named ... column) {
-    if (index == null || column.length == 0)
-      return null;
-
-    String name = "";
-    for (final $xdl_named c : column)
-      name += "_" + c._name$().text();
-
-    return "idx_" + table._name$().text() + name;
-  }
-
-  public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) {
+  public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws IOException, XMLException {
     return DDLTransform.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static DDLTransform transformDDL(final URL url) {
+  public static DDLTransform transformDDL(final URL url) throws IOException, XMLException {
     final xdl_database database = parseArguments(url, null);
-    try {
-      return new DDLTransform(database);
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
+    return new DDLTransform(database);
   }
 
   private static boolean checkName(final String string) {
@@ -75,48 +56,28 @@ public final class DDLTransform extends XDLTransformer {
   }
 
   public static DDL[] createDDL(final xdl_database database, final DBVendor vendor, final File outDir) {
-    try {
-      final DDLTransform creator = new DDLTransform(database);
-      final DDL[] ddls = creator.parse(vendor);
-      String sql = "";
-      for (int i = ddls.length - 1; i >= 0; --i)
-        if (ddls[i].drop != null)
-          for (final String drop : ddls[i].drop)
-            sql += "\n" + drop + ";";
+    final DDLTransform creator = new DDLTransform(database);
+    final DDL[] ddls = creator.parse(vendor);
+    final StringBuilder sql = new StringBuilder();
+    for (int i = ddls.length - 1; i >= 0; --i)
+      if (ddls[i].drop != null)
+        for (final String drop : ddls[i].drop)
+          sql.append(drop).append(";\n");
 
-      for (final DDL ddl : ddls)
-        for (final String create : ddl.create)
-          sql += "\n" + create + ";";
+    if (sql.length() > 0)
+      sql.append("\n");
 
-      if (vendor == DBVendor.DERBY)
-        sql = "\nCREATE SCHEMA " + database._name$().text() + ";\n" + sql;
+    for (final DDL ddl : ddls)
+      for (final String create : ddl.create)
+        sql.append(create).append(";\n\n");
 
-      writeOutput(sql, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
-
-      return ddls;
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
+    final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + database._name$().text() + ";\n\n" + sql : sql.toString();
+    writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
+    return ddls;
   }
 
-  private static String toEnumValue(String value) {
-    value = value.replaceAll("\\\\\\\\", "\\\\"); // \\ is \
-    value = value.replaceAll("\\\\_", " "); // \_ is <space>
-    value = value.replaceAll("\\\\", ""); // anything else escaped is itself
-    value = value.replace("'", "\\'"); // ' must be \'
-    return value;
-  }
-
-  private DDLTransform(final xdl_database database) throws Exception {
+  private DDLTransform(final xdl_database database) {
     super(database);
-  }
-
-  private static void checkValidNumber(final String var, final Integer precision, final Integer decimal) {
-    if (precision < decimal) {
-      System.err.println("[ERROR] ERROR 1427 (42000): For decimal(M,D), M must be >= D (column '" + var + "').");
-      System.exit(1);
-    }
   }
 
   private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
@@ -125,157 +86,69 @@ public final class DDLTransform extends XDLTransformer {
     return columnCount;
   }
 
-  private static String parseColumn(final $xdl_column column, final DBVendor vendor) {
-    String ddl = "";
-    String suffix = "";
-    final String columnName = column._name$().text();
-    ddl += columnName + " ";
+  private static String parseColumn(final $xdl_table table, final $xdl_column column, final DBVendor vendor) {
+    final StringBuilder ddl = new StringBuilder();
+    ddl.append(column._name$().text()).append(" ");
     if (column instanceof $xdl_char) {
-      final $xdl_char type = ($xdl_char)column;
-      ddl += type._variant$().text() ? "VARCHAR" : "CHAR";
-      ddl += "(" + type._length$().text() + ")";
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT '" + type._default$().text() + "'";
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_char)column));
     }
     else if (column instanceof $xdl_bit) {
-      final $xdl_bit type = ($xdl_bit)column;
-      ddl += vendor != DBVendor.DERBY ? "BIT" : "BIT";
-      if (type._variant$().text()) // FIXME: This is implemented for PostgreSQL, but not for MySQL
-        ddl += " VARYING";
-
-      ddl += "(" + type._length$().text() + ")";
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT b'" + type._default$().text() + "'";
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_bit)column));
     }
     else if (column instanceof $xdl_blob) {
-      final $xdl_blob type = ($xdl_blob)column;
-      ddl += "BLOB";
-      ddl += "(" + type._length$().text() + ")";
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_blob)column));
     }
     else if (column instanceof $xdl_integer) {
-      final $xdl_integer type = ($xdl_integer)column;
-      final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
-      if (noBytes == 1) // 2^8 = 256
-        ddl += vendor != DBVendor.DERBY ? "TINYINT" : "SMALLINT";
-      else if (noBytes == 2) // 2^16 = 65536
-        ddl += vendor != DBVendor.DERBY ? "SMALLINT" : !type._unsigned$().isNull() && type._unsigned$().text() ? "INTEGER" : "SMALLINT";
-      else if (noBytes == 3) // 2^24 = 16777216
-        ddl += vendor != DBVendor.DERBY ? "MEDIUMINT" : "INTEGER";
-      else if (noBytes == 4) // 2^32 = 4294967296
-        ddl += "INTEGER";
-      else
-        ddl += "BIGINT";
-
-      if (!type._precision$().isNull() && vendor != DBVendor.DERBY)
-        ddl += "(" + type._precision$().text() + ")";
-
-      if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
-        ddl += " UNSIGNED";
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
-
-      if (!type._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
-        suffix += " " + $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_integer)column));
     }
     else if (column instanceof $xdl_float) {
-      final $xdl_float type = ($xdl_float)column;
-      ddl += type._double$().text() ? "DOUBLE" : "FLOAT";
-      ddl += "(" + type._precision$().text() + ")";
-
-      if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
-        ddl += " UNSIGNED";
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_float)column));
     }
     else if (column instanceof $xdl_decimal) {
-      final $xdl_decimal type = ($xdl_decimal)column;
-      ddl += "DECIMAL";
-      DDLTransform.checkValidNumber(column._name$().text(), type._precision$().text(), type._decimal$().text());
-      ddl += "(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
-
-      if (!type._unsigned$().isNull() && type._unsigned$().text() && vendor != DBVendor.DERBY)
-        ddl += " UNSIGNED";
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_decimal)column));
     }
     else if (column instanceof $xdl_date) {
-      final $xdl_date type = ($xdl_date)column;
-      ddl += "DATE";
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_date)column));
     }
     else if (column instanceof $xdl_time) {
-      final $xdl_time type = ($xdl_time)column;
-      ddl += "TIME";
-      ddl += "(" + type._precision$().text() + ")";
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_time)column));
     }
     else if (column instanceof $xdl_dateTime) {
-      final $xdl_dateTime type = ($xdl_dateTime)column;
-      if (vendor == DBVendor.DERBY) {
-        ddl += "TIMESTAMP";
-      }
-      else {
-        ddl += "DATETIME";
-        ddl += "(" + type._precision$().text() + ")";
-      }
-
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_dateTime)column));
     }
     else if (column instanceof $xdl_boolean) {
-      final $xdl_boolean type = ($xdl_boolean)column;
-      ddl += "BOOLEAN";
-      if (!type._default$().isNull())
-        ddl += " DEFAULT " + type._default$().text();
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_boolean)column));
     }
     else if (column instanceof $xdl_enum) {
-      final $xdl_enum type = ($xdl_enum)column;
-      ddl += vendor != DBVendor.DERBY ? "ENUM" : "VARCHAR";
-      ddl += "(";
-      if (vendor == DBVendor.DERBY) {
-        int maxLength = 0;
-        if (!type._values$().isNull())
-          for (final String value : type._values$().text())
-            maxLength = Math.max(maxLength, value.length());
-
-        ddl += String.valueOf(maxLength);
-      }
-      else if (!type._values$().isNull()) {
-        String values = "";
-        for (final String value : type._values$().text())
-          values += ", '" + DDLTransform.toEnumValue(value) + "'";
-
-        ddl += values.substring(2);
-      }
-
-      ddl += ")";
-      if (!type._default$().isNull())
-        ddl += " DEFAULT '" + type._default$().text() + "'";
+      ddl.append(vendor.getSQLSpec().type(table, ($xdl_enum)column));
     }
 
-    if (!column._null$().isNull())
-      ddl += !column._null$().text() ? " NOT NULL" : (vendor != DBVendor.DERBY ? " NULL" : "");
+    final String defaultFragement = vendor.getSQLSpec().$default(table, column);
+    if (defaultFragement != null && defaultFragement.length() > 0)
+      ddl.append(" DEFAULT ").append(defaultFragement);
 
-    ddl += suffix;
-    return ddl;
+    final String nullFragment = vendor.getSQLSpec().$null(table, column);
+    if (nullFragment != null && nullFragment.length() > 0)
+      ddl.append(" ").append(nullFragment);
+
+    if (column instanceof $xdl_integer) {
+      final String autoIncrementFragment = vendor.getSQLSpec().$autoIncrement(table, ($xdl_integer)column);
+      if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
+        ddl.append(" ").append(autoIncrementFragment);
+    }
+
+    return ddl.toString();
   }
 
   private String parseColumns(final DBVendor vendor, final $xdl_table table) {
-    String ddl = "";
+    final StringBuilder ddl = new StringBuilder();
     columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
     if (table._column() == null)
       return "";
 
     for (final $xdl_column column : table._column())
       if (!(column instanceof $xdl_inherited))
-        ddl += ",\n  " + parseColumn(column, vendor);
+        ddl.append(",\n  ").append(parseColumn(table, column, vendor));
 
     return ddl.substring(2);
   }
@@ -385,44 +258,6 @@ public final class DDLTransform extends XDLTransformer {
     return contraintsBuffer.toString();
   }
 
-  private static String getTriggerName(final String tableName, final $xdl_table._triggers._trigger trigger, final String action) {
-    return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
-  }
-
-  private String parseTriggers(final String tableName, final List<$xdl_table._triggers._trigger> triggers) {
-    String buffer = "";
-    for (final $xdl_table._triggers._trigger trigger : triggers) {
-      for (final String action : trigger._actions$().text()) {
-        buffer += "\nDELIMITER |\n";
-        buffer += "CREATE TRIGGER " + DDLTransform.getTriggerName(tableName, trigger, action) + " " + trigger._time$().text() + " " + action + " ON " + tableName + "\n";
-        buffer += "  FOR EACH ROW\n";
-        buffer += "  BEGIN\n";
-
-        final String text = trigger.text().toString();
-        // FIXME: This does not work because the whitespace is trimmed before we can check it
-        int i = 0, j = -1;
-        while (i < text.length()) {
-          char c = text.charAt(i++);
-          if (c == '\n' || c == '\r')
-            continue;
-
-          j++;
-          //System.err.println(c);
-          if (c != ' ' && c != '\t')
-            break;
-        }
-
-        //System.err.println("XXXX: " + i + " " + j);
-        buffer += "    " + text.trim().replace("\n" + text.substring(0, j), "\n    ") + "\n";
-        buffer += "  END;\n";
-        buffer += "|\n";
-        buffer += "DELIMITER";
-      }
-    }
-
-    return buffer.substring(1);
-  }
-
   private void registerColumns(final Set<String> tableNames, final Map<String,$xdl_column> columnNameToColumn, final $xdl_table table) {
     final String tableName = table._name$().text();
     if (!checkName(tableName)) {
@@ -455,6 +290,9 @@ public final class DDLTransform extends XDLTransformer {
     final Map<String,$xdl_column> columnNameToColumn = new HashMap<String,$xdl_column>();
     registerColumns(tableNames, columnNameToColumn, table);
 
+    final List<String> statements = new ArrayList<String>();
+    statements.addAll(vendor.getSQLSpec().types(table));
+
     final String tableName = table._name$().text();
     final StringBuffer buffer = new StringBuffer();
     buffer.append("CREATE TABLE ").append(tableName).append(" (\n");
@@ -462,33 +300,11 @@ public final class DDLTransform extends XDLTransformer {
     buffer.append(parseConstraints(vendor, tableName, columnNameToColumn, table));
     buffer.append("\n)");
 
-    final List<String> statements = new ArrayList<String>();
     statements.add(buffer.toString());
 
-    if (table._triggers() != null)
-      statements.add(parseTriggers(tableName, table._triggers().get(0)._trigger()));
-
-    if (table._index() != null)
-      for (final $xdl_table._index index : table._index())
-        statements.add("CREATE " + (!index._unique$().isNull() && index._unique$().text() ? "UNIQUE " : "") + "INDEX " + getIndexName(table, index) + " USING " + index._type$().text() + " ON " + table._name$().text() + " (" + csvNames(index._column()) + ")");
-
-    if (table._column() != null)
-      for (final $xdl_column column : table._column())
-        if (column._index() != null)
-          statements.add("CREATE " + (!column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "") + "INDEX " + getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ")");
-
+    statements.addAll(vendor.getSQLSpec().triggers(table));
+    statements.addAll(vendor.getSQLSpec().indexes(table));
     return statements.toArray(new String[statements.size()]);
-  }
-
-  private static String csvNames(final BindingList<$xdl_named> names) {
-    if (names.size() == 0)
-      return "";
-
-    String csv = "";
-    for (final $xdl_named name : names)
-      csv += ", " + name._name$().text();
-
-    return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
   private final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
@@ -507,38 +323,22 @@ public final class DDLTransform extends XDLTransformer {
       dependants.add(source);
   }
 
-  private String[] createDropStatement(final $xdl_table table) {
-    final List<String> statements = new ArrayList<String>();
-    if (table._index() != null)
-      for (final $xdl_table._index index : table._index())
-        statements.add("DROP INDEX " + getIndexName(table, index) + " ON " + table._name$().text());
-
-    if (table._column() != null)
-      for (final $xdl_column column : table._column())
-        if (column._index() != null)
-          statements.add("DROP INDEX " + getIndexName(table, column._index(0), column) + " ON " + table._name$().text());
-
-    if (table._triggers() != null)
-      for (final $xdl_table._triggers._trigger trigger : table._triggers().get(0)._trigger())
-        for (final String action : trigger._actions$().text())
-          statements.add("DROP TRIGGER IF EXISTS " + DDLTransform.getTriggerName(table._name$().text(), trigger, action));
-
-    statements.add("DROP TABLE IF EXISTS " + table._name$().text());
-    return statements.toArray(new String[statements.size()]);
-  }
-
-  public DDL[] parse(final DBVendor vendor) throws Exception {
+  public DDL[] parse(final DBVendor vendor) {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
 
     final Map<String,String[]> dropStatements = new HashMap<String,String[]>();
     final Map<String,String[]> createTableStatements = new HashMap<String,String[]>();
 
     final Set<String> skipTables = new HashSet<String>();
-    for (final $xdl_table table : merged._table())
-      if (table._skip$().text())
+    for (final $xdl_table table : merged._table()) {
+      if (table._skip$().text()) {
         skipTables.add(table._name$().text());
-      else if (!table._abstract$().text() && createDropStatements)
-        dropStatements.put(table._name$().text(), createDropStatement(table));
+      }
+      else if (!table._abstract$().text() && createDropStatements) {
+        final List<String> drops = vendor.getSQLSpec().drops(table);
+        dropStatements.put(table._name$().text(), drops.toArray(new String[drops.size()]));
+      }
+    }
 
     final Set<String> tableNames = new HashSet<String>();
     for (final $xdl_table table : merged._table())

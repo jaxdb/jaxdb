@@ -17,9 +17,9 @@
 package org.safris.xdb.xdl;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,6 +60,7 @@ import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceBinding;
+import org.safris.commons.xml.XMLException;
 import org.safris.xdb.xdr.CheckOnUpdate;
 import org.safris.xdb.xdr.GenerateOnInsert;
 import org.safris.xdb.xdr.GenerateOnUpdate;
@@ -70,43 +71,32 @@ public final class JPABeanTransform extends XDLTransformer {
     createJPABeans(new File(args[0]), new File(args[1]));
   }
 
-  public static void createJPABeans(final File xdlFile, final File outDir) {
-    final xdl_database database;
-    try {
-      database = parseArguments(xdlFile.toURI().toURL(), null);
+  public static void createJPABeans(final File xdlFile, final File outDir) throws IOException, XMLException {
+    final xdl_database database = parseArguments(xdlFile.toURI().toURL(), null);
+
+    final JPABeanTransform creator = new JPABeanTransform(database);
+    final Map<String,String> files = creator.parse();
+
+    final Collection<File> classpath = new ArrayList<File>(1);
+    final File bindingLocationBase = Resources.getLocationBase(Entity.class);
+    if (bindingLocationBase != null)
+      classpath.add(bindingLocationBase);
+
+    final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    final MemoryJavaFileManager fileManager = new MemoryJavaFileManager(compiler.getStandardFileManager(null, null, null));
+    final File packageDir = outDir != null ? new File(outDir, creator.pkg.replace('.', '/')) : null;
+    final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
+    for (final Map.Entry<String,String> entry : files.entrySet()) {
+      writeOutput(entry.getValue(), packageDir != null ? new File(packageDir, entry.getKey() + ".java") : null);
+      javaFiles.add(new CharSequenceJavaFileObject(creator.pkg + "." + entry.getKey(), entry.getValue()));
     }
-    catch (final MalformedURLException e) {
-      throw new Error(e);
-    }
 
-    try {
-      final JPABeanTransform creator = new JPABeanTransform(database);
-      final Map<String,String> files = creator.parse();
+    final Collection<String> options = new ArrayList<String>();
+    options.add("-classpath");
+    options.add(Resources.getLocationBase(Table.class).getAbsolutePath() + File.pathSeparator + Resources.getLocationBase(org.safris.xdb.xdr.Entity.class).getAbsolutePath());
+    options.add("-nowarn");
 
-      final Collection<File> classpath = new ArrayList<File>(1);
-      final File bindingLocationBase = Resources.getLocationBase(Entity.class);
-      if (bindingLocationBase != null)
-        classpath.add(bindingLocationBase);
-
-      final JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-      final MemoryJavaFileManager fileManager = new MemoryJavaFileManager(compiler.getStandardFileManager(null, null, null));
-      final File packageDir = outDir != null ? new File(outDir, creator.pkg.replace('.', '/')) : null;
-      final List<JavaFileObject> javaFiles = new ArrayList<JavaFileObject>();
-      for (final Map.Entry<String,String> entry : files.entrySet()) {
-        writeOutput(entry.getValue(), packageDir != null ? new File(packageDir, entry.getKey() + ".java") : null);
-        javaFiles.add(new CharSequenceJavaFileObject(creator.pkg + "." + entry.getKey(), entry.getValue()));
-      }
-
-      final Collection<String> options = new ArrayList<String>();
-      options.add("-classpath");
-      options.add(Resources.getLocationBase(Table.class).getAbsolutePath() + File.pathSeparator + Resources.getLocationBase(org.safris.xdb.xdr.Entity.class).getAbsolutePath());
-      options.add("-nowarn");
-
-      InMemoryCompiler.compile(compiler, fileManager, options, javaFiles, outDir);
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
+    InMemoryCompiler.compile(compiler, fileManager, options, javaFiles, outDir);
   }
 
   private static String getCascadeString(final List<String> cascadeList) {
@@ -135,7 +125,7 @@ public final class JPABeanTransform extends XDLTransformer {
 
   private final String pkg;
 
-  private JPABeanTransform(final xdl_database database) throws Exception {
+  private JPABeanTransform(final xdl_database database) {
     super(database);
     pkg = NamespaceBinding.getPackageFromNamespace(getPackageName(database));
   }
