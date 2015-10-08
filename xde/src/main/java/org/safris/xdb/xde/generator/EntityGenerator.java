@@ -39,8 +39,8 @@ import org.safris.xdb.xde.column.Char;
 import org.safris.xdb.xde.column.DateTime;
 import org.safris.xdb.xde.column.Decimal;
 import org.safris.xdb.xde.column.Float;
-import org.safris.xdb.xde.column.MediumInt;
 import org.safris.xdb.xde.column.Long;
+import org.safris.xdb.xde.column.MediumInt;
 import org.safris.xdb.xde.column.SmallInt;
 import org.safris.xdb.xdl.$xdl_bit;
 import org.safris.xdb.xdl.$xdl_blob;
@@ -444,13 +444,12 @@ public class EntityGenerator {
 
   public static String makeParam(final $xdl_table table, final $xdl_column column) {
     final String columnName = Strings.toCamelCase(column._name$().text());
-    final String typeName = Strings.toTitleCase(column._name$().text());
     final Type type = Type.getType(table, column);
     final String rawType;
     if (column instanceof $xdl_enum)
-      rawType = typeName;
+      rawType = Strings.toTitleCase(column._name$().text());
     else
-      rawType = ((Class<?>)Classes.getGenericSuperclasses(type.type)[0]).getName();
+      rawType = Classes.getName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
 
     return "final " + rawType + " " + columnName;
   }

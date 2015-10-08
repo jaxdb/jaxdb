@@ -64,22 +64,20 @@ public abstract class XDLTransformer {
   }
 
   protected static void writeOutput(final String output, final File file) {
+    if (file == null)
+      return;
+
     try {
-      if (file == null) {
-        System.out.println(output);
-      }
-      else {
-        if (file.getParentFile().isFile())
-          throw new IllegalArgumentException(file.getParent() + " is a file.");
+      if (file.getParentFile().isFile())
+        throw new IllegalArgumentException(file.getParent() + " is a file.");
 
-        if (!file.getParentFile().exists())
-          if (!file.getParentFile().mkdirs())
-            throw new IllegalArgumentException("Could not create path: " + file.getParent());
+      if (!file.getParentFile().exists())
+        if (!file.getParentFile().mkdirs())
+          throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
-        final FileOutputStream out = new FileOutputStream(file);
-        out.write(output.getBytes());
-        out.close();
-      }
+      final FileOutputStream out = new FileOutputStream(file);
+      out.write(output.getBytes());
+      out.close();
     }
     catch (final Exception e) {
       throw new RuntimeException(e);
