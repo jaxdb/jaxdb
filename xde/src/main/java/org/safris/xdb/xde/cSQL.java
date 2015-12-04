@@ -134,6 +134,10 @@ public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
       return table.getClass().getEnclosingClass().getSimpleName() + "." + table.name();
     }
 
+    if (serialization.vendor == DBVendor.POSTGRE_SQL) {
+      return table.name();
+    }
+
     throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
   }
 

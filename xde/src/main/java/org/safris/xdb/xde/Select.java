@@ -41,22 +41,21 @@ class Select {
       for (int i = 0; i < table.column().length; i++)
         columns.add(new Pair<Column<?>,Integer>(table.column()[i], i));
     }
-
-    if (selectable instanceof Aggregate<?>) {
+    else if (selectable instanceof Aggregate<?>) {
       final Aggregate<?> aggregate = (Aggregate<?>)selectable;
       columns.add(new Pair<Column<?>,Integer>((Column<?>)aggregate.parent(), -1));
     }
-
-    if (selectable instanceof Column<?>) {
+    else if (selectable instanceof Column<?>) {
       final Column<?> column = (Column<?>)selectable;
       columns.add(new Pair<Column<?>,Integer>(column, -1));
     }
-
-    throw new UnsupportedOperationException("Unknown selectable type: " + selectable.getClass().getName());
+    else {
+      throw new UnsupportedOperationException("Unknown selectable type: " + selectable.getClass().getName());
+    }
   }
 
   private static abstract class Execute<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> {
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>List<B[]> execute() throws SQLException {
+    public final <B extends Selectable>List<B[]> execute() throws SQLException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       final Connection connection = Schema.getConnection(schema);
@@ -166,7 +165,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" FROM ");
 
@@ -207,7 +206,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" GROUP BY ").append(columnRef(column));
       }
@@ -234,7 +233,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" HAVING ");
         condition.serialize(serialization);
@@ -274,15 +273,15 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
-        serialization.sql.append((natural != null ? " NATURAL" : ""));
+        serialization.sql.append(natural != null ? " NATURAL" : "");
         if (type != null) {
           serialization.sql.append(" ");
           type.serialize(serialization);
         }
 
-        serialization.sql.append(" JOIN ").append(tableName(table, serialization)).append(tableAlias(table, true));
+        serialization.sql.append(" JOIN ").append(tableName(table, serialization)).append(" ").append(tableAlias(table, true));
         return;
       }
 
@@ -311,7 +310,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" ON (");
         condition.serialize(serialization);
@@ -337,7 +336,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" ORDER BY ");
         for (int i = 0; i < columns.length; i++) {
@@ -380,7 +379,10 @@ class Select {
     }
 
     public FROM<T> FROM(final Table ... table) {
-      return new FROM<T>(this, table);
+      if (from != null)
+        throw new IllegalStateException("FROM() has already been called for this SELECT object.");
+
+      return from = new FROM<T>(this, table);
     }
 
     protected cSQL<?> parent() {
@@ -392,8 +394,18 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
-        serialization.sql.append("SELECT ").append(all != null ? all + " " : "").append(distinct != null ? distinct + " " : "");
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
+        serialization.sql.append("SELECT ");
+        if (all != null) {
+          all.serialize(serialization);
+          serialization.sql.append(" ");
+        }
+
+        if (distinct != null) {
+          distinct.serialize(serialization);
+          serialization.sql.append(" ");
+        }
+
         for (int i = 0; i < selectables.length; i++) {
           final cSQL<?> csql = (cSQL<?>)selectables[i];
           if (i > 0)
@@ -428,7 +440,7 @@ class Select {
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>> List<B[]> execute() throws SQLException {
+    public <B extends Selectable>List<B[]> execute() throws SQLException {
       if (selectables.length == 1) {
         final Table table = (Table)this.selectables[0];
         final Table out = table.newInstance();
@@ -491,7 +503,7 @@ class Select {
     }
 
     protected void serialize(final Serialization serialization) {
-      if (serialization.vendor == DBVendor.MY_SQL) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
         serialization.sql.append(" WHERE ");
         condition.serialize(serialization);

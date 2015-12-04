@@ -139,26 +139,6 @@ public abstract class DML extends cSQL<Object> {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Table>SELECT_FROM<T> SELECT(final T ... tables) {
-    return DML.<T>SELECT(null, null, tables);
-  }
-
-  @SafeVarargs
-  public static <T extends Table>SELECT_FROM<T> SELECT(final ALL all, final T ... tables) {
-    return DML.<T>SELECT(all, null, tables);
-  }
-
-  @SafeVarargs
-  public static <T extends Table>SELECT_FROM<T> SELECT(final DISTINCT distinct, final T ... tables) {
-    return DML.<T>SELECT(null, distinct, tables);
-  }
-
-  @SafeVarargs
-  public static <T extends Table>SELECT_FROM<T> SELECT(final ALL all, final DISTINCT distinct, final T ... tables) {
-    return new Select.SELECT<T>(all, distinct, tables);
-  }
-
-  @SafeVarargs
   public static <T extends SELECT.Column<?>>SELECT_FROM<T> SELECT(final T ... columns) {
     return DML.<T>SELECT(null, null, columns);
   }

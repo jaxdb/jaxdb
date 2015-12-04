@@ -16,11 +16,11 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xde.csql.Selectable;
+import org.safris.xdb.xde.csql.select.SELECT;
 import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
 
-public abstract class Table extends cSQL<Table> implements Selectable {
+public abstract class Table extends cSQL<Table> implements SELECT.Column<Table> {
   protected Table(final Column<?>[] column, final Column<?>[] primary) {
   }
 

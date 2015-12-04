@@ -33,6 +33,9 @@ public abstract class Schema {
     if (url.contains("jdbc:mysql"))
       return DBVendor.MY_SQL;
 
+    if (url.contains("jdbc:postgresql"))
+      return DBVendor.POSTGRE_SQL;
+
     return null;
   }
 

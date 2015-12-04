@@ -26,5 +26,5 @@ public interface SELECT<T extends cSQL<?>> extends org.safris.xdb.xde.csql.cSQL<
   public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T>, Selectable {
   }
 
-  public <B extends cSQL<?>>List<B[]> execute() throws SQLException;
+  public <B extends Selectable>List<B[]> execute() throws SQLException;
 }
