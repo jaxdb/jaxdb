@@ -44,6 +44,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
         for (final Method method : methods) {
           if (Modifier.isStatic(method.getModifiers()) && "set".equals(method.getName())) {
             typeToSetter.put(Classes.getGenericSuperclasses(cls)[0], method);
+            method.setAccessible(true);
             continue;
           }
         }
