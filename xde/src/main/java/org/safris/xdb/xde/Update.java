@@ -38,14 +38,14 @@ class Update {
             return statement.executeUpdate();
           }
         }
-        else if (serialization.prototype == Statement.class) {
+
+        if (serialization.prototype == Statement.class) {
           try (final Statement statement = connection.createStatement()) {
             return statement.executeUpdate(serialization.sql.toString());
           }
         }
-        else {
-          throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
-        }
+
+        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
       }
     }
   }
