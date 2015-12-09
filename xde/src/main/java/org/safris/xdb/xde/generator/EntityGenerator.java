@@ -101,11 +101,11 @@ public class EntityGenerator {
     code += identity.substring(2) + "};\n\n";
 
     code += "  public static void dropDDL() throws " + SQLException.class.getName() + " {\n";
-    code += "    " + Schema.class.getName() + ".dropDDL(getConnection(" + classSimpleName + ".class), identity);\n";
+    code += "    " + Schema.class.getName() + ".dropDDL(" + classSimpleName + ".class, identity);\n";
     code += "  }\n\n";
 
     code += "  public static void createDDL() throws " + SQLException.class.getName() + " {\n";
-    code += "    " + Schema.class.getName() + ".createDDL(getConnection(" + classSimpleName + ".class), identity);\n";
+    code += "    " + Schema.class.getName() + ".createDDL(" + classSimpleName + ".class, identity);\n";
     code += "  }\n\n";
 
     String tables = "";

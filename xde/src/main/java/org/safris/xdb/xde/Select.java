@@ -66,13 +66,15 @@ class Select {
 
         final ResultSet resultSet;
         if (serialization.prototype == PreparedStatement.class) {
-          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
-          serialization.set(statement);
-          resultSet = statement.executeQuery();
+          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+            serialization.set(statement);
+            resultSet = statement.executeQuery();
+          }
         }
         else if (serialization.prototype == Statement.class) {
-          final Statement statement = connection.createStatement();
-          resultSet = statement.executeQuery(serialization.sql.toString());
+          try (final Statement statement = connection.createStatement()) {
+            resultSet = statement.executeQuery(serialization.sql.toString());
+          }
         }
         else {
           throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
@@ -110,6 +112,8 @@ class Select {
 
             column.set(column.get(resultSet, i + 1));
           }
+
+          resultSet.close();
         }
 
         return rows;
@@ -457,25 +461,30 @@ class Select {
         }
 
         sql += select.substring(2) + " FROM " + table.name() + " WHERE " + where.substring(5);
-        final PreparedStatement statement = Schema.getConnection(table.schema()).prepareStatement(sql);
-        int index = 0;
-        for (final org.safris.xdb.xde.Column<?> column : columns)
-          if (column.primary)
-            column.set(statement, ++index);
+        try (
+          final Connection connection = Schema.getConnection(table.schema());
+          final PreparedStatement statement = connection.prepareStatement(sql);
+        ) {
+          int index = 0;
+          for (final org.safris.xdb.xde.Column<?> column : columns)
+            if (column.primary)
+              column.set(statement, ++index);
 
-        System.err.println(statement.toString());
-        final ResultSet resultSet = statement.executeQuery();
-        if (!resultSet.next())
-          return null;
+          System.err.println(statement.toString());
+          try (final ResultSet resultSet = statement.executeQuery()) {
+            if (!resultSet.next())
+              return null;
 
-        index = 0;
-        for (final org.safris.xdb.xde.Column column : out.column())
-          if (!column.primary)
-            column.set(column.get(resultSet, ++index));
+            index = 0;
+            for (final org.safris.xdb.xde.Column column : out.column())
+              if (!column.primary)
+                column.set(column.get(resultSet, ++index));
 
-        final List<Table[]> list = new ArrayList<Table[]>();
-        list.add(new Table[] {out});
-        return (List)list;
+            final List<Table[]> list = new ArrayList<Table[]>();
+            list.add(new Table[] {out});
+            return (List)list;
+          }
+        }
       }
 
       clearAliases();

@@ -31,13 +31,15 @@ class Delete {
         serialize(serialization);
         clearAliases();
         if (serialization.prototype == PreparedStatement.class) {
-          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
-          serialization.set(statement);
-          return statement.executeUpdate();
+          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+            serialization.set(statement);
+            return statement.executeUpdate();
+          }
         }
         else if (serialization.prototype == Statement.class) {
-          final Statement statement = connection.createStatement();
-          return statement.executeUpdate(serialization.sql.toString());
+          try (final Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(serialization.sql.toString());
+          }
         }
         else {
           throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
@@ -115,20 +117,21 @@ class Delete {
           if (true)
             return 0;
 
-          final PreparedStatement statement = Schema.getConnection(((Table)table).schema()).prepareStatement(sql);
-          // set the updated columns first
-          int index = 0;
-          for (final Column<?> column : ((Table)table).column())
-            if (!column.primary)
-              column.set(statement, ++index);
+          try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+            // set the updated columns first
+            int index = 0;
+            for (final Column<?> column : ((Table)table).column())
+              if (!column.primary)
+                column.set(statement, ++index);
 
-          // then the conditional columns
-          for (final Column<?> column : ((Table)table).column())
-            if (column.primary)
-              column.set(statement, ++index);
+            // then the conditional columns
+            for (final Column<?> column : ((Table)table).column())
+              if (column.primary)
+                column.set(statement, ++index);
 
-          System.err.println(statement.toString());
-          return statement.executeUpdate();
+            System.err.println(statement.toString());
+            return statement.executeUpdate();
+          }
         }
       }
 

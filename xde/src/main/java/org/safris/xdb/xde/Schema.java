@@ -48,27 +48,31 @@ public abstract class Schema {
     return connection instanceof ConnectionProxy ? (ConnectionProxy)connection : ConnectionProxy.getInstance(connection);
   }
 
-  protected static void createDDL(final Connection connection, final Table[] identity) throws SQLException {
-    final DBVendor vendor = getDBVendor(connection);
-    final Statement statement = connection.createStatement();
-    for (final org.safris.xdb.xde.Table entity : identity) {
-      final String[] sqls = entity.ddl(vendor, DDL.Type.CREATE);
-      for (final String sql : sqls)
-        statement.execute(sql);
+  protected static void createDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {
+    try (
+      final Connection connection = getConnection(schema);
+      final Statement statement = connection.createStatement();
+    ) {
+      final DBVendor vendor = getDBVendor(connection);
+      for (final org.safris.xdb.xde.Table entity : identity) {
+        final String[] sqls = entity.ddl(vendor, DDL.Type.CREATE);
+        for (final String sql : sqls)
+          statement.execute(sql);
+      }
     }
-
-    connection.close();
   }
 
-  protected static void dropDDL(final Connection connection, final Table[] identity) throws SQLException {
-    final DBVendor vendor = getDBVendor(connection);
-    final Statement statement = connection.createStatement();
-    for (int i = identity.length - 1; i >= 0; --i) {
-      final String[] sqls = identity[i].ddl(vendor, DDL.Type.DROP);
-      for (final String sql : sqls)
-        statement.execute(sql);
+  protected static void dropDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {
+    try (
+      final Connection connection = getConnection(schema);
+      final Statement statement = connection.createStatement();
+    ) {
+      final DBVendor vendor = getDBVendor(connection);
+      for (int i = identity.length - 1; i >= 0; --i) {
+        final String[] sqls = identity[i].ddl(vendor, DDL.Type.DROP);
+        for (final String sql : sqls)
+          statement.execute(sql);
+      }
     }
-
-    connection.close();
   }
 }

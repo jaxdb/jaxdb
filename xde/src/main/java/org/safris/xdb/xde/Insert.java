@@ -60,21 +60,24 @@ class Insert {
     public int execute() throws SQLException {
       final cSQL<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
-      final Connection connection = Schema.getConnection(schema);
-      final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
-      serialize(serialization);
-      clearAliases();
-      if (serialization.prototype == PreparedStatement.class) {
-        final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
-        serialization.set(statement);
-        return statement.executeUpdate();
-      }
-      else if (serialization.prototype == Statement.class) {
-        final Statement statement = connection.createStatement();
-        return statement.executeUpdate(serialization.sql.toString());
-      }
-      else {
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+      try (final Connection connection = Schema.getConnection(schema)) {
+        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+        serialize(serialization);
+        clearAliases();
+        if (serialization.prototype == PreparedStatement.class) {
+          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+            serialization.set(statement);
+            return statement.executeUpdate();
+          }
+        }
+        else if (serialization.prototype == Statement.class) {
+          try (final Statement statement = connection.createStatement()) {
+            return statement.executeUpdate(serialization.sql.toString());
+          }
+        }
+        else {
+          throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+        }
       }
     }
   }

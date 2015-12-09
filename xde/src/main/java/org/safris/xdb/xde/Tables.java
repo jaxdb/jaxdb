@@ -225,11 +225,13 @@ public final class Tables {
       lastIdentity = column.owner;
     }
 
-    try (final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass())) {
+    final String sql = transform(string, aliases);
+    System.err.println(sql);
+    try (
+      final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass());
       final Statement statement = connection.createStatement();
-      final String sql = transform(string, aliases);
-      System.err.println(sql);
       final ResultSet resultSet = statement.executeQuery(sql);
+    ) {
       int index = 0;
       int colCount = 0;
       Table current = null;
