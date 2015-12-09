@@ -225,46 +225,47 @@ public final class Tables {
       lastIdentity = column.owner;
     }
 
-    final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass());
-    final Statement statement = connection.createStatement();
-    final String sql = transform(string, aliases);
-    System.err.println(sql);
-    final ResultSet resultSet = statement.executeQuery(sql);
-    int index = 0;
-    int colCount = 0;
-    Table current = null;
-    final List entities = new ArrayList();
-    try {
-      while (resultSet.next()) {
-        int cursor = 0;
-        final Table[] row = new Table[numEntities];
-        entities.add(row);
-        for (final Column<?> column : columns) {
-          if (current == null || lastIdentity == null || lastIdentity != column.owner) {
-            row[cursor++] = current = column.owner.getClass().newInstance();
-            colCount = 0;
-          }
+    try (final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass())) {
+      final Statement statement = connection.createStatement();
+      final String sql = transform(string, aliases);
+      System.err.println(sql);
+      final ResultSet resultSet = statement.executeQuery(sql);
+      int index = 0;
+      int colCount = 0;
+      Table current = null;
+      final List entities = new ArrayList();
+      try {
+        while (resultSet.next()) {
+          int cursor = 0;
+          final Table[] row = new Table[numEntities];
+          entities.add(row);
+          for (final Column<?> column : columns) {
+            if (current == null || lastIdentity == null || lastIdentity != column.owner) {
+              row[cursor++] = current = column.owner.getClass().newInstance();
+              colCount = 0;
+            }
 
-          // FIXME: Copy of code in Entity.select()
-          final Column col = ((Column<Object>)current.column()[colCount++]);
-          if (col.type.isEnum())
-            col.set(Enum.valueOf(col.type, (String)resultSet.getObject(++index, String.class)));
-          else if (((Column<?>)col).type == BigInteger.class) {
-            final Object value = resultSet.getObject(++index);
-            col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
-          }
-          else
-            col.set(resultSet.getObject(++index, col.type));
+            // FIXME: Copy of code in Entity.select()
+            final Column col = ((Column<Object>)current.column()[colCount++]);
+            if (col.type.isEnum())
+              col.set(Enum.valueOf(col.type, (String)resultSet.getObject(++index, String.class)));
+            else if (((Column<?>)col).type == BigInteger.class) {
+              final Object value = resultSet.getObject(++index);
+              col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
+            }
+            else
+              col.set(resultSet.getObject(++index, col.type));
 
-          lastIdentity = column.owner;
+            lastIdentity = column.owner;
+          }
         }
       }
-    }
-    catch (final Exception e) {
-      throw new Error(e);
-    }
+      catch (final Exception e) {
+        throw new Error(e);
+      }
 
-    return (List<T[]>)entities;
+      return (List<T[]>)entities;
+    }
   }
 
   /*public static int select(final Table ... entity) throws SQLException {

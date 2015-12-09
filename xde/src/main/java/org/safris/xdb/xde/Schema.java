@@ -56,6 +56,8 @@ public abstract class Schema {
       for (final String sql : sqls)
         statement.execute(sql);
     }
+
+    connection.close();
   }
 
   protected static void dropDDL(final Connection connection, final Table[] identity) throws SQLException {
@@ -66,5 +68,7 @@ public abstract class Schema {
       for (final String sql : sqls)
         statement.execute(sql);
     }
+
+    connection.close();
   }
 }
