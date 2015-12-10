@@ -87,8 +87,6 @@ class Select {
 
         column.set(column.get(resultSet, i + 1));
       }
-
-      resultSet.close();
     }
 
     return rows;
