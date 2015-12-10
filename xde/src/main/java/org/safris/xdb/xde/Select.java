@@ -54,6 +54,46 @@ class Select {
     }
   }
 
+  private static <B extends Selectable>List<B[]> parseResultSet(final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+    final List<Pair<Column<?>,Integer>> columns = new ArrayList<Pair<Column<?>,Integer>>();
+    for (final Selectable selectable : select.selectables)
+      Select.serialize(columns, selectable);
+
+    final ResultSetMetaData metaData = resultSet.getMetaData();
+    final int noColumns = metaData.getColumnCount();
+    Table tablePrototype = null;
+    Table table = null;
+    final List<B[]> rows = new ArrayList<B[]>();
+    while (resultSet.next()) {
+      final Selectable[] row = new Selectable[select.selectables.length];
+      rows.add((B[])row);
+      int index = 0;
+      for (int i = 0; i < noColumns; i++) {
+        final Pair<Column<?>,Integer> columnPrototype = columns.get(i);
+        final Column column;
+        if (columnPrototype.b == -1) {
+          column = columnPrototype.a.clone();
+          row[index++] = column;
+        }
+        else {
+          if (tablePrototype == null || tablePrototype != columnPrototype.a.owner) {
+            tablePrototype = columnPrototype.a.owner;
+            table = tablePrototype.newInstance();
+            row[index++] = table;
+          }
+
+          column = table.column()[columnPrototype.b];
+        }
+
+        column.set(column.get(resultSet, i + 1));
+      }
+
+      resultSet.close();
+    }
+
+    return rows;
+  }
+
   private static abstract class Execute<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> {
     public final <B extends Selectable>List<B[]> execute() throws SQLException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
@@ -64,59 +104,25 @@ class Select {
         serialize(serialization);
         clearAliases();
 
-        final ResultSet resultSet;
         if (serialization.prototype == PreparedStatement.class) {
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
             serialization.set(statement);
-            resultSet = statement.executeQuery();
-          }
-        }
-        else if (serialization.prototype == Statement.class) {
-          try (final Statement statement = connection.createStatement()) {
-            resultSet = statement.executeQuery(serialization.sql.toString());
-          }
-        }
-        else {
-          throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
-        }
-
-        final List<Pair<Column<?>,Integer>> columns = new ArrayList<Pair<Column<?>,Integer>>();
-        for (final Selectable selectable : select.selectables)
-          Select.serialize(columns, selectable);
-
-        final ResultSetMetaData metaData = resultSet.getMetaData();
-        final int noColumns = metaData.getColumnCount();
-        Table tablePrototype = null;
-        Table table = null;
-        final List<B[]> rows = new ArrayList<B[]>();
-        while (resultSet.next()) {
-          final Selectable[] row = new Selectable[select.selectables.length];
-          rows.add((B[])row);
-          int index = 0;
-          for (int i = 0; i < noColumns; i++) {
-            final Pair<Column<?>,Integer> columnPrototype = columns.get(i);
-            final Column column;
-            if (columnPrototype.b == -1) {
-              column = columnPrototype.a.clone();
-              row[index++] = column;
+            try (final ResultSet resultSet = statement.executeQuery()) {
+              return parseResultSet(resultSet, select);
             }
-            else {
-              if (tablePrototype == null || tablePrototype != columnPrototype.a.owner) {
-                tablePrototype = columnPrototype.a.owner;
-                table = tablePrototype.newInstance();
-                row[index++] = table;
-              }
-
-              column = table.column()[columnPrototype.b];
-            }
-
-            column.set(column.get(resultSet, i + 1));
           }
-
-          resultSet.close();
         }
 
-        return rows;
+        if (serialization.prototype == Statement.class) {
+          try (
+            final Statement statement = connection.createStatement();
+            final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
+          ) {
+            return parseResultSet(resultSet, select);
+          }
+        }
+
+        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
       }
     }
   }
