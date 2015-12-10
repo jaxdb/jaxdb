@@ -29,23 +29,23 @@ class Update {
       final cSQL<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE<?>)update).table).schema();
       try (final Connection connection = Schema.getConnection(schema)) {
-        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
         serialize(serialization);
         clearAliases();
-        if (serialization.prototype == PreparedStatement.class) {
+        if (serialization.statementType == PreparedStatement.class) {
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
             serialization.set(statement);
             return statement.executeUpdate();
           }
         }
 
-        if (serialization.prototype == Statement.class) {
+        if (serialization.statementType == Statement.class) {
           try (final Statement statement = connection.createStatement()) {
             return statement.executeUpdate(serialization.sql.toString());
           }
         }
 
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
     }
   }
@@ -131,7 +131,7 @@ class Update {
         final cSQL<?> table = getParentRoot(this);
         final Class<? extends Schema> schema = ((Table)table).schema();
         try (final Connection connection = Schema.getConnection(schema)) {
-          final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+          final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
           final String sql = encodeSingle(serialization);
           System.out.println(sql);
           if (true)

@@ -108,7 +108,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
   }
 
   protected void serialize(final Serialization serialization) {
-    if (serialization.prototype == PreparedStatement.class) {
+    if (serialization.statementType == PreparedStatement.class) {
       if (tableAlias(owner, false) == null) {
         serialization.parameters.add(get());
         serialization.sql.append("?");
@@ -117,11 +117,11 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
         serialization.sql.append(toString());
       }
     }
-    else if (serialization.prototype == Statement.class) {
+    else if (serialization.statementType == Statement.class) {
       serialization.sql.append(toString());
     }
     else {
-      throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+      throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
     }
   }
 

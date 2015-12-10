@@ -20,23 +20,23 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class EntityDataSources {
-  private static Map<Class<? extends Schema>,EntityDataSource> sources = new HashMap<Class<? extends Schema>,EntityDataSource>();
-  private static Map<Class<? extends Schema>,Class<? extends Statement>> prototypes = new HashMap<Class<? extends Schema>,Class<? extends Statement>>();
+public final class XDERegistry {
+  private static Map<Class<? extends Schema>,XDEDataSource> sources = new HashMap<Class<? extends Schema>,XDEDataSource>();
+  private static Map<Class<? extends Schema>,Class<? extends Statement>> statementTypes = new HashMap<Class<? extends Schema>,Class<? extends Statement>>();
 
-  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> prototype, final EntityDataSource source) {
+  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> statementType, final XDEDataSource source) {
     sources.put(schema, source);
-    prototypes.put(schema, prototype);
+    statementTypes.put(schema, statementType);
   }
 
-  protected static EntityDataSource getDataSource(final Class<? extends Schema> schema) {
+  protected static XDEDataSource getDataSource(final Class<? extends Schema> schema) {
     return sources.get(schema);
   }
 
-  protected static Class<? extends Statement> getPrototype(final Class<? extends Schema> schema) {
-    return prototypes.get(schema);
+  protected static Class<? extends Statement> getStatementType(final Class<? extends Schema> schema) {
+    return statementTypes.get(schema);
   }
 
-  private EntityDataSources() {
+  private XDERegistry() {
   }
 }

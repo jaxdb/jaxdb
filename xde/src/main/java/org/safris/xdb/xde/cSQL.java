@@ -59,7 +59,7 @@ public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
       if (object == null) {
         serialization.sql.append("NULL");
       }
-      else if (serialization.prototype == PreparedStatement.class) {
+      else if (serialization.statementType == PreparedStatement.class) {
         serialization.parameters.add(object);
         serialization.sql.append("?");
       }
@@ -104,7 +104,7 @@ public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
     if (obj instanceof Column<?>) {
       ((Column<?>)obj).serialize(serialization);
     }
-    else if (serialization.prototype == PreparedStatement.class) {
+    else if (serialization.statementType == PreparedStatement.class) {
       if (obj == null) {
         serialization.sql.append("NULL");
       }
@@ -113,11 +113,11 @@ public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
         serialization.sql.append("?");
       }
     }
-    else if (serialization.prototype == Statement.class) {
+    else if (serialization.statementType == Statement.class) {
       serialization.sql.append(cSQLObject.toString(obj));
     }
     else {
-      throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+      throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
     }
   }
 

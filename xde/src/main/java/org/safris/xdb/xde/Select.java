@@ -97,12 +97,12 @@ class Select {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       try (final Connection connection = Schema.getConnection(schema)) {
-        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
 
         serialize(serialization);
         clearAliases();
 
-        if (serialization.prototype == PreparedStatement.class) {
+        if (serialization.statementType == PreparedStatement.class) {
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
             serialization.set(statement);
             try (final ResultSet resultSet = statement.executeQuery()) {
@@ -111,7 +111,7 @@ class Select {
           }
         }
 
-        if (serialization.prototype == Statement.class) {
+        if (serialization.statementType == Statement.class) {
           try (
             final Statement statement = connection.createStatement();
             final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
@@ -120,7 +120,7 @@ class Select {
           }
         }
 
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
       }
     }
   }

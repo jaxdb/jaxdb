@@ -18,16 +18,16 @@ public class Serialization {
   public final List<Object> parameters = new ArrayList<Object>();
 
   public final DBVendor vendor;
-  public final Class<? extends Statement> prototype;
+  public final Class<? extends Statement> statementType;
   public final StringBuilder sql = new StringBuilder();
 
-  public Serialization(final DBVendor vendor, final Class<? extends Statement> prototype) {
+  public Serialization(final DBVendor vendor, final Class<? extends Statement> statementType) {
     this.vendor = vendor;
-    this.prototype = prototype;
+    this.statementType = statementType;
   }
 
   public String toStringParameters() {
-    if (prototype == PreparedStatement.class) {
+    if (statementType == PreparedStatement.class) {
       if (parameters.size() == 0)
         return "[]";
 
@@ -38,7 +38,7 @@ public class Serialization {
       return "[" + string.substring(2) + "]";
     }
 
-    if (prototype == Statement.class)
+    if (statementType == Statement.class)
       return "";
 
     return super.toString();

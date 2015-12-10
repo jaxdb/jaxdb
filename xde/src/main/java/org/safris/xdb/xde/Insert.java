@@ -37,21 +37,21 @@ class Insert {
       serialization.sql.append("INSERT INTO ").append(table.name());
       String columns = "";
       String values = "";
-      if (serialization.prototype == PreparedStatement.class) {
+      if (serialization.statementType == PreparedStatement.class) {
         for (final Column column : table.column()) {
           columns += ", " + column.name;
           values += ", ?";
           serialization.parameters.add(column.get());
         }
       }
-      else if (serialization.prototype == Statement.class) {
+      else if (serialization.statementType == Statement.class) {
         for (final Column<?> column : table.column()) {
           columns += ", " + column.name;
           values += ", " + cSQLObject.toString(column.get());
         }
       }
       else {
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
 
       serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
@@ -61,23 +61,23 @@ class Insert {
       final cSQL<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
       try (final Connection connection = Schema.getConnection(schema)) {
-        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), EntityDataSources.getPrototype(schema));
+        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
         serialize(serialization);
         clearAliases();
-        if (serialization.prototype == PreparedStatement.class) {
+        if (serialization.statementType == PreparedStatement.class) {
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
             serialization.set(statement);
             return statement.executeUpdate();
           }
         }
 
-        if (serialization.prototype == Statement.class) {
+        if (serialization.statementType == Statement.class) {
           try (final Statement statement = connection.createStatement()) {
             return statement.executeUpdate(serialization.sql.toString());
           }
         }
 
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.prototype.getName());
+        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
     }
   }

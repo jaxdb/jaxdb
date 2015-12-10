@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.safris.commons.sql.ConnectionProxy;
 import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
 
@@ -40,12 +39,11 @@ public abstract class Schema {
   }
 
   protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
-    final EntityDataSource dataSource = EntityDataSources.getDataSource(schema);
+    final XDEDataSource dataSource = XDERegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new SQLException("No EntityDataSource has been registered for " + schema.getName());
+      throw new SQLException("No XDEDataSource has been registered for " + schema.getName());
 
-    final Connection connection = dataSource.getConnection();
-    return connection instanceof ConnectionProxy ? (ConnectionProxy)connection : ConnectionProxy.getInstance(connection);
+    return dataSource.getConnection();
   }
 
   protected static void createDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {

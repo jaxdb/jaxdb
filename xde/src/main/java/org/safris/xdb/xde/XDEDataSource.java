@@ -19,6 +19,6 @@ package org.safris.xdb.xde;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface EntityDataSource {
+public interface XDEDataSource {
   public Connection getConnection() throws SQLException;
 }
