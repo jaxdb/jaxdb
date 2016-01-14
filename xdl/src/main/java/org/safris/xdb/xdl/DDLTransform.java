@@ -56,6 +56,7 @@ public final class DDLTransform extends XDLTransformer {
   }
 
   static {
+    // reserved words per SQL spec (SQL-92, SQL-99, SQL-2003)
     reservedWords.put("ABSOLUTE", 0b110);
     reservedWords.put("ACTION", 0b110);
     reservedWords.put("ADD", 0b111);
@@ -396,7 +397,6 @@ public final class DDLTransform extends XDLTransformer {
   }
 
   public static void main(final String[] args) throws Exception {
-    int s = 0b001;
     if (args.length != 2) {
       System.err.println("<Derby|MySQL|PostgreSQL> <XDL_FILE>");
       System.exit(1);
