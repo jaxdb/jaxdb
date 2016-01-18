@@ -21,16 +21,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class XDERegistry {
-  private static Map<Class<? extends Schema>,XDEDataSource> sources = new HashMap<Class<? extends Schema>,XDEDataSource>();
-  private static Map<Class<? extends Schema>,Class<? extends Statement>> statementTypes = new HashMap<Class<? extends Schema>,Class<? extends Statement>>();
+  private static final Map<Class<? extends Schema>,XDEDataSource> dataSources = new HashMap<Class<? extends Schema>,XDEDataSource>();
+  private static final Map<Class<? extends Schema>,Class<? extends Statement>> statementTypes = new HashMap<Class<? extends Schema>,Class<? extends Statement>>();
 
-  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> statementType, final XDEDataSource source) {
-    sources.put(schema, source);
+  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> statementType, final XDEDataSource dataSource) {
+    dataSources.put(schema, dataSource);
     statementTypes.put(schema, statementType);
   }
 
   protected static XDEDataSource getDataSource(final Class<? extends Schema> schema) {
-    return sources.get(schema);
+    final Map<Class<? extends Schema>,XDEDataSource> dataSources2 = dataSources;
+    return dataSources.get(schema);
   }
 
   protected static Class<? extends Statement> getStatementType(final Class<? extends Schema> schema) {

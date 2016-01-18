@@ -19,6 +19,6 @@ package org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xde.Table;
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface SELECT_FROM<T extends cSQL<?>> extends SELECT<T> {
+public interface SELECT_FROM<T extends cSQL<?>> extends SELECT<T>, LIMIT.A {
   public <B extends cSQL<?>>FROM<B> FROM(final Table ... table);
 }

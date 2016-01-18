@@ -190,6 +190,10 @@ class Select {
     public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table) {
       return new JOIN<B>(this, natural, type, table);
     }
+
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
+    }
   }
 
   protected final static class FROM<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
@@ -249,6 +253,10 @@ class Select {
       return new HAVING<T>(this, condition);
     }
 
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
+    }
+
     protected cSQL<?> parent() {
       return parent;
     }
@@ -274,6 +282,10 @@ class Select {
 
     public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column) {
       return new ORDER_BY<B>(this, column);
+    }
+
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
     }
 
     protected cSQL<?> parent() {
@@ -379,6 +391,10 @@ class Select {
       this.columns = columns;
     }
 
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
+    }
+
     protected cSQL<?> parent() {
       return parent;
     }
@@ -413,6 +429,30 @@ class Select {
     }
   }
 
+  protected final static class LIMIT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT.B<T> {
+    private final cSQL<?> parent;
+    private final int limit;
+
+    protected LIMIT(final cSQL<?> parent, final int limit) {
+      this.parent = parent;
+      this.limit = limit;
+    }
+
+    protected cSQL<?> parent() {
+      return parent;
+    }
+
+    protected void serialize(final Serialization serialization) {
+      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
+        parent.serialize(serialization);
+        serialization.sql.append(" LIMIT " + limit);
+        return;
+      }
+
+      throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
+    }
+  }
+
   protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select.SELECT_FROM<T> {
     private final ALL all;
     private final DISTINCT distinct;
@@ -431,6 +471,10 @@ class Select {
         throw new IllegalStateException("FROM() has already been called for this SELECT object.");
 
       return from = new FROM<T>(this, table);
+    }
+
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
     }
 
     protected cSQL<?> parent() {
@@ -561,6 +605,10 @@ class Select {
 
     public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column) {
       return new GROUP_BY<T>(this, column);
+    }
+
+    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+      return new LIMIT<B>(this, limit);
     }
 
     protected cSQL<?> parent() {

@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2016 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,6 +18,11 @@ package org.safris.xdb.xde.csql.select;
 
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface HAVING<T extends cSQL<?>> extends SELECT<T>, LIMIT.A {
-  public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column);
+public interface LIMIT {
+  public interface A {
+    public <B extends cSQL<?>>LIMIT.B<B> LIMIT(final int limit);
+  }
+
+  public interface B<T extends cSQL<?>> extends SELECT<T> {
+  }
 }

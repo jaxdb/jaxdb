@@ -83,7 +83,9 @@ public class EntityGenerator {
         throw new Error("Unable to create output dir: " + dir.getAbsolutePath());
 
     final String classSimpleName = database._name$().text();
-    String code = "package xdb.xde;\n\n";
+    final String className = pkg + "." + classSimpleName;
+
+    String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
     code += "  private static final " + Table.class.getName() + "[] identity = new " + Table.class.getName() + "[] {";
     DDL[][] ddls = null;
@@ -121,6 +123,16 @@ public class EntityGenerator {
       tables += "\n\n" + makeTable(tableNameToTable.get(ddl[0].name), ddl);
 
     code += tables.substring(2) + "\n\n";
+
+    /*code += "  private " + String.class.getName() + " name = \"" + classSimpleName + "\";\n\n";
+
+    code += "  public boolean equals(final " + Object.class.getName() + " obj) {\n";
+    code += "    if (obj == this)\n      return true;\n\n";
+    code += "    if (!(obj instanceof " + className + "))\n      return false;\n\n";
+    code += "    return name.equals(((" + className + ")obj).name);\n  }\n\n";
+
+    code += "  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+
     code += "  private " + classSimpleName + "() {\n  }\n}";
 
     final File javaFile = new File(dir, classSimpleName + ".java");

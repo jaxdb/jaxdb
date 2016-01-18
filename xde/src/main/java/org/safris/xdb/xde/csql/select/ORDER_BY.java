@@ -18,7 +18,7 @@ package org.safris.xdb.xde.csql.select;
 
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface ORDER_BY<T extends cSQL<?>> extends SELECT<T> {
+public interface ORDER_BY<T extends cSQL<?>> extends SELECT<T>, LIMIT.A {
   public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T> {
   }
 }
