@@ -56,7 +56,7 @@ class Select {
     }
   }
 
-  private static <B extends Entity>RowIterator<B> parseResultSet(final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+  private static <B extends Entity>RowIterator<B> parseResultSet(final Connection connection, final Statement statement, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
     final List<Pair<Column<?>,Integer>> columns = new ArrayList<Pair<Column<?>,Integer>>();
     for (final Entity selectable : select.entities)
       Select.serialize(columns, selectable);
@@ -128,6 +128,12 @@ class Select {
         resetEntities();
         return true;
       }
+
+      public void close() throws SQLException {
+        resultSet.close();
+        statement.close();
+        connection.close();
+      }
     };
   }
 
@@ -135,32 +141,26 @@ class Select {
     public final <B extends Entity>RowIterator<B> execute() throws SQLException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
-      try (final Connection connection = Schema.getConnection(schema)) {
-        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
+      final Connection connection = Schema.getConnection(schema);
+      final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
 
-        serialize(serialization);
-        clearAliases();
+      serialize(serialization);
+      clearAliases();
 
-        if (serialization.statementType == PreparedStatement.class) {
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            try (final ResultSet resultSet = statement.executeQuery()) {
-              return parseResultSet(resultSet, select);
-            }
-          }
-        }
-
-        if (serialization.statementType == Statement.class) {
-          try (
-            final Statement statement = connection.createStatement();
-            final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
-          ) {
-            return parseResultSet(resultSet, select);
-          }
-        }
-
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
+      if (serialization.statementType == PreparedStatement.class) {
+        final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
+        serialization.set(statement);
+        final ResultSet resultSet = statement.executeQuery();
+        return parseResultSet(connection, statement, resultSet, select);
       }
+
+      if (serialization.statementType == Statement.class) {
+        final Statement statement = connection.createStatement();
+        final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
+        return parseResultSet(connection, statement, resultSet, select);
+      }
+
+      throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
     }
   }
 
@@ -548,40 +548,43 @@ class Select {
         }
 
         sql += select.substring(2) + " FROM " + table.name() + " WHERE " + where.substring(5);
-        try (
-          final Connection connection = Schema.getConnection(table.schema());
-          final PreparedStatement statement = connection.prepareStatement(sql);
-        ) {
-          int index = 0;
-          for (final org.safris.xdb.xde.Column<?> column : columns)
-            if (column.primary)
-              column.set(statement, ++index);
+        final Connection connection = Schema.getConnection(table.schema());
+        final PreparedStatement statement = connection.prepareStatement(sql);
+        int index = 0;
+        for (final org.safris.xdb.xde.Column<?> column : columns)
+          if (column.primary)
+            column.set(statement, ++index);
 
-          System.err.println(statement.toString());
-          try (final ResultSet resultSet = statement.executeQuery()) {
-            new RowIterator<B>() {
-              public boolean nextRow() throws SQLException {
-                if (rowIndex + 1 < rows.size()) {
-                  ++rowIndex;
-                  resetEntities();
-                  return true;
-                }
-
-                if (!resultSet.next())
-                  return false;
-
-                int index = 0;
-                for (final org.safris.xdb.xde.Column column : out.column())
-                  if (!column.primary)
-                    column.set(column.get(resultSet, ++index));
-
-                rows.add((B[])new Table[] {out});
+        System.err.println(statement.toString());
+        try (final ResultSet resultSet = statement.executeQuery()) {
+          new RowIterator<B>() {
+            public boolean nextRow() throws SQLException {
+              if (rowIndex + 1 < rows.size()) {
                 ++rowIndex;
                 resetEntities();
                 return true;
               }
-            };
-          }
+
+              if (!resultSet.next())
+                return false;
+
+              int index = 0;
+              for (final org.safris.xdb.xde.Column column : out.column())
+                if (!column.primary)
+                  column.set(column.get(resultSet, ++index));
+
+              rows.add((B[])new Table[] {out});
+              ++rowIndex;
+              resetEntities();
+              return true;
+            }
+
+            public void close() throws SQLException {
+              resultSet.close();
+              statement.close();
+              connection.close();
+            }
+          };
         }
       }
 

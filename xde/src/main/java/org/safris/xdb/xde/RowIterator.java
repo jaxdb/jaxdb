@@ -36,4 +36,6 @@ public abstract class RowIterator<T extends Entity> {
   public T nextEntity() {
     return ++entityIndex < entities.length ? entities[entityIndex] : null;
   }
+
+  public abstract void close() throws SQLException;
 }
