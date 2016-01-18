@@ -212,7 +212,7 @@ public final class Tables {
     }
   }
 
-  public static <T extends cSQL>List<T[]> executeQuery(final String string) throws SQLException {
+  public static <T extends cSQL<?>>List<T[]> executeQuery(final String string) throws SQLException {
     final Map<String,Class<? extends Table>> aliases = getAliases(string);
     final List<Column<?>> columns = getSelection(string, aliases);
     Table lastIdentity = null;

@@ -140,6 +140,17 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     }
   }
 
+  public boolean equals(final Object obj) {
+    if (this == obj)
+      return true;
+
+    if (obj.getClass() != getClass())
+      return false;
+
+    final T get = get();
+    return get != null ? get.equals(((Column<?>)obj).get()) : ((Column<?>)obj).get() == null;
+  }
+
   public String toString() {
     final String alias = cSQL.tableAlias(owner, false);
     return alias != null ? alias + "." + name : String.valueOf(get());

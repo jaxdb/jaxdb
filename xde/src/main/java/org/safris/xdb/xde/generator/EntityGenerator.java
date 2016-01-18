@@ -23,7 +23,9 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.safris.commons.lang.Strings;
@@ -394,18 +396,38 @@ public class EntityGenerator {
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
+    final List<$xdl_column> primaryColumns = new ArrayList<$xdl_column>();
     if (table._column() != null) {
-      out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
       for (final $xdl_column column : table._column())
-        eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
+        if (isPrimary(table, column))
+          primaryColumns.add(column);
 
-      out += "      return " + eq.substring(4) + ";";
+      if (primaryColumns.size() > 0) {
+        out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
+        for (final $xdl_column column : primaryColumns)
+          eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
+
+        out += "      return " + eq.substring(4) + ";";
+      }
+      else {
+        out += "      return true;";
+      }
     }
     else {
       out += "      return true;";
     }
-
     out += "\n    }";
+
+    eq = "";
+    if (primaryColumns.size() > 0) {
+      out += "\n";
+      out += "    public int hashCode() {\n";
+      for (final $xdl_column column : primaryColumns)
+        eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
+      out += "      return " + eq.substring(3) + ";";
+      out += "\n    }";
+    }
+
     out += "\n  }";
     return out;
   }

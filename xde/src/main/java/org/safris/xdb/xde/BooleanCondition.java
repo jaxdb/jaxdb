@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde;
 
-class BooleanCondition<T> extends Condition<T> {
+public class BooleanCondition<T> extends Condition<T> {
   protected static enum Operator {
     AND("AND"),
     OR("OR");

@@ -23,7 +23,9 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.safris.commons.lang.Pair;
 import org.safris.xdb.xde.DML.ALL;
@@ -31,69 +33,106 @@ import org.safris.xdb.xde.DML.DISTINCT;
 import org.safris.xdb.xde.DML.Direction;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
-import org.safris.xdb.xde.csql.Selectable;
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
 class Select {
-  private static void serialize(final List<Pair<Column<?>,Integer>> columns, final Selectable selectable) {
-    if (selectable instanceof Table) {
-      final Table table = (Table)selectable;
+  private static void serialize(final List<Pair<Column<?>,Integer>> columns, final Entity entity) {
+    if (entity instanceof Table) {
+      final Table table = (Table)entity;
       for (int i = 0; i < table.column().length; i++)
         columns.add(new Pair<Column<?>,Integer>(table.column()[i], i));
     }
-    else if (selectable instanceof Aggregate<?>) {
-      final Aggregate<?> aggregate = (Aggregate<?>)selectable;
+    else if (entity instanceof Aggregate<?>) {
+      final Aggregate<?> aggregate = (Aggregate<?>)entity;
       columns.add(new Pair<Column<?>,Integer>((Column<?>)aggregate.parent(), -1));
     }
-    else if (selectable instanceof Column<?>) {
-      final Column<?> column = (Column<?>)selectable;
+    else if (entity instanceof Column<?>) {
+      final Column<?> column = (Column<?>)entity;
       columns.add(new Pair<Column<?>,Integer>(column, -1));
     }
     else {
-      throw new UnsupportedOperationException("Unknown selectable type: " + selectable.getClass().getName());
+      throw new UnsupportedOperationException("Unknown entity type: " + entity.getClass().getName());
     }
   }
 
-  private static <B extends Selectable>List<B[]> parseResultSet(final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+  private static <B extends Entity>RowIterator<B> parseResultSet(final ResultSet resultSet, final SELECT<?> select) throws SQLException {
     final List<Pair<Column<?>,Integer>> columns = new ArrayList<Pair<Column<?>,Integer>>();
-    for (final Selectable selectable : select.selectables)
+    for (final Entity selectable : select.entities)
       Select.serialize(columns, selectable);
 
     final ResultSetMetaData metaData = resultSet.getMetaData();
     final int noColumns = metaData.getColumnCount();
-    Table tablePrototype = null;
-    Table table = null;
-    final List<B[]> rows = new ArrayList<B[]>();
-    while (resultSet.next()) {
-      final Selectable[] row = new Selectable[select.selectables.length];
-      rows.add((B[])row);
-      int index = 0;
-      for (int i = 0; i < noColumns; i++) {
-        final Pair<Column<?>,Integer> columnPrototype = columns.get(i);
-        final Column column;
-        if (columnPrototype.b == -1) {
-          column = columnPrototype.a.clone();
-          row[index++] = column;
+
+    return new RowIterator<B>() {
+      private final Map<Class<? extends Table>,Table> prototypes = new HashMap<Class<? extends Table>,Table>();
+      private final Map<Table,Table> cache = new HashMap<Table,Table>();
+      private Table currentTable = null;
+
+      public boolean nextRow() throws SQLException {
+        if (rowIndex + 1 < rows.size()) {
+          ++rowIndex;
+          resetEntities();
+          return true;
         }
-        else {
-          if (tablePrototype == null || tablePrototype != columnPrototype.a.owner) {
-            tablePrototype = columnPrototype.a.owner;
-            table = tablePrototype.newInstance();
-            row[index++] = table;
+
+        if (!resultSet.next())
+          return false;
+
+        final Entity[] row = new Entity[select.entities.length];
+        int index = 0;
+        Table table = null;
+        for (int i = 0; i < noColumns; i++) {
+          final Pair<Column<?>,Integer> columnPrototype = columns.get(i);
+          final Column column;
+          if (columnPrototype.b == -1) {
+            column = columnPrototype.a.clone();
+            row[index++] = column;
+          }
+          else {
+            if (currentTable == null) {
+              currentTable = columnPrototype.a.owner;
+              table = currentTable.newInstance();
+              prototypes.put(table.getClass(), table);
+              row[index++] = table;
+            }
+            else if (currentTable != columnPrototype.a.owner) {
+              final Table cached = cache.get(table);
+              if (cached != null) {
+                row[index++] = cached;
+              }
+              else {
+                row[index++] = table;
+                cache.put(table, table);
+                prototypes.put(table.getClass(), table.newInstance());
+                currentTable = columnPrototype.a.owner;
+                table = prototypes.get(currentTable.getClass());
+                if (table == null)
+                  prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
+              }
+            }
+
+            column = table.column()[columnPrototype.b];
           }
 
-          column = table.column()[columnPrototype.b];
+          column.set(column.get(resultSet, i + 1));
         }
 
-        column.set(column.get(resultSet, i + 1));
-      }
-    }
+        if (table != null) {
+          final Table cached = cache.get(table);
+          row[index++] = cached != null ? cached : table;
+        }
 
-    return rows;
+        rows.add((B[])row);
+        ++rowIndex;
+        resetEntities();
+        return true;
+      }
+    };
   }
 
   private static abstract class Execute<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> {
-    public final <B extends Selectable>List<B[]> execute() throws SQLException {
+    public final <B extends Entity>RowIterator<B> execute() throws SQLException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       try (final Connection connection = Schema.getConnection(schema)) {
@@ -377,14 +416,14 @@ class Select {
   protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select.SELECT_FROM<T> {
     private final ALL all;
     private final DISTINCT distinct;
-    protected final Selectable[] selectables;
+    protected final Entity[] entities;
     private FROM<T> from;
 
     @SafeVarargs
-    public SELECT(final ALL all, final DISTINCT distinct, final Selectable ... selections) {
+    public SELECT(final ALL all, final DISTINCT distinct, final Entity ... entities) {
       this.all = all;
       this.distinct = distinct;
-      this.selectables = selections;
+      this.entities = entities;
     }
 
     public FROM<T> FROM(final Table ... table) {
@@ -415,8 +454,8 @@ class Select {
           serialization.sql.append(" ");
         }
 
-        for (int i = 0; i < selectables.length; i++) {
-          final cSQL<?> csql = (cSQL<?>)selectables[i];
+        for (int i = 0; i < entities.length; i++) {
+          final cSQL<?> csql = (cSQL<?>)entities[i];
           if (i > 0)
             serialization.sql.append(", ");
 
@@ -449,9 +488,9 @@ class Select {
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
     }
 
-    public <B extends Selectable>List<B[]> execute() throws SQLException {
-      if (selectables.length == 1) {
-        final Table table = (Table)this.selectables[0];
+    public <B extends Entity>RowIterator<B> execute() throws SQLException {
+      if (entities.length == 1) {
+        final Table table = (Table)this.entities[0];
         final Table out = table.newInstance();
         final org.safris.xdb.xde.Column<?>[] columns = table.column();
         String sql = "SELECT ";
@@ -476,17 +515,28 @@ class Select {
 
           System.err.println(statement.toString());
           try (final ResultSet resultSet = statement.executeQuery()) {
-            if (!resultSet.next())
-              return null;
+            new RowIterator<B>() {
+              public boolean nextRow() throws SQLException {
+                if (rowIndex + 1 < rows.size()) {
+                  ++rowIndex;
+                  resetEntities();
+                  return true;
+                }
 
-            index = 0;
-            for (final org.safris.xdb.xde.Column column : out.column())
-              if (!column.primary)
-                column.set(column.get(resultSet, ++index));
+                if (!resultSet.next())
+                  return false;
 
-            final List<Table[]> list = new ArrayList<Table[]>();
-            list.add(new Table[] {out});
-            return (List)list;
+                int index = 0;
+                for (final org.safris.xdb.xde.Column column : out.column())
+                  if (!column.primary)
+                    column.set(column.get(resultSet, ++index));
+
+                rows.add((B[])new Table[] {out});
+                ++rowIndex;
+                resetEntities();
+                return true;
+              }
+            };
           }
         }
       }

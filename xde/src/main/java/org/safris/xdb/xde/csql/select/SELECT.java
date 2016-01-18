@@ -17,14 +17,14 @@
 package org.safris.xdb.xde.csql.select;
 
 import java.sql.SQLException;
-import java.util.List;
 
-import org.safris.xdb.xde.csql.Selectable;
+import org.safris.xdb.xde.RowIterator;
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.cSQL;
 
 public interface SELECT<T extends cSQL<?>> extends org.safris.xdb.xde.csql.cSQL<T> {
-  public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T>, Selectable {
+  public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T>, Entity {
   }
 
-  public <B extends Selectable>List<B[]> execute() throws SQLException;
+  public <B extends Entity>RowIterator<B> execute() throws SQLException;
 }
