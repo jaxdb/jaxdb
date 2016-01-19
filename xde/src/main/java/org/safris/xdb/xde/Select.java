@@ -94,7 +94,6 @@ class Select {
               currentTable = columnPrototype.a.owner;
               table = currentTable.newInstance();
               prototypes.put(table.getClass(), table);
-              row[index++] = table;
             }
             else if (currentTable != columnPrototype.a.owner) {
               final Table cached = cache.get(table);

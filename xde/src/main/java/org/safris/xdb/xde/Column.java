@@ -16,6 +16,7 @@
 
 package org.safris.xdb.xde;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -75,8 +76,10 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
   protected final boolean unique;
   protected final boolean primary;
   protected final boolean nullable;
+  protected final GenerateOn<T> generateOnInsert;
+  protected final GenerateOn<T> generateOnUpdate;
 
-  protected Column(final int sqlType, final Class<T> type, final Table owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable) {
+  protected Column(final int sqlType, final Class<T> type, final Table owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate) {
     this.sqlType = sqlType;
     this.type = type;
     this.owner = owner;
@@ -86,16 +89,25 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     this.unique = unique;
     this.primary = primary;
     this.nullable = nullable;
+    this.generateOnInsert = generateOnInsert;
+    this.generateOnUpdate = generateOnUpdate;
   }
 
   protected Column(final Column<T> column) {
-    this(column.sqlType, column.type, column.owner, column.csqlName, column.name, column.value, column.unique, column.primary, column.nullable);
+    this(column.sqlType, column.type, column.owner, column.csqlName, column.name, column.value, column.unique, column.primary, column.nullable, column.generateOnInsert, column.generateOnUpdate);
     this.value = column.value;
+  }
+
+  private boolean wasSet = false;
+
+  protected boolean wasSet() {
+    return wasSet;
   }
 
   private T value;
 
   public void set(final T value) {
+    this.wasSet = true;
     this.value = value;
   }
 
@@ -128,9 +140,11 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
   protected abstract void set(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract T get(final ResultSet resultSet, final int columnIndex) throws SQLException;
 
-  public Column<?> clone() {
+  public Column<T> clone() {
     try {
-      return getClass().getConstructor(getClass()).newInstance(this);
+      final Constructor<Column<T>> constructor = (Constructor<Column<T>>)getClass().getDeclaredConstructor(getClass());
+      constructor.setAccessible(true);
+      return (Column<T>)constructor.newInstance(this);
     }
     catch (final InstantiationException e) {
       throw new Error(e);

@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -31,8 +32,8 @@ public final class Boolean extends Column<java.lang.Boolean> {
     statement.setBoolean(parameterIndex, value);
   }
 
-  public Boolean(final Table owner, final String csqlName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable) {
-    super(sqlType, java.lang.Boolean.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Boolean(final Table owner, final String csqlName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
+    super(sqlType, java.lang.Boolean.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Boolean(final Boolean column) {

@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -31,8 +32,8 @@ public final class Enum<T extends java.lang.Enum<?>> extends Column<T> {
     statement.setString(parameterIndex, value.toString());
   }
 
-  public Enum(final Table owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final Class<T> type) {
-    super(sqlType, type, owner, csqlName, name, _default, unique, primary, nullable);
+  public Enum(final Table owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
+    super(sqlType, type, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Enum(final Enum<T> column) {

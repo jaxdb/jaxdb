@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.joda.time.LocalTime;
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -32,8 +33,8 @@ public final class Time extends Column<LocalTime> {
     statement.setTime(parameterIndex, new java.sql.Time(value.toDateTimeToday().toDate().getTime()));
   }
 
-  public Time(final Table owner, final String csqlName, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable) {
-    super(sqlType, LocalTime.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Time(final Table owner, final String csqlName, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalTime> generateOnInsert, final GenerateOn<LocalTime> generateOnUpdate) {
+    super(sqlType, LocalTime.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Time(final Time column) {

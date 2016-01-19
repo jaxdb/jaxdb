@@ -16,6 +16,10 @@
 
 package org.safris.xdb.xde.generator;
 
+import java.lang.reflect.Field;
+
+import org.safris.xdb.xde.GenerateOn;
+
 public final class Serializer {
   public static String serialize(final Object[] object) {
     if (object == null)
@@ -37,6 +41,20 @@ public final class Serializer {
 
     if (object instanceof Long)
       return String.valueOf(object + "L");
+
+    if (object instanceof GenerateOn<?>) {
+      try {
+        final Field[] fields = GenerateOn.class.getDeclaredFields();
+        for (final Field field : fields)
+          if (field.get(null) == object)
+            return GenerateOn.class.getName() + "." + field.getName();
+
+        throw new Error("Did not find the desired field");
+      }
+      catch (final IllegalAccessException e) {
+        throw new RuntimeException(e);
+      }
+    }
 
     if (object instanceof Short)
       return String.valueOf("(short)" + object);

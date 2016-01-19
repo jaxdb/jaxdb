@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -36,8 +37,8 @@ public final class MediumInt extends Column<Integer> {
   public final Integer min;
   public final Integer max;
 
-  public MediumInt(final Table owner, final String csqlName, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final int precision, final boolean unsigned, final Integer min, final Integer max) {
-    super(sqlType, Integer.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public MediumInt(final Table owner, final String csqlName, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Integer> generateOnInsert, final GenerateOn<Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
+    super(sqlType, Integer.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -36,8 +37,8 @@ public final class SmallInt extends Column<Short> {
   public final Short min;
   public final Short max;
 
-  public SmallInt(final Table owner, final String csqlName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final int precision, final boolean unsigned, final Short min, final Short max) {
-    super(sqlType, Short.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public SmallInt(final Table owner, final String csqlName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Short> generateOnInsert, final GenerateOn<Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
+    super(sqlType, Short.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

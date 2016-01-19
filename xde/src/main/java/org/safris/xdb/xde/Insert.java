@@ -38,16 +38,22 @@ class Insert {
       String columns = "";
       String values = "";
       if (serialization.statementType == PreparedStatement.class) {
-        for (final Column column : table.column()) {
-          columns += ", " + column.name;
-          values += ", ?";
-          serialization.parameters.add(column.get());
+        for (final Column<?> column : table.column()) {
+          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.generateOnInsert.generate() : column.generateOnUpdate != null ? column.generateOnUpdate.generate() : null;
+          if (value != null) {
+            columns += ", " + column.name;
+            values += ", ?";
+            serialization.parameters.add(value);
+          }
         }
       }
       else if (serialization.statementType == Statement.class) {
         for (final Column<?> column : table.column()) {
-          columns += ", " + column.name;
-          values += ", " + cSQLObject.toString(column.get());
+          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.generateOnInsert.generate() : column.generateOnUpdate != null ? column.generateOnUpdate.generate() : null;
+          if (value != null) {
+            columns += ", " + column.name;
+            values += ", " + cSQLObject.toString(value);
+          }
         }
       }
       else {

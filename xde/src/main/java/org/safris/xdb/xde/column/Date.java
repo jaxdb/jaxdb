@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.joda.time.LocalDate;
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -32,8 +33,8 @@ public final class Date extends Column<LocalDate> {
     statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
   }
 
-  public Date(final Table owner, final String csqlName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable) {
-    super(sqlType, LocalDate.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Date(final Table owner, final String csqlName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalDate> generateOnInsert, final GenerateOn<LocalDate> generateOnUpdate) {
+    super(sqlType, LocalDate.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Date(final Date column) {

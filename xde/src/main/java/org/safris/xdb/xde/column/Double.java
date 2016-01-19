@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -37,8 +38,8 @@ public final class Double extends Column<java.lang.Double> {
   public final java.lang.Double min;
   public final java.lang.Double max;
 
-  public Double(final Table owner, final String csqlName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
-    super(sqlType, java.lang.Double.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Double(final Table owner, final String csqlName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Double> generateOnInsert, final GenerateOn<java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
+    super(sqlType, java.lang.Double.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

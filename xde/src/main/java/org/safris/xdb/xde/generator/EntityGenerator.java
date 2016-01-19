@@ -31,6 +31,7 @@ import java.util.Map;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Schema;
 import org.safris.xdb.xde.Table;
@@ -147,70 +148,114 @@ public class EntityGenerator {
     private static Type getType(final $xdl_table table, final $xdl_column column) {
       final Class<?> cls = column.getClass().getSuperclass();
       final Object _default = getDefault(column);
+      GenerateOn<?> generateOnInsert = null;
+      GenerateOn<?> generateOnUpdate = null;
       final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
       if (column instanceof $xdl_blob) {
         final $xdl_blob type = ($xdl_blob)column;
-        return new Type(column, Blob.class, params);
+        return new Type(column, Blob.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_char) {
         final $xdl_char type = ($xdl_char)column;
-        return new Type(column, Char.class, params, type._length$().text(), type._variant$().text());
+        if (!type._generateOnInsert$().isNull()) {
+          if ($xdl_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
+            generateOnInsert = GenerateOn.UUID;
+        }
+
+        if (!type._generateOnUpdate$().isNull()) {
+          if ($xdl_char._generateOnUpdate$.UUID.text().equals(type._generateOnUpdate$().text()))
+            generateOnUpdate = GenerateOn.UUID;
+        }
+
+        return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
       }
 
       if (column instanceof $xdl_bit) {
         final $xdl_bit type = ($xdl_bit)column;
-        return new Type(column, Bit.class, params, type._length$().text(), type._variant$().text());
+        return new Type(column, Bit.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
       }
 
       if (column instanceof $xdl_integer) {
         final $xdl_integer type = ($xdl_integer)column;
+        // no autogenerator is necessary for xdl_integer._generateOnInsert$.AUTO_5FINCREMENT
+
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
         if (noBytes <= 2)
-          return new Type(column, SmallInt.class, params, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
+          return new Type(column, SmallInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
 
         if (noBytes <= 4)
-          return new Type(column, MediumInt.class, params, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+          return new Type(column, MediumInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
         if (noBytes <= 8)
-          return new Type(column, Long.class, params, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+          return new Type(column, Long.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
-        return new Type(column, BigInt.class, params, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, BigInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xdl_float) {
         final $xdl_float type = ($xdl_float)column;
-        return new Type(column, Float.class, params, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, Float.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xdl_decimal) {
         final $xdl_decimal type = ($xdl_decimal)column;
-        return new Type(column, Decimal.class, params, type._precision$().text(), type._decimal$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, Decimal.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._decimal$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xdl_date) {
         final $xdl_date type = ($xdl_date)column;
-        return new Type(column, org.safris.xdb.xde.column.Date.class, params);
+        if (!type._generateOnInsert$().isNull()) {
+          if ($xdl_date._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+            generateOnInsert = GenerateOn.TIMESTAMP_DATE;
+        }
+
+        if (!type._generateOnUpdate$().isNull()) {
+          if ($xdl_date._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+            generateOnUpdate = GenerateOn.TIMESTAMP_DATE;
+        }
+
+        return new Type(column, org.safris.xdb.xde.column.Date.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_time) {
         final $xdl_time type = ($xdl_time)column;
-        return new Type(column, org.safris.xdb.xde.column.Time.class, params);
+        if (!type._generateOnInsert$().isNull()) {
+          if ($xdl_time._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+            generateOnInsert = GenerateOn.TIMESTAMP_TIME;
+        }
+
+        if (!type._generateOnUpdate$().isNull()) {
+          if ($xdl_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+            generateOnUpdate = GenerateOn.TIMESTAMP_TIME;
+        }
+
+        return new Type(column, org.safris.xdb.xde.column.Time.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_dateTime) {
         final $xdl_dateTime type = ($xdl_dateTime)column;
-        return new Type(column, DateTime.class, params);
+        if (!type._generateOnInsert$().isNull()) {
+          if ($xdl_dateTime._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+            generateOnInsert = GenerateOn.TIMESTAMP_DATETIME;
+        }
+
+        if (!type._generateOnUpdate$().isNull()) {
+          if ($xdl_dateTime._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+            generateOnUpdate = GenerateOn.TIMESTAMP_DATETIME;
+        }
+
+        return new Type(column, DateTime.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_boolean) {
         final $xdl_boolean type = ($xdl_boolean)column;
-        return new Type(column, org.safris.xdb.xde.column.Boolean.class, params);
+        return new Type(column, org.safris.xdb.xde.column.Boolean.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_enum) {
         final $xdl_enum type = ($xdl_enum)column;
-        return new Type(column, org.safris.xdb.xde.column.Enum.class, params);
+        return new Type(column, org.safris.xdb.xde.column.Enum.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
@@ -219,12 +264,16 @@ public class EntityGenerator {
     private final $xdl_column column;
     public final Class<? extends Column> type;
     private final Object[] commonParams;
+    private final GenerateOn<?> generateOnInsert;
+    private final GenerateOn<?> generateOnUpdate;
     private final Object[] customParams;
 
-    private Type(final $xdl_column column, final Class<? extends Column> type, final Object[] commonParams, final Object ... params) {
+    private Type(final $xdl_column column, final Class<? extends Column> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
+      this.generateOnInsert = generateOnInsert;
+      this.generateOnUpdate = generateOnUpdate;
       this.customParams = params;
     }
 
@@ -233,6 +282,8 @@ public class EntityGenerator {
       for (final Object param : commonParams)
         out += ", " + (param == THIS ? "this" : Serializer.serialize(param));
 
+      out += ", " + Serializer.serialize(generateOnInsert);
+      out += ", " + Serializer.serialize(generateOnUpdate);
       if (customParams != null)
         for (final Object param : customParams)
           out += ", " + (param == THIS ? "this" : Serializer.serialize(param));

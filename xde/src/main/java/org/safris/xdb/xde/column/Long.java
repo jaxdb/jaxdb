@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -36,8 +37,8 @@ public final class Long extends Column<java.lang.Long> {
   public final java.lang.Long min;
   public final java.lang.Long max;
 
-  public Long(final Table owner, final String csqlName, final String name, final java.lang.Long _default, final boolean unique, final boolean primary, final boolean nullable, final int precision, final boolean unsigned, final java.lang.Long min, final java.lang.Long max) {
-    super(sqlType, java.lang.Long.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Long(final Table owner, final String csqlName, final String name, final java.lang.Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Long> generateOnInsert, final GenerateOn<java.lang.Long> generateOnUpdate, final int precision, final boolean unsigned, final java.lang.Long min, final java.lang.Long max) {
+    super(sqlType, java.lang.Long.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

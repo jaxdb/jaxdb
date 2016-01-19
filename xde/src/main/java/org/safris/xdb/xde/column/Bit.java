@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
 
@@ -34,8 +35,8 @@ public final class Bit extends Column<String> {
   public final int length;
   public final boolean varyant;
 
-  public Bit(final Table owner, final String csqlName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final int length, final boolean varyant) {
-    super(sqlType, String.class, owner, csqlName, name, _default, unique, primary, nullable);
+  public Bit(final Table owner, final String csqlName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varyant) {
+    super(sqlType, String.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.length = length;
     this.varyant = varyant;
   }
