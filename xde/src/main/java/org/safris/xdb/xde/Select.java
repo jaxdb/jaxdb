@@ -90,12 +90,7 @@ class Select {
             row[index++] = column;
           }
           else {
-            if (currentTable == null) {
-              currentTable = columnPrototype.a.owner;
-              table = currentTable.newInstance();
-              prototypes.put(table.getClass(), table);
-            }
-            else if (currentTable != columnPrototype.a.owner) {
+            if (currentTable != null && currentTable != columnPrototype.a.owner) {
               final Table cached = cache.get(table);
               if (cached != null) {
                 row[index++] = cached;
@@ -104,12 +99,13 @@ class Select {
                 row[index++] = table;
                 cache.put(table, table);
                 prototypes.put(table.getClass(), table.newInstance());
-                currentTable = columnPrototype.a.owner;
-                table = prototypes.get(currentTable.getClass());
-                if (table == null)
-                  prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
               }
             }
+
+            currentTable = columnPrototype.a.owner;
+            table = prototypes.get(currentTable.getClass());
+            if (table == null)
+              prototypes.put(currentTable.getClass(), table = currentTable.newInstance());
 
             column = table.column()[columnPrototype.b];
           }
