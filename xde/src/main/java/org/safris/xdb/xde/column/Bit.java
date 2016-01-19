@@ -24,6 +24,7 @@ import java.sql.Types;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Bit extends Column<String> {
   protected static final int sqlType = Types.VARCHAR;
@@ -45,6 +46,10 @@ public final class Bit extends Column<String> {
     super(column);
     this.length = column.length;
     this.varyant = column.varyant;
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

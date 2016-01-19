@@ -24,6 +24,7 @@ import java.sql.Types;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Float extends Column<java.lang.Float> {
   protected static final int sqlType = Types.FLOAT;
@@ -52,6 +53,10 @@ public final class Float extends Column<java.lang.Float> {
     this.unsigned = column.unsigned;
     this.min = column.min;
     this.max = column.max;
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

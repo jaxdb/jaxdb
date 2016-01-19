@@ -25,6 +25,7 @@ import org.joda.time.LocalDate;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Date extends Column<LocalDate> {
   protected static final int sqlType = Types.DATE;
@@ -39,6 +40,10 @@ public final class Date extends Column<LocalDate> {
 
   protected Date(final Date column) {
     super(column);
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

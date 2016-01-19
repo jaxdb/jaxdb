@@ -38,18 +38,18 @@ class Insert {
       String columns = "";
       String values = "";
       if (serialization.statementType == PreparedStatement.class) {
-        for (final Column<?> column : table.column()) {
-          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.generateOnInsert.generate() : column.generateOnUpdate != null ? column.generateOnUpdate.generate() : null;
+        for (final Column column : table.column()) {
+          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.set(column.generateOnInsert.generate()) : column.generateOnUpdate != null ? column.set(column.generateOnUpdate.generate()) : null;
           if (value != null) {
             columns += ", " + column.name;
-            values += ", ?";
+            values += ", " + column.getPreparedStatementMark(serialization.vendor);
             serialization.parameters.add(value);
           }
         }
       }
       else if (serialization.statementType == Statement.class) {
-        for (final Column<?> column : table.column()) {
-          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.generateOnInsert.generate() : column.generateOnUpdate != null ? column.generateOnUpdate.generate() : null;
+        for (final Column column : table.column()) {
+          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.set(column.generateOnInsert.generate()) : column.generateOnUpdate != null ? column.set(column.generateOnUpdate.generate()) : null;
           if (value != null) {
             columns += ", " + column.name;
             values += ", " + cSQLObject.toString(value);

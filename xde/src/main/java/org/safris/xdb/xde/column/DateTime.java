@@ -26,6 +26,7 @@ import org.joda.time.LocalDateTime;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class DateTime extends Column<LocalDateTime> {
   protected static final int sqlType = Types.TIMESTAMP;
@@ -40,6 +41,10 @@ public final class DateTime extends Column<LocalDateTime> {
 
   protected DateTime(final DateTime column) {
     super(column);
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

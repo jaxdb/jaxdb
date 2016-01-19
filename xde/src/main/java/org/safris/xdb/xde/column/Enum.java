@@ -24,12 +24,15 @@ import java.sql.Types;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.Tables;
+import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.xdl.SQLDataTypes;
 
 public final class Enum<T extends java.lang.Enum<?>> extends Column<T> {
   protected static final int sqlType = Types.VARCHAR;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Enum<?> value) throws SQLException {
-    statement.setString(parameterIndex, value.toString());
+    statement.setObject(parameterIndex, value.toString());
   }
 
   public Enum(final Table owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
@@ -38,6 +41,10 @@ public final class Enum<T extends java.lang.Enum<?>> extends Column<T> {
 
   protected Enum(final Enum<T> column) {
     super(column);
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return vendor == DBVendor.POSTGRE_SQL ? "?::" + SQLDataTypes.getTypeName(Tables.name(owner), name) : "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

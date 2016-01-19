@@ -125,6 +125,7 @@ class Select {
         rows.add((B[])row);
         ++rowIndex;
         resetEntities();
+        currentTable = null;
         return true;
       }
 
@@ -569,8 +570,7 @@ class Select {
 
               int index = 0;
               for (final org.safris.xdb.xde.Column column : out.column())
-                if (!column.primary)
-                  column.set(column.get(resultSet, ++index));
+                column.set(column.get(resultSet, ++index));
 
               rows.add((B[])new Table[] {out});
               ++rowIndex;

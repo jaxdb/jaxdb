@@ -24,6 +24,7 @@ import java.sql.Types;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Boolean extends Column<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;
@@ -38,6 +39,10 @@ public final class Boolean extends Column<java.lang.Boolean> {
 
   protected Boolean(final Boolean column) {
     super(column);
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

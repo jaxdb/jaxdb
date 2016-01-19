@@ -31,6 +31,10 @@ import java.util.StringTokenizer;
 import org.safris.commons.lang.Numbers;
 
 public final class Tables {
+  public static String name(final Table table) {
+    return table.name();
+  }
+
   private static List<Column<?>> getSelection(final String string, final Map<String,Class<? extends Table>> aliases) {
     final StringTokenizer tokenizer = new StringTokenizer(string, " \t\n\r\f,");
     final List<String> selection = new ArrayList<String>();

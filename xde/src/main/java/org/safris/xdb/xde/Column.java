@@ -33,6 +33,7 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.xde.csql.select.ORDER_BY;
 import org.safris.xdb.xde.csql.select.SELECT;
+import org.safris.xdb.xdl.DBVendor;
 
 public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.Column<T>, SELECT.Column<T> {
   private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
@@ -44,7 +45,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
         final Method[] methods = cls.getDeclaredMethods();
         for (final Method method : methods) {
           if (Modifier.isStatic(method.getModifiers()) && "set".equals(method.getName())) {
-            typeToSetter.put(Classes.getGenericSuperclasses(cls)[0], method);
+            typeToSetter.put(cls == org.safris.xdb.xde.column.Enum.class ? Enum.class : Classes.getGenericSuperclasses(cls)[0], method);
             method.setAccessible(true);
             continue;
           }
@@ -58,7 +59,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final Class<?> type, final Object value) {
     try {
-      typeToSetter.get(type).invoke(null, statement, parameterIndex, value);
+      typeToSetter.get(type.isEnum() ? Enum.class : type).invoke(null, statement, parameterIndex, value);
     }
     catch (final IllegalAccessException e) {
       throw new Error(e);
@@ -106,9 +107,9 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
 
   private T value;
 
-  public void set(final T value) {
+  public T set(final T value) {
     this.wasSet = true;
-    this.value = value;
+    return this.value = value;
   }
 
   public T get() {
@@ -123,7 +124,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     if (serialization.statementType == PreparedStatement.class) {
       if (tableAlias(owner, false) == null) {
         serialization.parameters.add(get());
-        serialization.sql.append("?");
+        serialization.sql.append(getPreparedStatementMark(serialization.vendor));
       }
       else {
         serialization.sql.append(toString());
@@ -137,6 +138,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     }
   }
 
+  protected abstract String getPreparedStatementMark(final DBVendor vendor);
   protected abstract void set(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract T get(final ResultSet resultSet, final int columnIndex) throws SQLException;
 

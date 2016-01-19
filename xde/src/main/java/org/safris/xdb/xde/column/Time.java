@@ -25,6 +25,7 @@ import org.joda.time.LocalTime;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Time extends Column<LocalTime> {
   protected static final int sqlType = Types.TIME;
@@ -39,6 +40,10 @@ public final class Time extends Column<LocalTime> {
 
   protected Time(final Time column) {
     super(column);
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {

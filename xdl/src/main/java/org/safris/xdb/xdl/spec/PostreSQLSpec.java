@@ -40,7 +40,7 @@ public class PostreSQLSpec extends SQLSpec {
     if (table._column() != null) {
       for (final $xdl_column column : table._column()) {
         if (column instanceof $xdl_enum) {
-          statements.add("DROP TYPE IF EXISTS " + SQLDataTypes.getTypeName(table, ($xdl_enum)column));
+          statements.add("DROP TYPE IF EXISTS " + SQLDataTypes.getTypeName(table._name$().text(), (($xdl_enum)column)._name$().text()));
         }
         else if (column instanceof $xdl_integer) {
           final $xdl_integer type = ($xdl_integer)column;
@@ -59,7 +59,7 @@ public class PostreSQLSpec extends SQLSpec {
       for (final $xdl_column column : table._column()) {
         if (column instanceof $xdl_enum) {
           final $xdl_enum type = ($xdl_enum)column;
-          String sql = "CREATE TYPE " + SQLDataTypes.getTypeName(table, type) + " AS ENUM (";
+          String sql = "CREATE TYPE " + SQLDataTypes.getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
           if (!type._values$().isNull()) {
             String values = "";
             for (final String value : type._values$().text())
@@ -143,7 +143,7 @@ public class PostreSQLSpec extends SQLSpec {
   }
 
   public String type(final $xdl_table table, final $xdl_enum type) {
-    return SQLDataTypes.getTypeName(table, type);
+    return SQLDataTypes.getTypeName(table._name$().text(), (($xdl_enum)type)._name$().text());
   }
 
   public String $null(final $xdl_table table, final $xdl_column column) {
