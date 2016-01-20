@@ -16,9 +16,11 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface GROUP_BY<T extends cSQL<?>> extends HAVING<T> {
-  public HAVING<T> HAVING(final Condition<?> condition);
+public interface GROUP_BY<T extends cSQL<?>> extends SELECT<T>, _LIMIT, _HAVING<T> {
+}
+
+interface _GROUP_BY<T extends cSQL<?>> {
+  public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column);
 }

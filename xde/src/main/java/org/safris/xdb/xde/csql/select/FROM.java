@@ -16,17 +16,12 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.DML.NATURAL;
-import org.safris.xdb.xde.DML.TYPE;
 import org.safris.xdb.xde.Table;
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface FROM<T extends cSQL<?>> extends WHERE<T> {
-  public <B extends cSQL<?>>WHERE<B> WHERE(final Condition<?> condition);
+public interface FROM<T extends cSQL<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN, _LIMIT, _ORDER_BY, _WHERE {
+}
 
-  public <B extends cSQL<?>>JOIN<B> JOIN(final Table table);
-  public <B extends cSQL<?>>JOIN<B> JOIN(final TYPE type, final Table table);
-  public <B extends cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final Table table);
-  public <B extends cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table);
+interface _FROM {
+  public <B extends cSQL<?>>FROM<B> FROM(final Table ... table);
 }

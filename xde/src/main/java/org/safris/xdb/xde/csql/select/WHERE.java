@@ -16,8 +16,12 @@
 
 package org.safris.xdb.xde.csql.select;
 
+import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface WHERE<T extends cSQL<?>> extends HAVING<T> {
-  public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column);
+public interface WHERE<T extends cSQL<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT, _ORDER_BY {
+}
+
+interface _WHERE {
+  public <B extends cSQL<?>>WHERE<B> WHERE(final Condition<?> condition);
 }

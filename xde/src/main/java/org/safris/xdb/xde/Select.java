@@ -445,7 +445,7 @@ class Select {
     }
   }
 
-  protected final static class LIMIT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT.B<T> {
+  protected final static class LIMIT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT<T> {
     private final cSQL<?> parent;
     private final int limit;
 
@@ -469,7 +469,7 @@ class Select {
     }
   }
 
-  protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select.SELECT_FROM<T> {
+  protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select._SELECT<T> {
     private final ALL all;
     private final DISTINCT distinct;
     protected final Entity[] entities;

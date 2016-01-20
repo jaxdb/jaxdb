@@ -18,11 +18,9 @@ package org.safris.xdb.xde.csql.select;
 
 import org.safris.xdb.xde.csql.cSQL;
 
-public interface LIMIT {
-  public interface A {
-    public <B extends cSQL<?>>LIMIT.B<B> LIMIT(final int limit);
-  }
+public interface LIMIT<T extends cSQL<?>> extends SELECT<T> {
+}
 
-  public interface B<T extends cSQL<?>> extends SELECT<T> {
-  }
+interface _LIMIT {
+  public <B extends cSQL<?>>LIMIT<B> LIMIT(final int limit);
 }
