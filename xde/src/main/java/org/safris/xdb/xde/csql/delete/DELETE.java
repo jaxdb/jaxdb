@@ -16,10 +16,9 @@
 
 package org.safris.xdb.xde.csql.delete;
 
-import java.sql.SQLException;
-
+import org.safris.xdb.xde.XDEException;
 import org.safris.xdb.xde.csql.cSQL;
 
 public interface DELETE<T> extends cSQL<T> {
-  public int execute() throws SQLException;
+  public int execute() throws XDEException;
 }

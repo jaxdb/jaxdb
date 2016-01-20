@@ -1,6 +1,5 @@
 package org.safris.xdb.xde;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +12,7 @@ public abstract class RowIterator<T extends Entity> {
   private T[] entities;
   private int entityIndex = -1;
 
-  public boolean previousRow() throws SQLException {
+  public boolean previousRow() throws XDEException {
     if (rowIndex <= 0)
       return false;
 
@@ -22,7 +21,7 @@ public abstract class RowIterator<T extends Entity> {
     return true;
   }
 
-  public abstract boolean nextRow() throws SQLException;
+  public abstract boolean nextRow() throws XDEException;
 
   protected void resetEntities() {
     entities = rows.get(rowIndex);
@@ -37,5 +36,5 @@ public abstract class RowIterator<T extends Entity> {
     return ++entityIndex < entities.length ? entities[entityIndex] : null;
   }
 
-  public abstract void close() throws SQLException;
+  public abstract void close() throws XDEException;
 }

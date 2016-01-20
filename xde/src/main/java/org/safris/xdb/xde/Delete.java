@@ -21,29 +21,38 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.xdl.DBVendor;
+
 class Delete {
   private static abstract class Execute<T> extends cSQL<T> {
-    public int execute() throws SQLException {
+    public int execute() throws XDEException {
       final cSQL<?> table = getParentRoot(this);
       final Class<? extends Schema> schema = ((Table)table).schema();
-      try (final Connection connection = Schema.getConnection(schema)) {
-        final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
-        serialize(serialization);
-        clearAliases();
-        if (serialization.statementType == PreparedStatement.class) {
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            return statement.executeUpdate();
+      DBVendor vendor = null;
+      try {
+        try (final Connection connection = Schema.getConnection(schema)) {
+          vendor = Schema.getDBVendor(connection);
+          final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+          serialize(serialization);
+          clearAliases();
+          if (serialization.statementType == PreparedStatement.class) {
+            try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+              serialization.set(statement);
+              return statement.executeUpdate();
+            }
           }
-        }
 
-        if (serialization.statementType == Statement.class) {
-          try (final Statement statement = connection.createStatement()) {
-            return statement.executeUpdate(serialization.sql.toString());
+          if (serialization.statementType == Statement.class) {
+            try (final Statement statement = connection.createStatement()) {
+              return statement.executeUpdate(serialization.sql.toString());
+            }
           }
-        }
 
-        throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
+          throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
+        }
+      }
+      catch (final SQLException e) {
+        throw XDEException.lookup(e, vendor);
       }
     }
   }
@@ -106,32 +115,39 @@ class Delete {
       return sql;
     }
 
-    public int execute() throws SQLException {
+    public int execute() throws XDEException {
       if (false) {
         final cSQL<?> table = getParentRoot(this);
         final Class<? extends Schema> schema = ((Table)table).schema();
-        try (final Connection connection = Schema.getConnection(schema)) {
-          final Serialization serialization = new Serialization(Schema.getDBVendor(connection), XDERegistry.getStatementType(schema));
-          final String sql = encodeSingle(serialization);
-          System.out.println(sql);
-          if (true)
-            return 0;
+        DBVendor vendor = null;
+        try {
+          try (final Connection connection = Schema.getConnection(schema)) {
+            vendor = Schema.getDBVendor(connection);
+            final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+            final String sql = encodeSingle(serialization);
+            System.out.println(sql);
+            if (true)
+              return 0;
 
-          try (final PreparedStatement statement = connection.prepareStatement(sql)) {
-            // set the updated columns first
-            int index = 0;
-            for (final Column<?> column : ((Table)table).column())
-              if (!column.primary)
-                column.set(statement, ++index);
+            try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+              // set the updated columns first
+              int index = 0;
+              for (final Column<?> column : ((Table)table).column())
+                if (!column.primary)
+                  column.set(statement, ++index);
 
-            // then the conditional columns
-            for (final Column<?> column : ((Table)table).column())
-              if (column.primary)
-                column.set(statement, ++index);
+              // then the conditional columns
+              for (final Column<?> column : ((Table)table).column())
+                if (column.primary)
+                  column.set(statement, ++index);
 
-            System.err.println(statement.toString());
-            return statement.executeUpdate();
+              System.err.println(statement.toString());
+              return statement.executeUpdate();
+            }
           }
+        }
+        catch (final SQLException e) {
+          throw XDEException.lookup(e, vendor);
         }
       }
 

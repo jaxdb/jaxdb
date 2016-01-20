@@ -16,11 +16,10 @@
 
 package org.safris.xdb.xde.csql.insert;
 
-import java.sql.SQLException;
-
 import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.XDEException;
 import org.safris.xdb.xde.csql.cSQL;
 
 public interface INSERT extends cSQL<Table> {
-  public int execute() throws SQLException;
+  public int execute() throws XDEException;
 }
