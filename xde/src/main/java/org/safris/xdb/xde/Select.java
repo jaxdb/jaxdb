@@ -531,7 +531,7 @@ class Select {
               serialization.sql.append(alias).append(".").append(column.name);
             }
           }
-          else if (csql instanceof Column<?>) {
+          else if (csql instanceof org.safris.xdb.xde.Column<?>) {
             tableAlias(((org.safris.xdb.xde.Column<?>)csql).owner, true);
             final org.safris.xdb.xde.Column<?> column = (org.safris.xdb.xde.Column<?>)csql;
             column.serialize(serialization);

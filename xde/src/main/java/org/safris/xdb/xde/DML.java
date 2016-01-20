@@ -399,16 +399,16 @@ public abstract class DML extends cSQL<Object> {
     return new LogicalCondition<T>(">", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Column<T> a, final Column<T> b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> GTE(final Column<T> a, final Column<T> b) {
+    return new LogicalCondition<T>(">=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Column<T> a, final T b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> GTE(final Column<T> a, final T b) {
+    return new LogicalCondition<T>(">=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final T a, final Column<T> b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> GTE(final T a, final Column<T> b) {
+    return new LogicalCondition<T>(">=", a, b);
   }
 
   public static <T>LogicalCondition<T> EQ(final Column<T> a, final Column<T> b) {
@@ -423,15 +423,27 @@ public abstract class DML extends cSQL<Object> {
     return new LogicalCondition<T>("=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTEQ(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LT(final Column<T> a, final Column<T> b) {
+    return new LogicalCondition<T>("<", a, b);
+  }
+
+  public static <T>LogicalCondition<T> LT(final Column<T> a, final T b) {
+    return new LogicalCondition<T>("<", a, b);
+  }
+
+  public static <T>LogicalCondition<T> LT(final T a, final Column<T> b) {
+    return new LogicalCondition<T>("<", a, b);
+  }
+
+  public static <T>LogicalCondition<T> LTE(final Column<T> a, final Column<T> b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTEQ(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> LTE(final Column<T> a, final T b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTEQ(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LTE(final T a, final Column<T> b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 }
