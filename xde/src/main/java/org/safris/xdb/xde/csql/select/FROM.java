@@ -17,11 +17,11 @@
 package org.safris.xdb.xde.csql.select;
 
 import org.safris.xdb.xde.Table;
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface FROM<T extends cSQL<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN, _LIMIT, _ORDER_BY, _WHERE {
+public interface FROM<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _JOIN, _LIMIT, _ORDER_BY, _WHERE {
 }
 
 interface _FROM {
-  public <B extends cSQL<?>>FROM<B> FROM(final Table ... table);
+  public <B extends Entity>FROM<B> FROM(final Table ... table);
 }

@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde.csql.expression;
 
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface CASE<T> extends cSQL<T> {
+public interface CASE<T> extends Entity {
 }

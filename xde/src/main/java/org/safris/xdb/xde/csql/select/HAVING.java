@@ -17,11 +17,11 @@
 package org.safris.xdb.xde.csql.select;
 
 import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface HAVING<T extends cSQL<?>> extends SELECT<T>, _LIMIT, _ORDER_BY {
+public interface HAVING<T extends Entity> extends SELECT<T>, _LIMIT, _ORDER_BY {
 }
 
-interface _HAVING<T extends cSQL<?>> {
+interface _HAVING<T extends Entity> {
   public HAVING<T> HAVING(final Condition<?> condition);
 }

@@ -16,13 +16,13 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface ORDER_BY<T extends cSQL<?>> extends SELECT<T>, _LIMIT {
-  public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T> {
+public interface ORDER_BY<T extends Entity> extends SELECT<T>, _LIMIT {
+  public static interface Column<T> extends Entity {
   }
 }
 
 interface _ORDER_BY {
-  public <B extends cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column);
+  public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column);
 }

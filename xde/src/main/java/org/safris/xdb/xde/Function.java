@@ -16,7 +16,9 @@
 
 package org.safris.xdb.xde;
 
-public abstract class Function<T> extends cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
+import org.safris.xdb.xde.csql.Entity;
+
+public abstract class Function<T> extends cSQL<T> implements Entity {
   protected final cSQL<T> a;
   protected final cSQL<T> b;
 

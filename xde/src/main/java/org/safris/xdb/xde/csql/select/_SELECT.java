@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface _SELECT<T extends cSQL<?>> extends SELECT<T>, _LIMIT, _FROM {
+public interface _SELECT<T extends Entity> extends SELECT<T>, _LIMIT, _FROM {
 }

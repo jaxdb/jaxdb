@@ -31,11 +31,11 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.select.ORDER_BY;
-import org.safris.xdb.xde.csql.select.SELECT;
 import org.safris.xdb.xdl.DBVendor;
 
-public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.Column<T>, SELECT.Column<T> {
+public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.Column<T>, Entity {
   private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
 
   static {

@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.expression.CASE;
 import org.safris.xdb.xdl.DBVendor;
 
@@ -178,7 +179,7 @@ class Update {
   protected final static class SET<T,B> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.SET<T,B> {
     private final cSQL<T> parent;
     private final Column<B> set;
-    private final org.safris.xdb.xde.csql.cSQL<B> to;
+    private final Entity to;
 
     protected SET(final cSQL<T> parent, final Column<B> set, final Function<B> to) {
       this.parent = parent;

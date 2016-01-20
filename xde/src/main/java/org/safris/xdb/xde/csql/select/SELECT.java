@@ -19,11 +19,7 @@ package org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xde.RowIterator;
 import org.safris.xdb.xde.XDEException;
 import org.safris.xdb.xde.csql.Entity;
-import org.safris.xdb.xde.csql.cSQL;
 
-public interface SELECT<T extends cSQL<?>> extends org.safris.xdb.xde.csql.cSQL<T> {
-  public static interface Column<T> extends org.safris.xdb.xde.csql.cSQL<T>, Entity {
-  }
-
+public interface SELECT<T extends Entity> extends Entity {
   public <B extends Entity>RowIterator<B> execute() throws XDEException;
 }

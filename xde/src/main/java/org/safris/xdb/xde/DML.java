@@ -17,11 +17,11 @@
 package org.safris.xdb.xde;
 
 import org.safris.xdb.xde.BooleanCondition.Operator;
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
 import org.safris.xdb.xde.csql.insert.INSERT;
 import org.safris.xdb.xde.csql.select.ORDER_BY;
-import org.safris.xdb.xde.csql.select.SELECT;
 import org.safris.xdb.xde.csql.select._SELECT;
 import org.safris.xdb.xde.csql.update.UPDATE_SET;
 
@@ -139,22 +139,22 @@ public abstract class DML extends cSQL<Object> {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends SELECT.Column<?>>_SELECT<T> SELECT(final T ... columns) {
+  public static <T extends Entity>_SELECT<T> SELECT(final T ... columns) {
     return DML.<T>SELECT(null, null, columns);
   }
 
   @SafeVarargs
-  public static <T extends SELECT.Column<?>>_SELECT<T> SELECT(final ALL all, final T ... columns) {
+  public static <T extends Entity>_SELECT<T> SELECT(final ALL all, final T ... columns) {
     return DML.<T>SELECT(all, null, columns);
   }
 
   @SafeVarargs
-  public static <T extends SELECT.Column<?>>_SELECT<T> SELECT(final DISTINCT distinct, final T ... columns) {
+  public static <T extends Entity>_SELECT<T> SELECT(final DISTINCT distinct, final T ... columns) {
     return DML.<T>SELECT(null, distinct, columns);
   }
 
   @SafeVarargs
-  public static <T extends SELECT.Column<?>>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... columns) {
+  public static <T extends Entity>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... columns) {
     return new Select.SELECT<T>(all, distinct, columns);
   }
 

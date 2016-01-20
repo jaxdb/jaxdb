@@ -25,9 +25,10 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
+public abstract class cSQL<T> implements Entity {
   protected static class cSQLObject<T> extends cSQL<T> {
     protected static String toString(final Object obj) {
       if (obj == null)
@@ -155,7 +156,7 @@ public abstract class cSQL<T> implements org.safris.xdb.xde.csql.cSQL<T> {
     return String.valueOf((char)('a' + i));
   }
 
-  protected static void serialize(final org.safris.xdb.xde.csql.cSQL<?> csql, final Serialization serialization) {
+  protected static void serialize(final Entity csql, final Serialization serialization) {
     if (!(csql instanceof cSQL<?>))
       throw new Error(csql.getClass().getName() + " is not an instance of cSQL");
 

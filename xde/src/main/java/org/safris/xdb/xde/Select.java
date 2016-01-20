@@ -146,7 +146,7 @@ class Select {
     };
   }
 
-  private static abstract class Execute<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> {
+  private static abstract class Execute<T extends Entity> extends cSQL<T> {
     public final <B extends Entity>RowIterator<B> execute() throws XDEException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
@@ -180,39 +180,39 @@ class Select {
     }
   }
 
-  protected static abstract class FROM_JOIN_ON<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected static abstract class FROM_JOIN_ON<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
     protected final cSQL<?> parent;
 
     protected FROM_JOIN_ON(final cSQL<?> parent) {
       this.parent = parent;
     }
 
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>WHERE<B> WHERE(final Condition<?> condition) {
+    public final <B extends Entity>WHERE<B> WHERE(final Condition<?> condition) {
       return new WHERE<B>(this, condition);
     }
 
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final Table table) {
+    public final <B extends Entity>JOIN<B> JOIN(final Table table) {
       return new JOIN<B>(this, null, null, table);
     }
 
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final TYPE type, final Table table) {
+    public final <B extends Entity>JOIN<B> JOIN(final TYPE type, final Table table) {
       return new JOIN<B>(this, null, type, table);
     }
 
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final Table table) {
+    public final <B extends Entity>JOIN<B> JOIN(final NATURAL natural, final Table table) {
       return new JOIN<B>(this, natural, null, table);
     }
 
-    public final <B extends org.safris.xdb.xde.csql.cSQL<?>>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table) {
+    public final <B extends Entity>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table) {
       return new JOIN<B>(this, natural, type, table);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
   }
 
-  protected final static class FROM<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected final static class FROM<T extends Entity> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
     private final Table[] tables;
 
     protected FROM(final cSQL<?> parent, final Table ... tables) {
@@ -224,7 +224,7 @@ class Select {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -252,7 +252,7 @@ class Select {
     }
   }
 
-  protected final static class GROUP_BY<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.GROUP_BY<T> {
+  protected final static class GROUP_BY<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.GROUP_BY<T> {
     private final cSQL<?> parent;
     private final org.safris.xdb.xde.Column<?> column;
 
@@ -261,7 +261,7 @@ class Select {
       this.column = column;
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -269,7 +269,7 @@ class Select {
       return new HAVING<T>(this, condition);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
 
@@ -287,7 +287,7 @@ class Select {
     }
   }
 
-  protected final static class HAVING<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.HAVING<T> {
+  protected final static class HAVING<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.HAVING<T> {
     private final cSQL<?> parent;
     private final Condition<?> condition;
 
@@ -296,11 +296,11 @@ class Select {
       this.condition = condition;
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... column) {
       return new ORDER_BY<B>(this, column);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
 
@@ -320,7 +320,7 @@ class Select {
     }
   }
 
-  protected final static class JOIN<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.JOIN<T> {
+  protected final static class JOIN<T extends Entity> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.JOIN<T> {
     private final NATURAL natural;
     private final TYPE type;
     private final Table table;
@@ -332,7 +332,7 @@ class Select {
       this.table = table;
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ON<B> ON(final Condition<?> condition) {
+    public <B extends Entity>ON<B> ON(final Condition<?> condition) {
       return new ON<B>(this, condition);
     }
 
@@ -340,7 +340,7 @@ class Select {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -365,7 +365,7 @@ class Select {
     }
   }
 
-  protected final static class ON<T extends org.safris.xdb.xde.csql.cSQL<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.ON<T> {
+  protected final static class ON<T extends Entity> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.ON<T> {
     private final Condition<?> condition;
 
     protected ON(final cSQL<?> parent, final Condition<?> condition) {
@@ -377,7 +377,7 @@ class Select {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -398,7 +398,7 @@ class Select {
     }
   }
 
-  protected final static class ORDER_BY<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.ORDER_BY<T> {
+  protected final static class ORDER_BY<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.ORDER_BY<T> {
     private final cSQL<?> parent;
     private final ORDER_BY.Column<?>[] columns;
 
@@ -407,7 +407,7 @@ class Select {
       this.columns = columns;
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
 
@@ -445,7 +445,7 @@ class Select {
     }
   }
 
-  protected final static class LIMIT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT<T> {
+  protected final static class LIMIT<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT<T> {
     private final cSQL<?> parent;
     private final int limit;
 
@@ -469,7 +469,7 @@ class Select {
     }
   }
 
-  protected final static class SELECT<T extends org.safris.xdb.xde.csql.cSQL<?>> extends cSQL<T> implements org.safris.xdb.xde.csql.select._SELECT<T> {
+  protected final static class SELECT<T extends Entity> extends cSQL<T> implements org.safris.xdb.xde.csql.select._SELECT<T> {
     private final ALL all;
     private final DISTINCT distinct;
     protected final Entity[] entities;
@@ -489,7 +489,7 @@ class Select {
       return from = new FROM<T>(this, table);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
 
@@ -626,7 +626,7 @@ class Select {
     }
   }
 
-  protected final static class WHERE<T extends org.safris.xdb.xde.csql.cSQL<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.WHERE<T> {
+  protected final static class WHERE<T extends Entity> extends Execute<T> implements org.safris.xdb.xde.csql.select.WHERE<T> {
     private final cSQL<?> parent;
     private final Condition<?> condition;
 
@@ -635,7 +635,7 @@ class Select {
       this.condition = condition;
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
+    public <B extends Entity>ORDER_BY<B> ORDER_BY(final ORDER_BY.Column<?> ... columns) {
       return new ORDER_BY<B>(this, columns);
     }
 
@@ -643,7 +643,7 @@ class Select {
       return new GROUP_BY<T>(this, column);
     }
 
-    public <B extends org.safris.xdb.xde.csql.cSQL<?>>LIMIT<B> LIMIT(final int limit) {
+    public <B extends Entity>LIMIT<B> LIMIT(final int limit) {
       return new LIMIT<B>(this, limit);
     }
 

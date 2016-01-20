@@ -16,11 +16,11 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.csql.cSQL;
+import org.safris.xdb.xde.csql.Entity;
 
-public interface LIMIT<T extends cSQL<?>> extends SELECT<T> {
+public interface LIMIT<T extends Entity> extends SELECT<T> {
 }
 
 interface _LIMIT {
-  public <B extends cSQL<?>>LIMIT<B> LIMIT(final int limit);
+  public <B extends Entity>LIMIT<B> LIMIT(final int limit);
 }
