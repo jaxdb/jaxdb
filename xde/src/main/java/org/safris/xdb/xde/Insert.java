@@ -21,6 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.commons.sql.ConnectionProxy;
+import org.safris.commons.sql.StatementProxy;
 import org.safris.xdb.xdl.DBVendor;
 
 class Insert {
@@ -65,35 +67,47 @@ class Insert {
       serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
     }
 
-    public int execute() throws XDEException {
+    public int execute(final Transaction transaction) throws XDEException {
       final cSQL<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
       DBVendor vendor = null;
       try {
-        try (final Connection connection = Schema.getConnection(schema)) {
-          vendor = Schema.getDBVendor(connection);
-          final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-          serialize(serialization);
-          clearAliases();
-          if (serialization.statementType == PreparedStatement.class) {
-            try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-              serialization.set(statement);
-              return statement.executeUpdate();
-            }
-          }
+        final Connection connection = transaction != null ? transaction.connection : Schema.getConnection(schema);
 
-          if (serialization.statementType == Statement.class) {
-            try (final Statement statement = connection.createStatement()) {
-              return statement.executeUpdate(serialization.sql.toString());
-            }
-          }
+        vendor = Schema.getDBVendor(connection);
+        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        serialize(serialization);
+        clearAliases();
+        if (serialization.statementType == PreparedStatement.class) {
+          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
+          serialization.set(statement);
+          final int count = statement.executeUpdate();
+          StatementProxy.close(statement);
+          if (transaction != null)
+            ConnectionProxy.close(connection);
 
-          throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+          return count;
         }
+
+        if (serialization.statementType == Statement.class) {
+          final Statement statement = connection.createStatement();
+          final int count = statement.executeUpdate(serialization.sql.toString());
+          StatementProxy.close(statement);
+          if (transaction != null)
+            ConnectionProxy.close(connection);
+
+          return count;
+        }
+
+        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
         throw XDEException.lookup(e, vendor);
       }
+    }
+
+    public int execute() throws XDEException {
+      return execute(null);
     }
   }
 }

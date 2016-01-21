@@ -24,26 +24,36 @@ import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
 
 public abstract class Schema {
-  protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
-    final String url = connection.getMetaData().getURL();
-    if (url.contains("jdbc:derby"))
-      return DBVendor.DERBY;
+  protected static DBVendor getDBVendor(final Connection connection) throws XDEException {
+    try {
+      final String url = connection.getMetaData().getURL();
+      if (url.contains("jdbc:derby"))
+        return DBVendor.DERBY;
 
-    if (url.contains("jdbc:mysql"))
-      return DBVendor.MY_SQL;
+      if (url.contains("jdbc:mysql"))
+        return DBVendor.MY_SQL;
 
-    if (url.contains("jdbc:postgresql"))
-      return DBVendor.POSTGRE_SQL;
+      if (url.contains("jdbc:postgresql"))
+        return DBVendor.POSTGRE_SQL;
+    }
+    catch (final SQLException e) {
+      throw XDEException.lookup(e, null);
+    }
 
     return null;
   }
 
-  protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
+  protected static Connection getConnection(final Class<? extends Schema> schema) throws XDEException {
     final XDEDataSource dataSource = XDERegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new SQLException("No XDEDataSource has been registered for " + schema.getName());
+      throw new XDEException("No XDEDataSource has been registered for " + schema.getName());
 
-    return dataSource.getConnection();
+    try {
+      return dataSource.getConnection();
+    }
+    catch (final SQLException e) {
+      throw XDEException.lookup(e, null);
+    }
   }
 
   protected static void createDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {

@@ -49,15 +49,20 @@ public class XDEException extends SQLException {
     return lookup(e, null);
   }
 
-  private final ErrorSpec ErrorSpec;
+  private final ErrorSpec errorSpec;
 
-  private XDEException(final SQLException e, final ErrorSpec ErrorSpec) {
+  private XDEException(final SQLException e, final ErrorSpec errorSpec) {
     super(e.getMessage(), e.getSQLState(), e.getErrorCode(), e.getCause());
     setStackTrace(e.getStackTrace());
-    this.ErrorSpec = ErrorSpec;
+    this.errorSpec = errorSpec;
+  }
+
+  protected XDEException(final String message) {
+    super(message);
+    this.errorSpec = null;
   }
 
   public ErrorSpec getErrorSpec() {
-    return ErrorSpec;
+    return errorSpec;
   }
 }
