@@ -6,19 +6,35 @@ import java.sql.SQLException;
 import org.safris.xdb.xdl.DBVendor;
 
 public class Transaction {
-  protected final DBVendor vendor;
-  protected final Connection connection;
+  private final Class<? extends Schema> schema;
+  private volatile Boolean inited = false;
 
-  public Transaction(final Class<? extends Schema> schema) throws XDEException {
-    this.connection = Schema.getConnection(schema);
-    this.vendor = Schema.getDBVendor(connection);
+  private DBVendor vendor;
+  private Connection connection;
 
-    try {
-      this.connection.setAutoCommit(false);
+  public Transaction(final Class<? extends Schema> schema) {
+    this.schema = schema;
+  }
+
+  protected Connection getConnection() throws XDEException {
+    if (!inited) {
+      synchronized (inited) {
+        if (!inited) {
+          this.connection = Schema.getConnection(schema);
+          this.vendor = Schema.getDBVendor(connection);
+          try {
+            this.connection.setAutoCommit(false);
+          }
+          catch (final SQLException e) {
+            throw XDEException.lookup(e, vendor);
+          }
+
+          inited = true;
+        }
+      }
     }
-    catch (final SQLException e) {
-      throw XDEException.lookup(e, vendor);
-    }
+
+    return connection;
   }
 
   public void commit() throws XDEException {

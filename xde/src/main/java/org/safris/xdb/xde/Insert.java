@@ -72,7 +72,7 @@ class Insert {
       final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
       DBVendor vendor = null;
       try {
-        final Connection connection = transaction != null ? transaction.connection : Schema.getConnection(schema);
+        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
 
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
