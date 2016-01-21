@@ -163,17 +163,28 @@ public abstract class XDLTransformer {
     if (superTable._constraints() == null)
       return;
 
-    final List<$xdl_table._constraints> constraints = superTable._constraints();
+    final List<$xdl_table._constraints> parentConstraints = superTable._constraints();
     if (table._constraints() == null) {
-      table._constraints(constraints.get(0));
+      table._constraints(parentConstraints.get(0));
       return;
     }
 
-    if (constraints.get(0)._primaryKey() == null)
-      return;
+    if (parentConstraints.get(0)._primaryKey() != null) {
+      for (final $xdl_table._constraints._primaryKey entry : parentConstraints.get(0)._primaryKey()) {
+        table._constraints(0)._primaryKey(entry);
+      }
+    }
 
-    final List<$xdl_table._constraints> constraints2 = table._constraints();
-    if (constraints2 != null)
-      constraints2.get(0)._primaryKey(constraints.get(0)._primaryKey(0));
+    if (parentConstraints.get(0)._foreignKey() != null) {
+      for (final $xdl_table._constraints._foreignKey entry : parentConstraints.get(0)._foreignKey()) {
+        table._constraints(0)._foreignKey(entry);
+      }
+    }
+
+    if (parentConstraints.get(0)._unique() != null) {
+      for (final $xdl_table._constraints._unique entry : parentConstraints.get(0)._unique()) {
+        table._constraints(0)._unique(entry);
+      }
+    }
   }
 }

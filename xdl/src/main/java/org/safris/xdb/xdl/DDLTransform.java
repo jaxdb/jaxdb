@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,6 +33,7 @@ import org.safris.commons.xml.XMLException;
 public final class DDLTransform extends XDLTransformer {
   private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();
 
+  @SuppressWarnings("unused")
   private static class SQLStandardEnum extends MaskedEnum {
     public static final SQLStandardEnum SQL92 = new SQLStandardEnum(0, "SQL-92");
     public static final SQLStandardEnum SQL99 = new SQLStandardEnum(1, "SQL-99");
