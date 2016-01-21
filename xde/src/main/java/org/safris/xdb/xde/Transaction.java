@@ -3,13 +3,10 @@ package org.safris.xdb.xde;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.safris.xdb.xdl.DBVendor;
-
 public class Transaction {
   private final Class<? extends Schema> schema;
   private volatile Boolean inited = false;
 
-  private DBVendor vendor;
   private Connection connection;
 
   public Transaction(final Class<? extends Schema> schema) {
@@ -21,12 +18,11 @@ public class Transaction {
       synchronized (inited) {
         if (!inited) {
           this.connection = Schema.getConnection(schema);
-          this.vendor = Schema.getDBVendor(connection);
           try {
             this.connection.setAutoCommit(false);
           }
           catch (final SQLException e) {
-            throw XDEException.lookup(e, vendor);
+            throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
           }
 
           inited = true;
@@ -45,7 +41,7 @@ public class Transaction {
       connection.commit();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, vendor);
+      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
     }
   }
 
@@ -57,7 +53,7 @@ public class Transaction {
       connection.rollback();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, vendor);
+      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
     }
   }
 
@@ -69,7 +65,7 @@ public class Transaction {
       connection.close();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, vendor);
+      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
     }
   }
 }

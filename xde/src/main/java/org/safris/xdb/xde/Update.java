@@ -44,7 +44,7 @@ class Update {
           serialization.set(statement);
           final int count = statement.executeUpdate();
           StatementProxy.close(statement);
-          if (transaction != null)
+          if (transaction == null)
             ConnectionProxy.close(connection);
 
           return count;
@@ -54,7 +54,7 @@ class Update {
           final Statement statement = connection.createStatement();
           final int count = statement.executeUpdate(serialization.sql.toString());
           StatementProxy.close(statement);
-          if (transaction != null)
+          if (transaction == null)
             ConnectionProxy.close(connection);
 
           return count;
