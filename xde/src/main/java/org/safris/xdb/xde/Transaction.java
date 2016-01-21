@@ -38,6 +38,9 @@ public class Transaction {
   }
 
   public void commit() throws XDEException {
+    if (connection == null)
+      return;
+
     try {
       connection.commit();
     }
@@ -47,6 +50,9 @@ public class Transaction {
   }
 
   public void rollback() throws XDEException {
+    if (connection == null)
+      return;
+
     try {
       connection.rollback();
     }
@@ -56,6 +62,9 @@ public class Transaction {
   }
 
   public void close() throws XDEException {
+    if (connection == null)
+      return;
+
     try {
       connection.close();
     }

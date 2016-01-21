@@ -89,19 +89,19 @@ public abstract class DML extends cSQL<Object> {
     }
   };
 
-  public static final TYPE LEFT_OUTER = new TYPE() {
+  public static final TYPE LEFT = new TYPE() {
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("LEFT OUTER");
     }
   };
 
-  public static final TYPE RIGHT_OUTER = new TYPE() {
+  public static final TYPE RIGHT = new TYPE() {
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("RIGHT OUTER");
     }
   };
 
-  public static final TYPE FULL_OUTER = new TYPE() {
+  public static final TYPE FULL = new TYPE() {
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("FULL OUTER");
     }
