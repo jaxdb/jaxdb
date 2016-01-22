@@ -168,11 +168,11 @@ public class MySQLSpec extends SQLSpec {
     return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
-  protected boolean canHaveUniqueIndexes(final $xdl_index._type$ type) {
-    return true;
-  }
-
   protected String dropIndexOnClause(final $xdl_table table) {
     return " ON " + table._name$().text();
+  }
+
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName) {
+    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + columnName + ")";
   }
 }

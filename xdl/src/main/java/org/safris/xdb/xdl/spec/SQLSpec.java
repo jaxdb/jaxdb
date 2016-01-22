@@ -38,7 +38,7 @@ import org.safris.xdb.xdl.SQLDataTypes;
 import org.w3.x2001.xmlschema.$xs_anySimpleType;
 
 public abstract class SQLSpec {
-  protected abstract boolean canHaveUniqueIndexes(final $xdl_index._type$ type);
+  protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName);
 
   public List<String> triggers(final $xdl_table table) {
     return new ArrayList<String>();
@@ -48,16 +48,14 @@ public abstract class SQLSpec {
     final List<String> statements = new ArrayList<String>();
     if (table._indexes() != null) {
       for (final $xdl_table._indexes._index index : table._indexes(0)._index()) {
-        final String unique = canHaveUniqueIndexes(index._type$()) && !index._unique$().isNull() && index._unique$().text() ? "UNIQUE " : "";
-        statements.add("CREATE " + unique + "INDEX " + SQLDataTypes.getIndexName(table, index) + " USING " + index._type$().text() + " ON " + table._name$().text() + " (" + SQLDataTypes.csvNames(index._column()) + ")");
+        statements.add(createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), SQLDataTypes.csvNames(index._column())));
       }
     }
 
     if (table._column() != null) {
       for (final $xdl_column column : table._column()) {
         if (column._index() != null) {
-          final String unique = canHaveUniqueIndexes(column._index(0)._type$()) && !column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "";
-          statements.add("CREATE " + unique + "INDEX " + SQLDataTypes.getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ")");
+          statements.add(createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column._name$().text()));
         }
       }
     }

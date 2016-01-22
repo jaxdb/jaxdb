@@ -155,11 +155,11 @@ public class PostreSQLSpec extends SQLSpec {
     return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
-  protected boolean canHaveUniqueIndexes(final $xdl_index._type$ type) {
-    return !$xdl_index._type$.HASH.text().equals(type.text());
-  }
-
   protected String dropIndexOnClause(final $xdl_table table) {
     return "";
+  }
+
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName) {
+    return "CREATE " + (unique && !$xdl_index._type$.HASH.text().equals(type) ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + columnName + ")";
   }
 }
