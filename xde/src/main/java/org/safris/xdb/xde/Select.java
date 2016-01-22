@@ -61,9 +61,7 @@ class Select {
     for (final Entity selectable : select.entities)
       Select.serialize(columns, selectable);
 
-    final ResultSetMetaData metaData = resultSet.getMetaData();
-    final int noColumns = metaData.getColumnCount();
-
+    final int noColumns = resultSet.getMetaData().getColumnCount();
     return new RowIterator<B>() {
       private final Map<Class<? extends Table>,Table> prototypes = new HashMap<Class<? extends Table>,Table>();
       private final Map<Table,Table> cache = new HashMap<Table,Table>();
@@ -141,6 +139,12 @@ class Select {
         }
         catch (final SQLException e) {
           throw XDEException.lookup(e, vendor);
+        }
+        finally {
+          prototypes.clear();
+          cache.clear();
+          currentTable = null;
+          columns.clear();
         }
       }
     };

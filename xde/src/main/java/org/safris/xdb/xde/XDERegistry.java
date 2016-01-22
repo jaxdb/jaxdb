@@ -30,7 +30,6 @@ public final class XDERegistry {
   }
 
   protected static XDEDataSource getDataSource(final Class<? extends Schema> schema) {
-    final Map<Class<? extends Schema>,XDEDataSource> dataSources2 = dataSources;
     return dataSources.get(schema);
   }
 

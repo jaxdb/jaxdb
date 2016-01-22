@@ -259,8 +259,9 @@ public final class Tables {
               final Object value = resultSet.getObject(++index);
               col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
             }
-            else
+            else {
               col.set(resultSet.getObject(++index, col.type));
+            }
 
             lastIdentity = column.owner;
           }
