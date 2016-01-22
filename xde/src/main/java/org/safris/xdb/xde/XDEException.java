@@ -26,6 +26,7 @@ public class XDEException extends SQLException {
 
   public static final ErrorSpec UNIQUE_VIOLATION = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "23505"));
   public static final ErrorSpec NOT_NULL_VIOLATION = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "23502"));
+  public static final ErrorSpec UNDEFINED_COLUMN = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "42703"));
 
   public static final ErrorSpec UNIMPLEMENTED = new ErrorSpec();
 
