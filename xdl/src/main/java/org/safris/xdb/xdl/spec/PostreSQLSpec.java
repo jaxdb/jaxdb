@@ -158,4 +158,8 @@ public class PostreSQLSpec extends SQLSpec {
   protected boolean canHaveUniqueIndexes(final $xdl_index._type$ type) {
     return !$xdl_index._type$.HASH.text().equals(type.text());
   }
+
+  protected String dropIndexOnClause(final $xdl_table table) {
+    return "";
+  }
 }

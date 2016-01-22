@@ -171,4 +171,8 @@ public class MySQLSpec extends SQLSpec {
   protected boolean canHaveUniqueIndexes(final $xdl_index._type$ type) {
     return true;
   }
+
+  protected String dropIndexOnClause(final $xdl_table table) {
+    return " ON " + table._name$().text();
+  }
 }
