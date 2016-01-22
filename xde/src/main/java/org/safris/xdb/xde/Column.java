@@ -120,7 +120,7 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     return owner;
   }
 
-  protected void serialize(final Serialization serialization) {
+  protected final void serialize(final Serialization serialization) {
     if (serialization.statementType == PreparedStatement.class) {
       if (tableAlias(owner, false) == null) {
         serialization.parameters.add(get());

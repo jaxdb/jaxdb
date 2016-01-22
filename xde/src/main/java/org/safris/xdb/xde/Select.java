@@ -354,6 +354,9 @@ class Select {
 
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
+        // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
+        // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
+        tableAlias(table, true);
         parent.serialize(serialization);
         serialization.sql.append(natural != null ? " NATURAL" : "");
         if (type != null) {
