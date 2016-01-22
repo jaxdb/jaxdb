@@ -73,12 +73,12 @@ public abstract class SQLSpec {
     final List<String> statements = new ArrayList<String>();
     if (table._indexes() != null)
       for (final $xdl_table._indexes._index index : table._indexes(0)._index())
-        statements.add("DROP INDEX " + SQLDataTypes.getIndexName(table, index) + " ON " + table._name$().text());
+        statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, index) + " ON " + table._name$().text());
 
     if (table._column() != null)
       for (final $xdl_column column : table._column())
         if (column._index() != null)
-          statements.add("DROP INDEX " + SQLDataTypes.getIndexName(table, column._index(0), column) + " ON " + table._name$().text());
+          statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, column._index(0), column) + " ON " + table._name$().text());
 
     if (table._triggers() != null)
       for (final $xdl_table._triggers._trigger trigger : table._triggers().get(0)._trigger())
