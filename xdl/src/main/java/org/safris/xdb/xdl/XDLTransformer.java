@@ -160,30 +160,40 @@ public abstract class XDLTransformer {
       }
     }
 
-    if (superTable._constraints() == null)
-      return;
+    if (superTable._constraints() != null) {
+      final $xdl_table._constraints parentConstraints = superTable._constraints(0);
+      if (table._constraints() == null) {
+        table._constraints(parentConstraints);
+      }
+      else {
+        if (parentConstraints._primaryKey() != null) {
+          for (final $xdl_table._constraints._primaryKey entry : parentConstraints._primaryKey()) {
+            table._constraints(0)._primaryKey(entry);
+          }
+        }
 
-    final List<$xdl_table._constraints> parentConstraints = superTable._constraints();
-    if (table._constraints() == null) {
-      table._constraints(parentConstraints.get(0));
-      return;
-    }
+        if (parentConstraints._foreignKey() != null) {
+          for (final $xdl_table._constraints._foreignKey entry : parentConstraints._foreignKey()) {
+            table._constraints(0)._foreignKey(entry);
+          }
+        }
 
-    if (parentConstraints.get(0)._primaryKey() != null) {
-      for (final $xdl_table._constraints._primaryKey entry : parentConstraints.get(0)._primaryKey()) {
-        table._constraints(0)._primaryKey(entry);
+        if (parentConstraints._unique() != null) {
+          for (final $xdl_table._constraints._unique entry : parentConstraints._unique()) {
+            table._constraints(0)._unique(entry);
+          }
+        }
       }
     }
 
-    if (parentConstraints.get(0)._foreignKey() != null) {
-      for (final $xdl_table._constraints._foreignKey entry : parentConstraints.get(0)._foreignKey()) {
-        table._constraints(0)._foreignKey(entry);
+    if (superTable._indexes() != null) {
+      if (table._indexes() == null) {
+        table._indexes(superTable._indexes(0));
       }
-    }
-
-    if (parentConstraints.get(0)._unique() != null) {
-      for (final $xdl_table._constraints._unique entry : parentConstraints.get(0)._unique()) {
-        table._constraints(0)._unique(entry);
+      else {
+        for (final $xdl_table._indexes._index index : superTable._indexes(0)._index()) {
+          table._indexes(0)._index(index);
+        }
       }
     }
   }

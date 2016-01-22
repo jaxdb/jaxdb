@@ -52,7 +52,7 @@ public final class SQLDataTypes {
     return "idx_" + table._name$().text() + name;
   }
 
-  public static String getIndexName(final $xdl_table table, final $xdl_table._index index) {
+  public static String getIndexName(final $xdl_table table, final $xdl_table._indexes._index index) {
     return getIndexName(table, index, index._column().toArray(new $xdl_named[index._column().size()]));
   }
 

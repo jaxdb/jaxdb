@@ -29,6 +29,7 @@ import org.safris.xdb.xdl.$xdl_dateTime;
 import org.safris.xdb.xdl.$xdl_decimal;
 import org.safris.xdb.xdl.$xdl_enum;
 import org.safris.xdb.xdl.$xdl_float;
+import org.safris.xdb.xdl.$xdl_index;
 import org.safris.xdb.xdl.$xdl_integer;
 import org.safris.xdb.xdl.$xdl_table;
 import org.safris.xdb.xdl.$xdl_time;
@@ -152,5 +153,9 @@ public class PostreSQLSpec extends SQLSpec {
 
   public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
     return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
+  }
+
+  protected boolean canHaveUniqueIndexes(final $xdl_index._type$ type) {
+    return !$xdl_index._type$.HASH.text().equals(type.text());
   }
 }

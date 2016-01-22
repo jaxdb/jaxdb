@@ -30,6 +30,7 @@ import org.safris.xdb.xdl.$xdl_dateTime;
 import org.safris.xdb.xdl.$xdl_decimal;
 import org.safris.xdb.xdl.$xdl_enum;
 import org.safris.xdb.xdl.$xdl_float;
+import org.safris.xdb.xdl.$xdl_index;
 import org.safris.xdb.xdl.$xdl_integer;
 import org.safris.xdb.xdl.$xdl_table;
 import org.safris.xdb.xdl.$xdl_time;
@@ -37,20 +38,29 @@ import org.safris.xdb.xdl.SQLDataTypes;
 import org.w3.x2001.xmlschema.$xs_anySimpleType;
 
 public abstract class SQLSpec {
+  protected abstract boolean canHaveUniqueIndexes(final $xdl_index._type$ type);
+
   public List<String> triggers(final $xdl_table table) {
     return new ArrayList<String>();
   }
 
   public List<String> indexes(final $xdl_table table) {
     final List<String> statements = new ArrayList<String>();
-    if (table._index() != null)
-      for (final $xdl_table._index index : table._index())
-        statements.add("CREATE " + (!index._unique$().isNull() && index._unique$().text() ? "UNIQUE " : "") + "INDEX " + SQLDataTypes.getIndexName(table, index) + " USING " + index._type$().text() + " ON " + table._name$().text() + " (" + SQLDataTypes.csvNames(index._column()) + ")");
+    if (table._indexes() != null) {
+      for (final $xdl_table._indexes._index index : table._indexes(0)._index()) {
+        final String unique = canHaveUniqueIndexes(index._type$()) && !index._unique$().isNull() && index._unique$().text() ? "UNIQUE " : "";
+        statements.add("CREATE " + unique + "INDEX " + SQLDataTypes.getIndexName(table, index) + " USING " + index._type$().text() + " ON " + table._name$().text() + " (" + SQLDataTypes.csvNames(index._column()) + ")");
+      }
+    }
 
-    if (table._column() != null)
-      for (final $xdl_column column : table._column())
-        if (column._index() != null)
-          statements.add("CREATE " + (!column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "") + "INDEX " + SQLDataTypes.getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ")");
+    if (table._column() != null) {
+      for (final $xdl_column column : table._column()) {
+        if (column._index() != null) {
+          final String unique = canHaveUniqueIndexes(column._index(0)._type$()) && !column._index(0)._unique$().isNull() && column._index(0)._unique$().text() ? "UNIQUE " : "";
+          statements.add("CREATE " + unique + "INDEX " + SQLDataTypes.getIndexName(table, column._index(0), column) + " USING " + column._index(0)._type$().text() + " ON " + table._name$().text() + " (" + column._name$().text() + ")");
+        }
+      }
+    }
 
     return statements;
   }
@@ -61,8 +71,8 @@ public abstract class SQLSpec {
 
   public List<String> drops(final $xdl_table table) {
     final List<String> statements = new ArrayList<String>();
-    if (table._index() != null)
-      for (final $xdl_table._index index : table._index())
+    if (table._indexes() != null)
+      for (final $xdl_table._indexes._index index : table._indexes(0)._index())
         statements.add("DROP INDEX " + SQLDataTypes.getIndexName(table, index) + " ON " + table._name$().text());
 
     if (table._column() != null)

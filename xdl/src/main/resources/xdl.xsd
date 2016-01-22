@@ -501,20 +501,26 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="index" minOccurs="0">
+          <xs:element name="indexes" minOccurs="0">
             <xs:complexType>
-              <xs:complexContent>
-                <xs:extension base="xdl:index">
-                  <xs:sequence maxOccurs="unbounded">
-                    <xs:element name="column" type="xdl:named"/>
-                  </xs:sequence>
-                </xs:extension>
-              </xs:complexContent>
+              <xs:sequence>
+                <xs:element name="index">
+                  <xs:complexType>
+                    <xs:complexContent>
+                      <xs:extension base="xdl:index">
+                        <xs:sequence minOccurs="2" maxOccurs="unbounded">
+                          <xs:element name="column" type="xdl:named"/>
+                        </xs:sequence>
+                      </xs:extension>
+                    </xs:complexContent>
+                  </xs:complexType>
+                  <xs:unique name="indexColumn">
+                    <xs:selector xpath="./xdl:column"/>
+                    <xs:field xpath="@name"/>
+                  </xs:unique>
+                </xs:element>
+              </xs:sequence>
             </xs:complexType>
-            <xs:unique name="indexColumn">
-              <xs:selector xpath="./xdl:column"/>
-              <xs:field xpath="@name"/>
-            </xs:unique>
           </xs:element>
         </xs:sequence>
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>
@@ -543,11 +549,11 @@
               <xs:field xpath="@name"/>
             </xs:key>
             <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column | ./xdl:constraints/xdl:index/xdl:columns/xdl:column"/>
+              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column"/>
               <xs:field xpath="@column | @name"/>
             </xs:keyref>
             <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column"/>
+              <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column | ./xdl:indexes/xdl:index/xdl:column"/>
               <xs:field xpath="@name"/>
             </xs:keyref>
           </xs:element>
