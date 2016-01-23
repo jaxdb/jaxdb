@@ -19,9 +19,9 @@ package org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.csql.Entity;
 
-public interface ON<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _JOIN, _LIMIT, _ORDER_BY, _WHERE {
+public interface ON<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
 }
 
-interface _ON {
-  public <B extends Entity>ON<B> ON(final Condition<?> condition);
+interface _ON<T extends Entity> {
+  public ON<T> ON(final Condition<?> condition);
 }

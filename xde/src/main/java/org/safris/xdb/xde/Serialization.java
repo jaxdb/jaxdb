@@ -8,7 +8,7 @@ import java.util.List;
 import org.safris.xdb.xdl.DBVendor;
 
 public class Serialization {
-  protected final List<Object> parameters = new ArrayList<Object>();
+  private final List<Object> parameters = new ArrayList<Object>();
 
   protected final DBVendor vendor;
   protected final Class<? extends Statement> statementType;
@@ -17,6 +17,13 @@ public class Serialization {
   public Serialization(final DBVendor vendor, final Class<? extends Statement> statementType) {
     this.vendor = vendor;
     this.statementType = statementType;
+  }
+
+  protected void addParameter(final Object parameter) {
+    if (parameter == null)
+      throw new IllegalArgumentException("parameter cannot be null");
+
+    parameters.add(parameter);
   }
 
   protected void set(final PreparedStatement statement) {

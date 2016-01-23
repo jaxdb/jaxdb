@@ -16,22 +16,27 @@
 
 package org.safris.xdb.xde;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.safris.xdb.xde.BooleanCondition.Operator;
 import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
 import org.safris.xdb.xde.csql.insert.INSERT;
-import org.safris.xdb.xde.csql.select.ORDER_BY;
 import org.safris.xdb.xde.csql.select._SELECT;
 import org.safris.xdb.xde.csql.update.UPDATE_SET;
+import org.safris.xdb.xdl.DBVendor;
 
 public abstract class DML extends cSQL<Object> {
   /** Direction **/
 
-  protected static abstract class Direction<T> implements ORDER_BY.Column<T> {
+  protected static abstract class Direction<T> extends Column<T> {
     private final Column<?> column;
 
-    public Direction(final Column<?> column) {
+    public Direction(final Column<T> column) {
+      super(column);
       this.column = column;
     }
 
@@ -39,25 +44,37 @@ public abstract class DML extends cSQL<Object> {
       column.serialize(serialization);
       serialization.sql.append(" ").append(getClass().getSimpleName());
     }
+
+    protected String getPreparedStatementMark(final DBVendor vendor) {
+      return column.getPreparedStatementMark(vendor);
+    }
+
+    protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      column.set(statement, parameterIndex);
+    }
+
+    protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      return (T)column.get(resultSet, columnIndex);
+    }
   }
 
   protected static class ASC<T> extends Direction<T> {
-    protected ASC(final Column<?> column) {
+    protected ASC(final Column<T> column) {
       super(column);
     }
   }
 
-  public static <T>ASC<T> ASC(final Column<?> column) {
+  public static <T>ASC<T> ASC(final Column<T> column) {
     return new ASC<T>(column);
   }
 
   protected static class DESC<T> extends Direction<T> {
-    protected DESC(final Column<?> column) {
+    protected DESC(final Column<T> column) {
       super(column);
     }
   }
 
-  public static <T>DESC<T> DESC(final Column<?> column) {
+  public static <T>DESC<T> DESC(final Column<T> column) {
     return new DESC<T>(column);
   }
 
@@ -187,6 +204,10 @@ public abstract class DML extends cSQL<Object> {
       super(qualifier, column);
     }
 
+    protected AVG(final AVG<T> max) {
+      super(max);
+    }
+
     protected void serialize(final Serialization serialization) {
       tableAlias(column.owner, true);
       serialization.sql.append("AVG(");
@@ -201,17 +222,21 @@ public abstract class DML extends cSQL<Object> {
     return new AVG<T>(null, column);
   }
 
-  public static <T>Aggregate<T> AVG(final DISTINCT distinct, final Column<T> column) {
+  public static <T>AVG<T> AVG(final DISTINCT distinct, final Column<T> column) {
     return new AVG<T>(distinct, column);
   }
 
-  public static <T>Aggregate<T> AVG(final ALL all, final Column<T> column) {
+  public static <T>AVG<T> AVG(final ALL all, final Column<T> column) {
     return new AVG<T>(all, column);
   }
 
   public static class MAX<T> extends Aggregate<T> {
     protected MAX(final SetQualifier qualifier, final Column<T> column) {
       super(qualifier, column);
+    }
+
+    protected MAX(final MAX<T> max) {
+      super(max);
     }
 
     protected void serialize(final Serialization serialization) {
@@ -241,6 +266,10 @@ public abstract class DML extends cSQL<Object> {
       super(qualifier, column);
     }
 
+    protected MIN(final MIN<T> max) {
+      super(max);
+    }
+
     protected void serialize(final Serialization serialization) {
       tableAlias(column.owner, true);
       serialization.sql.append("MIN(");
@@ -266,6 +295,10 @@ public abstract class DML extends cSQL<Object> {
   public static class SUM<T> extends Aggregate<T> {
     protected SUM(final SetQualifier qualifier, final Column<T> column) {
       super(qualifier, column);
+    }
+
+    protected SUM(final SUM<T> max) {
+      super(max);
     }
 
     protected void serialize(final Serialization serialization) {
@@ -295,6 +328,10 @@ public abstract class DML extends cSQL<Object> {
       super(qualifier, column);
     }
 
+    protected COUNT(final COUNT<T> max) {
+      super(max);
+    }
+
     protected void serialize(final Serialization serialization) {
       tableAlias(column.owner, true);
       serialization.sql.append("COUNT(");
@@ -309,11 +346,11 @@ public abstract class DML extends cSQL<Object> {
     return new COUNT<T>(null, column);
   }
 
-  public static <T>Aggregate<T> COUNT(final DISTINCT distinct, final Column<T> column) {
+  public static <T>COUNT<T> COUNT(final DISTINCT distinct, final Column<T> column) {
     return new COUNT<T>(distinct, column);
   }
 
-  public static <T>Aggregate<T> COUNT(final ALL all, final Column<T> column) {
+  public static <T>COUNT<T> COUNT(final ALL all, final Column<T> column) {
     return new COUNT<T>(all, column);
   }
 

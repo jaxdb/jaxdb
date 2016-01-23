@@ -77,10 +77,6 @@ class Update {
       return new SET<T,B>(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Column<B> set, final Aggregate<B> to) {
-      return new SET<T,B>(this, set, to);
-    }
-
     public final <B>SET<T,B> SET(final Column<B> set, final CASE<B> to) {
       return new SET<T,B>(this, set, to);
     }
@@ -200,7 +196,7 @@ class Update {
       this.to = to;
     }
 
-    protected SET(final cSQL<T> parent, final Column<B> set, final Aggregate<B> to) {
+    protected SET(final cSQL<T> parent, final Column<B> set, final Aggregate to) {
       this.parent = parent;
       this.set = set;
       this.to = to;

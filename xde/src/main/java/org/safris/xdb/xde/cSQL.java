@@ -61,7 +61,7 @@ public abstract class cSQL<T> implements Entity {
         serialization.sql.append("NULL");
       }
       else if (serialization.statementType == PreparedStatement.class) {
-        serialization.parameters.add(object);
+        serialization.addParameter(object);
         serialization.sql.append("?");
       }
       else {
@@ -110,7 +110,7 @@ public abstract class cSQL<T> implements Entity {
         serialization.sql.append("NULL");
       }
       else {
-        serialization.parameters.add(obj);
+        serialization.addParameter(obj);
         serialization.sql.append("?");
       }
     }

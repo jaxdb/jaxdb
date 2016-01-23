@@ -19,9 +19,9 @@ package org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xde.Table;
 import org.safris.xdb.xde.csql.Entity;
 
-public interface FROM<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _JOIN, _LIMIT, _ORDER_BY, _WHERE {
+public interface FROM<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
 }
 
-interface _FROM {
-  public <B extends Entity>FROM<B> FROM(final Table ... table);
+interface _FROM<T extends Entity> {
+  public FROM<T> FROM(final Table ... table);
 }

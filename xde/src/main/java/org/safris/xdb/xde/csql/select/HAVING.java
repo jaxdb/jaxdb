@@ -19,7 +19,7 @@ package org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.csql.Entity;
 
-public interface HAVING<T extends Entity> extends SELECT<T>, _LIMIT, _ORDER_BY {
+public interface HAVING<T extends Entity> extends SELECT<T>, _LIMIT<T>, _ORDER_BY<T> {
 }
 
 interface _HAVING<T extends Entity> {

@@ -47,7 +47,7 @@ class Insert {
           if (value != null) {
             columns += ", " + column.name;
             values += ", " + column.getPreparedStatementMark(serialization.vendor);
-            serialization.parameters.add(value);
+            serialization.addParameter(value);
           }
         }
       }

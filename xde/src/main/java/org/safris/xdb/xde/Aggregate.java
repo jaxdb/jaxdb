@@ -16,18 +16,41 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xde.csql.Entity;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-public abstract class Aggregate<T> extends cSQL<T> implements Entity {
+import org.safris.xdb.xdl.DBVendor;
+
+public abstract class Aggregate<T> extends Column<T> {
   protected final DML.SetQualifier qualifier;
   protected final Column<T> column;
 
   protected Aggregate(final DML.SetQualifier qualifier, final Column<T> column) {
+    super(column);
     this.qualifier = qualifier;
     this.column = column;
   }
 
+  protected Aggregate(final Aggregate<T> aggregate) {
+    super(aggregate.column);
+    this.qualifier = aggregate.qualifier;
+    this.column = aggregate.column;
+  }
+
   protected cSQL<?> parent() {
     return column;
+  }
+
+  protected String getPreparedStatementMark(final DBVendor vendor) {
+    return column.getPreparedStatementMark(vendor);
+  }
+
+  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    column.set(statement, parameterIndex);
+  }
+
+  protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    return column.get(resultSet, columnIndex);
   }
 }

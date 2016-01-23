@@ -32,10 +32,9 @@ import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.xde.csql.Entity;
-import org.safris.xdb.xde.csql.select.ORDER_BY;
 import org.safris.xdb.xdl.DBVendor;
 
-public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.Column<T>, Entity {
+public abstract class Column<T> extends cSQL<T> implements Cloneable, Entity {
   private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
 
   static {
@@ -120,10 +119,10 @@ public abstract class Column<T> extends cSQL<T> implements Cloneable, ORDER_BY.C
     return owner;
   }
 
-  protected final void serialize(final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
     if (serialization.statementType == PreparedStatement.class) {
       if (tableAlias(owner, false) == null) {
-        serialization.parameters.add(get());
+        serialization.addParameter(get());
         serialization.sql.append(getPreparedStatementMark(serialization.vendor));
       }
       else {

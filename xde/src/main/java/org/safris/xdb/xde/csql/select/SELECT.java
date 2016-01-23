@@ -21,5 +21,5 @@ import org.safris.xdb.xde.XDEException;
 import org.safris.xdb.xde.csql.Entity;
 
 public interface SELECT<T extends Entity> extends Entity {
-  public <B extends Entity>RowIterator<B> execute() throws XDEException;
+  public RowIterator<T> execute() throws XDEException;
 }

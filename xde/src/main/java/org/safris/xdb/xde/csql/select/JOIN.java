@@ -21,12 +21,12 @@ import org.safris.xdb.xde.DML.TYPE;
 import org.safris.xdb.xde.Table;
 import org.safris.xdb.xde.csql.Entity;
 
-public interface JOIN<T extends Entity> extends _ON {
+public interface JOIN<T extends Entity> extends _ON<T> {
 }
 
-interface _JOIN {
-  public <B extends Entity>JOIN<B> JOIN(final Table table);
-  public <B extends Entity>JOIN<B> JOIN(final TYPE type, final Table table);
-  public <B extends Entity>JOIN<B> JOIN(final NATURAL natural, final Table table);
-  public <B extends Entity>JOIN<B> JOIN(final NATURAL natural, final TYPE type, final Table table);
+interface _JOIN<T extends Entity> {
+  public JOIN<T> JOIN(final Table table);
+  public JOIN<T> JOIN(final TYPE type, final Table table);
+  public JOIN<T> JOIN(final NATURAL natural, final Table table);
+  public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Table table);
 }

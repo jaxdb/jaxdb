@@ -21,6 +21,6 @@ import org.safris.xdb.xde.csql.Entity;
 public interface LIMIT<T extends Entity> extends SELECT<T> {
 }
 
-interface _LIMIT {
-  public <B extends Entity>LIMIT<B> LIMIT(final int limit);
+interface _LIMIT<T extends Entity> {
+  public LIMIT<T> LIMIT(final int limit);
 }
