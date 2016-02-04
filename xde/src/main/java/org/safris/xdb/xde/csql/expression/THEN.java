@@ -16,11 +16,11 @@
 
 package org.safris.xdb.xde.csql.expression;
 
-import org.safris.xdb.xde.Column;
+import org.safris.xdb.xde.Field;
 import org.safris.xdb.xde.Condition;
 
 public interface THEN<T> {
   public THEN<T> WHEN(final Condition<T> condition);
-  public ELSE<T> ELSE(final Column<T> column);
+  public ELSE<T> ELSE(final Field<T> field);
   public ELSE<T> ELSE(final T value);
 }

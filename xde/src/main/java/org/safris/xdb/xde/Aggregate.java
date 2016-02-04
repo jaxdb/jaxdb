@@ -22,35 +22,35 @@ import java.sql.SQLException;
 
 import org.safris.xdb.xdl.DBVendor;
 
-public abstract class Aggregate<T> extends Column<T> {
+public abstract class Aggregate<T> extends DataType<T> {
   protected final DML.SetQualifier qualifier;
-  protected final Column<T> column;
+  protected final DataType<T> dataType;
 
-  protected Aggregate(final DML.SetQualifier qualifier, final Column<T> column) {
-    super(column);
+  protected Aggregate(final DML.SetQualifier qualifier, final DataType<T> dataType) {
+    super(dataType);
     this.qualifier = qualifier;
-    this.column = column;
+    this.dataType = dataType;
   }
 
   protected Aggregate(final Aggregate<T> aggregate) {
-    super(aggregate.column);
+    super(aggregate.dataType);
     this.qualifier = aggregate.qualifier;
-    this.column = aggregate.column;
+    this.dataType = aggregate.dataType;
   }
 
-  protected cSQL<?> parent() {
-    return column;
+  protected Entity entity() {
+    return dataType.entity();
   }
 
   protected String getPreparedStatementMark(final DBVendor vendor) {
-    return column.getPreparedStatementMark(vendor);
+    return null;
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    column.set(statement, parameterIndex);
+    throw new UnsupportedOperationException();
   }
 
   protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return column.get(resultSet, columnIndex);
+    return dataType.get(resultSet, columnIndex);
   }
 }

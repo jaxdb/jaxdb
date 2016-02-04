@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,41 +22,38 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.Tables;
 import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.xdl.SQLDataTypes;
 
-public final class Bit extends Column<String> {
+public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;
 
-  protected static void set(final PreparedStatement statement, final int parameterIndex, final String value) throws SQLException {
-    statement.setString(parameterIndex, value);
+  protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Enum<?> value) throws SQLException {
+    statement.setObject(parameterIndex, value.toString());
   }
 
-  public final int length;
-  public final boolean varyant;
-
-  public Bit(final Table owner, final String csqlName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varyant) {
-    super(sqlType, String.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-    this.length = length;
-    this.varyant = varyant;
+  public Enum(final Entity owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
+    super(sqlType, type, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Bit(final Bit column) {
+  protected Enum(final Enum<T> column) {
     super(column);
-    this.length = column.length;
-    this.varyant = column.varyant;
   }
 
   protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
+    return vendor == DBVendor.POSTGRE_SQL ? "?::" + SQLDataTypes.getTypeName(Tables.name(entity), name) : "?";
   }
 
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
-  protected String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return resultSet.getString(columnIndex);
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final String value = resultSet.getString(columnIndex);
+    return value == null ? null : (T)java.lang.Enum.valueOf((Class)type, value);
   }
 }

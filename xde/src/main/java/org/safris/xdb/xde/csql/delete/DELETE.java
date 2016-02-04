@@ -17,8 +17,7 @@
 package org.safris.xdb.xde.csql.delete;
 
 import org.safris.xdb.xde.XDEException;
-import org.safris.xdb.xde.csql.Entity;
 
-public interface DELETE<T> extends Entity {
+public interface DELETE<T> {
   public int execute() throws XDEException;
 }

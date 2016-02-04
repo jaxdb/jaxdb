@@ -16,5 +16,5 @@
 
 package org.safris.xdb.xde;
 
-public abstract class Condition<T> extends cSQL<T> {
+public abstract class Condition<T> extends Keyword<Data<T>> {
 }

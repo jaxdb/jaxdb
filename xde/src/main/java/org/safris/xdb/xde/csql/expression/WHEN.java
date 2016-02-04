@@ -16,9 +16,9 @@
 
 package org.safris.xdb.xde.csql.expression;
 
-import org.safris.xdb.xde.Column;
+import org.safris.xdb.xde.Field;
 
 public interface WHEN<T> {
-  public THEN<T> THEN(final Column<T> column);
+  public THEN<T> THEN(final Field<T> field);
   public THEN<T> THEN(final T value);
 }

@@ -31,20 +31,21 @@ import java.util.Map;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.xde.Field;
+import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.Schema;
-import org.safris.xdb.xde.Table;
-import org.safris.xdb.xde.column.BigInt;
-import org.safris.xdb.xde.column.Bit;
-import org.safris.xdb.xde.column.Blob;
-import org.safris.xdb.xde.column.Char;
-import org.safris.xdb.xde.column.DateTime;
-import org.safris.xdb.xde.column.Decimal;
-import org.safris.xdb.xde.column.Float;
-import org.safris.xdb.xde.column.Long;
-import org.safris.xdb.xde.column.MediumInt;
-import org.safris.xdb.xde.column.SmallInt;
+import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.datatype.BigInt;
+import org.safris.xdb.xde.datatype.Bit;
+import org.safris.xdb.xde.datatype.Blob;
+import org.safris.xdb.xde.datatype.Char;
+import org.safris.xdb.xde.datatype.DateTime;
+import org.safris.xdb.xde.datatype.Decimal;
+import org.safris.xdb.xde.datatype.Float;
+import org.safris.xdb.xde.datatype.Long;
+import org.safris.xdb.xde.datatype.MediumInt;
+import org.safris.xdb.xde.datatype.SmallInt;
 import org.safris.xdb.xdl.$xdl_bit;
 import org.safris.xdb.xdl.$xdl_blob;
 import org.safris.xdb.xdl.$xdl_boolean;
@@ -88,7 +89,7 @@ public class EntityGenerator {
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
-    code += "  private static final " + Table.class.getName() + "[] identity = new " + Table.class.getName() + "[] {";
+    code += "  private static final " + Entity.class.getName() + "[] identity = new " + Entity.class.getName() + "[] {";
     DDL[][] ddls = null;
     for (int i = 0; i < DBVendor.values().length; i++) {
       DDL[] ddl = DDLTransform.createDDL(database, DBVendor.values()[i], null);
@@ -215,7 +216,7 @@ public class EntityGenerator {
             generateOnUpdate = GenerateOn.TIMESTAMP_DATE;
         }
 
-        return new Type(column, org.safris.xdb.xde.column.Date.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.xde.datatype.Date.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_time) {
@@ -230,7 +231,7 @@ public class EntityGenerator {
             generateOnUpdate = GenerateOn.TIMESTAMP_TIME;
         }
 
-        return new Type(column, org.safris.xdb.xde.column.Time.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.xde.datatype.Time.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_dateTime) {
@@ -250,25 +251,25 @@ public class EntityGenerator {
 
       if (column instanceof $xdl_boolean) {
         final $xdl_boolean type = ($xdl_boolean)column;
-        return new Type(column, org.safris.xdb.xde.column.Boolean.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.xde.datatype.Boolean.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_enum) {
         final $xdl_enum type = ($xdl_enum)column;
-        return new Type(column, org.safris.xdb.xde.column.Enum.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.xde.datatype.Enum.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
     }
 
     private final $xdl_column column;
-    public final Class<? extends Column> type;
+    public final Class<? extends DataType> type;
     private final Object[] commonParams;
     private final GenerateOn<?> generateOnInsert;
     private final GenerateOn<?> generateOnUpdate;
     private final Object[] customParams;
 
-    private Type(final $xdl_column column, final Class<? extends Column> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    private Type(final $xdl_column column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
@@ -292,11 +293,11 @@ public class EntityGenerator {
     }
 
     public String getType() {
-      return type.getName() + (type == org.safris.xdb.xde.column.Enum.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
+      return type.getName() + (type == org.safris.xdb.xde.datatype.Enum.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
     }
 
     public String toString() {
-      return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.xde.column.Enum.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
+      return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.xde.datatype.Enum.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
     }
   }
 
@@ -352,7 +353,7 @@ public class EntityGenerator {
   }
 
   public static String makeTable(final $xdl_table table, final DDL[] ddl) {
-    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Table.class.getName();
+    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Entity.class.getName();
     String out = "";
     String abs = "";
     if (table._abstract$().text())
@@ -366,22 +367,25 @@ public class EntityGenerator {
     if (!table._abstract$().text()) {
       out += "    protected static final " + DDL.class.getName() + "[] ddl = " + serialize(ddl) + ";\n";
       out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
-      out += "    protected final " + Column.class.getName() + "<?>[] column;\n";
-      out += "    protected final " + Column.class.getName() + "<?>[] primary;\n\n";
+      out += "    protected final " + DataType.class.getName() + "<?>[] column;\n";
+      out += "    protected final " + DataType.class.getName() + "<?>[] primary;\n\n";
       out += "    protected " + DDL.class.getName() + "[] ddl() {\n";
       out += "      return ddl;\n";
       out += "    }\n\n";
-      out += "    protected " + Column.class.getName() + "<?>[] column() {\n";
+      out += "    protected " + DataType.class.getName() + "<?>[] column() {\n";
       out += "      return column;\n";
       out += "    }\n\n";
-      out += "    protected " + Column.class.getName() + "<?>[] primary() {\n";
+      out += "    protected " + DataType.class.getName() + "<?>[] primary() {\n";
       out += "      return primary;\n";
       out += "    }\n\n";
       out += "    protected " + String.class.getName() + " name() {\n";
       out += "      return \"" + table._name$().text() + "\";\n";
       out += "    }\n\n";
       out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
-      out += "      this(new " + Column.class.getName() + "[" + totalColumnCount + "], new " + Column.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "    }\n\n";
+      out += "    protected " + entityName + " newInstance() {\n";
+      out += "      return new " + entityName + "();\n";
       out += "    }\n\n";
 
       // Constructor with params
@@ -423,7 +427,7 @@ public class EntityGenerator {
     }
 
     String defs = "";
-    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final " + Column.class.getName() + "<?>[] column, final " + Column.class.getName() + "<?>[] primary) {\n";
+    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final " + DataType.class.getName() + "<?>[] column, final " + DataType.class.getName() + "<?>[] primary) {\n";
     out += "      super(column, primary);\n";
     if (!table._abstract$().text()) {
       out += "      this.column = column;\n";
@@ -483,7 +487,7 @@ public class EntityGenerator {
 
     eq = "";
     if (primaryColumns.size() > 0) {
-      out += "\n";
+      out += "\n\n";
       out += "    public int hashCode() {\n";
       for (final $xdl_column column : primaryColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
@@ -492,6 +496,7 @@ public class EntityGenerator {
     }
 
     out += "\n  }";
+
     return out;
   }
 

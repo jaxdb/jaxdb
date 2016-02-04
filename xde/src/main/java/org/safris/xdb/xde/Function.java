@@ -16,18 +16,24 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xde.csql.Entity;
+public abstract class Function<T> extends Keyword<Field<T>> {
+  protected final Field<T> a;
+  protected final Field<T> b;
 
-public abstract class Function<T> extends cSQL<T> implements Entity {
-  protected final cSQL<T> a;
-  protected final cSQL<T> b;
-
-  protected Function(final cSQL<T> a, final cSQL<T> b) {
+  protected Function(final Field<T> a, final Field<T> b) {
     this.a = a;
     this.b = b;
   }
 
-  protected cSQL<?> parent() {
+  protected Entity entity() {
     return null;
+  }
+
+  protected Keyword<Field<T>> parent() {
+    return null;
+  }
+
+  protected void serialize(Serialization serialization) {
+    throw new RuntimeException("Implement me");
   }
 }

@@ -14,39 +14,40 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class SmallInt extends Column<Short> {
-  protected static final int sqlType = Types.TINYINT;
+public final class Decimal extends DataType<java.lang.Double> {
+  protected static final int sqlType = Types.DECIMAL;
 
-  protected static void set(final PreparedStatement statement, final int parameterIndex, final Short value) throws SQLException {
-    statement.setShort(parameterIndex, value);
+  protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Double value) throws SQLException {
+    statement.setDouble(parameterIndex, value);
   }
 
   public final int precision;
+  public int decimal;
   public final boolean unsigned;
-  public final Short min;
-  public final Short max;
+  public final java.lang.Double min;
+  public final java.lang.Double max;
 
-  public SmallInt(final Table owner, final String csqlName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Short> generateOnInsert, final GenerateOn<Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
-    super(sqlType, Short.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Decimal(final Entity owner, final String csqlName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Double> generateOnInsert, final GenerateOn<java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
+    super(sqlType, java.lang.Double.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;
     this.max = max;
   }
 
-  protected SmallInt(final SmallInt column) {
+  protected Decimal(final Decimal column) {
     super(column);
     this.precision = column.precision;
     this.unsigned = column.unsigned;
@@ -62,8 +63,8 @@ public final class SmallInt extends Column<Short> {
     set(statement, parameterIndex, get());
   }
 
-  protected Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final short value = resultSet.getShort(columnIndex);
+  protected java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final double value = resultSet.getDouble(columnIndex);
     return resultSet.wasNull() ? null : value;
   }
 }

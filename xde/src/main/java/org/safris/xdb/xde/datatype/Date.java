@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,18 +23,18 @@ import java.sql.Types;
 
 import org.joda.time.LocalDate;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class Date extends Column<LocalDate> {
+public final class Date extends DataType<LocalDate> {
   protected static final int sqlType = Types.DATE;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDate value) throws SQLException {
     statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
   }
 
-  public Date(final Table owner, final String csqlName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalDate> generateOnInsert, final GenerateOn<LocalDate> generateOnUpdate) {
+  public Date(final Entity owner, final String csqlName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalDate> generateOnInsert, final GenerateOn<LocalDate> generateOnUpdate) {
     super(sqlType, LocalDate.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 

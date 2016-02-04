@@ -16,5 +16,5 @@
 
 package org.safris.xdb.xde;
 
-public abstract class Expression<T> extends cSQL<T> {
+public abstract class Expression<T extends Data<?>> extends Keyword<T> {
 }

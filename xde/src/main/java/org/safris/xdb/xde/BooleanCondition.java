@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde;
 
-public class BooleanCondition<T> extends Condition<T> {
+public class BooleanCondition<T extends Data<?>> extends Condition<T> {
   protected static enum Operator {
     AND("AND"),
     OR("OR");
@@ -32,7 +32,7 @@ public class BooleanCondition<T> extends Condition<T> {
     }
   }
 
-  private static <T>void formatBraces(final Operator operator, final Condition<T> condition, final Serialization serialization) {
+  private static <T extends Data<?>>void formatBraces(final Operator operator, final Condition<?> condition, final Serialization serialization) {
     if (condition instanceof LogicalCondition) {
       condition.serialize(serialization);
     }
@@ -60,7 +60,7 @@ public class BooleanCondition<T> extends Condition<T> {
     this.conditions = conditions;
   }
 
-  protected cSQL<?> parent() {
+  protected Keyword<Data<T>> parent() {
     return null;
   }
 

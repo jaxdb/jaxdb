@@ -16,11 +16,7 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.csql.Entity;
+import org.safris.xdb.xde.Data;
 
-public interface GROUP_BY<T extends Entity> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {
-}
-
-interface _GROUP_BY<T extends Entity> {
-  public GROUP_BY<T> GROUP_BY(final org.safris.xdb.xde.Column<?> column);
+public interface GROUP_BY<T extends Data<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {
 }

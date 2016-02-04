@@ -24,17 +24,17 @@ import java.sql.Statement;
 import org.safris.xdb.xdl.DBVendor;
 
 class Delete {
-  private static abstract class Execute<T> extends cSQL<T> {
+  private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
     public int execute() throws XDEException {
-      final cSQL<?> table = getParentRoot(this);
-      final Class<? extends Schema> schema = ((Table)table).schema();
+      final Entity entity = null;//getParentRoot(this);
+      final Class<? extends Schema> schema = entity.schema();
       DBVendor vendor = null;
       try {
         try (final Connection connection = Schema.getConnection(schema)) {
           vendor = Schema.getDBVendor(connection);
           final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
           serialize(serialization);
-          clearAliases();
+          Entity.clearAliases();
           if (serialization.statementType == PreparedStatement.class) {
             try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
               serialization.set(statement);
@@ -57,17 +57,17 @@ class Delete {
     }
   }
 
-  protected final static class WHERE<T> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE<T> {
-    private final cSQL<T> parent;
+  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE<T> {
+    private final Field<T> parent;
     private final Condition<?> condition;
 
-    protected WHERE(final cSQL<T> parent, final Condition<?> condition) {
+    protected WHERE(final Field<T> parent, final Condition<?> condition) {
       this.parent = parent;
       this.condition = condition;
     }
 
-    protected cSQL<?> parent() {
-      return parent;
+    protected Keyword<T> parent() {
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {
@@ -77,38 +77,39 @@ class Delete {
     }
   }
 
-  protected final static class DELETE<T> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE_WHERE<T> {
-    protected final Table table;
+  protected final static class DELETE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE_WHERE<T> {
+    protected final Entity entity;
 
-    protected DELETE(final Table table) {
-      this.table = table;
+    protected DELETE(final Entity entity) {
+      this.entity = entity;
     }
 
     public WHERE<T> WHERE(final Condition<?> condition) {
-      return new WHERE<T>(this, condition);
+      return null;//new WHERE<T>(this, condition);
     }
 
-    protected cSQL<?> parent() {
-      return table;
+    protected Keyword<T> parent() {
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("UPDATE ");
-      serialize(table, serialization);
+      entity.serialize(serialization);
     }
 
     protected String encodeSingle(final Serialization serialization) {
       if (getClass() != DELETE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
-      String sql = "UPDATE " + table.name() + " SET ";
+      String sql = "UPDATE " + entity.name() + " SET ";
       String columns = "";
       String where = "";
-      for (final Column<?> column : table.column())
-        if (column.primary)
-          where += " AND " + column.name + " = ?";
+      for (final DataType<?> dataType : entity.column()) {
+        if (dataType.primary)
+          where += " AND " + dataType.name + " = ?";
         else
-          columns += ", " + column.name + " = ?";
+          columns += ", " + dataType.name + " = ?";
+      }
 
       sql += columns.substring(2) + " WHERE " + where.substring(5);
       System.out.println(sql);
@@ -117,8 +118,8 @@ class Delete {
 
     public int execute() throws XDEException {
       if (false) {
-        final cSQL<?> table = getParentRoot(this);
-        final Class<? extends Schema> schema = ((Table)table).schema();
+        final Entity entity = null;//getParentRoot(this);
+        final Class<? extends Schema> schema = ((Entity)entity).schema();
         DBVendor vendor = null;
         try {
           try (final Connection connection = Schema.getConnection(schema)) {
@@ -132,14 +133,14 @@ class Delete {
             try (final PreparedStatement statement = connection.prepareStatement(sql)) {
               // set the updated columns first
               int index = 0;
-              for (final Column<?> column : ((Table)table).column())
-                if (!column.primary)
-                  column.set(statement, ++index);
+              for (final DataType<?> dataType : ((Entity)entity).column())
+                if (!dataType.primary)
+                  dataType.set(statement, ++index);
 
               // then the conditional columns
-              for (final Column<?> column : ((Table)table).column())
-                if (column.primary)
-                  column.set(statement, ++index);
+              for (final DataType<?> dataType : ((Entity)entity).column())
+                if (dataType.primary)
+                  dataType.set(statement, ++index);
 
               System.err.println(statement.toString());
               return statement.executeUpdate();
@@ -151,7 +152,7 @@ class Delete {
         }
       }
 
-      clearAliases();
+      Entity.clearAliases();
       return super.execute();
     }
   }

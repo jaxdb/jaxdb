@@ -17,86 +17,90 @@
 package org.safris.xdb.xde;
 
 class Case {
-  protected static abstract class CASE<T> extends Expression<T> implements org.safris.xdb.xde.csql.expression.CASE<T> {
+  protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.csql.expression.CASE<T> {
     protected void serialize(final Serialization serialization) {
       throw new Error("Have to override this");
     }
   }
 
-  protected static final class CASE_WHEN<T> extends cSQL<T> implements org.safris.xdb.xde.csql.expression.WHEN<T> {
+  protected static final class CASE_WHEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.csql.expression.WHEN<T> {
     private final Condition<T> condition;
 
     protected CASE_WHEN(final Condition<T> condition) {
       this.condition = condition;
     }
 
-    public THEN<T> THEN(final Column<T> column) {
-      return new THEN<T>(this, column);
+    public THEN<T> THEN(final Field<T> field) {
+      return new THEN<T>(this, field);
     }
 
     public THEN<T> THEN(final T value) {
-      return new THEN<T>(this, cSQL.valueOf(value));
+      return new THEN<T>(this, Field.valueOf(value));
     }
 
-    protected cSQL<?> parent() {
-      return condition;
+    protected Keyword<Field<T>> parent() {
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("CASE WHEN ");
-      serialize(condition, serialization);
+      throw new RuntimeException("implement this");
+      //serialize(condition, serialization);
     }
   }
 
-  protected static final class THEN<T> extends cSQL<T> implements org.safris.xdb.xde.csql.expression.THEN<T> {
-    private final cSQL<T> parent;
-    private final cSQL<?> value;
+  protected static final class THEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.csql.expression.THEN<T> {
+    private final Keyword<Field<T>> parent;
+    private final Field<T> value;
 
-    protected <B>THEN(final cSQL<T> parent, final cSQL<B> value) {
+    protected THEN(final Keyword<Field<T>> parent, final Field<T> value) {
       this.parent = parent;
       this.value = value;
     }
 
     public THEN<T> WHEN(final Condition<T> condition) {
-      return new THEN<T>(this, condition);
+      throw new RuntimeException("implement this");
+      //return new THEN<T>(this, condition);
     }
 
-    public ELSE<T> ELSE(final Column<T> column) {
-      return new ELSE<T>(this, column);
+    public ELSE<T> ELSE(final Field<T> field) {
+      return new ELSE<T>(this, field);
     }
 
     public ELSE<T> ELSE(final T value) {
-      return new ELSE<T>(this, cSQL.valueOf(value));
+      return new ELSE<T>(this, Field.valueOf(value));
     }
 
-    protected cSQL<?> parent() {
+    protected Keyword<Field<T>> parent() {
       return parent;
     }
 
     protected void serialize(final Serialization serialization) {
-      serialize(parent, serialization);
+      //serialize(parent, serialization);
       serialization.sql.append(" THEN ");
-      serialize(value, serialization);
+      value.serialize(serialization);
+      throw new RuntimeException("implement this");
     }
   }
 
   protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.xde.csql.expression.ELSE<T> {
     private final THEN<T> parent;
-    private final cSQL<?> value;
+    private final Field<T> value;
 
-    protected <B>ELSE(final THEN<T> parent, final cSQL<B> value) {
+    protected ELSE(final THEN<T> parent, final Field<T> value) {
       this.parent = parent;
       this.value = value;
     }
 
-    protected cSQL<?> parent() {
+    protected Keyword<Field<T>> parent() {
       return parent;
     }
 
     protected void serialize(final Serialization serialization) {
-      serialize(parent, serialization);
+//      serialize(parent, serialization);
       serialization.sql.append(" ELSE ");
-      serialize(value, serialization);
+      value.serialize(serialization);
+      throw new RuntimeException("implement this");
     }
   }
 

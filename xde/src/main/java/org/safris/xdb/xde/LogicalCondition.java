@@ -27,15 +27,11 @@ class LogicalCondition<T> extends Condition<T> {
     this.b = b;
   }
 
-  protected cSQL<?> parent() {
+  protected Keyword<Data<T>> parent() {
     return null;
   }
 
   protected void serialize(final Serialization serialization) {
-    if (serialization.sql.toString().endsWith("genre d ON (")) {
-      int fds = 0;
-    }
-
     format(a, serialization);
     serialization.sql.append(" ").append(operator).append(" ");
     format(b, serialization);

@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,18 +22,18 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class Boolean extends Column<java.lang.Boolean> {
+public final class Boolean extends DataType<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Boolean value) throws SQLException {
     statement.setBoolean(parameterIndex, value);
   }
 
-  public Boolean(final Table owner, final String csqlName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
+  public Boolean(final Entity owner, final String csqlName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
     super(sqlType, java.lang.Boolean.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 

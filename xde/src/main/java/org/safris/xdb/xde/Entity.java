@@ -16,32 +16,26 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
 
-public abstract class Table extends cSQL<Table> implements Entity {
-  protected Table(final Column<?>[] column, final Column<?>[] primary) {
+public abstract class Entity extends Data<Entity> {
+  protected Entity(final DataType<?>[] dataType, final DataType<?>[] primary) {
   }
 
-  protected Table(final Table table) {
+  protected Entity(final Entity entity) {
   }
 
-  protected Table() {
+  protected Entity() {
   }
 
-  protected cSQL<?> parent() {
+  protected Entity entity() {
     return null;
   }
 
   protected void serialize(final Serialization serialization) {
     serialization.sql.append(tableName(this, serialization)).append(" ").append(tableAlias(this, true));
   }
-
-  protected abstract String name();
-  protected abstract Column<?>[] column();
-  protected abstract Column<?>[] primary();
-  protected abstract DDL[] ddl();
 
   protected Class<? extends Schema> schema() {
     return (Class<? extends Schema>)getClass().getEnclosingClass();
@@ -51,13 +45,9 @@ public abstract class Table extends cSQL<Table> implements Entity {
     return ddl()[vendor.ordinal()].get(type);
   }
 
-  // FIXME: Should this be custom for each generated class?
-  protected Table newInstance() {
-    try {
-      return getClass().newInstance();
-    }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
-    }
-  }
+  protected abstract String name();
+  protected abstract DataType<?>[] column();
+  protected abstract DataType<?>[] primary();
+  protected abstract DDL[] ddl();
+  protected abstract Entity newInstance();
 }

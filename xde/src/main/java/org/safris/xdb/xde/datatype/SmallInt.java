@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,32 +22,31 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class Float extends Column<java.lang.Float> {
-  protected static final int sqlType = Types.FLOAT;
+public final class SmallInt extends DataType<Short> {
+  protected static final int sqlType = Types.TINYINT;
 
-  protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Float value) throws SQLException {
-    statement.setFloat(parameterIndex, value);
+  protected static void set(final PreparedStatement statement, final int parameterIndex, final Short value) throws SQLException {
+    statement.setShort(parameterIndex, value);
   }
 
   public final int precision;
-  public int decimal;
   public final boolean unsigned;
-  public final java.lang.Float min;
-  public final java.lang.Float max;
+  public final Short min;
+  public final Short max;
 
-  public Float(final Table owner, final String csqlName, final String name, final java.lang.Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Float> generateOnInsert, final GenerateOn<java.lang.Float> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Float min, final java.lang.Float max) {
-    super(sqlType, java.lang.Float.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public SmallInt(final Entity owner, final String csqlName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Short> generateOnInsert, final GenerateOn<Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
+    super(sqlType, Short.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;
     this.max = max;
   }
 
-  protected Float(final Float column) {
+  protected SmallInt(final SmallInt column) {
     super(column);
     this.precision = column.precision;
     this.unsigned = column.unsigned;
@@ -63,8 +62,8 @@ public final class Float extends Column<java.lang.Float> {
     set(statement, parameterIndex, get());
   }
 
-  protected java.lang.Float get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final float value = resultSet.getFloat(columnIndex);
+  protected Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final short value = resultSet.getShort(columnIndex);
     return resultSet.wasNull() ? null : value;
   }
 }

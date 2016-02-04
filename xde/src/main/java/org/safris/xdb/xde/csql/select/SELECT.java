@@ -16,10 +16,10 @@
 
 package org.safris.xdb.xde.csql.select;
 
+import org.safris.xdb.xde.Data;
 import org.safris.xdb.xde.RowIterator;
 import org.safris.xdb.xde.XDEException;
-import org.safris.xdb.xde.csql.Entity;
 
-public interface SELECT<T extends Entity> extends Entity {
+public interface SELECT<T extends Data<?>> {
   public RowIterator<T> execute() throws XDEException;
 }

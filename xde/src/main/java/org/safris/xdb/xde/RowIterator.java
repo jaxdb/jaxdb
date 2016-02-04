@@ -3,9 +3,7 @@ package org.safris.xdb.xde;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.xdb.xde.csql.Entity;
-
-public abstract class RowIterator<T extends Entity> {
+public abstract class RowIterator<T extends Data<?>> {
   protected final List<T[]> rows = new ArrayList<T[]>();
   protected int rowIndex = -1;
 

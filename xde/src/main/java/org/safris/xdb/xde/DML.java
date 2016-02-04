@@ -21,67 +21,65 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.safris.xdb.xde.BooleanCondition.Operator;
-import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
 import org.safris.xdb.xde.csql.insert.INSERT;
 import org.safris.xdb.xde.csql.select._SELECT;
 import org.safris.xdb.xde.csql.update.UPDATE_SET;
-import org.safris.xdb.xdl.DBVendor;
 
-public abstract class DML extends cSQL<Object> {
+public abstract class DML {
   /** Direction **/
 
-  protected static abstract class Direction<T> extends Column<T> {
-    private final Column<?> column;
+  protected static abstract class Direction<T extends Data<?>> extends Field<T> {
+    private final Field<?> field;
 
-    public Direction(final Column<T> column) {
-      super(column);
-      this.column = column;
+    public Direction(final Field<T> field) {
+      super(null);
+      this.field = field;
     }
 
     protected void serialize(final Serialization serialization) {
-      column.serialize(serialization);
+      field.serialize(serialization);
       serialization.sql.append(" ").append(getClass().getSimpleName());
     }
 
-    protected String getPreparedStatementMark(final DBVendor vendor) {
-      return column.getPreparedStatementMark(vendor);
+    protected Entity entity() {
+      throw new UnsupportedOperationException("Implement me");
     }
 
     protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      column.set(statement, parameterIndex);
+      throw new UnsupportedOperationException("Implement me");
     }
 
     protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      return (T)column.get(resultSet, columnIndex);
+      throw new UnsupportedOperationException("Implement me");
     }
   }
 
-  protected static class ASC<T> extends Direction<T> {
-    protected ASC(final Column<T> column) {
-      super(column);
+  protected static class ASC<T extends Data<?>> extends Direction<T> {
+    protected ASC(final Field<T> field) {
+      super(field);
     }
   }
 
-  public static <T>ASC<T> ASC(final Column<T> column) {
-    return new ASC<T>(column);
+  public static <T extends Data<?>>ASC<T> ASC(final Field<T> field) {
+    return new ASC<T>(field);
   }
 
-  protected static class DESC<T> extends Direction<T> {
-    protected DESC(final Column<T> column) {
-      super(column);
+  protected static class DESC<T extends Data<?>> extends Direction<T> {
+    protected DESC(final Field<T> field) {
+      super(field);
     }
   }
 
-  public static <T>DESC<T> DESC(final Column<T> column) {
-    return new DESC<T>(column);
+  public static <T extends Data<?>>DESC<T> DESC(final Field<T> field) {
+    return new DESC<T>(field);
   }
 
   /** NATURAL **/
 
-  public static class NATURAL extends cSQL<Object> {
-    protected cSQL<?> parent() {
+  public static class NATURAL extends Keyword<Data<?>> {
+    protected Keyword<Data<?>> parent() {
       return null;
     }
 
@@ -94,8 +92,8 @@ public abstract class DML extends cSQL<Object> {
 
   /** TYPE **/
 
-  public static abstract class TYPE extends cSQL<Object> {
-    protected cSQL<?> parent() {
+  public static abstract class TYPE extends Keyword<Data<?>> {
+    protected Keyword<Data<?>> parent() {
       return null;
     }
   }
@@ -132,8 +130,8 @@ public abstract class DML extends cSQL<Object> {
 
   /** SetQualifier **/
 
-  public static abstract class SetQualifier extends cSQL<Object> {
-    protected cSQL<?> parent() {
+  public static abstract class SetQualifier extends Keyword<Data<?>> {
+    protected Keyword<Data<?>> parent() {
       return null;
     }
   }
@@ -156,23 +154,23 @@ public abstract class DML extends cSQL<Object> {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Entity>_SELECT<T> SELECT(final T ... columns) {
-    return DML.<T>SELECT(null, null, columns);
+  public static <T extends Data<?>>_SELECT<T> SELECT(final T ... entities) {
+    return DML.<T>SELECT(null, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Entity>_SELECT<T> SELECT(final ALL all, final T ... columns) {
-    return DML.<T>SELECT(all, null, columns);
+  public static <T extends Data<?>>_SELECT<T> SELECT(final ALL all, final T ... entities) {
+    return DML.<T>SELECT(all, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Entity>_SELECT<T> SELECT(final DISTINCT distinct, final T ... columns) {
-    return DML.<T>SELECT(null, distinct, columns);
+  public static <T extends Data<?>>_SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
+    return DML.<T>SELECT(null, distinct, entities);
   }
 
   @SafeVarargs
-  public static <T extends Entity>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... columns) {
-    return new Select.SELECT<T>(all, distinct, columns);
+  public static <T extends Data<?>>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+    return new Select.SELECT<T>(all, distinct, entities);
   }
 
   /** CASE **/
@@ -183,25 +181,25 @@ public abstract class DML extends cSQL<Object> {
 
   /** DELETE **/
 
-  public static <T>UPDATE_SET<T> UPDATE(final Table table) {
-    return new Update.UPDATE<T>(table);
+  public static <T extends Data<?>>UPDATE_SET<T> UPDATE(final Entity entity) {
+    return new Update.UPDATE<T>(entity);
   }
 
-  public static <T>DELETE_WHERE<T> DELETE(final Table table) {
-    return new Delete.DELETE<T>(table);
+  public static <T extends Data<?>>DELETE_WHERE<T> DELETE(final Entity entity) {
+    return new Delete.DELETE<T>(entity);
   }
 
   /** INSERT **/
 
-  public static INSERT INSERT(final Table table) {
-    return new Insert.INSERT(table);
+  public static INSERT INSERT(final Entity entity) {
+    return new Insert.INSERT(entity);
   }
 
   /** Aggregate **/
 
   public static class AVG<T> extends Aggregate<T> {
-    protected AVG(final SetQualifier qualifier, final Column<T> column) {
-      super(qualifier, column);
+    protected AVG(final SetQualifier qualifier, final DataType<T> dataType) {
+      super(qualifier, dataType);
     }
 
     protected AVG(final AVG<T> max) {
@@ -209,30 +207,30 @@ public abstract class DML extends cSQL<Object> {
     }
 
     protected void serialize(final Serialization serialization) {
-      tableAlias(column.owner, true);
+      tableAlias(dataType.entity(), true);
       serialization.sql.append("AVG(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
 
-      serialization.sql.append(column).append(")");
+      serialization.sql.append(dataType).append(")");
     }
   }
 
-  public static <T>AVG<T> AVG(final Column<T> column) {
-    return new AVG<T>(null, column);
+  public static <T>AVG<T> AVG(final DataType<T> dataType) {
+    return new AVG<T>(null, dataType);
   }
 
-  public static <T>AVG<T> AVG(final DISTINCT distinct, final Column<T> column) {
-    return new AVG<T>(distinct, column);
+  public static <T>AVG<T> AVG(final DISTINCT distinct, final DataType<T> dataType) {
+    return new AVG<T>(distinct, dataType);
   }
 
-  public static <T>AVG<T> AVG(final ALL all, final Column<T> column) {
-    return new AVG<T>(all, column);
+  public static <T>AVG<T> AVG(final ALL all, final DataType<T> dataType) {
+    return new AVG<T>(all, dataType);
   }
 
   public static class MAX<T> extends Aggregate<T> {
-    protected MAX(final SetQualifier qualifier, final Column<T> column) {
-      super(qualifier, column);
+    protected MAX(final SetQualifier qualifier, final DataType<T> dataType) {
+      super(qualifier, dataType);
     }
 
     protected MAX(final MAX<T> max) {
@@ -240,30 +238,30 @@ public abstract class DML extends cSQL<Object> {
     }
 
     protected void serialize(final Serialization serialization) {
-      tableAlias(column.owner, true);
+      tableAlias(dataType.entity(), true);
       serialization.sql.append("MAX(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
 
-      serialization.sql.append(column).append(")");
+      serialization.sql.append(dataType).append(")");
     }
   }
 
-  public static <T>MAX<T> MAX(final Column<T> column) {
-    return new MAX<T>(null, column);
+  public static <T>MAX<T> MAX(final DataType<T> dataType) {
+    return new MAX<T>(null, dataType);
   }
 
-  public static <T>MAX<T> MAX(final DISTINCT distinct, final Column<T> column) {
-    return new MAX<T>(distinct, column);
+  public static <T>MAX<T> MAX(final DISTINCT distinct, final DataType<T> dataType) {
+    return new MAX<T>(distinct, dataType);
   }
 
-  public static <T>MAX<T> MAX(final ALL all, final Column<T> column) {
-    return new MAX<T>(all, column);
+  public static <T>MAX<T> MAX(final ALL all, final DataType<T> dataType) {
+    return new MAX<T>(all, dataType);
   }
 
   public static class MIN<T> extends Aggregate<T> {
-    protected MIN(final SetQualifier qualifier, final Column<T> column) {
-      super(qualifier, column);
+    protected MIN(final SetQualifier qualifier, final DataType<T> dataType) {
+      super(qualifier, dataType);
     }
 
     protected MIN(final MIN<T> max) {
@@ -271,30 +269,30 @@ public abstract class DML extends cSQL<Object> {
     }
 
     protected void serialize(final Serialization serialization) {
-      tableAlias(column.owner, true);
+      tableAlias(dataType.entity(), true);
       serialization.sql.append("MIN(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
 
-      serialization.sql.append(column).append(")");
+      serialization.sql.append(dataType).append(")");
     }
   }
 
-  public static <T>MIN<T> MIN(final Column<T> column) {
-    return new MIN<T>(null, column);
+  public static <T>MIN<T> MIN(final DataType<T> dataType) {
+    return new MIN<T>(null, dataType);
   }
 
-  public static <T>MIN<T> MIN(final DISTINCT distinct, final Column<T> column) {
-    return new MIN<T>(distinct, column);
+  public static <T>MIN<T> MIN(final DISTINCT distinct, final DataType<T> dataType) {
+    return new MIN<T>(distinct, dataType);
   }
 
-  public static <T>MIN<T> MIN(final ALL all, final Column<T> column) {
-    return new MIN<T>(all, column);
+  public static <T>MIN<T> MIN(final ALL all, final DataType<T> dataType) {
+    return new MIN<T>(all, dataType);
   }
 
   public static class SUM<T> extends Aggregate<T> {
-    protected SUM(final SetQualifier qualifier, final Column<T> column) {
-      super(qualifier, column);
+    protected SUM(final SetQualifier qualifier, final DataType<T> dataType) {
+      super(qualifier, dataType);
     }
 
     protected SUM(final SUM<T> max) {
@@ -302,30 +300,30 @@ public abstract class DML extends cSQL<Object> {
     }
 
     protected void serialize(final Serialization serialization) {
-      tableAlias(column.owner, true);
+      tableAlias(dataType.entity(), true);
       serialization.sql.append("SUM(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
 
-      serialization.sql.append(column).append(")");
+      serialization.sql.append(dataType).append(")");
     }
   }
 
-  public static <T>SUM<T> SUM(final Column<T> column) {
-    return new SUM<T>(null, column);
+  public static <T>SUM<T> SUM(final DataType<T> dataType) {
+    return new SUM<T>(null, dataType);
   }
 
-  public static <T>SUM<T> SUM(final DISTINCT distinct, final Column<T> column) {
-    return new SUM<T>(distinct, column);
+  public static <T>SUM<T> SUM(final DISTINCT distinct, final DataType<T> dataType) {
+    return new SUM<T>(distinct, dataType);
   }
 
-  public static <T>SUM<T> SUM(final ALL all, final Column<T> column) {
-    return new SUM<T>(all, column);
+  public static <T>SUM<T> SUM(final ALL all, final DataType<T> dataType) {
+    return new SUM<T>(all, dataType);
   }
 
   public static class COUNT<T> extends Aggregate<T> {
-    protected COUNT(final SetQualifier qualifier, final Column<T> column) {
-      super(qualifier, column);
+    protected COUNT(final SetQualifier qualifier, final DataType<T> dataType) {
+      super(qualifier, dataType);
     }
 
     protected COUNT(final COUNT<T> max) {
@@ -333,81 +331,81 @@ public abstract class DML extends cSQL<Object> {
     }
 
     protected void serialize(final Serialization serialization) {
-      tableAlias(column.owner, true);
+      tableAlias(dataType.entity(), true);
       serialization.sql.append("COUNT(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
 
-      serialization.sql.append(column).append(")");
+      serialization.sql.append(dataType).append(")");
     }
   }
 
-  public static <T>COUNT<T> COUNT(final Column<T> column) {
-    return new COUNT<T>(null, column);
+  public static <T>COUNT<T> COUNT(final DataType<T> dataType) {
+    return new COUNT<T>(null, dataType);
   }
 
-  public static <T>COUNT<T> COUNT(final DISTINCT distinct, final Column<T> column) {
-    return new COUNT<T>(distinct, column);
+  public static <T>COUNT<T> COUNT(final DISTINCT distinct, final DataType<T> dataType) {
+    return new COUNT<T>(distinct, dataType);
   }
 
-  public static <T>COUNT<T> COUNT(final ALL all, final Column<T> column) {
-    return new COUNT<T>(all, column);
+  public static <T>COUNT<T> COUNT(final ALL all, final DataType<T> dataType) {
+    return new COUNT<T>(all, dataType);
   }
 
   public static class PLUS<T> extends Function<T> {
-    protected PLUS(final cSQL<T> a, final cSQL<T> b) {
+    protected PLUS(final Field<T> a, final Field<T> b) {
       super(a, b);
     }
 
     protected void serialize(final Serialization serialization) {
-      serialize(a, serialization);
+      a.serialize(serialization);
       serialization.sql.append(" + ");
-      serialize(b, serialization);
+      b.serialize(serialization);
     }
   }
 
-  public static <T>PLUS<T> PLUS(final Column<T> a, final Column<T> b) {
+  public static <T>PLUS<T> PLUS(final Field<T> a, final Field<T> b) {
     return new PLUS<T>(a, b);
   }
 
-  public static <T>PLUS<T> PLUS(final Column<T> a, final T b) {
-    return new PLUS<T>(a, cSQL.valueOf(b));
+  public static <T>PLUS<T> PLUS(final Field<T> a, final T b) {
+    return new PLUS<T>(a, Field.valueOf(b));
   }
 
-  public static <T>PLUS<T> PLUS(final T a, final Column<T> b) {
-    return new PLUS<T>(cSQL.valueOf(a), b);
+  public static <T>PLUS<T> PLUS(final T a, final Field<T> b) {
+    return new PLUS<T>(Field.valueOf(a), b);
   }
 
   public static <T>PLUS<T> PLUS(final T a, final T b) {
-    return new PLUS<T>(cSQL.valueOf(a), cSQL.valueOf(b));
+    return new PLUS<T>(Field.valueOf(a), Field.valueOf(b));
   }
 
   public static class MINUS<T> extends Function<T> {
-    protected MINUS(final cSQL<T> a, final cSQL<T> b) {
+    protected MINUS(final Field<T> a, final Field<T> b) {
       super(a, b);
     }
 
     protected void serialize(final Serialization serialization) {
-      serialize(a, serialization);
+      a.serialize(serialization);
       serialization.sql.append(" - ");
-      serialize(b, serialization);
+      b.serialize(serialization);
     }
   }
 
-  public static <T>MINUS<T> MINUS(final Column<T> a, final Column<T> b) {
+  public static <T>MINUS<T> MINUS(final Field<T> a, final Field<T> b) {
     return new MINUS<T>(a, b);
   }
 
-  public static <T>MINUS<T> MINUS(final Column<T> a, final T b) {
-    return new MINUS<T>(a, cSQL.valueOf(b));
+  public static <T>MINUS<T> MINUS(final Field<T> a, final T b) {
+    return new MINUS<T>(a, Field.valueOf(b));
   }
 
-  public static <T>MINUS<T> MINUS(final T a, final Column<T> b) {
-    return new MINUS<T>(cSQL.valueOf(a), b);
+  public static <T>MINUS<T> MINUS(final T a, final Field<T> b) {
+    return new MINUS<T>(Field.valueOf(a), b);
   }
 
   public static <T>MINUS<T> MINUS(final T a, final T b) {
-    return new MINUS<T>(cSQL.valueOf(a), cSQL.valueOf(b));
+    return new MINUS<T>(Field.valueOf(a), Field.valueOf(b));
   }
 
   /** Condition **/
@@ -424,63 +422,63 @@ public abstract class DML extends cSQL<Object> {
     return new BooleanCondition(Operator.OR, conditions);
   }
 
-  public static <T>LogicalCondition<T> GT(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> GT(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>(">", a, b);
   }
 
-  public static <T>LogicalCondition<T> GT(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> GT(final Field<T> a, final T b) {
     return new LogicalCondition<T>(">", a, b);
   }
 
-  public static <T>LogicalCondition<T> GT(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> GT(final T a, final Field<T> b) {
     return new LogicalCondition<T>(">", a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> GTE(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>(">=", a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> GTE(final Field<T> a, final T b) {
     return new LogicalCondition<T>(">=", a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> GTE(final T a, final Field<T> b) {
     return new LogicalCondition<T>(">=", a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> EQ(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>("=", a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> EQ(final Field<T> a, final T b) {
     return new LogicalCondition<T>("=", a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> EQ(final T a, final Field<T> b) {
     return new LogicalCondition<T>("=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LT(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>("<", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> LT(final Field<T> a, final T b) {
     return new LogicalCondition<T>("<", a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LT(final T a, final Field<T> b) {
     return new LogicalCondition<T>("<", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Column<T> a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LTE(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Column<T> a, final T b) {
+  public static <T>LogicalCondition<T> LTE(final Field<T> a, final T b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final T a, final Column<T> b) {
+  public static <T>LogicalCondition<T> LTE(final T a, final Field<T> b) {
     return new LogicalCondition<T>("<=", a, b);
   }
 }

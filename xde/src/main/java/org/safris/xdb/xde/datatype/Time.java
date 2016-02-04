@@ -14,32 +14,31 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
 
-import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Column;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class DateTime extends Column<LocalDateTime> {
-  protected static final int sqlType = Types.TIMESTAMP;
+public final class Time extends DataType<LocalTime> {
+  protected static final int sqlType = Types.TIME;
 
-  protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDateTime value) throws SQLException {
-    statement.setTimestamp(parameterIndex, new Timestamp(value.toDate().getTime()));
+  protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalTime value) throws SQLException {
+    statement.setTime(parameterIndex, new java.sql.Time(value.toDateTimeToday().toDate().getTime()));
   }
 
-  public DateTime(final Table owner, final String csqlName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalDateTime> generateOnInsert, final GenerateOn<LocalDateTime> generateOnUpdate) {
-    super(sqlType, LocalDateTime.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Time(final Entity owner, final String csqlName, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalTime> generateOnInsert, final GenerateOn<LocalTime> generateOnUpdate) {
+    super(sqlType, LocalTime.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected DateTime(final DateTime column) {
+  protected Time(final Time column) {
     super(column);
   }
 
@@ -51,8 +50,8 @@ public final class DateTime extends Column<LocalDateTime> {
     set(statement, parameterIndex, get());
   }
 
-  protected LocalDateTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Timestamp value = resultSet.getTimestamp(columnIndex);
-    return value == null ? null : new LocalDateTime(value.getTime());
+  protected LocalTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Time value = resultSet.getTime(columnIndex);
+    return value == null ? null : new LocalTime(value.getTime());
   }
 }

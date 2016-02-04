@@ -14,40 +14,39 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.column;
+package org.safris.xdb.xde.datatype;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.Column;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Table;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
-public final class Decimal extends Column<java.lang.Double> {
-  protected static final int sqlType = Types.DECIMAL;
+public final class MediumInt extends DataType<Integer> {
+  protected static final int sqlType = Types.SMALLINT;
 
-  protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Double value) throws SQLException {
-    statement.setDouble(parameterIndex, value);
+  protected static void set(final PreparedStatement statement, final int parameterIndex, final Integer value) throws SQLException {
+    statement.setInt(parameterIndex, value);
   }
 
   public final int precision;
-  public int decimal;
   public final boolean unsigned;
-  public final java.lang.Double min;
-  public final java.lang.Double max;
+  public final Integer min;
+  public final Integer max;
 
-  public Decimal(final Table owner, final String csqlName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Double> generateOnInsert, final GenerateOn<java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
-    super(sqlType, java.lang.Double.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public MediumInt(final Entity owner, final String csqlName, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Integer> generateOnInsert, final GenerateOn<Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
+    super(sqlType, Integer.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;
     this.max = max;
   }
 
-  protected Decimal(final Decimal column) {
+  protected MediumInt(final MediumInt column) {
     super(column);
     this.precision = column.precision;
     this.unsigned = column.unsigned;
@@ -63,8 +62,8 @@ public final class Decimal extends Column<java.lang.Double> {
     set(statement, parameterIndex, get());
   }
 
-  protected java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final double value = resultSet.getDouble(columnIndex);
+  protected Integer get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final int value = resultSet.getInt(columnIndex);
     return resultSet.wasNull() ? null : value;
   }
 }

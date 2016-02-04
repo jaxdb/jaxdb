@@ -23,22 +23,21 @@ import java.sql.Statement;
 
 import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.sql.StatementProxy;
-import org.safris.xdb.xde.csql.Entity;
 import org.safris.xdb.xde.csql.expression.CASE;
 import org.safris.xdb.xdl.DBVendor;
 
 class Update {
-  private static abstract class Execute<T> extends cSQL<T> {
+  private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
     public int execute(final Transaction transaction) throws XDEException {
-      final cSQL<?> update = getParentRoot(this);
-      final Class<? extends Schema> schema = (((UPDATE<?>)update).table).schema();
+      final Keyword<?> update = getParentRoot(this);
+      final Class<? extends Schema> schema = (((UPDATE<?>)update).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
         serialize(serialization);
-        clearAliases();
+        Entity.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
           serialization.set(statement);
@@ -72,34 +71,34 @@ class Update {
     }
   }
 
-  private abstract static class UPDATE_SET<T> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
-    public final <B>SET<T,B> SET(final Column<B> set, final Function<B> to) {
+  private abstract static class UPDATE_SET<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
+    public final <B>SET<T,B> SET(final Field<B> set, final Function<B> to) {
       return new SET<T,B>(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Column<B> set, final CASE<B> to) {
+    public final <B>SET<T,B> SET(final Field<B> set, final CASE<B> to) {
       return new SET<T,B>(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Column<B> set, final Column<B> to) {
+    public final <B>SET<T,B> SET(final Field<B> set, final Field<B> to) {
       return new SET<T,B>(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Column<B> set, final B to) {
-      return new SET<T,B>(this, set, cSQL.valueOf(to));
+    public final <B>SET<T,B> SET(final Field<B> set, final B to) {
+      return new SET<T,B>(this, set, Field.valueOf(to));
     }
   }
 
-  protected final static class WHERE<T> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE<T> {
-    private final cSQL<T> parent;
+  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE<T> {
+    private final Keyword<T> parent;
     private final Condition<?> condition;
 
-    protected WHERE(final cSQL<T> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
       this.parent = parent;
       this.condition = condition;
     }
 
-    protected cSQL<?> parent() {
+    protected Keyword<T> parent() {
       return parent;
     }
 
@@ -110,34 +109,34 @@ class Update {
     }
   }
 
-  protected final static class UPDATE<T> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
-    protected final Table table;
+  protected final static class UPDATE<T extends Data<?>> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
+    protected final Entity entity;
 
-    protected UPDATE(final Table table) {
-      this.table = table;
+    protected UPDATE(final Entity entity) {
+      this.entity = entity;
     }
 
-    protected cSQL<?> parent() {
+    protected Keyword<T> parent() {
       return null;
     }
 
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("UPDATE ");
-      serialize(table, serialization);
+      entity.serialize(serialization);
     }
 
     protected String encodeSingle(final Serialization serialization) {
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
-      String sql = "UPDATE " + table.name() + " SET ";
+      String sql = "UPDATE " + entity.name() + " SET ";
       String columns = "";
       String where = "";
-      for (final Column<?> column : table.column())
-        if (column.primary)
-          where += " AND " + column.name + " = ?";
+      for (final DataType<?> dataType : entity.column())
+        if (dataType.primary)
+          where += " AND " + dataType.name + " = ?";
         else
-          columns += ", " + column.name + " = ?";
+          columns += ", " + dataType.name + " = ?";
 
       sql += columns.substring(2) + " WHERE " + where.substring(5);
       System.out.println(sql);
@@ -146,8 +145,8 @@ class Update {
 
     public int execute() throws XDEException {
       if (false) {
-        final cSQL<?> table = getParentRoot(this);
-        final Class<? extends Schema> schema = ((Table)table).schema();
+        final UPDATE<?> update = (UPDATE<?>)getParentRoot(this);
+        final Class<? extends Schema> schema = update.entity.schema();
         DBVendor vendor = null;
         try {
           try (final Connection connection = Schema.getConnection(schema)) {
@@ -161,14 +160,14 @@ class Update {
             try (final PreparedStatement statement = connection.prepareStatement(sql)) {
               // set the updated columns first
               int index = 0;
-              for (final Column<?> column : ((Table)table).column())
-                if (!column.primary)
-                  column.set(statement, ++index);
+              for (final DataType<?> dataType : update.entity.column())
+                if (!dataType.primary)
+                  dataType.set(statement, ++index);
 
               // then the conditional columns
-              for (final Column<?> column : ((Table)table).column())
-                if (column.primary)
-                  column.set(statement, ++index);
+              for (final DataType<?> dataType : update.entity.column())
+                if (dataType.primary)
+                  dataType.set(statement, ++index);
 
               System.err.println(statement.toString());
               return statement.executeUpdate();
@@ -180,41 +179,35 @@ class Update {
         }
       }
 
-      clearAliases();
+      Entity.clearAliases();
       return super.execute();
     }
   }
 
-  protected final static class SET<T,B> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.SET<T,B> {
-    private final cSQL<T> parent;
-    private final Column<B> set;
-    private final Entity to;
+  protected final static class SET<T extends Data<?>,B> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.SET<T,B> {
+    private final Keyword<T> parent;
+    private final Field<B> set;
+    private final Serializable to;
 
-    protected SET(final cSQL<T> parent, final Column<B> set, final Function<B> to) {
+    protected SET(final Keyword<T> parent, final Field<B> set, final Function<B> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
     }
 
-    protected SET(final cSQL<T> parent, final Column<B> set, final Aggregate to) {
+    protected SET(final Keyword<T> parent, final Field<B> set, final Aggregate<B> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
     }
 
-    protected SET(final cSQL<T> parent, final Column<B> set, final CASE<B> to) {
+    protected SET(final Keyword<T> parent, final Field<B> set, final CASE<B> to) {
       this.parent = parent;
       this.set = set;
-      this.to = to;
+      this.to = (Expression<Field<T>>)to;
     }
 
-    protected SET(final cSQL<T> parent, final Column<B> set, final Column<B> to) {
-      this.parent = parent;
-      this.set = set;
-      this.to = to;
-    }
-
-    protected SET(final cSQL<T> parent, final Column<B> set, final cSQL<B> to) {
+    protected SET(final Keyword<T> parent, final Field<B> set, final Field<B> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
@@ -224,16 +217,16 @@ class Update {
       return new WHERE<T>(this, condition);
     }
 
-    protected cSQL<?> parent() {
-      return parent;
+    protected Keyword<T> parent() {
+      return null;
     }
 
     protected void serialize(final Serialization serialization) {
-      serialize(parent, serialization);
+      parent.serialize(serialization);
       serialization.sql.append(" SET ");
-      serialize(set, serialization);
+      set.serialize(serialization);
       serialization.sql.append(" = ");
-      serialize(to, serialization);
+      to.serialize(serialization);
     }
   }
 }

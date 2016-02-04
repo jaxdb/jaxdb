@@ -26,37 +26,37 @@ import org.safris.commons.sql.StatementProxy;
 import org.safris.xdb.xdl.DBVendor;
 
 class Insert {
-  protected static class INSERT extends cSQL<Table> implements org.safris.xdb.xde.csql.insert.INSERT {
-    protected final Table table;
+  protected static class INSERT extends Keyword<Data<?>> implements org.safris.xdb.xde.csql.insert.INSERT {
+    protected final Entity entity;
 
-    protected INSERT(final Table table) {
-      this.table = table;
+    protected INSERT(final Entity entity) {
+      this.entity = entity;
     }
 
-    protected cSQL<?> parent() {
+    protected Keyword<Data<?>> parent() {
       return null;
     }
 
     protected void serialize(final Serialization serialization) {
-      serialization.sql.append("INSERT INTO ").append(table.name());
+      serialization.sql.append("INSERT INTO ").append(entity.name());
       String columns = "";
       String values = "";
       if (serialization.statementType == PreparedStatement.class) {
-        for (final Column column : table.column()) {
-          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.set(column.generateOnInsert.generate()) : column.generateOnUpdate != null ? column.set(column.generateOnUpdate.generate()) : null;
+        for (final DataType dataType : entity.column()) {
+          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            columns += ", " + column.name;
-            values += ", " + column.getPreparedStatementMark(serialization.vendor);
+            columns += ", " + dataType.name;
+            values += ", " + dataType.getPreparedStatementMark(serialization.vendor);
             serialization.addParameter(value);
           }
         }
       }
       else if (serialization.statementType == Statement.class) {
-        for (final Column column : table.column()) {
-          final Object value = column.wasSet() ? column.get() : column.generateOnInsert != null ? column.set(column.generateOnInsert.generate()) : column.generateOnUpdate != null ? column.set(column.generateOnUpdate.generate()) : null;
+        for (final DataType dataType : entity.column()) {
+          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            columns += ", " + column.name;
-            values += ", " + cSQLObject.toString(value);
+            columns += ", " + dataType.name;
+            values += ", " + FieldWrapper.toString(value);
           }
         }
       }
@@ -68,8 +68,8 @@ class Insert {
     }
 
     public int execute(final Transaction transaction) throws XDEException {
-      final cSQL<?> insert = getParentRoot(this);
-      final Class<? extends Schema> schema = (((INSERT)insert).table).schema();
+      final Keyword<?> insert = getParentRoot(this);
+      final Class<? extends Schema> schema = (((INSERT)insert).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
@@ -77,7 +77,7 @@ class Insert {
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
         serialize(serialization);
-        clearAliases();
+        Entity.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
           serialization.set(statement);

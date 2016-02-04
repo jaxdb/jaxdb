@@ -16,7 +16,6 @@
 
 package org.safris.xdb.xde;
 
-import java.lang.reflect.Field;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -31,11 +30,11 @@ import java.util.StringTokenizer;
 import org.safris.commons.lang.Numbers;
 
 public final class Tables {
-  public static String name(final Table table) {
-    return table.name();
+  public static String name(final Entity entity) {
+    return entity.name();
   }
 
-  private static List<Column<?>> getSelection(final String string, final Map<String,Class<? extends Table>> aliases) {
+  private static List<DataType<?>> getSelection(final String string, final Map<String,Class<? extends Entity>> aliases) {
     final StringTokenizer tokenizer = new StringTokenizer(string, " \t\n\r\f,");
     final List<String> selection = new ArrayList<String>();
     while (tokenizer.hasMoreTokens()) {
@@ -49,23 +48,23 @@ public final class Tables {
       selection.add(token);
     }
 
-    final List<Column<?>> columns = new ArrayList<Column<?>>(selection.size());
+    final List<DataType<?>> dataTypes = new ArrayList<DataType<?>>(selection.size());
     for (final String select : selection)
-      for (final Column<?> column : identity(aliases.get(select)).column())
-        columns.add(column);
+      for (final DataType<?> dataType : identity(aliases.get(select)).column())
+        dataTypes.add(dataType);
 
-    return columns;
+    return dataTypes;
   }
 
-  private static Map<String,Class<? extends Table>> getAliases(final String string) {
+  private static Map<String,Class<? extends Entity>> getAliases(final String string) {
     try {
-      final Map<String,Class<? extends Table>> aliases = new HashMap<String,Class<? extends Table>>();
+      final Map<String,Class<? extends Entity>> aliases = new HashMap<String,Class<? extends Entity>>();
 
       final StringTokenizer tokenizer = new StringTokenizer(string, " \t\n\r\f,()");
       final List<String> selection = new ArrayList<String>();
       boolean isInFrom = false;
 
-      Class<? extends Table> entityClass = null;
+      Class<? extends Entity> entityClass = null;
       while (tokenizer.hasMoreTokens()) {
         final String token = tokenizer.nextToken();
         if (!isInFrom) {
@@ -84,7 +83,7 @@ public final class Tables {
           break;
 
         if (entityClass == null) {
-          entityClass = (Class<? extends Table>)Class.forName("xdb.xde." + token.replace('.', '$'));
+          entityClass = (Class<? extends Entity>)Class.forName("xdb.xde." + token.replace('.', '$'));
         }
         else {
           aliases.put(token, entityClass);
@@ -105,33 +104,33 @@ public final class Tables {
     COLUMN,
   }
 
-  protected static String listColumns(final Class<? extends Table> entity, final String alias) {
-    final Table identity = identity(entity);
+  protected static String listColumns(final Class<? extends Entity> entity, final String alias) {
+    final Entity identity = identity(entity);
     String out = "";
-    for (final Column<?> column : identity.column())
-      out += ", " + alias + "." + column.name;
+    for (final DataType<?> dataType : identity.column())
+      out += ", " + alias + "." + dataType.name;
 
     return out.substring(2);
   }
 
-  private static final Table identity(final Class<? extends Table> entity) {
+  private static final Entity identity(final Class<? extends Entity> entity) {
     try {
-      final Field field = entity.getDeclaredField("identity");
+      final java.lang.reflect.Field field = entity.getDeclaredField("identity");
       field.setAccessible(true);
-      return (Table)field.get(null);
+      return (Entity)field.get(null);
     }
     catch (final Exception e) {
       throw new Error(e);
     }
   }
 
-  private static String transform(final String string, final Map<String,Class<? extends Table>> aliases) {
+  private static String transform(final String string, final Map<String,Class<? extends Entity>> aliases) {
     try {
       final String delims = " \t\n\r\f(),";
       final StringTokenizer tokenizer = new StringTokenizer(string, delims, true);
       Zone zone = null;
       String out = "";
-      Class<? extends Table> entityClass = null;
+      Class<? extends Entity> entityClass = null;
       while (tokenizer.hasMoreTokens()) {
         final String token = tokenizer.nextToken();
         if (token.length() == 1 && delims.contains(token)) {
@@ -159,7 +158,7 @@ public final class Tables {
             continue;
           }
 
-          final Class<? extends Table> entity = aliases.get(token);
+          final Class<? extends Entity> entity = aliases.get(token);
           if (entity == null)
             throw new Error("Unknown entity for: " + token);
 
@@ -178,8 +177,8 @@ public final class Tables {
           }
 
           if (entityClass == null) {
-            entityClass = (Class<? extends Table>)Class.forName("xdb.xde." + token.replace('.', '$'));
-            final Table identity = identity(entityClass);
+            entityClass = (Class<? extends Entity>)Class.forName("xdb.xde." + token.replace('.', '$'));
+            final Entity identity = identity(entityClass);
             out += identity.name();
           }
           else {
@@ -198,11 +197,11 @@ public final class Tables {
 
           final String alias = token.substring(0, dot);
           final String field = token.substring(dot + 1);
-          final Class<? extends Table> entity = aliases.get(alias);
-          final Table identity = identity(entity);
-          for (final Column<?> col : identity.column()) {
-            if (col.csqlName.equals(field)) {
-              out += alias + "." + col.name;
+          final Class<? extends Entity> entity = aliases.get(alias);
+          final Entity identity = identity(entity);
+          for (final DataType<?> dataType : identity.column()) {
+            if (dataType.csqlName.equals(field)) {
+              out += alias + "." + dataType.name;
               break;
             }
           }
@@ -216,17 +215,17 @@ public final class Tables {
     }
   }
 
-  public static <T extends cSQL<?>>List<T[]> executeQuery(final String string) throws SQLException {
-    final Map<String,Class<? extends Table>> aliases = getAliases(string);
-    final List<Column<?>> columns = getSelection(string, aliases);
-    Table lastIdentity = null;
+  public static <T extends Field<?>>List<T[]> executeQuery(final String string) throws SQLException {
+    final Map<String,Class<? extends Entity>> aliases = getAliases(string);
+    final List<DataType<?>> dataTypes = getSelection(string, aliases);
+    Entity lastIdentity = null;
     int numEntities = 0;
-    for (final Column<?> column : columns) {
-      if (lastIdentity == null || lastIdentity != column.owner) {
+    for (final DataType<?> dataType : dataTypes) {
+      if (lastIdentity == null || lastIdentity != dataType.entity) {
         ++numEntities;
       }
 
-      lastIdentity = column.owner;
+      lastIdentity = dataType.entity;
     }
 
     final String sql = transform(string, aliases);
@@ -238,24 +237,24 @@ public final class Tables {
     ) {
       int index = 0;
       int colCount = 0;
-      Table current = null;
+      Entity current = null;
       final List entities = new ArrayList();
       try {
         while (resultSet.next()) {
           int cursor = 0;
-          final Table[] row = new Table[numEntities];
+          final Entity[] row = new Entity[numEntities];
           entities.add(row);
-          for (final Column<?> column : columns) {
-            if (current == null || lastIdentity == null || lastIdentity != column.owner) {
-              row[cursor++] = current = column.owner.getClass().newInstance();
+          for (final DataType<?> dataType : dataTypes) {
+            if (current == null || lastIdentity == null || lastIdentity != dataType.entity) {
+              row[cursor++] = current = dataType.entity.getClass().newInstance();
               colCount = 0;
             }
 
             // FIXME: Copy of code in Entity.select()
-            final Column col = ((Column<Object>)current.column()[colCount++]);
+            final DataType col = ((DataType<Object>)current.column()[colCount++]);
             if (col.type.isEnum())
               col.set(Enum.valueOf(col.type, (String)resultSet.getObject(++index, String.class)));
-            else if (((Column<?>)col).type == BigInteger.class) {
+            else if (((DataType<?>)col).type == BigInteger.class) {
               final Object value = resultSet.getObject(++index);
               col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
             }
@@ -263,7 +262,7 @@ public final class Tables {
               col.set(resultSet.getObject(++index, col.type));
             }
 
-            lastIdentity = column.owner;
+            lastIdentity = dataType.entity;
           }
         }
       }

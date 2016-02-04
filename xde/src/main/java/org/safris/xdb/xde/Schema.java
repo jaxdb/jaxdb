@@ -56,13 +56,13 @@ public abstract class Schema {
     }
   }
 
-  protected static void createDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {
+  protected static void createDDL(final Class<? extends Schema> schema, final Entity[] identity) throws SQLException {
     try (
       final Connection connection = getConnection(schema);
       final Statement statement = connection.createStatement();
     ) {
       final DBVendor vendor = getDBVendor(connection);
-      for (final org.safris.xdb.xde.Table entity : identity) {
+      for (final org.safris.xdb.xde.Entity entity : identity) {
         final String[] sqls = entity.ddl(vendor, DDL.Type.CREATE);
         for (final String sql : sqls)
           statement.execute(sql);
@@ -70,7 +70,7 @@ public abstract class Schema {
     }
   }
 
-  protected static void dropDDL(final Class<? extends Schema> schema, final Table[] identity) throws SQLException {
+  protected static void dropDDL(final Class<? extends Schema> schema, final Entity[] identity) throws SQLException {
     try (
       final Connection connection = getConnection(schema);
       final Statement statement = connection.createStatement();

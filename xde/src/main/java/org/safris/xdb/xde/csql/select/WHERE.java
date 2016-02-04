@@ -16,12 +16,7 @@
 
 package org.safris.xdb.xde.csql.select;
 
-import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.csql.Entity;
+import org.safris.xdb.xde.Data;
 
-public interface WHERE<T extends Entity> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T> {
-}
-
-interface _WHERE<T extends Entity> {
-  public WHERE<T> WHERE(final Condition<?> condition);
+public interface WHERE<T extends Data<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T> {
 }

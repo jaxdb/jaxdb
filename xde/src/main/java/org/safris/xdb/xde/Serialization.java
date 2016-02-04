@@ -29,7 +29,7 @@ public class Serialization {
   protected void set(final PreparedStatement statement) {
     for (int i = 0; i < parameters.size(); i++) {
       final Object parameter = parameters.get(i);
-      Column.set(statement, i + 1, parameter.getClass(), parameter);
+      DataType.set(statement, i + 1, parameter.getClass(), parameter);
     }
   }
 

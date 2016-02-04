@@ -18,9 +18,8 @@ package org.safris.xdb.xde.csql.insert;
 
 import org.safris.xdb.xde.Transaction;
 import org.safris.xdb.xde.XDEException;
-import org.safris.xdb.xde.csql.Entity;
 
-public interface INSERT extends Entity {
+public interface INSERT {
   public int execute(final Transaction transaction) throws XDEException;
   public int execute() throws XDEException;
 }
