@@ -17,8 +17,7 @@
 package org.safris.xdb.xde.csql.update;
 
 import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.Data;
 
-public interface SET<T extends Data<?>,B> extends UPDATE_SET<T> {
-  public UPDATE<T> WHERE(final Condition<?> condition);
+public interface SET extends UPDATE_SET {
+  public UPDATE WHERE(final Condition<?> condition);
 }

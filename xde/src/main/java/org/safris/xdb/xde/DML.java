@@ -181,8 +181,8 @@ public abstract class DML {
 
   /** DELETE **/
 
-  public static <T extends Data<?>>UPDATE_SET<T> UPDATE(final Entity entity) {
-    return new Update.UPDATE<T>(entity);
+  public static <T>UPDATE_SET UPDATE(final Entity entity) {
+    return new Update.UPDATE(entity);
   }
 
   public static <T extends Data<?>>DELETE_WHERE<T> DELETE(final Entity entity) {

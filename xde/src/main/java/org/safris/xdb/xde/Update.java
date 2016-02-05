@@ -27,10 +27,10 @@ import org.safris.xdb.xde.csql.expression.CASE;
 import org.safris.xdb.xdl.DBVendor;
 
 class Update {
-  private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
+  private static abstract class Execute extends Keyword<DataType<?>> {
     public int execute(final Transaction transaction) throws XDEException {
       final Keyword<?> update = getParentRoot(this);
-      final Class<? extends Schema> schema = (((UPDATE<?>)update).entity).schema();
+      final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
@@ -71,34 +71,34 @@ class Update {
     }
   }
 
-  private abstract static class UPDATE_SET<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
-    public final <B>SET<T,B> SET(final Field<B> set, final Function<B> to) {
-      return new SET<T,B>(this, set, to);
+  private abstract static class UPDATE_SET extends Execute implements org.safris.xdb.xde.csql.update.UPDATE_SET {
+    public final <T>SET SET(final DataType<T> set, final Function<T> to) {
+      return new SET(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Field<B> set, final CASE<B> to) {
-      return new SET<T,B>(this, set, to);
+    public final <T>SET SET(final DataType<T> set, final CASE<T> to) {
+      return new SET(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Field<B> set, final Field<B> to) {
-      return new SET<T,B>(this, set, to);
+    public final <T>SET SET(final DataType<T> set, final Field<T> to) {
+      return new SET(this, set, to);
     }
 
-    public final <B>SET<T,B> SET(final Field<B> set, final B to) {
-      return new SET<T,B>(this, set, Field.valueOf(to));
+    public final <T>SET SET(final DataType<T> set, final T to) {
+      return new SET(this, set, Field.valueOf(to));
     }
   }
 
-  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.update.UPDATE<T> {
-    private final Keyword<T> parent;
+  protected final static class WHERE extends Execute implements org.safris.xdb.xde.csql.update.UPDATE {
+    private final Keyword<DataType<?>> parent;
     private final Condition<?> condition;
 
-    protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
       this.parent = parent;
       this.condition = condition;
     }
 
-    protected Keyword<T> parent() {
+    protected Keyword<DataType<?>> parent() {
       return parent;
     }
 
@@ -109,14 +109,14 @@ class Update {
     }
   }
 
-  protected final static class UPDATE<T extends Data<?>> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.UPDATE_SET<T> {
+  protected final static class UPDATE extends UPDATE_SET implements org.safris.xdb.xde.csql.update.UPDATE_SET {
     protected final Entity entity;
 
     protected UPDATE(final Entity entity) {
       this.entity = entity;
     }
 
-    protected Keyword<T> parent() {
+    protected Keyword<DataType<?>> parent() {
       return null;
     }
 
@@ -145,7 +145,7 @@ class Update {
 
     public int execute() throws XDEException {
       if (false) {
-        final UPDATE<?> update = (UPDATE<?>)getParentRoot(this);
+        final UPDATE update = (UPDATE)getParentRoot(this);
         final Class<? extends Schema> schema = update.entity.schema();
         DBVendor vendor = null;
         try {
@@ -184,40 +184,46 @@ class Update {
     }
   }
 
-  protected final static class SET<T extends Data<?>,B> extends UPDATE_SET<T> implements org.safris.xdb.xde.csql.update.SET<T,B> {
-    private final Keyword<T> parent;
-    private final Field<B> set;
+  protected final static class SET extends UPDATE_SET implements org.safris.xdb.xde.csql.update.SET {
+    private final Keyword<? extends DataType<?>> parent;
+    private final DataType<?> set;
     private final Serializable to;
 
-    protected SET(final Keyword<T> parent, final Field<B> set, final Function<B> to) {
+    protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final Function<T> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
     }
 
-    protected SET(final Keyword<T> parent, final Field<B> set, final Aggregate<B> to) {
+    protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final Aggregate<T> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
     }
 
-    protected SET(final Keyword<T> parent, final Field<B> set, final CASE<B> to) {
+    protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final CASE<T> to) {
       this.parent = parent;
       this.set = set;
       this.to = (Expression<Field<T>>)to;
     }
 
-    protected SET(final Keyword<T> parent, final Field<B> set, final Field<B> to) {
+    protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final Field<T> to) {
       this.parent = parent;
       this.set = set;
       this.to = to;
     }
 
-    public WHERE<T> WHERE(final Condition<?> condition) {
-      return new WHERE<T>(this, condition);
+    protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final T to) {
+      this.parent = parent;
+      this.set = set;
+      this.to = FieldWrapper.valueOf(to);
     }
 
-    protected Keyword<T> parent() {
+    public WHERE WHERE(final Condition<?> condition) {
+      return new WHERE(this, condition);
+    }
+
+    protected Keyword<DataType<?>> parent() {
       return null;
     }
 

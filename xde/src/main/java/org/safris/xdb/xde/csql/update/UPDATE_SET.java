@@ -16,14 +16,14 @@
 
 package org.safris.xdb.xde.csql.update;
 
+import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Field;
-import org.safris.xdb.xde.Data;
 import org.safris.xdb.xde.Function;
 import org.safris.xdb.xde.csql.expression.CASE;
 
-public interface UPDATE_SET<T extends Data<?>> extends UPDATE<T> {
-  public <B>SET<T,B> SET(final Field<B> set, final Function<B> to);
-  public <B>SET<T,B> SET(final Field<B> set, final CASE<B> to);
-  public <B>SET<T,B> SET(final Field<B> set, final Field<B> to);
-  public <B>SET<T,B> SET(final Field<B> set, final B to);
+public interface UPDATE_SET extends UPDATE {
+  public <T>SET SET(final DataType<T> set, final Function<T> to);
+  public <T>SET SET(final DataType<T> set, final CASE<T> to);
+  public <T>SET SET(final DataType<T> set, final Field<T> to);
+  public <T>SET SET(final DataType<T> set, final T to);
 }

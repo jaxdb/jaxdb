@@ -18,6 +18,6 @@ package org.safris.xdb.xde.csql.update;
 
 import org.safris.xdb.xde.XDEException;
 
-public interface UPDATE<T> {
+public interface UPDATE {
   public int execute() throws XDEException;
 }
