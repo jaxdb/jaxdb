@@ -53,7 +53,7 @@ class Select {
 
   private static <B extends Data<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final Statement statement, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
     final List<Pair<DataType<?>,Integer>> dataTypes = new ArrayList<Pair<DataType<?>,Integer>>();
-    for (final Data entity : select.entities)
+    for (final Data<?> entity : select.entities)
       Select.serialize(dataTypes, entity);
 
     final int noColumns = resultSet.getMetaData().getColumnCount();
@@ -140,6 +140,7 @@ class Select {
           cache.clear();
           currentTable = null;
           dataTypes.clear();
+          rows.clear();
         }
       }
     };
@@ -613,6 +614,9 @@ class Select {
                 }
                 catch (final SQLException e) {
                   throw XDEException.lookup(e, finalVendor);
+                }
+                finally {
+                  rows.clear();
                 }
               }
             };
