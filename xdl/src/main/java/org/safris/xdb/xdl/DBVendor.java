@@ -18,13 +18,13 @@ package org.safris.xdb.xdl;
 
 import org.safris.xdb.xdl.spec.DerbySQLSpec;
 import org.safris.xdb.xdl.spec.MySQLSpec;
-import org.safris.xdb.xdl.spec.PostreSQLSpec;
+import org.safris.xdb.xdl.spec.PostgreSQLSpec;
 import org.safris.xdb.xdl.spec.SQLSpec;
 
 public enum DBVendor {
   DERBY("Derby", new DerbySQLSpec()),
   MY_SQL("MySQL", new MySQLSpec()),
-  POSTGRE_SQL("PostgreSQL", new PostreSQLSpec());
+  POSTGRE_SQL("PostgreSQL", new PostgreSQLSpec());
 
   public static DBVendor parse(final String value) {
     for (final DBVendor vendor : DBVendor.values())
@@ -46,6 +46,7 @@ public enum DBVendor {
     return sqlSpec;
   }
 
+  @Override
   public String toString() {
     return name;
   }

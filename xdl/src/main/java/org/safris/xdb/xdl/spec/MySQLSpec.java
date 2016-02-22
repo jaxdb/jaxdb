@@ -29,13 +29,14 @@ import org.safris.xdb.xdl.$xdl_dateTime;
 import org.safris.xdb.xdl.$xdl_decimal;
 import org.safris.xdb.xdl.$xdl_enum;
 import org.safris.xdb.xdl.$xdl_float;
-import org.safris.xdb.xdl.$xdl_index;
 import org.safris.xdb.xdl.$xdl_integer;
+import org.safris.xdb.xdl.$xdl_named;
 import org.safris.xdb.xdl.$xdl_table;
 import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
 
 public class MySQLSpec extends SQLSpec {
+  @Override
   public List<String> triggers(final $xdl_table table) {
     if (table._triggers() == null)
       return super.triggers(table);
@@ -79,18 +80,22 @@ public class MySQLSpec extends SQLSpec {
     return statements;
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_char type) {
     return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_bit type) {
     return "BIT(" + type._length$().text() + ")";
   }
 
+  @Override
   public final String type(final $xdl_table table, final $xdl_blob type) {
     return "BLOB(" + type._length$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_integer type) {
     final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
     String sql = "";
@@ -114,6 +119,7 @@ public class MySQLSpec extends SQLSpec {
     return sql;
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_float type) {
     String sql = type._double$().text() ? "DOUBLE" : "FLOAT";
     sql += "(" + type._precision$().text() + ")";
@@ -124,6 +130,7 @@ public class MySQLSpec extends SQLSpec {
     return sql;
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_decimal type) {
     SQLDataTypes.checkValidNumber(type._name$().text(), type._precision$().text(), type._decimal$().text());
     String sql = "DECIMAL(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
@@ -133,22 +140,27 @@ public class MySQLSpec extends SQLSpec {
     return sql;
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_date type) {
     return "DATE";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_time type) {
     return "TIME";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_dateTime type) {
     return "DATETIME(" + type._precision$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_boolean type) {
     return "BOOLEAN";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_enum type) {
     if (type._values$().isNull())
       return "ENUM()";
@@ -160,19 +172,23 @@ public class MySQLSpec extends SQLSpec {
     return "ENUM(" + values.substring(2) + ")";
   }
 
+  @Override
   public String $null(final $xdl_table table, final $xdl_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
+  @Override
   public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
     return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
+  @Override
   protected String dropIndexOnClause(final $xdl_table table) {
     return " ON " + table._name$().text();
   }
 
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName) {
-    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + columnName + ")";
+  @Override
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns) {
+    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
   }
 }

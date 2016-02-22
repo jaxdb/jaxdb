@@ -93,10 +93,12 @@ public final class JPAFieldModel implements Cloneable {
     return realFieldModels;
   }
 
+  @Override
   public JPAFieldModel clone() {
     return new JPAFieldModel(this);
   }
 
+  @Override
   public boolean equals(final Object obj) {
     if (obj == this)
       return true;
@@ -108,6 +110,7 @@ public final class JPAFieldModel implements Cloneable {
     return (columns != null ? columns.equals(that.columns) : that.columns == null) && (foreignKeyModel != null ? foreignKeyModel.equals(that.foreignKeyModel) : that.foreignKeyModel == null) && (isImmutable == that.isImmutable);
   }
 
+  @Override
   public int hashCode() {
     return columns.hashCode() + (foreignKeyModel != null ? foreignKeyModel.hashCode() : -139625) + (isImmutable ? 324 : -7483);
   }
@@ -147,6 +150,7 @@ public final class JPAFieldModel implements Cloneable {
       return checkOnUpdate;
     }
 
+    @Override
     public boolean equals(final Object obj) {
       if (obj == this)
         return true;
@@ -158,6 +162,7 @@ public final class JPAFieldModel implements Cloneable {
       return column != null ? column.equals(that.column) : that.column == null;
     }
 
+    @Override
     public int hashCode() {
       return column._name$().text().hashCode() * (generationStrategy != null ? generationStrategy.hashCode() : -22378);
     }

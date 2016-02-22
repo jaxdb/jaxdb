@@ -99,6 +99,7 @@ public final class JPAForeignKeyModel {
       inverseField = new InverseField(join._inverse(0)._name$().text(), join._inverse(0)._cascade$().text(), fieldModel.getEntityModel().getName(), join._field(0)._name$().text());
   }
 
+  @Override
   public boolean equals(final Object obj) {
     if (obj == this)
       return true;
@@ -116,6 +117,7 @@ public final class JPAForeignKeyModel {
       (referencedColumnNames != null ? referencedColumnNames.equals(that.referencedColumnNames) : that.referencedColumnNames == null);
   }
 
+  @Override
   public int hashCode() {
     return (id != null ? id.hashCode() : -32) + (referencedTableName != null ? referencedTableName.hashCode() : -81364) + (association != null ? association.hashCode() : 32128) + (fetchType != null ? fetchType.hashCode() : -291864) + (field != null ? field.hashCode() : 3864) + (inverseField != null ? inverseField.hashCode() : -82796) + (referencedColumnNames != null ? referencedColumnNames.hashCode() : 3792);
   }
@@ -137,6 +139,7 @@ public final class JPAForeignKeyModel {
       return cascade;
     }
 
+    @Override
     public boolean equals(final Object obj) {
       if (obj == this)
         return true;
@@ -148,6 +151,7 @@ public final class JPAForeignKeyModel {
       return (name != null ? name.equals(that.name) : that.name == null) && (cascade != null ? cascade.equals(that.cascade) : that.cascade == null);
     }
 
+    @Override
     public int hashCode() {
       return (name != null ? name.hashCode() : -382) + (cascade != null ? cascade.hashCode() : -32382);
     }
@@ -177,6 +181,7 @@ public final class JPAForeignKeyModel {
       return inverseAssociation;
     }
 
+    @Override
     public boolean equals(final Object obj) {
       if (obj == this)
         return true;
@@ -188,6 +193,7 @@ public final class JPAForeignKeyModel {
       return (referencedTableName != null ? referencedTableName.equals(that.referencedTableName) : that.referencedTableName == null) && (mappedBy != null ? mappedBy.equals(that.mappedBy) : that.mappedBy == null) && (inverseAssociation == that.inverseAssociation);
     }
 
+    @Override
     public int hashCode() {
       return super.hashCode() + referencedTableName.hashCode() + mappedBy.hashCode() + inverseAssociation.hashCode();
     }

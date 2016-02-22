@@ -31,11 +31,13 @@ import org.safris.xdb.xdl.$xdl_enum;
 import org.safris.xdb.xdl.$xdl_float;
 import org.safris.xdb.xdl.$xdl_index;
 import org.safris.xdb.xdl.$xdl_integer;
+import org.safris.xdb.xdl.$xdl_named;
 import org.safris.xdb.xdl.$xdl_table;
 import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
 
-public class PostreSQLSpec extends SQLSpec {
+public class PostgreSQLSpec extends SQLSpec {
+  @Override
   public List<String> drops(final $xdl_table table) {
     final List<String> statements = super.drops(table);
     if (table._column() != null) {
@@ -54,6 +56,7 @@ public class PostreSQLSpec extends SQLSpec {
     return statements;
   }
 
+  @Override
   public List<String> types(final $xdl_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._column() != null) {
@@ -84,10 +87,12 @@ public class PostreSQLSpec extends SQLSpec {
     return statements;
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_char type) {
     return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_bit type) {
     String sql = "BIT";
     if (type._variant$().text())
@@ -97,10 +102,12 @@ public class PostreSQLSpec extends SQLSpec {
     return sql;
   }
 
+  @Override
   public final String type(final $xdl_table table, final $xdl_blob type) {
     return "BLOB(" + type._length$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_integer type) {
     final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), false, type._min$().text(), type._max$().text());
     if (noBytes == 1) // 2^8 = 256
@@ -118,48 +125,76 @@ public class PostreSQLSpec extends SQLSpec {
     return "BIGINT";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_float type) {
     return (type._double$().text() ? "DOUBLE PRECISION" : "REAL") + "(" + type._precision$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_decimal type) {
     SQLDataTypes.checkValidNumber(type._name$().text(), type._precision$().text(), type._decimal$().text());
     return "DECIMAL(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_date type) {
     return "DATE";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_time type) {
     return "TIME";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_dateTime type) {
     return "TIMESTAMP(" + type._precision$().text() + ")";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_boolean type) {
     return "BOOLEAN";
   }
 
+  @Override
   public String type(final $xdl_table table, final $xdl_enum type) {
-    return SQLDataTypes.getTypeName(table._name$().text(), (($xdl_enum)type)._name$().text());
+    return SQLDataTypes.getTypeName(table._name$().text(), type._name$().text());
   }
 
+  @Override
   public String $null(final $xdl_table table, final $xdl_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
+  @Override
   public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
     return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
+  @Override
   protected String dropIndexOnClause(final $xdl_table table) {
     return "";
   }
 
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName) {
-    return "CREATE " + (unique && !$xdl_index._type$.HASH.text().equals(type) ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + columnName + ")";
+  @Override
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns) {
+    final String uniqueClause;
+    if ($xdl_index._type$.HASH.text().equals(type)) {
+      if (columns.length > 1) {
+        System.err.println("[WARNING] Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+        return "";
+      }
+
+      if (unique) {
+        System.err.println("[WARNING] UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
+      }
+
+      uniqueClause = "";
+    }
+    else {
+      uniqueClause = unique ? "UNIQUE " : "";
+    }
+
+    return "CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + SQLDataTypes.csvNames(columns) + ")";
   }
 }

@@ -50,6 +50,7 @@ public final class DDLTransform extends XDLTransformer {
       this.name = name;
     }
 
+    @Override
     public String toString() {
       return name;
     }
@@ -634,7 +635,7 @@ public final class DDLTransform extends XDLTransformer {
     return contraintsBuffer.toString();
   }
 
-  private void registerColumns(final Set<String> tableNames, final Map<String,$xdl_column> columnNameToColumn, final $xdl_table table) {
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$xdl_column> columnNameToColumn, final $xdl_table table) {
     final String tableName = table._name$().text();
     checkName(tableName);
 

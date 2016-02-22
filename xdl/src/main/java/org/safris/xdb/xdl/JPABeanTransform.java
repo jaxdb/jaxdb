@@ -130,7 +130,7 @@ public final class JPABeanTransform extends XDLTransformer {
     pkg = NamespaceBinding.getPackageFromNamespace(getPackageName(database));
   }
 
-  private String[] parseType(final $xdl_column column, final StringBuffer columnsBuffer) {
+  private static String[] parseType(final $xdl_column column, final StringBuffer columnsBuffer) {
     final String columnType;
     final String columnDef;
     if (column instanceof $xdl_enum) {

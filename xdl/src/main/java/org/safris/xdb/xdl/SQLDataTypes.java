@@ -23,7 +23,11 @@ import org.safris.xml.generator.compiler.runtime.BindingList;
 
 public final class SQLDataTypes {
   public static String csvNames(final BindingList<$xdl_named> names) {
-    if (names.size() == 0)
+    return names.size() == 0 ? "" : csvNames(names.toArray(new $xdl_named[names.size()]));
+  }
+
+  public static String csvNames(final $xdl_named ... names) {
+    if (names.length == 0)
       return "";
 
     String csv = "";

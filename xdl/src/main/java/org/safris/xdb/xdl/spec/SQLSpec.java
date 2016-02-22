@@ -30,15 +30,15 @@ import org.safris.xdb.xdl.$xdl_dateTime;
 import org.safris.xdb.xdl.$xdl_decimal;
 import org.safris.xdb.xdl.$xdl_enum;
 import org.safris.xdb.xdl.$xdl_float;
-import org.safris.xdb.xdl.$xdl_index;
 import org.safris.xdb.xdl.$xdl_integer;
+import org.safris.xdb.xdl.$xdl_named;
 import org.safris.xdb.xdl.$xdl_table;
 import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
 import org.w3.x2001.xmlschema.$xs_anySimpleType;
 
 public abstract class SQLSpec {
-  protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final String columnName);
+  protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns);
 
   public List<String> triggers(final $xdl_table table) {
     return new ArrayList<String>();
@@ -48,14 +48,14 @@ public abstract class SQLSpec {
     final List<String> statements = new ArrayList<String>();
     if (table._indexes() != null) {
       for (final $xdl_table._indexes._index index : table._indexes(0)._index()) {
-        statements.add(createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), SQLDataTypes.csvNames(index._column())));
+        statements.add(createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), index._column().toArray(new $xdl_named[index._column().size()])));
       }
     }
 
     if (table._column() != null) {
       for (final $xdl_column column : table._column()) {
         if (column._index() != null) {
-          statements.add(createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column._name$().text()));
+          statements.add(createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column));
         }
       }
     }
@@ -102,7 +102,7 @@ public abstract class SQLSpec {
   public abstract String type(final $xdl_table table, final $xdl_enum type);
 
   // this is meant to be abstract and specific to each DB.. it's in here cause all DBs seem to be the same on this fragment
-  public final String $default(final $xdl_table table, final $xdl_column column, final $xs_anySimpleType _default) {
+  public static final String $default(final $xdl_table table, final $xdl_column column, final $xs_anySimpleType _default) {
     return !_default.isNull() ? column instanceof $xdl_char || column instanceof $xdl_enum ? "'" + _default.text() + "'" : _default.text().toString() : "";
   }
 
