@@ -66,10 +66,12 @@ class Delete {
       this.condition = condition;
     }
 
+    @Override
     protected Keyword<T> parent() {
       return null;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       parent.serialize(serialization);
       serialization.sql.append(" WHERE ");
@@ -84,14 +86,17 @@ class Delete {
       this.entity = entity;
     }
 
+    @Override
     public WHERE<T> WHERE(final Condition<?> condition) {
       return null;//new WHERE<T>(this, condition);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return null;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("UPDATE ");
       entity.serialize(serialization);
@@ -116,6 +121,7 @@ class Delete {
       return sql;
     }
 
+    @Override
     public int execute() throws XDEException {
       if (false) {
         final Entity entity = null;//getParentRoot(this);

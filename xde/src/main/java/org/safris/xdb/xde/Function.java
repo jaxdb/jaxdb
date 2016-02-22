@@ -29,10 +29,12 @@ public abstract class Function<T> extends Keyword<Field<T>> {
     return null;
   }
 
+  @Override
   protected Keyword<Field<T>> parent() {
     return null;
   }
 
+  @Override
   protected void serialize(Serialization serialization) {
     throw new RuntimeException("Implement me");
   }

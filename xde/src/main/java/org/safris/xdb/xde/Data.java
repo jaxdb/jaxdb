@@ -28,6 +28,7 @@ public abstract class Data<T> extends Serializable {
   // because the CQL query is rendered immediately upon construct. As it is
   // guaranteed to run linearly in a single thread, a ThreadLocal variable fits.
   private static final ThreadLocal<List<Entity>> aliases = new ThreadLocal<List<Entity>>() {
+    @Override
     protected List<Entity> initialValue() {
       return new ArrayList<Entity>();
     }

@@ -27,12 +27,14 @@ import org.joda.time.LocalDateTime;
 
 class FieldWrapper<T> extends Field<T> {
   private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
+    @Override
     protected DateFormat initialValue() {
       return new SimpleDateFormat("yyyy-MM-dd");
     }
   };
 
   private static final ThreadLocal<DateFormat> dateTimeFormat = new ThreadLocal<DateFormat>() {
+    @Override
     protected DateFormat initialValue() {
       return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     }
@@ -58,10 +60,12 @@ class FieldWrapper<T> extends Field<T> {
     super(value);
   }
 
+  @Override
   protected Entity entity() {
     return null;
   }
 
+  @Override
   protected void serialize(final Serialization serialization) {
     if (get() == null) {
       serialization.sql.append("NULL");
@@ -75,15 +79,18 @@ class FieldWrapper<T> extends Field<T> {
     }
   }
 
+  @Override
   public String toString() {
     return toString(get());
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final Object value = get();
     DataType.set(statement, parameterIndex, value.getClass(), value);
   }
 
+  @Override
   protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     throw new UnsupportedOperationException("not implemented");
   }

@@ -33,6 +33,7 @@ public abstract class Entity extends Data<Entity> {
     return null;
   }
 
+  @Override
   protected void serialize(final Serialization serialization) {
     serialization.sql.append(tableName(this, serialization)).append(" ").append(tableAlias(this, true));
   }

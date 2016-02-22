@@ -43,14 +43,17 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
     super(column);
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return vendor == DBVendor.POSTGRE_SQL ? "?::" + SQLDataTypes.getTypeName(Tables.name(entity), name) : "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   @SuppressWarnings({"unchecked", "rawtypes"})
   protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);

@@ -56,14 +56,17 @@ public final class BigInt extends DataType<BigInteger> {
     this.max = column.max;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected BigInteger get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
     if (value instanceof BigInteger)

@@ -55,14 +55,17 @@ public final class Double extends DataType<java.lang.Double> {
     this.max = column.max;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final double value = resultSet.getDouble(columnIndex);
     return resultSet.wasNull() ? null : value;

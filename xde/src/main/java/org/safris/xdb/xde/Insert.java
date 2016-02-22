@@ -33,10 +33,12 @@ class Insert {
       this.entity = entity;
     }
 
+    @Override
     protected Keyword<Data<?>> parent() {
       return null;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("INSERT INTO ").append(entity.name());
       String columns = "";
@@ -67,6 +69,7 @@ class Insert {
       serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
     }
 
+    @Override
     public int execute(final Transaction transaction) throws XDEException {
       final Keyword<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).entity).schema();
@@ -106,6 +109,7 @@ class Insert {
       }
     }
 
+    @Override
     public int execute() throws XDEException {
       return execute(null);
     }

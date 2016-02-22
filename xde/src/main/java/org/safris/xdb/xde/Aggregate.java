@@ -38,18 +38,22 @@ public abstract class Aggregate<T> extends DataType<T> {
     this.dataType = aggregate.dataType;
   }
 
+  @Override
   protected Entity entity() {
     return dataType.entity();
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return null;
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     return dataType.get(resultSet, columnIndex);
   }

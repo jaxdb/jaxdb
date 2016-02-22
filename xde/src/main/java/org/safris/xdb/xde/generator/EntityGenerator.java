@@ -31,11 +31,10 @@ import java.util.Map;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
-import org.safris.xdb.xde.Field;
 import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Schema;
-import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.datatype.BigInt;
 import org.safris.xdb.xde.datatype.Bit;
 import org.safris.xdb.xde.datatype.Blob;
@@ -296,6 +295,7 @@ public class EntityGenerator {
       return type.getName() + (type == org.safris.xdb.xde.datatype.Enum.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
     }
 
+    @Override
     public String toString() {
       return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.xde.datatype.Enum.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
     }

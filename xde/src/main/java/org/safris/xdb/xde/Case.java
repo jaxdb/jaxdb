@@ -18,6 +18,7 @@ package org.safris.xdb.xde;
 
 class Case {
   protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.csql.expression.CASE<T> {
+    @Override
     protected void serialize(final Serialization serialization) {
       throw new Error("Have to override this");
     }
@@ -30,18 +31,22 @@ class Case {
       this.condition = condition;
     }
 
+    @Override
     public THEN<T> THEN(final Field<T> field) {
       return new THEN<T>(this, field);
     }
 
+    @Override
     public THEN<T> THEN(final T value) {
       return new THEN<T>(this, Field.valueOf(value));
     }
 
+    @Override
     protected Keyword<Field<T>> parent() {
       return null;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("CASE WHEN ");
       throw new RuntimeException("implement this");
@@ -58,23 +63,28 @@ class Case {
       this.value = value;
     }
 
+    @Override
     public THEN<T> WHEN(final Condition<T> condition) {
       throw new RuntimeException("implement this");
       //return new THEN<T>(this, condition);
     }
 
+    @Override
     public ELSE<T> ELSE(final Field<T> field) {
       return new ELSE<T>(this, field);
     }
 
+    @Override
     public ELSE<T> ELSE(final T value) {
       return new ELSE<T>(this, Field.valueOf(value));
     }
 
+    @Override
     protected Keyword<Field<T>> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       //serialize(parent, serialization);
       serialization.sql.append(" THEN ");
@@ -92,10 +102,12 @@ class Case {
       this.value = value;
     }
 
+    @Override
     protected Keyword<Field<T>> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
 //      serialize(parent, serialization);
       serialization.sql.append(" ELSE ");

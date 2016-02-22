@@ -48,14 +48,17 @@ public final class Bit extends DataType<String> {
     this.varyant = column.varyant;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getString(columnIndex);
   }

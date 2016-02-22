@@ -55,14 +55,17 @@ public final class Float extends DataType<java.lang.Float> {
     this.max = column.max;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected java.lang.Float get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final float value = resultSet.getFloat(columnIndex);
     return resultSet.wasNull() ? null : value;

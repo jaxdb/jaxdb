@@ -206,6 +206,7 @@ public abstract class DML {
       super(max);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("AVG(");
@@ -237,6 +238,7 @@ public abstract class DML {
       super(max);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("MAX(");
@@ -268,6 +270,7 @@ public abstract class DML {
       super(max);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("MIN(");
@@ -299,6 +302,7 @@ public abstract class DML {
       super(max);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("SUM(");
@@ -330,6 +334,7 @@ public abstract class DML {
       super(max);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("COUNT(");
@@ -357,6 +362,7 @@ public abstract class DML {
       super(a, b);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       a.serialize(serialization);
       serialization.sql.append(" + ");
@@ -385,6 +391,7 @@ public abstract class DML {
       super(a, b);
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       a.serialize(serialization);
       serialization.sql.append(" - ");

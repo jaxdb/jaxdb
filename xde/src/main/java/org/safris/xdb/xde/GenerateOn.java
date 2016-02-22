@@ -22,24 +22,28 @@ import org.joda.time.LocalTime;
 
 public abstract class GenerateOn<T> {
   public static GenerateOn<String> UUID = new GenerateOn<String>() {
+    @Override
     public String generate() {
       return java.util.UUID.randomUUID().toString().toUpperCase();
     }
   };
 
   public static GenerateOn<LocalDate> TIMESTAMP_DATE = new GenerateOn<LocalDate>() {
+    @Override
     public LocalDate generate() {
       return new LocalDate();
     }
   };
 
   public static GenerateOn<LocalTime> TIMESTAMP_TIME = new GenerateOn<LocalTime>() {
+    @Override
     public LocalTime generate() {
       return new LocalTime();
     }
   };
 
   public static GenerateOn<LocalDateTime> TIMESTAMP_DATETIME = new GenerateOn<LocalDateTime>() {
+    @Override
     public LocalDateTime generate() {
       return new LocalDateTime();
     }

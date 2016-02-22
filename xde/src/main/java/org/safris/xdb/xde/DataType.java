@@ -101,10 +101,12 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     this(0, null, null, null, null, null, false, false, false, null, null);
   }
 
+  @Override
   protected Entity entity() {
     return entity;
   }
 
+  @Override
   protected void serialize(final Serialization serialization) {
     if (serialization.statementType == PreparedStatement.class) {
       if (Entity.tableAlias(entity, false) == null) {
@@ -125,6 +127,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
 
   protected abstract String getPreparedStatementMark(final DBVendor vendor);
 
+  @Override
   public DataType<T> clone() {
     try {
       final Constructor<DataType<T>> constructor = (Constructor<DataType<T>>)getClass().getDeclaredConstructor(getClass());
@@ -139,6 +142,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     }
   }
 
+  @Override
   public boolean equals(final Object obj) {
     if (this == obj)
       return true;
@@ -150,6 +154,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     return get != null ? get.equals(((DataType<?>)obj).get()) : ((DataType<?>)obj).get() == null;
   }
 
+  @Override
   public String toString() {
     final String alias = Entity.tableAlias(entity, false);
     return alias != null ? alias + "." + name : String.valueOf(get());

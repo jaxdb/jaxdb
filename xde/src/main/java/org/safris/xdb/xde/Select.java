@@ -62,6 +62,7 @@ class Select {
       private final Map<Entity,Entity> cache = new HashMap<Entity,Entity>();
       private Entity currentTable = null;
 
+      @Override
       public boolean nextRow() throws XDEException {
         if (rowIndex + 1 < rows.size()) {
           ++rowIndex;
@@ -126,6 +127,7 @@ class Select {
         return true;
       }
 
+      @Override
       public void close() throws XDEException {
         try {
           resultSet.close();
@@ -187,26 +189,32 @@ class Select {
       this.parent = parent;
     }
 
+    @Override
     public final WHERE<T> WHERE(final Condition<?> condition) {
       return new WHERE<T>(this, condition);
     }
 
+    @Override
     public final JOIN<T> JOIN(final Entity entity) {
       return new JOIN<T>(this, null, null, entity);
     }
 
+    @Override
     public final JOIN<T> JOIN(final TYPE type, final Entity entity) {
       return new JOIN<T>(this, null, type, entity);
     }
 
+    @Override
     public final JOIN<T> JOIN(final NATURAL natural, final Entity entity) {
       return new JOIN<T>(this, natural, null, entity);
     }
 
+    @Override
     public final JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity) {
       return new JOIN<T>(this, natural, type, entity);
     }
 
+    @Override
     public final LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
@@ -220,18 +228,22 @@ class Select {
       this.tables = tables;
     }
 
+    @Override
     public GROUP_BY<T> GROUP_BY(final Field<?> field) {
       return new GROUP_BY<T>(this, field);
     }
 
+    @Override
     public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
       return new ORDER_BY<T>(this, fields);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -265,18 +277,22 @@ class Select {
       return new ORDER_BY<T>(this, columns);
     }
 
+    @Override
     public HAVING<T> HAVING(final Condition<?> condition) {
       return new HAVING<T>(this, condition);
     }
 
+    @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -296,18 +312,22 @@ class Select {
       this.condition = condition;
     }
 
+    @Override
     public ORDER_BY<T> ORDER_BY(final Field<?> ... column) {
       return new ORDER_BY<T>(this, column);
     }
 
+    @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -332,22 +352,27 @@ class Select {
       this.entity = entity;
     }
 
+    @Override
     public ON<T> ON(final Condition<?> condition) {
       return new ON<T>(this, condition);
     }
 
+    @Override
     public GROUP_BY<T> GROUP_BY(final Field<?> field) {
       return new GROUP_BY<T>(this, field);
     }
 
+    @Override
     public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
       return new ORDER_BY<T>(this, fields);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
@@ -376,18 +401,22 @@ class Select {
       this.condition = condition;
     }
 
+    @Override
     public GROUP_BY<T> GROUP_BY(final Field<?> field) {
       return new GROUP_BY<T>(this, field);
     }
 
+    @Override
     public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
       return new ORDER_BY<T>(this, fields);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -410,14 +439,17 @@ class Select {
       this.columns = columns;
     }
 
+    @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -457,10 +489,12 @@ class Select {
       this.limit = limit;
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
@@ -485,6 +519,7 @@ class Select {
       this.entities = entities;
     }
 
+    @Override
     public FROM<T> FROM(final Entity ... table) {
       if (from != null)
         throw new IllegalStateException("FROM() has already been called for this SELECT object.");
@@ -492,10 +527,12 @@ class Select {
       return from = new FROM<T>(this, table);
     }
 
+    @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return null;
     }
@@ -504,6 +541,7 @@ class Select {
       return from;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         serialization.sql.append("SELECT ");
@@ -551,6 +589,7 @@ class Select {
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
     }
 
+    @Override
     public RowIterator<T> execute() throws XDEException {
       if (entities.length == 1) {
         final Entity entity = (Entity)this.entities[0];
@@ -580,7 +619,8 @@ class Select {
 
           System.err.println(statement.toString());
           try (final ResultSet resultSet = statement.executeQuery()) {
-            new RowIterator<T>() {
+            return new RowIterator<T>() {
+              @Override
               public boolean nextRow() throws XDEException {
                 if (rowIndex + 1 < rows.size()) {
                   ++rowIndex;
@@ -606,6 +646,7 @@ class Select {
                 return true;
               }
 
+              @Override
               public void close() throws XDEException {
                 try {
                   resultSet.close();
@@ -631,6 +672,7 @@ class Select {
       return null;
     }
 
+    @Override
     public boolean equals(final Object obj) {
       if (this == obj)
         return true;
@@ -642,6 +684,7 @@ class Select {
       return all == that.all && distinct == that.distinct && Arrays.equals(entities, that.entities);
     }
 
+    @Override
     public int hashCode() {
       int mask = 0;
       if (all != null)
@@ -663,22 +706,27 @@ class Select {
       this.condition = condition;
     }
 
+    @Override
     public GROUP_BY<T> GROUP_BY(final Field<?> field) {
       return new GROUP_BY<T>(this, field);
     }
 
+    @Override
     public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
       return new ORDER_BY<T>(this, fields);
     }
 
+    @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
 
+    @Override
     protected Keyword<T> parent() {
       return parent;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);

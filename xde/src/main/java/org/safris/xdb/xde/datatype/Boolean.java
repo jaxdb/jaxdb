@@ -41,14 +41,17 @@ public final class Boolean extends DataType<java.lang.Boolean> {
     super(column);
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected java.lang.Boolean get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final boolean value = resultSet.getBoolean(columnIndex);
     return resultSet.wasNull() ? null : value;

@@ -42,14 +42,17 @@ public final class Blob extends DataType<byte[]> {
     super(column);
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected byte[] get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getBytes(columnIndex);
   }

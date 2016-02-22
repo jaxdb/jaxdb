@@ -27,6 +27,7 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
       this.symbol = symbol;
     }
 
+    @Override
     public String toString() {
       return symbol;
     }
@@ -60,10 +61,12 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
     this.conditions = conditions;
   }
 
+  @Override
   protected Keyword<Data<T>> parent() {
     return null;
   }
 
+  @Override
   protected void serialize(final Serialization serialization) {
     for (int i = 0; i < conditions.length; i++) {
       formatBraces(operator, conditions[i], serialization);

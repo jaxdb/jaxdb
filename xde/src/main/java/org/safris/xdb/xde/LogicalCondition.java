@@ -27,10 +27,12 @@ class LogicalCondition<T> extends Condition<T> {
     this.b = b;
   }
 
+  @Override
   protected Keyword<Data<T>> parent() {
     return null;
   }
 
+  @Override
   protected void serialize(final Serialization serialization) {
     format(a, serialization);
     serialization.sql.append(" ").append(operator).append(" ");

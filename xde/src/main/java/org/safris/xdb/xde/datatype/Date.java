@@ -42,14 +42,17 @@ public final class Date extends DataType<LocalDate> {
     super(column);
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected LocalDate get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final java.sql.Date value = resultSet.getDate(columnIndex);
     return value == null ? null : new LocalDate(value.getTime());

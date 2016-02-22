@@ -54,14 +54,17 @@ public final class SmallInt extends DataType<Short> {
     this.max = column.max;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final short value = resultSet.getShort(columnIndex);
     return resultSet.wasNull() ? null : value;

@@ -54,14 +54,17 @@ public final class MediumInt extends DataType<Integer> {
     this.max = column.max;
   }
 
+  @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
     return "?";
   }
 
+  @Override
   protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
+  @Override
   protected Integer get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final int value = resultSet.getInt(columnIndex);
     return resultSet.wasNull() ? null : value;
