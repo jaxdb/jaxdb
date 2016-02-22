@@ -215,7 +215,7 @@ public final class Tables {
     }
   }
 
-  public static <T extends Field<?>>List<T[]> executeQuery(final String string) throws SQLException {
+  public static <T extends Entity>List<T[]> executeQuery(final String string) throws SQLException {
     final Map<String,Class<? extends Entity>> aliases = getAliases(string);
     final List<DataType<?>> dataTypes = getSelection(string, aliases);
     Entity lastIdentity = null;
@@ -231,26 +231,31 @@ public final class Tables {
     final String sql = transform(string, aliases);
     System.err.println(sql);
     try (
+      @SuppressWarnings("unchecked")
       final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass());
       final Statement statement = connection.createStatement();
       final ResultSet resultSet = statement.executeQuery(sql);
     ) {
       int index = 0;
       int colCount = 0;
-      Entity current = null;
-      final List entities = new ArrayList();
+      T current = null;
+      final List<T[]> entities = new ArrayList<T[]>();
       try {
         while (resultSet.next()) {
           int cursor = 0;
-          final Entity[] row = new Entity[numEntities];
+          @SuppressWarnings("unchecked")
+          final T[] row = (T[])new Entity[numEntities];
           entities.add(row);
           for (final DataType<?> dataType : dataTypes) {
             if (current == null || lastIdentity == null || lastIdentity != dataType.entity) {
-              row[cursor++] = current = dataType.entity.getClass().newInstance();
+              @SuppressWarnings("unchecked")
+              final Class<T> type = (Class<T>)dataType.entity.getClass();
+              row[cursor++] = current = type.newInstance();
               colCount = 0;
             }
 
             // FIXME: Copy of code in Entity.select()
+            @SuppressWarnings({"cast", "rawtypes", "unchecked"})
             final DataType col = ((DataType<Object>)current.column()[colCount++]);
             if (col.type.isEnum())
               col.set(Enum.valueOf(col.type, (String)resultSet.getObject(++index, String.class)));
@@ -270,7 +275,7 @@ public final class Tables {
         throw new Error(e);
       }
 
-      return (List<T[]>)entities;
+      return entities;
     }
   }
 
