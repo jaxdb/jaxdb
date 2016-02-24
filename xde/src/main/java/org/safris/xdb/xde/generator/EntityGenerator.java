@@ -84,7 +84,6 @@ public class EntityGenerator {
         throw new Error("Unable to create output dir: " + dir.getAbsolutePath());
 
     final String classSimpleName = database._name$().text();
-    final String className = pkg + "." + classSimpleName;
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
@@ -152,7 +151,6 @@ public class EntityGenerator {
       GenerateOn<?> generateOnUpdate = null;
       final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
       if (column instanceof $xdl_blob) {
-        final $xdl_blob type = ($xdl_blob)column;
         return new Type(column, Blob.class, params, generateOnInsert, generateOnUpdate);
       }
 
@@ -249,12 +247,10 @@ public class EntityGenerator {
       }
 
       if (column instanceof $xdl_boolean) {
-        final $xdl_boolean type = ($xdl_boolean)column;
         return new Type(column, org.safris.xdb.xde.datatype.Boolean.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_enum) {
-        final $xdl_enum type = ($xdl_enum)column;
         return new Type(column, org.safris.xdb.xde.datatype.Enum.class, params, generateOnInsert, generateOnUpdate);
       }
 
@@ -262,12 +258,14 @@ public class EntityGenerator {
     }
 
     private final $xdl_column column;
+    @SuppressWarnings("rawtypes")
     public final Class<? extends DataType> type;
     private final Object[] commonParams;
     private final GenerateOn<?> generateOnInsert;
     private final GenerateOn<?> generateOnUpdate;
     private final Object[] customParams;
 
+    @SuppressWarnings("rawtypes")
     private Type(final $xdl_column column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
@@ -369,23 +367,28 @@ public class EntityGenerator {
       out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
       out += "    protected final " + DataType.class.getName() + "<?>[] column;\n";
       out += "    protected final " + DataType.class.getName() + "<?>[] primary;\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + DDL.class.getName() + "[] ddl() {\n";
       out += "      return ddl;\n";
       out += "    }\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + DataType.class.getName() + "<?>[] column() {\n";
       out += "      return column;\n";
       out += "    }\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + DataType.class.getName() + "<?>[] primary() {\n";
       out += "      return primary;\n";
       out += "    }\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + String.class.getName() + " name() {\n";
       out += "      return \"" + table._name$().text() + "\";\n";
       out += "    }\n\n";
-      out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
-      out += "      this(new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
-      out += "    }\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + entityName + " newInstance() {\n";
       out += "      return new " + entityName + "();\n";
+      out += "    }\n\n";
+      out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
+      out += "      this(new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
       // Constructor with params
@@ -458,6 +461,7 @@ public class EntityGenerator {
     }
 
     out += "\n";
+    out += "    @" + Override.class.getName() + "\n";
     out += "    public boolean equals(final " + Object.class.getName() + " obj) {\n";
     out += "      if (obj == this)\n        return true;\n\n";
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
@@ -488,6 +492,7 @@ public class EntityGenerator {
     eq = "";
     if (primaryColumns.size() > 0) {
       out += "\n\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
       for (final $xdl_column column : primaryColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
