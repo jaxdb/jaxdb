@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Seva Safris
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * You should have received a copy of The MIT License (MIT) along with this
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
@@ -215,25 +215,25 @@ public abstract class Entity implements Cloneable {
           if (entityManager != null) {
             if (methods[0].getReturnType() == Short.class) {
               if (currentEntity == null)
-                currentEntity = (Entity)entityManager.find(getClass(), createId());
+                currentEntity = entityManager.find(getClass(), createId());
 
               methods[1].invoke(this, (Short)methods[0].invoke(currentEntity) + (short)1);
             }
             else if (methods[0].getReturnType() == Integer.class) {
               if (currentEntity == null)
-                currentEntity = (Entity)entityManager.find(getClass(), createId());
+                currentEntity = entityManager.find(getClass(), createId());
 
               methods[1].invoke(this, (Integer)methods[0].invoke(currentEntity) + 1);
             }
             else if (methods[0].getReturnType() == Long.class) {
               if (currentEntity == null)
-                currentEntity = (Entity)entityManager.find(getClass(), createId());
+                currentEntity = entityManager.find(getClass(), createId());
 
               methods[1].invoke(this, (Long)methods[0].invoke(currentEntity) + 1L);
             }
             else if (methods[0].getReturnType() == BigInteger.class) {
               if (currentEntity == null)
-                currentEntity = (Entity)entityManager.find(getClass(), createId());
+                currentEntity = entityManager.find(getClass(), createId());
 
               methods[1].invoke(this, ((BigInteger)methods[0].invoke(currentEntity)).add(BigInteger.ONE));
             }
@@ -260,7 +260,7 @@ public abstract class Entity implements Cloneable {
     if (checkValuesOnUpdate == null)
       return;
 
-    final Entity currentEntity = (Entity)entityManager.find(getClass(), createId());
+    final Entity currentEntity = entityManager.find(getClass(), createId());
     final List<Field> failedFields = new ArrayList<Field>();
     try {
       for (final Field field : checkValuesOnUpdate) {
@@ -309,6 +309,7 @@ public abstract class Entity implements Cloneable {
     entityManager.persist(this);
   }
 
+  @SuppressWarnings("unchecked")
   public <T>T update(final EntityManager entityManager) throws UpdateCheckFailedException {
     checkValuesOnUpdate(entityManager);
     generateOnUpdate(entityManager);
@@ -416,5 +417,6 @@ public abstract class Entity implements Cloneable {
     }
   }
 
+  @Override
   public abstract Entity clone();
 }

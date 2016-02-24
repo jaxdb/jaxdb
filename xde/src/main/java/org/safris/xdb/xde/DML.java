@@ -38,19 +38,23 @@ public abstract class DML {
       this.field = field;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       field.serialize(serialization);
       serialization.sql.append(" ").append(getClass().getSimpleName());
     }
 
+    @Override
     protected Entity entity() {
       throw new UnsupportedOperationException("Implement me");
     }
 
+    @Override
     protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       throw new UnsupportedOperationException("Implement me");
     }
 
+    @Override
     protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
       throw new UnsupportedOperationException("Implement me");
     }
@@ -79,10 +83,12 @@ public abstract class DML {
   /** NATURAL **/
 
   public static class NATURAL extends Keyword<Data<?>> {
+    @Override
     protected Keyword<Data<?>> parent() {
       return null;
     }
 
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("NATURAL");
     }
@@ -93,36 +99,42 @@ public abstract class DML {
   /** TYPE **/
 
   public static abstract class TYPE extends Keyword<Data<?>> {
+    @Override
     protected Keyword<Data<?>> parent() {
       return null;
     }
   }
 
   public static final TYPE INNER = new TYPE() {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("INNER");
     }
   };
 
   public static final TYPE LEFT = new TYPE() {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("LEFT OUTER");
     }
   };
 
   public static final TYPE RIGHT = new TYPE() {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("RIGHT OUTER");
     }
   };
 
   public static final TYPE FULL = new TYPE() {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("FULL OUTER");
     }
   };
 
   public static final TYPE UNION = new TYPE() {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("UNION");
     }
@@ -131,18 +143,21 @@ public abstract class DML {
   /** SetQualifier **/
 
   public static abstract class SetQualifier extends Keyword<Data<?>> {
+    @Override
     protected Keyword<Data<?>> parent() {
       return null;
     }
   }
 
   public static class ALL extends SetQualifier {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("ALL");
     }
   }
 
   public static class DISTINCT extends SetQualifier {
+    @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("DISTINCT");
     }

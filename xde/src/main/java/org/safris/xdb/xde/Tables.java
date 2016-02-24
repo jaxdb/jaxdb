@@ -56,6 +56,7 @@ public final class Tables {
     return dataTypes;
   }
 
+  @SuppressWarnings("unchecked")
   private static Map<String,Class<? extends Entity>> getAliases(final String string) {
     try {
       final Map<String,Class<? extends Entity>> aliases = new HashMap<String,Class<? extends Entity>>();
@@ -124,6 +125,7 @@ public final class Tables {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static String transform(final String string, final Map<String,Class<? extends Entity>> aliases) {
     try {
       final String delims = " \t\n\r\f(),";
@@ -215,6 +217,7 @@ public final class Tables {
     }
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Entity>List<T[]> executeQuery(final String string) throws SQLException {
     final Map<String,Class<? extends Entity>> aliases = getAliases(string);
     final List<DataType<?>> dataTypes = getSelection(string, aliases);
@@ -231,7 +234,6 @@ public final class Tables {
     final String sql = transform(string, aliases);
     System.err.println(sql);
     try (
-      @SuppressWarnings("unchecked")
       final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass());
       final Statement statement = connection.createStatement();
       final ResultSet resultSet = statement.executeQuery(sql);
@@ -243,22 +245,19 @@ public final class Tables {
       try {
         while (resultSet.next()) {
           int cursor = 0;
-          @SuppressWarnings("unchecked")
           final T[] row = (T[])new Entity[numEntities];
           entities.add(row);
           for (final DataType<?> dataType : dataTypes) {
             if (current == null || lastIdentity == null || lastIdentity != dataType.entity) {
-              @SuppressWarnings("unchecked")
               final Class<T> type = (Class<T>)dataType.entity.getClass();
               row[cursor++] = current = type.newInstance();
               colCount = 0;
             }
 
             // FIXME: Copy of code in Entity.select()
-            @SuppressWarnings({"cast", "rawtypes", "unchecked"})
-            final DataType col = ((DataType<Object>)current.column()[colCount++]);
+            final DataType col = current.column()[colCount++];
             if (col.type.isEnum())
-              col.set(Enum.valueOf(col.type, (String)resultSet.getObject(++index, String.class)));
+              col.set(Enum.valueOf(col.type, resultSet.getObject(++index, String.class)));
             else if (((DataType<?>)col).type == BigInteger.class) {
               final Object value = resultSet.getObject(++index);
               col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));

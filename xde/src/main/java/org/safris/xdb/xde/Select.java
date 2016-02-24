@@ -63,6 +63,7 @@ class Select {
       private Entity currentTable = null;
 
       @Override
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public boolean nextRow() throws XDEException {
         if (rowIndex + 1 < rows.size()) {
           ++rowIndex;
@@ -621,6 +622,7 @@ class Select {
           try (final ResultSet resultSet = statement.executeQuery()) {
             return new RowIterator<T>() {
               @Override
+              @SuppressWarnings({"rawtypes", "unchecked"})
               public boolean nextRow() throws XDEException {
                 if (rowIndex + 1 < rows.size()) {
                   ++rowIndex;

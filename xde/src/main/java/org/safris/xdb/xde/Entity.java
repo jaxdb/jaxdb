@@ -38,6 +38,7 @@ public abstract class Entity extends Data<Entity> {
     serialization.sql.append(tableName(this, serialization)).append(" ").append(tableAlias(this, true));
   }
 
+  @SuppressWarnings("unchecked")
   protected Class<? extends Schema> schema() {
     return (Class<? extends Schema>)getClass().getEnclosingClass();
   }

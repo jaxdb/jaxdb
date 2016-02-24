@@ -128,11 +128,12 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   protected abstract String getPreparedStatementMark(final DBVendor vendor);
 
   @Override
+  @SuppressWarnings("unchecked")
   public DataType<T> clone() {
     try {
       final Constructor<DataType<T>> constructor = (Constructor<DataType<T>>)getClass().getDeclaredConstructor(getClass());
       constructor.setAccessible(true);
-      return (DataType<T>)constructor.newInstance(this);
+      return constructor.newInstance(this);
     }
     catch (final InstantiationException e) {
       throw new Error(e);

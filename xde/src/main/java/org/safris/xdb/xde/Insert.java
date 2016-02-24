@@ -38,6 +38,7 @@ class Insert {
       return null;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("INSERT INTO ").append(entity.name());

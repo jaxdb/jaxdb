@@ -210,6 +210,7 @@ class Update {
       this.to = to;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final CASE<T> to) {
       this.parent = parent;
       this.set = set;

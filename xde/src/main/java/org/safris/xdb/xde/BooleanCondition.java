@@ -33,6 +33,7 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
     }
   }
 
+  @SuppressWarnings("unchecked")
   private static <T extends Data<?>>void formatBraces(final Operator operator, final Condition<?> condition, final Serialization serialization) {
     if (condition instanceof LogicalCondition) {
       condition.serialize(serialization);

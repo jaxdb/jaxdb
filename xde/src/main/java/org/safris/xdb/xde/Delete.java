@@ -125,7 +125,7 @@ class Delete {
     public int execute() throws XDEException {
       if (false) {
         final Entity entity = null;//getParentRoot(this);
-        final Class<? extends Schema> schema = ((Entity)entity).schema();
+        final Class<? extends Schema> schema = entity.schema();
         DBVendor vendor = null;
         try {
           try (final Connection connection = Schema.getConnection(schema)) {
@@ -139,12 +139,12 @@ class Delete {
             try (final PreparedStatement statement = connection.prepareStatement(sql)) {
               // set the updated columns first
               int index = 0;
-              for (final DataType<?> dataType : ((Entity)entity).column())
+              for (final DataType<?> dataType : entity.column())
                 if (!dataType.primary)
                   dataType.set(statement, ++index);
 
               // then the conditional columns
-              for (final DataType<?> dataType : ((Entity)entity).column())
+              for (final DataType<?> dataType : entity.column())
                 if (dataType.primary)
                   dataType.set(statement, ++index);
 
