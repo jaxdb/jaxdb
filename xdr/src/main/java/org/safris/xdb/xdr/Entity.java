@@ -58,7 +58,7 @@ public abstract class Entity implements Cloneable {
         final Method[] idClassMethods = innerClass.getMethods();
         for (final Method idClassMethod : idClassMethods)
           if (idClassMethod.getName().startsWith("set"))
-            idFieldMethods.put(idClassMethod.getName().substring(3), new Method[]{null, idClassMethod});
+            idFieldMethods.put(idClassMethod.getName().substring(3), new Method[] {null, idClassMethod});
 
         break;
       }
@@ -94,7 +94,7 @@ public abstract class Entity implements Cloneable {
           final String name = field.getName().toLowerCase();
           final Method getMethod = getMethods.get(name);
           final Method setMethod = setMethods.get(name);
-          fieldToGenerateOnInsert.put(new Method[]{getMethod, setMethod}, generateOnInsert.strategy());
+          fieldToGenerateOnInsert.put(new Method[] {getMethod, setMethod}, generateOnInsert.strategy());
         }
 
         final GenerateOnUpdate generateOnUpdate = field.getAnnotation(GenerateOnUpdate.class);
@@ -102,7 +102,7 @@ public abstract class Entity implements Cloneable {
           final String name = field.getName().toLowerCase();
           final Method getMethod = getMethods.get(name);
           final Method setMethod = setMethods.get(name);
-          fieldToGenerateOnUpdate.put(new Method[]{getMethod, setMethod}, generateOnUpdate.strategy());
+          fieldToGenerateOnUpdate.put(new Method[] {getMethod, setMethod}, generateOnUpdate.strategy());
         }
 
         final CheckOnUpdate checkOnUpdate = field.getAnnotation(CheckOnUpdate.class);

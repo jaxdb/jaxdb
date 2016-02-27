@@ -41,17 +41,6 @@ public final class UpdateCheckFailedException extends Exception {
     }
   }
 
-  private static String fieldsToString(final Field[] fields) {
-    if (fields == null)
-      return null;
-
-    final StringBuffer buffer = new StringBuffer();
-    for (final Field field : fields)
-      buffer.append("\n").append(String.valueOf(field.getName()));
-
-    return buffer.substring(1);
-  }
-
   private final FailureDetail[] failureDetails;
   private final List<? extends Entity> entities;
 

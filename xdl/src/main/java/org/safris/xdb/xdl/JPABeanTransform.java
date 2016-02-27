@@ -211,7 +211,7 @@ public final class JPABeanTransform extends XDLTransformer {
       columnDef = null;
     }
 
-    return new String[]{columnType, columnDef};
+    return new String[] {columnType, columnDef};
   }
 
   private Map<String,String> parse() {
