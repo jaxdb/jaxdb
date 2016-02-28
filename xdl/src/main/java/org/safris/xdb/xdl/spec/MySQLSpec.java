@@ -61,12 +61,10 @@ public class MySQLSpec extends SQLSpec {
             continue;
 
           j++;
-          //System.err.println(c);
           if (c != ' ' && c != '\t')
             break;
         }
 
-        //System.err.println("XXXX: " + i + " " + j);
         buffer += "    " + text.trim().replace("\n" + text.substring(0, j), "\n    ") + "\n";
         buffer += "  END;\n";
         buffer += "|\n";

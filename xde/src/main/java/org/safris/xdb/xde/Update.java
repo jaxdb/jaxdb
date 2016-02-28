@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.sql.StatementProxy;
@@ -27,6 +28,8 @@ import org.safris.xdb.xde.csql.expression.CASE;
 import org.safris.xdb.xdl.DBVendor;
 
 class Update {
+  private static final Logger logger = Logger.getLogger(Update.class.getName());
+
   private static abstract class Execute extends Keyword<DataType<?>> {
     public int execute(final Transaction transaction) throws XDEException {
       final Keyword<?> update = getParentRoot(this);
@@ -147,7 +150,7 @@ class Update {
           columns += ", " + dataType.name + " = ?";
 
       sql += columns.substring(2) + " WHERE " + where.substring(5);
-      System.out.println(sql);
+      logger.info(sql);
       return sql;
     }
 
@@ -162,7 +165,7 @@ class Update {
             vendor = Schema.getDBVendor(connection);
             final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
             final String sql = encodeSingle(serialization);
-            System.out.println(sql);
+            logger.info(sql);
             if (true)
               return 0;
 
@@ -178,7 +181,7 @@ class Update {
                 if (dataType.primary)
                   dataType.set(statement, ++index);
 
-              System.err.println(statement.toString());
+              logger.info(statement.toString());
               return statement.executeUpdate();
             }
           }

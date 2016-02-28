@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.safris.commons.lang.Pair;
 import org.safris.xdb.xde.DML.ALL;
@@ -508,6 +509,8 @@ class Select {
   }
 
   protected final static class SELECT<T extends Data<?>> extends Keyword<T> implements org.safris.xdb.xde.csql.select._SELECT<T> {
+    private static final Logger logger = Logger.getLogger(SELECT.class.getName());
+
     private final ALL all;
     private final DISTINCT distinct;
     protected final T[] entities;
@@ -618,7 +621,7 @@ class Select {
             if (dataType.primary)
               dataType.set(statement, ++index);
 
-          System.err.println(statement.toString());
+          logger.info(statement.toString());
           try (final ResultSet resultSet = statement.executeQuery()) {
             return new RowIterator<T>() {
               @Override

@@ -18,6 +18,7 @@ package org.safris.xdb.xdl.spec;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.safris.xdb.xdl.$xdl_bit;
 import org.safris.xdb.xdl.$xdl_blob;
@@ -37,6 +38,8 @@ import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
 
 public class PostgreSQLSpec extends SQLSpec {
+  private static final Logger logger = Logger.getLogger(PostgreSQLSpec.class.getName());
+
   @Override
   public List<String> drops(final $xdl_table table) {
     final List<String> statements = super.drops(table);
@@ -181,12 +184,12 @@ public class PostgreSQLSpec extends SQLSpec {
     final String uniqueClause;
     if ($xdl_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
-        System.err.println("[WARNING] Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+        logger.warning("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return "";
       }
 
       if (unique) {
-        System.err.println("[WARNING] UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
+        logger.warning("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
       }
 
       uniqueClause = "";

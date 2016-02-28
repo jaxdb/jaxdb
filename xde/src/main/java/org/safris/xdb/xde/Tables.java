@@ -26,10 +26,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 import org.safris.commons.lang.Numbers;
 
 public final class Tables {
+  private static final Logger logger = Logger.getLogger(Tables.class.getName());
+
   public static String name(final Entity entity) {
     return entity.name();
   }
@@ -232,7 +235,7 @@ public final class Tables {
     }
 
     final String sql = transform(string, aliases);
-    System.err.println(sql);
+    logger.info(sql);
     try (
       final Connection connection = Schema.getConnection((Class<? extends Schema>)aliases.values().iterator().next().getEnclosingClass());
       final Statement statement = connection.createStatement();

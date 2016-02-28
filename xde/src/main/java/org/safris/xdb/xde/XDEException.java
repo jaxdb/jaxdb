@@ -19,11 +19,14 @@ package org.safris.xdb.xde;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.safris.commons.lang.Pair;
 import org.safris.xdb.xdl.DBVendor;
 
 public class XDEException extends SQLException {
+  private static final Logger logger = Logger.getLogger(Tables.class.getName());
+
   private static final long serialVersionUID = 400839108529773414L;
   private static final Map<DBVendor,Map<String,ErrorSpec>> errorSpecs = new HashMap<DBVendor,Map<String,ErrorSpec>>();
 
@@ -50,13 +53,13 @@ public class XDEException extends SQLException {
   public static XDEException lookup(final SQLException e, final DBVendor vendor) {
     Map<String,ErrorSpec> sqlCodeToException = errorSpecs.get(vendor);
     if (sqlCodeToException == null) {
-      System.err.println("[WARNING] THE VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
+      logger.warning("THE VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
       return new XDEException(e, UNIMPLEMENTED);
     }
 
     final ErrorSpec errorSpec = sqlCodeToException.get(e.getSQLState());
     if (errorSpec == null) {
-      System.err.println("[WARNING] THE SQLSTATE " + e.getSQLState() + " FOR VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
+      logger.warning("THE SQLSTATE " + e.getSQLState() + " FOR VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
       return new XDEException(e, UNIMPLEMENTED);
     }
 

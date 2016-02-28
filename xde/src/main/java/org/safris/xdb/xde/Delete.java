@@ -20,10 +20,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
 import org.safris.xdb.xdl.DBVendor;
 
 class Delete {
+  private static final Logger logger = Logger.getLogger(Delete.class.getName());
+
   private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
     public int execute() throws XDEException {
       final Entity entity = null;//getParentRoot(this);
@@ -117,7 +120,7 @@ class Delete {
       }
 
       sql += columns.substring(2) + " WHERE " + where.substring(5);
-      System.out.println(sql);
+      logger.info(sql);
       return sql;
     }
 
@@ -132,7 +135,7 @@ class Delete {
             vendor = Schema.getDBVendor(connection);
             final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
             final String sql = encodeSingle(serialization);
-            System.out.println(sql);
+            logger.info(sql);
             if (true)
               return 0;
 
@@ -148,7 +151,7 @@ class Delete {
                 if (dataType.primary)
                   dataType.set(statement, ++index);
 
-              System.err.println(statement.toString());
+              logger.info(statement.toString());
               return statement.executeUpdate();
             }
           }

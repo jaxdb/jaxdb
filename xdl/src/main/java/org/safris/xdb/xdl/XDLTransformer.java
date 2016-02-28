@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
+import org.safris.commons.maven.Log;
 import org.safris.commons.xml.XMLException;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.xml.sax.InputSource;
@@ -116,7 +117,7 @@ public abstract class XDLTransformer {
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
       for (final String error : errors)
-        System.err.println("[WARNING] " + error);
+        Log.warn(error);
 
       //System.exit(1);
     }
@@ -141,7 +142,7 @@ public abstract class XDLTransformer {
 
     final $xdl_table superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
-      System.err.println("[ERROR] Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
+      Log.error("Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
       System.exit(1);
     }
 

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.safris.commons.maven.AdvancedMojo;
+import org.safris.commons.maven.Log;
 import org.safris.commons.util.MaskedEnum;
 import org.safris.commons.util.TopologicalSort;
 import org.safris.commons.xml.XMLException;
@@ -423,13 +425,13 @@ public final class DDLTransform extends XDLTransformer {
       return;
 
     final SQLStandardEnum[] enums = SQLStandardEnum.toArray(mask);
-    String message = "[WARNING] The name '" + string + "' is reserved word in " + enums[0];
+    String message = "The name '" + string + "' is reserved word in " + enums[0];
 
     for (int i = 1; i < enums.length; i++)
       message += ", " + enums[i];
 
     message += ".";
-    System.err.println(message);
+    Log.warn(message);
   }
 
   public static DDL[] createDDL(final xdl_database database, final DBVendor vendor, final File outDir) {
@@ -557,7 +559,7 @@ public final class DDLTransform extends XDLTransformer {
           final String primaryKeyColumn = primaryColumn._name$().text();
           final $xdl_column column = columnNameToColumn.get(primaryKeyColumn);
           if (column._null$().text()) {
-            System.err.println("[ERROR] Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
+            Log.error("Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
             System.exit(1);
           }
 
@@ -640,7 +642,7 @@ public final class DDLTransform extends XDLTransformer {
     checkName(tableName);
 
     if (tableNames.contains(tableName)) {
-      System.err.println("[ERROR] Circular dependency detected for table: " + tableName);
+      Log.error("Circular dependency detected for table: " + tableName);
       System.exit(1);
     }
 
@@ -651,7 +653,7 @@ public final class DDLTransform extends XDLTransformer {
         checkName(columnName);
         final $xdl_column existing = columnNameToColumn.get(columnName);
         if (existing != null && !(column instanceof $xdl_inherited)) {
-          System.err.println("[ERROR] Duplicate column definition: " + tableName + "." + columnName + " only xsi:type=\"xdl:inherited\" is allowed when overriding a column.");
+          Log.error("Duplicate column definition: " + tableName + "." + columnName + " only xsi:type=\"xdl:inherited\" is allowed when overriding a column.");
           System.exit(1);
         }
 
