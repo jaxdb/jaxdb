@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.safris.commons.lang.Numbers;
 import org.safris.commons.maven.Log;
 import org.safris.commons.util.MaskedEnum;
 import org.safris.commons.util.TopologicalSort;
@@ -531,14 +532,34 @@ public final class DDLTransform extends XDLTransformer {
     return ddl.substring(2);
   }
 
+  private static String recurseCheckRule(final $xdl_check check, final $xdl_checkRule rule) {
+    final String operator = $xdl_integer._check._operator$.eq.text().equals(rule._condition(0)._operator$().text()) ? "=" : $xdl_integer._check._operator$.ne.text().equals(rule._condition(0)._operator$().text()) ? "!=" : $xdl_integer._check._operator$.gt.text().equals(rule._condition(0)._operator$().text()) ? ">" : $xdl_integer._check._operator$.gte.text().equals(rule._condition(0)._operator$().text()) ? ">=" : $xdl_integer._check._operator$.lt.text().equals(rule._condition(0)._operator$().text()) ? "<" : $xdl_integer._check._operator$.lte.text().equals(rule._condition(0)._operator$().text()) ? "<=" : null;
+    if (operator == null)
+      throw new UnsupportedOperationException("Unexpected operator " + operator + " in check constraint on column '" + check._column$().text() + "'");
+
+    final String condition = rule._condition(0)._condition$().text();
+    final String clause = check._column$().text() + " " + operator + " " + (Numbers.isNumber(condition) ? Numbers.roundInsignificant(condition) : "'" + condition + "'");
+
+    if (!rule._and(0).isNull()) {
+      return "(" + clause + " AND " + recurseCheckRule(check, rule._and(0)) + ")";
+    }
+    else if (!rule._or(0).isNull()) {
+      return "(" + clause + " OR " + recurseCheckRule(check, rule._or(0)) + ")";
+    }
+
+    return clause;
+  }
+
   private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xdl_column> columnNameToColumn, final $xdl_table table) {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $xdl_table._constraints constraints = table._constraints(0);
-      String uniqueString = "";
-      int uniqueIndex = 1;
+
+      // unique constraint
       final List<$xdl_table._constraints._unique> uniques = constraints._unique();
       if (uniques != null) {
+        String uniqueString = "";
+        int uniqueIndex = 1;
         for (final $xdl_table._constraints._unique unique : uniques) {
           final List<$xdl_named> columns = unique._column();
           String columnsString = "";
@@ -551,6 +572,19 @@ public final class DDLTransform extends XDLTransformer {
         contraintsBuffer.append(uniqueString);
       }
 
+      // check constraint
+      final List<$xdl_check> checks = constraints._check();
+      if (checks != null) {
+        String checkString = "";
+        for (final $xdl_check check : checks) {
+          final String checkClause = recurseCheckRule(check, check);
+          checkString += ",\n  CHECK " + (checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
+        }
+
+        contraintsBuffer.append(checkString);
+      }
+
+      // primary key constraint
       final $xdl_table._constraints._primaryKey primaryKey = constraints._primaryKey(0);
       if (!primaryKey.isNull()) {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
@@ -566,6 +600,29 @@ public final class DDLTransform extends XDLTransformer {
         }
 
         contraintsBuffer.append(",\n  PRIMARY KEY (").append(primaryKeyBuffer.substring(2)).append(")");
+      }
+
+      // foreign key constraint
+      final List<$xdl_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
+      if (foreignKeys != null) {
+        for (final $xdl_table._constraints._foreignKey foreignKey : foreignKeys) {
+          String columns = "";
+          String referencedColumns = "";
+          for (final $xdl_table._constraints._foreignKey._column column : foreignKey._column()) {
+            columns += ", " + column._name$().text();
+            referencedColumns += ", " + column._column$().text();
+          }
+
+          contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
+          insertDependency(tableName, foreignKey._references$().text());
+          contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
+          if (!foreignKey._onDelete$().isNull())
+            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
+
+          if (vendor != DBVendor.DERBY && !foreignKey._onUpdate$().isNull())
+            contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
+        }
       }
     }
 
@@ -585,27 +642,7 @@ public final class DDLTransform extends XDLTransformer {
         }
       }
 
-      if (table._constraints() != null && table._constraints(0)._foreignKey() != null) {
-        for (final $xdl_table._constraints._foreignKey foreignKey : table._constraints(0)._foreignKey()) {
-          String columns = "";
-          String referencedColumns = "";
-          for (final $xdl_table._constraints._foreignKey._column column : foreignKey._column()) {
-            columns += ", " + column._name$().text();
-            referencedColumns += ", " + column._column$().text();
-          }
-
-          contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
-          insertDependency(tableName, foreignKey._references$().text());
-          contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
-          if (!foreignKey._onDelete$().isNull())
-            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
-
-          if (vendor != DBVendor.DERBY && !foreignKey._onUpdate$().isNull())
-            contraintsBuffer.append(" ON UPDATE ").append(foreignKey._onUpdate$().text());
-        }
-      }
-
+      // Parse the min & max constraints of numeric types
       for (final $xdl_column column : table._column()) {
         String minCheck = null;
         String maxCheck = null;
@@ -630,6 +667,49 @@ public final class DDLTransform extends XDLTransformer {
 
         if (maxCheck != null)
           contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " <= " + maxCheck + ")");
+      }
+
+      // parse the <check/> element per type
+      for (final $xdl_column column : table._column()) {
+        String operator = null;
+        String condition = null;
+        if (column instanceof $xdl_char) {
+          final $xdl_char type = ($xdl_char)column;
+          if (!type._check(0).isNull()) {
+            operator = $xdl_char._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $xdl_char._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : null;
+            condition = "'" + type._check(0)._condition$().text() + "'";
+          }
+        }
+        else if (column instanceof $xdl_integer) {
+          final $xdl_integer type = ($xdl_integer)column;
+          if (!type._check(0).isNull()) {
+            operator = $xdl_integer._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $xdl_integer._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $xdl_integer._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $xdl_integer._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $xdl_integer._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $xdl_integer._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $xdl_float) {
+          final $xdl_float type = ($xdl_float)column;
+          if (!type._check(0).isNull()) {
+            operator = $xdl_float._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $xdl_float._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $xdl_float._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $xdl_float._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $xdl_float._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $xdl_float._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $xdl_decimal) {
+          final $xdl_decimal type = ($xdl_decimal)column;
+          if (!type._check(0).isNull()) {
+            operator = $xdl_decimal._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $xdl_decimal._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $xdl_decimal._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $xdl_decimal._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $xdl_decimal._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $xdl_decimal._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+
+        if (operator != null) {
+          if (condition != null)
+            contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " " + operator + " " + condition + ")");
+          else
+            throw new UnsupportedOperationException("Unexpected 'null' condition encountered on column '" + column._name$().text());
+        }
+        else if (condition != null)
+          throw new UnsupportedOperationException("Unexpected 'null' operator encountered on column '" + column._name$().text());
       }
     }
 
