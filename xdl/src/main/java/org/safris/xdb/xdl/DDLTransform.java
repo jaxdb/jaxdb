@@ -663,10 +663,20 @@ public final class DDLTransform extends XDLTransformer {
         }
 
         if (minCheck != null)
-          contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " >= " + minCheck + ")");
+          minCheck = column._name$().text() + " >= " + minCheck;
 
         if (maxCheck != null)
-          contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " <= " + maxCheck + ")");
+          maxCheck = column._name$().text() + " <= " + maxCheck;
+
+        if (minCheck != null) {
+          if (maxCheck != null)
+            contraintsBuffer.append(",\n  CHECK (" + minCheck + " AND " + maxCheck + ")");
+          else
+            contraintsBuffer.append(",\n  CHECK (" + minCheck + ")");
+        }
+        else if (maxCheck != null) {
+          contraintsBuffer.append(",\n  CHECK (" + maxCheck + ")");
+        }
       }
 
       // parse the <check/> element per type
