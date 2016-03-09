@@ -77,7 +77,7 @@ public abstract class XDLTransformer {
           throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
       final FileOutputStream out = new FileOutputStream(file);
-      out.write(output.getBytes());
+      out.write(output.trim().getBytes());
       out.close();
     }
     catch (final Exception e) {
