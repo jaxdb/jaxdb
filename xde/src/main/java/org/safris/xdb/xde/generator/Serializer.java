@@ -18,6 +18,7 @@ package org.safris.xdb.xde.generator;
 
 import java.lang.reflect.Field;
 
+import org.safris.commons.lang.Numbers;
 import org.safris.xdb.xde.GenerateOn;
 
 public final class Serializer {
@@ -39,8 +40,17 @@ public final class Serializer {
     if (object instanceof String)
       return "\"" + ((String)object).replace("\"", "\\\"").replace("\n", "\\n") + "\"";
 
+    if (object instanceof Short)
+      return "(short)" + object;
+
+    if (object instanceof Float && Numbers.isWhole((float)object))
+      return object + "f";
+
+    if (object instanceof Double && Numbers.isWhole((double)object))
+      return object + "d";
+
     if (object instanceof Long)
-      return String.valueOf(object + "L");
+      return object + "l";
 
     if (object instanceof GenerateOn<?>) {
       try {
@@ -55,9 +65,6 @@ public final class Serializer {
         throw new RuntimeException(e);
       }
     }
-
-    if (object instanceof Short)
-      return String.valueOf("(short)" + object);
 
     return String.valueOf(object);
   }

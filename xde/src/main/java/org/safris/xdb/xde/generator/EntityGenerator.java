@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.safris.commons.lang.Numbers;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
@@ -41,8 +42,6 @@ import org.safris.xdb.xde.datatype.Blob;
 import org.safris.xdb.xde.datatype.Char;
 import org.safris.xdb.xde.datatype.DateTime;
 import org.safris.xdb.xde.datatype.Decimal;
-import org.safris.xdb.xde.datatype.Float;
-import org.safris.xdb.xde.datatype.Long;
 import org.safris.xdb.xde.datatype.MediumInt;
 import org.safris.xdb.xde.datatype.SmallInt;
 import org.safris.xdb.xdl.$xdl_bit;
@@ -186,19 +185,33 @@ public class EntityGenerator {
           return new Type(column, MediumInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
         if (noBytes <= 8)
-          return new Type(column, Long.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+          return new Type(column, org.safris.xdb.xde.datatype.Long.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
         return new Type(column, BigInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xdl_float) {
         final $xdl_float type = ($xdl_float)column;
-        return new Type(column, Float.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        final Class<? extends DataType<?>> javaType;
+        final Number min;
+        final Number max;
+        if (type._double$().text()) {
+          javaType = org.safris.xdb.xde.datatype.Double.class;
+          min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
+          max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
+        }
+        else {
+          javaType = org.safris.xdb.xde.datatype.Float.class;
+          min = type._min$().text() != null ? type._min$().text().floatValue() : null;
+          max = type._max$().text() != null ? type._max$().text().floatValue() : null;
+        }
+
+        return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), min, max);
       }
 
       if (column instanceof $xdl_decimal) {
         final $xdl_decimal type = ($xdl_decimal)column;
-        return new Type(column, Decimal.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._decimal$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, Decimal.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._decimal$().text(), type._unsigned$().text(), type._min$().text() != null ? type._min$().text().doubleValue() : null, type._max$().text() != null ? type._max$().text().doubleValue() : null);
       }
 
       if (column instanceof $xdl_date) {
@@ -276,6 +289,10 @@ public class EntityGenerator {
     }
 
     private String serializeParams() {
+      if ("audio_price".equals(column._name$().text())) {
+        int i = 9;
+      }
+
       String out = "";
       for (final Object param : commonParams)
         out += ", " + (param == THIS ? "this" : Serializer.serialize(param));

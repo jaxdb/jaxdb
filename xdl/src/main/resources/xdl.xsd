@@ -347,8 +347,8 @@
         <xs:attribute name="double" type="xs:boolean" default="false"/>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="default" type="xs:decimal"/>
-        <xs:attribute name="min" type="xs:decimal"/>
-        <xs:attribute name="max" type="xs:decimal"/>
+        <xs:attribute name="min" type="xs:double"/>
+        <xs:attribute name="max" type="xs:double"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
