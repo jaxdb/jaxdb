@@ -159,40 +159,32 @@
     </xs:attribute>
   </xs:complexType>
   
-  <xs:complexType name="checkRule">
+  <xs:complexType name="check">
     <xs:sequence>
-      <xs:element name="condition">
-        <xs:complexType>
-          <xs:attribute name="operator" use="required">
-            <xs:simpleType>
-              <xs:restriction base="xs:NCName">
-                <xs:enumeration value="eq"/>
-                <xs:enumeration value="ne"/>
-                <xs:enumeration value="gt"/>
-                <xs:enumeration value="gte"/>
-                <xs:enumeration value="lt"/>
-                <xs:enumeration value="lte"/>
-              </xs:restriction>
-            </xs:simpleType>
-          </xs:attribute>
-          <xs:attribute name="condition" type="xs:string" use="required"/>
-        </xs:complexType>
+      <xs:element name="column" type="xdl:name"/>
+      <xs:element name="operator">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="="/>
+            <xs:enumeration value="!="/>
+            <xs:enumeration value="&gt;"/>
+            <xs:enumeration value="&gt;="/>
+            <xs:enumeration value="&lt;"/>
+            <xs:enumeration value="&lt;="/>
+          </xs:restriction>
+        </xs:simpleType>
       </xs:element>
+      <xs:choice>
+        <xs:element name="column" type="xdl:name"/>
+        <xs:element name="value" type="xs:string"/>
+      </xs:choice>
       <xs:choice minOccurs="0">
-        <xs:element name="and" type="xdl:checkRule"/>
-        <xs:element name="or" type="xdl:checkRule"/>
+        <xs:element name="and" type="xdl:check"/>
+        <xs:element name="or" type="xdl:check"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
   
-  <xs:complexType name="check">
-    <xs:complexContent>
-      <xs:extension base="xdl:checkRule">
-        <xs:attribute name="column" type="xdl:name" use="required"/>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <!-- text data -->
   
   <xs:complexType name="char">
@@ -555,10 +547,6 @@
               <xs:selector xpath="./xdl:unique"/>
               <xs:field xpath="@column"/>
             </xs:unique>
-            <xs:unique name="uniqueCheckColumn">
-              <xs:selector xpath="./xdl:check"/>
-              <xs:field xpath="@column"/>
-            </xs:unique>
           </xs:element>
           <xs:element name="relation" type="xdl:relation" minOccurs="0"/>
           <xs:element name="triggers" minOccurs="0" maxOccurs="1">
@@ -640,12 +628,16 @@
               <xs:field xpath="@name"/>
             </xs:key>
             <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column | ./xdl:constraints/xdl:check"/>
+              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column"/>
               <xs:field xpath="@column | @name"/>
             </xs:keyref>
             <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
               <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column | ./xdl:indexes/xdl:index/xdl:column"/>
               <xs:field xpath="@name"/>
+            </xs:keyref>
+            <xs:keyref name="keyrefColumnName3" refer="xdl:keyColumnName">
+              <xs:selector xpath="./xdl:constraints/xdl:check | ./xdl:constraints/xdl:check/xdl:and | ./xdl:constraints/xdl:check/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or| ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or"/>
+              <xs:field xpath="xdl:column"/>
             </xs:keyref>
           </xs:element>
         </xs:sequence>

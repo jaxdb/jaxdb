@@ -532,20 +532,21 @@ public final class DDLTransform extends XDLTransformer {
     return ddl.substring(2);
   }
 
-  private static String recurseCheckRule(final $xdl_check check, final $xdl_checkRule rule) {
-    final String operator = $xdl_integer._check._operator$.eq.text().equals(rule._condition(0)._operator$().text()) ? "=" : $xdl_integer._check._operator$.ne.text().equals(rule._condition(0)._operator$().text()) ? "!=" : $xdl_integer._check._operator$.gt.text().equals(rule._condition(0)._operator$().text()) ? ">" : $xdl_integer._check._operator$.gte.text().equals(rule._condition(0)._operator$().text()) ? ">=" : $xdl_integer._check._operator$.lt.text().equals(rule._condition(0)._operator$().text()) ? "<" : $xdl_integer._check._operator$.lte.text().equals(rule._condition(0)._operator$().text()) ? "<=" : null;
-    if (operator == null)
-      throw new UnsupportedOperationException("Unexpected operator " + operator + " in check constraint on column '" + check._column$().text() + "'");
+  private static String recurseCheckRule(final $xdl_check check) {
+    final String condition;
+    if (check._column().size() == 2)
+      condition = check._column(1).text();
+    else if (!check._value(0).isNull())
+      condition = Numbers.isNumber(check._value(0).text()) ? Numbers.roundInsignificant(check._value(0).text()) : "'" + check._value(0).text() + "'";
+    else
+      throw new UnsupportedOperationException("Unexpected condition on column '" + check._column(0).text() + "'");
 
-    final String condition = rule._condition(0)._condition$().text();
-    final String clause = check._column$().text() + " " + operator + " " + (Numbers.isNumber(condition) ? Numbers.roundInsignificant(condition) : "'" + condition + "'");
+    final String clause = check._column(0).text() + " " + check._operator(0).text() + " " + condition;
+    if (!check._and(0).isNull())
+      return "(" + clause + " AND " + recurseCheckRule(check._and(0)) + ")";
 
-    if (!rule._and(0).isNull()) {
-      return "(" + clause + " AND " + recurseCheckRule(check, rule._and(0)) + ")";
-    }
-    else if (!rule._or(0).isNull()) {
-      return "(" + clause + " OR " + recurseCheckRule(check, rule._or(0)) + ")";
-    }
+    if (!check._or(0).isNull())
+      return "(" + clause + " OR " + recurseCheckRule(check._or(0)) + ")";
 
     return clause;
   }
@@ -577,7 +578,7 @@ public final class DDLTransform extends XDLTransformer {
       if (checks != null) {
         String checkString = "";
         for (final $xdl_check check : checks) {
-          final String checkClause = recurseCheckRule(check, check);
+          final String checkClause = recurseCheckRule(check);
           checkString += ",\n  CHECK " + (checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
         }
 
