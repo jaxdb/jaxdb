@@ -19,7 +19,7 @@ package org.safris.xdb.xde;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RowIterator<T extends Data<?>> {
+public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
   protected final List<T[]> rows = new ArrayList<T[]>();
   protected int rowIndex = -1;
 
