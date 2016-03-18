@@ -50,5 +50,6 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
     return ++entityIndex < entities.length ? entities[entityIndex] : null;
   }
 
+  @Override
   public abstract void close() throws XDEException;
 }

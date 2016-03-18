@@ -19,7 +19,7 @@ package org.safris.xdb.xde;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class Transaction {
+public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private volatile Boolean inited = false;
 
@@ -73,6 +73,7 @@ public class Transaction {
     }
   }
 
+  @Override
   public void close() throws XDEException {
     if (connection == null)
       return;
