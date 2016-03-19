@@ -26,11 +26,12 @@ import org.safris.xdb.xde.csql.expression.WHEN;
 import org.safris.xdb.xde.csql.insert.INSERT;
 import org.safris.xdb.xde.csql.select._SELECT;
 import org.safris.xdb.xde.csql.update.UPDATE_SET;
+import org.safris.xdb.xde.datatype.Char;
 
 public abstract class DML {
   /** Direction **/
 
-  protected static abstract class Direction<T extends Data<?>> extends Field<T> {
+  protected static abstract class Direction<T> extends Field<T> {
     private final Field<?> field;
 
     public Direction(final Field<T> field) {
@@ -60,23 +61,23 @@ public abstract class DML {
     }
   }
 
-  protected static class ASC<T extends Data<?>> extends Direction<T> {
+  protected static class ASC<T> extends Direction<T> {
     protected ASC(final Field<T> field) {
       super(field);
     }
   }
 
-  public static <T extends Data<?>>ASC<T> ASC(final Field<T> field) {
+  public static <T>ASC<T> ASC(final Field<T> field) {
     return new ASC<T>(field);
   }
 
-  protected static class DESC<T extends Data<?>> extends Direction<T> {
+  protected static class DESC<T> extends Direction<T> {
     protected DESC(final Field<T> field) {
       super(field);
     }
   }
 
-  public static <T extends Data<?>>DESC<T> DESC(final Field<T> field) {
+  public static <T>DESC<T> DESC(final Field<T> field) {
     return new DESC<T>(field);
   }
 
@@ -502,5 +503,11 @@ public abstract class DML {
 
   public static <T>LogicalCondition<T> LTE(final T a, final Field<T> b) {
     return new LogicalCondition<T>("<=", a, b);
+  }
+
+  /** Predicate **/
+
+  public static Predicate<String> LIKE(final Char a, final String b) {
+    return new Predicate<String>("LIKE", a, b);
   }
 }
