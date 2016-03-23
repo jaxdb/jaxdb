@@ -131,27 +131,37 @@ class Update {
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     protected void serialize(final Serialization serialization) {
-      serialization.sql.append("UPDATE ");
-      entity.serialize(serialization);
-    }
-
-    protected String encodeSingle(final Serialization serialization) {
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
-      String sql = "UPDATE " + entity.name() + " SET ";
+      serialization.sql.append("UPDATE ");
+      entity.serialize(serialization);
       String columns = "";
-      String where = "";
-      for (final DataType<?> dataType : entity.column())
-        if (dataType.primary)
-          where += " AND " + dataType.name + " = ?";
-        else
-          columns += ", " + dataType.name + " = ?";
+      for (final DataType dataType : entity.column()) {
+        if (!dataType.primary) {
+          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
+          if (value != null) {
+            columns += ", " + dataType.name + " = ?";
+            serialization.addParameter(value);
+          }
+        }
+      }
 
-      sql += columns.substring(2) + " WHERE " + where.substring(5);
-      logger.info(sql);
-      return sql;
+      serialization.sql.append(" SET ").append(columns.substring(2));
+      String where = "";
+      for (final DataType dataType : entity.column()) {
+        if (dataType.primary) {
+          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
+          if (value != null) {
+            where += " AND " + dataType.name + " = ?";
+            serialization.addParameter(value);
+          }
+        }
+      }
+
+      serialization.sql.append(" WHERE ").append(where.substring(5));
     }
 
     @Override
@@ -164,12 +174,12 @@ class Update {
           try (final Connection connection = Schema.getConnection(schema)) {
             vendor = Schema.getDBVendor(connection);
             final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-            final String sql = encodeSingle(serialization);
-            logger.info(sql);
+            serialize(serialization);
+            logger.info(serialization.sql.toString());
             if (true)
               return 0;
 
-            try (final PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
               // set the updated columns first
               int index = 0;
               for (final DataType<?> dataType : update.entity.column())
