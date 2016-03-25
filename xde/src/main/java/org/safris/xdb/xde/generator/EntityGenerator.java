@@ -134,9 +134,9 @@ public class EntityGenerator {
     code += "  private " + classSimpleName + "() {\n  }\n}";
 
     final File javaFile = new File(dir, classSimpleName + ".java");
-    final FileOutputStream out = new FileOutputStream(javaFile);
-    out.write(code.getBytes());
-    out.close();
+    try (final FileOutputStream out = new FileOutputStream(javaFile)) {
+      out.write(code.getBytes());
+    }
   }
 
   private static final Object THIS = new Object();
@@ -288,10 +288,6 @@ public class EntityGenerator {
     }
 
     private String serializeParams() {
-      if ("audio_price".equals(column._name$().text())) {
-        int i = 9;
-      }
-
       String out = "";
       for (final Object param : commonParams)
         out += ", " + (param == THIS ? "this" : Serializer.serialize(param));

@@ -40,7 +40,7 @@ class Update {
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
         serialize(serialization);
-        Entity.clearAliases();
+        Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
           serialization.set(statement);
@@ -131,7 +131,7 @@ class Update {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serialization serialization) {
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
@@ -201,7 +201,7 @@ class Update {
         }
       }
 
-      Entity.clearAliases();
+      Data.clearAliases();
       return super.execute();
     }
   }
@@ -239,7 +239,7 @@ class Update {
     protected <T>SET(final Keyword<? extends DataType<?>> parent, final DataType<T> set, final T to) {
       this.parent = parent;
       this.set = set;
-      this.to = FieldWrapper.valueOf(to);
+      this.to = Field.valueOf(to);
     }
 
     @Override

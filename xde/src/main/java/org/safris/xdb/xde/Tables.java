@@ -65,7 +65,6 @@ public final class Tables {
       final Map<String,Class<? extends Entity>> aliases = new HashMap<String,Class<? extends Entity>>();
 
       final StringTokenizer tokenizer = new StringTokenizer(string, " \t\n\r\f,()");
-      final List<String> selection = new ArrayList<String>();
       boolean isInFrom = false;
 
       Class<? extends Entity> entityClass = null;

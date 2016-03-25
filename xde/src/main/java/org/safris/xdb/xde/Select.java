@@ -161,7 +161,7 @@ class Select {
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
 
         serialize(serialization);
-        Entity.clearAliases();
+        Data.clearAliases();
 
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
@@ -257,7 +257,7 @@ class Select {
           if (i > 0)
             serialization.sql.append(", ");
 
-          serialization.sql.append(Entity.tableName(tables[i], serialization)).append(" ").append(Entity.tableAlias(tables[i], true));
+          serialization.sql.append(Data.tableName(tables[i], serialization)).append(" ").append(Data.tableAlias(tables[i], true));
         }
       }
       else {
@@ -298,7 +298,7 @@ class Select {
     protected void serialize(final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(serialization);
-        serialization.sql.append(" GROUP BY ").append(Entity.columnRef(field));
+        serialization.sql.append(" GROUP BY ").append(Data.columnRef(field));
       }
 
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
@@ -379,7 +379,7 @@ class Select {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
         // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-        Entity.tableAlias(entity, true);
+        Data.tableAlias(entity, true);
         parent.serialize(serialization);
         serialization.sql.append(natural != null ? " NATURAL" : "");
         if (type != null) {
@@ -387,7 +387,7 @@ class Select {
           type.serialize(serialization);
         }
 
-        serialization.sql.append(" JOIN ").append(Entity.tableName(entity, serialization)).append(" ").append(Entity.tableAlias(entity, true));
+        serialization.sql.append(" JOIN ").append(Data.tableName(entity, serialization)).append(" ").append(Data.tableAlias(entity, true));
         return;
       }
 
@@ -463,7 +463,7 @@ class Select {
 
           if (field instanceof DataType<?>) {
             final DataType<?> dataType = (DataType<?>)field;
-            Entity.tableAlias(dataType.entity, true);
+            Data.tableAlias(dataType.entity, true);
             dataType.serialize(serialization);
             serialization.sql.append(" ASC");
           }
@@ -566,7 +566,7 @@ class Select {
 
           if (data instanceof Entity) {
             final Entity entity = (Entity)data;
-            final String alias = Entity.tableAlias(entity, true);
+            final String alias = Data.tableAlias(entity, true);
             final DataType<?>[] dataTypes = entity.column();
             for (int j = 0; j < dataTypes.length; j++) {
               final DataType<?> dataType = dataTypes[j];
@@ -577,7 +577,7 @@ class Select {
             }
           }
           else if (data instanceof DataType<?>) {
-            Entity.tableAlias(((DataType<?>)data).entity, true);
+            Data.tableAlias(((DataType<?>)data).entity, true);
             final DataType<?> dataType = (DataType<?>)data;
             dataType.serialize(serialization);
           }
@@ -673,7 +673,7 @@ class Select {
         }
       }
 
-      Entity.clearAliases();
+      Data.clearAliases();
       return null;
     }
 

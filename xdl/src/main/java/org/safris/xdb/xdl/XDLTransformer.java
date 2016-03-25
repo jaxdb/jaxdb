@@ -58,10 +58,10 @@ public abstract class XDLTransformer {
     if (outDir != null && !outDir.exists())
       throw new IllegalArgumentException("!outDir.exists()");
 
-    final InputStream in = url.openStream();
-    final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
-    in.close();
-    return database;
+    try (final InputStream in = url.openStream()) {
+      final xdl_database database = (xdl_database)Bindings.parse(new InputSource(in));
+      return database;
+    }
   }
 
   protected static void writeOutput(final String output, final File file) {
@@ -76,9 +76,9 @@ public abstract class XDLTransformer {
         if (!file.getParentFile().mkdirs())
           throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
-      final FileOutputStream out = new FileOutputStream(file);
-      out.write(output.trim().getBytes());
-      out.close();
+      try (final FileOutputStream out = new FileOutputStream(file)) {
+        out.write(output.trim().getBytes());
+      }
     }
     catch (final Exception e) {
       throw new RuntimeException(e);
@@ -119,7 +119,7 @@ public abstract class XDLTransformer {
       for (final String error : errors)
         Log.warn(error);
 
-      //System.exit(1);
+      // System.exit(1);
     }
   }
 

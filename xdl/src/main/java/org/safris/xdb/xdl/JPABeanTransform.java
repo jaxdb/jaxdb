@@ -292,7 +292,7 @@ public final class JPABeanTransform extends XDLTransformer {
           if (column._foreignKey() != null) {
             final JPAFieldModel columnModel = fieldModel.clone();
             final List<String> cascade = column._foreignKey(0)._join() != null ? column._foreignKey(0)._join(0)._field(0)._cascade$().text() : null;
-            if (cascade == null || (cascade.size() == 1 && $xdl_field._cascade$.REFRESH.text().equals(cascade.get(0))))
+            if (cascade == null || (cascade.size() == 1 && $xdl_cascade.REFRESH.text().equals(cascade.get(0))))
               fieldModel.setImmutable(true);
             else
               columnModel.setImmutable(true);

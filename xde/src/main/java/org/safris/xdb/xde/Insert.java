@@ -81,7 +81,7 @@ class Insert {
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
         serialize(serialization);
-        Entity.clearAliases();
+        Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
           serialization.set(statement);

@@ -37,7 +37,7 @@ class Delete {
           vendor = Schema.getDBVendor(connection);
           final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
           serialize(serialization);
-          Entity.clearAliases();
+          Data.clearAliases();
           if (serialization.statementType == PreparedStatement.class) {
             try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
               serialization.set(statement);
@@ -161,7 +161,7 @@ class Delete {
         }
       }
 
-      Entity.clearAliases();
+      Data.clearAliases();
       return super.execute();
     }
   }

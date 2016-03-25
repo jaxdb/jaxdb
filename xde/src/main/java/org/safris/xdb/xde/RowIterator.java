@@ -26,7 +26,7 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
   private T[] entities;
   private int entityIndex = -1;
 
-  public boolean previousRow() throws XDEException {
+  public boolean previousRow() {
     if (rowIndex <= 0)
       return false;
 
