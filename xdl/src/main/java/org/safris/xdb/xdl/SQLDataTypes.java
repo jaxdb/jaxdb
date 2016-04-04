@@ -19,6 +19,10 @@ package org.safris.xdb.xdl;
 import java.math.BigInteger;
 
 import org.safris.commons.lang.Strings;
+import org.safris.xdb.xdl.xe.$xdl_index;
+import org.safris.xdb.xdl.xe.$xdl_integer;
+import org.safris.xdb.xdl.xe.$xdl_named;
+import org.safris.xdb.xdl.xe.$xdl_table;
 import org.safris.xml.generator.compiler.runtime.BindingList;
 
 public final class SQLDataTypes {

@@ -20,22 +20,22 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.xdb.xdl.$xdl_bit;
-import org.safris.xdb.xdl.$xdl_blob;
-import org.safris.xdb.xdl.$xdl_boolean;
-import org.safris.xdb.xdl.$xdl_char;
-import org.safris.xdb.xdl.$xdl_column;
-import org.safris.xdb.xdl.$xdl_date;
-import org.safris.xdb.xdl.$xdl_dateTime;
-import org.safris.xdb.xdl.$xdl_decimal;
-import org.safris.xdb.xdl.$xdl_enum;
-import org.safris.xdb.xdl.$xdl_float;
-import org.safris.xdb.xdl.$xdl_integer;
-import org.safris.xdb.xdl.$xdl_named;
-import org.safris.xdb.xdl.$xdl_table;
-import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
-import org.w3.x2001.xmlschema.$xs_anySimpleType;
+import org.safris.xdb.xdl.xe.$xdl_bit;
+import org.safris.xdb.xdl.xe.$xdl_blob;
+import org.safris.xdb.xdl.xe.$xdl_boolean;
+import org.safris.xdb.xdl.xe.$xdl_char;
+import org.safris.xdb.xdl.xe.$xdl_column;
+import org.safris.xdb.xdl.xe.$xdl_date;
+import org.safris.xdb.xdl.xe.$xdl_dateTime;
+import org.safris.xdb.xdl.xe.$xdl_decimal;
+import org.safris.xdb.xdl.xe.$xdl_enum;
+import org.safris.xdb.xdl.xe.$xdl_float;
+import org.safris.xdb.xdl.xe.$xdl_integer;
+import org.safris.xdb.xdl.xe.$xdl_named;
+import org.safris.xdb.xdl.xe.$xdl_table;
+import org.safris.xdb.xdl.xe.$xdl_time;
+import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public abstract class SQLSpec {
   protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns);

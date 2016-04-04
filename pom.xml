@@ -30,9 +30,6 @@
   <version>0.2.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>
-    Ant stuff.
-  </description>
   <modules>
     <module>xdr</module>
     <module>xdl</module>

@@ -20,22 +20,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.safris.xdb.xdl.$xdl_bit;
-import org.safris.xdb.xdl.$xdl_blob;
-import org.safris.xdb.xdl.$xdl_boolean;
-import org.safris.xdb.xdl.$xdl_char;
-import org.safris.xdb.xdl.$xdl_column;
-import org.safris.xdb.xdl.$xdl_date;
-import org.safris.xdb.xdl.$xdl_dateTime;
-import org.safris.xdb.xdl.$xdl_decimal;
-import org.safris.xdb.xdl.$xdl_enum;
-import org.safris.xdb.xdl.$xdl_float;
-import org.safris.xdb.xdl.$xdl_index;
-import org.safris.xdb.xdl.$xdl_integer;
-import org.safris.xdb.xdl.$xdl_named;
-import org.safris.xdb.xdl.$xdl_table;
-import org.safris.xdb.xdl.$xdl_time;
 import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xdl.xe.$xdl_bit;
+import org.safris.xdb.xdl.xe.$xdl_blob;
+import org.safris.xdb.xdl.xe.$xdl_boolean;
+import org.safris.xdb.xdl.xe.$xdl_char;
+import org.safris.xdb.xdl.xe.$xdl_column;
+import org.safris.xdb.xdl.xe.$xdl_date;
+import org.safris.xdb.xdl.xe.$xdl_dateTime;
+import org.safris.xdb.xdl.xe.$xdl_decimal;
+import org.safris.xdb.xdl.xe.$xdl_enum;
+import org.safris.xdb.xdl.xe.$xdl_float;
+import org.safris.xdb.xdl.xe.$xdl_index;
+import org.safris.xdb.xdl.xe.$xdl_integer;
+import org.safris.xdb.xdl.xe.$xdl_named;
+import org.safris.xdb.xdl.xe.$xdl_table;
+import org.safris.xdb.xdl.xe.$xdl_time;
 
 public class PostgreSQLSpec extends SQLSpec {
   private static final Logger logger = Logger.getLogger(PostgreSQLSpec.class.getName());

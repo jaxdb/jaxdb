@@ -37,22 +37,20 @@
         <version>2.0.1-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>generate-sources</id>
             <phase>generate-sources</phase>
             <goals>
               <goal>generate</goal>
             </goals>
-            <configuration>
-              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-                <destdir explodeJars="true">${project.build.directory}/generated-sources/xmlbinding</destdir>
-                <schemas>
-                  <schema>${basedir}/src/main/resources/XMLSchemaAPI.xsd</schema>
-                  <schema>${basedir}/src/main/resources/xdl.xsd</schema>
-                </schemas>
-              </manifest>
-            </configuration>
           </execution>
         </executions>
+        <configuration>
+          <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
+            <destdir explodeJars="true">${project.build.directory}/generated-sources/xmlbinding</destdir>
+            <schemas>
+              <schema>${basedir}/src/main/resources/xdl.xsd</schema>
+            </schemas>
+          </manifest>
+        </configuration>
       </plugin>
     </plugins>
   </build>

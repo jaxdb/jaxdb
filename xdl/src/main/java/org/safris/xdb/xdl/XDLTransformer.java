@@ -32,6 +32,10 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.maven.Log;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.xdl.xe.$xdl_column;
+import org.safris.xdb.xdl.xe.$xdl_inherited;
+import org.safris.xdb.xdl.xe.$xdl_table;
+import org.safris.xdb.xdl.xe.xdl_database;
 import org.safris.xml.generator.compiler.runtime.Bindings;
 import org.xml.sax.InputSource;
 

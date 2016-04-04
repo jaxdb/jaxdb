@@ -31,6 +31,24 @@ import org.safris.commons.maven.Log;
 import org.safris.commons.util.MaskedEnum;
 import org.safris.commons.util.TopologicalSort;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.xdl.xe.$xdl_bit;
+import org.safris.xdb.xdl.xe.$xdl_blob;
+import org.safris.xdb.xdl.xe.$xdl_boolean;
+import org.safris.xdb.xdl.xe.$xdl_char;
+import org.safris.xdb.xdl.xe.$xdl_check;
+import org.safris.xdb.xdl.xe.$xdl_column;
+import org.safris.xdb.xdl.xe.$xdl_date;
+import org.safris.xdb.xdl.xe.$xdl_dateTime;
+import org.safris.xdb.xdl.xe.$xdl_decimal;
+import org.safris.xdb.xdl.xe.$xdl_enum;
+import org.safris.xdb.xdl.xe.$xdl_float;
+import org.safris.xdb.xdl.xe.$xdl_foreignKey;
+import org.safris.xdb.xdl.xe.$xdl_inherited;
+import org.safris.xdb.xdl.xe.$xdl_integer;
+import org.safris.xdb.xdl.xe.$xdl_named;
+import org.safris.xdb.xdl.xe.$xdl_table;
+import org.safris.xdb.xdl.xe.$xdl_time;
+import org.safris.xdb.xdl.xe.xdl_database;
 
 public final class DDLTransform extends XDLTransformer {
   private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();

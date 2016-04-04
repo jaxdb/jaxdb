@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.safris.xdb.xdl.xe.$xdl_column;
 import org.safris.xdb.xdr.GenerateOnInsert;
 import org.safris.xdb.xdr.GenerateOnUpdate;
 

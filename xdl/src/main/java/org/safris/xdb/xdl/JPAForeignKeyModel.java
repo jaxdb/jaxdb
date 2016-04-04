@@ -25,6 +25,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
+import org.safris.xdb.xdl.xe.$xdl_column;
+import org.safris.xdb.xdl.xe.$xdl_join;
+
 public final class JPAForeignKeyModel {
   private final JPAFieldModel fieldModel;
   private final String id;
