@@ -480,33 +480,31 @@ public class EntityGenerator {
 
     String eq = "";
     final List<$xdl_column> primaryColumns = new ArrayList<$xdl_column>();
+    final List<$xdl_column> equalsColumns;
     if (table._column() != null) {
       for (final $xdl_column column : table._column())
         if (isPrimary(table, column))
           primaryColumns.add(column);
 
-      if (primaryColumns.size() > 0) {
-        out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
-        for (final $xdl_column column : primaryColumns)
-          eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
+      equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table._column();
+      out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
+      for (final $xdl_column column : equalsColumns)
+        eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
 
-        out += "      return " + eq.substring(4) + ";";
-      }
-      else {
-        out += "      return true;";
-      }
+      out += "      return " + eq.substring(4) + ";";
     }
     else {
+      equalsColumns = null;
       out += "      return true;";
     }
     out += "\n    }";
 
     eq = "";
-    if (primaryColumns.size() > 0) {
+    if (equalsColumns != null && equalsColumns.size() > 0) {
       out += "\n\n";
       out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
-      for (final $xdl_column column : primaryColumns)
+      for (final $xdl_column column : equalsColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
       out += "      return " + eq.substring(3) + ";";
       out += "\n    }";
