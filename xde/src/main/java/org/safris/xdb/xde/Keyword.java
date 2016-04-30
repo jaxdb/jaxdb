@@ -28,6 +28,20 @@ public abstract class Keyword<T extends Data<?>> extends Serializable {
       if (obj == null) {
         serialization.sql.append("NULL");
       }
+      else if (obj instanceof Object[]) {
+        serialization.sql.append("(");
+        final Object[] arr = (Object[])obj;
+        if (arr.length > 0) {
+          serialization.addParameter(arr[0]);
+          serialization.sql.append("?");
+          for (int i = 1; i < arr.length; i++) {
+            serialization.addParameter(arr[i]);
+            serialization.sql.append(", ?");
+          }
+        }
+
+        serialization.sql.append(")");
+      }
       else {
         serialization.addParameter(obj);
         serialization.sql.append("?");

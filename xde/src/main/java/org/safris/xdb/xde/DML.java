@@ -20,6 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.safris.commons.lang.Arrays;
 import org.safris.xdb.xde.BooleanCondition.Operator;
 import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
@@ -509,5 +510,55 @@ public abstract class DML {
 
   public static Predicate<String> LIKE(final Char a, final String b) {
     return new Predicate<String>("LIKE", a, b);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final Field<T> ... b1) {
+    final Object[] in = new Object[b1.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    return new Predicate<T>("IN", a, in);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, T b0, final T ... b1) {
+    final Object[] in = new Object[b1.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    return new Predicate<T>("IN", a, in);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final T ... b1) {
+    final Object[] in = new Object[b1.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    return new Predicate<T>("IN", a, in);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, final T b0, final Field<T> ... b1) {
+    final Object[] in = new Object[b1.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    return new Predicate<T>("IN", a, in);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final Field<T>[] b1, final T ... b2) {
+    final Object[] in = new Object[b1.length + b2.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    System.arraycopy(b2, 0, in, 1 + b1.length, b2.length);
+    return new Predicate<T>("IN", a, in);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final Field<T> a, final T b0, final T[] b1, final Field<T> ... b2) {
+    final Object[] in = new Object[b1.length + b2.length + 1];
+    in[0] = b0;
+    System.arraycopy(b1, 0, in, 1, b1.length);
+    System.arraycopy(b2, 0, in, 1 + b1.length, b2.length);
+    return new Predicate<T>("IN", a, in);
   }
 }

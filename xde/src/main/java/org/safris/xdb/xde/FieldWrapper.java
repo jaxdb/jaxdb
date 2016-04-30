@@ -44,6 +44,19 @@ class FieldWrapper<T> extends Field<T> {
     if (obj == null)
       return "NULL";
 
+    if (obj instanceof Object[]) {
+      final StringBuilder buffer = new StringBuilder("(");
+      final Object[] arr = (Object[])obj;
+      if (arr.length > 0) {
+        buffer.append(toString(arr[0]));
+        for (int i = 1; i < arr.length; i++)
+          buffer.append(", ").append(toString(arr[0]));
+      }
+
+      buffer.append(")");
+      return buffer.toString();
+    }
+
     if (obj instanceof String)
       return "'" + obj + "'";
 

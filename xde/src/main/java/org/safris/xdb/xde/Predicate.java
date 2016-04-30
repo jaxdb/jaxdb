@@ -3,9 +3,9 @@ package org.safris.xdb.xde;
 public class Predicate<T> extends Condition<Data<T>> {
   private final String predicate;
   private final Field<T> field;
-  private final T condition;
+  private final Object[] condition;
 
-  protected Predicate(final String predicate, final Field<T> field, final T condition) {
+  protected Predicate(final String predicate, final Field<T> field, final Object ... condition) {
     this.predicate = predicate;
     this.field = field;
     this.condition = condition;
