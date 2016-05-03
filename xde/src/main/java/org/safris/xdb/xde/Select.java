@@ -150,13 +150,19 @@ class Select {
     };
   }
 
-  private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
+  private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements org.safris.xdb.xde.csql.select.SELECT<T> {
+    @Override
     public final RowIterator<T> execute() throws XDEException {
+      return execute(null);
+    }
+
+    @Override
+    public RowIterator<T> execute(final Transaction transaction) throws XDEException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       DBVendor vendor = null;
       try {
-        final Connection connection = Schema.getConnection(schema);
+        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
 
@@ -595,6 +601,11 @@ class Select {
 
     @Override
     public RowIterator<T> execute() throws XDEException {
+      return execute(null);
+    }
+
+    @Override
+    public RowIterator<T> execute(final Transaction transaction) throws XDEException {
       if (entities.length == 1) {
         final Entity entity = (Entity)this.entities[0];
         final Entity out = entity.newInstance();
@@ -612,7 +623,7 @@ class Select {
         sql += select.substring(2) + " FROM " + entity.name() + " WHERE " + where.substring(5);
         DBVendor vendor = null;
         try {
-          final Connection connection = Schema.getConnection(entity.schema());
+          final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
           vendor = Schema.getDBVendor(connection);
           final DBVendor finalVendor = vendor;
           final PreparedStatement statement = connection.prepareStatement(sql);
