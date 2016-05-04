@@ -19,8 +19,9 @@ package org.safris.xdb.xde;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Iterator;
 
-import org.safris.commons.lang.Arrays;
 import org.safris.xdb.xde.BooleanCondition.Operator;
 import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
 import org.safris.xdb.xde.csql.expression.WHEN;
@@ -513,52 +514,56 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final Field<T> ... b1) {
-    final Object[] in = new Object[b1.length + 1];
-    in[0] = b0;
-    System.arraycopy(b1, 0, in, 1, b1.length);
-    return new Predicate<T>("IN", a, in);
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> ... b) {
+    return new Predicate<T>("IN", a, (Object[])b);
   }
 
   @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, T b0, final T ... b1) {
-    final Object[] in = new Object[b1.length + 1];
-    in[0] = b0;
+  public static <T>Predicate<T> IN(final Field<T> a, final T ... b) {
+    return new Predicate<T>("IN", a, b);
+  }
+
+  public static <T>Predicate<T> IN(final Field<T> a, final Collection<T> b) {
+    return new Predicate<T>("IN", a, b.toArray());
+  }
+
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T>[] b1, final T[] b2) {
+    final Object[] in = new Object[b1.length + b2.length];
     System.arraycopy(b1, 0, in, 1, b1.length);
+    System.arraycopy(b2, 0, in, b1.length, b2.length);
     return new Predicate<T>("IN", a, in);
   }
 
-  @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final T ... b1) {
-    final Object[] in = new Object[b1.length + 1];
-    in[0] = b0;
-    System.arraycopy(b1, 0, in, 1, b1.length);
+  public static <T>Predicate<T> IN(final Field<T> a, final Collection<Field<T>> b1, final T[] b2) {
+    final Object[] in = new Object[b1.size() + b2.length];
+    final Iterator<Field<T>> iterator = b1.iterator();
+    for (int i = 0; iterator.hasNext(); i++)
+      in[i] = iterator.next();
+
+    System.arraycopy(b2, 0, in, b1.size(), b2.length);
     return new Predicate<T>("IN", a, in);
   }
 
-  @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final T b0, final Field<T> ... b1) {
-    final Object[] in = new Object[b1.length + 1];
-    in[0] = b0;
+  public static <T>Predicate<T> IN(final Field<T> a, final Field<T>[] b1, final Collection<T> b2) {
+    final Object[] in = new Object[b1.length + b2.size()];
     System.arraycopy(b1, 0, in, 1, b1.length);
+    final Iterator<T> iterator = b2.iterator();
+    for (int i = b1.length; iterator.hasNext(); i++)
+      in[i] = iterator.next();
+
     return new Predicate<T>("IN", a, in);
   }
 
-  @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> b0, final Field<T>[] b1, final T ... b2) {
-    final Object[] in = new Object[b1.length + b2.length + 1];
-    in[0] = b0;
-    System.arraycopy(b1, 0, in, 1, b1.length);
-    System.arraycopy(b2, 0, in, 1 + b1.length, b2.length);
-    return new Predicate<T>("IN", a, in);
-  }
+  public static <T>Predicate<T> IN(final Field<T> a, final Collection<Field<T>> b1, final Collection<T> b2) {
+    final Object[] in = new Object[b1.size() + b2.size()];
+    final Iterator<Field<T>> iterator1 = b1.iterator();
+    for (int i = 0; iterator1.hasNext(); i++)
+      in[i] = iterator1.next();
 
-  @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final T b0, final T[] b1, final Field<T> ... b2) {
-    final Object[] in = new Object[b1.length + b2.length + 1];
-    in[0] = b0;
-    System.arraycopy(b1, 0, in, 1, b1.length);
-    System.arraycopy(b2, 0, in, 1 + b1.length, b2.length);
+    final Iterator<T> iterator2 = b2.iterator();
+    for (int i = b1.size(); iterator2.hasNext(); i++)
+      in[i] = iterator2.next();
+
     return new Predicate<T>("IN", a, in);
   }
 }
