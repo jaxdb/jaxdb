@@ -16,8 +16,10 @@
 
 package org.safris.xdb.xde.csql.update;
 
+import org.safris.xdb.xde.Transaction;
 import org.safris.xdb.xde.XDEException;
 
 public interface UPDATE {
+  public int execute(final Transaction transaction) throws XDEException;
   public int execute() throws XDEException;
 }

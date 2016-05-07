@@ -30,7 +30,8 @@ import org.safris.xdb.xdl.DBVendor;
 class Update {
   private static final Logger logger = Logger.getLogger(Update.class.getName());
 
-  private static abstract class Execute extends Keyword<DataType<?>> {
+  private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.csql.update.UPDATE {
+    @Override
     public int execute(final Transaction transaction) throws XDEException {
       final Keyword<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
@@ -69,6 +70,7 @@ class Update {
       }
     }
 
+    @Override
     public int execute() throws XDEException {
       return execute(null);
     }
