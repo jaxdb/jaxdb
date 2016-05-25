@@ -43,6 +43,8 @@ public class XDEException extends SQLException {
     }
   }
 
+  public static final ErrorSpec CONNECTION_ATTEMPT_FAILED = new ErrorSpec(new Pair<DBVendor,String>(null, "08001"));
+
   public static final ErrorSpec INVALID_PARAMETER_VALUE = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "22023"));
   public static final ErrorSpec SYNTAX_ERROR = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "42601"));
   public static final ErrorSpec DATATYPE_MISMATCH = new ErrorSpec(new Pair<DBVendor,String>(DBVendor.POSTGRE_SQL, "42804"));
