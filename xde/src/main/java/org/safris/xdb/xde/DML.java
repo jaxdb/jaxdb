@@ -143,29 +143,6 @@ public abstract class DML {
     }
   };
 
-  /** NULL / NOT NULL **/
-
-  public static abstract class NULL_NOT_NULL extends Keyword<Data<?>> {
-    @Override
-    protected Keyword<Data<?>> parent() {
-      return null;
-    }
-  }
-
-  public static final NULL_NOT_NULL NULL = new NULL_NOT_NULL() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.sql.append("NULL");
-    }
-  };
-
-  public static final NULL_NOT_NULL NOT_NULL = new NULL_NOT_NULL() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.sql.append("NOT NULL");
-    }
-  };
-
   /** SetQualifier **/
 
   public static abstract class SetQualifier extends Keyword<Data<?>> {
@@ -470,8 +447,12 @@ public abstract class DML {
     return new BooleanCondition(Operator.OR, conditions);
   }
 
-  public static <T>LogicalCondition<T> IS(final NULL_NOT_NULL nul, final Field<T> a) {
-    return new LogicalCondition<T>("IS", a, nul);
+  public static <T>LogicalCondition<T> IS_NULL(final Field<T> a) {
+    return new LogicalCondition<T>("IS", a, null);
+  }
+
+  public static <T>LogicalCondition<T> IS_NOT_NULL(final Field<T> a) {
+    return new LogicalCondition<T>("IS NOT", a, null);
   }
 
   public static <T>LogicalCondition<T> GT(final Field<T> a, final Field<T> b) {
