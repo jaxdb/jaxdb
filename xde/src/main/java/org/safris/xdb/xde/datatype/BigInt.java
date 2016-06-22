@@ -69,6 +69,9 @@ public final class BigInt extends DataType<BigInteger> {
   @Override
   protected BigInteger get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
+    if (value == null)
+      return null;
+
     if (value instanceof BigInteger)
       return (BigInteger)value;
 
