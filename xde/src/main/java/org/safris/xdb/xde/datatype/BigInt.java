@@ -31,7 +31,7 @@ public final class BigInt extends DataType<BigInteger> {
   protected static final int sqlType = Types.BIGINT;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final BigInteger value) throws SQLException {
-    statement.setObject(parameterIndex, value);
+    statement.setObject(parameterIndex, value, Types.BIGINT);
   }
 
   public final int precision;
@@ -75,7 +75,7 @@ public final class BigInt extends DataType<BigInteger> {
     if (value instanceof BigInteger)
       return (BigInteger)value;
 
-    if (value instanceof Long)
+    if (value instanceof java.lang.Long)
       return BigInteger.valueOf((java.lang.Long)value);
 
     throw new Error("Unexpected class: " + value.getClass().getName());
