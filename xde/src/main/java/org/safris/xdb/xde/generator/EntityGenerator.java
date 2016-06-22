@@ -318,7 +318,7 @@ public class EntityGenerator {
 
       final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
       final $xs_anySimpleType value = ($xs_anySimpleType)method.invoke(column);
-      if (value.isNull())
+      if (value.isNull() || "null".equals(value.text()))
         return null;
 
       if (column instanceof $xdl_enum)
