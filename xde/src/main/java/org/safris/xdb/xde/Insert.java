@@ -42,14 +42,14 @@ class Insert {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serialization serialization) {
       serialization.sql.append("INSERT INTO ").append(entity.name());
-      String columns = "";
-      String values = "";
+      final StringBuilder columns = new StringBuilder();
+      final StringBuilder values = new StringBuilder();
       if (serialization.statementType == PreparedStatement.class) {
         for (final DataType dataType : entity.column()) {
           final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            columns += ", " + dataType.name;
-            values += ", " + dataType.getPreparedStatementMark(serialization.vendor);
+            columns.append(", ").append(dataType.name);
+            values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
             serialization.addParameter(value);
           }
         }
@@ -58,8 +58,8 @@ class Insert {
         for (final DataType dataType : entity.column()) {
           final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            columns += ", " + dataType.name;
-            values += ", " + FieldWrapper.toString(value);
+            columns.append(", ").append(dataType.name);
+            values.append(", ").append(FieldWrapper.toString(value));
           }
         }
       }

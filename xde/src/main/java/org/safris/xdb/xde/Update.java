@@ -140,24 +140,24 @@ class Update {
 
       serialization.sql.append("UPDATE ");
       entity.serialize(serialization);
-      String columns = "";
+      final StringBuilder setClause = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (!dataType.primary) {
           final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            columns += ", " + dataType.name + " = ?";
+            setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
             serialization.addParameter(value);
           }
         }
       }
 
-      serialization.sql.append(" SET ").append(columns.substring(2));
-      String where = "";
+      serialization.sql.append(" SET ").append(setClause.substring(2));
+      StringBuilder where = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (dataType.primary) {
           final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
           if (value != null) {
-            where += " AND " + dataType.name + " = ?";
+            where.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
             serialization.addParameter(value);
           }
         }
