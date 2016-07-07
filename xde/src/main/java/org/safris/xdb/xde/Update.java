@@ -162,12 +162,8 @@ class Update {
       final StringBuilder whereClause = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (dataType.primary) {
-          if (!dataType.wasSet()) {
-            if (dataType.generateOnUpdate == null)
-              continue;
-
+          if (dataType.generateOnUpdate != null)
             dataType.value = dataType.generateOnUpdate.generate(dataType);
-          }
 
           serialization.addParameter(dataType.get());
           whereClause.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
