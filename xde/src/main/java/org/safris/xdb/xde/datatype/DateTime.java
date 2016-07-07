@@ -23,9 +23,10 @@ import java.sql.Timestamp;
 import java.sql.Types;
 
 import org.joda.time.LocalDateTime;
-import org.safris.xdb.xde.GenerateOn;
+import org.joda.time.base.BaseLocal;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xdl.DBVendor;
 
 public final class DateTime extends DataType<LocalDateTime> {
@@ -35,7 +36,7 @@ public final class DateTime extends DataType<LocalDateTime> {
     statement.setTimestamp(parameterIndex, new Timestamp(value.toDate().getTime()));
   }
 
-  public DateTime(final Entity owner, final String csqlName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<LocalDateTime> generateOnInsert, final GenerateOn<LocalDateTime> generateOnUpdate) {
+  public DateTime(final Entity owner, final String csqlName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
     super(sqlType, LocalDateTime.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 

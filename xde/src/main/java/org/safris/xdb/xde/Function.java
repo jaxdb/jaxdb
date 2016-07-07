@@ -36,6 +36,6 @@ public abstract class Function<T> extends Keyword<Field<T>> {
 
   @Override
   protected void serialize(Serialization serialization) {
-    throw new RuntimeException("Implement me");
+    throw new UnsupportedOperationException("Implement me");
   }
 }

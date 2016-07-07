@@ -46,21 +46,29 @@ class Insert {
       final StringBuilder values = new StringBuilder();
       if (serialization.statementType == PreparedStatement.class) {
         for (final DataType dataType : entity.column()) {
-          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
-          if (value != null) {
-            columns.append(", ").append(dataType.name);
-            values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
-            serialization.addParameter(value);
+          if (!dataType.wasSet()) {
+            if (dataType.generateOnInsert == null)
+              continue;
+
+            dataType.set(dataType.generateOnInsert.generate(dataType));
           }
+
+          columns.append(", ").append(dataType.name);
+          values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
+          serialization.addParameter(dataType.get());
         }
       }
       else if (serialization.statementType == Statement.class) {
         for (final DataType dataType : entity.column()) {
-          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnInsert != null ? dataType.set(dataType.generateOnInsert.generate()) : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
-          if (value != null) {
-            columns.append(", ").append(dataType.name);
-            values.append(", ").append(FieldWrapper.toString(value));
+          if (!dataType.wasSet()) {
+            if (dataType.generateOnInsert == null)
+              continue;
+
+            dataType.set(dataType.generateOnInsert.generate(dataType));
           }
+
+          columns.append(", ").append(dataType.name);
+          values.append(", ").append(FieldWrapper.toString(dataType.get()));
         }
       }
       else {

@@ -20,6 +20,7 @@ import java.lang.reflect.Field;
 
 import org.safris.commons.lang.Numbers;
 import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xde.XDERuntimeException;
 
 public final class Serializer {
   public static String serialize(final Object[] object) {
@@ -62,7 +63,7 @@ public final class Serializer {
         throw new Error("Did not find the desired field");
       }
       catch (final IllegalAccessException e) {
-        throw new RuntimeException(e);
+        throw new XDERuntimeException(e);
       }
     }
 

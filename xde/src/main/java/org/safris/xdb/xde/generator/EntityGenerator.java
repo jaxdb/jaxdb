@@ -154,15 +154,9 @@ public class EntityGenerator {
 
       if (column instanceof $xdl_char) {
         final $xdl_char type = ($xdl_char)column;
-        if (!type._generateOnInsert$().isNull()) {
+        if (!type._generateOnInsert$().isNull())
           if ($xdl_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
             generateOnInsert = GenerateOn.UUID;
-        }
-
-        if (!type._generateOnUpdate$().isNull()) {
-          if ($xdl_char._generateOnUpdate$.UUID.text().equals(type._generateOnUpdate$().text()))
-            generateOnUpdate = GenerateOn.UUID;
-        }
 
         return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
       }
@@ -175,6 +169,9 @@ public class EntityGenerator {
       if (column instanceof $xdl_integer) {
         final $xdl_integer type = ($xdl_integer)column;
         // no autogenerator is necessary for xdl_integer._generateOnInsert$.AUTO_5FINCREMENT
+        if (!type._generateOnUpdate$().isNull())
+          if ($xdl_integer._generateOnUpdate$.INCREMENT.text().equals(type._generateOnUpdate$().text()))
+            generateOnUpdate = GenerateOn.INCREMENT;
 
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
         if (noBytes <= 2)
@@ -215,45 +212,39 @@ public class EntityGenerator {
 
       if (column instanceof $xdl_date) {
         final $xdl_date type = ($xdl_date)column;
-        if (!type._generateOnInsert$().isNull()) {
+        if (!type._generateOnInsert$().isNull())
           if ($xdl_date._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
-            generateOnInsert = GenerateOn.TIMESTAMP_DATE;
-        }
+            generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull()) {
+        if (!type._generateOnUpdate$().isNull())
           if ($xdl_date._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
-            generateOnUpdate = GenerateOn.TIMESTAMP_DATE;
-        }
+            generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, org.safris.xdb.xde.datatype.Date.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_time) {
         final $xdl_time type = ($xdl_time)column;
-        if (!type._generateOnInsert$().isNull()) {
+        if (!type._generateOnInsert$().isNull())
           if ($xdl_time._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
-            generateOnInsert = GenerateOn.TIMESTAMP_TIME;
-        }
+            generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull()) {
+        if (!type._generateOnUpdate$().isNull())
           if ($xdl_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
-            generateOnUpdate = GenerateOn.TIMESTAMP_TIME;
-        }
+            generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, org.safris.xdb.xde.datatype.Time.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xdl_dateTime) {
         final $xdl_dateTime type = ($xdl_dateTime)column;
-        if (!type._generateOnInsert$().isNull()) {
+        if (!type._generateOnInsert$().isNull())
           if ($xdl_dateTime._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
-            generateOnInsert = GenerateOn.TIMESTAMP_DATETIME;
-        }
+            generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull()) {
+        if (!type._generateOnUpdate$().isNull())
           if ($xdl_dateTime._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
-            generateOnUpdate = GenerateOn.TIMESTAMP_DATETIME;
-        }
+            generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, DateTime.class, params, generateOnInsert, generateOnUpdate);
       }

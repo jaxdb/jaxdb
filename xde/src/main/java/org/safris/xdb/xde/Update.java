@@ -135,6 +135,9 @@ class Update {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serialization serialization) {
+      if (entity.primary().length == 0)
+        throw new XDERuntimeException(entity.name() + " does not have a primary key.");
+
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
@@ -143,27 +146,35 @@ class Update {
       final StringBuilder setClause = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (!dataType.primary) {
-          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
-          if (value != null) {
-            setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
-            serialization.addParameter(value);
+          if (!dataType.wasSet()) {
+            if (dataType.generateOnUpdate == null)
+              continue;
+
+            dataType.set(dataType.generateOnUpdate.generate(dataType));
           }
+
+          serialization.addParameter(dataType.get());
+          setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
 
       serialization.sql.append(" SET ").append(setClause.substring(2));
-      StringBuilder where = new StringBuilder();
+      final StringBuilder whereClause = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (dataType.primary) {
-          final Object value = dataType.wasSet() ? dataType.get() : dataType.generateOnUpdate != null ? dataType.set(dataType.generateOnUpdate.generate()) : null;
-          if (value != null) {
-            where.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
-            serialization.addParameter(value);
+          if (!dataType.wasSet()) {
+            if (dataType.generateOnUpdate == null)
+              continue;
+
+            dataType.set(dataType.generateOnUpdate.generate(dataType));
           }
+
+          serialization.addParameter(dataType.get());
+          whereClause.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
 
-      serialization.sql.append(" WHERE ").append(where.substring(5));
+      serialization.sql.append(" WHERE ").append(whereClause.substring(5));
     }
 
     @Override

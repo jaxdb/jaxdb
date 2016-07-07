@@ -38,7 +38,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     try {
       final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(DataType.class.getPackage().getName() + ".datatype");
       if (classes.size() == 0)
-        throw new Error("No classes found, wrong package?");
+        throw new XDERuntimeException("No classes found, wrong package?");
 
       for (final Class<?> cls : classes) {
         final Method[] methods = cls.getDeclaredMethods();
@@ -60,11 +60,8 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     try {
       typeToSetter.get(type.isEnum() ? Enum.class : type).invoke(null, statement, parameterIndex, value);
     }
-    catch (final IllegalAccessException e) {
-      throw new Error(e);
-    }
-    catch (final InvocationTargetException e) {
-      throw new Error(e);
+    catch (final IllegalAccessException | InvocationTargetException e) {
+      throw new XDERuntimeException(e);
     }
   }
 
@@ -76,10 +73,10 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   protected final boolean unique;
   protected final boolean primary;
   protected final boolean nullable;
-  protected final GenerateOn<T> generateOnInsert;
-  protected final GenerateOn<T> generateOnUpdate;
+  protected final GenerateOn<? super T> generateOnInsert;
+  protected final GenerateOn<? super T> generateOnUpdate;
 
-  protected DataType(final int sqlType, final Class<T> type, final Entity owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate) {
+  protected DataType(final int sqlType, final Class<T> type, final Entity owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
     super(_default);
     this.sqlType = sqlType;
     this.type = type;
@@ -135,11 +132,8 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
       constructor.setAccessible(true);
       return constructor.newInstance(this);
     }
-    catch (final InstantiationException e) {
-      throw new Error(e);
-    }
     catch (final ReflectiveOperationException e) {
-      throw new Error(e);
+      throw new XDERuntimeException(e);
     }
   }
 

@@ -24,6 +24,7 @@ import java.sql.Types;
 
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xde.XDERuntimeException;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
 
@@ -78,6 +79,6 @@ public final class BigInt extends DataType<BigInteger> {
     if (value instanceof java.lang.Long)
       return BigInteger.valueOf((java.lang.Long)value);
 
-    throw new Error("Unexpected class: " + value.getClass().getName());
+    throw new XDERuntimeException("Unexpected class: " + value.getClass().getName());
   }
 }

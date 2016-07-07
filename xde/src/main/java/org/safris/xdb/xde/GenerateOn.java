@@ -16,38 +16,39 @@
 
 package org.safris.xdb.xde;
 
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.joda.time.LocalTime;
+import org.joda.time.base.BaseLocal;
+import org.safris.commons.lang.reflect.Classes;
 
 public abstract class GenerateOn<T> {
+  public static GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
+    @Override
+    public Number generate(final DataType<Number> dataType) {
+      if (dataType.get() == null)
+        throw new XDERuntimeException("Value is missing");
+
+      return 1 + (dataType.get() instanceof Long ? dataType.get().longValue() : dataType.get() instanceof Integer ? dataType.get().intValue() : dataType.get() instanceof Double ? dataType.get().doubleValue() : dataType.get() instanceof Float ? dataType.get().floatValue() : dataType.get() instanceof Short ? dataType.get().shortValue() : dataType.get().byteValue());
+    }
+  };
+
+  public static GenerateOn<BaseLocal> TIMESTAMP = new GenerateOn<BaseLocal>() {
+    @Override
+    public BaseLocal generate(final DataType<BaseLocal> dataType) {
+      final Class<?> type = (Class<?>)Classes.getGenericSuperclasses(dataType.getClass())[0];
+      try {
+        return (BaseLocal)type.newInstance();
+      }
+      catch (final IllegalAccessException | InstantiationException e) {
+        throw new XDERuntimeException(e);
+      }
+    }
+  };
+
   public static GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
-    public String generate() {
+    public String generate(final DataType<String> dataType) {
       return java.util.UUID.randomUUID().toString().toUpperCase();
     }
   };
 
-  public static GenerateOn<LocalDate> TIMESTAMP_DATE = new GenerateOn<LocalDate>() {
-    @Override
-    public LocalDate generate() {
-      return new LocalDate();
-    }
-  };
-
-  public static GenerateOn<LocalTime> TIMESTAMP_TIME = new GenerateOn<LocalTime>() {
-    @Override
-    public LocalTime generate() {
-      return new LocalTime();
-    }
-  };
-
-  public static GenerateOn<LocalDateTime> TIMESTAMP_DATETIME = new GenerateOn<LocalDateTime>() {
-    @Override
-    public LocalDateTime generate() {
-      return new LocalDateTime();
-    }
-  };
-
-  public abstract T generate();
+  public abstract T generate(final DataType<T> dataType);
 }

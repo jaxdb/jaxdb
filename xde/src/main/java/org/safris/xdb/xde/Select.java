@@ -477,7 +477,7 @@ class Select {
             ((Direction<?>)field).serialize(serialization);
           }
           else {
-            throw new Error("Unknown column type: " + field.getClass().getName());
+            throw new XDERuntimeException("Unknown column type: " + field.getClass().getName());
           }
         }
 
