@@ -136,7 +136,10 @@ class Update {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serialization serialization) {
       if (entity.primary().length == 0)
-        throw new XDERuntimeException(entity.name() + " does not have a primary key.");
+        throw new XDERuntimeException(entity.name() + " does not have a primary key");
+
+      if (!entity.wasSelected())
+        throw new XDERuntimeException(entity.name() + " did not come from a SELECT");
 
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");

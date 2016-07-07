@@ -388,10 +388,13 @@ public class EntityGenerator {
       out += "    }\n\n";
       out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + entityName + " newInstance() {\n";
-      out += "      return new " + entityName + "();\n";
+      out += "      return new " + entityName + "(true);\n";
       out += "    }\n\n";
       out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
-      out += "      this(new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(false, new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "    }\n\n";
+      out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected) {\n";
+      out += "      this(wasSelected, new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
       // Constructor with params
@@ -433,8 +436,8 @@ public class EntityGenerator {
     }
 
     String defs = "";
-    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final " + DataType.class.getName() + "<?>[] column, final " + DataType.class.getName() + "<?>[] primary) {\n";
-    out += "      super(column, primary);\n";
+    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected, final " + DataType.class.getName() + "<?>[] column, final " + DataType.class.getName() + "<?>[] primary) {\n";
+    out += "      super(wasSelected, column, primary);\n";
     if (!table._abstract$().text()) {
       out += "      this.column = column;\n";
       out += "      this.primary = primary;\n";

@@ -20,17 +20,26 @@ import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
 
 public abstract class Entity extends Data<Entity> {
-  protected Entity(final DataType<?>[] dataType, final DataType<?>[] primary) {
+  private final boolean wasSelected;
+
+  protected Entity(final boolean wasSelected, final DataType<?>[] dataType, final DataType<?>[] primary) {
+    this.wasSelected = wasSelected;
   }
 
   protected Entity(final Entity entity) {
+    this.wasSelected = false;
   }
 
   protected Entity() {
+    this.wasSelected = false;
   }
 
   protected Entity entity() {
     return null;
+  }
+
+  protected boolean wasSelected() {
+    return wasSelected;
   }
 
   @Override
