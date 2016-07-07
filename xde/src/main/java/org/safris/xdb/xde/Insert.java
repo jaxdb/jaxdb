@@ -50,7 +50,7 @@ class Insert {
             if (dataType.generateOnInsert == null)
               continue;
 
-            dataType.set(dataType.generateOnInsert.generate(dataType));
+            dataType.value = dataType.generateOnInsert.generate(dataType);
           }
 
           columns.append(", ").append(dataType.name);
@@ -64,7 +64,7 @@ class Insert {
             if (dataType.generateOnInsert == null)
               continue;
 
-            dataType.set(dataType.generateOnInsert.generate(dataType));
+            dataType.value = dataType.generateOnInsert.generate(dataType);
           }
 
           columns.append(", ").append(dataType.name);

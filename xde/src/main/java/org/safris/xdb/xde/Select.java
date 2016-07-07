@@ -110,7 +110,7 @@ class Select {
               dataType = entity.column()[dataTypePrototype.b];
             }
 
-            dataType.set(dataType.get(resultSet, i + 1));
+            dataType.value = dataType.get(resultSet, i + 1);
           }
         }
         catch (final SQLException e) {
@@ -650,7 +650,7 @@ class Select {
 
                   int index = 0;
                   for (final Field field : out.column())
-                    field.set(field.get(resultSet, ++index));
+                    field.value = field.get(resultSet, ++index);
                 }
                 catch (final SQLException e) {
                   throw XDEException.lookup(e, finalVendor);

@@ -38,7 +38,7 @@ public abstract class Field<T> extends Data<Field<T>> {
     return wasSet;
   }
 
-  private T value;
+  protected T value;
 
   public T set(final T value) {
     this.wasSet = true;

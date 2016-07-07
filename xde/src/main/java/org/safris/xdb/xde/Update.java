@@ -150,7 +150,7 @@ class Update {
             if (dataType.generateOnUpdate == null)
               continue;
 
-            dataType.set(dataType.generateOnUpdate.generate(dataType));
+            dataType.value = dataType.generateOnUpdate.generate(dataType);
           }
 
           serialization.addParameter(dataType.get());
@@ -166,7 +166,7 @@ class Update {
             if (dataType.generateOnUpdate == null)
               continue;
 
-            dataType.set(dataType.generateOnUpdate.generate(dataType));
+            dataType.value = dataType.generateOnUpdate.generate(dataType);
           }
 
           serialization.addParameter(dataType.get());

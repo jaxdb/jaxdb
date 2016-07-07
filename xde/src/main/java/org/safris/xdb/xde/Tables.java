@@ -259,13 +259,13 @@ public final class Tables {
             // FIXME: Copy of code in Entity.select()
             final DataType col = current.column()[colCount++];
             if (col.type.isEnum())
-              col.set(Enum.valueOf(col.type, resultSet.getObject(++index, String.class)));
+              col.value = Enum.valueOf(col.type, resultSet.getObject(++index, String.class));
             else if (((DataType<?>)col).type == BigInteger.class) {
               final Object value = resultSet.getObject(++index);
-              col.set(value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value)));
+              col.value = value instanceof BigInteger ? value : value instanceof Long ? BigInteger.valueOf((Long)value) : new BigInteger(String.valueOf(value));
             }
             else {
-              col.set(resultSet.getObject(++index, col.type));
+              col.value = resultSet.getObject(++index, col.type);
             }
 
             lastIdentity = dataType.entity;
