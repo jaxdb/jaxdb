@@ -125,6 +125,7 @@ class Select {
         rows.add((B[])row);
         ++rowIndex;
         resetEntities();
+        prototypes.clear();
         currentTable = null;
         return true;
       }
