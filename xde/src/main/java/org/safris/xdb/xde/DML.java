@@ -199,12 +199,12 @@ public abstract class DML {
 
   /** DELETE **/
 
-  public static <T>UPDATE_SET UPDATE(final Entity entity) {
+  public static UPDATE_SET UPDATE(final Entity entity) {
     return new Update.UPDATE(entity);
   }
 
-  public static <T extends Data<?>>DELETE_WHERE<T> DELETE(final Entity entity) {
-    return new Delete.DELETE<T>(entity);
+  public static DELETE_WHERE DELETE(final Entity entity) {
+    return new Delete.DELETE(entity);
   }
 
   /** INSERT **/

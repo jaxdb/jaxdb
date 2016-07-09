@@ -18,6 +18,6 @@ package org.safris.xdb.xde.csql.delete;
 
 import org.safris.xdb.xde.Condition;
 
-public interface DELETE_WHERE<T> extends DELETE<T> {
-  public DELETE<T> WHERE(final Condition<?> condition);
+public interface DELETE_WHERE extends DELETE {
+  public DELETE WHERE(final Condition<?> condition);
 }

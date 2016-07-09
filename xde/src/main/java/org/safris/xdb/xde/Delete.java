@@ -22,55 +22,70 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 
+import org.safris.commons.sql.ConnectionProxy;
+import org.safris.commons.sql.StatementProxy;
 import org.safris.xdb.xdl.DBVendor;
 
 class Delete {
   private static final Logger logger = Logger.getLogger(Delete.class.getName());
 
-  private static abstract class Execute<T extends Data<?>> extends Keyword<T> {
-    public int execute() throws XDEException {
-      final Entity entity = null;//getParentRoot(this);
-      final Class<? extends Schema> schema = entity.schema();
+  private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.csql.delete.DELETE {
+    @Override
+    public int execute(final Transaction transaction) throws XDEException {
+      final Keyword<?> delete = getParentRoot(this);
+      final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
       try {
-        try (final Connection connection = Schema.getConnection(schema)) {
-          vendor = Schema.getDBVendor(connection);
-          final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-          serialize(serialization);
-          Data.clearAliases();
-          if (serialization.statementType == PreparedStatement.class) {
-            try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-              serialization.set(statement);
-              return statement.executeUpdate();
-            }
-          }
+        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
+        vendor = Schema.getDBVendor(connection);
+        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        serialize(serialization);
+        Data.clearAliases();
+        if (serialization.statementType == PreparedStatement.class) {
+          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
+          serialization.set(statement);
+          final int count = statement.executeUpdate();
+          StatementProxy.close(statement);
+          if (transaction == null)
+            ConnectionProxy.close(connection);
 
-          if (serialization.statementType == Statement.class) {
-            try (final Statement statement = connection.createStatement()) {
-              return statement.executeUpdate(serialization.sql.toString());
-            }
-          }
-
-          throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
+          return count;
         }
+
+        if (serialization.statementType == Statement.class) {
+          final Statement statement = connection.createStatement();
+          final int count = statement.executeUpdate(serialization.sql.toString());
+          StatementProxy.close(statement);
+          if (transaction == null)
+            ConnectionProxy.close(connection);
+
+          return count;
+        }
+
+        throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
         throw XDEException.lookup(e, vendor);
       }
     }
+
+    @Override
+    public int execute() throws XDEException {
+      return execute(null);
+    }
   }
 
-  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE<T> {
-    private final Field<T> parent;
+  protected final static class WHERE extends Execute implements org.safris.xdb.xde.csql.delete.DELETE {
+    private final Field<?> parent;
     private final Condition<?> condition;
 
-    protected WHERE(final Field<T> parent, final Condition<?> condition) {
+    protected WHERE(final Field<?> parent, final Condition<?> condition) {
       this.parent = parent;
       this.condition = condition;
     }
 
     @Override
-    protected Keyword<T> parent() {
+    protected Keyword<DataType<?>> parent() {
       return null;
     }
 
@@ -82,7 +97,7 @@ class Delete {
     }
   }
 
-  protected final static class DELETE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.delete.DELETE_WHERE<T> {
+  protected final static class DELETE extends Execute implements org.safris.xdb.xde.csql.delete.DELETE_WHERE {
     protected final Entity entity;
 
     protected DELETE(final Entity entity) {
@@ -90,38 +105,36 @@ class Delete {
     }
 
     @Override
-    public WHERE<T> WHERE(final Condition<?> condition) {
+    public WHERE WHERE(final Condition<?> condition) {
       return null;//new WHERE<T>(this, condition);
     }
 
     @Override
-    protected Keyword<T> parent() {
+    protected Keyword<DataType<?>> parent() {
       return null;
     }
 
     @Override
     protected void serialize(final Serialization serialization) {
-      serialization.sql.append("UPDATE ");
-      entity.serialize(serialization);
-    }
-
-    protected String encodeSingle(final Serialization serialization) {
       if (getClass() != DELETE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
-      String sql = "UPDATE " + entity.name() + " SET ";
-      String columns = "";
-      String where = "";
-      for (final DataType<?> dataType : entity.column()) {
-        if (dataType.primary)
-          where += " AND " + dataType.name + " = ?";
-        else
-          columns += ", " + dataType.name + " = ?";
+      if (entity.primary().length == 0)
+        throw new XDERuntimeException("Entity '" + entity.name() + "' does not have a primary key");
+
+      if (!entity.wasSelected())
+        throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
+
+      serialization.sql.append("DELETE FROM ");
+      entity.serialize(serialization);
+
+      final StringBuilder whereClause = new StringBuilder();
+      for (final DataType<?> dataType : entity.primary()) {
+        serialization.addParameter(dataType.get());
+        whereClause.append(" AND ").append(dataType.name).append(" = ?");
       }
 
-      sql += columns.substring(2) + " WHERE " + where.substring(5);
-      logger.info(sql);
-      return sql;
+      serialization.sql.append(" WHERE ").append(whereClause.substring(5));
     }
 
     @Override
@@ -134,7 +147,7 @@ class Delete {
           try (final Connection connection = Schema.getConnection(schema)) {
             vendor = Schema.getDBVendor(connection);
             final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-            final String sql = encodeSingle(serialization);
+            final String sql = null;
             logger.info(sql);
             if (true)
               return 0;
