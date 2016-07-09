@@ -33,9 +33,9 @@ class LogicalCondition<T> extends Condition<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    format(a, serialization);
+  protected void serialize(final Serializable caller, final Serialization serialization) {
+    format(this, a, serialization);
     serialization.sql.append(" ").append(operator).append(" ");
-    format(b, serialization);
+    format(this, b, serialization);
   }
 }

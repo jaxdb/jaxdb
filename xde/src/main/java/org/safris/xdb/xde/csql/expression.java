@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,7 +14,26 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql.expression;
+package org.safris.xdb.xde.csql;
 
-public interface ELSE<T> extends CASE<T> {
+import org.safris.xdb.xde.Condition;
+import org.safris.xdb.xde.Field;
+
+public interface expression {
+  public interface WHEN<T> {
+    public THEN<T> THEN(final Field<T> field);
+    public THEN<T> THEN(final T value);
+  }
+
+  public interface THEN<T> {
+    public THEN<T> WHEN(final Condition<T> condition);
+    public ELSE<T> ELSE(final Field<T> field);
+    public ELSE<T> ELSE(final T value);
+  }
+
+  public interface ELSE<T> extends CASE<T> {
+  }
+
+  public interface CASE<T> {
+  }
 }

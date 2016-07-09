@@ -40,7 +40,7 @@ class Insert {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("INSERT INTO ").append(entity.name());
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
@@ -88,7 +88,7 @@ class Insert {
 
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-        serialize(serialization);
+        serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());

@@ -17,9 +17,9 @@ public class Predicate<T> extends Condition<Data<T>> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    format(field, serialization);
+  protected void serialize(final Serializable caller, final Serialization serialization) {
+    format(this, field, serialization);
     serialization.sql.append(" ").append(predicate).append(" ");
-    format(condition, serialization);
+    format(this, condition, serialization);
   }
 }

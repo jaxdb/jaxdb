@@ -14,9 +14,15 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql.delete;
+package org.safris.xdb.xde.csql;
 
-import org.safris.xdb.xde.csql.ExecuteUpdate;
+import org.safris.xdb.xde.Condition;
 
-public interface DELETE extends ExecuteUpdate {
+public interface delete {
+  public interface DELETE extends ExecuteUpdate {
+  }
+
+  public interface DELETE_WHERE extends DELETE {
+    public DELETE WHERE(final Condition<?> condition);
+  }
 }

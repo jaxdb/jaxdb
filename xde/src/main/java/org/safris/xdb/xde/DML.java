@@ -42,8 +42,8 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      field.serialize(serialization);
+    protected void serialize(final Serializable caller, final Serialization serialization) {
+      field.serialize(this, serialization);
       serialization.sql.append(" ").append(getClass().getSimpleName());
     }
 
@@ -92,7 +92,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("NATURAL");
     }
   }
@@ -110,35 +110,35 @@ public abstract class DML {
 
   public static final TYPE INNER = new TYPE() {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("INNER");
     }
   };
 
   public static final TYPE LEFT = new TYPE() {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("LEFT OUTER");
     }
   };
 
   public static final TYPE RIGHT = new TYPE() {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("RIGHT OUTER");
     }
   };
 
   public static final TYPE FULL = new TYPE() {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("FULL OUTER");
     }
   };
 
   public static final TYPE UNION = new TYPE() {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("UNION");
     }
   };
@@ -154,14 +154,14 @@ public abstract class DML {
 
   public static class ALL extends SetQualifier {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("ALL");
     }
   }
 
   public static class DISTINCT extends SetQualifier {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("DISTINCT");
     }
   }
@@ -225,7 +225,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("AVG(");
       if (qualifier != null)
@@ -257,7 +257,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("MAX(");
       if (qualifier != null)
@@ -289,7 +289,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("MIN(");
       if (qualifier != null)
@@ -321,7 +321,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("SUM(");
       if (qualifier != null)
@@ -353,7 +353,7 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       tableAlias(dataType.entity(), true);
       serialization.sql.append("COUNT(");
       if (qualifier != null)
@@ -381,10 +381,10 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      a.serialize(serialization);
+    protected void serialize(final Serializable caller, final Serialization serialization) {
+      a.serialize(this, serialization);
       serialization.sql.append(" + ");
-      b.serialize(serialization);
+      b.serialize(this, serialization);
     }
   }
 
@@ -410,10 +410,10 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      a.serialize(serialization);
+    protected void serialize(final Serializable caller, final Serialization serialization) {
+      a.serialize(this, serialization);
       serialization.sql.append(" - ");
-      b.serialize(serialization);
+      b.serialize(this, serialization);
     }
   }
 

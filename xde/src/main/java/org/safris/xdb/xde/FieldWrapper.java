@@ -79,7 +79,7 @@ class FieldWrapper<T> extends Field<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
+  protected void serialize(final Serializable caller, final Serialization serialization) {
     if (get() == null) {
       serialization.sql.append("NULL");
     }

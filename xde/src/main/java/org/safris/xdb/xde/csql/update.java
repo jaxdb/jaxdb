@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,11 +14,25 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql.expression;
+package org.safris.xdb.xde.csql;
 
+import org.safris.xdb.xde.Condition;
+import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Field;
+import org.safris.xdb.xde.Function;
 
-public interface WHEN<T> {
-  public THEN<T> THEN(final Field<T> field);
-  public THEN<T> THEN(final T value);
+public interface update {
+  public interface SET extends UPDATE_SET {
+    public UPDATE WHERE(final Condition<?> condition);
+  }
+
+  public interface UPDATE_SET extends UPDATE {
+    public <T>SET SET(final DataType<T> set, final Function<T> to);
+    public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
+    public <T>SET SET(final DataType<T> set, final Field<T> to);
+    public <T>SET SET(final DataType<T> set, final T to);
+  }
+
+  public interface UPDATE extends ExecuteUpdate {
+  }
 }

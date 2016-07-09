@@ -34,17 +34,17 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
   }
 
   @SuppressWarnings("unchecked")
-  private static <T extends Data<?>>void formatBraces(final Operator operator, final Condition<?> condition, final Serialization serialization) {
+  private static <T extends Data<?>>void formatBraces(final Serializable caller, final Operator operator, final Condition<?> condition, final Serialization serialization) {
     if (condition instanceof LogicalCondition || condition instanceof Predicate) {
-      condition.serialize(serialization);
+      condition.serialize(caller, serialization);
     }
     else if (condition instanceof BooleanCondition) {
       if (operator == ((BooleanCondition<T>)condition).operator) {
-        condition.serialize(serialization);
+        condition.serialize(caller, serialization);
       }
       else {
         serialization.sql.append("(");
-        condition.serialize(serialization);
+        condition.serialize(caller, serialization);
         serialization.sql.append(")");
       }
     }
@@ -68,9 +68,9 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
+  protected void serialize(final Serializable caller, final Serialization serialization) {
     for (int i = 0; i < conditions.length; i++) {
-      formatBraces(operator, conditions[i], serialization);
+      formatBraces(this, operator, conditions[i], serialization);
       serialization.sql.append(i < conditions.length - 1 ? " " + operator + " " : "");
     }
   }

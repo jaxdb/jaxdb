@@ -40,7 +40,7 @@ class Update {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-        serialize(serialization);
+        serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
@@ -113,10 +113,10 @@ class Update {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      parent.serialize(serialization);
+    protected void serialize(final Serializable caller, final Serialization serialization) {
+      parent.serialize(this, serialization);
       serialization.sql.append(" WHERE ");
-      condition.serialize(serialization);
+      condition.serialize(this, serialization);
     }
   }
 
@@ -134,7 +134,7 @@ class Update {
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (getClass() != UPDATE.class) // means that there are subsequent clauses
         throw new Error("Need to override this");
 
@@ -145,7 +145,7 @@ class Update {
         throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
 
       serialization.sql.append("UPDATE ");
-      entity.serialize(serialization);
+      entity.serialize(this, serialization);
       final StringBuilder setClause = new StringBuilder();
       for (final DataType dataType : entity.column()) {
         if (!dataType.primary) {
@@ -157,7 +157,7 @@ class Update {
           }
 
           serialization.addParameter(dataType.get());
-          setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
+          setClause.append(", ").append(dataType).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
 
@@ -186,7 +186,7 @@ class Update {
           try (final Connection connection = Schema.getConnection(schema)) {
             vendor = Schema.getDBVendor(connection);
             final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
-            serialize(serialization);
+            serialize(this, serialization);
             logger.info(serialization.sql.toString());
             if (true)
               return 0;
@@ -265,12 +265,12 @@ class Update {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      parent.serialize(serialization);
+    protected void serialize(final Serializable caller, final Serialization serialization) {
+      parent.serialize(this, serialization);
       serialization.sql.append(" SET ");
-      set.serialize(serialization);
+      set.serialize(this, serialization);
       serialization.sql.append(" = ");
-      to.serialize(serialization);
+      to.serialize(this, serialization);
     }
   }
 }

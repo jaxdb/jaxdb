@@ -19,7 +19,7 @@ package org.safris.xdb.xde;
 class Case {
   protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.csql.expression.CASE<T> {
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       throw new Error("Have to override this");
     }
   }
@@ -47,7 +47,7 @@ class Case {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       serialization.sql.append("CASE WHEN ");
       throw new UnsupportedOperationException("implement this");
       //serialize(condition, serialization);
@@ -85,10 +85,10 @@ class Case {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       //serialize(parent, serialization);
       serialization.sql.append(" THEN ");
-      value.serialize(serialization);
+      value.serialize(this, serialization);
       throw new UnsupportedOperationException("implement this");
     }
   }
@@ -108,10 +108,10 @@ class Case {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
 //      serialize(parent, serialization);
       serialization.sql.append(" ELSE ");
-      value.serialize(serialization);
+      value.serialize(this, serialization);
       throw new UnsupportedOperationException("implement this");
     }
   }

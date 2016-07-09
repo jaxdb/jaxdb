@@ -34,6 +34,7 @@ import org.safris.xdb.xde.DML.DISTINCT;
 import org.safris.xdb.xde.DML.Direction;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
+import org.safris.xdb.xde.csql.select;
 import org.safris.xdb.xdl.DBVendor;
 
 class Select {
@@ -151,7 +152,7 @@ class Select {
     };
   }
 
-  private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements org.safris.xdb.xde.csql.select.SELECT<T> {
+  private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements select.SELECT<T> {
     @Override
     public final RowIterator<T> execute() throws XDEException {
       return execute(null);
@@ -167,7 +168,7 @@ class Select {
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
 
-        serialize(serialization);
+        serialize(this, serialization);
         Data.clearAliases();
 
         if (serialization.statementType == PreparedStatement.class) {
@@ -191,7 +192,7 @@ class Select {
     }
   }
 
-  protected static abstract class FROM_JOIN_ON<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected static abstract class FROM_JOIN_ON<T extends Data<?>> extends Execute<T> implements select.FROM<T> {
     protected final Keyword<T> parent;
 
     protected FROM_JOIN_ON(final Keyword<T> parent) {
@@ -229,7 +230,7 @@ class Select {
     }
   }
 
-  protected final static class FROM<T extends Data<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.FROM<T> {
+  protected final static class FROM<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
     private final Entity[] tables;
 
     protected FROM(final Keyword<T> parent, final Entity ... tables) {
@@ -253,9 +254,9 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" FROM ");
 
         // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
@@ -273,7 +274,7 @@ class Select {
     }
   }
 
-  protected final static class GROUP_BY<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.GROUP_BY<T> {
+  protected final static class GROUP_BY<T extends Data<?>> extends Execute<T> implements select.GROUP_BY<T> {
     private final Keyword<T> parent;
     private final Field<?> field;
 
@@ -302,9 +303,9 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" GROUP BY ").append(Data.columnRef(field));
       }
 
@@ -312,7 +313,7 @@ class Select {
     }
   }
 
-  protected final static class HAVING<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.HAVING<T> {
+  protected final static class HAVING<T extends Data<?>> extends Execute<T> implements select.HAVING<T> {
     private final Keyword<T> parent;
     private final Condition<?> condition;
 
@@ -337,11 +338,11 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" HAVING ");
-        condition.serialize(serialization);
+        condition.serialize(this, serialization);
         return;
       }
 
@@ -349,7 +350,7 @@ class Select {
     }
   }
 
-  protected final static class JOIN<T extends Data<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.JOIN<T> {
+  protected final static class JOIN<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
     private final NATURAL natural;
     private final TYPE type;
     private final Entity entity;
@@ -382,16 +383,16 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
         // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
         Data.tableAlias(entity, true);
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(natural != null ? " NATURAL" : "");
         if (type != null) {
           serialization.sql.append(" ");
-          type.serialize(serialization);
+          type.serialize(this, serialization);
         }
 
         serialization.sql.append(" JOIN ").append(Data.tableName(entity, serialization)).append(" ").append(Data.tableAlias(entity, true));
@@ -402,7 +403,7 @@ class Select {
     }
   }
 
-  protected final static class ON<T extends Data<?>> extends FROM_JOIN_ON<T> implements org.safris.xdb.xde.csql.select.ON<T> {
+  protected final static class ON<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
     private final Condition<?> condition;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
@@ -426,11 +427,11 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" ON (");
-        condition.serialize(serialization);
+        condition.serialize(this, serialization);
         serialization.sql.append(")");
         return;
       }
@@ -439,7 +440,7 @@ class Select {
     }
   }
 
-  protected final static class ORDER_BY<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.ORDER_BY<T> {
+  protected final static class ORDER_BY<T extends Data<?>> extends Execute<T> implements select.ORDER_BY<T> {
     private final Keyword<T> parent;
     private final Field<?>[] columns;
 
@@ -459,9 +460,9 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" ORDER BY ");
         for (int i = 0; i < columns.length; i++) {
           final Field<?> field = columns[i];
@@ -471,11 +472,11 @@ class Select {
           if (field instanceof DataType<?>) {
             final DataType<?> dataType = (DataType<?>)field;
             Data.tableAlias(dataType.entity, true);
-            dataType.serialize(serialization);
+            dataType.serialize(this, serialization);
             serialization.sql.append(" ASC");
           }
           else if (field instanceof Direction<?>) {
-            ((Direction<?>)field).serialize(serialization);
+            ((Direction<?>)field).serialize(this, serialization);
           }
           else {
             throw new XDERuntimeException("Unknown column type: " + field.getClass().getName());
@@ -489,7 +490,7 @@ class Select {
     }
   }
 
-  protected final static class LIMIT<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.LIMIT<T> {
+  protected final static class LIMIT<T extends Data<?>> extends Execute<T> implements select.LIMIT<T> {
     private final Keyword<T> parent;
     private final int limit;
 
@@ -504,9 +505,9 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" LIMIT " + limit);
         return;
       }
@@ -515,7 +516,7 @@ class Select {
     }
   }
 
-  protected final static class SELECT<T extends Data<?>> extends Keyword<T> implements org.safris.xdb.xde.csql.select._SELECT<T> {
+  protected final static class SELECT<T extends Data<?>> extends Keyword<T> implements select._SELECT<T> {
     private static final Logger logger = Logger.getLogger(SELECT.class.getName());
 
     private final ALL all;
@@ -553,16 +554,16 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         serialization.sql.append("SELECT ");
         if (all != null) {
-          all.serialize(serialization);
+          all.serialize(this, serialization);
           serialization.sql.append(" ");
         }
 
         if (distinct != null) {
-          distinct.serialize(serialization);
+          distinct.serialize(this, serialization);
           serialization.sql.append(" ");
         }
 
@@ -586,11 +587,11 @@ class Select {
           else if (data instanceof DataType<?>) {
             Data.tableAlias(((DataType<?>)data).entity, true);
             final DataType<?> dataType = (DataType<?>)data;
-            dataType.serialize(serialization);
+            dataType.serialize(this, serialization);
           }
           else if (data instanceof Aggregate<?>) {
             final Aggregate<?> aggregate = (Aggregate<?>)data;
-            aggregate.serialize(serialization);
+            aggregate.serialize(this, serialization);
           }
         }
 
@@ -714,7 +715,7 @@ class Select {
     }
   }
 
-  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements org.safris.xdb.xde.csql.select.WHERE<T> {
+  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements select.WHERE<T> {
     private final Keyword<T> parent;
     private final Condition<?> condition;
 
@@ -744,11 +745,11 @@ class Select {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        parent.serialize(serialization);
+        parent.serialize(this, serialization);
         serialization.sql.append(" WHERE ");
-        condition.serialize(serialization);
+        condition.serialize(this, serialization);
       }
       else {
         throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");

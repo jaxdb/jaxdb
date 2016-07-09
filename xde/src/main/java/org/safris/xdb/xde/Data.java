@@ -19,6 +19,7 @@ package org.safris.xdb.xde;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.commons.lang.Strings;
 import org.safris.xdb.xdl.DBVendor;
 
 public abstract class Data<T> extends Serializable {
@@ -39,13 +40,13 @@ public abstract class Data<T> extends Serializable {
     int i;
     for (i = 0; i < list.size(); i++)
       if (list.get(i) == entity)
-        return String.valueOf((char)('a' + i));
+        return Strings.getAlpha(i);
 
     if (!register)
       return null;
 
     list.add(entity);
-    return String.valueOf((char)('a' + i));
+    return Strings.getAlpha(i);
   }
 
   protected static <B>Object columnRef(final Field<B> field) {

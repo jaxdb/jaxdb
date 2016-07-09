@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,16 +14,9 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql.select;
+package org.safris.xdb.xde.csql;
 
-import org.safris.xdb.xde.Data;
-import org.safris.xdb.xde.Entity;
-import org.safris.xdb.xde.DML.NATURAL;
-import org.safris.xdb.xde.DML.TYPE;
-
-public interface _JOIN<T extends Data<?>> {
-  public JOIN<T> JOIN(final Entity entity);
-  public JOIN<T> JOIN(final TYPE type, final Entity entity);
-  public JOIN<T> JOIN(final NATURAL natural, final Entity entity);
-  public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity);
+public interface insert {
+  public interface INSERT extends ExecuteUpdate {
+  }
 }

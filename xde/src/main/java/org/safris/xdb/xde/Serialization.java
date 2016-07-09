@@ -30,7 +30,7 @@ public class Serialization {
   protected final Class<? extends Statement> statementType;
   protected final StringBuilder sql = new StringBuilder();
 
-  public Serialization(final DBVendor vendor, final Class<? extends Statement> statementType) {
+  protected Serialization(final DBVendor vendor, final Class<? extends Statement> statementType) {
     this.vendor = vendor;
     this.statementType = statementType;
   }
@@ -47,23 +47,5 @@ public class Serialization {
       final Object parameter = parameters.get(i);
       DataType.set(statement, i + 1, parameter.getClass(), parameter);
     }
-  }
-
-  public String toStringParameters() {
-    if (statementType == PreparedStatement.class) {
-      if (parameters.size() == 0)
-        return "[]";
-
-      final StringBuilder string = new StringBuilder();
-      for (final Object parameter : parameters)
-        string.append(", ").append(parameter);
-
-      return "[" + string.substring(2) + "]";
-    }
-
-    if (statementType == Statement.class)
-      return "";
-
-    return super.toString();
   }
 }

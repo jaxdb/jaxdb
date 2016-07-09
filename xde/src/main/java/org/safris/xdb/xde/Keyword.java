@@ -20,9 +20,9 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 
 public abstract class Keyword<T extends Data<?>> extends Serializable {
-  protected static void format(final Object obj, final Serialization serialization) {
+  protected static void format(final Serializable caller, final Object obj, final Serialization serialization) {
     if (obj instanceof DataType<?>) {
-      ((DataType<?>)obj).serialize(serialization);
+      ((DataType<?>)obj).serialize(caller, serialization);
     }
     else if (serialization.statementType == PreparedStatement.class) {
       if (obj == null) {
@@ -55,7 +55,7 @@ public abstract class Keyword<T extends Data<?>> extends Serializable {
     }
   }
 
-  protected Keyword<?> getParentRoot(Keyword<?> keyword) {
+  protected static Keyword<?> getParentRoot(Keyword<?> keyword) {
     while (keyword.parent() != null)
       keyword = keyword.parent();
 

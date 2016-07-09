@@ -17,5 +17,5 @@
 package org.safris.xdb.xde;
 
 public abstract class Serializable {
-  protected abstract void serialize(final Serialization serialization);
+  protected abstract void serialize(final Serializable caller, final Serialization serialization);
 }

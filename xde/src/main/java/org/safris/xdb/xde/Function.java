@@ -35,7 +35,7 @@ public abstract class Function<T> extends Keyword<Field<T>> {
   }
 
   @Override
-  protected void serialize(Serialization serialization) {
+  protected void serialize(final Serializable caller, final Serialization serialization) {
     throw new UnsupportedOperationException("Implement me");
   }
 }
