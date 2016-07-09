@@ -14,26 +14,9 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql;
+package org.safris.xdb.xde.spec;
 
-import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.Field;
-
-public interface expression {
-  public interface WHEN<T> {
-    public THEN<T> THEN(final Field<T> field);
-    public THEN<T> THEN(final T value);
-  }
-
-  public interface THEN<T> {
-    public THEN<T> WHEN(final Condition<T> condition);
-    public ELSE<T> ELSE(final Field<T> field);
-    public ELSE<T> ELSE(final T value);
-  }
-
-  public interface ELSE<T> extends CASE<T> {
-  }
-
-  public interface CASE<T> {
+public interface insert {
+  public interface INSERT extends ExecuteUpdate {
   }
 }

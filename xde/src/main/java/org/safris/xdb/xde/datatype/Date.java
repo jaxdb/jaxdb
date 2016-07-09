@@ -35,8 +35,8 @@ public final class Date extends DataType<LocalDate> {
     statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
   }
 
-  public Date(final Entity owner, final String csqlName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
-    super(sqlType, LocalDate.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
+    super(sqlType, LocalDate.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Date(final Date column) {

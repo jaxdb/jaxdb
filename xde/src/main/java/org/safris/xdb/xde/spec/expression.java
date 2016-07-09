@@ -14,25 +14,26 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql;
+package org.safris.xdb.xde.spec;
 
 import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Field;
-import org.safris.xdb.xde.Function;
 
-public interface update {
-  public interface SET extends UPDATE_SET {
-    public UPDATE WHERE(final Condition<?> condition);
+public interface expression {
+  public interface WHEN<T> {
+    public THEN<T> THEN(final Field<T> field);
+    public THEN<T> THEN(final T value);
   }
 
-  public interface UPDATE_SET extends UPDATE {
-    public <T>SET SET(final DataType<T> set, final Function<T> to);
-    public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
-    public <T>SET SET(final DataType<T> set, final Field<T> to);
-    public <T>SET SET(final DataType<T> set, final T to);
+  public interface THEN<T> {
+    public THEN<T> WHEN(final Condition<T> condition);
+    public ELSE<T> ELSE(final Field<T> field);
+    public ELSE<T> ELSE(final T value);
   }
 
-  public interface UPDATE extends ExecuteUpdate {
+  public interface ELSE<T> extends CASE<T> {
+  }
+
+  public interface CASE<T> {
   }
 }

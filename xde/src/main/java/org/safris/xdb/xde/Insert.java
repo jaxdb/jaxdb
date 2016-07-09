@@ -26,7 +26,7 @@ import org.safris.commons.sql.StatementProxy;
 import org.safris.xdb.xdl.DBVendor;
 
 class Insert {
-  protected static class INSERT extends Keyword<Data<?>> implements org.safris.xdb.xde.csql.insert.INSERT {
+  protected static class INSERT extends Keyword<Data<?>> implements org.safris.xdb.xde.spec.insert.INSERT {
     protected final Entity entity;
 
     protected INSERT(final Entity entity) {

@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql;
+package org.safris.xdb.xde.spec;
 
 import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.Data;

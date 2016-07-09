@@ -33,8 +33,8 @@ public final class Boolean extends DataType<java.lang.Boolean> {
     statement.setBoolean(parameterIndex, value);
   }
 
-  public Boolean(final Entity owner, final String csqlName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
-    super(sqlType, java.lang.Boolean.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Boolean(final Entity owner, final String specName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
+    super(sqlType, java.lang.Boolean.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Boolean(final Boolean column) {

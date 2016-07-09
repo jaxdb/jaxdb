@@ -38,8 +38,8 @@ public final class SmallInt extends DataType<Short> {
   public final Short min;
   public final Short max;
 
-  public SmallInt(final Entity owner, final String csqlName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Short> generateOnInsert, final GenerateOn<Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
-    super(sqlType, Short.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public SmallInt(final Entity owner, final String specName, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Short> generateOnInsert, final GenerateOn<Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
+    super(sqlType, Short.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

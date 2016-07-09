@@ -38,8 +38,8 @@ public final class Long extends DataType<java.lang.Long> {
   public final java.lang.Long min;
   public final java.lang.Long max;
 
-  public Long(final Entity owner, final String csqlName, final String name, final java.lang.Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Long> generateOnInsert, final GenerateOn<? super java.lang.Long> generateOnUpdate, final int precision, final boolean unsigned, final java.lang.Long min, final java.lang.Long max) {
-    super(sqlType, java.lang.Long.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Long(final Entity owner, final String specName, final String name, final java.lang.Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Long> generateOnInsert, final GenerateOn<? super java.lang.Long> generateOnUpdate, final int precision, final boolean unsigned, final java.lang.Long min, final java.lang.Long max) {
+    super(sqlType, java.lang.Long.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

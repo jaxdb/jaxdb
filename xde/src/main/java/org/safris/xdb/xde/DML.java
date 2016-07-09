@@ -23,12 +23,12 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.safris.xdb.xde.BooleanCondition.Operator;
-import org.safris.xdb.xde.csql.delete.DELETE_WHERE;
-import org.safris.xdb.xde.csql.expression.WHEN;
-import org.safris.xdb.xde.csql.insert.INSERT;
-import org.safris.xdb.xde.csql.select._SELECT;
-import org.safris.xdb.xde.csql.update.UPDATE_SET;
 import org.safris.xdb.xde.datatype.Char;
+import org.safris.xdb.xde.spec.delete.DELETE_WHERE;
+import org.safris.xdb.xde.spec.expression.WHEN;
+import org.safris.xdb.xde.spec.insert.INSERT;
+import org.safris.xdb.xde.spec.select._SELECT;
+import org.safris.xdb.xde.spec.update.UPDATE_SET;
 
 public abstract class DML {
   /** Direction **/

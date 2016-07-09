@@ -17,14 +17,14 @@
 package org.safris.xdb.xde;
 
 class Case {
-  protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.csql.expression.CASE<T> {
+  protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.spec.expression.CASE<T> {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       throw new Error("Have to override this");
     }
   }
 
-  protected static final class CASE_WHEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.csql.expression.WHEN<T> {
+  protected static final class CASE_WHEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.spec.expression.WHEN<T> {
     private final Condition<T> condition;
 
     protected CASE_WHEN(final Condition<T> condition) {
@@ -54,7 +54,7 @@ class Case {
     }
   }
 
-  protected static final class THEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.csql.expression.THEN<T> {
+  protected static final class THEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.spec.expression.THEN<T> {
     private final Keyword<Field<T>> parent;
     private final Field<T> value;
 
@@ -93,7 +93,7 @@ class Case {
     }
   }
 
-  protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.xde.csql.expression.ELSE<T> {
+  protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.xde.spec.expression.ELSE<T> {
     private final THEN<T> parent;
     private final Field<T> value;
 

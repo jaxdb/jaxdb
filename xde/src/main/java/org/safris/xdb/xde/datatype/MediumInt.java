@@ -38,8 +38,8 @@ public final class MediumInt extends DataType<Integer> {
   public final Integer min;
   public final Integer max;
 
-  public MediumInt(final Entity owner, final String csqlName, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
-    super(sqlType, Integer.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public MediumInt(final Entity owner, final String specName, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
+    super(sqlType, Integer.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

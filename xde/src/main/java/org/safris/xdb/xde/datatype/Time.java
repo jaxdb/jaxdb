@@ -35,8 +35,8 @@ public final class Time extends DataType<LocalTime> {
     statement.setTime(parameterIndex, new java.sql.Time(value.toDateTimeToday().toDate().getTime()));
   }
 
-  public Time(final Entity owner, final String csqlName, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
-    super(sqlType, LocalTime.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Time(final Entity owner, final String specName, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
+    super(sqlType, LocalTime.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Time(final Time column) {

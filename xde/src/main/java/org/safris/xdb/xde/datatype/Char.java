@@ -36,8 +36,8 @@ public final class Char extends DataType<String> {
   public final int length;
   public final boolean varyant;
 
-  public Char(final Entity owner, final String csqlName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varyant) {
-    super(sqlType, String.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Char(final Entity owner, final String specName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varyant) {
+    super(sqlType, String.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.length = length;
     this.varyant = varyant;
   }

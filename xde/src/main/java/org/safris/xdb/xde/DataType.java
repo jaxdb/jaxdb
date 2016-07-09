@@ -68,7 +68,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   protected final int sqlType;
   protected final Class<T> type;
   protected final Entity entity;
-  protected final String csqlName;
+  protected final String specName;
   protected final String name;
   protected final boolean unique;
   protected final boolean primary;
@@ -76,12 +76,12 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   protected final GenerateOn<? super T> generateOnInsert;
   protected final GenerateOn<? super T> generateOnUpdate;
 
-  protected DataType(final int sqlType, final Class<T> type, final Entity owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+  protected DataType(final int sqlType, final Class<T> type, final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
     super(_default);
     this.sqlType = sqlType;
     this.type = type;
     this.entity = owner;
-    this.csqlName = csqlName;
+    this.specName = specName;
     this.name = name;
     this.unique = unique;
     this.primary = primary;
@@ -91,7 +91,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   }
 
   protected DataType(final DataType<T> dataType) {
-    this(dataType.sqlType, dataType.type, dataType.entity, dataType.csqlName, dataType.name, dataType.get(), dataType.unique, dataType.primary, dataType.nullable, dataType.generateOnInsert, dataType.generateOnUpdate);
+    this(dataType.sqlType, dataType.type, dataType.entity, dataType.specName, dataType.name, dataType.get(), dataType.unique, dataType.primary, dataType.nullable, dataType.generateOnInsert, dataType.generateOnUpdate);
   }
 
   protected DataType() {

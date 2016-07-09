@@ -204,7 +204,7 @@ public final class Tables {
           final Class<? extends Entity> entity = aliases.get(alias);
           final Entity identity = identity(entity);
           for (final DataType<?> dataType : identity.column()) {
-            if (dataType.csqlName.equals(field)) {
+            if (dataType.specName.equals(field)) {
               out += alias + "." + dataType.name;
               break;
             }

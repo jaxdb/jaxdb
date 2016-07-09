@@ -23,7 +23,7 @@ import java.sql.Statement;
 
 import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.sql.StatementProxy;
-import org.safris.xdb.xde.csql.delete;
+import org.safris.xdb.xde.spec.delete;
 import org.safris.xdb.xdl.DBVendor;
 
 class Delete {

@@ -34,8 +34,8 @@ public final class Blob extends DataType<byte[]> {
     statement.setBinaryStream(parameterIndex, new ByteArrayInputStream(value));
   }
 
-  public Blob(final Entity owner, final String csqlName, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<byte[]> generateOnInsert, final GenerateOn<byte[]> generateOnUpdate) {
-    super(sqlType, byte[].class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Blob(final Entity owner, final String specName, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<byte[]> generateOnInsert, final GenerateOn<byte[]> generateOnUpdate) {
+    super(sqlType, byte[].class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Blob(final Blob column) {

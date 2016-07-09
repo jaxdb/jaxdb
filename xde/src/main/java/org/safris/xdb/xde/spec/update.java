@@ -14,12 +14,25 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql;
+package org.safris.xdb.xde.spec;
 
-import org.safris.xdb.xde.Transaction;
-import org.safris.xdb.xde.XDEException;
+import org.safris.xdb.xde.Condition;
+import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Field;
+import org.safris.xdb.xde.Function;
 
-public interface ExecuteUpdate {
-  public int execute(final Transaction transaction) throws XDEException;
-  public int execute() throws XDEException;
+public interface update {
+  public interface SET extends UPDATE_SET {
+    public UPDATE WHERE(final Condition<?> condition);
+  }
+
+  public interface UPDATE_SET extends UPDATE {
+    public <T>SET SET(final DataType<T> set, final Function<T> to);
+    public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
+    public <T>SET SET(final DataType<T> set, final Field<T> to);
+    public <T>SET SET(final DataType<T> set, final T to);
+  }
+
+  public interface UPDATE extends ExecuteUpdate {
+  }
 }

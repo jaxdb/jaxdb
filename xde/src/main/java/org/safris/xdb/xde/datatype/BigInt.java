@@ -41,8 +41,8 @@ public final class BigInt extends DataType<BigInteger> {
   public final BigInteger max;
 
   // FIXME: This is not properly supported by Derby, as in derby, only signed numbers are allowed. But in MySQL, unsigned values of up to 18446744073709551615 are allowed.
-  public BigInt(final Entity owner, final String csqlName, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BigInteger> generateOnInsert, final GenerateOn<BigInteger> generateOnUpdate, final int precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
-    super(sqlType, BigInteger.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public BigInt(final Entity owner, final String specName, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BigInteger> generateOnInsert, final GenerateOn<BigInteger> generateOnUpdate, final int precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
+    super(sqlType, BigInteger.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

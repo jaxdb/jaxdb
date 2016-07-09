@@ -35,8 +35,8 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
     statement.setObject(parameterIndex, value.toString());
   }
 
-  public Enum(final Entity owner, final String csqlName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
-    super(sqlType, type, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Enum(final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
+    super(sqlType, type, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Enum(final Enum<T> column) {

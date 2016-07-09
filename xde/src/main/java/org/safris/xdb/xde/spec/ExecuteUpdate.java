@@ -14,15 +14,12 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xde.csql;
+package org.safris.xdb.xde.spec;
 
-import org.safris.xdb.xde.Condition;
+import org.safris.xdb.xde.Transaction;
+import org.safris.xdb.xde.XDEException;
 
-public interface delete {
-  public interface DELETE extends ExecuteUpdate {
-  }
-
-  public interface DELETE_WHERE extends DELETE {
-    public DELETE WHERE(final Condition<?> condition);
-  }
+public interface ExecuteUpdate {
+  public int execute(final Transaction transaction) throws XDEException;
+  public int execute() throws XDEException;
 }

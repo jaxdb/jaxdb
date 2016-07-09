@@ -39,8 +39,8 @@ public final class Decimal extends DataType<java.lang.Double> {
   public final java.lang.Double min;
   public final java.lang.Double max;
 
-  public Decimal(final Entity owner, final String csqlName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Double> generateOnInsert, final GenerateOn<java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
-    super(sqlType, java.lang.Double.class, owner, csqlName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Decimal(final Entity owner, final String specName, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Double> generateOnInsert, final GenerateOn<java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
+    super(sqlType, java.lang.Double.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.precision = precision;
     this.unsigned = unsigned;
     this.min = min;

@@ -34,7 +34,7 @@ import org.safris.xdb.xde.DML.DISTINCT;
 import org.safris.xdb.xde.DML.Direction;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
-import org.safris.xdb.xde.csql.select;
+import org.safris.xdb.xde.spec.select;
 import org.safris.xdb.xdl.DBVendor;
 
 class Select {

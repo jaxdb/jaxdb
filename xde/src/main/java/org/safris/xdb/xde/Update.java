@@ -24,13 +24,13 @@ import java.util.logging.Logger;
 
 import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.sql.StatementProxy;
-import org.safris.xdb.xde.csql.expression.CASE;
+import org.safris.xdb.xde.spec.expression.CASE;
 import org.safris.xdb.xdl.DBVendor;
 
 class Update {
   private static final Logger logger = Logger.getLogger(Update.class.getName());
 
-  private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.csql.update.UPDATE {
+  private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.spec.update.UPDATE {
     @Override
     public int execute(final Transaction transaction) throws XDEException {
       final Keyword<?> update = getParentRoot(this);
@@ -76,7 +76,7 @@ class Update {
     }
   }
 
-  private abstract static class UPDATE_SET extends Execute implements org.safris.xdb.xde.csql.update.UPDATE_SET {
+  private abstract static class UPDATE_SET extends Execute implements org.safris.xdb.xde.spec.update.UPDATE_SET {
     @Override
     public final <T>SET SET(final DataType<T> set, final Function<T> to) {
       return new SET(this, set, to);
@@ -98,7 +98,7 @@ class Update {
     }
   }
 
-  protected final static class WHERE extends Execute implements org.safris.xdb.xde.csql.update.UPDATE {
+  protected final static class WHERE extends Execute implements org.safris.xdb.xde.spec.update.UPDATE {
     private final Keyword<DataType<?>> parent;
     private final Condition<?> condition;
 
@@ -120,7 +120,7 @@ class Update {
     }
   }
 
-  protected final static class UPDATE extends UPDATE_SET implements org.safris.xdb.xde.csql.update.UPDATE_SET {
+  protected final static class UPDATE extends UPDATE_SET implements org.safris.xdb.xde.spec.update.UPDATE_SET {
     protected final Entity entity;
 
     protected UPDATE(final Entity entity) {
@@ -218,7 +218,7 @@ class Update {
     }
   }
 
-  protected final static class SET extends UPDATE_SET implements org.safris.xdb.xde.csql.update.SET {
+  protected final static class SET extends UPDATE_SET implements org.safris.xdb.xde.spec.update.SET {
     private final Keyword<? extends DataType<?>> parent;
     private final DataType<?> set;
     private final Serializable to;
