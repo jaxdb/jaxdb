@@ -23,9 +23,9 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
-import org.safris.xdb.xdl.DBVendor;
 
 public final class Blob extends DataType<byte[]> {
   protected static final int sqlType = Types.BLOB;

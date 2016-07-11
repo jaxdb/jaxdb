@@ -21,12 +21,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Tables;
 import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xdl.spec.PostgreSQLSpec;
 
 public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;
@@ -45,7 +45,7 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
 
   @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
-    return vendor == DBVendor.POSTGRE_SQL ? "?::" + SQLDataTypes.getTypeName(Tables.name(entity), name) : "?";
+    return vendor == DBVendor.POSTGRE_SQL ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(entity), name) : "?";
   }
 
   @Override

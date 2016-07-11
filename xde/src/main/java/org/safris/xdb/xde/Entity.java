@@ -17,7 +17,6 @@
 package org.safris.xdb.xde;
 
 import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xdl.DDL;
 
 public abstract class Entity extends Data<Entity> {
   private final boolean wasSelected;
@@ -52,13 +51,8 @@ public abstract class Entity extends Data<Entity> {
     return (Class<? extends Schema>)getClass().getEnclosingClass();
   }
 
-  public String[] ddl(final DBVendor vendor, final DDL.Type type) {
-    return ddl()[vendor.ordinal()].get(type);
-  }
-
   protected abstract String name();
   protected abstract DataType<?>[] column();
   protected abstract DataType<?>[] primary();
-  protected abstract DDL[] ddl();
   protected abstract Entity newInstance();
 }

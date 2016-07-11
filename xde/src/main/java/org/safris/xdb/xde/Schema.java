@@ -18,10 +18,8 @@ package org.safris.xdb.xde;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xdl.DDL;
 
 public abstract class Schema {
   protected static DBVendor getDBVendor(final Connection connection) throws XDEException {
@@ -53,34 +51,6 @@ public abstract class Schema {
     }
     catch (final SQLException e) {
       throw XDEException.lookup(e, null);
-    }
-  }
-
-  protected static void createDDL(final Class<? extends Schema> schema, final Entity[] identity) throws SQLException {
-    try (
-      final Connection connection = getConnection(schema);
-      final Statement statement = connection.createStatement();
-    ) {
-      final DBVendor vendor = getDBVendor(connection);
-      for (final org.safris.xdb.xde.Entity entity : identity) {
-        final String[] sqls = entity.ddl(vendor, DDL.Type.CREATE);
-        for (final String sql : sqls)
-          statement.execute(sql);
-      }
-    }
-  }
-
-  protected static void dropDDL(final Class<? extends Schema> schema, final Entity[] identity) throws SQLException {
-    try (
-      final Connection connection = getConnection(schema);
-      final Statement statement = connection.createStatement();
-    ) {
-      final DBVendor vendor = getDBVendor(connection);
-      for (int i = identity.length - 1; i >= 0; --i) {
-        final String[] sqls = identity[i].ddl(vendor, DDL.Type.DROP);
-        for (final String sql : sqls)
-          statement.execute(sql);
-      }
     }
   }
 }

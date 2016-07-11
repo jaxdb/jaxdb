@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -43,9 +42,7 @@ import org.safris.xdb.xde.datatype.DateTime;
 import org.safris.xdb.xde.datatype.Decimal;
 import org.safris.xdb.xde.datatype.MediumInt;
 import org.safris.xdb.xde.datatype.SmallInt;
-import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xdl.DDL;
-import org.safris.xdb.xdl.DDLTransform;
 import org.safris.xdb.xdl.SQLDataTypes;
 import org.safris.xdb.xdl.xe.$xdl_bit;
 import org.safris.xdb.xdl.xe.$xdl_blob;
@@ -85,40 +82,17 @@ public class EntityGenerator {
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
-    code += "  private static final " + Entity.class.getName() + "[] identity = new " + Entity.class.getName() + "[] {";
-    DDL[][] ddls = null;
-    for (int i = 0; i < DBVendor.values().length; i++) {
-      DDL[] ddl = DDLTransform.createDDL(database, DBVendor.values()[i], null);
-      if (ddls == null)
-        ddls = new DDL[ddl.length][DBVendor.values().length];
-
-      for (int j = 0; j < ddl.length; j++)
-        ddls[j][i] = ddl[j];
-    }
-
-    String identity = "";
-    for (final DDL[] ddl : ddls)
-      identity += ", " + Strings.toTitleCase(ddl[0].name) + ".identity";
-
-    code += identity.substring(2) + "};\n\n";
-
-    code += "  public static void dropDDL() throws " + SQLException.class.getName() + " {\n";
-    code += "    " + Schema.class.getName() + ".dropDDL(" + classSimpleName + ".class, identity);\n";
-    code += "  }\n\n";
-
-    code += "  public static void createDDL() throws " + SQLException.class.getName() + " {\n";
-    code += "    " + Schema.class.getName() + ".createDDL(" + classSimpleName + ".class, identity);\n";
-    code += "  }\n\n";
 
     String tables = "";
     // First create the abstract entities
     for (final $xdl_table table : database._table())
       if (table._abstract$().text())
-        tables += "\n\n" + makeTable(table, null);
+        tables += "\n\n" + makeTable(table);
 
     // Then, in proper inheritance order, the real entities
-    for (final DDL[] ddl : ddls)
-      tables += "\n\n" + makeTable(tableNameToTable.get(ddl[0].name), ddl);
+    for (final $xdl_table table : database._table())
+      if (!table._abstract$().text())
+        tables += "\n\n" + makeTable(table);
 
     code += tables.substring(2) + "\n\n";
 
@@ -353,7 +327,7 @@ public class EntityGenerator {
     return count;
   }
 
-  public static String makeTable(final $xdl_table table, final DDL[] ddl) {
+  public static String makeTable(final $xdl_table table) {
     final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Entity.class.getName();
     String out = "";
     String abs = "";
@@ -366,14 +340,9 @@ public class EntityGenerator {
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
     out += "  public static" + abs + " class " + entityName + " extends " + ext + " {\n";
     if (!table._abstract$().text()) {
-      out += "    protected static final " + DDL.class.getName() + "[] ddl = " + serialize(ddl) + ";\n";
       out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
       out += "    protected final " + DataType.class.getName() + "<?>[] column;\n";
       out += "    protected final " + DataType.class.getName() + "<?>[] primary;\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + DDL.class.getName() + "[] ddl() {\n";
-      out += "      return ddl;\n";
-      out += "    }\n\n";
       out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + DataType.class.getName() + "<?>[] column() {\n";
       out += "      return column;\n";

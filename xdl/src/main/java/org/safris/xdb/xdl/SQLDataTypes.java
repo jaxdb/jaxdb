@@ -41,10 +41,6 @@ public final class SQLDataTypes {
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
-  public static String getTypeName(final String tableName, final String columnName) {
-    return "ty_" + tableName + "_" + columnName;
-  }
-
   public static String getSequenceName(final $xdl_table table, final $xdl_integer column) {
     return "seq_" + table._name$().text() + "_" + column._name$().text();
   }

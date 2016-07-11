@@ -21,8 +21,6 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.safris.commons.sql.ConnectionProxy;
-import org.safris.commons.sql.StatementProxy;
 import org.safris.xdb.xdl.DBVendor;
 
 class Insert {
@@ -91,22 +89,26 @@ class Insert {
         serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
-          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
-          serialization.set(statement);
-          final int count = statement.executeUpdate();
-          StatementProxy.close(statement);
+          final int count;
+          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+            serialization.set(statement);
+            count = statement.executeUpdate();
+          }
+
           if (transaction == null)
-            ConnectionProxy.close(connection);
+            connection.close();
 
           return count;
         }
 
         if (serialization.statementType == Statement.class) {
-          final Statement statement = connection.createStatement();
-          final int count = statement.executeUpdate(serialization.sql.toString());
-          StatementProxy.close(statement);
+          final int count;
+          try (final Statement statement = connection.createStatement()) {
+            count = statement.executeUpdate(serialization.sql.toString());
+          }
+
           if (transaction == null)
-            ConnectionProxy.close(connection);
+            connection.close();
 
           return count;
         }

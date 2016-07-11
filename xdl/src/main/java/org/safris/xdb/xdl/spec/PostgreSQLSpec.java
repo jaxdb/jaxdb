@@ -40,13 +40,17 @@ import org.safris.xdb.xdl.xe.$xdl_time;
 public class PostgreSQLSpec extends SQLSpec {
   private static final Logger logger = Logger.getLogger(PostgreSQLSpec.class.getName());
 
+  public static String getTypeName(final String tableName, final String columnName) {
+    return "ty_" + tableName + "_" + columnName;
+  }
+
   @Override
   public List<String> drops(final $xdl_table table) {
     final List<String> statements = super.drops(table);
     if (table._column() != null) {
       for (final $xdl_column column : table._column()) {
         if (column instanceof $xdl_enum) {
-          statements.add("DROP TYPE IF EXISTS " + SQLDataTypes.getTypeName(table._name$().text(), (($xdl_enum)column)._name$().text()));
+          statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($xdl_enum)column)._name$().text()));
         }
         else if (column instanceof $xdl_integer) {
           final $xdl_integer type = ($xdl_integer)column;
@@ -66,7 +70,7 @@ public class PostgreSQLSpec extends SQLSpec {
       for (final $xdl_column column : table._column()) {
         if (column instanceof $xdl_enum) {
           final $xdl_enum type = ($xdl_enum)column;
-          String sql = "CREATE TYPE " + SQLDataTypes.getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
+          String sql = "CREATE TYPE " + getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
           if (!type._values$().isNull()) {
             String values = "";
             for (final String value : type._values$().text())
@@ -161,7 +165,7 @@ public class PostgreSQLSpec extends SQLSpec {
 
   @Override
   public String type(final $xdl_table table, final $xdl_enum type) {
-    return SQLDataTypes.getTypeName(table._name$().text(), type._name$().text());
+    return getTypeName(table._name$().text(), type._name$().text());
   }
 
   @Override

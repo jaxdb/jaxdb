@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Numbers;
 import org.safris.commons.maven.Log;
 import org.safris.commons.util.MaskedEnum;
@@ -419,7 +420,8 @@ public final class DDLTransform extends XDLTransformer {
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
-      System.err.println("<Derby|MySQL|PostgreSQL> <XDL_FILE>");
+      final String vendors = Arrays.toString(DBVendor.values(), "|");
+      System.err.println("<" + vendors + "> <XDL_FILE>");
       System.exit(1);
     }
 
@@ -428,6 +430,27 @@ public final class DDLTransform extends XDLTransformer {
 
   public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws IOException, XMLException {
     return DDLTransform.createDDL(parseArguments(url, outDir), vendor, outDir);
+  }
+
+  public static DDL[] createDDL(final xdl_database database, final DBVendor vendor, final File outDir) {
+    final DDLTransform creator = new DDLTransform(database);
+    final DDL[] ddls = creator.parse(vendor);
+    final StringBuilder sql = new StringBuilder();
+    for (int i = ddls.length - 1; i >= 0; --i)
+      if (ddls[i].drop != null)
+        for (final String drop : ddls[i].drop)
+          sql.append(drop).append(";\n");
+
+    if (sql.length() > 0)
+      sql.append("\n");
+
+    for (final DDL ddl : ddls)
+      for (final String create : ddl.create)
+        sql.append(create).append(";\n\n");
+
+    final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + database._name$().text() + ";\n\n" + sql : sql.toString();
+    writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
+    return ddls;
   }
 
   public static DDLTransform transformDDL(final URL url) throws IOException, XMLException {
@@ -450,27 +473,6 @@ public final class DDLTransform extends XDLTransformer {
 
     message += ".";
     Log.warn(message);
-  }
-
-  public static DDL[] createDDL(final xdl_database database, final DBVendor vendor, final File outDir) {
-    final DDLTransform creator = new DDLTransform(database);
-    final DDL[] ddls = creator.parse(vendor);
-    final StringBuilder sql = new StringBuilder();
-    for (int i = ddls.length - 1; i >= 0; --i)
-      if (ddls[i].drop != null)
-        for (final String drop : ddls[i].drop)
-          sql.append(drop).append(";\n");
-
-    if (sql.length() > 0)
-      sql.append("\n");
-
-    for (final DDL ddl : ddls)
-      for (final String create : ddl.create)
-        sql.append(create).append(";\n\n");
-
-    final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + database._name$().text() + ";\n\n" + sql : sql.toString();
-    writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
-    return ddls;
   }
 
   private DDLTransform(final xdl_database database) {

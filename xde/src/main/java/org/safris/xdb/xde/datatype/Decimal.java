@@ -23,8 +23,8 @@ import java.sql.Types;
 
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.xde.Entity;
 
 public final class Decimal extends DataType<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;

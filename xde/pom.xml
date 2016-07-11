@@ -14,7 +14,6 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -29,95 +28,12 @@
   <artifactId>xde</artifactId>
   <version>0.2.3-SNAPSHOT</version>
   <name>${project.groupId}.${project.artifactId}</name>
-  <build>
-    <plugins>
-      <!--plugin>
-        <groupId>org.safris.maven.plugin</groupId>
-        <artifactId>xdb</artifactId>
-        <version>0.2.1-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <id>xdb</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>ddl</goal>
-              <goal>xsd</goal>
-            </goals>
-            <configuration>
-              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-                <destdir>${project.build.directory}/generated-test-resources/xdl</destdir>
-                <schemas>
-                  <schema>${basedir}/src/test/resources/library.xdl</schema>
-                </schemas>
-              </manifest>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.safris.maven.plugin.xml</groupId>
-        <artifactId>binding</artifactId>
-        <version>2.0.1-SNAPSHOT</version>
-        <executions>
-          <execution>
-            <id>binding</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <configuration>
-              <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-                <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xmlbinding</destdir>
-                <schemas>
-                  <schema>${basedir}/target/generated-test-resources/xdl/library.xsd</schema>
-                </schemas>
-              </manifest>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin-->
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.safris.xdb</groupId>
       <artifactId>xdl</artifactId>
       <version>0.2.1-SNAPSHOT</version>
     </dependency>
-    <dependency>
-      <groupId>org.safris.xml.toolkit</groupId>
-      <artifactId>binding</artifactId>
-      <version>2.0.1-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>formatter</artifactId>
-      <version>0.4.12-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>jci</artifactId>
-      <version>0.5.12-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>sql</artifactId>
-      <version>1.0.13-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>javax.persistence</groupId>
-      <artifactId>persistence-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>validation-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.derby</groupId>
-      <artifactId>derby</artifactId>
-    </dependency>
-    
-    
     <dependency>
       <groupId>joda-time</groupId>
       <artifactId>joda-time</artifactId>
