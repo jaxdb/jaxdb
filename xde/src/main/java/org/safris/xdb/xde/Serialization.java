@@ -36,9 +36,6 @@ public class Serialization {
   }
 
   protected void addParameter(final Object parameter) {
-    if (parameter == null)
-      throw new IllegalArgumentException("parameter cannot be null");
-
     parameters.add(parameter);
   }
 

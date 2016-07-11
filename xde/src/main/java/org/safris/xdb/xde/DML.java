@@ -447,14 +447,6 @@ public abstract class DML {
     return new BooleanCondition(Operator.OR, conditions);
   }
 
-  public static <T>LogicalCondition<T> IS_NULL(final Field<T> a) {
-    return new LogicalCondition<T>("IS", a, null);
-  }
-
-  public static <T>LogicalCondition<T> IS_NOT_NULL(final Field<T> a) {
-    return new LogicalCondition<T>("IS NOT", a, null);
-  }
-
   public static <T>LogicalCondition<T> GT(final Field<T> a, final Field<T> b) {
     return new LogicalCondition<T>(">", a, b);
   }
@@ -484,11 +476,23 @@ public abstract class DML {
   }
 
   public static <T>LogicalCondition<T> EQ(final Field<T> a, final T b) {
-    return new LogicalCondition<T>("=", a, b);
+    return new LogicalCondition<T>(b != null ? "=" : "IS", a, b);
   }
 
   public static <T>LogicalCondition<T> EQ(final T a, final Field<T> b) {
     return new LogicalCondition<T>("=", a, b);
+  }
+
+  public static <T>LogicalCondition<T> NE(final Field<T> a, final Field<T> b) {
+    return new LogicalCondition<T>("<>", a, b);
+  }
+
+  public static <T>LogicalCondition<T> NE(final Field<T> a, final T b) {
+    return new LogicalCondition<T>(b != null ? "<>" : "IS NOT", a, b);
+  }
+
+  public static <T>LogicalCondition<T> NE(final T a, final Field<T> b) {
+    return new LogicalCondition<T>("<>", a, b);
   }
 
   public static <T>LogicalCondition<T> LT(final Field<T> a, final Field<T> b) {
