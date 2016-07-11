@@ -26,7 +26,22 @@ public abstract class GenerateOn<T> {
       if (dataType.get() == null)
         throw new XDERuntimeException("Value is missing");
 
-      return 1 + (dataType.get() instanceof Long ? dataType.get().longValue() : dataType.get() instanceof Integer ? dataType.get().intValue() : dataType.get() instanceof Double ? dataType.get().doubleValue() : dataType.get() instanceof Float ? dataType.get().floatValue() : dataType.get() instanceof Short ? dataType.get().shortValue() : dataType.get().byteValue());
+      if (dataType.get() instanceof Long)
+        return (long)(dataType.get().longValue() + 1l);
+
+      if (dataType.get() instanceof Integer)
+        return (int)(dataType.get().intValue() + 1);
+
+      if (dataType.get() instanceof Double)
+        return (double)(dataType.get().doubleValue() + 1d);
+
+      if (dataType.get() instanceof Float)
+        return (float)(dataType.get().floatValue() + 1f);
+
+      if (dataType.get() instanceof Short)
+        return (short)(dataType.get().shortValue() + 1);
+
+      return (byte)(dataType.get().byteValue() + 1);
     }
   };
 
