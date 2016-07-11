@@ -34,6 +34,9 @@ class LogicalCondition<T> extends Condition<T> {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
+    if (a == null)
+      throw new IllegalArgumentException("Left hand side of condition cannot be null");
+
     format(this, a, serialization);
     serialization.sql.append(" ").append(operator).append(" ");
     format(this, b, serialization);

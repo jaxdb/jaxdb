@@ -143,8 +143,8 @@ class Update {
       if (entity.primary().length == 0)
         throw new XDERuntimeException("Entity '" + entity.name() + "' does not have a primary key");
 
-      if (!entity.wasSelected())
-        throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
+//      if (!entity.wasSelected())
+//        throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
 
       serialization.sql.append("UPDATE ");
       entity.serialize(this, serialization);
@@ -158,7 +158,7 @@ class Update {
             dataType.value = dataType.generateOnUpdate.generate(dataType);
           }
 
-          serialization.addParameter(dataType.get());
+          serialization.addParameter(dataType);
           setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
@@ -170,7 +170,7 @@ class Update {
           if (dataType.generateOnUpdate != null)
             dataType.value = dataType.generateOnUpdate.generate(dataType);
 
-          serialization.addParameter(dataType.get());
+          serialization.addParameter(dataType);
           whereClause.append(" AND ").append(dataType).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }

@@ -131,7 +131,7 @@ class Delete {
       if (caller == this) {
         final StringBuilder whereClause = new StringBuilder();
         for (final DataType<?> dataType : entity.primary()) {
-          serialization.addParameter(dataType.get());
+          serialization.addParameter(dataType);
           whereClause.append(" AND ").append(dataType.name).append(" = ?");
         }
 

@@ -23,16 +23,19 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.XDERuntimeException;
 import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xde.Entity;
 
 public final class BigInt extends DataType<BigInteger> {
   protected static final int sqlType = Types.BIGINT;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final BigInteger value) throws SQLException {
-    statement.setObject(parameterIndex, value, Types.BIGINT);
+    if (value != null)
+      statement.setObject(parameterIndex, value, sqlType);
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public final int precision;
@@ -49,12 +52,12 @@ public final class BigInt extends DataType<BigInteger> {
     this.max = max;
   }
 
-  protected BigInt(final BigInt column) {
-    super(column);
-    this.precision = column.precision;
-    this.unsigned = column.unsigned;
-    this.min = column.min;
-    this.max = column.max;
+  protected BigInt(final BigInt copy) {
+    super(copy);
+    this.precision = copy.precision;
+    this.unsigned = copy.unsigned;
+    this.min = copy.min;
+    this.max = copy.max;
   }
 
   @Override

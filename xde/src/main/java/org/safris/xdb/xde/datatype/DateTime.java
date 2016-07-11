@@ -33,15 +33,18 @@ public final class DateTime extends DataType<LocalDateTime> {
   protected static final int sqlType = Types.TIMESTAMP;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDateTime value) throws SQLException {
-    statement.setTimestamp(parameterIndex, new Timestamp(value.toDate().getTime()));
+    if (value != null)
+      statement.setTimestamp(parameterIndex, new Timestamp(value.toDate().getTime()));
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public DateTime(final Entity owner, final String specName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
     super(sqlType, LocalDateTime.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected DateTime(final DateTime column) {
-    super(column);
+  protected DateTime(final DateTime copy) {
+    super(copy);
   }
 
   @Override

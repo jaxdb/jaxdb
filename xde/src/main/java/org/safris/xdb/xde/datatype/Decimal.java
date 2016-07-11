@@ -22,15 +22,18 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import org.safris.xdb.xde.DataType;
+import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xde.Entity;
 
 public final class Decimal extends DataType<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Double value) throws SQLException {
-    statement.setDouble(parameterIndex, value);
+    if (value != null)
+      statement.setDouble(parameterIndex, value);
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public final int precision;
@@ -47,12 +50,12 @@ public final class Decimal extends DataType<java.lang.Double> {
     this.max = max;
   }
 
-  protected Decimal(final Decimal column) {
-    super(column);
-    this.precision = column.precision;
-    this.unsigned = column.unsigned;
-    this.min = column.min;
-    this.max = column.max;
+  protected Decimal(final Decimal copy) {
+    super(copy);
+    this.precision = copy.precision;
+    this.unsigned = copy.unsigned;
+    this.min = copy.min;
+    this.max = copy.max;
   }
 
   @Override

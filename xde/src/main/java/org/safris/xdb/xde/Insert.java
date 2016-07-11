@@ -53,7 +53,7 @@ class Insert {
 
           columns.append(", ").append(dataType.name);
           values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
-          serialization.addParameter(dataType.get());
+          serialization.addParameter(dataType);
         }
       }
       else if (serialization.statementType == Statement.class) {

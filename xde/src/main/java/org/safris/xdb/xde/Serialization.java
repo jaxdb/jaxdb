@@ -17,6 +17,7 @@
 package org.safris.xdb.xde;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,7 @@ import java.util.List;
 import org.safris.xdb.xdl.DBVendor;
 
 public class Serialization {
-  private final List<Object> parameters = new ArrayList<Object>();
+  private final List<Field<?>> parameters = new ArrayList<Field<?>>();
 
   protected final DBVendor vendor;
   protected final Class<? extends Statement> statementType;
@@ -35,14 +36,15 @@ public class Serialization {
     this.statementType = statementType;
   }
 
-  protected void addParameter(final Object parameter) {
+  protected void addParameter(final Field<?> parameter) {
+    if (parameter == null)
+      throw new IllegalArgumentException("parameter cannot be null");
+
     parameters.add(parameter);
   }
 
-  protected void set(final PreparedStatement statement) {
-    for (int i = 0; i < parameters.size(); i++) {
-      final Object parameter = parameters.get(i);
-      DataType.set(statement, i + 1, parameter.getClass(), parameter);
-    }
+  protected void set(final PreparedStatement statement) throws SQLException {
+    for (int i = 0; i < parameters.size(); i++)
+      parameters.get(i).set(statement, i + 1);
   }
 }

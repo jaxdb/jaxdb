@@ -21,24 +21,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Boolean extends DataType<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Boolean value) throws SQLException {
-    statement.setBoolean(parameterIndex, value);
+    if (value != null)
+      statement.setBoolean(parameterIndex, value);
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public Boolean(final Entity owner, final String specName, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<java.lang.Boolean> generateOnInsert, final GenerateOn<java.lang.Boolean> generateOnUpdate) {
     super(sqlType, java.lang.Boolean.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Boolean(final Boolean column) {
-    super(column);
+  protected Boolean(final Boolean copy) {
+    super(copy);
   }
 
   @Override

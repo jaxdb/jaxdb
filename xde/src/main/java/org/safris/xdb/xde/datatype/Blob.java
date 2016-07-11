@@ -22,24 +22,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Blob extends DataType<byte[]> {
   protected static final int sqlType = Types.BLOB;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final byte[] value) throws SQLException {
-    statement.setBinaryStream(parameterIndex, new ByteArrayInputStream(value));
+    if (value != null)
+      statement.setBinaryStream(parameterIndex, new ByteArrayInputStream(value));
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public Blob(final Entity owner, final String specName, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<byte[]> generateOnInsert, final GenerateOn<byte[]> generateOnUpdate) {
     super(sqlType, byte[].class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Blob(final Blob column) {
-    super(column);
+  protected Blob(final Blob copy) {
+    super(copy);
   }
 
   @Override

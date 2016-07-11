@@ -32,15 +32,18 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Enum<?> value) throws SQLException {
-    statement.setObject(parameterIndex, value.toString());
+    if (value != null)
+      statement.setObject(parameterIndex, value.toString());
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public Enum(final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<T> generateOnInsert, final GenerateOn<T> generateOnUpdate, final Class<T> type) {
     super(sqlType, type, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Enum(final Enum<T> column) {
-    super(column);
+  protected Enum(final Enum<T> copy) {
+    super(copy);
   }
 
   @Override

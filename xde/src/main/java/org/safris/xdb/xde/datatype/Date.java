@@ -32,15 +32,18 @@ public final class Date extends DataType<LocalDate> {
   protected static final int sqlType = Types.DATE;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDate value) throws SQLException {
-    statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
+    if (value != null)
+      statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
     super(sqlType, LocalDate.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Date(final Date column) {
-    super(column);
+  protected Date(final Date copy) {
+    super(copy);
   }
 
   @Override

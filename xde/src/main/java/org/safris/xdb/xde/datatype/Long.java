@@ -21,16 +21,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Long extends DataType<java.lang.Long> {
   protected static final int sqlType = Types.INTEGER;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Long value) throws SQLException {
-    statement.setLong(parameterIndex, value);
+    if (value != null)
+      statement.setLong(parameterIndex, value);
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public final int precision;
@@ -46,12 +49,12 @@ public final class Long extends DataType<java.lang.Long> {
     this.max = max;
   }
 
-  protected Long(final Long column) {
-    super(column);
-    this.precision = column.precision;
-    this.unsigned = column.unsigned;
-    this.min = column.min;
-    this.max = column.max;
+  protected Long(final Long copy) {
+    super(copy);
+    this.precision = copy.precision;
+    this.unsigned = copy.unsigned;
+    this.min = copy.min;
+    this.max = copy.max;
   }
 
   @Override

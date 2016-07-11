@@ -69,7 +69,7 @@ class FieldWrapper<T> extends Field<T> {
     return obj.toString();
   }
 
-  public FieldWrapper(final T value) {
+  protected FieldWrapper(final T value) {
     super(value);
   }
 
@@ -84,7 +84,7 @@ class FieldWrapper<T> extends Field<T> {
       serialization.sql.append("NULL");
     }
     else if (serialization.statementType == PreparedStatement.class) {
-      serialization.addParameter(get());
+      serialization.addParameter(this);
       serialization.sql.append("?");
     }
     else {

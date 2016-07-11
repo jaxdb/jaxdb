@@ -107,7 +107,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
   protected void serialize(final Serializable caller, final Serialization serialization) {
     if (serialization.statementType == PreparedStatement.class) {
       if (Entity.tableAlias(entity, false) == null) {
-        serialization.addParameter(get());
+        serialization.addParameter(this);
         serialization.sql.append(getPreparedStatementMark(serialization.vendor));
       }
       else {

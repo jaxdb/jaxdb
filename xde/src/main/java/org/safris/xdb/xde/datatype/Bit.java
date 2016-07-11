@@ -21,16 +21,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
+import org.safris.xdb.xde.GenerateOn;
+import org.safris.xdb.xdl.DBVendor;
 
 public final class Bit extends DataType<String> {
   protected static final int sqlType = Types.VARCHAR;
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final String value) throws SQLException {
-    statement.setString(parameterIndex, value);
+    if (value != null)
+      statement.setString(parameterIndex, value);
+    else
+      statement.setNull(parameterIndex, sqlType);
   }
 
   public final int length;
@@ -42,10 +45,10 @@ public final class Bit extends DataType<String> {
     this.varyant = varyant;
   }
 
-  protected Bit(final Bit column) {
-    super(column);
-    this.length = column.length;
-    this.varyant = column.varyant;
+  protected Bit(final Bit copy) {
+    super(copy);
+    this.length = copy.length;
+    this.varyant = copy.varyant;
   }
 
   @Override
