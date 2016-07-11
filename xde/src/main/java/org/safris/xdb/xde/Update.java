@@ -159,7 +159,7 @@ class Update {
           }
 
           serialization.addParameter(dataType.get());
-          setClause.append(", ").append(dataType).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
+          setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
 
@@ -171,7 +171,7 @@ class Update {
             dataType.value = dataType.generateOnUpdate.generate(dataType);
 
           serialization.addParameter(dataType.get());
-          whereClause.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
+          whereClause.append(" AND ").append(dataType).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
         }
       }
 
