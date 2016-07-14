@@ -44,7 +44,7 @@
         </executions>
         <configuration>
           <manifest xmlns="http://xml.safris.org/toolkit/binding/manifest.xsd">
-            <destdir explodeJars="true">${project.build.directory}/generated-sources/xmlbinding</destdir>
+            <destdir explodeJars="true">${project.build.directory}/generated-sources/xsb</destdir>
             <schemas>
               <schema>${basedir}/src/main/resources/xdl.xsd</schema>
             </schemas>
