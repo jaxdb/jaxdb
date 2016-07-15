@@ -23,7 +23,7 @@ import org.safris.xdb.xdl.xe.$xdl_index;
 import org.safris.xdb.xdl.xe.$xdl_integer;
 import org.safris.xdb.xdl.xe.$xdl_named;
 import org.safris.xdb.xdl.xe.$xdl_table;
-import org.safris.xml.generator.compiler.runtime.BindingList;
+import org.safris.xsb.generator.compiler.runtime.BindingList;
 
 public final class SQLDataTypes {
   public static String csvNames(final BindingList<$xdl_named> names) {

@@ -28,10 +28,10 @@ import java.util.Set;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Numbers;
-import org.safris.commons.maven.Log;
 import org.safris.commons.util.MaskedEnum;
 import org.safris.commons.util.TopologicalSort;
 import org.safris.commons.xml.XMLException;
+import org.safris.maven.common.Log;
 import org.safris.xdb.xdl.xe.$xdl_bit;
 import org.safris.xdb.xdl.xe.$xdl_blob;
 import org.safris.xdb.xdl.xe.$xdl_boolean;
