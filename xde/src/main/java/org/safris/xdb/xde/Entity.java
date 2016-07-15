@@ -16,8 +16,6 @@
 
 package org.safris.xdb.xde;
 
-import org.safris.xdb.xdl.DBVendor;
-
 public abstract class Entity extends Data<Entity> {
   private final boolean wasSelected;
 

@@ -42,7 +42,6 @@ import org.safris.xdb.xde.datatype.DateTime;
 import org.safris.xdb.xde.datatype.Decimal;
 import org.safris.xdb.xde.datatype.MediumInt;
 import org.safris.xdb.xde.datatype.SmallInt;
-import org.safris.xdb.xdl.DDL;
 import org.safris.xdb.xdl.SQLDataTypes;
 import org.safris.xdb.xdl.xe.$xdl_bit;
 import org.safris.xdb.xdl.xe.$xdl_blob;
@@ -500,14 +499,6 @@ public class EntityGenerator {
         return true;
 
     return false;
-  }
-
-  private static String serialize(final DDL[] ddls) {
-    String out = "";
-    for (final DDL ddl : ddls)
-      out += ", new " + DDL.class.getName() + "(" + Serializer.serialize(ddl.name) + ", " + Serializer.serialize(ddl.drop) + ", " + Serializer.serialize(ddl.create) + ")";
-
-    return "new " + DDL.class.getName() + "[] {" + out.substring(2) + "}";
   }
 
   public static String makeParam(final $xdl_table table, final $xdl_column column) {
