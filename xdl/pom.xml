@@ -27,7 +27,7 @@
   <groupId>org.safris.xdb</groupId>
   <artifactId>xdl</artifactId>
   <version>1.2.1</version>
-  <name>${project.groupId}.${project.artifactId}</name>
+  <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <plugins>
       <plugin>

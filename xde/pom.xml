@@ -27,7 +27,7 @@
   <groupId>org.safris.xdb</groupId>
   <artifactId>xde</artifactId>
   <version>1.3.3</version>
-  <name>${project.groupId}.${project.artifactId}</name>
+  <name>${project.groupId}:${project.artifactId}</name>
   <dependencies>
     <dependency>
       <groupId>org.safris.xdb</groupId>
