@@ -36,7 +36,7 @@ import org.safris.xdb.xdl.xe.$xdl_column;
 import org.safris.xdb.xdl.xe.$xdl_inherited;
 import org.safris.xdb.xdl.xe.$xdl_table;
 import org.safris.xdb.xdl.xe.xdl_database;
-import org.safris.xsb.generator.compiler.runtime.Bindings;
+import org.safris.xsb.compiler.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class XDLTransformer {

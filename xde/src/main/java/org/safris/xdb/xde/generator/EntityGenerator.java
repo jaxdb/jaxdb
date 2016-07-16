@@ -58,7 +58,7 @@ import org.safris.xdb.xdl.xe.$xdl_named;
 import org.safris.xdb.xdl.xe.$xdl_table;
 import org.safris.xdb.xdl.xe.$xdl_time;
 import org.safris.xdb.xdl.xe.xdl_database;
-import org.safris.xsb.generator.compiler.runtime.Bindings;
+import org.safris.xsb.compiler.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 import org.xml.sax.InputSource;
 
