@@ -30,14 +30,14 @@ class Update {
 
   private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.spec.update.UPDATE {
     @Override
-    public int execute(final Transaction transaction) throws XDEException {
+    public int execute(final Transaction transaction) throws SQLErrorSpecException {
       final Keyword<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
@@ -68,12 +68,12 @@ class Update {
         throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw XDEException.lookup(e, vendor);
+        throw SQLErrorSpecException.lookup(e, vendor);
       }
     }
 
     @Override
-    public int execute() throws XDEException {
+    public int execute() throws SQLErrorSpecException {
       return execute(null);
     }
   }
@@ -141,7 +141,7 @@ class Update {
         throw new Error("Need to override this");
 
       if (entity.primary().length == 0)
-        throw new XDERuntimeException("Entity '" + entity.name() + "' does not have a primary key");
+        throw new UnsupportedOperationException("Entity '" + entity.name() + "' does not have a primary key");
 
 //      if (!entity.wasSelected())
 //        throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
@@ -179,7 +179,7 @@ class Update {
     }
 
     @Override
-    public int execute() throws XDEException {
+    public int execute() throws SQLErrorSpecException {
       if (false) {
         final UPDATE update = (UPDATE)getParentRoot(this);
         final Class<? extends Schema> schema = update.entity.schema();
@@ -187,7 +187,7 @@ class Update {
         try {
           try (final Connection connection = Schema.getConnection(schema)) {
             vendor = Schema.getDBVendor(connection);
-            final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+            final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
             serialize(this, serialization);
             logger.info(serialization.sql.toString());
             if (true)
@@ -211,7 +211,7 @@ class Update {
           }
         }
         catch (final SQLException e) {
-          throw XDEException.lookup(e, vendor);
+          throw SQLErrorSpecException.lookup(e, vendor);
         }
       }
 

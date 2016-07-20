@@ -20,16 +20,16 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
-public final class XDERegistry {
-  private static final Map<Class<? extends Schema>,XDEDataSource> dataSources = new HashMap<Class<? extends Schema>,XDEDataSource>();
+public final class EntityRegistry {
+  private static final Map<Class<? extends Schema>,EntityDataSource> dataSources = new HashMap<Class<? extends Schema>,EntityDataSource>();
   private static final Map<Class<? extends Schema>,Class<? extends Statement>> statementTypes = new HashMap<Class<? extends Schema>,Class<? extends Statement>>();
 
-  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> statementType, final XDEDataSource dataSource) {
+  public static void register(final Class<? extends Schema> schema, final Class<? extends Statement> statementType, final EntityDataSource dataSource) {
     dataSources.put(schema, dataSource);
     statementTypes.put(schema, statementType);
   }
 
-  protected static XDEDataSource getDataSource(final Class<? extends Schema> schema) {
+  protected static EntityDataSource getDataSource(final Class<? extends Schema> schema) {
     return dataSources.get(schema);
   }
 
@@ -37,6 +37,6 @@ public final class XDERegistry {
     return statementTypes.get(schema);
   }
 
-  private XDERegistry() {
+  private EntityRegistry() {
   }
 }

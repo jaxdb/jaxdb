@@ -35,7 +35,7 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
     return true;
   }
 
-  public abstract boolean nextRow() throws XDEException;
+  public abstract boolean nextRow() throws SQLErrorSpecException;
 
   protected void resetEntities() {
     entities = rows.get(rowIndex);
@@ -51,5 +51,5 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
   }
 
   @Override
-  public abstract void close() throws XDEException;
+  public abstract void close() throws SQLErrorSpecException;
 }

@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 import org.safris.commons.lang.Pair;
 import org.safris.xdb.xdl.DBVendor;
 
-public class XDEException extends SQLException {
+public class SQLErrorSpecException extends SQLException {
   private static final Logger logger = Logger.getLogger(Tables.class.getName());
 
   private static final long serialVersionUID = 400839108529773414L;
@@ -34,9 +34,9 @@ public class XDEException extends SQLException {
     @SafeVarargs
     public ErrorSpec(final Pair<DBVendor,String> ... specs) {
       for (final Pair<DBVendor,String> spec : specs) {
-        Map<String,ErrorSpec> sqlCodeToException = XDEException.errorSpecs.get(spec.a);
+        Map<String,ErrorSpec> sqlCodeToException = SQLErrorSpecException.errorSpecs.get(spec.a);
         if (sqlCodeToException == null)
-          XDEException.errorSpecs.put(spec.a, sqlCodeToException = new HashMap<String,ErrorSpec>());
+          SQLErrorSpecException.errorSpecs.put(spec.a, sqlCodeToException = new HashMap<String,ErrorSpec>());
 
         sqlCodeToException.put(spec.b, this);
       }
@@ -55,35 +55,35 @@ public class XDEException extends SQLException {
 
   public static final ErrorSpec UNIMPLEMENTED = new ErrorSpec();
 
-  public static XDEException lookup(final SQLException e, final DBVendor vendor) {
+  public static SQLErrorSpecException lookup(final SQLException e, final DBVendor vendor) {
     Map<String,ErrorSpec> sqlCodeToException = errorSpecs.get(vendor);
     if (sqlCodeToException == null) {
       logger.warning("THE VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
-      return new XDEException(e, UNIMPLEMENTED);
+      return new SQLErrorSpecException(e, UNIMPLEMENTED);
     }
 
     final ErrorSpec errorSpec = sqlCodeToException.get(e.getSQLState());
     if (errorSpec == null) {
       logger.warning("THE SQLSTATE " + e.getSQLState() + " FOR VENDOR " + vendor + " DOES NOT EXIST IN THE XDEException library!!!!!!!!!!!!!!! Add it!!!!! http://www.postgresql.org/docs/8.3/static/errcodes-appendix.html");
-      return new XDEException(e, UNIMPLEMENTED);
+      return new SQLErrorSpecException(e, UNIMPLEMENTED);
     }
 
-    return new XDEException(e, errorSpec);
+    return new SQLErrorSpecException(e, errorSpec);
   }
 
-  public static XDEException lookup(final SQLException e) {
+  public static SQLErrorSpecException lookup(final SQLException e) {
     return lookup(e, null);
   }
 
   private final ErrorSpec errorSpec;
 
-  private XDEException(final SQLException e, final ErrorSpec errorSpec) {
+  private SQLErrorSpecException(final SQLException e, final ErrorSpec errorSpec) {
     super(e.getMessage(), e.getSQLState(), e.getErrorCode(), e.getCause());
     setStackTrace(e.getStackTrace());
     this.errorSpec = errorSpec;
   }
 
-  protected XDEException(final String message) {
+  protected SQLErrorSpecException(final String message) {
     super(message);
     this.errorSpec = null;
   }

@@ -97,7 +97,7 @@ public final class Tables {
       return aliases;
     }
     catch (final ClassNotFoundException e) {
-      throw new XDERuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -123,7 +123,7 @@ public final class Tables {
       return (Entity)field.get(null);
     }
     catch (final Exception e) {
-      throw new XDERuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -164,7 +164,7 @@ public final class Tables {
 
           final Class<? extends Entity> entity = aliases.get(token);
           if (entity == null)
-            throw new XDERuntimeException("Unknown entity for: " + token);
+            throw new RuntimeException("Unknown entity for: " + token);
 
           out += listColumns(entity, token);
         }
@@ -215,7 +215,7 @@ public final class Tables {
       return out;
     }
     catch (final ClassNotFoundException e) {
-      throw new XDERuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 
@@ -273,7 +273,7 @@ public final class Tables {
         }
       }
       catch (final Exception e) {
-        throw new XDERuntimeException(e);
+        throw new RuntimeException(e);
       }
 
       return entities;

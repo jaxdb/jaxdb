@@ -17,7 +17,6 @@
 package org.safris.xdb.xde;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -29,6 +28,7 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
+import org.safris.xdb.xde.datatype.Char;
 import org.safris.xdb.xdl.DBVendor;
 
 public abstract class DataType<T> extends Field<T> implements Cloneable {
@@ -36,9 +36,9 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(DataType.class.getPackage().getName() + ".datatype");
+      final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(Char.class.getPackage().getName());
       if (classes.size() == 0)
-        throw new XDERuntimeException("No classes found, wrong package?");
+        throw new ExceptionInInitializerError("No classes found, wrong package?");
 
       for (final Class<?> cls : classes) {
         final Method[] methods = cls.getDeclaredMethods();
@@ -60,8 +60,8 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
     try {
       typeToSetter.get(type.isEnum() ? Enum.class : type).invoke(null, statement, parameterIndex, value);
     }
-    catch (final IllegalAccessException | InvocationTargetException e) {
-      throw new XDERuntimeException(e);
+    catch (final ReflectiveOperationException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -133,7 +133,7 @@ public abstract class DataType<T> extends Field<T> implements Cloneable {
       return constructor.newInstance(this);
     }
     catch (final ReflectiveOperationException e) {
-      throw new XDERuntimeException(e);
+      throw new RuntimeException(e);
     }
   }
 

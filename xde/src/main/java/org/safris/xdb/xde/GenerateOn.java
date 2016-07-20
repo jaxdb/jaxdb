@@ -24,7 +24,7 @@ public abstract class GenerateOn<T> {
     @Override
     public Number generate(final DataType<Number> dataType) {
       if (dataType.get() == null)
-        throw new XDERuntimeException("value is missing");
+        throw new IllegalArgumentException("value is missing");
 
       if (dataType.get() instanceof Long)
         return (long)(dataType.get().longValue() + 1l);
@@ -52,8 +52,8 @@ public abstract class GenerateOn<T> {
       try {
         return (BaseLocal)type.newInstance();
       }
-      catch (final IllegalAccessException | InstantiationException e) {
-        throw new XDERuntimeException(e);
+      catch (final ReflectiveOperationException e) {
+        throw new RuntimeException(e);
       }
     }
   };

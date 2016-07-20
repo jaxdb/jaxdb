@@ -23,7 +23,7 @@ import java.sql.SQLException;
 public abstract class Field<T> extends Data<Field<T>> {
   protected static <T>Field<T> valueOf(final T object) {
     if (object instanceof Serializable)
-      throw new XDERuntimeException("Should not happen!");
+      throw new AssertionError("Should not happen!");
 
     return new FieldWrapper<T>(object);
   }

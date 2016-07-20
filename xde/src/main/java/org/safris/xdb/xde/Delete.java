@@ -27,14 +27,14 @@ import org.safris.xdb.xdl.DBVendor;
 class Delete {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
     @Override
-    public int execute(final Transaction transaction) throws XDEException {
+    public int execute(final Transaction transaction) throws SQLErrorSpecException {
       final Keyword<?> delete = getParentRoot(this);
       final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
@@ -65,12 +65,12 @@ class Delete {
         throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw XDEException.lookup(e, vendor);
+        throw SQLErrorSpecException.lookup(e, vendor);
       }
     }
 
     @Override
-    public int execute() throws XDEException {
+    public int execute() throws SQLErrorSpecException {
       return execute(null);
     }
   }
@@ -120,10 +120,10 @@ class Delete {
         throw new Error("Need to override this");
 
       if (entity.primary().length == 0)
-        throw new XDERuntimeException("Entity '" + entity.name() + "' does not have a primary key");
+        throw new UnsupportedOperationException("Entity '" + entity.name() + "' does not have a primary key");
 
       if (caller == this && !entity.wasSelected())
-        throw new XDERuntimeException("Entity '" + entity.name() + "' did not come from a SELECT");
+        throw new UnsupportedOperationException("Entity '" + entity.name() + "' did not come from a SELECT");
 
       serialization.sql.append("DELETE FROM ");
       entity.serialize(this, serialization);

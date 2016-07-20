@@ -22,7 +22,10 @@ import java.sql.SQLException;
 import org.safris.xdb.xdl.DBVendor;
 
 public abstract class Schema {
-  protected static DBVendor getDBVendor(final Connection connection) throws XDEException {
+  protected static DBVendor getDBVendor(final Connection connection) throws SQLErrorSpecException {
+    if (connection == null)
+      return null;
+
     try {
       final String url = connection.getMetaData().getURL();
       if (url.contains("jdbc:derby"))
@@ -35,22 +38,22 @@ public abstract class Schema {
         return DBVendor.POSTGRE_SQL;
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, null);
+      throw SQLErrorSpecException.lookup(e, null);
     }
 
     return null;
   }
 
-  protected static Connection getConnection(final Class<? extends Schema> schema) throws XDEException {
-    final XDEDataSource dataSource = XDERegistry.getDataSource(schema);
+  protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLErrorSpecException {
+    final EntityDataSource dataSource = EntityRegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new XDEException("No XDEDataSource has been registered for " + schema.getName());
+      throw new SQLErrorSpecException("No XDEDataSource has been registered for " + schema.getName());
 
     try {
       return dataSource.getConnection();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, null);
+      throw SQLErrorSpecException.lookup(e, null);
     }
   }
 }

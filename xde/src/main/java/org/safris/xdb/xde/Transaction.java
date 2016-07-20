@@ -29,27 +29,29 @@ public class Transaction implements AutoCloseable {
     this.schema = schema;
   }
 
-  protected Connection getConnection() throws XDEException {
-    if (!inited) {
-      synchronized (inited) {
-        if (!inited) {
-          this.connection = Schema.getConnection(schema);
-          try {
-            this.connection.setAutoCommit(false);
-          }
-          catch (final SQLException e) {
-            throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
-          }
+  protected Connection getConnection() throws SQLErrorSpecException {
+    if (inited)
+      return connection;
 
-          inited = true;
-        }
+    synchronized (inited) {
+      if (inited)
+        return connection;
+
+      this.connection = Schema.getConnection(schema);
+      try {
+        this.connection.setAutoCommit(false);
       }
+      catch (final SQLException e) {
+        throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
+      }
+
+      inited = true;
     }
 
     return connection;
   }
 
-  public void commit() throws XDEException {
+  public void commit() throws SQLErrorSpecException {
     if (connection == null)
       return;
 
@@ -57,11 +59,11 @@ public class Transaction implements AutoCloseable {
       connection.commit();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
+      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
     }
   }
 
-  public void rollback() throws XDEException {
+  public void rollback() throws SQLErrorSpecException {
     if (connection == null)
       return;
 
@@ -69,12 +71,12 @@ public class Transaction implements AutoCloseable {
       connection.rollback();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
+      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
     }
   }
 
   @Override
-  public void close() throws XDEException {
+  public void close() throws SQLErrorSpecException {
     if (connection == null)
       return;
 
@@ -82,7 +84,7 @@ public class Transaction implements AutoCloseable {
       connection.close();
     }
     catch (final SQLException e) {
-      throw XDEException.lookup(e, connection != null ? Schema.getDBVendor(connection) : null);
+      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
     }
   }
 }

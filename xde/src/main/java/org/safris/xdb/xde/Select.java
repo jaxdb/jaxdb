@@ -66,7 +66,7 @@ class Select {
 
       @Override
       @SuppressWarnings({"rawtypes", "unchecked"})
-      public boolean nextRow() throws XDEException {
+      public boolean nextRow() throws SQLErrorSpecException {
         if (rowIndex + 1 < rows.size()) {
           ++rowIndex;
           resetEntities();
@@ -115,7 +115,7 @@ class Select {
           }
         }
         catch (final SQLException e) {
-          throw XDEException.lookup(e, vendor);
+          throw SQLErrorSpecException.lookup(e, vendor);
         }
 
         if (entity != null) {
@@ -132,14 +132,14 @@ class Select {
       }
 
       @Override
-      public void close() throws XDEException {
+      public void close() throws SQLErrorSpecException {
         try {
           resultSet.close();
           statement.close();
           connection.close();
         }
         catch (final SQLException e) {
-          throw XDEException.lookup(e, vendor);
+          throw SQLErrorSpecException.lookup(e, vendor);
         }
         finally {
           prototypes.clear();
@@ -154,19 +154,19 @@ class Select {
 
   private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements select.SELECT<T> {
     @Override
-    public final RowIterator<T> execute() throws XDEException {
+    public final RowIterator<T> execute() throws SQLErrorSpecException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws XDEException {
+    public RowIterator<T> execute(final Transaction transaction) throws SQLErrorSpecException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
 
         serialize(this, serialization);
         Data.clearAliases();
@@ -187,7 +187,7 @@ class Select {
         throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw XDEException.lookup(e, vendor);
+        throw SQLErrorSpecException.lookup(e, vendor);
       }
     }
   }
@@ -479,7 +479,7 @@ class Select {
             ((Direction<?>)field).serialize(this, serialization);
           }
           else {
-            throw new XDERuntimeException("Unknown column type: " + field.getClass().getName());
+            throw new UnsupportedOperationException("Unsupported column type: " + field.getClass().getName());
           }
         }
 
@@ -602,12 +602,12 @@ class Select {
     }
 
     @Override
-    public RowIterator<T> execute() throws XDEException {
+    public RowIterator<T> execute() throws SQLErrorSpecException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws XDEException {
+    public RowIterator<T> execute(final Transaction transaction) throws SQLErrorSpecException {
       if (entities.length == 1) {
         final Entity entity = (Entity)this.entities[0];
         final Entity out = entity.newInstance();
@@ -639,7 +639,7 @@ class Select {
             return new RowIterator<T>() {
               @Override
               @SuppressWarnings({"rawtypes", "unchecked"})
-              public boolean nextRow() throws XDEException {
+              public boolean nextRow() throws SQLErrorSpecException {
                 if (rowIndex + 1 < rows.size()) {
                   ++rowIndex;
                   resetEntities();
@@ -655,7 +655,7 @@ class Select {
                     field.value = field.get(resultSet, ++index);
                 }
                 catch (final SQLException e) {
-                  throw XDEException.lookup(e, finalVendor);
+                  throw SQLErrorSpecException.lookup(e, finalVendor);
                 }
 
                 rows.add((T[])new Entity[] {out});
@@ -665,14 +665,14 @@ class Select {
               }
 
               @Override
-              public void close() throws XDEException {
+              public void close() throws SQLErrorSpecException {
                 try {
                   resultSet.close();
                   statement.close();
                   connection.close();
                 }
                 catch (final SQLException e) {
-                  throw XDEException.lookup(e, finalVendor);
+                  throw SQLErrorSpecException.lookup(e, finalVendor);
                 }
                 finally {
                   rows.clear();
@@ -682,7 +682,7 @@ class Select {
           }
         }
         catch (final SQLException e) {
-          throw XDEException.lookup(e, vendor);
+          throw SQLErrorSpecException.lookup(e, vendor);
         }
       }
 

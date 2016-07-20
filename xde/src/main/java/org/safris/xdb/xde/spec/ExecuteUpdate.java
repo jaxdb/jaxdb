@@ -17,9 +17,9 @@
 package org.safris.xdb.xde.spec;
 
 import org.safris.xdb.xde.Transaction;
-import org.safris.xdb.xde.XDEException;
+import org.safris.xdb.xde.SQLErrorSpecException;
 
 public interface ExecuteUpdate {
-  public int execute(final Transaction transaction) throws XDEException;
-  public int execute() throws XDEException;
+  public int execute(final Transaction transaction) throws SQLErrorSpecException;
+  public int execute() throws SQLErrorSpecException;
 }

@@ -77,15 +77,14 @@ class Insert {
     }
 
     @Override
-    public int execute(final Transaction transaction) throws XDEException {
+    public int execute(final Transaction transaction) throws SQLErrorSpecException {
       final Keyword<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, XDERegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Data.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
@@ -116,12 +115,12 @@ class Insert {
         throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw XDEException.lookup(e, vendor);
+        throw SQLErrorSpecException.lookup(e, vendor);
       }
     }
 
     @Override
-    public int execute() throws XDEException {
+    public int execute() throws SQLErrorSpecException {
       return execute(null);
     }
   }
