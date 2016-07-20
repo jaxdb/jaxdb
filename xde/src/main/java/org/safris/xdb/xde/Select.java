@@ -66,7 +66,7 @@ class Select {
 
       @Override
       @SuppressWarnings({"rawtypes", "unchecked"})
-      public boolean nextRow() throws SQLErrorSpecException {
+      public boolean nextRow() throws SQLException {
         if (rowIndex + 1 < rows.size()) {
           ++rowIndex;
           resetEntities();
@@ -132,7 +132,7 @@ class Select {
       }
 
       @Override
-      public void close() throws SQLErrorSpecException {
+      public void close() throws SQLException {
         try {
           resultSet.close();
           statement.close();
@@ -154,12 +154,12 @@ class Select {
 
   private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements select.SELECT<T> {
     @Override
-    public final RowIterator<T> execute() throws SQLErrorSpecException {
+    public final RowIterator<T> execute() throws SQLException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws SQLErrorSpecException {
+    public RowIterator<T> execute(final Transaction transaction) throws SQLException {
       final SELECT<?> select = (SELECT<?>)getParentRoot(this);
       final Class<? extends Schema> schema = select.from().tables[0].schema();
       DBVendor vendor = null;
@@ -602,12 +602,12 @@ class Select {
     }
 
     @Override
-    public RowIterator<T> execute() throws SQLErrorSpecException {
+    public RowIterator<T> execute() throws SQLException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws SQLErrorSpecException {
+    public RowIterator<T> execute(final Transaction transaction) throws SQLException {
       if (entities.length == 1) {
         final Entity entity = (Entity)this.entities[0];
         final Entity out = entity.newInstance();
@@ -639,7 +639,7 @@ class Select {
             return new RowIterator<T>() {
               @Override
               @SuppressWarnings({"rawtypes", "unchecked"})
-              public boolean nextRow() throws SQLErrorSpecException {
+              public boolean nextRow() throws SQLException {
                 if (rowIndex + 1 < rows.size()) {
                   ++rowIndex;
                   resetEntities();
@@ -665,7 +665,7 @@ class Select {
               }
 
               @Override
-              public void close() throws SQLErrorSpecException {
+              public void close() throws SQLException {
                 try {
                   resultSet.close();
                   statement.close();

@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import org.safris.xdb.xdl.DBVendor;
 
 public abstract class Schema {
-  protected static DBVendor getDBVendor(final Connection connection) throws SQLErrorSpecException {
+  protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
       return null;
 
@@ -44,7 +44,7 @@ public abstract class Schema {
     return null;
   }
 
-  protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLErrorSpecException {
+  protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
     final EntityDataSource dataSource = EntityRegistry.getDataSource(schema);
     if (dataSource == null)
       throw new SQLErrorSpecException("No XDEDataSource has been registered for " + schema.getName());

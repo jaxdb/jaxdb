@@ -16,12 +16,13 @@
 
 package org.safris.xdb.xde.spec;
 
+import java.sql.SQLException;
+
 import org.safris.xdb.xde.Data;
 import org.safris.xdb.xde.RowIterator;
 import org.safris.xdb.xde.Transaction;
-import org.safris.xdb.xde.SQLErrorSpecException;
 
 public interface ExecuteQuery<T extends Data<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws SQLErrorSpecException;
-  public RowIterator<T> execute() throws SQLErrorSpecException;
+  public RowIterator<T> execute(final Transaction transaction) throws SQLException;
+  public RowIterator<T> execute() throws SQLException;
 }

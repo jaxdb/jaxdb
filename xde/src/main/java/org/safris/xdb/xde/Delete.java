@@ -27,7 +27,7 @@ import org.safris.xdb.xdl.DBVendor;
 class Delete {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
     @Override
-    public int execute(final Transaction transaction) throws SQLErrorSpecException {
+    public int execute(final Transaction transaction) throws SQLException {
       final Keyword<?> delete = getParentRoot(this);
       final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
@@ -70,7 +70,7 @@ class Delete {
     }
 
     @Override
-    public int execute() throws SQLErrorSpecException {
+    public int execute() throws SQLException {
       return execute(null);
     }
   }

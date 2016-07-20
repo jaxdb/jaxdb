@@ -29,7 +29,7 @@ public class Transaction implements AutoCloseable {
     this.schema = schema;
   }
 
-  protected Connection getConnection() throws SQLErrorSpecException {
+  protected Connection getConnection() throws SQLException {
     if (inited)
       return connection;
 
@@ -51,7 +51,7 @@ public class Transaction implements AutoCloseable {
     return connection;
   }
 
-  public void commit() throws SQLErrorSpecException {
+  public void commit() throws SQLException {
     if (connection == null)
       return;
 
@@ -63,7 +63,7 @@ public class Transaction implements AutoCloseable {
     }
   }
 
-  public void rollback() throws SQLErrorSpecException {
+  public void rollback() throws SQLException {
     if (connection == null)
       return;
 
@@ -76,7 +76,7 @@ public class Transaction implements AutoCloseable {
   }
 
   @Override
-  public void close() throws SQLErrorSpecException {
+  public void close() throws SQLException {
     if (connection == null)
       return;
 

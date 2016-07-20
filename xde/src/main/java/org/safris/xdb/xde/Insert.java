@@ -77,7 +77,7 @@ class Insert {
     }
 
     @Override
-    public int execute(final Transaction transaction) throws SQLErrorSpecException {
+    public int execute(final Transaction transaction) throws SQLException {
       final Keyword<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).entity).schema();
       DBVendor vendor = null;
@@ -120,7 +120,7 @@ class Insert {
     }
 
     @Override
-    public int execute() throws SQLErrorSpecException {
+    public int execute() throws SQLException {
       return execute(null);
     }
   }

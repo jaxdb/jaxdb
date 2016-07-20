@@ -30,7 +30,7 @@ class Update {
 
   private static abstract class Execute extends Keyword<DataType<?>> implements org.safris.xdb.xde.spec.update.UPDATE {
     @Override
-    public int execute(final Transaction transaction) throws SQLErrorSpecException {
+    public int execute(final Transaction transaction) throws SQLException {
       final Keyword<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
@@ -73,7 +73,7 @@ class Update {
     }
 
     @Override
-    public int execute() throws SQLErrorSpecException {
+    public int execute() throws SQLException {
       return execute(null);
     }
   }
@@ -179,7 +179,7 @@ class Update {
     }
 
     @Override
-    public int execute() throws SQLErrorSpecException {
+    public int execute() throws SQLException {
       if (false) {
         final UPDATE update = (UPDATE)getParentRoot(this);
         final Class<? extends Schema> schema = update.entity.schema();

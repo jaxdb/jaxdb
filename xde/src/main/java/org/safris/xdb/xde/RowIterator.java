@@ -16,6 +16,7 @@
 
 package org.safris.xdb.xde;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,7 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
     return true;
   }
 
-  public abstract boolean nextRow() throws SQLErrorSpecException;
+  public abstract boolean nextRow() throws SQLException;
 
   protected void resetEntities() {
     entities = rows.get(rowIndex);
@@ -51,5 +52,5 @@ public abstract class RowIterator<T extends Data<?>> implements AutoCloseable {
   }
 
   @Override
-  public abstract void close() throws SQLErrorSpecException;
+  public abstract void close() throws SQLException;
 }
