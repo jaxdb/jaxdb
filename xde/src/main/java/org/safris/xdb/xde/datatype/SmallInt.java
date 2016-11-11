@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class SmallInt extends DataType<Short> {
   protected static final int sqlType = Types.TINYINT;
 
+  protected static Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final short value = resultSet.getShort(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final Short value) throws SQLException {
     if (value != null)
       statement.setShort(parameterIndex, value);
@@ -63,13 +68,12 @@ public final class SmallInt extends DataType<Short> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final short value = resultSet.getShort(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

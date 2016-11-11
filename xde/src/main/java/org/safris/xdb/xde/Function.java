@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2016 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,26 +16,48 @@
 
 package org.safris.xdb.xde;
 
-public abstract class Function<T> extends Keyword<Field<T>> {
-  protected final Field<T> a;
-  protected final Field<T> b;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
-  protected Function(final Field<T> a, final Field<T> b) {
-    this.a = a;
-    this.b = b;
-  }
+import org.safris.commons.lang.reflect.Classes;
 
-  protected Entity entity() {
-    return null;
+public class Function<T> extends Variable<T> {
+  private final Class<? extends DataType<? extends T>> dataType;
+  private final String function;
+
+  protected Function(final Class<? extends DataType<? extends T>> dataType, final String function) {
+    super(null);
+    this.dataType = dataType;
+    this.function = function;
   }
 
   @Override
-  protected Keyword<Field<T>> parent() {
+  protected Entity owner() {
     return null;
   }
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    throw new UnsupportedOperationException("Implement me");
+    serialization.sql.append(function).append("()");
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    Class<?> cls = dataType.getClass();
+    do {
+      if (DataType.canSet(cls)) {
+        DataType.set(statement, parameterIndex, (Class<T>)Classes.getGenericSuperclasses(dataType.getClass())[0], this.value);
+        return;
+      }
+    }
+    while ((cls = cls.getSuperclass()) != null);
+  }
+
+  @Override
+  @SuppressWarnings("unchecked")
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = DataType.get((Class<T>)Classes.getGenericSuperclasses(dataType.getClass())[0], resultSet, columnIndex);
   }
 }

@@ -34,9 +34,9 @@ class Delete {
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
-        Data.clearAliases();
+        Subject.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final int count;
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {

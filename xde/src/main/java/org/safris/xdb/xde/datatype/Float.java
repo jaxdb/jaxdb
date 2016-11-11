@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Float extends DataType<java.lang.Float> {
   protected static final int sqlType = Types.FLOAT;
 
+  protected static java.lang.Float get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final float value = resultSet.getFloat(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Float value) throws SQLException {
     if (value != null)
       statement.setFloat(parameterIndex, value);
@@ -64,13 +69,12 @@ public final class Float extends DataType<java.lang.Float> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected java.lang.Float get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final float value = resultSet.getFloat(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

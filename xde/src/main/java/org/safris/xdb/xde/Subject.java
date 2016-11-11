@@ -22,7 +22,7 @@ import java.util.List;
 import org.safris.commons.lang.Strings;
 import org.safris.xdb.xdl.DBVendor;
 
-public abstract class Data<T> extends Serializable {
+public abstract class Subject<T> extends Serializable {
   // This is implemented as a ThreadLocal variable, because of one main reason:
   // The CQL query construct crosses into static space when applying Condition(s),
   // such as AND, OR, EQ, etc. A ThreadLocal reference to the aliases list works,
@@ -49,8 +49,8 @@ public abstract class Data<T> extends Serializable {
     return Strings.getAlpha(i);
   }
 
-  protected static <B>Object columnRef(final Field<B> field) {
-    return tableAlias(field.entity(), false) == null ? field.get() : field;
+  protected static <B>Object columnRef(final Variable<B> variable) {
+    return tableAlias(variable.owner(), false) == null ? variable.get() : variable;
   }
 
   protected static void clearAliases() {

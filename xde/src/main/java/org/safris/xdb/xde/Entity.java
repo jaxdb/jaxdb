@@ -16,7 +16,7 @@
 
 package org.safris.xdb.xde;
 
-public abstract class Entity extends Data<Entity> {
+public abstract class Entity extends Subject<Entity> {
   private final boolean wasSelected;
 
   protected Entity(final boolean wasSelected, final DataType<?>[] dataType, final DataType<?>[] primary) {
@@ -41,7 +41,10 @@ public abstract class Entity extends Data<Entity> {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    serialization.sql.append(tableName(this, serialization)).append(" ").append(tableAlias(this, true));
+    serialization.sql.append(tableName(this, serialization));
+    final String alias = tableAlias(this, true);
+    if (serialization.getType() == Select.class)
+      serialization.sql.append(" ").append(alias);
   }
 
   @SuppressWarnings("unchecked")

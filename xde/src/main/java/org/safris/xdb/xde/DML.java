@@ -22,8 +22,10 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.safris.xdb.xde.BooleanCondition.Operator;
+import org.joda.time.base.BaseLocal;
+import org.joda.time.base.BaseSingleFieldPeriod;
 import org.safris.xdb.xde.datatype.Char;
+import org.safris.xdb.xde.datatype.DateTime;
 import org.safris.xdb.xde.spec.delete.DELETE_WHERE;
 import org.safris.xdb.xde.spec.expression.WHEN;
 import org.safris.xdb.xde.spec.insert.INSERT;
@@ -33,61 +35,61 @@ import org.safris.xdb.xde.spec.update.UPDATE_SET;
 public abstract class DML {
   /** Direction **/
 
-  protected static abstract class Direction<T> extends Field<T> {
-    private final Field<?> field;
+  protected static abstract class Direction<T> extends Variable<T> {
+    private final Variable<?> variable;
 
-    public Direction(final Field<T> field) {
-      super(null);
-      this.field = field;
+    public Direction(final Variable<T> variable) {
+      super(variable.value);
+      this.variable = variable;
     }
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      field.serialize(this, serialization);
+      variable.serialize(this, serialization);
       serialization.sql.append(" ").append(getClass().getSimpleName());
     }
 
     @Override
-    protected Entity entity() {
+    protected Entity owner() {
       throw new UnsupportedOperationException("Implement me");
     }
 
     @Override
-    protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       throw new UnsupportedOperationException("Implement me");
     }
 
     @Override
-    protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       throw new UnsupportedOperationException("Implement me");
     }
   }
 
-  protected static class ASC<T> extends Direction<T> {
-    protected ASC(final Field<T> field) {
-      super(field);
+  protected static final class ASC<T> extends Direction<T> {
+    protected ASC(final Variable<T> variable) {
+      super(variable);
     }
   }
 
-  public static <T>ASC<T> ASC(final Field<T> field) {
-    return new ASC<T>(field);
+  public static <T>ASC<T> ASC(final Variable<T> variable) {
+    return new ASC<T>(variable);
   }
 
-  protected static class DESC<T> extends Direction<T> {
-    protected DESC(final Field<T> field) {
-      super(field);
+  protected static final class DESC<T> extends Direction<T> {
+    protected DESC(final Variable<T> variable) {
+      super(variable);
     }
   }
 
-  public static <T>DESC<T> DESC(final Field<T> field) {
-    return new DESC<T>(field);
+  public static <T>DESC<T> DESC(final Variable<T> variable) {
+    return new DESC<T>(variable);
   }
 
   /** NATURAL **/
 
-  public static class NATURAL extends Keyword<Data<?>> {
+  public static class NATURAL extends Keyword<Subject<?>> {
     @Override
-    protected Keyword<Data<?>> parent() {
+    protected Keyword<Subject<?>> parent() {
       return null;
     }
 
@@ -101,9 +103,9 @@ public abstract class DML {
 
   /** TYPE **/
 
-  public static abstract class TYPE extends Keyword<Data<?>> {
+  public static abstract class TYPE extends Keyword<Subject<?>> {
     @Override
-    protected Keyword<Data<?>> parent() {
+    protected Keyword<Subject<?>> parent() {
       return null;
     }
   }
@@ -145,9 +147,9 @@ public abstract class DML {
 
   /** SetQualifier **/
 
-  public static abstract class SetQualifier extends Keyword<Data<?>> {
+  public static abstract class SetQualifier extends Keyword<Subject<?>> {
     @Override
-    protected Keyword<Data<?>> parent() {
+    protected Keyword<Subject<?>> parent() {
       return null;
     }
   }
@@ -172,22 +174,22 @@ public abstract class DML {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Data<?>>_SELECT<T> SELECT(final T ... entities) {
+  public static <T extends Subject<?>>_SELECT<T> SELECT(final T ... entities) {
     return DML.<T>SELECT(null, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Data<?>>_SELECT<T> SELECT(final ALL all, final T ... entities) {
+  public static <T extends Subject<?>>_SELECT<T> SELECT(final ALL all, final T ... entities) {
     return DML.<T>SELECT(all, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Data<?>>_SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
+  public static <T extends Subject<?>>_SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
     return DML.<T>SELECT(null, distinct, entities);
   }
 
   @SafeVarargs
-  public static <T extends Data<?>>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+  public static <T extends Subject<?>>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
     return new Select.SELECT<T>(all, distinct, entities);
   }
 
@@ -226,7 +228,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.entity(), true);
+      tableAlias(dataType.owner(), true);
       serialization.sql.append("AVG(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
@@ -258,7 +260,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.entity(), true);
+      tableAlias(dataType.owner(), true);
       serialization.sql.append("MAX(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
@@ -290,7 +292,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.entity(), true);
+      tableAlias(dataType.owner(), true);
       serialization.sql.append("MIN(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
@@ -322,7 +324,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.entity(), true);
+      tableAlias(dataType.owner(), true);
       serialization.sql.append("SUM(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
@@ -354,7 +356,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.entity(), true);
+      tableAlias(dataType.owner(), true);
       serialization.sql.append("COUNT(");
       if (qualifier != null)
         serialization.sql.append(qualifier).append(" ");
@@ -375,62 +377,58 @@ public abstract class DML {
     return new COUNT<T>(all, dataType);
   }
 
-  public static class PLUS<T> extends Function<T> {
-    protected PLUS(final Field<T> a, final Field<T> b) {
-      super(a, b);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      a.serialize(this, serialization);
-      serialization.sql.append(" + ");
-      b.serialize(this, serialization);
+  private static final class PLUS<T> extends Evaluation<T> {
+    protected PLUS(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
+      super(a, operator, b);
     }
   }
 
-  public static <T>PLUS<T> PLUS(final Field<T> a, final Field<T> b) {
-    return new PLUS<T>(a, b);
+  public static <T extends Number>PLUS<T> PLUS(final Variable<T> a, final Variable<? super T> b) {
+    return new PLUS<T>(a, Operator.PLUS, b);
   }
 
-  public static <T>PLUS<T> PLUS(final Field<T> a, final T b) {
-    return new PLUS<T>(a, Field.valueOf(b));
+  public static <T extends Number>PLUS<T> PLUS(final Variable<T> a, final T b) {
+    return new PLUS<T>(a, Operator.PLUS, b);
   }
 
-  public static <T>PLUS<T> PLUS(final T a, final Field<T> b) {
-    return new PLUS<T>(Field.valueOf(a), b);
+  public static <T extends Number>PLUS<T> PLUS(final T a, final T b) {
+    return new PLUS<T>(Variable.valueOf(a), Operator.PLUS, b);
   }
 
-  public static <T>PLUS<T> PLUS(final T a, final T b) {
-    return new PLUS<T>(Field.valueOf(a), Field.valueOf(b));
+  public static <T extends BaseLocal>PLUS<T> PLUS(final Variable<T> a, final BaseSingleFieldPeriod ... intervals) {
+    return new PLUS<T>(a, Operator.PLUS, intervals);
   }
 
-  public static class MINUS<T> extends Function<T> {
-    protected MINUS(final Field<T> a, final Field<T> b) {
-      super(a, b);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      a.serialize(this, serialization);
-      serialization.sql.append(" - ");
-      b.serialize(this, serialization);
+  private static final class MINUS<T> extends Evaluation<T> {
+    protected MINUS(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
+      super(a, Operator.MINUS, b);
     }
   }
 
-  public static <T>MINUS<T> MINUS(final Field<T> a, final Field<T> b) {
-    return new MINUS<T>(a, b);
+  public static <T extends Number>MINUS<T> MINUS(final Variable<T> a, final Variable<? super T> b) {
+    return new MINUS<T>(a, Operator.MINUS, b);
   }
 
-  public static <T>MINUS<T> MINUS(final Field<T> a, final T b) {
-    return new MINUS<T>(a, Field.valueOf(b));
+  public static <T extends Number>MINUS<T> MINUS(final Variable<T> a, final T b) {
+    return new MINUS<T>(a, Operator.MINUS, b);
   }
 
-  public static <T>MINUS<T> MINUS(final T a, final Field<T> b) {
-    return new MINUS<T>(Field.valueOf(a), b);
+  public static <T extends Number>MINUS<T> MINUS(final T a, final T b) {
+    return new MINUS<T>(Variable.valueOf(a), Operator.MINUS, b);
   }
 
-  public static <T>MINUS<T> MINUS(final T a, final T b) {
-    return new MINUS<T>(Field.valueOf(a), Field.valueOf(b));
+  public static <T extends BaseLocal>MINUS<T> MINUS(final Variable<T> a, final BaseSingleFieldPeriod ... intervals) {
+    return new MINUS<T>(a, Operator.MINUS, intervals);
+  }
+
+  private static class NOW extends Function<BaseLocal> {
+    protected NOW() {
+      super(DateTime.class, "NOW");
+    }
+  }
+
+  public static NOW NOW() {
+    return new NOW();
   }
 
   /** Condition **/
@@ -447,76 +445,76 @@ public abstract class DML {
     return new BooleanCondition(Operator.OR, conditions);
   }
 
-  public static <T>LogicalCondition<T> GT(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>(">", a, b);
+  public static <T>LogicalCondition<T> GT(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
-  public static <T>LogicalCondition<T> GT(final Field<T> a, final T b) {
-    return new LogicalCondition<T>(">", a, b);
+  public static <T>LogicalCondition<T> GT(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
-  public static <T>LogicalCondition<T> GT(final T a, final Field<T> b) {
-    return new LogicalCondition<T>(">", a, b);
+  public static <T>LogicalCondition<T> GT(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>(">=", a, b);
+  public static <T>LogicalCondition<T> GTE(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Field<T> a, final T b) {
-    return new LogicalCondition<T>(">=", a, b);
+  public static <T>LogicalCondition<T> GTE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final T a, final Field<T> b) {
-    return new LogicalCondition<T>(">=", a, b);
+  public static <T>LogicalCondition<T> GTE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>("=", a, b);
+  public static <T>LogicalCondition<T> EQ(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Field<T> a, final T b) {
-    return new LogicalCondition<T>(b != null ? "=" : "IS", a, b);
+  public static <T>LogicalCondition<T> EQ(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final T a, final Field<T> b) {
-    return new LogicalCondition<T>("=", a, b);
+  public static <T>LogicalCondition<T> EQ(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
-  public static <T>LogicalCondition<T> NE(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>("<>", a, b);
+  public static <T>LogicalCondition<T> NE(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
-  public static <T>LogicalCondition<T> NE(final Field<T> a, final T b) {
-    return new LogicalCondition<T>(b != null ? "<>" : "IS NOT", a, b);
+  public static <T>LogicalCondition<T> NE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(b != null ? Operator.NE : Operator.IS_NOT, a, b);
   }
 
-  public static <T>LogicalCondition<T> NE(final T a, final Field<T> b) {
-    return new LogicalCondition<T>("<>", a, b);
+  public static <T>LogicalCondition<T> NE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> LT(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Field<T> a, final T b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> LT(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final T a, final Field<T> b) {
-    return new LogicalCondition<T>("<", a, b);
+  public static <T>LogicalCondition<T> LT(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Field<T> a, final Field<T> b) {
-    return new LogicalCondition<T>("<=", a, b);
+  public static <T>LogicalCondition<T> LTE(final Variable<T> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Field<T> a, final T b) {
-    return new LogicalCondition<T>("<=", a, b);
+  public static <T>LogicalCondition<T> LTE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final T a, final Field<T> b) {
-    return new LogicalCondition<T>("<=", a, b);
+  public static <T>LogicalCondition<T> LTE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
   /** Predicate **/
@@ -526,29 +524,29 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T> ... b) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T> ... b) {
     return new Predicate<T>("IN", a, (Object[])b);
   }
 
   @SafeVarargs
-  public static <T>Predicate<T> IN(final Field<T> a, final T ... b) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final T ... b) {
     return new Predicate<T>("IN", a, b);
   }
 
-  public static <T>Predicate<T> IN(final Field<T> a, final Collection<T> b) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Collection<T> b) {
     return new Predicate<T>("IN", a, b.toArray());
   }
 
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T>[] b1, final T[] b2) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T>[] b1, final T[] b2) {
     final Object[] in = new Object[b1.length + b2.length];
     System.arraycopy(b1, 0, in, 1, b1.length);
     System.arraycopy(b2, 0, in, b1.length, b2.length);
     return new Predicate<T>("IN", a, in);
   }
 
-  public static <T>Predicate<T> IN(final Field<T> a, final Collection<Field<T>> b1, final T[] b2) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Collection<Variable<T>> b1, final T[] b2) {
     final Object[] in = new Object[b1.size() + b2.length];
-    final Iterator<Field<T>> iterator = b1.iterator();
+    final Iterator<Variable<T>> iterator = b1.iterator();
     for (int i = 0; iterator.hasNext(); i++)
       in[i] = iterator.next();
 
@@ -556,7 +554,7 @@ public abstract class DML {
     return new Predicate<T>("IN", a, in);
   }
 
-  public static <T>Predicate<T> IN(final Field<T> a, final Field<T>[] b1, final Collection<T> b2) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T>[] b1, final Collection<T> b2) {
     final Object[] in = new Object[b1.length + b2.size()];
     System.arraycopy(b1, 0, in, 1, b1.length);
     final Iterator<T> iterator = b2.iterator();
@@ -566,9 +564,9 @@ public abstract class DML {
     return new Predicate<T>("IN", a, in);
   }
 
-  public static <T>Predicate<T> IN(final Field<T> a, final Collection<Field<T>> b1, final Collection<T> b2) {
+  public static <T>Predicate<T> IN(final Variable<T> a, final Collection<Variable<T>> b1, final Collection<T> b2) {
     final Object[] in = new Object[b1.size() + b2.size()];
-    final Iterator<Field<T>> iterator1 = b1.iterator();
+    final Iterator<Variable<T>> iterator1 = b1.iterator();
     for (int i = 0; iterator1.hasNext(); i++)
       in[i] = iterator1.next();
 

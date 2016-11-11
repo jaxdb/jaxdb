@@ -16,25 +16,25 @@
 
 package org.safris.xdb.xde;
 
-public class Predicate<T> extends Condition<Data<T>> {
+final class Predicate<T> extends Condition<Subject<T>> {
   private final String predicate;
-  private final Field<T> field;
+  private final Variable<T> variable;
   private final Object[] condition;
 
-  protected Predicate(final String predicate, final Field<T> field, final Object ... condition) {
+  protected Predicate(final String predicate, final Variable<T> variable, final Object ... condition) {
     this.predicate = predicate;
-    this.field = field;
+    this.variable = variable;
     this.condition = condition;
   }
 
   @Override
-  protected Keyword<Data<Data<T>>> parent() {
+  protected Keyword<Subject<Subject<T>>> parent() {
     return null;
   }
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    format(this, field, serialization);
+    format(this, variable, serialization);
     serialization.sql.append(" ").append(predicate).append(" ");
     format(this, condition, serialization);
   }

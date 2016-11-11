@@ -20,36 +20,36 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class Field<T> extends Data<Field<T>> {
-  protected static <T>Field<T> valueOf(final T object) {
+public abstract class Variable<T> extends Subject<Variable<T>> {
+  protected static <T>Variable<T> valueOf(final T object) {
     if (object instanceof Serializable)
       throw new AssertionError("Should not happen!");
 
-    return new FieldWrapper<T>(object);
+    return new VariableWrapper<T>(object);
   }
 
-  protected Field(final T value) {
+  protected Variable(final T value) {
     this.value = value;
   }
 
   private boolean wasSet = false;
 
-  protected boolean wasSet() {
+  protected final boolean wasSet() {
     return wasSet;
   }
 
   protected T value;
 
-  public T set(final T value) {
+  public final T set(final T value) {
     this.wasSet = true;
     return this.value = value;
   }
 
-  public T get() {
+  public final T get() {
     return value;
   }
 
-  protected abstract Entity entity();
-  protected abstract void set(final PreparedStatement statement, final int parameterIndex) throws SQLException;
-  protected abstract T get(final ResultSet resultSet, final int columnIndex) throws SQLException;
+  protected abstract Entity owner();
+  protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
+  protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
 }

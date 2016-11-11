@@ -38,24 +38,24 @@ import org.safris.xdb.xde.spec.select;
 import org.safris.xdb.xdl.DBVendor;
 
 class Select {
-  private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Data<?> data) {
-    if (data instanceof Entity) {
-      final Entity entity = (Entity)data;
+  private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
+    if (subject instanceof Entity) {
+      final Entity entity = (Entity)subject;
       for (int i = 0; i < entity.column().length; i++)
         dataTypes.add(new Pair<DataType<?>,Integer>(entity.column()[i], i));
     }
-    else if (data instanceof DataType<?>) {
-      final DataType<?> dataType = (DataType<?>)data;
+    else if (subject instanceof DataType<?>) {
+      final DataType<?> dataType = (DataType<?>)subject;
       dataTypes.add(new Pair<DataType<?>,Integer>(dataType, -1));
     }
     else {
-      throw new UnsupportedOperationException("Unknown entity type: " + data.getClass().getName());
+      throw new UnsupportedOperationException("Unknown entity type: " + subject.getClass().getName());
     }
   }
 
-  private static <B extends Data<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final Statement statement, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final Statement statement, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
     final List<Pair<DataType<?>,Integer>> dataTypes = new ArrayList<Pair<DataType<?>,Integer>>();
-    for (final Data<?> entity : select.entities)
+    for (final Subject<?> entity : select.entities)
       Select.serialize(dataTypes, entity);
 
     final int noColumns = resultSet.getMetaData().getColumnCount();
@@ -73,14 +73,14 @@ class Select {
           return true;
         }
 
-        Data<?>[] row;
+        Subject<?>[] row;
         int index;
         Entity entity;
         try {
           if (!resultSet.next())
             return false;
 
-          row = new Data[select.entities.length];
+          row = new Subject[select.entities.length];
           index = 0;
           entity = null;
           for (int i = 0; i < noColumns; i++) {
@@ -111,7 +111,7 @@ class Select {
               dataType = entity.column()[dataTypePrototype.b];
             }
 
-            dataType.value = dataType.get(resultSet, i + 1);
+            dataType.set(resultSet, i + 1);
           }
         }
         catch (final SQLException e) {
@@ -152,7 +152,7 @@ class Select {
     };
   }
 
-  private static abstract class Execute<T extends Data<?>> extends Keyword<T> implements select.SELECT<T> {
+  private static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
     @Override
     public final RowIterator<T> execute() throws SQLException {
       return execute(null);
@@ -166,10 +166,10 @@ class Select {
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(Select.class, vendor, EntityRegistry.getStatementType(schema));
 
         serialize(this, serialization);
-        Data.clearAliases();
+        Subject.clearAliases();
 
         if (serialization.statementType == PreparedStatement.class) {
           final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
@@ -192,7 +192,7 @@ class Select {
     }
   }
 
-  protected static abstract class FROM_JOIN_ON<T extends Data<?>> extends Execute<T> implements select.FROM<T> {
+  protected static abstract class FROM_JOIN_ON<T extends Subject<?>> extends Execute<T> implements select.FROM<T> {
     protected final Keyword<T> parent;
 
     protected FROM_JOIN_ON(final Keyword<T> parent) {
@@ -230,7 +230,7 @@ class Select {
     }
   }
 
-  protected final static class FROM<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
+  protected final static class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
     private final Entity[] tables;
 
     protected FROM(final Keyword<T> parent, final Entity ... tables) {
@@ -239,13 +239,13 @@ class Select {
     }
 
     @Override
-    public GROUP_BY<T> GROUP_BY(final Field<?> field) {
-      return new GROUP_BY<T>(this, field);
+    public GROUP_BY<T> GROUP_BY(final Variable<?> variable) {
+      return new GROUP_BY<T>(this, variable);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
-      return new ORDER_BY<T>(this, fields);
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
+      return new ORDER_BY<T>(this, variables);
     }
 
     @Override
@@ -265,7 +265,7 @@ class Select {
           if (i > 0)
             serialization.sql.append(", ");
 
-          serialization.sql.append(Data.tableName(tables[i], serialization)).append(" ").append(Data.tableAlias(tables[i], true));
+          serialization.sql.append(Subject.tableName(tables[i], serialization)).append(" ").append(Subject.tableAlias(tables[i], true));
         }
       }
       else {
@@ -274,16 +274,16 @@ class Select {
     }
   }
 
-  protected final static class GROUP_BY<T extends Data<?>> extends Execute<T> implements select.GROUP_BY<T> {
+  protected final static class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
     private final Keyword<T> parent;
-    private final Field<?> field;
+    private final Variable<?> variable;
 
-    protected GROUP_BY(final Keyword<T> parent, final Field<?> field) {
+    protected GROUP_BY(final Keyword<T> parent, final Variable<?> variable) {
       this.parent = parent;
-      this.field = field;
+      this.variable = variable;
     }
 
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -306,14 +306,14 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" GROUP BY ").append(Data.columnRef(field));
+        serialization.sql.append(" GROUP BY ").append(Subject.columnRef(variable));
       }
 
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
     }
   }
 
-  protected final static class HAVING<T extends Data<?>> extends Execute<T> implements select.HAVING<T> {
+  protected final static class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
     private final Keyword<T> parent;
     private final Condition<?> condition;
 
@@ -323,7 +323,7 @@ class Select {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... column) {
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... column) {
       return new ORDER_BY<T>(this, column);
     }
 
@@ -350,7 +350,7 @@ class Select {
     }
   }
 
-  protected final static class JOIN<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
+  protected final static class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
     private final NATURAL natural;
     private final TYPE type;
     private final Entity entity;
@@ -368,13 +368,13 @@ class Select {
     }
 
     @Override
-    public GROUP_BY<T> GROUP_BY(final Field<?> field) {
-      return new GROUP_BY<T>(this, field);
+    public GROUP_BY<T> GROUP_BY(final Variable<?> variable) {
+      return new GROUP_BY<T>(this, variable);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
-      return new ORDER_BY<T>(this, fields);
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
+      return new ORDER_BY<T>(this, variables);
     }
 
     @Override
@@ -387,7 +387,7 @@ class Select {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
         // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-        Data.tableAlias(entity, true);
+        Subject.tableAlias(entity, true);
         parent.serialize(this, serialization);
         serialization.sql.append(natural != null ? " NATURAL" : "");
         if (type != null) {
@@ -395,7 +395,7 @@ class Select {
           type.serialize(this, serialization);
         }
 
-        serialization.sql.append(" JOIN ").append(Data.tableName(entity, serialization)).append(" ").append(Data.tableAlias(entity, true));
+        serialization.sql.append(" JOIN ").append(Subject.tableName(entity, serialization)).append(" ").append(Subject.tableAlias(entity, true));
         return;
       }
 
@@ -403,7 +403,7 @@ class Select {
     }
   }
 
-  protected final static class ON<T extends Data<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
+  protected final static class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
     private final Condition<?> condition;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
@@ -412,13 +412,13 @@ class Select {
     }
 
     @Override
-    public GROUP_BY<T> GROUP_BY(final Field<?> field) {
-      return new GROUP_BY<T>(this, field);
+    public GROUP_BY<T> GROUP_BY(final Variable<?> variable) {
+      return new GROUP_BY<T>(this, variable);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
-      return new ORDER_BY<T>(this, fields);
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
+      return new ORDER_BY<T>(this, variables);
     }
 
     @Override
@@ -440,11 +440,11 @@ class Select {
     }
   }
 
-  protected final static class ORDER_BY<T extends Data<?>> extends Execute<T> implements select.ORDER_BY<T> {
+  protected final static class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
     private final Keyword<T> parent;
-    private final Field<?>[] columns;
+    private final Variable<?>[] columns;
 
-    protected ORDER_BY(final Keyword<T> parent, final Field<?> ... columns) {
+    protected ORDER_BY(final Keyword<T> parent, final Variable<?> ... columns) {
       this.parent = parent;
       this.columns = columns;
     }
@@ -465,21 +465,21 @@ class Select {
         parent.serialize(this, serialization);
         serialization.sql.append(" ORDER BY ");
         for (int i = 0; i < columns.length; i++) {
-          final Field<?> field = columns[i];
+          final Variable<?> variable = columns[i];
           if (i > 0)
             serialization.sql.append(", ");
 
-          if (field instanceof DataType<?>) {
-            final DataType<?> dataType = (DataType<?>)field;
-            Data.tableAlias(dataType.entity, true);
+          if (variable instanceof DataType<?>) {
+            final DataType<?> dataType = (DataType<?>)variable;
+            Subject.tableAlias(dataType.entity, true);
             dataType.serialize(this, serialization);
             serialization.sql.append(" ASC");
           }
-          else if (field instanceof Direction<?>) {
-            ((Direction<?>)field).serialize(this, serialization);
+          else if (variable instanceof Direction<?>) {
+            ((Direction<?>)variable).serialize(this, serialization);
           }
           else {
-            throw new UnsupportedOperationException("Unsupported column type: " + field.getClass().getName());
+            throw new UnsupportedOperationException("Unsupported column type: " + variable.getClass().getName());
           }
         }
 
@@ -490,7 +490,7 @@ class Select {
     }
   }
 
-  protected final static class LIMIT<T extends Data<?>> extends Execute<T> implements select.LIMIT<T> {
+  protected final static class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
     private final Keyword<T> parent;
     private final int limit;
 
@@ -516,7 +516,7 @@ class Select {
     }
   }
 
-  protected final static class SELECT<T extends Data<?>> extends Keyword<T> implements select._SELECT<T> {
+  protected final static class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
     private static final Logger logger = Logger.getLogger(SELECT.class.getName());
 
     private final ALL all;
@@ -568,13 +568,13 @@ class Select {
         }
 
         for (int i = 0; i < entities.length; i++) {
-          final Data<?> data = entities[i];
+          final Subject<?> subject = entities[i];
           if (i > 0)
             serialization.sql.append(", ");
 
-          if (data instanceof Entity) {
-            final Entity entity = (Entity)data;
-            final String alias = Data.tableAlias(entity, true);
+          if (subject instanceof Entity) {
+            final Entity entity = (Entity)subject;
+            final String alias = Subject.tableAlias(entity, true);
             final DataType<?>[] dataTypes = entity.column();
             for (int j = 0; j < dataTypes.length; j++) {
               final DataType<?> dataType = dataTypes[j];
@@ -584,13 +584,13 @@ class Select {
               serialization.sql.append(alias).append(".").append(dataType.name);
             }
           }
-          else if (data instanceof DataType<?>) {
-            Data.tableAlias(((DataType<?>)data).entity, true);
-            final DataType<?> dataType = (DataType<?>)data;
+          else if (subject instanceof DataType<?>) {
+            Subject.tableAlias(((DataType<?>)subject).entity, true);
+            final DataType<?> dataType = (DataType<?>)subject;
             dataType.serialize(this, serialization);
           }
-          else if (data instanceof Aggregate<?>) {
-            final Aggregate<?> aggregate = (Aggregate<?>)data;
+          else if (subject instanceof Aggregate<?>) {
+            final Aggregate<?> aggregate = (Aggregate<?>)subject;
             aggregate.serialize(this, serialization);
           }
         }
@@ -632,7 +632,7 @@ class Select {
           int index = 0;
           for (final DataType<?> dataType : dataTypes)
             if (dataType.primary)
-              dataType.set(statement, ++index);
+              dataType.get(statement, ++index);
 
           logger.info(statement.toString());
           try (final ResultSet resultSet = statement.executeQuery()) {
@@ -651,8 +651,8 @@ class Select {
                     return false;
 
                   int index = 0;
-                  for (final Field field : out.column())
-                    field.value = field.get(resultSet, ++index);
+                  for (final Variable variable : out.column())
+                    variable.set(resultSet, ++index);
                 }
                 catch (final SQLException e) {
                   throw SQLErrorSpecException.lookup(e, finalVendor);
@@ -686,7 +686,7 @@ class Select {
         }
       }
 
-      Data.clearAliases();
+      Subject.clearAliases();
       return null;
     }
 
@@ -715,7 +715,7 @@ class Select {
     }
   }
 
-  protected final static class WHERE<T extends Data<?>> extends Execute<T> implements select.WHERE<T> {
+  protected final static class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
     private final Keyword<T> parent;
     private final Condition<?> condition;
 
@@ -725,13 +725,13 @@ class Select {
     }
 
     @Override
-    public GROUP_BY<T> GROUP_BY(final Field<?> field) {
-      return new GROUP_BY<T>(this, field);
+    public GROUP_BY<T> GROUP_BY(final Variable<?> variable) {
+      return new GROUP_BY<T>(this, variable);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Field<?> ... fields) {
-      return new ORDER_BY<T>(this, fields);
+    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
+      return new ORDER_BY<T>(this, variables);
     }
 
     @Override

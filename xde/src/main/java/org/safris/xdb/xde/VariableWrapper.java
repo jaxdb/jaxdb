@@ -19,26 +19,15 @@ package org.safris.xdb.xde;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
+import org.safris.commons.util.Formats;
 
-class FieldWrapper<T> extends Field<T> {
-  private static final ThreadLocal<DateFormat> dateFormat = new ThreadLocal<DateFormat>() {
-    @Override
-    protected DateFormat initialValue() {
-      return new SimpleDateFormat("yyyy-MM-dd");
-    }
-  };
-
-  private static final ThreadLocal<DateFormat> dateTimeFormat = new ThreadLocal<DateFormat>() {
-    @Override
-    protected DateFormat initialValue() {
-      return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-    }
-  };
+class VariableWrapper<T> extends Variable<T> {
+  private static final ThreadLocal<SimpleDateFormat> dateFormat = Formats.createSimpleDateFormat("yyyy-MM-dd");
+  private static final ThreadLocal<SimpleDateFormat> dateTimeFormat = Formats.createSimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
   protected static String toString(final Object obj) {
     if (obj == null)
@@ -69,12 +58,12 @@ class FieldWrapper<T> extends Field<T> {
     return obj.toString();
   }
 
-  protected FieldWrapper(final T value) {
+  protected VariableWrapper(final T value) {
     super(value);
   }
 
   @Override
-  protected Entity entity() {
+  protected Entity owner() {
     return null;
   }
 
@@ -98,13 +87,13 @@ class FieldWrapper<T> extends Field<T> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    final Object value = get();
-    DataType.set(statement, parameterIndex, value.getClass(), value);
+  @SuppressWarnings("unchecked")
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    DataType.set(statement, parameterIndex, (Class<T>)value.getClass(), get());
   }
 
   @Override
-  protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    throw new UnsupportedOperationException("not implemented");
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    throw new UnsupportedOperationException();
   }
 }

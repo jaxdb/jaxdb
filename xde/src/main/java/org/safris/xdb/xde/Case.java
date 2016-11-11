@@ -17,14 +17,14 @@
 package org.safris.xdb.xde;
 
 class Case {
-  protected static abstract class CASE<T> extends Expression<Field<T>> implements org.safris.xdb.xde.spec.expression.CASE<T> {
+  protected static abstract class CASE<T> extends Expression<Variable<T>> implements org.safris.xdb.xde.spec.expression.CASE<T> {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       throw new Error("Have to override this");
     }
   }
 
-  protected static final class CASE_WHEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.spec.expression.WHEN<T> {
+  protected static final class CASE_WHEN<T> extends Keyword<Variable<T>> implements org.safris.xdb.xde.spec.expression.WHEN<T> {
     private final Condition<T> condition;
 
     protected CASE_WHEN(final Condition<T> condition) {
@@ -32,17 +32,17 @@ class Case {
     }
 
     @Override
-    public THEN<T> THEN(final Field<T> field) {
-      return new THEN<T>(this, field);
+    public THEN<T> THEN(final Variable<T> variable) {
+      return new THEN<T>(this, variable);
     }
 
     @Override
     public THEN<T> THEN(final T value) {
-      return new THEN<T>(this, Field.valueOf(value));
+      return new THEN<T>(this, Variable.valueOf(value));
     }
 
     @Override
-    protected Keyword<Field<T>> parent() {
+    protected Keyword<Variable<T>> parent() {
       return null;
     }
 
@@ -54,11 +54,11 @@ class Case {
     }
   }
 
-  protected static final class THEN<T> extends Keyword<Field<T>> implements org.safris.xdb.xde.spec.expression.THEN<T> {
-    private final Keyword<Field<T>> parent;
-    private final Field<T> value;
+  protected static final class THEN<T> extends Keyword<Variable<T>> implements org.safris.xdb.xde.spec.expression.THEN<T> {
+    private final Keyword<Variable<T>> parent;
+    private final Variable<T> value;
 
-    protected THEN(final Keyword<Field<T>> parent, final Field<T> value) {
+    protected THEN(final Keyword<Variable<T>> parent, final Variable<T> value) {
       this.parent = parent;
       this.value = value;
     }
@@ -70,17 +70,17 @@ class Case {
     }
 
     @Override
-    public ELSE<T> ELSE(final Field<T> field) {
-      return new ELSE<T>(this, field);
+    public ELSE<T> ELSE(final Variable<T> variable) {
+      return new ELSE<T>(this, variable);
     }
 
     @Override
     public ELSE<T> ELSE(final T value) {
-      return new ELSE<T>(this, Field.valueOf(value));
+      return new ELSE<T>(this, Variable.valueOf(value));
     }
 
     @Override
-    protected Keyword<Field<T>> parent() {
+    protected Keyword<Variable<T>> parent() {
       return parent;
     }
 
@@ -95,15 +95,15 @@ class Case {
 
   protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.xde.spec.expression.ELSE<T> {
     private final THEN<T> parent;
-    private final Field<T> value;
+    private final Variable<T> value;
 
-    protected ELSE(final THEN<T> parent, final Field<T> value) {
+    protected ELSE(final THEN<T> parent, final Variable<T> value) {
       this.parent = parent;
       this.value = value;
     }
 
     @Override
-    protected Keyword<Field<T>> parent() {
+    protected Keyword<Variable<T>> parent() {
       return parent;
     }
 

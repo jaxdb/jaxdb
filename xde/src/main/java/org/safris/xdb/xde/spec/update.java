@@ -18,8 +18,7 @@ package org.safris.xdb.xde.spec;
 
 import org.safris.xdb.xde.Condition;
 import org.safris.xdb.xde.DataType;
-import org.safris.xdb.xde.Field;
-import org.safris.xdb.xde.Function;
+import org.safris.xdb.xde.Variable;
 
 public interface update {
   public interface SET extends UPDATE_SET {
@@ -27,9 +26,8 @@ public interface update {
   }
 
   public interface UPDATE_SET extends UPDATE {
-    public <T>SET SET(final DataType<T> set, final Function<T> to);
     public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
-    public <T>SET SET(final DataType<T> set, final Field<T> to);
+    public <T>SET SET(final DataType<T> set, final Variable<T> to);
     public <T>SET SET(final DataType<T> set, final T to);
   }
 

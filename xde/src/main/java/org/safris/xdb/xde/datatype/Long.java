@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Long extends DataType<java.lang.Long> {
   protected static final int sqlType = Types.INTEGER;
 
+  protected static java.lang.Long get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final long value = resultSet.getLong(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Long value) throws SQLException {
     if (value != null)
       statement.setLong(parameterIndex, value);
@@ -63,13 +68,12 @@ public final class Long extends DataType<java.lang.Long> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected java.lang.Long get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final long value = resultSet.getLong(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

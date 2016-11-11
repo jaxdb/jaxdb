@@ -39,22 +39,23 @@ public abstract class Aggregate<T> extends DataType<T> {
   }
 
   @Override
-  protected Entity entity() {
-    return dataType.entity();
+  protected Entity owner() {
+    return dataType.owner();
   }
 
   @Override
   protected String getPreparedStatementMark(final DBVendor vendor) {
-    return null;
+    return dataType.getPreparedStatementMark(vendor);
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    throw new UnsupportedOperationException();
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    dataType.get(statement, parameterIndex);
   }
 
   @Override
-  protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return dataType.get(resultSet, columnIndex);
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    dataType.set(resultSet, columnIndex);
+    this.value = dataType.get();
   }
 }

@@ -31,6 +31,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Date extends DataType<LocalDate> {
   protected static final int sqlType = Types.DATE;
 
+  protected static LocalDate get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Date value = resultSet.getDate(columnIndex);
+    return value == null ? null : new LocalDate(value.getTime());
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDate value) throws SQLException {
     if (value != null)
       statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
@@ -52,13 +57,12 @@ public final class Date extends DataType<LocalDate> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected LocalDate get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Date value = resultSet.getDate(columnIndex);
-    return value == null ? null : new LocalDate(value.getTime());
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

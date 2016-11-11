@@ -31,6 +31,12 @@ import org.safris.xdb.xdl.spec.PostgreSQLSpec;
 public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;
 
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  protected static <T extends java.lang.Enum<?>>T get(final ResultSet resultSet, final int columnIndex, final Class<T> type) throws SQLException {
+    final String value = resultSet.getString(columnIndex);
+    return value == null ? null : (T)java.lang.Enum.valueOf((Class)type, value);
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Enum<?> value) throws SQLException {
     if (value != null)
       statement.setObject(parameterIndex, value.toString());
@@ -52,14 +58,12 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  @SuppressWarnings({"unchecked", "rawtypes"})
-  protected T get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final String value = resultSet.getString(columnIndex);
-    return value == null ? null : (T)java.lang.Enum.valueOf((Class)type, value);
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex, type);
   }
 }

@@ -19,10 +19,10 @@ package org.safris.xdb.xde;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 
-public abstract class Keyword<T extends Data<?>> extends Serializable {
+public abstract class Keyword<T extends Subject<?>> extends Serializable {
   protected static void format(final Serializable caller, final Object obj, final Serialization serialization) {
-    if (obj instanceof DataType<?>) {
-      ((DataType<?>)obj).serialize(caller, serialization);
+    if (obj instanceof Serializable) {
+      ((Serializable)obj).serialize(caller, serialization);
     }
     else if (serialization.statementType == PreparedStatement.class) {
       if (obj == null) {
@@ -33,7 +33,7 @@ public abstract class Keyword<T extends Data<?>> extends Serializable {
         final Object[] arr = (Object[])obj;
         if (arr.length > 0) {
           if (arr[0] != null) {
-            serialization.addParameter(FieldWrapper.valueOf(arr[0]));
+            serialization.addParameter(VariableWrapper.valueOf(arr[0]));
             serialization.sql.append("?");
           }
           else {
@@ -42,7 +42,7 @@ public abstract class Keyword<T extends Data<?>> extends Serializable {
 
           for (int i = 1; i < arr.length; i++) {
             if (arr[i] != null) {
-              serialization.addParameter(FieldWrapper.valueOf(arr[i]));
+              serialization.addParameter(VariableWrapper.valueOf(arr[i]));
               serialization.sql.append(", ?");
             }
             else {
@@ -54,12 +54,12 @@ public abstract class Keyword<T extends Data<?>> extends Serializable {
         serialization.sql.append(")");
       }
       else {
-        serialization.addParameter(FieldWrapper.valueOf(obj));
+        serialization.addParameter(VariableWrapper.valueOf(obj));
         serialization.sql.append("?");
       }
     }
     else if (serialization.statementType == Statement.class) {
-      serialization.sql.append(FieldWrapper.toString(obj));
+      serialization.sql.append(VariableWrapper.toString(obj));
     }
     else {
       throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());

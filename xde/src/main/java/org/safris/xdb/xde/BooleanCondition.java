@@ -16,25 +16,9 @@
 
 package org.safris.xdb.xde;
 
-public class BooleanCondition<T extends Data<?>> extends Condition<T> {
-  protected static enum Operator {
-    AND("AND"),
-    OR("OR");
-
-    private final String symbol;
-
-    Operator(final String symbol) {
-      this.symbol = symbol;
-    }
-
-    @Override
-    public String toString() {
-      return symbol;
-    }
-  }
-
+final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   @SuppressWarnings("unchecked")
-  private static <T extends Data<?>>void formatBraces(final Serializable caller, final Operator operator, final Condition<?> condition, final Serialization serialization) {
+  private static <T extends Subject<?>>void formatBraces(final Serializable caller, final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) {
     if (condition instanceof LogicalCondition || condition instanceof Predicate) {
       condition.serialize(caller, serialization);
     }
@@ -53,17 +37,17 @@ public class BooleanCondition<T extends Data<?>> extends Condition<T> {
     }
   }
 
-  protected final Operator operator;
+  protected final Operator<BooleanCondition<?>> operator;
   private final Condition<?>[] conditions;
 
   @SafeVarargs
-  protected BooleanCondition(final Operator operator, final Condition<?> ... conditions) {
+  protected BooleanCondition(final Operator<BooleanCondition<?>> operator, final Condition<?> ... conditions) {
     this.operator = operator;
     this.conditions = conditions;
   }
 
   @Override
-  protected Keyword<Data<T>> parent() {
+  protected Keyword<Subject<T>> parent() {
     return null;
   }
 

@@ -18,11 +18,11 @@ package org.safris.xdb.xde.spec;
 
 import java.sql.SQLException;
 
-import org.safris.xdb.xde.Data;
+import org.safris.xdb.xde.Subject;
 import org.safris.xdb.xde.RowIterator;
 import org.safris.xdb.xde.Transaction;
 
-public interface ExecuteQuery<T extends Data<?>> {
+public interface ExecuteQuery<T extends Subject<?>> {
   public RowIterator<T> execute(final Transaction transaction) throws SQLException;
   public RowIterator<T> execute() throws SQLException;
 }

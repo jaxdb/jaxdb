@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class MediumInt extends DataType<Integer> {
   protected static final int sqlType = Types.SMALLINT;
 
+  protected static Integer get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final int value = resultSet.getInt(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final Integer value) throws SQLException {
     if (value != null)
       statement.setInt(parameterIndex, value);
@@ -63,13 +68,12 @@ public final class MediumInt extends DataType<Integer> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected Integer get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final int value = resultSet.getInt(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

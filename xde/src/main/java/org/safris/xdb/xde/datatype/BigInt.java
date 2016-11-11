@@ -30,6 +30,20 @@ import org.safris.xdb.xdl.DBVendor;
 public final class BigInt extends DataType<BigInteger> {
   protected static final int sqlType = Types.BIGINT;
 
+  protected static BigInteger get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Object value = resultSet.getObject(columnIndex);
+    if (value == null)
+      return null;
+
+    if (value instanceof BigInteger)
+      return (BigInteger)value;
+
+    if (value instanceof java.lang.Long)
+      return BigInteger.valueOf((java.lang.Long)value);
+
+    throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final BigInteger value) throws SQLException {
     if (value != null)
       statement.setObject(parameterIndex, value, sqlType);
@@ -65,22 +79,12 @@ public final class BigInt extends DataType<BigInteger> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected BigInteger get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final Object value = resultSet.getObject(columnIndex);
-    if (value == null)
-      return null;
-
-    if (value instanceof BigInteger)
-      return (BigInteger)value;
-
-    if (value instanceof java.lang.Long)
-      return BigInteger.valueOf((java.lang.Long)value);
-
-    throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Decimal extends DataType<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;
 
+  protected static java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final double value = resultSet.getDouble(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Double value) throws SQLException {
     if (value != null)
       statement.setDouble(parameterIndex, value);
@@ -64,13 +69,12 @@ public final class Decimal extends DataType<java.lang.Double> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final double value = resultSet.getDouble(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

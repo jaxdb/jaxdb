@@ -16,19 +16,19 @@
 
 package org.safris.xdb.xde;
 
-class LogicalCondition<T> extends Condition<T> {
-  private final String operator;
+final class LogicalCondition<T> extends Condition<T> {
+  private final Operator<LogicalCondition<?>> operator;
   private final Object a;
   private final Object b;
 
-  protected LogicalCondition(final String operator, final Object a, final Object b) {
+  protected LogicalCondition(final Operator<LogicalCondition<?>> operator, final Object a, final Object b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
   @Override
-  protected Keyword<Data<T>> parent() {
+  protected Keyword<Subject<T>> parent() {
     return null;
   }
 

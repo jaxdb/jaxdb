@@ -24,7 +24,7 @@ import java.sql.Statement;
 import org.safris.xdb.xdl.DBVendor;
 
 class Insert {
-  protected static class INSERT extends Keyword<Data<?>> implements org.safris.xdb.xde.spec.insert.INSERT {
+  protected static class INSERT extends Keyword<Subject<?>> implements org.safris.xdb.xde.spec.insert.INSERT {
     protected final Entity entity;
 
     protected INSERT(final Entity entity) {
@@ -32,14 +32,15 @@ class Insert {
     }
 
     @Override
-    protected Keyword<Data<?>> parent() {
+    protected Keyword<Subject<?>> parent() {
       return null;
     }
 
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("INSERT INTO ").append(entity.name());
+      serialization.sql.append("INSERT INTO ");
+      entity.serialize(this, serialization);
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
       if (serialization.statementType == PreparedStatement.class) {
@@ -66,7 +67,7 @@ class Insert {
           }
 
           columns.append(", ").append(dataType.name);
-          values.append(", ").append(FieldWrapper.toString(dataType.get()));
+          values.append(", ").append(VariableWrapper.toString(dataType.get()));
         }
       }
       else {
@@ -84,9 +85,9 @@ class Insert {
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(vendor, EntityRegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
-        Data.clearAliases();
+        Subject.clearAliases();
         if (serialization.statementType == PreparedStatement.class) {
           final int count;
           try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {

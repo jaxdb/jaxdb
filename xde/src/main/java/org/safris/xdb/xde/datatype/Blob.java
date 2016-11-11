@@ -30,6 +30,10 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Blob extends DataType<byte[]> {
   protected static final int sqlType = Types.BLOB;
 
+  protected static byte[] get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    return resultSet.getBytes(columnIndex);
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final byte[] value) throws SQLException {
     if (value != null)
       statement.setBinaryStream(parameterIndex, new ByteArrayInputStream(value));
@@ -51,12 +55,12 @@ public final class Blob extends DataType<byte[]> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected byte[] get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return resultSet.getBytes(columnIndex);
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

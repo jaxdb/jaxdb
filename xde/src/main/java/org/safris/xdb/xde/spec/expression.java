@@ -17,17 +17,17 @@
 package org.safris.xdb.xde.spec;
 
 import org.safris.xdb.xde.Condition;
-import org.safris.xdb.xde.Field;
+import org.safris.xdb.xde.Variable;
 
 public interface expression {
   public interface WHEN<T> {
-    public THEN<T> THEN(final Field<T> field);
+    public THEN<T> THEN(final Variable<T> variable);
     public THEN<T> THEN(final T value);
   }
 
   public interface THEN<T> {
     public THEN<T> WHEN(final Condition<T> condition);
-    public ELSE<T> ELSE(final Field<T> field);
+    public ELSE<T> ELSE(final Variable<T> variable);
     public ELSE<T> ELSE(final T value);
   }
 

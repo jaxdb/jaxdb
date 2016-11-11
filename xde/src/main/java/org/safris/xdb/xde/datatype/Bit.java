@@ -29,6 +29,10 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Bit extends DataType<String> {
   protected static final int sqlType = Types.VARCHAR;
 
+  protected static String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    return resultSet.getString(columnIndex);
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final String value) throws SQLException {
     if (value != null)
       statement.setString(parameterIndex, value);
@@ -57,12 +61,12 @@ public final class Bit extends DataType<String> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    return resultSet.getString(columnIndex);
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

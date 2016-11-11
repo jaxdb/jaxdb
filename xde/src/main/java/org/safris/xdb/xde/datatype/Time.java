@@ -31,6 +31,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Time extends DataType<LocalTime> {
   protected static final int sqlType = Types.TIME;
 
+  protected static LocalTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Time value = resultSet.getTime(columnIndex);
+    return value == null ? null : new LocalTime(value.getTime());
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalTime value) throws SQLException {
     if (value != null)
       statement.setTime(parameterIndex, new java.sql.Time(value.toDateTimeToday().toDate().getTime()));
@@ -52,13 +57,12 @@ public final class Time extends DataType<LocalTime> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected LocalTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Time value = resultSet.getTime(columnIndex);
-    return value == null ? null : new LocalTime(value.getTime());
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }

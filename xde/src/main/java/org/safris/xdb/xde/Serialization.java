@@ -25,18 +25,24 @@ import java.util.List;
 import org.safris.xdb.xdl.DBVendor;
 
 public class Serialization {
-  private final List<Field<?>> parameters = new ArrayList<Field<?>>();
+  private final List<Variable<?>> parameters = new ArrayList<Variable<?>>();
 
+  protected final Class<?> type;
   protected final DBVendor vendor;
   protected final Class<? extends Statement> statementType;
   protected final StringBuilder sql = new StringBuilder();
 
-  protected Serialization(final DBVendor vendor, final Class<? extends Statement> statementType) {
+  protected Serialization(final Class<?> type, final DBVendor vendor, final Class<? extends Statement> statementType) {
+    this.type = type;
     this.vendor = vendor;
     this.statementType = statementType;
   }
 
-  protected void addParameter(final Field<?> parameter) {
+  public Class<?> getType() {
+    return type;
+  }
+
+  protected void addParameter(final Variable<?> parameter) {
     if (parameter == null)
       throw new IllegalArgumentException("parameter cannot be null");
 
@@ -45,6 +51,6 @@ public class Serialization {
 
   protected void set(final PreparedStatement statement) throws SQLException {
     for (int i = 0; i < parameters.size(); i++)
-      parameters.get(i).set(statement, i + 1);
+      parameters.get(i).get(statement, i + 1);
   }
 }

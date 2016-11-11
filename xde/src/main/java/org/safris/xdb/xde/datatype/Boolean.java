@@ -29,6 +29,11 @@ import org.safris.xdb.xdl.DBVendor;
 public final class Boolean extends DataType<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;
 
+  protected static java.lang.Boolean get(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final boolean value = resultSet.getBoolean(columnIndex);
+    return resultSet.wasNull() ? null : value;
+  }
+
   protected static void set(final PreparedStatement statement, final int parameterIndex, final java.lang.Boolean value) throws SQLException {
     if (value != null)
       statement.setBoolean(parameterIndex, value);
@@ -50,13 +55,12 @@ public final class Boolean extends DataType<java.lang.Boolean> {
   }
 
   @Override
-  protected void set(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
     set(statement, parameterIndex, get());
   }
 
   @Override
-  protected java.lang.Boolean get(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final boolean value = resultSet.getBoolean(columnIndex);
-    return resultSet.wasNull() ? null : value;
+  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    this.value = get(resultSet, columnIndex);
   }
 }
