@@ -31,8 +31,16 @@
   <build>
     <plugins>
       <plugin>
+        <!-- FIXME: This is here because the validator uses an API that is old and not up to current XML spec -->
         <groupId>org.safris.maven.plugin</groupId>
-        <artifactId>xsb</artifactId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
             <destdir explodeJars="true">${project.build.directory}/generated-sources/xsb</destdir>
