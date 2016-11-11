@@ -31,7 +31,7 @@
   <build>
     <plugins>
       <plugin>
-        <!-- FIXME: This is here because the validator uses an API that is old and not up to current XML spec -->
+        <!-- FIXME: Skip because the validator uses an API that is old and not up to current XML spec -->
         <groupId>org.safris.maven.plugin</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <configuration>
