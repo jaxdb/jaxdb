@@ -59,4 +59,16 @@
       <version>2.1.2</version>
     </dependency>
   </dependencies>
+  <repositories>
+    <repository>
+      <id>mvn.repo.safris.org</id>
+      <url>http://mvn.repo.safris.org/m2</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>mvn.repo.safris.org</id>
+      <url>http://mvn.repo.safris.org/m2</url>
+    </pluginRepository>
+  </pluginRepositories>
 </project>
