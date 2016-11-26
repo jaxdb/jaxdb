@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.safris.commons.lang.Pair;
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.DML.ALL;
 import org.safris.xdb.xde.DML.DISTINCT;
 import org.safris.xdb.xde.DML.Direction;
 import org.safris.xdb.xde.DML.NATURAL;
 import org.safris.xdb.xde.DML.TYPE;
 import org.safris.xdb.xde.spec.select;
-import org.safris.xdb.xdl.DBVendor;
 
 class Select {
   private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {

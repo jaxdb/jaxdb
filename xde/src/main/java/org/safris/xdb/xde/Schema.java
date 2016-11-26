@@ -19,7 +19,7 @@ package org.safris.xdb.xde;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public abstract class Schema {
   protected static DBVendor getDBVendor(final Connection connection) throws SQLException {

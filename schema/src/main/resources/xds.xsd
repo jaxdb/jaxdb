@@ -16,8 +16,8 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://cf.safris.org/xdl.xsd"
-  xmlns:xdl="http://cf.safris.org/xdl.xsd"
+  targetNamespace="http://xdb.safris.org/xds.xsd"
+  xmlns:xds="http://xdb.safris.org/xds.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
   <xs:simpleType name="name">
@@ -28,15 +28,15 @@
   </xs:simpleType>
   
   <xs:complexType name="named">
-    <xs:attribute name="name" type="xdl:name" use="required"/>
+    <xs:attribute name="name" type="xds:name" use="required"/>
   </xs:complexType>
   
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
-      <xs:extension base="xdl:named">
+      <xs:extension base="xds:named">
         <xs:sequence minOccurs="0">
           <xs:element name="documentation" type="xs:string" minOccurs="0"/>
-          <xs:element name="foreignKey" minOccurs="0" type="xdl:foreignKey">
+          <xs:element name="foreignKey" minOccurs="0" type="xds:foreignKey">
             <xs:annotation>
               <xs:documentation>
                 There is a great potential to be able to have schema validation on the content entered into this element.
@@ -45,7 +45,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="index" minOccurs="0" type="xdl:index"/>
+          <xs:element name="index" minOccurs="0" type="xds:index"/>
         </xs:sequence>
         <xs:attribute name="null" type="xs:boolean" default="true"/>
         <xs:attribute name="checkOnUpdate">
@@ -67,8 +67,8 @@
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="xs:NCName" use="required"/>
     <xs:attribute name="column" type="xs:NCName" use="required"/>
-    <xs:attribute name="onDelete" type="xdl:referentialAction" default="CASCADE"/>
-    <xs:attribute name="onUpdate" type="xdl:referentialAction" default="CASCADE"/>
+    <xs:attribute name="onDelete" type="xds:referentialAction" default="CASCADE"/>
+    <xs:attribute name="onUpdate" type="xds:referentialAction" default="CASCADE"/>
   </xs:complexType>
 
   <xs:simpleType name="cascade">
@@ -108,7 +108,7 @@
   
   <xs:complexType name="check">
     <xs:sequence>
-      <xs:element name="column" type="xdl:name"/>
+      <xs:element name="column" type="xds:name"/>
       <xs:element name="operator">
         <xs:simpleType>
           <xs:restriction base="xs:token">
@@ -122,12 +122,12 @@
         </xs:simpleType>
       </xs:element>
       <xs:choice>
-        <xs:element name="column" type="xdl:name"/>
+        <xs:element name="column" type="xds:name"/>
         <xs:element name="value" type="xs:string"/>
       </xs:choice>
       <xs:choice minOccurs="0">
-        <xs:element name="and" type="xdl:check"/>
-        <xs:element name="or" type="xdl:check"/>
+        <xs:element name="and" type="xds:check"/>
+        <xs:element name="or" type="xds:check"/>
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
@@ -136,7 +136,7 @@
   
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:sequence minOccurs="0">
           <xs:element name="check">
             <xs:complexType>
@@ -170,7 +170,7 @@
   
   <xs:complexType name="bit">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="variant" type="xs:boolean" default="false"/>
         <xs:attribute name="default"> <!-- FIXME: Add check so the default is not longer than the length -->
@@ -186,7 +186,7 @@
   
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
       </xs:extension>
     </xs:complexContent>
@@ -203,7 +203,7 @@
   
   <xs:complexType name="integer">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:sequence minOccurs="0">
           <xs:element name="check">
             <xs:complexType>
@@ -219,7 +219,7 @@
                   </xs:restriction>
                 </xs:simpleType>
               </xs:attribute>
-              <xs:attribute name="condition" type="xdl:integerType" use="required"/>
+              <xs:attribute name="condition" type="xds:integerType" use="required"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -232,9 +232,9 @@
           </xs:simpleType>
         </xs:attribute>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xdl:integerType"/>
-        <xs:attribute name="min" type="xdl:integerType"/>
-        <xs:attribute name="max" type="xdl:integerType"/>
+        <xs:attribute name="default" type="xds:integerType"/>
+        <xs:attribute name="min" type="xds:integerType"/>
+        <xs:attribute name="max" type="xds:integerType"/>
         <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:NCName">
@@ -255,7 +255,7 @@
   
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:sequence minOccurs="0">
           <xs:element name="check">
             <xs:complexType>
@@ -287,7 +287,7 @@
   
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:sequence minOccurs="0">
           <xs:element name="check">
             <xs:complexType>
@@ -321,7 +321,7 @@
 
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="default" type="xs:date"/>
         <xs:attribute name="generateOnInsert">
           <xs:simpleType>
@@ -343,7 +343,7 @@
   
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
         <xs:attribute name="default" type="xs:string"/>
         <xs:attribute name="generateOnInsert">
@@ -366,7 +366,7 @@
   
   <xs:complexType name="dateTime">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
         <xs:attribute name="default" type="xs:dateTime"/>
         <xs:attribute name="generateOnInsert">
@@ -391,7 +391,7 @@
   
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="default" type="xs:boolean"/>
       </xs:extension>
     </xs:complexContent>
@@ -401,7 +401,7 @@
   
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="xdl:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="values" use="required">
           <xs:simpleType>
             <xs:list>
@@ -420,39 +420,39 @@
   
   <xs:complexType name="inherited">
     <xs:complexContent>
-      <xs:extension base="xdl:column"/>
+      <xs:extension base="xds:column"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="table">
     <xs:complexContent>
-      <xs:extension base="xdl:named">
+      <xs:extension base="xds:named">
         <xs:sequence>
-          <xs:element name="column" type="xdl:column" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="column" type="xds:column" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element name="constraints" minOccurs="0">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="primaryKey" minOccurs="0">
                   <xs:complexType>
                     <xs:sequence maxOccurs="unbounded">
-                      <xs:element name="column" type="xdl:named"/>
+                      <xs:element name="column" type="xds:named"/>
                     </xs:sequence>
                   </xs:complexType>
                   <xs:unique name="primaryKeyColumn">
-                    <xs:selector xpath="./xdl:column"/>
+                    <xs:selector xpath="./xds:column"/>
                     <xs:field xpath="@name"/>
                   </xs:unique>
                 </xs:element>
                 <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
                   <xs:complexType>
                     <xs:complexContent>
-                      <xs:extension base="xdl:foreignKey">
+                      <xs:extension base="xds:foreignKey">
                         <xs:sequence>
                           <xs:element name="column" maxOccurs="unbounded">
                             <xs:complexType>
                               <xs:complexContent>
-                                <xs:extension base="xdl:named">
-                                  <xs:attribute name="column" type="xdl:name" use="required"/>
+                                <xs:extension base="xds:named">
+                                  <xs:attribute name="column" type="xds:name" use="required"/>
                                 </xs:extension>
                               </xs:complexContent>
                             </xs:complexType>
@@ -471,20 +471,20 @@
                   <xs:element name="unique" minOccurs="0">
                     <xs:complexType>
                       <xs:sequence maxOccurs="unbounded">
-                        <xs:element name="column" type="xdl:named"/>
+                        <xs:element name="column" type="xds:named"/>
                       </xs:sequence>
                     </xs:complexType>
                     <xs:unique name="uniqueColumnName1">
-                      <xs:selector xpath="./xdl:column"/>
+                      <xs:selector xpath="./xds:column"/>
                       <xs:field xpath="@name"/>
                     </xs:unique>
                   </xs:element>
-                  <xs:element name="check" minOccurs="0" type="xdl:check"/>
+                  <xs:element name="check" minOccurs="0" type="xds:check"/>
                 </xs:sequence>
               </xs:sequence>
             </xs:complexType>
             <xs:unique name="uniqueUniqueColumn">
-              <xs:selector xpath="./xdl:unique"/>
+              <xs:selector xpath="./xds:unique"/>
               <xs:field xpath="@column"/>
             </xs:unique>
           </xs:element>
@@ -525,15 +525,15 @@
                 <xs:element name="index">
                   <xs:complexType>
                     <xs:complexContent>
-                      <xs:extension base="xdl:index">
+                      <xs:extension base="xds:index">
                         <xs:sequence minOccurs="2" maxOccurs="unbounded">
-                          <xs:element name="column" type="xdl:named"/>
+                          <xs:element name="column" type="xds:named"/>
                         </xs:sequence>
                       </xs:extension>
                     </xs:complexContent>
                   </xs:complexType>
                   <xs:unique name="indexColumn">
-                    <xs:selector xpath="./xdl:column"/>
+                    <xs:selector xpath="./xds:column"/>
                     <xs:field xpath="@name"/>
                   </xs:unique>
                 </xs:element>
@@ -550,33 +550,33 @@
   
   <xs:complexType name="database">
     <xs:complexContent>
-      <xs:extension base="xdl:named">
+      <xs:extension base="xds:named">
         <xs:sequence>
           <xs:element name="source" minOccurs="0" maxOccurs="unbounded">
             <xs:complexType>
               <xs:attribute name="xdb" type="xs:anyURI" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="table" type="xdl:table" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="table" type="xds:table" minOccurs="0" maxOccurs="unbounded">
             <!--<xs:unique name="primaryKey">
               <xs:selector xpath="*"/>
               <xs:field xpath="@primary"/>
             </xs:unique>-->
             <xs:key name="keyColumnName">
-              <xs:selector xpath="./xdl:column"/>
+              <xs:selector xpath="./xds:column"/>
               <xs:field xpath="@name"/>
             </xs:key>
-            <xs:keyref name="keyrefColumnName1" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:autoIncrement | ./xdl:constraints/xdl:unique/xdl:column"/>
+            <xs:keyref name="keyrefColumnName1" refer="xds:keyColumnName">
+              <xs:selector xpath="./xds:constraints/xds:autoIncrement | ./xds:constraints/xds:unique/xds:column"/>
               <xs:field xpath="@column | @name"/>
             </xs:keyref>
-            <xs:keyref name="keyrefColumnName2" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:primaryKey/xdl:column | ./xdl:constraints/xdl:foreignKey/xdl:column | ./xdl:indexes/xdl:index/xdl:column"/>
+            <xs:keyref name="keyrefColumnName2" refer="xds:keyColumnName">
+              <xs:selector xpath="./xds:constraints/xds:primaryKey/xds:column | ./xds:constraints/xds:foreignKey/xds:column | ./xds:indexes/xds:index/xds:column"/>
               <xs:field xpath="@name"/>
             </xs:keyref>
-            <xs:keyref name="keyrefColumnName3" refer="xdl:keyColumnName">
-              <xs:selector xpath="./xdl:constraints/xdl:check | ./xdl:constraints/xdl:check/xdl:and | ./xdl:constraints/xdl:check/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or| ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or/xdl:and | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:and/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:and/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:and/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:and/xdl:or/xdl:or/xdl:or/xdl:or | ./xdl:constraints/xdl:check/xdl:or/xdl:or/xdl:or"/>
-              <xs:field xpath="xdl:column"/>
+            <xs:keyref name="keyrefColumnName3" refer="xds:keyColumnName">
+              <xs:selector xpath="./xds:constraints/xds:check | ./xds:constraints/xds:check/xds:and | ./xds:constraints/xds:check/xds:or | ./xds:constraints/xds:check/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:or| ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:and/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:or/xds:and | ./xds:constraints/xds:check/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:and/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:and/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:and/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:and/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:and/xds:or/xds:or/xds:or/xds:or | ./xds:constraints/xds:check/xds:or/xds:or/xds:or"/>
+              <xs:field xpath="xds:column"/>
             </xs:keyref>
           </xs:element>
         </xs:sequence>
@@ -584,21 +584,21 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="database" type="xdl:database">
+  <xs:element name="database" type="xds:database">
     <xs:key name="keyTableName">
-      <xs:selector xpath="./xdl:table"/>
+      <xs:selector xpath="./xds:table"/>
       <xs:field xpath="@name"/>
     </xs:key>
-    <xs:keyref name="keyrefTableName1" refer="xdl:keyTableName">
-      <xs:selector xpath="./xdl:table/xdl:column/xdl:foreignKey"/>
+    <xs:keyref name="keyrefTableName1" refer="xds:keyTableName">
+      <xs:selector xpath="./xds:table/xds:column/xds:foreignKey"/>
       <xs:field xpath="@references"/>
     </xs:keyref>
-    <xs:keyref name="keyrefTableName2" refer="xdl:keyTableName">
-      <xs:selector xpath="./xdl:table/xdl:constraints/xdl:foreignKey"/>
+    <xs:keyref name="keyrefTableName2" refer="xds:keyTableName">
+      <xs:selector xpath="./xds:table/xds:constraints/xds:foreignKey"/>
       <xs:field xpath="@references"/>
     </xs:keyref>
-    <xs:keyref name="keyrefExtendsTableName" refer="xdl:keyTableName">
-      <xs:selector xpath="./xdl:table"/>
+    <xs:keyref name="keyrefExtendsTableName" refer="xds:keyTableName">
+      <xs:selector xpath="./xds:table"/>
       <xs:field xpath="@extends"/>
     </xs:keyref>
   </xs:element>

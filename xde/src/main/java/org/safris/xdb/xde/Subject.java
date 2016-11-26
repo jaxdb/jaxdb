@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.safris.commons.lang.Strings;
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public abstract class Subject<T> extends Serializable {
   // This is implemented as a ThreadLocal variable, because of one main reason:

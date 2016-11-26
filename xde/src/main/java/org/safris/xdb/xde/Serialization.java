@@ -22,7 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public class Serialization {
   private final List<Variable<?>> parameters = new ArrayList<Variable<?>>();

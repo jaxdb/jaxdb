@@ -23,10 +23,10 @@ import java.sql.Types;
 
 import org.joda.time.LocalDate;
 import org.joda.time.base.BaseLocal;
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 
 public final class Date extends DataType<LocalDate> {
   protected static final int sqlType = Types.DATE;

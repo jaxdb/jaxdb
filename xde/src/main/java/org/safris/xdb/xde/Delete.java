@@ -21,8 +21,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.spec.delete;
-import org.safris.xdb.xdl.DBVendor;
 
 class Delete {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {

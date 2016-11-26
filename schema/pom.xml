@@ -25,7 +25,7 @@
     <version>1.1.5</version>
   </parent>
   <groupId>org.safris.xdb</groupId>
-  <artifactId>xdb-xdl</artifactId>
+  <artifactId>xdb-schema</artifactId>
   <version>1.2.1</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
@@ -45,7 +45,7 @@
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
             <destdir explodeJars="true">${project.build.directory}/generated-sources/xsb</destdir>
             <schemas>
-              <schema>${basedir}/src/main/resources/xdl.xsd</schema>
+              <schema>${basedir}/src/main/resources/xds.xsd</schema>
             </schemas>
           </manifest>
         </configuration>

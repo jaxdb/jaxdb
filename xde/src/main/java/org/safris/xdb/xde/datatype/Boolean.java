@@ -21,10 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 
 public final class Boolean extends DataType<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;

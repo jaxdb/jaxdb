@@ -34,7 +34,7 @@
   </description>
   <modules>
     <module>xde</module>
-    <module>xdl</module>
+    <module>schema</module>
   </modules>
   <repositories>
     <repository>

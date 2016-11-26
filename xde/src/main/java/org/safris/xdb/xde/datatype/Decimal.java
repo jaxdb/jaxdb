@@ -21,10 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
-import org.safris.xdb.xdl.DBVendor;
 
 public final class Decimal extends DataType<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;

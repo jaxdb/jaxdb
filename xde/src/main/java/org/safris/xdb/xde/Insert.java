@@ -21,7 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 class Insert {
   protected static class INSERT extends Keyword<Subject<?>> implements org.safris.xdb.xde.spec.insert.INSERT {

@@ -14,12 +14,12 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.schema;
 
-import org.safris.xdb.xdl.spec.DerbySQLSpec;
-import org.safris.xdb.xdl.spec.MySQLSpec;
-import org.safris.xdb.xdl.spec.PostgreSQLSpec;
-import org.safris.xdb.xdl.spec.SQLSpec;
+import org.safris.xdb.schema.spec.DerbySQLSpec;
+import org.safris.xdb.schema.spec.MySQLSpec;
+import org.safris.xdb.schema.spec.PostgreSQLSpec;
+import org.safris.xdb.schema.spec.SQLSpec;
 
 public enum DBVendor {
   DERBY("Derby", new DerbySQLSpec()),

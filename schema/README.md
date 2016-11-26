@@ -4,7 +4,7 @@
 
 ## Introduction
 
-XDL is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDL Schema](http://xdb.safris.org/xdl.xsd) utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
+XDL is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDL Schema](http://xdb.safris.org/xds.xsd) utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
 
 ## Why XDL?
 
@@ -54,13 +54,13 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
   </pluginRepositories>
   ```
 
-3. Create a `basis.xdl` XDL Schema and put it in `src/main/resources/`.
+3. Create a `basis.xds` XDL Schema and put it in `src/main/resources/`.
 
   ```xml
   <database name="basis"
-    xmlns="http://xdb.safris.org/xdl.xsd"
+    xmlns="http://xdb.safris.org/xds.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xdb.safris.org/xdl.xsd http://xdb.safris.org/xdl.xsd">
+    xsi:schemaLocation="http://xdb.safris.org/xds.xsd http://xdb.safris.org/xds.xsd">
 
     <table name="id" abstract="true">
       <column name="id" xsi:type="char" length="36" null="false" generateOnInsert="UUID"/>
@@ -108,17 +108,17 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
     <version>1.3.2</version>
     <executions>
       <execution>
-        <id>xdl</id>
+        <id>default-schema</id>
         <phase>generate-resources</phase>
         <goals>
-          <goal>xdl</goal>
+          <goal>schema</goal>
         </goals>
         <configuration>
           <vendor>PostgreSQL</vendor>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-resources/xdl</destdir>
+            <destdir>${project.build.directory}/generated-resources/xdb</destdir>
             <schemas>
-              <schema>${basedir}/src/main/resources/basis.xdl</schema>
+              <schema>${basedir}/src/main/resources/basis.xds</schema>
             </schemas>
           </manifest>
         </configuration>
@@ -127,12 +127,12 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `xdb-maven-plugin`, an `example.sql` will be created in `generated-resources/xdl` that complies to the `PostgreSQL` vendor as is specified in the POM.
+5. Run `mvn generate-resources`, and upon successful execution of the `xdb-maven-plugin`, an `example.sql` will be created in `generated-resources/xds` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
 6. Import the DDL into your database. The 
 
   ```tcsh
-  psql -d example < generated-resources/xdl/basis.sql
+  psql -d example < generated-resources/xdb/basis.sql
   ```
   
   Subsequent imports of `schema.sql` into the database will `DROP` and re-`CREATE` the data model.

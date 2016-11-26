@@ -14,37 +14,37 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl.spec;
+package org.safris.xdb.schema.spec;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.cf.xdl.xe.$xdl_bit;
-import org.safris.cf.xdl.xe.$xdl_blob;
-import org.safris.cf.xdl.xe.$xdl_boolean;
-import org.safris.cf.xdl.xe.$xdl_char;
-import org.safris.cf.xdl.xe.$xdl_column;
-import org.safris.cf.xdl.xe.$xdl_date;
-import org.safris.cf.xdl.xe.$xdl_dateTime;
-import org.safris.cf.xdl.xe.$xdl_decimal;
-import org.safris.cf.xdl.xe.$xdl_enum;
-import org.safris.cf.xdl.xe.$xdl_float;
-import org.safris.cf.xdl.xe.$xdl_integer;
-import org.safris.cf.xdl.xe.$xdl_named;
-import org.safris.cf.xdl.xe.$xdl_table;
-import org.safris.cf.xdl.xe.$xdl_time;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.xds.xe.$xds_blob;
+import org.safris.xdb.xds.xe.$xds_boolean;
+import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_date;
+import org.safris.xdb.xds.xe.$xds_dateTime;
+import org.safris.xdb.xds.xe.$xds_decimal;
+import org.safris.xdb.xds.xe.$xds_enum;
+import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.$xds_time;
+import org.safris.xdb.schema.SQLDataTypes;
 
 public class MySQLSpec extends SQLSpec {
   @Override
-  public List<String> triggers(final $xdl_table table) {
+  public List<String> triggers(final $xds_table table) {
     if (table._triggers() == null)
       return super.triggers(table);
 
     final String tableName = table._name$().text();
-    final List<$xdl_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
+    final List<$xds_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
     final List<String> statements = new ArrayList<String>();
-    for (final $xdl_table._triggers._trigger trigger : triggers) {
+    for (final $xds_table._triggers._trigger trigger : triggers) {
       String buffer = "";
       for (final String action : trigger._actions$().text()) {
         buffer += "DELIMITER |\n";
@@ -79,22 +79,22 @@ public class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_char type) {
+  public String type(final $xds_table table, final $xds_char type) {
     return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_bit type) {
+  public String type(final $xds_table table, final $xds_bit type) {
     return "BIT(" + type._length$().text() + ")";
   }
 
   @Override
-  public final String type(final $xdl_table table, final $xdl_blob type) {
+  public final String type(final $xds_table table, final $xds_blob type) {
     return "BLOB(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_integer type) {
+  public String type(final $xds_table table, final $xds_integer type) {
     final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
     String sql = "";
     if (noBytes == 1) // 2^8 = 256
@@ -118,7 +118,7 @@ public class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_float type) {
+  public String type(final $xds_table table, final $xds_float type) {
     String sql = type._double$().text() ? "DOUBLE" : "FLOAT";
     sql += "(" + type._precision$().text() + ")";
 
@@ -129,7 +129,7 @@ public class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_decimal type) {
+  public String type(final $xds_table table, final $xds_decimal type) {
     SQLDataTypes.checkValidNumber(type._name$().text(), type._precision$().text(), type._decimal$().text());
     String sql = "DECIMAL(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
     if (!type._unsigned$().isNull() && type._unsigned$().text())
@@ -139,27 +139,27 @@ public class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_date type) {
+  public String type(final $xds_table table, final $xds_date type) {
     return "DATE";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_time type) {
+  public String type(final $xds_table table, final $xds_time type) {
     return "TIME";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_dateTime type) {
+  public String type(final $xds_table table, final $xds_dateTime type) {
     return "DATETIME(" + type._precision$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_boolean type) {
+  public String type(final $xds_table table, final $xds_boolean type) {
     return "BOOLEAN";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_enum type) {
+  public String type(final $xds_table table, final $xds_enum type) {
     if (type._values$().isNull())
       return "ENUM()";
 
@@ -171,22 +171,22 @@ public class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xdl_table table, final $xdl_column column) {
+  public String $null(final $xds_table table, final $xds_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
-    return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+  public String $autoIncrement(final $xds_table table, final $xds_integer column) {
+    return !column._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $xdl_table table) {
+  protected String dropIndexOnClause(final $xds_table table) {
     return " ON " + table._name$().text();
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns) {
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns) {
     return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
   }
 }

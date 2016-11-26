@@ -14,12 +14,12 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.schema;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.safris.commons.test.LoggableTest;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.schema.SQLDataTypes;
 
 public class SQLDataTypesTest extends LoggableTest {
   @Test

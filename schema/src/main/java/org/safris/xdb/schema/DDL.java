@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.schema;
 
 public class DDL {
   public static enum Type {

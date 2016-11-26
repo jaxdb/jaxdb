@@ -21,12 +21,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import org.safris.xdb.schema.DBVendor;
+import org.safris.xdb.schema.spec.PostgreSQLSpec;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
 import org.safris.xdb.xde.Tables;
-import org.safris.xdb.xdl.DBVendor;
-import org.safris.xdb.xdl.spec.PostgreSQLSpec;
 
 public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;

@@ -14,43 +14,43 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl.spec;
+package org.safris.xdb.schema.spec;
 
-import org.safris.cf.xdl.xe.$xdl_bit;
-import org.safris.cf.xdl.xe.$xdl_blob;
-import org.safris.cf.xdl.xe.$xdl_boolean;
-import org.safris.cf.xdl.xe.$xdl_char;
-import org.safris.cf.xdl.xe.$xdl_column;
-import org.safris.cf.xdl.xe.$xdl_date;
-import org.safris.cf.xdl.xe.$xdl_dateTime;
-import org.safris.cf.xdl.xe.$xdl_decimal;
-import org.safris.cf.xdl.xe.$xdl_enum;
-import org.safris.cf.xdl.xe.$xdl_float;
-import org.safris.cf.xdl.xe.$xdl_integer;
-import org.safris.cf.xdl.xe.$xdl_named;
-import org.safris.cf.xdl.xe.$xdl_table;
-import org.safris.cf.xdl.xe.$xdl_time;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.xds.xe.$xds_blob;
+import org.safris.xdb.xds.xe.$xds_boolean;
+import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_date;
+import org.safris.xdb.xds.xe.$xds_dateTime;
+import org.safris.xdb.xds.xe.$xds_decimal;
+import org.safris.xdb.xds.xe.$xds_enum;
+import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.$xds_time;
+import org.safris.xdb.schema.SQLDataTypes;
 
 public class DerbySQLSpec extends SQLSpec {
   @Override
-  public String type(final $xdl_table table, final $xdl_char type) {
+  public String type(final $xds_table table, final $xds_char type) {
     return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_bit type) {
+  public String type(final $xds_table table, final $xds_bit type) {
     // FIXME!!!
     return "#nohave" + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public final String type(final $xdl_table table, final $xdl_blob type) {
+  public final String type(final $xds_table table, final $xds_blob type) {
     return "BLOB(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_integer type) {
+  public String type(final $xds_table table, final $xds_integer type) {
     final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), false, type._min$().text(), type._max$().text());
     if (noBytes == 1) // 2^8 = 256
       return "SMALLINT";
@@ -68,38 +68,38 @@ public class DerbySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_float type) {
+  public String type(final $xds_table table, final $xds_float type) {
     return (type._double$().text() ? "DOUBLE" : "FLOAT") + "(" + type._precision$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_decimal type) {
+  public String type(final $xds_table table, final $xds_decimal type) {
     SQLDataTypes.checkValidNumber(type._name$().text(), type._precision$().text(), type._decimal$().text());
     return "DECIMAL" + "(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_date type) {
+  public String type(final $xds_table table, final $xds_date type) {
     return "DATE";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_time type) {
+  public String type(final $xds_table table, final $xds_time type) {
     return "TIME";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_dateTime type) {
+  public String type(final $xds_table table, final $xds_dateTime type) {
     return "TIMESTAMP";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_boolean type) {
+  public String type(final $xds_table table, final $xds_boolean type) {
     return "BOOLEAN";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_enum type) {
+  public String type(final $xds_table table, final $xds_enum type) {
     int maxLength = 0;
     if (!type._values$().isNull())
       for (final String value : type._values$().text())
@@ -109,22 +109,22 @@ public class DerbySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xdl_table table, final $xdl_column column) {
+  public String $null(final $xds_table table, final $xds_column column) {
     return !column._null$().isNull() && !column._null$().text() ? "NOT NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
-    return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+  public String $autoIncrement(final $xds_table table, final $xds_integer column) {
+    return !column._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $xdl_table table) {
+  protected String dropIndexOnClause(final $xds_table table) {
     return " ON " + table._name$().text();
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns) {
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns) {
     return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
   }
 }

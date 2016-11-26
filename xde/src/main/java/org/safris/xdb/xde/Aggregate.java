@@ -20,7 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public abstract class Aggregate<T> extends DataType<T> {
   protected final DML.SetQualifier qualifier;

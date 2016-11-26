@@ -27,24 +27,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.safris.cf.xdl.xe.$xdl_bit;
-import org.safris.cf.xdl.xe.$xdl_blob;
-import org.safris.cf.xdl.xe.$xdl_boolean;
-import org.safris.cf.xdl.xe.$xdl_char;
-import org.safris.cf.xdl.xe.$xdl_column;
-import org.safris.cf.xdl.xe.$xdl_date;
-import org.safris.cf.xdl.xe.$xdl_dateTime;
-import org.safris.cf.xdl.xe.$xdl_decimal;
-import org.safris.cf.xdl.xe.$xdl_enum;
-import org.safris.cf.xdl.xe.$xdl_float;
-import org.safris.cf.xdl.xe.$xdl_integer;
-import org.safris.cf.xdl.xe.$xdl_named;
-import org.safris.cf.xdl.xe.$xdl_table;
-import org.safris.cf.xdl.xe.$xdl_time;
-import org.safris.cf.xdl.xe.xdl_database;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
+import org.safris.maven.common.Log;
+import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.xde.DataType;
 import org.safris.xdb.xde.Entity;
 import org.safris.xdb.xde.GenerateOn;
@@ -57,17 +44,32 @@ import org.safris.xdb.xde.datatype.DateTime;
 import org.safris.xdb.xde.datatype.Decimal;
 import org.safris.xdb.xde.datatype.MediumInt;
 import org.safris.xdb.xde.datatype.SmallInt;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.xds.xe.$xds_blob;
+import org.safris.xdb.xds.xe.$xds_boolean;
+import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_date;
+import org.safris.xdb.xds.xe.$xds_dateTime;
+import org.safris.xdb.xds.xe.$xds_decimal;
+import org.safris.xdb.xds.xe.$xds_enum;
+import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.$xds_time;
+import org.safris.xdb.xds.xe.xds_database;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 import org.xml.sax.InputSource;
 
-public class EntityGenerator {
-  private static final Map<String,$xdl_table> tableNameToTable = new HashMap<String,$xdl_table>();
+public class Generator {
+  private static final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
 
   public static void generate(final URL url, final File outDir) throws IOException, XMLException {
-    final xdl_database database = (xdl_database)Bindings.parse(new InputSource(url.openStream()));
-    for (final $xdl_table table : database._table())
+    final xds_database database = (xds_database)Bindings.parse(new InputSource(url.openStream()));
+    Log.info("Generating database entities: " + database._name$().text());
+    for (final $xds_table table : database._table())
       tableNameToTable.put(table._name$().text(), table);
 
     final String pkg = "cf.xde";
@@ -84,12 +86,12 @@ public class EntityGenerator {
 
     String tables = "";
     // First create the abstract entities
-    for (final $xdl_table table : database._table())
+    for (final $xds_table table : database._table())
       if (table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
     // Then, in proper inheritance order, the real entities
-    for (final $xdl_table table : database._table())
+    for (final $xds_table table : database._table())
       if (!table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
@@ -115,35 +117,35 @@ public class EntityGenerator {
   private static final Object THIS = new Object();
 
   private static class Type {
-    private static Type getType(final $xdl_table table, final $xdl_column column) {
+    private static Type getType(final $xds_table table, final $xds_column column) {
       final Class<?> cls = column.getClass().getSuperclass();
       final Object _default = getDefault(column);
       GenerateOn<?> generateOnInsert = null;
       GenerateOn<?> generateOnUpdate = null;
       final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
-      if (column instanceof $xdl_blob) {
+      if (column instanceof $xds_blob) {
         return new Type(column, Blob.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xdl_char) {
-        final $xdl_char type = ($xdl_char)column;
+      if (column instanceof $xds_char) {
+        final $xds_char type = ($xds_char)column;
         if (!type._generateOnInsert$().isNull())
-          if ($xdl_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
+          if ($xds_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
             generateOnInsert = GenerateOn.UUID;
 
         return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
       }
 
-      if (column instanceof $xdl_bit) {
-        final $xdl_bit type = ($xdl_bit)column;
+      if (column instanceof $xds_bit) {
+        final $xds_bit type = ($xds_bit)column;
         return new Type(column, Bit.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
       }
 
-      if (column instanceof $xdl_integer) {
-        final $xdl_integer type = ($xdl_integer)column;
-        // no autogenerator is necessary for xdl_integer._generateOnInsert$.AUTO_5FINCREMENT
+      if (column instanceof $xds_integer) {
+        final $xds_integer type = ($xds_integer)column;
+        // no autogenerator is necessary for xds_integer._generateOnInsert$.AUTO_5FINCREMENT
         if (!type._generateOnUpdate$().isNull())
-          if ($xdl_integer._generateOnUpdate$.INCREMENT.text().equals(type._generateOnUpdate$().text()))
+          if ($xds_integer._generateOnUpdate$.INCREMENT.text().equals(type._generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
@@ -159,8 +161,8 @@ public class EntityGenerator {
         return new Type(column, BigInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
-      if (column instanceof $xdl_float) {
-        final $xdl_float type = ($xdl_float)column;
+      if (column instanceof $xds_float) {
+        final $xds_float type = ($xds_float)column;
         final Class<? extends DataType<?>> javaType;
         final Number min;
         final Number max;
@@ -178,62 +180,62 @@ public class EntityGenerator {
         return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), min, max);
       }
 
-      if (column instanceof $xdl_decimal) {
-        final $xdl_decimal type = ($xdl_decimal)column;
+      if (column instanceof $xds_decimal) {
+        final $xds_decimal type = ($xds_decimal)column;
         return new Type(column, Decimal.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._decimal$().text(), type._unsigned$().text(), type._min$().text() != null ? type._min$().text().doubleValue() : null, type._max$().text() != null ? type._max$().text().doubleValue() : null);
       }
 
-      if (column instanceof $xdl_date) {
-        final $xdl_date type = ($xdl_date)column;
+      if (column instanceof $xds_date) {
+        final $xds_date type = ($xds_date)column;
         if (!type._generateOnInsert$().isNull())
-          if ($xdl_date._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+          if ($xds_date._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
         if (!type._generateOnUpdate$().isNull())
-          if ($xdl_date._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+          if ($xds_date._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, org.safris.xdb.xde.datatype.Date.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xdl_time) {
-        final $xdl_time type = ($xdl_time)column;
+      if (column instanceof $xds_time) {
+        final $xds_time type = ($xds_time)column;
         if (!type._generateOnInsert$().isNull())
-          if ($xdl_time._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+          if ($xds_time._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
         if (!type._generateOnUpdate$().isNull())
-          if ($xdl_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+          if ($xds_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, org.safris.xdb.xde.datatype.Time.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xdl_dateTime) {
-        final $xdl_dateTime type = ($xdl_dateTime)column;
+      if (column instanceof $xds_dateTime) {
+        final $xds_dateTime type = ($xds_dateTime)column;
         if (!type._generateOnInsert$().isNull())
-          if ($xdl_dateTime._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+          if ($xds_dateTime._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
         if (!type._generateOnUpdate$().isNull())
-          if ($xdl_dateTime._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+          if ($xds_dateTime._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, DateTime.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xdl_boolean) {
+      if (column instanceof $xds_boolean) {
         return new Type(column, org.safris.xdb.xde.datatype.Boolean.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xdl_enum) {
+      if (column instanceof $xds_enum) {
         return new Type(column, org.safris.xdb.xde.datatype.Enum.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
     }
 
-    private final $xdl_column column;
+    private final $xds_column column;
     @SuppressWarnings("rawtypes")
     public final Class<? extends DataType> type;
     private final Object[] commonParams;
@@ -242,7 +244,7 @@ public class EntityGenerator {
     private final Object[] customParams;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $xdl_column column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    private Type(final $xds_column column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
@@ -275,9 +277,9 @@ public class EntityGenerator {
     }
   }
 
-  public static Object getDefault(final $xdl_column column) {
+  public static Object getDefault(final $xds_column column) {
     try {
-      if (column instanceof $xdl_blob)
+      if (column instanceof $xds_blob)
         return null;
 
       final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
@@ -285,11 +287,11 @@ public class EntityGenerator {
       if (value.isNull() || "null".equals(value.text()))
         return null;
 
-      if (column instanceof $xdl_enum)
+      if (column instanceof $xds_enum)
         return Strings.toTitleCase(column._name$().text()) + "." + String.valueOf(value.text());
 
-      if (column instanceof $xdl_integer) {
-        final $xdl_integer type = ($xdl_integer)column;
+      if (column instanceof $xds_integer) {
+        final $xds_integer type = ($xds_integer)column;
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
         if (noBytes <= 2)
           return Short.valueOf(String.valueOf(value.text()));
@@ -307,7 +309,7 @@ public class EntityGenerator {
     }
   }
 
-  private static int getColumnCount($xdl_table table, final boolean deep) {
+  private static int getColumnCount($xds_table table, final boolean deep) {
     int count = 0;
     do {
       count += table._column() != null ? table._column().size() : 0;
@@ -316,7 +318,7 @@ public class EntityGenerator {
     return count;
   }
 
-  private static int getPrimaryColumnCount($xdl_table table, final boolean deep) {
+  private static int getPrimaryColumnCount($xds_table table, final boolean deep) {
     int count = 0;
     do {
       if (!table._constraints(0)._primaryKey(0).isNull())
@@ -326,7 +328,7 @@ public class EntityGenerator {
     return count;
   }
 
-  public static String makeTable(final $xdl_table table) {
+  public static String makeTable(final $xds_table table) {
     final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Entity.class.getName();
     String out = "";
     String abs = "";
@@ -371,14 +373,14 @@ public class EntityGenerator {
         out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
         String params = "";
         for (int i = 0; i < table._column().size(); i++) {
-          final $xdl_column column = table._column().get(i);
+          final $xds_column column = table._column().get(i);
           params += ", " + makeParam(table, column);
         }
 
         out += params.substring(2) + ") {\n";
         out += "      this();\n";
         for (int i = 0; i < table._column().size(); i++) {
-          final $xdl_column column = table._column().get(i);
+          final $xds_column column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
           set += "\n      this." + columnName + ".set(" + columnName + ");";
         }
@@ -392,7 +394,7 @@ public class EntityGenerator {
       set = "";
       if (table._column() != null) {
         for (int i = 0; i < table._column().size(); i++) {
-          final $xdl_column column = table._column().get(i);
+          final $xds_column column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
           set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
         }
@@ -415,7 +417,7 @@ public class EntityGenerator {
     int primaryIndex = 0;
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xdl_column column = table._column().get(i);
+        final $xds_column column = table._column().get(i);
         final String columnName = Strings.toCamelCase(column._name$().text());
         defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
       }
@@ -427,7 +429,7 @@ public class EntityGenerator {
 
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xdl_column column = table._column().get(i);
+        final $xds_column column = table._column().get(i);
         out += makeColumn(table, column, i == table._column().size());
       }
 
@@ -441,16 +443,16 @@ public class EntityGenerator {
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
-    final List<$xdl_column> primaryColumns = new ArrayList<$xdl_column>();
-    final List<$xdl_column> equalsColumns;
+    final List<$xds_column> primaryColumns = new ArrayList<$xds_column>();
+    final List<$xds_column> equalsColumns;
     if (table._column() != null) {
-      for (final $xdl_column column : table._column())
+      for (final $xds_column column : table._column())
         if (isPrimary(table, column))
           primaryColumns.add(column);
 
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table._column();
       out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
-      for (final $xdl_column column : equalsColumns)
+      for (final $xds_column column : equalsColumns)
         eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
 
       out += "      return " + eq.substring(4) + ";";
@@ -466,7 +468,7 @@ public class EntityGenerator {
       out += "\n\n";
       out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
-      for (final $xdl_column column : equalsColumns)
+      for (final $xds_column column : equalsColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
       out += "      return " + eq.substring(3) + ";";
       out += "\n    }";
@@ -477,35 +479,35 @@ public class EntityGenerator {
     return out;
   }
 
-  private static boolean isPrimary(final $xdl_table table, final $xdl_column column) {
-    final $xdl_table._constraints._primaryKey constraint = table._constraints(0)._primaryKey(0);
+  private static boolean isPrimary(final $xds_table table, final $xds_column column) {
+    final $xds_table._constraints._primaryKey constraint = table._constraints(0)._primaryKey(0);
     if (constraint.isNull())
       return false;
 
-    for (final $xdl_named col : constraint._column())
+    for (final $xds_named col : constraint._column())
       if (column._name$().text().equals(col._name$().text()))
         return true;
 
     return false;
   }
 
-  private static boolean isUnique(final $xdl_table table, final $xdl_column column) {
-    final $xdl_table._constraints._unique constraint = table._constraints(0)._unique(0);
+  private static boolean isUnique(final $xds_table table, final $xds_column column) {
+    final $xds_table._constraints._unique constraint = table._constraints(0)._unique(0);
     if (constraint.isNull())
       return false;
 
-    for (final $xdl_named col : constraint._column())
+    for (final $xds_named col : constraint._column())
       if (column._name$().text().equals(col._name$().text()))
         return true;
 
     return false;
   }
 
-  public static String makeParam(final $xdl_table table, final $xdl_column column) {
+  public static String makeParam(final $xds_table table, final $xds_column column) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final Type type = Type.getType(table, column);
     final String rawType;
-    if (column instanceof $xdl_enum)
+    if (column instanceof $xds_enum)
       rawType = Strings.toTitleCase(column._name$().text());
     else
       rawType = Classes.getName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
@@ -513,15 +515,15 @@ public class EntityGenerator {
     return "final " + rawType + " " + columnName;
   }
 
-  public static String makeColumn(final $xdl_table table, final $xdl_column column, final boolean isLast) {
+  public static String makeColumn(final $xds_table table, final $xds_column column, final boolean isLast) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final String typeName = Strings.toTitleCase(column._name$().text());
     String out = "";
     final Type type = Type.getType(table, column);
-    if (column instanceof $xdl_enum) {
+    if (column instanceof $xds_enum) {
       out += "\n    public static enum " + typeName + " {";
       String values = "";
-      for (final String value : (($xdl_enum)column)._values$().text())
+      for (final String value : (($xds_enum)column)._values$().text())
         values += ", " + value;
 
       out += values.substring(2) + "}";

@@ -14,28 +14,28 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl.spec;
+package org.safris.xdb.schema.spec;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.safris.cf.xdl.xe.$xdl_bit;
-import org.safris.cf.xdl.xe.$xdl_blob;
-import org.safris.cf.xdl.xe.$xdl_boolean;
-import org.safris.cf.xdl.xe.$xdl_char;
-import org.safris.cf.xdl.xe.$xdl_column;
-import org.safris.cf.xdl.xe.$xdl_date;
-import org.safris.cf.xdl.xe.$xdl_dateTime;
-import org.safris.cf.xdl.xe.$xdl_decimal;
-import org.safris.cf.xdl.xe.$xdl_enum;
-import org.safris.cf.xdl.xe.$xdl_float;
-import org.safris.cf.xdl.xe.$xdl_index;
-import org.safris.cf.xdl.xe.$xdl_integer;
-import org.safris.cf.xdl.xe.$xdl_named;
-import org.safris.cf.xdl.xe.$xdl_table;
-import org.safris.cf.xdl.xe.$xdl_time;
-import org.safris.xdb.xdl.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.xds.xe.$xds_blob;
+import org.safris.xdb.xds.xe.$xds_boolean;
+import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_date;
+import org.safris.xdb.xds.xe.$xds_dateTime;
+import org.safris.xdb.xds.xe.$xds_decimal;
+import org.safris.xdb.xds.xe.$xds_enum;
+import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_index;
+import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.$xds_time;
+import org.safris.xdb.schema.SQLDataTypes;
 
 public class PostgreSQLSpec extends SQLSpec {
   private static final Logger logger = Logger.getLogger(PostgreSQLSpec.class.getName());
@@ -45,16 +45,16 @@ public class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public List<String> drops(final $xdl_table table) {
+  public List<String> drops(final $xds_table table) {
     final List<String> statements = super.drops(table);
     if (table._column() != null) {
-      for (final $xdl_column column : table._column()) {
-        if (column instanceof $xdl_enum) {
-          statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($xdl_enum)column)._name$().text()));
+      for (final $xds_column column : table._column()) {
+        if (column instanceof $xds_enum) {
+          statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($xds_enum)column)._name$().text()));
         }
-        else if (column instanceof $xdl_integer) {
-          final $xdl_integer type = ($xdl_integer)column;
-          if (!type._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+        else if (column instanceof $xds_integer) {
+          final $xds_integer type = ($xds_integer)column;
+          if (!type._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
             statements.add("DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type));
         }
       }
@@ -64,12 +64,12 @@ public class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public List<String> types(final $xdl_table table) {
+  public List<String> types(final $xds_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._column() != null) {
-      for (final $xdl_column column : table._column()) {
-        if (column instanceof $xdl_enum) {
-          final $xdl_enum type = ($xdl_enum)column;
+      for (final $xds_column column : table._column()) {
+        if (column instanceof $xds_enum) {
+          final $xds_enum type = ($xds_enum)column;
           String sql = "CREATE TYPE " + getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
           if (!type._values$().isNull()) {
             String values = "";
@@ -82,9 +82,9 @@ public class PostgreSQLSpec extends SQLSpec {
           sql += ")";
           statements.add(0, sql);
         }
-        else if (column instanceof $xdl_integer) {
-          final $xdl_integer type = ($xdl_integer)column;
-          if (!type._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+        else if (column instanceof $xds_integer) {
+          final $xds_integer type = ($xds_integer)column;
+          if (!type._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
             statements.add(0, "CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type));
         }
       }
@@ -95,12 +95,12 @@ public class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_char type) {
+  public String type(final $xds_table table, final $xds_char type) {
     return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_bit type) {
+  public String type(final $xds_table table, final $xds_bit type) {
     String sql = "BIT";
     if (type._variant$().text())
       sql += " VARYING";
@@ -110,12 +110,12 @@ public class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public final String type(final $xdl_table table, final $xdl_blob type) {
+  public final String type(final $xds_table table, final $xds_blob type) {
     return "BLOB(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_integer type) {
+  public String type(final $xds_table table, final $xds_integer type) {
     final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), false, type._min$().text(), type._max$().text());
     if (noBytes == 1) // 2^8 = 256
       return "SMALLINT";
@@ -133,60 +133,60 @@ public class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_float type) {
+  public String type(final $xds_table table, final $xds_float type) {
     return (type._double$().text() ? "DOUBLE PRECISION" : "REAL") + "(" + type._precision$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_decimal type) {
+  public String type(final $xds_table table, final $xds_decimal type) {
     SQLDataTypes.checkValidNumber(type._name$().text(), type._precision$().text(), type._decimal$().text());
     return "DECIMAL(" + type._precision$().text() + ", " + type._decimal$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_date type) {
+  public String type(final $xds_table table, final $xds_date type) {
     return "DATE";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_time type) {
+  public String type(final $xds_table table, final $xds_time type) {
     return "TIME";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_dateTime type) {
+  public String type(final $xds_table table, final $xds_dateTime type) {
     return "TIMESTAMP(" + type._precision$().text() + ")";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_boolean type) {
+  public String type(final $xds_table table, final $xds_boolean type) {
     return "BOOLEAN";
   }
 
   @Override
-  public String type(final $xdl_table table, final $xdl_enum type) {
+  public String type(final $xds_table table, final $xds_enum type) {
     return getTypeName(table._name$().text(), type._name$().text());
   }
 
   @Override
-  public String $null(final $xdl_table table, final $xdl_column column) {
+  public String $null(final $xds_table table, final $xds_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $xdl_table table, final $xdl_integer column) {
-    return !column._generateOnInsert$().isNull() && $xdl_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
+  public String $autoIncrement(final $xds_table table, final $xds_integer column) {
+    return !column._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $xdl_table table) {
+  protected String dropIndexOnClause(final $xds_table table) {
     return "";
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xdl_named ... columns) {
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns) {
     final String uniqueClause;
-    if ($xdl_index._type$.HASH.text().equals(type)) {
+    if ($xds_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
         logger.warning("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return "";

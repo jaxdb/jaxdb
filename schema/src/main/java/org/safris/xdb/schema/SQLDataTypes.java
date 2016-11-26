@@ -14,53 +14,53 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.xdl;
+package org.safris.xdb.schema;
 
 import java.math.BigInteger;
 
-import org.safris.cf.xdl.xe.$xdl_index;
-import org.safris.cf.xdl.xe.$xdl_integer;
-import org.safris.cf.xdl.xe.$xdl_named;
-import org.safris.cf.xdl.xe.$xdl_table;
+import org.safris.xdb.xds.xe.$xds_index;
+import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.commons.lang.Strings;
 import org.safris.xsb.runtime.BindingList;
 
 public final class SQLDataTypes {
-  public static String csvNames(final BindingList<$xdl_named> names) {
-    return names.size() == 0 ? "" : csvNames(names.toArray(new $xdl_named[names.size()]));
+  public static String csvNames(final BindingList<$xds_named> names) {
+    return names.size() == 0 ? "" : csvNames(names.toArray(new $xds_named[names.size()]));
   }
 
-  public static String csvNames(final $xdl_named ... names) {
+  public static String csvNames(final $xds_named ... names) {
     if (names.length == 0)
       return "";
 
     String csv = "";
-    for (final $xdl_named name : names)
+    for (final $xds_named name : names)
       csv += ", " + name._name$().text();
 
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
-  public static String getSequenceName(final $xdl_table table, final $xdl_integer column) {
+  public static String getSequenceName(final $xds_table table, final $xds_integer column) {
     return "seq_" + table._name$().text() + "_" + column._name$().text();
   }
 
-  public static String getIndexName(final $xdl_table table, final $xdl_index index, final $xdl_named ... column) {
+  public static String getIndexName(final $xds_table table, final $xds_index index, final $xds_named ... column) {
     if (index == null || column.length == 0)
       return null;
 
     String name = "";
-    for (final $xdl_named c : column)
+    for (final $xds_named c : column)
       name += "_" + c._name$().text();
 
     return "idx_" + table._name$().text() + name;
   }
 
-  public static String getIndexName(final $xdl_table table, final $xdl_table._indexes._index index) {
-    return getIndexName(table, index, index._column().toArray(new $xdl_named[index._column().size()]));
+  public static String getIndexName(final $xds_table table, final $xds_table._indexes._index index) {
+    return getIndexName(table, index, index._column().toArray(new $xds_named[index._column().size()]));
   }
 
-  public static String getTriggerName(final String tableName, final $xdl_table._triggers._trigger trigger, final String action) {
+  public static String getTriggerName(final String tableName, final $xds_table._triggers._trigger trigger, final String action) {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 

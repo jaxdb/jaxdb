@@ -29,8 +29,8 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.datatype.Char;
-import org.safris.xdb.xdl.DBVendor;
 
 public abstract class DataType<T> extends Variable<T> implements Cloneable {
   private static final Map<Type,Method> typeToGetter = new HashMap<Type,Method>();

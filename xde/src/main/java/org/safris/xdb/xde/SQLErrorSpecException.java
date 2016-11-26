@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.safris.commons.lang.Pair;
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public class SQLErrorSpecException extends SQLException {
   private static final Logger logger = Logger.getLogger(Tables.class.getName());

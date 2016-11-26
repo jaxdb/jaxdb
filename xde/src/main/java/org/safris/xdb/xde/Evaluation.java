@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.joda.time.base.BaseSingleFieldPeriod;
 import org.safris.commons.lang.reflect.Classes;
-import org.safris.xdb.xdl.DBVendor;
+import org.safris.xdb.schema.DBVendor;
 
 public abstract class Evaluation<T> extends Variable<T> {
   private static BaseSingleFieldPeriod[] normalizeIntervals(final BaseSingleFieldPeriod[] intervals) {

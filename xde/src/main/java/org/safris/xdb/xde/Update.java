@@ -24,9 +24,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xde.spec.update;
 import org.safris.xdb.xde.spec.expression.CASE;
-import org.safris.xdb.xdl.DBVendor;
 
 class Update {
   private static final Logger logger = Logger.getLogger(Update.class.getName());
