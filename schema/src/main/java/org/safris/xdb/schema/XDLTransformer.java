@@ -49,12 +49,6 @@ public abstract class XDLTransformer {
     }
   }
 
-  private static final String packagePrefix = "cf.xds";
-
-  protected static String getPackageName(final xds_database database) {
-    return packagePrefix + "." + database._name$().text();
-  }
-
   protected static xds_database parseArguments(final URL url, final File outDir) throws IOException, XMLException {
     if (url == null)
       throw new IllegalArgumentException("url == null");

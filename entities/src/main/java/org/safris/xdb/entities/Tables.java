@@ -86,7 +86,7 @@ public final class Tables {
           break;
 
         if (entityClass == null) {
-          entityClass = (Class<? extends Entity>)Class.forName("cf.xde." + token.replace('.', '$'));
+          entityClass = (Class<? extends Entity>)Class.forName("xdb.ddl." + token.replace('.', '$'));
         }
         else {
           aliases.put(token, entityClass);

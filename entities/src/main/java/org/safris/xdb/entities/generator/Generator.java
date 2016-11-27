@@ -72,7 +72,7 @@ public class Generator {
     for (final $xds_table table : database._table())
       tableNameToTable.put(table._name$().text(), table);
 
-    final String pkg = "xdb.entities";
+    final String pkg = "xdb.ddl";
 
     final File dir = new File(outDir, pkg.replace('.', '/'));
     if (!dir.exists())
