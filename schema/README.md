@@ -1,35 +1,35 @@
 <img src="http://safris.org/logo.png" align="right" />
-# XDL [![CohesionFirst](http://safris.org/cf2.svg)](https://cohesionfirst.com/)
-> eXtended Data Langauge
+## xdb-schema<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
+> eXtended Data Binding Schema
 
-## Introduction
+### Introduction
 
-XDL is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDL Schema](http://xdb.safris.org/xds.xsd) utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
+**xdb-schema** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDS Schema](https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd) utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
 
-## Why XDL?
+### Why **xdb-schema**?
 
-XDL can also be used with [XDE](https://github.com/SevaSafris/xde/), an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
+**xdb-schema** can also be used with [**xdb-entities**](https://github.com/SevaSafris/xdb/tree/master/entities), an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
 
-### CohesionFirst™
+#### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, XDL is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, XDL is a complete solution for the creation and management of a SQL Schema. The XDL solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
+Developed with the CohesionFirst™ approach, **xdb-schema** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **xdb-schema** is a complete solution for the creation and management of a SQL Schema. The **xdb-schema** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
-### Vendor-Agnostic
+#### Vendor-Agnostic
 
-How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using XDL as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
+How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **xdb-schema** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
 
-### Validating and Fail-Fast
+#### Validating and Fail-Fast
 
-XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provides cohesive semantics for the definition of most (close to all) of the SQL-92 and SQL-99 DDL structures. Utilizing the full power of XML Schema Validation, XDL provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL Schemas.
+**xdb-schema** is a standard that abstracts the DDL with a vendor-agnostic model, and provides cohesive semantics for the definition of most (close to all) of the SQL-92 and SQL-99 DDL structures. Utilizing the full power of XML Schema Validation, **xdb-schema** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL Schemas.
 
-## Getting Started
+### Getting Started
 
-### Prerequisites
+#### Prerequisites
 
 * [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html) - The minimum required JDK version.
-* [Maven](https://maven.apache.org/) - The dependency management system used to install XDL.
+* [Maven](https://maven.apache.org/) - The dependency management system.
 
-### Example
+#### Example
 
 1. In your preferred development directory, create a [`maven-archetype-quickstart`](http://maven.apache.org/archetypes/maven-archetype-quickstart/) project.
 
@@ -54,7 +54,7 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
   </pluginRepositories>
   ```
 
-3. Create a `basis.xds` XDL Schema and put it in `src/main/resources/`.
+3. Create a `basis.xds` **xdb-schema** Schema and put it in `src/main/resources/`.
 
   ```xml
   <database name="basis"
@@ -99,7 +99,7 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
   </database>
   ```
 
-4. Add the [`org.safris.maven.plugin`:`xdb-maven-plugin`](https://github.com/SevaSafris/xdb-maven-plugin) to the POM.
+4. Add the [`org.safris.maven.plugin:xdb-maven-plugin`](https://github.com/SevaSafris/xdb-maven-plugin) to the POM.
 
   ```xml
   <plugin>
@@ -137,6 +137,6 @@ XDL is a standard that abstracts the DDL with a vendor-agnostic model, and provi
   
   Subsequent imports of `schema.sql` into the database will `DROP` and re-`CREATE` the data model.
 
-## License
+### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.

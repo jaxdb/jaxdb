@@ -1,20 +1,20 @@
 <img src="http://safris.org/logo.png" align="right" />
-# XDE [![CohesionFirst](http://safris.org/cf2.svg)](https://cohesionfirst.com/)
-> eXtended Data Entities
+## xdb-entities<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
+> eXtended Data Binding Entities
 
-## Introduction
+### Introduction
 
-XDE is an extension to [XDL](https://github.com/SevaSafris/xdl/), offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. Based on the CohesionFirst™ approach, the XDE framework is designed to provide a highly cohesive and strongly typed binding between the Java language and RDBMS servers. XDE uses a SQL schema defined in a [XDL file](https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xdl) to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**xdb-entities** is an extension to [**xdb-schema**](https://github.com/SevaSafris/xdb/tree/master/schema/), offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. Based on the CohesionFirst™ approach, the **xdb-entities** framework is designed to provide a highly cohesive and strongly-typed binding between the Java language and RDBMS servers. XDE uses a SQL schema defined in a [XDS file](https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xds) to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
-## Why XDE?
+### Why **xdb-entities**?
 
-### CohesionFirst™
+#### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, XDE is reliable, consistent, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, XDE is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The XDE solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
+Developed with the CohesionFirst™ approach, **xdb-entities** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **xdb-entities** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **xdb-entities** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
 
-### Strongly Typed DML Semantics
+#### Strongly Typed DML Semantics
 
-In addition to generating Java classes that bind to a DDL, the XDE framework offers an API for Strongly Typed DML Semantics. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
+In addition to generating Java classes that bind to a DDL, the **xdb-entities** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
 
 ```java
 public static basis.Account findAccount(final String email) throws SQLException {
@@ -29,35 +29,35 @@ public static basis.Account findAccount(final String email) throws SQLException 
 }
 ```
 
-Strongly Typed DML Semantics are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, XDE provides a strongly typed approach for the construction of SQL DML.
+**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **xdb-entities** provides a strongly typed approach for the construction of SQL DML.
 
 Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
 
-### Fast and Memory Efficient
+#### Fast and Memory Efficient
 
-XDE is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
+**xdb-entities** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
 
-### Cohesive and Fail-Fast
+#### Cohesive and Fail-Fast
 
-XDE is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
+**xdb-entities** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
 
-## Getting Started
+### Getting Started
 
-### Prerequisites
+#### Prerequisites
 
 * [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html) - The minimum required JDK version.
-* [Maven](https://maven.apache.org/) - The dependency management system used to install XDE.
+* [Maven](https://maven.apache.org/) - The dependency management system.
 
-### Example
+#### Example
 
-1. As XDE framework requires a XDL-based SQL Schema, start with a [XDL Example](https://github.com/SevaSafris/xdl#example).
+1. As **xdb-entities** framework requires a XDS-based SQL Schema, start with a [XDL Example](https://github.com/SevaSafris/xdb/tree/master/schema#example).
 
-2. Next, add the `org.safris.xdb`:`xde` dependency into the POM.
+2. Next, add the `org.safris.xdb:xdb-entities` dependency into the POM.
 
   ```xml
   <dependency>
     <groupId>org.safris.xdb</groupId>
-    <artifactId>xde</artifactId>
+    <artifactId>xdb-entities</artifactId>
     <version>1.3.3</version>
   </dependency>
   ```
@@ -86,7 +86,7 @@ XDE is cohesive, offering the power of Java's compiler to realize errors in edit
   </plugin>
   ```
 
-4. Run `mvn install`, and upon successful execution of the `xdb-maven-plugin`, classes will be generated in `target/generated-sources/xde`. Add this path to your Build Paths in your IDE to integrate into your project.
+4. Run `mvn install`, and upon successful execution of the `xdb-maven-plugin`, classes will be generated in `target/generated-sources/xdb`. Add this path to your Build Paths in your IDE to integrate into your project.
 
 5. In `App.java`, include:
 
@@ -120,7 +120,7 @@ XDE is cohesive, offering the power of Java's compiler to realize errors in edit
   }
   ```
 
-6. To run the code, you must now connect XDE to your database. XDE relies on the [`org.safris.commons`:`dbcp`](https://github.com/SevaSafris/dbcp/) module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD](http://commons.safris.org/dbcp.xsd), which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **xdb-entities** to your database. **xdb-entities** relies on the [`org.safris.commons:dbcp`](https://github.com/SevaSafris/commons-dbcp/) module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD](https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd), which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
@@ -168,7 +168,7 @@ XDE is cohesive, offering the power of Java's compiler to realize errors in edit
   </dbcp>
   ```
 
-7. Add [`org.safris.commons`:`dbcp`](https://github.com/SevaSafris/dbcp/) dependency to the POM.
+7. Add [`org.safris.commons:dbcp`](https://github.com/SevaSafris/dbcp/) dependency to the POM.
 
   ```xml
   <dependency>
@@ -178,7 +178,7 @@ XDE is cohesive, offering the power of Java's compiler to realize errors in edit
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the XDE `EntityRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **xdb-entities** `EntityRegistry`.
 
   ```java
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
@@ -193,11 +193,11 @@ XDE is cohesive, offering the power of Java's compiler to realize errors in edit
 
 9. Run `App`.
 
-## Known Issues
+### Known Issues
 
 * Inner statements are currently not implemented.
-* MySQL, PostgreSQL, and Derby are the only vendors currently supported by XDE. However, as the vendor-specific facets of the DML have been abstracted, support for any other vendor can be added hastily.
+* MySQL, PostgreSQL, and Derby are the only vendors currently supported by **xdb-entities**. However, as the vendor-specific facets of the DML have been abstracted, support for any other vendor can be added hastily.
 
-## License
+### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
