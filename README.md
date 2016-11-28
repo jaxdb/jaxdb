@@ -1,6 +1,6 @@
 <img src="http://safris.org/logo.png" align="right"/>
 ## XDB<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
-> eXtended Data Binding
+> eXtensible Data Binding
 
 ### Introduction
 
