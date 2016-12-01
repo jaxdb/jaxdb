@@ -1,10 +1,10 @@
 <img src="http://safris.org/logo.png" align="right" />
-## xdb-entities<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
+## xdb-entities<br>![java-enterprise][java-enterprise] [![CohesionFirst™][cohesionfirst_badge]][cohesionfirst]
 > eXtensible Data Binding Entities
 
 ### Introduction
 
-**xdb-entities** is an extension to [**xdb-schema**](https://github.com/SevaSafris/xdb/tree/master/schema/), offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. Based on the CohesionFirst™ approach, the **xdb-entities** framework is designed to provide a highly cohesive and strongly-typed binding between the Java language and RDBMS servers. XDE uses a SQL schema defined in a [XDS file](https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xds) to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**xdb-entities** is an extension to [**xdb-schema**][xdb-schema], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. Based on the CohesionFirst™ approach, the **xdb-entities** framework is designed to provide a highly cohesive and strongly-typed binding between the Java language and RDBMS servers. XDE uses a SQL schema defined in a [XDS file][hospital.xds] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
 ### Why **xdb-entities**?
 
@@ -45,12 +45,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Prerequisites
 
-* [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html) - The minimum required JDK version.
-* [Maven](https://maven.apache.org/) - The dependency management system.
+* [Java 7][jdk7-download] - The minimum required JDK version.
+* [Maven][maven] - The dependency management system.
 
 #### Example
 
-1. As **xdb-entities** framework requires a XDS-based SQL Schema, start with a [XDL Example](https://github.com/SevaSafris/xdb/tree/master/schema#example).
+1. As **xdb-entities** framework requires a XDS-based SQL Schema, start with a [`xdb-schema` Example][schema-example].
 
 2. Next, add the `org.safris.xdb:xdb-entities` dependency into the POM.
 
@@ -120,7 +120,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **xdb-entities** to your database. **xdb-entities** relies on the [`org.safris.commons:dbcp`](https://github.com/SevaSafris/commons-dbcp/) module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD](https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd), which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **xdb-entities** to your database. **xdb-entities** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
@@ -168,12 +168,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.safris.commons:dbcp`](https://github.com/SevaSafris/dbcp/) dependency to the POM.
+7. Add [`org.safris.commons:commons-dbcp`][commons-dbcp] dependency to the POM.
 
   ```xml
   <dependency>
     <groupId>org.safris.commons</groupId>
-    <artifactId>dbcp</artifactId>
+    <artifactId>commons-dbcp</artifactId>
     <version>2.0.2</version>
   </dependency>
   ```
@@ -201,3 +201,14 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+[cohesionfirst]: https://www.cohesionfirst.com/
+[cohesionfirst_badge]: https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg
+[commons-dbcp]: https://github.com/SevaSafris/commons-dbcp
+[dbcp.xsd]: https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd
+[hospital.xds]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xds
+[java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
+[jdk7-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+[maven]: https://maven.apache.org/
+[schema-example]: https://github.com/SevaSafris/xdb/tree/master/schema#example
+[xdb-schema]: https://github.com/SevaSafris/xdb/tree/master/schema/

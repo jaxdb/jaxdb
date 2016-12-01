@@ -1,5 +1,5 @@
 <img src="http://safris.org/logo.png" align="right"/>
-## XDB<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
+## XDB<br>![java-enterprise][java-enterprise] [![CohesionFirst™][cohesionfirst_badge]][cohesionfirst]
 > eXtensible Data Binding
 
 ### Introduction
@@ -21,3 +21,7 @@ Developed with the CohesionFirst™ approach, **XDB** is reliably designed, cons
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+[cohesionfirst]: https://www.cohesionfirst.com/
+[cohesionfirst_badge]: https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg
+[java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg

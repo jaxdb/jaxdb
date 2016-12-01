@@ -1,14 +1,14 @@
 <img src="http://safris.org/logo.png" align="right" />
-## xdb-schema<br>[![JavaCommons](https://img.shields.io/badge/java-enterprise-blue.svg)](https://cohesionfirst.com/) [![CohesionFirst](https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg)](https://cohesionfirst.com/)
+## xdb-schema<br>![java-enterprise][java-enterprise] [![CohesionFirst™][cohesionfirst_badge]][cohesionfirst]
 > eXtensible Data Binding Schema
 
 ### Introduction
 
-**xdb-schema** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDS Schema](https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd) utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
+**xdb-schema** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDS Schema][xds.xsd] utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
 
 ### Why **xdb-schema**?
 
-**xdb-schema** can also be used with [**xdb-entities**](https://github.com/SevaSafris/xdb/tree/master/entities), an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
+**xdb-schema** can also be used with [**xdb-entities**][xdb-entities], an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
 
 #### CohesionFirst™
 
@@ -26,12 +26,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 #### Prerequisites
 
-* [Java 7](http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html) - The minimum required JDK version.
-* [Maven](https://maven.apache.org/) - The dependency management system.
+* [Java 7][jdk7-download] - The minimum required JDK version.
+* [Maven][maven] - The dependency management system.
 
 #### Example
 
-1. In your preferred development directory, create a [`maven-archetype-quickstart`](http://maven.apache.org/archetypes/maven-archetype-quickstart/) project.
+1. In your preferred development directory, create a [`maven-archetype-quickstart`][maven-archetype-quickstart] project.
 
   ```tcsh
   mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
@@ -99,7 +99,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </database>
   ```
 
-4. Add the [`org.safris.maven.plugin:xdb-maven-plugin`](https://github.com/SevaSafris/xdb-maven-plugin) to the POM.
+4. Add the [`org.safris.maven.plugin:xdb-maven-plugin`][xdb-maven-plugin] to the POM.
 
   ```xml
   <plugin>
@@ -140,3 +140,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+[cohesionfirst]: https://www.cohesionfirst.com/
+[cohesionfirst_badge]: https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg
+[java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
+[jdk7-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+[maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
+[maven]: https://maven.apache.org/
+[xdb-entities]: https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd
+[xdb-maven-plugin]: https://github.com/SevaSafris/xdb-maven-plugin
+[xds.xsd]: https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd
