@@ -1,5 +1,5 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## xdb-schema<br>![java-enterprise][java-enterprise] [![CohesionFirst™][cohesionfirst_badge]][cohesionfirst]
+## xdb-schema<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
 > eXtensible Data Binding Schema
 
 ### Introduction
@@ -141,8 +141,6 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[cohesionfirst]: https://www.cohesionfirst.com/
-[cohesionfirst_badge]: https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk7-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
