@@ -20,18 +20,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.joda.time.base.BaseLocal;
 import org.joda.time.base.BaseSingleFieldPeriod;
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
+import org.safris.xdb.entities.spec.delete;
+import org.safris.xdb.entities.spec.expression;
+import org.safris.xdb.entities.spec.insert;
 import org.safris.xdb.entities.spec.select;
-import org.safris.xdb.entities.spec.delete.DELETE_WHERE;
-import org.safris.xdb.entities.spec.expression.WHEN;
-import org.safris.xdb.entities.spec.insert.INSERT;
-import org.safris.xdb.entities.spec.select._SELECT;
-import org.safris.xdb.entities.spec.update.UPDATE_SET;
+import org.safris.xdb.entities.spec.update;
 
 public abstract class DML {
   /** Direction **/
@@ -175,44 +173,44 @@ public abstract class DML {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Subject<?>>_SELECT<T> SELECT(final T ... entities) {
+  public static <T extends Subject<?>>select._SELECT<T> SELECT(final T ... entities) {
     return DML.<T>SELECT(null, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Subject<?>>_SELECT<T> SELECT(final ALL all, final T ... entities) {
+  public static <T extends Subject<?>>select._SELECT<T> SELECT(final ALL all, final T ... entities) {
     return DML.<T>SELECT(all, null, entities);
   }
 
   @SafeVarargs
-  public static <T extends Subject<?>>_SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
+  public static <T extends Subject<?>>select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
     return DML.<T>SELECT(null, distinct, entities);
   }
 
   @SafeVarargs
-  public static <T extends Subject<?>>_SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+  public static <T extends Subject<?>>select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
     return new Select.SELECT<T>(all, distinct, entities);
   }
 
   /** CASE **/
 
-  public static <T>WHEN<T> CASE_WHEN(final Condition<T> condition) {
+  public static <T>expression.WHEN<T> CASE_WHEN(final Condition<T> condition) {
     return new Case.CASE_WHEN<T>(condition);
   }
 
   /** DELETE **/
 
-  public static UPDATE_SET UPDATE(final Entity entity) {
+  public static update.UPDATE_SET UPDATE(final Entity entity) {
     return new Update.UPDATE(entity);
   }
 
-  public static DELETE_WHERE DELETE(final Entity entity) {
+  public static delete.DELETE_WHERE DELETE(final Entity entity) {
     return new Delete.DELETE(entity);
   }
 
   /** INSERT **/
 
-  public static INSERT INSERT(final Entity entity) {
+  public static insert.INSERT INSERT(final Entity entity) {
     return new Insert.INSERT(entity);
   }
 
