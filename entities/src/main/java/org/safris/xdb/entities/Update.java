@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.safris.xdb.entities.spec.expression;
 import org.safris.xdb.entities.spec.update;
-import org.safris.xdb.entities.spec.expression.CASE;
 import org.safris.xdb.schema.DBVendor;
 
 class Update {
@@ -89,7 +89,7 @@ class Update {
 
   private abstract static class UPDATE_SET extends Execute implements update.UPDATE_SET {
     @Override
-    public final <T>SET SET(final DataType<T> set, final CASE<T> to) {
+    public final <T>SET SET(final DataType<T> set, final expression.CASE<T> to) {
       return new SET(this, set, to);
     }
 
@@ -200,7 +200,7 @@ class Update {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final CASE<T> to) {
+    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
       this.parent = parent;
       this.set = set;
       this.to = (Expression<Variable<T>>)to;
