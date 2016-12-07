@@ -53,6 +53,9 @@ public abstract class Keyword<T extends Subject<?>> extends Serializable {
 
         serialization.sql.append(")");
       }
+      else if (obj instanceof Select.Execute<?>) {
+        ((Select.Execute<?>)obj).serialize(caller, serialization);
+      }
       else {
         serialization.addParameter(VariableWrapper.valueOf(obj));
         serialization.sql.append("?");

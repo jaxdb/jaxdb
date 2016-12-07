@@ -152,7 +152,7 @@ class Select {
     };
   }
 
-  private static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
+  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
     @Override
     public final RowIterator<T> execute() throws SQLException {
       return execute(null);

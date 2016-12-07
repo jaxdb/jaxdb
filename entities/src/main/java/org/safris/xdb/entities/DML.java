@@ -26,6 +26,7 @@ import org.joda.time.base.BaseLocal;
 import org.joda.time.base.BaseSingleFieldPeriod;
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
+import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.delete.DELETE_WHERE;
 import org.safris.xdb.entities.spec.expression.WHEN;
 import org.safris.xdb.entities.spec.insert.INSERT;
@@ -457,6 +458,10 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
+  public static <T>LogicalCondition<T> GT(final T a, final select.SELECT<? extends Variable<T>> b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
+  }
+
   public static <T>LogicalCondition<T> GTE(final Variable<T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
@@ -466,6 +471,10 @@ public abstract class DML {
   }
 
   public static <T>LogicalCondition<T> GTE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
+  }
+
+  public static <T>LogicalCondition<T> GTE(final T a, final select.SELECT<? extends Variable<T>> b) {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
@@ -481,6 +490,10 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
+  public static <T>LogicalCondition<T> EQ(final T a, final select.SELECT<? extends Variable<T>> b) {
+    return new LogicalCondition<T>(Operator.EQ, a, b);
+  }
+
   public static <T>LogicalCondition<T> NE(final Variable<T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
@@ -490,6 +503,10 @@ public abstract class DML {
   }
 
   public static <T>LogicalCondition<T> NE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.NE, a, b);
+  }
+
+  public static <T>LogicalCondition<T> NE(final T a, final select.SELECT<? extends Variable<T>> b) {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
@@ -505,6 +522,10 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
+  public static <T>LogicalCondition<T> LT(final T a, final select.SELECT<? extends Variable<T>> b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
+  }
+
   public static <T>LogicalCondition<T> LTE(final Variable<T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
@@ -514,6 +535,10 @@ public abstract class DML {
   }
 
   public static <T>LogicalCondition<T> LTE(final T a, final Variable<T> b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
+  }
+
+  public static <T>LogicalCondition<T> LTE(final T a, final select.SELECT<? extends Variable<T>> b) {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
@@ -537,43 +562,39 @@ public abstract class DML {
     return new Predicate<T>("IN", a, b.toArray());
   }
 
-  public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T>[] b1, final T[] b2) {
-    final Object[] in = new Object[b1.length + b2.length];
-    System.arraycopy(b1, 0, in, 1, b1.length);
-    System.arraycopy(b2, 0, in, b1.length, b2.length);
-    return new Predicate<T>("IN", a, in);
+  public static <T>Predicate<T> IN(final Variable<T> a, final select.SELECT<? extends Variable<T>> b) {
+    return new Predicate<T>("IN", a, b);
   }
 
-  public static <T>Predicate<T> IN(final Variable<T> a, final Collection<Variable<T>> b1, final T[] b2) {
-    final Object[] in = new Object[b1.size() + b2.length];
-    final Iterator<Variable<T>> iterator = b1.iterator();
-    for (int i = 0; iterator.hasNext(); i++)
-      in[i] = iterator.next();
-
-    System.arraycopy(b2, 0, in, b1.size(), b2.length);
-    return new Predicate<T>("IN", a, in);
+  public static <T>Predicate<T> EXISTS(final select.SELECT<? extends Variable<T>> b) {
+    return new Predicate<T>("EXISTS", b);
   }
 
-  public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T>[] b1, final Collection<T> b2) {
-    final Object[] in = new Object[b1.length + b2.size()];
-    System.arraycopy(b1, 0, in, 1, b1.length);
-    final Iterator<T> iterator = b2.iterator();
-    for (int i = b1.length; iterator.hasNext(); i++)
-      in[i] = iterator.next();
+  public static class NOT {
+    public static Predicate<String> LIKE(final Char a, final String b) {
+      return new Predicate<String>("NOT LIKE", a, b);
+    }
 
-    return new Predicate<T>("IN", a, in);
-  }
+    @SafeVarargs
+    public static <T>Predicate<T> IN(final Variable<T> a, final Variable<? super T> ... b) {
+      return new Predicate<T>("NOT IN", a, (Object[])b);
+    }
 
-  public static <T>Predicate<T> IN(final Variable<T> a, final Collection<Variable<T>> b1, final Collection<T> b2) {
-    final Object[] in = new Object[b1.size() + b2.size()];
-    final Iterator<Variable<T>> iterator1 = b1.iterator();
-    for (int i = 0; iterator1.hasNext(); i++)
-      in[i] = iterator1.next();
+    @SafeVarargs
+    public static <T>Predicate<T> IN(final Variable<T> a, final T ... b) {
+      return new Predicate<T>("NOT IN", a, b);
+    }
 
-    final Iterator<T> iterator2 = b2.iterator();
-    for (int i = b1.size(); iterator2.hasNext(); i++)
-      in[i] = iterator2.next();
+    public static <T>Predicate<T> IN(final Variable<T> a, final Collection<T> b) {
+      return new Predicate<T>("NOT IN", a, b.toArray());
+    }
 
-    return new Predicate<T>("IN", a, in);
+    public static <T>Predicate<T> IN(final Variable<T> a, final select.SELECT<? extends Variable<T>> b) {
+      return new Predicate<T>("NOT IN", a, b);
+    }
+
+    public static <T>Predicate<T> EXISTS(final select.SELECT<? extends Variable<T>> b) {
+      return new Predicate<T>("NOT EXISTS", b);
+    }
   }
 }

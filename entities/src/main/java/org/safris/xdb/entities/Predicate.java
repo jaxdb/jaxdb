@@ -22,8 +22,17 @@ final class Predicate<T> extends Condition<Subject<T>> {
   private final Object[] condition;
 
   protected Predicate(final String predicate, final Variable<T> variable, final Object ... condition) {
+    if (variable == null)
+      throw new NullPointerException("variable == null");
+
     this.predicate = predicate;
     this.variable = variable;
+    this.condition = condition;
+  }
+
+  protected Predicate(final String predicate, final Object ... condition) {
+    this.predicate = predicate;
+    this.variable = null;
     this.condition = condition;
   }
 
@@ -34,8 +43,12 @@ final class Predicate<T> extends Condition<Subject<T>> {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    format(this, variable, serialization);
-    serialization.sql.append(" ").append(predicate).append(" ");
+    if (variable != null) {
+      format(this, variable, serialization);
+      serialization.sql.append(" ");
+    }
+
+    serialization.sql.append(predicate).append(" ");
     format(this, condition, serialization);
   }
 }
