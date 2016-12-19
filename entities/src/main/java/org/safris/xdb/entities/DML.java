@@ -19,10 +19,10 @@ package org.safris.xdb.entities;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.temporal.Temporal;
 import java.util.Collection;
 
-import org.joda.time.base.BaseLocal;
-import org.joda.time.base.BaseSingleFieldPeriod;
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
 import org.safris.xdb.entities.spec.delete;
@@ -394,8 +394,8 @@ public abstract class DML {
     return new PLUS<T>(Variable.valueOf(a), Operator.PLUS, b);
   }
 
-  public static <T extends BaseLocal>PLUS<T> PLUS(final Variable<T> a, final BaseSingleFieldPeriod ... intervals) {
-    return new PLUS<T>(a, Operator.PLUS, intervals);
+  public static <T extends Temporal>PLUS<T> PLUS(final Variable<T> a, final Duration duration) {
+    return new PLUS<T>(a, Operator.PLUS, duration);
   }
 
   private static final class MINUS<T> extends Evaluation<T> {
@@ -416,11 +416,11 @@ public abstract class DML {
     return new MINUS<T>(Variable.valueOf(a), Operator.MINUS, b);
   }
 
-  public static <T extends BaseLocal>MINUS<T> MINUS(final Variable<T> a, final BaseSingleFieldPeriod ... intervals) {
-    return new MINUS<T>(a, Operator.MINUS, intervals);
+  public static <T extends Temporal>MINUS<T> MINUS(final Variable<T> a, final Duration duration) {
+    return new MINUS<T>(a, Operator.MINUS, duration);
   }
 
-  private static class NOW extends Function<BaseLocal> {
+  private static class NOW extends Function<Temporal> {
     protected NOW() {
       super(DateTime.class, "NOW");
     }

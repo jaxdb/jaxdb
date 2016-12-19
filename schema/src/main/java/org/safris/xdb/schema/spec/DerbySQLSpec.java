@@ -16,10 +16,12 @@
 
 package org.safris.xdb.schema.spec;
 
-import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.schema.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_clob;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
@@ -30,23 +32,26 @@ import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
-import org.safris.xdb.schema.SQLDataTypes;
 
-public class DerbySQLSpec extends SQLSpec {
+public final class DerbySQLSpec extends SQLSpec {
   @Override
   public String type(final $xds_table table, final $xds_char type) {
-    return (type._variant$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
+    return (type._national$().text() ? "N" : "") + (type._varying$().text() ? "VARCHAR" : "CHAR") + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public String type(final $xds_table table, final $xds_bit type) {
-    // FIXME!!!
-    return "#nohave" + "(" + type._length$().text() + ")";
+  public String type(final $xds_table table, final $xds_clob type) {
+    return (type._national$().text() ? "NCLOB" : "CLOB") + "(" + type._length$().text() + ")";
   }
 
   @Override
-  public final String type(final $xds_table table, final $xds_blob type) {
-    return "BLOB(" + type._length$().text() + ")";
+  public String type(final $xds_table table, final $xds_binary type) {
+    return "BIT" + (type._varying$().text() ? " VARYING" : "") + "(" + type._length$().text() + ")";
+  }
+
+  @Override
+  public String type(final $xds_table table, final $xds_blob type) {
+    return "BLOB" + "(" + type._length$().text() + ")";
   }
 
   @Override

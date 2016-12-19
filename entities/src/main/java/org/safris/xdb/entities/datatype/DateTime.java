@@ -21,9 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 
-import org.joda.time.LocalDateTime;
-import org.joda.time.base.BaseLocal;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
@@ -32,19 +32,20 @@ import org.safris.xdb.schema.DBVendor;
 public final class DateTime extends DataType<LocalDateTime> {
   protected static final int sqlType = Types.TIMESTAMP;
 
+  @SuppressWarnings("deprecation")
   protected static LocalDateTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final java.sql.Timestamp value = resultSet.getTimestamp(columnIndex);
-    return value == null ? null : new LocalDateTime(value.getTime());
+    return value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
 
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDateTime value) throws SQLException {
     if (value != null)
-      statement.setTimestamp(parameterIndex, new Timestamp(value.toDate().getTime()));
+      statement.setTimestamp(parameterIndex, new Timestamp(value.toEpochSecond(ZoneOffset.UTC)));
     else
       statement.setNull(parameterIndex, sqlType);
   }
 
-  public DateTime(final Entity owner, final String specName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
+  public DateTime(final Entity owner, final String specName, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate) {
     super(sqlType, LocalDateTime.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 

@@ -20,9 +20,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.temporal.Temporal;
 
-import org.joda.time.LocalDate;
-import org.joda.time.base.BaseLocal;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
@@ -31,19 +31,21 @@ import org.safris.xdb.schema.DBVendor;
 public final class Date extends DataType<LocalDate> {
   protected static final int sqlType = Types.DATE;
 
+  @SuppressWarnings("deprecation")
   protected static LocalDate get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     final java.sql.Date value = resultSet.getDate(columnIndex);
-    return value == null ? null : new LocalDate(value.getTime());
+    return value == null ? null : LocalDate.of(value.getYear(), value.getMonth(), value.getDate());
   }
 
+  @SuppressWarnings("deprecation")
   protected static void set(final PreparedStatement statement, final int parameterIndex, final LocalDate value) throws SQLException {
     if (value != null)
-      statement.setDate(parameterIndex, new java.sql.Date(value.toDate().getTime()));
+      statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
       statement.setNull(parameterIndex, sqlType);
   }
 
-  public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<BaseLocal> generateOnInsert, final GenerateOn<BaseLocal> generateOnUpdate) {
+  public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Temporal> generateOnInsert, final GenerateOn<Temporal> generateOnUpdate) {
     super(sqlType, LocalDate.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 

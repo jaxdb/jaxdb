@@ -16,8 +16,14 @@
 
 package org.safris.xdb.entities;
 
-import org.joda.time.base.BaseLocal;
-import org.safris.commons.lang.reflect.Classes;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.Temporal;
+
+import org.safris.xdb.entities.datatype.Date;
+import org.safris.xdb.entities.datatype.DateTime;
+import org.safris.xdb.entities.datatype.Time;
 
 public abstract class GenerateOn<T> {
   public static GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
@@ -54,24 +60,27 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public static GenerateOn<BaseLocal> TIMESTAMP = new GenerateOn<BaseLocal>() {
-    private BaseLocal generate(final DataType<BaseLocal> dataType) {
-      final Class<?> type = (Class<?>)Classes.getGenericSuperclasses(dataType.getClass())[0];
-      try {
-        return (BaseLocal)type.newInstance();
-      }
-      catch (final ReflectiveOperationException e) {
-        throw new RuntimeException(e);
-      }
+  public static GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
+    private Temporal generate(final DataType<? extends Temporal> dataType) {
+      if (dataType instanceof Date)
+        return LocalDate.now();
+
+      if (dataType instanceof Time)
+        return LocalTime.now();
+
+      if (dataType instanceof DateTime)
+        return LocalDateTime.now();
+
+      throw new UnsupportedOperationException("Unknown type: " + dataType.getClass().getName());
     }
 
     @Override
-    public BaseLocal generateStatic(final DataType<BaseLocal> dataType) {
+    public Temporal generateStatic(final DataType<Temporal> dataType) {
       return generate(dataType);
     }
 
     @Override
-    public String generateDynamic(final Serialization serialization, final DataType<BaseLocal> dataType) {
+    public String generateDynamic(final Serialization serialization, final DataType<Temporal> dataType) {
       dataType.set(generate(dataType));
       serialization.addParameter(dataType);
       return dataType.getPreparedStatementMark(serialization.vendor);

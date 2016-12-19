@@ -27,8 +27,6 @@ import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.schema.DBVendor;
 
 public final class Char extends DataType<String> {
-  protected static final int sqlType = Types.VARCHAR;
-
   protected static String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getString(columnIndex);
   }
@@ -37,22 +35,25 @@ public final class Char extends DataType<String> {
     if (value != null)
       statement.setString(parameterIndex, value);
     else
-      statement.setNull(parameterIndex, sqlType);
+      statement.setNull(parameterIndex, Types.CHAR);
   }
 
   public final int length;
-  public final boolean varyant;
+  public final boolean varying;
+  public final boolean national;
 
-  public Char(final Entity owner, final String specName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varyant) {
-    super(sqlType, String.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public Char(final Entity owner, final String specName, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<String> generateOnInsert, final GenerateOn<String> generateOnUpdate, final int length, final boolean varying, final boolean national) {
+    super(varying ? (national ? Types.NVARCHAR : Types.VARCHAR) : (national ? Types.NCHAR : Types.CHAR), String.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     this.length = length;
-    this.varyant = varyant;
+    this.varying = varying;
+    this.national = national;
   }
 
   protected Char(final Char copy) {
     super(copy);
     this.length = copy.length;
-    this.varyant = copy.varyant;
+    this.varying = copy.varying;
+    this.national = copy.national;
   }
 
   @Override

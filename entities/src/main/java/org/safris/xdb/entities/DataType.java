@@ -53,7 +53,8 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
             }
 
             if ("set".equals(method.getName())) {
-              typeToSetter.put(cls == org.safris.xdb.entities.datatype.Enum.class ? Enum.class : Classes.getGenericSuperclasses(cls)[0], method);
+              final Class<?> parameterType = method.getParameterTypes()[2];
+              typeToSetter.put(cls == org.safris.xdb.entities.datatype.Enum.class ? Enum.class : parameterType, method);
               method.setAccessible(true);
               continue;
             }

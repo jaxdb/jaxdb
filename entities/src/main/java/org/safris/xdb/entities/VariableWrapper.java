@@ -19,15 +19,13 @@ package org.safris.xdb.entities;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-
-import org.joda.time.LocalDate;
-import org.joda.time.LocalDateTime;
-import org.safris.commons.util.Formats;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 class VariableWrapper<T> extends Variable<T> {
-  private static final ThreadLocal<SimpleDateFormat> dateFormat = Formats.createSimpleDateFormat("yyyy-MM-dd");
-  private static final ThreadLocal<SimpleDateFormat> dateTimeFormat = Formats.createSimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+  private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
   protected static String toString(final Object obj) {
     if (obj == null)
@@ -50,10 +48,10 @@ class VariableWrapper<T> extends Variable<T> {
       return "'" + obj + "'";
 
     if (obj instanceof LocalDate)
-      return "'" + dateFormat.get().format(((LocalDate)obj).toDate()) + "'";
+      return "'" + dateFormat.format((LocalDate)obj) + "'";
 
     if (obj instanceof LocalDateTime)
-      return "'" + dateTimeFormat.get().format(((LocalDateTime)obj).toDate()) + "'";
+      return "'" + dateTimeFormat.format((LocalDateTime)obj) + "'";
 
     return obj.toString();
   }

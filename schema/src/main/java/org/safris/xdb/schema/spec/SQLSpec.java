@@ -20,10 +20,12 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.schema.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_clob;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
@@ -34,7 +36,6 @@ import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
-import org.safris.xdb.schema.SQLDataTypes;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public abstract class SQLSpec {
@@ -90,7 +91,8 @@ public abstract class SQLSpec {
   }
 
   public abstract String type(final $xds_table table, final $xds_char type);
-  public abstract String type(final $xds_table table, final $xds_bit type);
+  public abstract String type(final $xds_table table, final $xds_clob type);
+  public abstract String type(final $xds_table table, final $xds_binary type);
   public abstract String type(final $xds_table table, final $xds_blob type);
   public abstract String type(final $xds_table table, final $xds_integer type);
   public abstract String type(final $xds_table table, final $xds_float type);

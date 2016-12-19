@@ -31,7 +31,7 @@ import java.util.Set;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_inherited;
 import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.xdb.xds.xe.xds_database;
+import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.xml.XMLException;
@@ -42,14 +42,14 @@ import org.xml.sax.InputSource;
 public abstract class XDLTransformer {
   static {
     try {
-      PackageLoader.getSystemPackageLoader().loadPackage(xds_database.class.getPackage().getName());
+      PackageLoader.getSystemPackageLoader().loadPackage(xds_schema.class.getPackage().getName());
     }
     catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
 
-  protected static xds_database parseArguments(final URL url, final File outDir) throws IOException, XMLException {
+  protected static xds_schema parseArguments(final URL url, final File outDir) throws IOException, XMLException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 
@@ -57,7 +57,7 @@ public abstract class XDLTransformer {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try (final InputStream in = url.openStream()) {
-      final xds_database database = (xds_database)Bindings.parse(new InputSource(in));
+      final xds_schema database = (xds_schema)Bindings.parse(new InputSource(in));
       return database;
     }
   }
@@ -84,10 +84,10 @@ public abstract class XDLTransformer {
   }
 
   // FIXME: This should not be public! But it's been set this way to be usable by xde package.
-  public static xds_database merge(final xds_database database) {
-    final xds_database merged;
+  public static xds_schema merge(final xds_schema database) {
+    final xds_schema merged;
     try {
-      merged = (xds_database)Bindings.clone(database);
+      merged = (xds_schema)Bindings.clone(database);
     }
     catch (final Exception e) {
       throw new Error(e);
@@ -105,10 +105,10 @@ public abstract class XDLTransformer {
     return merged;
   }
 
-  protected final xds_database unmerged;
-  protected final xds_database merged;
+  protected final xds_schema unmerged;
+  protected final xds_schema merged;
 
-  public XDLTransformer(final xds_database database) {
+  public XDLTransformer(final xds_schema database) {
     this.unmerged = database;
     this.merged = merge(database);
 

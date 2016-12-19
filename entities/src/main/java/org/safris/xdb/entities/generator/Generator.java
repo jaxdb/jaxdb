@@ -36,18 +36,21 @@ import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.entities.Schema;
 import org.safris.xdb.entities.datatype.BigInt;
-import org.safris.xdb.entities.datatype.Bit;
+import org.safris.xdb.entities.datatype.Binary;
 import org.safris.xdb.entities.datatype.Blob;
 import org.safris.xdb.entities.datatype.Char;
+import org.safris.xdb.entities.datatype.Clob;
 import org.safris.xdb.entities.datatype.DateTime;
 import org.safris.xdb.entities.datatype.Decimal;
 import org.safris.xdb.entities.datatype.MediumInt;
 import org.safris.xdb.entities.datatype.SmallInt;
+import org.safris.xdb.entities.datatype.Time;
 import org.safris.xdb.schema.SQLDataTypes;
-import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
+import org.safris.xdb.xds.xe.$xds_clob;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
@@ -58,7 +61,7 @@ import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
-import org.safris.xdb.xds.xe.xds_database;
+import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 import org.xml.sax.InputSource;
@@ -67,7 +70,7 @@ public class Generator {
   private static final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
 
   public static void generate(final URL url, final File outDir) throws IOException, XMLException {
-    final xds_database database = (xds_database)Bindings.parse(new InputSource(url.openStream()));
+    final xds_schema database = (xds_schema)Bindings.parse(new InputSource(url.openStream()));
     Log.info("Generating database entities: " + database._name$().text());
     for (final $xds_table table : database._table())
       tableNameToTable.put(table._name$().text(), table);
@@ -123,22 +126,27 @@ public class Generator {
       GenerateOn<?> generateOnInsert = null;
       GenerateOn<?> generateOnUpdate = null;
       final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
-      if (column instanceof $xds_blob) {
-        return new Type(column, Blob.class, params, generateOnInsert, generateOnUpdate);
-      }
-
       if (column instanceof $xds_char) {
         final $xds_char type = ($xds_char)column;
-        if (!type._generateOnInsert$().isNull())
-          if ($xds_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
-            generateOnInsert = GenerateOn.UUID;
+        if (!type._generateOnInsert$().isNull() && $xds_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
+          generateOnInsert = GenerateOn.UUID;
 
-        return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
+        return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text(), type._national$().text());
       }
 
-      if (column instanceof $xds_bit) {
-        final $xds_bit type = ($xds_bit)column;
-        return new Type(column, Bit.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._variant$().text());
+      if (column instanceof $xds_clob) {
+        final $xds_clob type = ($xds_clob)column;
+        return new Type(column, Clob.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._national$().text());
+      }
+
+      if (column instanceof $xds_binary) {
+        final $xds_binary type = ($xds_binary)column;
+        return new Type(column, Binary.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
+      }
+
+      if (column instanceof $xds_blob) {
+        final $xds_blob type = ($xds_blob)column;
+        return new Type(column, Blob.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
       }
 
       if (column instanceof $xds_integer) {
@@ -208,7 +216,7 @@ public class Generator {
           if ($xds_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
-        return new Type(column, org.safris.xdb.entities.datatype.Time.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, Time.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xds_dateTime) {
@@ -279,10 +287,10 @@ public class Generator {
 
   public static Object getDefault(final $xds_column column) {
     try {
-      if (column instanceof $xds_blob)
+      final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
+      if (method == null)
         return null;
 
-      final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
       final $xs_anySimpleType value = ($xs_anySimpleType)method.invoke(column);
       if (value.isNull() || "null".equals(value.text()))
         return null;

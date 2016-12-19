@@ -26,11 +26,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.safris.xdb.xds.xe.$xds_bit;
+import org.safris.commons.lang.Arrays;
+import org.safris.commons.lang.Numbers;
+import org.safris.commons.util.MaskedEnum;
+import org.safris.commons.util.TopologicalSort;
+import org.safris.commons.xml.XMLException;
+import org.safris.maven.common.Log;
+import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_check;
+import org.safris.xdb.xds.xe.$xds_clob;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
@@ -43,13 +50,7 @@ import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
-import org.safris.xdb.xds.xe.xds_database;
-import org.safris.commons.lang.Arrays;
-import org.safris.commons.lang.Numbers;
-import org.safris.commons.util.MaskedEnum;
-import org.safris.commons.util.TopologicalSort;
-import org.safris.commons.xml.XMLException;
-import org.safris.maven.common.Log;
+import org.safris.xdb.xds.xe.xds_schema;
 
 public final class DDLTransform extends XDLTransformer {
   private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();
@@ -432,7 +433,7 @@ public final class DDLTransform extends XDLTransformer {
     return DDLTransform.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static DDL[] createDDL(final xds_database database, final DBVendor vendor, final File outDir) {
+  public static DDL[] createDDL(final xds_schema database, final DBVendor vendor, final File outDir) {
     final DDLTransform creator = new DDLTransform(database);
     final DDL[] ddls = creator.parse(vendor);
     final StringBuilder sql = new StringBuilder();
@@ -454,7 +455,7 @@ public final class DDLTransform extends XDLTransformer {
   }
 
   public static DDLTransform transformDDL(final URL url) throws IOException, XMLException {
-    final xds_database database = parseArguments(url, null);
+    final xds_schema database = parseArguments(url, null);
     return new DDLTransform(database);
   }
 
@@ -475,7 +476,7 @@ public final class DDLTransform extends XDLTransformer {
     Log.warn(message);
   }
 
-  private DDLTransform(final xds_database database) {
+  private DDLTransform(final xds_schema database) {
     super(database);
   }
 
@@ -491,8 +492,11 @@ public final class DDLTransform extends XDLTransformer {
     if (column instanceof $xds_char) {
       ddl.append(vendor.getSQLSpec().type(table, ($xds_char)column));
     }
-    else if (column instanceof $xds_bit) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_bit)column));
+    else if (column instanceof $xds_clob) {
+      ddl.append(vendor.getSQLSpec().type(table, ($xds_clob)column));
+    }
+    else if (column instanceof $xds_binary) {
+      ddl.append(vendor.getSQLSpec().type(table, ($xds_binary)column));
     }
     else if (column instanceof $xds_blob) {
       ddl.append(vendor.getSQLSpec().type(table, ($xds_blob)column));

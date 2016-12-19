@@ -198,6 +198,91 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 * Inner statements are currently not implemented.
 * MySQL, PostgreSQL, and Derby are the only vendors currently supported by **xdb-entities**. However, as the vendor-specific facets of the DML have been abstracted, support for any other vendor can be added hastily.
 
+### Dev Status
+Specification                                                  | Semantics | Derby | MySQL | PostgreSQL 
+-------------------------------------------------------------- | --------- | ----- | ----- | ----------
+**{select query} ::=**                                             |           |       |       |
+&ensp;&ensp;SELECT                                                       |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ DISTINCT |                                               |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;ALL ]                                                    |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&lt;column expressions&gt; |                               |           |       |       |
+&ensp;&ensp;&ensp;&ensp;*                                                          |           |       |       |
+&ensp;&ensp;&ensp;&ensp;FROM                                                       |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;table references&gt;                                 |           |       |       |
+&ensp;&ensp;&ensp;&ensp;WHERE                                                      |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;conditions&gt;                                       |           |       |       |
+&ensp;&ensp;&ensp;&ensp;GROUP BY                                                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;column names&gt;                                     |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ HAVING                                                 |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;conditions&gt; ]                                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;ORDER BY                                                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;order expressions&gt;                                |           |       |       |
+&ensp;&ensp;&ensp;&ensp;LIMIT                                                      |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;limit expression&gt;                                 |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;column expressions&gt; ::=                                 |           |       |       |
+&ensp;&ensp;&lt;column expression&gt; [ , &lt;column expression&gt;... ] |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;column expression&gt; ::=                                  |           |       |       |
+&ensp;&ensp;{column name}                                                |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ AS {column alias} ]                                      |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;table references&gt; ::=                                   |           |       |       |
+&ensp;&ensp;&lt;table reference&gt;                                      |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ , &lt;table reference&gt;... ]                           |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;table reference&gt; ::=                                    |           |       |       |
+&ensp;&ensp;[ ONLY ]                                                     |           |       |       |
+&ensp;&ensp;[ {table name} |                                             |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{query name}                                             |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ [ AS ]                                               |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{correlation name}                                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ (&lt;column names&gt;) ] ] ] |                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ {select query}                                           |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ [ AS ]                                                 |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{correlation name}                                     |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ (&lt;column names&gt;) ] ] ] |                     |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ {joined table name} |                                    |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;LATERAL (&lt;query expression&gt;)                       |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ [ AS ]                                                 |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;{correlation name}                                     |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ (&lt;column names&gt;) ] ] ]                       |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;column names&gt; ::=                                       |           |       |       |
+&ensp;&ensp;{column name}                                                |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ , {column name}... ]                                     |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;conditions&gt; ::=                                         |           |       |       |
+&ensp;&ensp;&lt;condition&gt;                                            |           |       |       |
+&ensp;&ensp;&ensp;&ensp;[ , {boolean operator} &lt;condition&gt;... ]              |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;condition&gt; ::=                                          |           |       |       |
+&ensp;&ensp;&lt;value reference&gt;                                      |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&lt;predicate&gt;                                          |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&lt;value reference&gt;                                  |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;value reference&gt; ::=                                    |           |       |       |
+&ensp;&ensp;&lt;table reference&gt; . {column name} |                    |           |       |       |
+&ensp;&ensp;&ensp;&ensp;{static value}                                             |           |       |       |
+&ensp;                                                               |           |       |       |
+{boolean operator} :==                                         |           |       |       |
+&ensp;&ensp;"AND" |                                                      |           |       |       |
+&ensp;&ensp;"OR"                                                         |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;order expressions&gt; ::=                                  |           |       |       |
+&ensp;&ensp;&lt;order expression&gt; [ , &lt;order expression&gt;... ]   |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;order expression&gt; ::=                                   |           |       |       |
+&ensp;&ensp;&lt; col_name |                                              |           |       |       |
+&ensp;&ensp;&ensp;&ensp;expr |                                                     |           |       |       |
+&ensp;&ensp;&ensp;&ensp;position                                                   |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ ASC |                                                  |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;DESC ] &gt;                                            |           |       |       |
+&ensp;                                                               |           |       |       |
+&lt;limit expression&gt; ::=                                   |           |       |       |
+&ensp;&ensp;&lt; row_count                                               |           |       |       |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;[ OFFSET offset ] &gt;                                   |           |       |       |
+
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
