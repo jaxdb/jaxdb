@@ -23,7 +23,7 @@
   
   <xs:import namespace="http://xdb.safris.org/xde.xsd" schemaLocation="xde.xsd"/>
   
-  <xs:include schemaLocation="file:/Users/seva/Work/SevaSafris/java/xdb/schema/src/main/resources/xds-common.xsd"/>
+  <xs:include schemaLocation="http://xdb.safris.org/xds-common.xsd"/>
   
   <!-- text data -->
   
