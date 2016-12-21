@@ -28,6 +28,22 @@
   <artifactId>xdb-entities</artifactId>
   <version>1.3.3</version>
   <name>${project.groupId}:${project.artifactId}</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xsb-maven-plugin</artifactId>
+        <configuration>
+          <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+            <destdir explodeJars="true">${project.build.directory}/generated-sources/xsb</destdir>
+            <schemas>
+              <schema>${basedir}/src/main/resources/xde.xsd</schema>
+            </schemas>
+          </manifest>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.safris.xdb</groupId>

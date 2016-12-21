@@ -1,0 +1,251 @@
+<!--
+  Copyright (c) 2006 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  elementFormDefault="qualified"
+  targetNamespace="http://xdb.safris.org/xds.xsd"
+  xmlns:xds="http://xdb.safris.org/xds.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:simpleType name="name">
+    <xs:restriction base="xs:NCName">
+      <xs:maxLength value="64"/> <!-- http://dev.mysql.com/doc/refman/5.7/en/identifiers.html -->
+      <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="named">
+    <xs:attribute name="name" type="xds:name" use="required"/>
+  </xs:complexType>
+  
+  <xs:complexType name="foreignKey">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="references" type="xs:NCName" use="required"/>
+    <xs:attribute name="column" type="xs:NCName" use="required"/>
+    <xs:attribute name="onDelete" type="xds:referentialAction" default="CASCADE"/>
+    <xs:attribute name="onUpdate" type="xds:referentialAction" default="CASCADE"/>
+  </xs:complexType>
+  
+  <xs:simpleType name="referentialAction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CASCADE"/>
+      <xs:enumeration value="SET NULL"/>
+      <xs:enumeration value="SET DEFAULT"/>
+      <xs:enumeration value="NO ACTION"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="index">
+    <xs:attribute name="unique" type="xs:boolean" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="BTREE"/>
+          <xs:enumeration value="HASH"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+  
+  <xs:complexType name="check">
+    <xs:sequence>
+      <xs:element name="column" type="xds:name"/>
+      <xs:element name="operator">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="="/>
+            <xs:enumeration value="!="/>
+            <xs:enumeration value="&gt;"/>
+            <xs:enumeration value="&gt;="/>
+            <xs:enumeration value="&lt;"/>
+            <xs:enumeration value="&lt;="/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:choice>
+        <xs:element name="column" type="xds:name"/>
+        <xs:element name="value" type="xs:string"/>
+      </xs:choice>
+      <xs:choice minOccurs="0">
+        <xs:element name="and" type="xds:check"/>
+        <xs:element name="or" type="xds:check"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:simpleType name="equalityOperator">
+    <xs:restriction base="xs:NCName">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="rangeOperator">
+    <xs:restriction base="xs:NCName">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+      <xs:enumeration value="gt"/>
+      <xs:enumeration value="gte"/>
+      <xs:enumeration value="lt"/>
+      <xs:enumeration value="lte"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:simpleType name="integerType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="-9223372036854775808"/>
+      <xs:maxInclusive value="18446744073709551615"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:complexType name="columns">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column" type="xds:named"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="constraints">
+    <xs:sequence>
+      <xs:element name="primaryKey" type="xds:columns" minOccurs="0">
+        <xs:unique name="primaryKeyColumn">
+          <xs:selector xpath="./xds:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="xds:foreignKey">
+              <xs:sequence>
+                <xs:element name="column" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:complexContent>
+                      <xs:extension base="xds:named">
+                        <xs:attribute name="column" type="xds:name" use="required"/>
+                      </xs:extension>
+                    </xs:complexContent>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="unique" type="xds:columns" minOccurs="0">
+          <xs:unique name="uniqueColumnName1">
+            <xs:selector xpath="./xds:column"/>
+            <xs:field xpath="@name"/>
+          </xs:unique>
+        </xs:element>
+        <xs:element name="check" minOccurs="0" type="xds:check"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="triggers">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="trigger">
+        <xs:complexType mixed="true">
+          <xs:attribute name="time" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="BEFORE"/>
+                <xs:enumeration value="AFTER"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="actions" use="required">
+            <xs:simpleType>
+              <xs:list>
+                <xs:simpleType>
+                  <xs:restriction base="xs:token">
+                    <xs:enumeration value="INSERT"/>
+                    <xs:enumeration value="UPDATE"/>
+                    <xs:enumeration value="DELETE"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:list>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <xs:complexType name="indexes">
+    <xs:sequence>
+      <xs:element name="index">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="xds:index">
+              <xs:sequence minOccurs="2" maxOccurs="unbounded">
+                <xs:element name="column" type="xds:named"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+        <xs:unique name="indexColumn">
+          <xs:selector xpath="./xds:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="columnCommon" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="xds:named">
+        <xs:sequence minOccurs="0">
+          <xs:element name="documentation" type="xs:string" minOccurs="0"/>
+          <xs:element name="foreignKey" minOccurs="0" type="xds:foreignKey">
+            <xs:annotation>
+              <xs:documentation>
+                There is a great potential to be able to have schema validation on the content entered into this element.
+                However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
+                queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="index" minOccurs="0" type="xds:index"/>
+        </xs:sequence>
+        <xs:attribute name="null" type="xs:boolean" default="true"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="tableCommon">
+    <xs:complexContent>
+      <xs:extension base="xds:named">
+        <xs:sequence>
+          <xs:element name="column" type="xds:columnCommon" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="constraints" type="xds:constraints" minOccurs="0">
+            <xs:unique name="uniqueUniqueColumn">
+              <xs:selector xpath="./xds:unique"/>
+              <xs:field xpath="@column"/>
+            </xs:unique>
+          </xs:element>
+          <xs:element name="triggers" type="xds:triggers" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="indexes" type="xds:indexes" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+        <xs:attribute name="extends" type="xds:name"/>
+        <xs:attribute name="skip" type="xs:boolean" default="false"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

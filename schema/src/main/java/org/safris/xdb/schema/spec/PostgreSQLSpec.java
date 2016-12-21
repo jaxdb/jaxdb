@@ -26,7 +26,7 @@ import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_columnCommon;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
@@ -49,7 +49,7 @@ public final class PostgreSQLSpec extends SQLSpec {
   public List<String> drops(final $xds_table table) {
     final List<String> statements = super.drops(table);
     if (table._column() != null) {
-      for (final $xds_column column : table._column()) {
+      for (final $xds_columnCommon column : table._column()) {
         if (column instanceof $xds_enum) {
           statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($xds_enum)column)._name$().text()));
         }
@@ -68,7 +68,7 @@ public final class PostgreSQLSpec extends SQLSpec {
   public List<String> types(final $xds_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._column() != null) {
-      for (final $xds_column column : table._column()) {
+      for (final $xds_columnCommon column : table._column()) {
         if (column instanceof $xds_enum) {
           final $xds_enum type = ($xds_enum)column;
           String sql = "CREATE TYPE " + getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
@@ -170,7 +170,7 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xds_table table, final $xds_column column) {
+  public String $null(final $xds_table table, final $xds_columnCommon column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 

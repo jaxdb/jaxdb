@@ -28,14 +28,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_inherited;
-import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
+import org.safris.xdb.xds.xe.$xds_columnCommon;
+import org.safris.xdb.xds.xe.$xds_columns;
+import org.safris.xdb.xds.xe.$xds_constraints;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
@@ -147,27 +148,23 @@ public abstract class XDLTransformer {
     mergeTable(superTable, tableNameToTable, mergedTables);
     if (superTable._column() != null) {
       if (table._column() != null) {
-        for (int i = table._column().size() - 1; 0 <= i; i--)
-          if (table._column(i) instanceof $xds_inherited)
-            table._column().remove(i);
-
         table._column().addAll(0, superTable._column());
       }
       else {
-        for (final $xds_column column : superTable._column())
+        for (final $xds_columnCommon column : superTable._column())
           table._column(column);
       }
     }
 
     if (superTable._constraints() != null) {
-      final $xds_table._constraints parentConstraints = superTable._constraints(0);
+      final $xds_constraints parentConstraints = superTable._constraints(0);
       if (table._constraints() == null) {
         table._constraints(parentConstraints);
       }
       else {
         if (parentConstraints._primaryKey() != null) {
-          for (final $xds_table._constraints._primaryKey entry : parentConstraints._primaryKey()) {
-            table._constraints(0)._primaryKey(entry);
+          for (final $xds_columns columns : parentConstraints._primaryKey()) {
+            table._constraints(0)._primaryKey(columns);
           }
         }
 
@@ -178,8 +175,8 @@ public abstract class XDLTransformer {
         }
 
         if (parentConstraints._unique() != null) {
-          for (final $xds_table._constraints._unique entry : parentConstraints._unique()) {
-            table._constraints(0)._unique(entry);
+          for (final $xds_columns columns : parentConstraints._unique()) {
+            table._constraints(0)._unique(columns);
           }
         }
       }

@@ -51,7 +51,8 @@ import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_columnCommon;
+import org.safris.xdb.xds.xe.$xds_columns;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
@@ -120,7 +121,7 @@ public class Generator {
   private static final Object THIS = new Object();
 
   private static class Type {
-    private static Type getType(final $xds_table table, final $xds_column column) {
+    private static Type getType(final $xds_table table, final $xds_columnCommon column) {
       final Class<?> cls = column.getClass().getSuperclass();
       final Object _default = getDefault(column);
       GenerateOn<?> generateOnInsert = null;
@@ -243,7 +244,7 @@ public class Generator {
       throw new IllegalArgumentException("Unknown type: " + cls);
     }
 
-    private final $xds_column column;
+    private final $xds_columnCommon column;
     @SuppressWarnings("rawtypes")
     public final Class<? extends DataType> type;
     private final Object[] commonParams;
@@ -252,7 +253,7 @@ public class Generator {
     private final Object[] customParams;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $xds_column column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    private Type(final $xds_columnCommon column, final Class<? extends DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
@@ -285,7 +286,7 @@ public class Generator {
     }
   }
 
-  public static Object getDefault(final $xds_column column) {
+  public static Object getDefault(final $xds_columnCommon column) {
     try {
       final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
       if (method == null)
@@ -381,14 +382,14 @@ public class Generator {
         out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
         String params = "";
         for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
+          final $xds_columnCommon column = table._column().get(i);
           params += ", " + makeParam(table, column);
         }
 
         out += params.substring(2) + ") {\n";
         out += "      this();\n";
         for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
+          final $xds_columnCommon column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
           set += "\n      this." + columnName + ".set(" + columnName + ");";
         }
@@ -402,7 +403,7 @@ public class Generator {
       set = "";
       if (table._column() != null) {
         for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
+          final $xds_columnCommon column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
           set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
         }
@@ -425,7 +426,7 @@ public class Generator {
     int primaryIndex = 0;
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xds_column column = table._column().get(i);
+        final $xds_columnCommon column = table._column().get(i);
         final String columnName = Strings.toCamelCase(column._name$().text());
         defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
       }
@@ -437,7 +438,7 @@ public class Generator {
 
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xds_column column = table._column().get(i);
+        final $xds_columnCommon column = table._column().get(i);
         out += makeColumn(table, column, i == table._column().size());
       }
 
@@ -451,16 +452,16 @@ public class Generator {
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
-    final List<$xds_column> primaryColumns = new ArrayList<$xds_column>();
-    final List<$xds_column> equalsColumns;
+    final List<$xds_columnCommon> primaryColumns = new ArrayList<$xds_columnCommon>();
+    final List<$xds_columnCommon> equalsColumns;
     if (table._column() != null) {
-      for (final $xds_column column : table._column())
+      for (final $xds_columnCommon column : table._column())
         if (isPrimary(table, column))
           primaryColumns.add(column);
 
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table._column();
       out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
-      for (final $xds_column column : equalsColumns)
+      for (final $xds_columnCommon column : equalsColumns)
         eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
 
       out += "      return " + eq.substring(4) + ";";
@@ -476,7 +477,7 @@ public class Generator {
       out += "\n\n";
       out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
-      for (final $xds_column column : equalsColumns)
+      for (final $xds_columnCommon column : equalsColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
       out += "      return " + eq.substring(3) + ";";
       out += "\n    }";
@@ -487,8 +488,8 @@ public class Generator {
     return out;
   }
 
-  private static boolean isPrimary(final $xds_table table, final $xds_column column) {
-    final $xds_table._constraints._primaryKey constraint = table._constraints(0)._primaryKey(0);
+  private static boolean isPrimary(final $xds_table table, final $xds_columnCommon column) {
+    final $xds_columns constraint = table._constraints(0)._primaryKey(0);
     if (constraint.isNull())
       return false;
 
@@ -499,8 +500,8 @@ public class Generator {
     return false;
   }
 
-  private static boolean isUnique(final $xds_table table, final $xds_column column) {
-    final $xds_table._constraints._unique constraint = table._constraints(0)._unique(0);
+  private static boolean isUnique(final $xds_table table, final $xds_columnCommon column) {
+    final $xds_columns constraint = table._constraints(0)._unique(0);
     if (constraint.isNull())
       return false;
 
@@ -511,7 +512,7 @@ public class Generator {
     return false;
   }
 
-  public static String makeParam(final $xds_table table, final $xds_column column) {
+  public static String makeParam(final $xds_table table, final $xds_columnCommon column) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final Type type = Type.getType(table, column);
     final String rawType;
@@ -523,7 +524,7 @@ public class Generator {
     return "final " + rawType + " " + columnName;
   }
 
-  public static String makeColumn(final $xds_table table, final $xds_column column, final boolean isLast) {
+  public static String makeColumn(final $xds_table table, final $xds_columnCommon column, final boolean isLast) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final String typeName = Strings.toTitleCase(column._name$().text());
     String out = "";

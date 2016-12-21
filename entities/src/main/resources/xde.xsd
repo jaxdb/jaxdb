@@ -1,0 +1,198 @@
+<!--
+  Copyright (c) 2016 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+  targetNamespace="http://xdb.safris.org/xde.xsd"
+  xmlns:xde="http://xdb.safris.org/xde.xsd"
+  xmlns:xds="http://xdb.safris.org/xds.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:import namespace="http://xdb.safris.org/xds.xsd" schemaLocation="xde-xds.xsd"/>
+  
+  <xs:simpleType name="timestampEnum">
+    <xs:restriction base="xs:NCName">
+      <xs:enumeration value="TIMESTAMP"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- text data -->
+  
+  <xs:complexType name="char">
+    <xs:complexContent>
+      <xs:extension base="xde:column">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="UUID"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="clob">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- binary data -->
+  
+  <xs:complexType name="binary">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="blob">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- numeric data -->
+  
+  <xs:complexType name="integer">
+    <xs:complexContent>
+      <xs:extension base="xde:column">
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- REAL is synonym for FLOAT(24) -->
+  
+  <xs:complexType name="float">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- NUMERIC is synonym for DECIMAL -->
+  
+  <xs:complexType name="decimal">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- time data -->
+  
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="xde:column">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="time">
+    <xs:complexContent>
+      <xs:extension base="xde:column">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="TIMESTAMP"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="dateTime">
+    <xs:complexContent>
+      <xs:extension base="xde:column">
+        <xs:attribute name="generateOnInsert" type="xde:timestampEnum"/>
+        <xs:attribute name="generateOnUpdate" type="xde:timestampEnum"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- boolean -->
+  
+  <xs:complexType name="boolean">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- enum -->
+  
+  <xs:complexType name="enum">
+    <xs:complexContent>
+      <xs:extension base="xde:column"/>
+    </xs:complexContent>
+  </xs:complexType>
+    
+  <!-- containers -->
+  
+  <xs:complexType name="column">
+    <xs:complexContent>
+      <xs:extension base="xds:columnCommon">
+        <xs:attribute name="checkOnUpdate">
+          <xs:simpleType>
+            <xs:list>
+              <xs:simpleType>
+                <xs:restriction base="xs:NCName">
+                  <xs:enumeration value="EQUALS"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:list>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="table">
+    <xs:complexContent>
+      <xs:extension base="xds:tableCommon">
+        <xs:attribute name="versionColumn" type="xds:name"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

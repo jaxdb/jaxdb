@@ -22,7 +22,7 @@ import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_columnCommon;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
@@ -114,7 +114,7 @@ public final class DerbySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xds_table table, final $xds_column column) {
+  public String $null(final $xds_table table, final $xds_columnCommon column) {
     return !column._null$().isNull() && !column._null$().text() ? "NOT NULL" : "";
   }
 
