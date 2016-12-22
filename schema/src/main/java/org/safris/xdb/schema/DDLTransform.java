@@ -38,7 +38,7 @@ import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_check;
 import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_columnCommon;
+import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_columns;
 import org.safris.xdb.xds.xe.$xds_constraints;
 import org.safris.xdb.xds.xe.$xds_date;
@@ -487,7 +487,7 @@ public final class DDLTransform extends XDLTransformer {
     return columnCount;
   }
 
-  private static String parseColumn(final $xds_table table, final $xds_columnCommon column, final DBVendor vendor) {
+  private static String parseColumn(final $xds_table table, final $xds_column column, final DBVendor vendor) {
     final StringBuilder ddl = new StringBuilder();
     ddl.append(column._name$().text()).append(" ");
     if (column instanceof $xds_char) {
@@ -550,7 +550,7 @@ public final class DDLTransform extends XDLTransformer {
     if (table._column() == null)
       return "";
 
-    for (final $xds_columnCommon column : table._column())
+    for (final $xds_column column : table._column())
       ddl.append(",\n  ").append(parseColumn(table, column, vendor));
 
     return ddl.substring(2);
@@ -575,7 +575,7 @@ public final class DDLTransform extends XDLTransformer {
     return clause;
   }
 
-  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_columnCommon> columnNameToColumn, final $xds_table table) {
+  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $xds_constraints constraints = table._constraints(0);
@@ -615,7 +615,7 @@ public final class DDLTransform extends XDLTransformer {
         final StringBuffer primaryKeyBuffer = new StringBuffer();
         for (final $xds_named primaryColumn : primaryKey._column()) {
           final String primaryKeyColumn = primaryColumn._name$().text();
-          final $xds_columnCommon column = columnNameToColumn.get(primaryKeyColumn);
+          final $xds_column column = columnNameToColumn.get(primaryKeyColumn);
           if (column._null$().text()) {
             Log.error("Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
             System.exit(1);
@@ -652,7 +652,7 @@ public final class DDLTransform extends XDLTransformer {
     }
 
     if (table._column() != null) {
-      for (final $xds_columnCommon column : table._column()) {
+      for (final $xds_column column : table._column()) {
         if (column._foreignKey() != null) {
           final $xds_foreignKey foreignKey = column._foreignKey(0);
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(column._name$().text());
@@ -668,7 +668,7 @@ public final class DDLTransform extends XDLTransformer {
       }
 
       // Parse the min & max constraints of numeric types
-      for (final $xds_columnCommon column : table._column()) {
+      for (final $xds_column column : table._column()) {
         String minCheck = null;
         String maxCheck = null;
         if (column instanceof $xds_integer) {
@@ -705,7 +705,7 @@ public final class DDLTransform extends XDLTransformer {
       }
 
       // parse the <check/> element per type
-      for (final $xds_columnCommon column : table._column()) {
+      for (final $xds_column column : table._column()) {
         String operator = null;
         String condition = null;
         if (column instanceof $xds_char) {
@@ -751,7 +751,7 @@ public final class DDLTransform extends XDLTransformer {
     return contraintsBuffer.toString();
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$xds_columnCommon> columnNameToColumn, final $xds_table table) {
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) {
     final String tableName = table._name$().text();
     checkName(tableName);
 
@@ -762,10 +762,10 @@ public final class DDLTransform extends XDLTransformer {
 
     tableNames.add(tableName);
     if (table._column() != null) {
-      for (final $xds_columnCommon column : table._column()) {
+      for (final $xds_column column : table._column()) {
         final String columnName = column._name$().text();
         checkName(columnName);
-        final $xds_columnCommon existing = columnNameToColumn.get(columnName);
+        final $xds_column existing = columnNameToColumn.get(columnName);
         if (existing != null) {
           Log.error("Duplicate column definition: " + tableName + "." + columnName);
           System.exit(1);
@@ -779,7 +779,7 @@ public final class DDLTransform extends XDLTransformer {
   private String[] parseTable(final DBVendor vendor, final $xds_table table, final Set<String> tableNames) {
     insertDependency(table._name$().text(), null);
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,$xds_columnCommon> columnNameToColumn = new HashMap<String,$xds_columnCommon>();
+    final Map<String,$xds_column> columnNameToColumn = new HashMap<String,$xds_column>();
     registerColumns(tableNames, columnNameToColumn, table);
 
     final List<String> statements = new ArrayList<String>();

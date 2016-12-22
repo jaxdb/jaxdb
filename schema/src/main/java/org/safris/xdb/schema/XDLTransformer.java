@@ -32,7 +32,7 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
-import org.safris.xdb.xds.xe.$xds_columnCommon;
+import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_columns;
 import org.safris.xdb.xds.xe.$xds_constraints;
 import org.safris.xdb.xds.xe.$xds_table;
@@ -151,7 +151,7 @@ public abstract class XDLTransformer {
         table._column().addAll(0, superTable._column());
       }
       else {
-        for (final $xds_columnCommon column : superTable._column())
+        for (final $xds_column column : superTable._column())
           table._column(column);
       }
     }

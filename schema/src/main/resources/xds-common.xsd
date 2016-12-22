@@ -206,7 +206,7 @@
     </xs:sequence>
   </xs:complexType>
 
-  <xs:complexType name="columnCommon" abstract="true">
+  <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="xds:named">
         <xs:sequence minOccurs="0">
@@ -227,11 +227,11 @@
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="tableCommon">
+  <xs:complexType name="table">
     <xs:complexContent>
       <xs:extension base="xds:named">
         <xs:sequence>
-          <xs:element name="column" type="xds:columnCommon" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="column" type="xds:column" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element name="constraints" type="xds:constraints" minOccurs="0">
             <xs:unique name="uniqueUniqueColumn">
               <xs:selector xpath="./xds:unique"/>

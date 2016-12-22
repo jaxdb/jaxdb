@@ -264,18 +264,6 @@
   
   <!-- containers -->
   
-  <xs:complexType name="column" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="xds:columnCommon"/>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="table">
-    <xs:complexContent>
-      <xs:extension base="xds:tableCommon"/>
-    </xs:complexContent>
-  </xs:complexType>
-  
   <xs:complexType name="schema">
     <xs:complexContent>
       <xs:extension base="xds:named">

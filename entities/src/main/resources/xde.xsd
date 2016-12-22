@@ -171,7 +171,7 @@
   
   <xs:complexType name="column">
     <xs:complexContent>
-      <xs:extension base="xds:columnCommon">
+      <xs:extension base="xds:column">
         <xs:attribute name="checkOnUpdate">
           <xs:simpleType>
             <xs:list>
@@ -189,7 +189,7 @@
   
   <xs:complexType name="table">
     <xs:complexContent>
-      <xs:extension base="xds:tableCommon">
+      <xs:extension base="xds:table">
         <xs:attribute name="versionColumn" type="xds:name"/>
       </xs:extension>
     </xs:complexContent>

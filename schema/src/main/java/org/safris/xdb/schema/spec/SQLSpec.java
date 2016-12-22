@@ -26,7 +26,7 @@ import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
 import org.safris.xdb.xds.xe.$xds_char;
 import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_columnCommon;
+import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
@@ -54,7 +54,7 @@ public abstract class SQLSpec {
     }
 
     if (table._column() != null) {
-      for (final $xds_columnCommon column : table._column()) {
+      for (final $xds_column column : table._column()) {
         if (column._index() != null) {
           statements.add(createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column));
         }
@@ -77,7 +77,7 @@ public abstract class SQLSpec {
         statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table));
 
     if (table._column() != null)
-      for (final $xds_columnCommon column : table._column())
+      for (final $xds_column column : table._column())
         if (column._index() != null)
           statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table));
 
@@ -104,11 +104,11 @@ public abstract class SQLSpec {
   public abstract String type(final $xds_table table, final $xds_enum type);
 
   // this is meant to be abstract and specific to each DB.. it's in here cause all DBs seem to be the same on this fragment
-  public static final String $default(final $xds_table table, final $xds_columnCommon column, final $xs_anySimpleType _default) {
+  public static final String $default(final $xds_table table, final $xds_column column, final $xs_anySimpleType _default) {
     return !_default.isNull() ? column instanceof $xds_char || column instanceof $xds_enum ? "'" + _default.text() + "'" : _default.text().toString() : "";
   }
 
-  public String $default(final $xds_table table, final $xds_columnCommon column) {
+  public String $default(final $xds_table table, final $xds_column column) {
     try {
       final Method method = column.getClass().getMethod("_default$");
       final $xs_anySimpleType _default = ($xs_anySimpleType)method.invoke(column);
@@ -122,6 +122,6 @@ public abstract class SQLSpec {
     }
   }
 
-  public abstract String $null(final $xds_table table, final $xds_columnCommon column);
+  public abstract String $null(final $xds_table table, final $xds_column column);
   public abstract String $autoIncrement(final $xds_table table, final $xds_integer column);
 }

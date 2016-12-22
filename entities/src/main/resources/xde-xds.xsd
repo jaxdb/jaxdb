@@ -232,23 +232,11 @@
   
   <!-- containers -->
   
-  <xs:complexType name="column" abstract="true">
-    <xs:complexContent>
-      <xs:extension base="xde:column"/>
-    </xs:complexContent>
-  </xs:complexType>
-  
-  <xs:complexType name="table">
-    <xs:complexContent>
-      <xs:extension base="xde:table"/>
-    </xs:complexContent>
-  </xs:complexType>
-  
   <xs:complexType name="schema">
     <xs:complexContent>
       <xs:extension base="xds:named">
         <xs:sequence>
-          <xs:element name="table" type="xds:table" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="table" type="xde:table" minOccurs="0" maxOccurs="unbounded">
             <!--<xs:unique name="primaryKey">
               <xs:selector xpath="*"/>
               <xs:field xpath="@primary"/>
