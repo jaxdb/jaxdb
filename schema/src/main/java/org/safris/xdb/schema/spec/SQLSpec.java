@@ -16,7 +16,7 @@
 
 package org.safris.xdb.schema.spec;
 
-import java.lang.reflect.Method;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +36,6 @@ import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
-import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public abstract class SQLSpec {
   protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns);
@@ -103,23 +102,106 @@ public abstract class SQLSpec {
   public abstract String type(final $xds_table table, final $xds_boolean type);
   public abstract String type(final $xds_table table, final $xds_enum type);
 
-  // this is meant to be abstract and specific to each DB.. it's in here cause all DBs seem to be the same on this fragment
-  public static final String $default(final $xds_table table, final $xds_column column, final $xs_anySimpleType _default) {
-    return !_default.isNull() ? column instanceof $xds_char || column instanceof $xds_enum ? "'" + _default.text() + "'" : _default.text().toString() : "";
+  private static void checkNumericDefault(final $xds_column type, final String defalt, final boolean positive, final int precision, final boolean unsigned) {
+    if (!positive && unsigned)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is negative, but type is declared UNSIGNED");
+
+    if (defalt.toString().length() > precision)
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is longer than declared PRECISION " + precision + ")");
   }
 
   public String $default(final $xds_table table, final $xds_column column) {
-    try {
-      final Method method = column.getClass().getMethod("_default$");
-      final $xs_anySimpleType _default = ($xs_anySimpleType)method.invoke(column);
-      return $default(table, column, _default);
+    if (column instanceof $xds_char) {
+      final $xds_char type = ($xds_char)column;
+      if (type._default$().isNull())
+        return null;
+
+      if (type._default$().text().length() > type._length$().text())
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH(" + type._length$().text() + ")");
+
+      return "'" + type._default$().text() + "'";
     }
-    catch (final NoSuchMethodException e) {
-      return null;
+
+    if (column instanceof $xds_binary) {
+      final $xds_binary type = ($xds_binary)column;
+      if (type._default$().isNull())
+        return null;
+
+      if (type._default$().text().length() > type._length$().text())
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH " + type._length$().text());
+
+      return "'" + type._default$().text() + "'";
     }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
+
+    if (column instanceof $xds_integer) {
+      final $xds_integer type = ($xds_integer)column;
+      if (type._default$().isNull())
+        return null;
+
+      final BigInteger defalt = type._default$().text();
+      checkNumericDefault(type, defalt.toString(), defalt.compareTo(BigInteger.ZERO) >= 0, type._precision$().text(), type._unsigned$().text());
+      return String.valueOf(type._default$().text());
     }
+
+    if (column instanceof $xds_float) {
+      final $xds_float type = ($xds_float)column;
+      if (type._default$().isNull())
+        return null;
+
+      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text(), type._unsigned$().text());
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_decimal) {
+      final $xds_decimal type = ($xds_decimal)column;
+      if (type._default$().isNull())
+        return null;
+
+      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text(), type._unsigned$().text());
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_date) {
+      final $xds_date type = ($xds_date)column;
+      if (type._default$().isNull())
+        return null;
+
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_time) {
+      final $xds_time type = ($xds_time)column;
+      if (type._default$().isNull())
+        return null;
+
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_dateTime) {
+      final $xds_dateTime type = ($xds_dateTime)column;
+      if (type._default$().isNull())
+        return null;
+
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_boolean) {
+      final $xds_boolean type = ($xds_boolean)column;
+      if (type._default$().isNull())
+        return null;
+
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $xds_enum) {
+      final $xds_enum type = ($xds_enum)column;
+      if (type._default$().isNull())
+        return null;
+
+      return "'" + type._default$().text() + "'";
+    }
+
+    throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
   public abstract String $null(final $xds_table table, final $xds_column column);

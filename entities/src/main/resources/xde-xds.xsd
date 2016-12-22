@@ -39,7 +39,7 @@
           </xs:element>
         </xs:sequence>
         <xs:attribute name="varying" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:string"/> <!-- FIXME: Add check so the default is not longer than the length -->
+        <xs:attribute name="default" type="xs:string"/>
         <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="national" type="xs:boolean" default="false"/>
       </xs:extension>
@@ -70,10 +70,10 @@
       <xs:extension base="xde:binary">
         <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
         <xs:attribute name="varying" type="xs:boolean" default="false"/>
-        <xs:attribute name="default"> <!-- FIXME: Add check so the default is not longer than the length -->
+        <xs:attribute name="default">
           <xs:simpleType>
             <xs:restriction base="xs:string">
-              <xs:pattern value="[01]+"/>
+              <xs:pattern value="^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
@@ -102,15 +102,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="precision" use="required">
-          <xs:simpleType>
-            <xs:restriction base="xs:positiveInteger">
-              <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="20"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="xds:numeric"/>
         <xs:attribute name="default" type="xds:integerType"/>
         <xs:attribute name="min" type="xds:integerType"/>
         <xs:attribute name="max" type="xds:integerType"/>
@@ -138,10 +130,9 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
+        <xs:attributeGroup ref="xds:numeric"/>
         <xs:attribute name="double" type="xs:boolean" default="false"/>
-        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:decimal"/>
+        <xs:attribute name="default" type="xs:double"/>
         <xs:attribute name="min" type="xs:double"/>
         <xs:attribute name="max" type="xs:double"/>
       </xs:extension>
@@ -161,9 +152,14 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="precision" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="decimal" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="xds:numeric"/>
+        <xs:attribute name="decimal" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:positiveInteger">
+              <xs:maxInclusive value="65"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
         <xs:attribute name="default" type="xs:decimal"/>
         <xs:attribute name="min" type="xs:decimal"/>
         <xs:attribute name="max" type="xs:decimal"/>
