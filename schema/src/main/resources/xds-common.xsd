@@ -35,11 +35,11 @@
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="xs:NCName" use="required"/>
     <xs:attribute name="column" type="xs:NCName" use="required"/>
-    <xs:attribute name="onDelete" type="xds:referentialAction" default="CASCADE"/>
-    <xs:attribute name="onUpdate" type="xds:referentialAction" default="CASCADE"/>
+    <xs:attribute name="onDelete" type="xds:changeAction" default="CASCADE"/>
+    <xs:attribute name="onUpdate" type="xds:changeAction" default="CASCADE"/>
   </xs:complexType>
   
-  <xs:simpleType name="referentialAction">
+  <xs:simpleType name="changeAction">
     <xs:restriction base="xs:string">
       <xs:enumeration value="CASCADE"/>
       <xs:enumeration value="SET NULL"/>
@@ -63,18 +63,7 @@
   <xs:complexType name="check">
     <xs:sequence>
       <xs:element name="column" type="xds:name"/>
-      <xs:element name="operator">
-        <xs:simpleType>
-          <xs:restriction base="xs:token">
-            <xs:enumeration value="="/>
-            <xs:enumeration value="!="/>
-            <xs:enumeration value="&gt;"/>
-            <xs:enumeration value="&gt;="/>
-            <xs:enumeration value="&lt;"/>
-            <xs:enumeration value="&lt;="/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:element>
+      <xs:element name="operator" type="xds:rangeOperator"/>
       <xs:choice>
         <xs:element name="column" type="xds:name"/>
         <xs:element name="value" type="xs:string"/>
@@ -94,7 +83,7 @@
   </xs:simpleType>
   
   <xs:simpleType name="rangeOperator">
-    <xs:restriction base="xs:NCName">
+    <xs:restriction base="xs:string">
       <xs:enumeration value="eq"/>
       <xs:enumeration value="ne"/>
       <xs:enumeration value="gt"/>
