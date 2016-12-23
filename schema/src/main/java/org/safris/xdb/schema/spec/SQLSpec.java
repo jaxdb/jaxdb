@@ -201,6 +201,9 @@ public abstract class SQLSpec {
       return "'" + type._default$().text() + "'";
     }
 
+    if (column instanceof $xds_clob || column instanceof $xds_blob)
+      return null;
+
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
