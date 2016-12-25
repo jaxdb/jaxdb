@@ -31,14 +31,6 @@
   <build>
     <plugins>
       <plugin>
-        <!-- FIXME: Skip because the validator uses an API that is old and not up to current XML spec -->
-        <groupId>org.safris.maven.plugin</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.safris.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
