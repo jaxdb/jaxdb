@@ -33,8 +33,8 @@
   
   <xs:complexType name="foreignKey">
     <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="references" type="xs:NCName" use="required"/>
-    <xs:attribute name="column" type="xs:NCName" use="required"/>
+    <xs:attribute name="references" type="xds:name" use="required"/>
+    <xs:attribute name="column" type="xds:name" use="required"/>
     <xs:attribute name="onDelete" type="xds:changeAction" default="CASCADE"/>
     <xs:attribute name="onUpdate" type="xds:changeAction" default="CASCADE"/>
   </xs:complexType>
@@ -76,7 +76,7 @@
   </xs:complexType>
   
   <xs:simpleType name="equalityOperator">
-    <xs:restriction base="xs:NCName">
+    <xs:restriction base="xs:string">
       <xs:enumeration value="eq"/>
       <xs:enumeration value="ne"/>
     </xs:restriction>
@@ -239,7 +239,7 @@
               <xs:field xpath="@column"/>
             </xs:unique>
           </xs:element>
-          <xs:element name="triggers" type="xds:triggers" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="triggers" type="xds:triggers" minOccurs="0"/>
           <xs:element name="indexes" type="xds:indexes" minOccurs="0"/>
         </xs:sequence>
         <xs:attribute name="abstract" type="xs:boolean" default="false"/>

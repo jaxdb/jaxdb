@@ -71,9 +71,9 @@ public class Generator {
   private static final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
 
   public static void generate(final URL url, final File outDir) throws IOException, XMLException {
-    final xds_schema database = (xds_schema)Bindings.parse(new InputSource(url.openStream()));
-    Log.info("Generating database entities: " + database._name$().text());
-    for (final $xds_table table : database._table())
+    final xds_schema schema = (xds_schema)Bindings.parse(new InputSource(url.openStream()));
+    Log.info("Generating database entities: " + schema._name$().text());
+    for (final $xds_table table : schema._table())
       tableNameToTable.put(table._name$().text(), table);
 
     final String pkg = "xdb.ddl";
@@ -83,19 +83,19 @@ public class Generator {
       if (!dir.mkdirs())
         throw new Error("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String classSimpleName = database._name$().text();
+    final String classSimpleName = schema._name$().text();
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
 
     String tables = "";
     // First create the abstract entities
-    for (final $xds_table table : database._table())
+    for (final $xds_table table : schema._table())
       if (table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
     // Then, in proper inheritance order, the real entities
-    for (final $xds_table table : database._table())
+    for (final $xds_table table : schema._table())
       if (!table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
@@ -129,7 +129,7 @@ public class Generator {
       final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
       if (column instanceof $xds_char) {
         final $xds_char type = ($xds_char)column;
-        if (!type._generateOnInsert$().isNull() && $xds_char._generateOnInsert$.UUID.text().equals(type._generateOnInsert$().text()))
+        if (!type.xde_generateOnInsert$().isNull() && $xds_char.xde_generateOnInsert$.UUID.text().equals(type.xde_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.UUID;
 
         return new Type(column, Char.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text(), type._national$().text());
@@ -153,8 +153,8 @@ public class Generator {
       if (column instanceof $xds_integer) {
         final $xds_integer type = ($xds_integer)column;
         // no autogenerator is necessary for xds_integer._generateOnInsert$.AUTO_5FINCREMENT
-        if (!type._generateOnUpdate$().isNull())
-          if ($xds_integer._generateOnUpdate$.INCREMENT.text().equals(type._generateOnUpdate$().text()))
+        if (!type.xde_generateOnUpdate$().isNull())
+          if ($xds_integer.xde_generateOnUpdate$.INCREMENT.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
@@ -196,12 +196,12 @@ public class Generator {
 
       if (column instanceof $xds_date) {
         final $xds_date type = ($xds_date)column;
-        if (!type._generateOnInsert$().isNull())
-          if ($xds_date._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+        if (!type.xde_generateOnInsert$().isNull())
+          if ($xds_date.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull())
-          if ($xds_date._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+        if (!type.xde_generateOnUpdate$().isNull())
+          if ($xds_date.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, org.safris.xdb.entities.datatype.Date.class, params, generateOnInsert, generateOnUpdate);
@@ -209,12 +209,12 @@ public class Generator {
 
       if (column instanceof $xds_time) {
         final $xds_time type = ($xds_time)column;
-        if (!type._generateOnInsert$().isNull())
-          if ($xds_time._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+        if (!type.xde_generateOnInsert$().isNull())
+          if ($xds_time.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull())
-          if ($xds_time._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+        if (!type.xde_generateOnUpdate$().isNull())
+          if ($xds_time.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, Time.class, params, generateOnInsert, generateOnUpdate);
@@ -222,12 +222,12 @@ public class Generator {
 
       if (column instanceof $xds_dateTime) {
         final $xds_dateTime type = ($xds_dateTime)column;
-        if (!type._generateOnInsert$().isNull())
-          if ($xds_dateTime._generateOnInsert$.TIMESTAMP.text().equals(type._generateOnInsert$().text()))
+        if (!type.xde_generateOnInsert$().isNull())
+          if ($xds_dateTime.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type._generateOnUpdate$().isNull())
-          if ($xds_dateTime._generateOnUpdate$.TIMESTAMP.text().equals(type._generateOnUpdate$().text()))
+        if (!type.xde_generateOnUpdate$().isNull())
+          if ($xds_dateTime.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, DateTime.class, params, generateOnInsert, generateOnUpdate);
