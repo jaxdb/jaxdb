@@ -1,16 +1,16 @@
 <!--
-  Copyright (c) 2006 Seva Safris
-
+  Copyright (c) 2016 Seva Safris
+  
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-
+  
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-
+  
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
@@ -20,38 +20,36 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org</groupId>
-    <artifactId>safris</artifactId>
-    <version>1.7.1</version>
+    <groupId>org.safris</groupId>
+    <artifactId>xdb</artifactId>
+    <version>1.1.5</version>
   </parent>
-  <groupId>org.safris</groupId>
-  <artifactId>xdb</artifactId>
-  <version>1.1.5</version>
-  <packaging>pom</packaging>
-  <properties>
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
+  <groupId>org.safris.xdb</groupId>
+  <artifactId>xdb-data</artifactId>
+  <version>1.3.3</version>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>
-    eXtended Data Binding
-  </description>
-  <modules>
-    <module>data</module>
-    <module>entities</module>
-    <module>schema</module>
-  </modules>
-  <repositories>
-    <repository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
-    </pluginRepository>
-  </pluginRepositories>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <destdir>target/generated-test-resources</destdir>
+          <rename>/\.\S+$/.xsd/</rename>
+          <stylesheet>src/main/resources/data.xsl</stylesheet>
+          <includes>
+            <include>src/test/resources/classicmodels.xds</include>
+          </includes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>

@@ -22,15 +22,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.safris.xdb.entities.spec.expression;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.schema.DBVendor;
 
 class Update {
-  private static final Logger logger = Logger.getLogger(Update.class.getName());
-
   private static abstract class Execute extends Keyword<DataType<?>> implements update.UPDATE {
     /**
      * Executes the SQL statement in this <code>XDE</code> object.
