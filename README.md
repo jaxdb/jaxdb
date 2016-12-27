@@ -16,6 +16,8 @@ Developed with the CohesionFirst™ approach, **XDB** is reliably designed, cons
 
 [**xdb-schema**](https://github.com/SevaSafris/xdb/tree/master/schema) - A XML-based and vendor-agnostic model for SQL schema definitions.
 
+[**xdb-data**](https://github.com/SevaSafris/xdb/tree/master/data) - A XML-based and vendor-agnostic model for SQL data definitions.
+
 [**xdb-entities**](https://github.com/SevaSafris/xdb/tree/master/entities) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
 
 ### License

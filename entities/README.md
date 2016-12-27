@@ -45,7 +45,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Prerequisites
 
-* [Java 7][jdk7-download] - The minimum required JDK version.
+* [Java 8][jdk8-download] - The minimum required JDK version.
 * [Maven][maven] - The dependency management system.
 
 #### Example
@@ -291,7 +291,7 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [dbcp.xsd]: https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd
 [hospital.xds]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xds
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
-[jdk7-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+[jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven]: https://maven.apache.org/
 [schema-example]: https://github.com/SevaSafris/xdb/tree/master/schema#example
 [xdb-schema]: https://github.com/SevaSafris/xdb/tree/master/schema/

@@ -26,7 +26,7 @@
   </parent>
   <groupId>org.safris.xdb</groupId>
   <artifactId>xdb-data</artifactId>
-  <version>1.3.3</version>
+  <version>1.0.1</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <plugins>

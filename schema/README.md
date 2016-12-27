@@ -26,7 +26,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 #### Prerequisites
 
-* [Java 7][jdk7-download] - The minimum required JDK version.
+* [Java 8][jdk8-download] - The minimum required JDK version.
 * [Maven][maven] - The dependency management system.
 
 #### Example
@@ -127,7 +127,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `xdb-maven-plugin`, an `example.sql` will be created in `generated-resources/xds` that complies to the `PostgreSQL` vendor as is specified in the POM.
+5. Run `mvn generate-resources`, and upon successful execution of the `xdb-maven-plugin`, an `example.sql` will be created in `generated-resources/xdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
 6. Import the DDL into your database. The 
 
@@ -142,7 +142,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
-[jdk7-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk7-downloads-1880260.html
+[jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
 [xdb-entities]: https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd

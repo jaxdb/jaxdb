@@ -181,6 +181,15 @@
           <xsl:value-of select="@default"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:if test="@xsi:type='date'">
+        <xsl:attribute name="type">xs:date</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@xsi:type='time'">
+        <xsl:attribute name="type">xs:time</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@xsi:type='dateTime'">
+        <xsl:attribute name="type">xs:dateTime</xsl:attribute>
+      </xsl:if>
       <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
         <xs:simpleType>
           <xs:restriction base="xs:token">
