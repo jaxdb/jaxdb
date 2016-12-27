@@ -39,7 +39,7 @@ How can one create a SQL static data files that are not vendor specific? Often, 
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
     <artifactId>xdb-maven-plugin</artifactId>
-    <version>1.3.2</version>
+    <version>1.0.1</version>
     <executions>
       <execution>
         <id>default-data</id>
