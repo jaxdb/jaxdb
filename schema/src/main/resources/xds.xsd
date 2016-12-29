@@ -259,7 +259,7 @@
   
   <xs:complexType name="schema">
     <xs:complexContent>
-      <xs:extension base="xds:named">
+      <xs:extension base="xds:compliant">
         <xs:sequence>
           <xs:element name="table" type="xds:table" minOccurs="0" maxOccurs="unbounded">
             <!--<xs:unique name="primaryKey">

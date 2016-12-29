@@ -40,7 +40,7 @@ import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-public abstract class XDLTransformer {
+public abstract class BaseGenerator {
   static {
     try {
       PackageLoader.getSystemPackageLoader().loadPackage(xds_schema.class.getPackage().getName());
@@ -58,8 +58,8 @@ public abstract class XDLTransformer {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try (final InputStream in = url.openStream()) {
-      final xds_schema database = (xds_schema)Bindings.parse(new InputSource(in));
-      return database;
+      final xds_schema schema = (xds_schema)Bindings.parse(new InputSource(in));
+      return schema;
     }
   }
 
@@ -85,10 +85,10 @@ public abstract class XDLTransformer {
   }
 
   // FIXME: This should not be public! But it's been set this way to be usable by xde package.
-  public static xds_schema merge(final xds_schema database) {
+  public static xds_schema merge(final xds_schema schema) {
     final xds_schema merged;
     try {
-      merged = (xds_schema)Bindings.clone(database);
+      merged = (xds_schema)Bindings.clone(schema);
     }
     catch (final Exception e) {
       throw new Error(e);
@@ -109,9 +109,9 @@ public abstract class XDLTransformer {
   protected final xds_schema unmerged;
   protected final xds_schema merged;
 
-  public XDLTransformer(final xds_schema database) {
-    this.unmerged = database;
-    this.merged = merge(database);
+  public BaseGenerator(final xds_schema schema) {
+    this.unmerged = schema;
+    this.merged = merge(schema);
 
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {

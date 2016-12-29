@@ -40,6 +40,7 @@ import org.safris.xdb.xds.xe.$xds_check;
 import org.safris.xdb.xds.xe.$xds_clob;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_columns;
+import org.safris.xdb.xds.xe.$xds_compliant;
 import org.safris.xdb.xds.xe.$xds_constraints;
 import org.safris.xdb.xds.xe.$xds_date;
 import org.safris.xdb.xds.xe.$xds_dateTime;
@@ -53,7 +54,7 @@ import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 import org.safris.xdb.xds.xe.xds_schema;
 
-public final class DDLTransform extends XDLTransformer {
+public final class Generator extends BaseGenerator {
   private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();
 
   @SuppressWarnings("unused")
@@ -423,19 +424,18 @@ public final class DDLTransform extends XDLTransformer {
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
       final String vendors = Arrays.toString(DBVendor.values(), "|");
-      System.err.println("<" + vendors + "> <XDL_FILE>");
-      System.exit(1);
+      throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.parse(args[0]), null);
   }
 
-  public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws IOException, XMLException {
-    return DDLTransform.createDDL(parseArguments(url, outDir), vendor, outDir);
+  public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
+    return Generator.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static DDL[] createDDL(final xds_schema database, final DBVendor vendor, final File outDir) {
-    final DDLTransform creator = new DDLTransform(database);
+  public static DDL[] createDDL(final xds_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+    final Generator creator = new Generator(schema);
     final DDL[] ddls = creator.parse(vendor);
     final StringBuilder sql = new StringBuilder();
     for (int i = ddls.length - 1; i >= 0; --i)
@@ -450,35 +450,35 @@ public final class DDLTransform extends XDLTransformer {
       for (final String create : ddl.create)
         sql.append(create).append(";\n\n");
 
-    final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + database._name$().text() + ";\n\n" + sql : sql.toString();
+    final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + schema._name$().text() + ";\n\n" + sql : sql.toString();
     writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
     return ddls;
   }
 
-  public static DDLTransform transformDDL(final URL url) throws IOException, XMLException {
-    final xds_schema database = parseArguments(url, null);
-    return new DDLTransform(database);
+  public static Generator transformDDL(final URL url) throws IOException, XMLException {
+    final xds_schema schema = parseArguments(url, null);
+    return new Generator(schema);
   }
 
-  private static void checkName(String string) {
+  private static String checkNameViolation(String string, final boolean strict) {
     string = string.toUpperCase();
 
     final Integer mask = reservedWords.get(string);
     if (mask == null)
-      return;
+      return null;
 
     final SQLStandardEnum[] enums = SQLStandardEnum.toArray(mask);
-    String message = "The name '" + string + "' is reserved word in " + enums[0];
+    final StringBuilder message = new StringBuilder("The name '").append(string).append("' is reserved word in ").append(enums[0]);
 
     for (int i = 1; i < enums.length; i++)
-      message += ", " + enums[i];
+      message.append(", ").append(enums[i]);
 
-    message += ".";
-    Log.warn(message);
+    message.append(".");
+    return message.toString();
   }
 
-  private DDLTransform(final xds_schema database) {
-    super(database);
+  private Generator(final xds_schema schema) {
+    super(schema);
   }
 
   private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
@@ -575,7 +575,7 @@ public final class DDLTransform extends XDLTransformer {
     return clause;
   }
 
-  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) {
+  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) throws GeneratorExecutionException {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $xds_constraints constraints = table._constraints(0);
@@ -616,10 +616,8 @@ public final class DDLTransform extends XDLTransformer {
         for (final $xds_named primaryColumn : primaryKey._column()) {
           final String primaryKeyColumn = primaryColumn._name$().text();
           final $xds_column column = columnNameToColumn.get(primaryKeyColumn);
-          if (column._null$().text()) {
-            Log.error("Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
-            System.exit(1);
-          }
+          if (column._null$().text())
+            throw new GeneratorExecutionException("Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
 
           primaryKeyBuffer.append(", ").append(primaryKeyColumn);
         }
@@ -751,36 +749,52 @@ public final class DDLTransform extends XDLTransformer {
     return contraintsBuffer.toString();
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) {
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$xds_column> columnNameToColumn, final $xds_table table, final xds_schema schema) throws GeneratorExecutionException {
+    final boolean strict = $xds_compliant._compliance$.strict.text().equals(schema._compliance$().text());
     final String tableName = table._name$().text();
-    checkName(tableName);
+    final List<String> violations = new ArrayList<String>();
+    String violation = checkNameViolation(tableName, strict);
+    if (violation != null)
+      violations.add(violation);
 
-    if (tableNames.contains(tableName)) {
-      Log.error("Circular dependency detected for table: " + tableName);
-      System.exit(1);
-    }
+    if (tableNames.contains(tableName))
+      throw new GeneratorExecutionException("Circular table dependency detected: " + schema._name$().text() + "." + tableName);
 
     tableNames.add(tableName);
     if (table._column() != null) {
       for (final $xds_column column : table._column()) {
         final String columnName = column._name$().text();
-        checkName(columnName);
+        violation = checkNameViolation(columnName, strict);
+        if (violation != null)
+          violations.add(violation);
+
         final $xds_column existing = columnNameToColumn.get(columnName);
-        if (existing != null) {
-          Log.error("Duplicate column definition: " + tableName + "." + columnName);
-          System.exit(1);
-        }
+        if (existing != null)
+          throw new GeneratorExecutionException("Duplicate column definition: " + schema._name$().text() + "." + tableName + "." + columnName);
 
         columnNameToColumn.put(columnName, column);
       }
     }
+
+    if (violations.size() > 0) {
+      if (strict) {
+        final StringBuilder builder = new StringBuilder();
+        for (final String v : violations)
+          builder.append(" ").append(v);
+
+        throw new GeneratorExecutionException(schema._name$().text() + ": " + builder.substring(1));
+      }
+
+      for (final String v : violations)
+        Log.warn(v);
+    }
   }
 
-  private String[] parseTable(final DBVendor vendor, final $xds_table table, final Set<String> tableNames) {
+  private String[] parseTable(final DBVendor vendor, final $xds_table table, final Set<String> tableNames) throws GeneratorExecutionException {
     insertDependency(table._name$().text(), null);
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$xds_column> columnNameToColumn = new HashMap<String,$xds_column>();
-    registerColumns(tableNames, columnNameToColumn, table);
+    registerColumns(tableNames, columnNameToColumn, table, merged);
 
     final List<String> statements = new ArrayList<String>();
     statements.addAll(vendor.getSQLSpec().types(table));
@@ -815,7 +829,7 @@ public final class DDLTransform extends XDLTransformer {
       dependants.add(source);
   }
 
-  public DDL[] parse(final DBVendor vendor) {
+  public DDL[] parse(final DBVendor vendor) throws GeneratorExecutionException {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
 
     final Map<String,String[]> dropStatements = new HashMap<String,String[]>();

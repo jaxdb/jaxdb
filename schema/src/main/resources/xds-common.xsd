@@ -207,6 +207,21 @@
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
   </xs:attributeGroup>
   
+  <xs:complexType name="compliant">
+    <xs:complexContent>
+      <xs:extension base="xds:named">
+        <xs:attribute name="compliance" default="strict">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="lax"/>
+              <xs:enumeration value="strict"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="xds:named">
