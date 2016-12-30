@@ -438,10 +438,20 @@ public abstract class DML {
     return new BooleanCondition(Operator.AND, conditions);
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> AND(final Collection<Condition<?>> conditions) {
+    return new BooleanCondition(Operator.AND, conditions.toArray(new Condition<?>[conditions.size()]));
+  }
+
   @SafeVarargs
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static BooleanCondition<?> OR(final Condition<?> ... conditions) {
     return new BooleanCondition(Operator.OR, conditions);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> OR(final Collection<Condition<?>> conditions) {
+    return new BooleanCondition(Operator.OR, conditions.toArray(new Condition<?>[conditions.size()]));
   }
 
   public static <T>LogicalCondition<T> GT(final Variable<T> a, final Variable<? super T> b) {
