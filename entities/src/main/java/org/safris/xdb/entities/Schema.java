@@ -19,6 +19,8 @@ package org.safris.xdb.entities;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.safris.xdb.entities.exception.SQLExceptionCatalog;
+import org.safris.xdb.entities.exception.SQLInvalidSchemaNameException;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class Schema {
@@ -38,7 +40,7 @@ public abstract class Schema {
         return DBVendor.POSTGRE_SQL;
     }
     catch (final SQLException e) {
-      throw SQLErrorSpecException.lookup(e, null);
+      throw SQLExceptionCatalog.lookup(e);
     }
 
     return null;
@@ -47,13 +49,13 @@ public abstract class Schema {
   protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
     final EntityDataSource dataSource = EntityRegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new SQLErrorSpecException("No XDEDataSource has been registered for " + schema.getName());
+      throw new SQLInvalidSchemaNameException("No XDEDataSource has been registered for " + schema.getName());
 
     try {
       return dataSource.getConnection();
     }
     catch (final SQLException e) {
-      throw SQLErrorSpecException.lookup(e, null);
+      throw SQLExceptionCatalog.lookup(e);
     }
   }
 }

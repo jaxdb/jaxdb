@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.delete;
 import org.safris.xdb.schema.DBVendor;
 
@@ -65,7 +66,7 @@ class Delete {
         throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw SQLErrorSpecException.lookup(e, vendor);
+        throw SQLExceptionCatalog.lookup(e);
       }
     }
 

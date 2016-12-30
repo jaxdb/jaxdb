@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.schema.DBVendor;
 
 class Insert {
@@ -116,7 +117,7 @@ class Insert {
         throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw SQLErrorSpecException.lookup(e, vendor);
+        throw SQLExceptionCatalog.lookup(e);
       }
     }
 

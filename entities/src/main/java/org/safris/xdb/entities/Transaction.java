@@ -19,6 +19,8 @@ package org.safris.xdb.entities;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.safris.xdb.entities.exception.SQLExceptionCatalog;
+
 public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private volatile Boolean inited = false;
@@ -42,7 +44,7 @@ public class Transaction implements AutoCloseable {
         this.connection.setAutoCommit(false);
       }
       catch (final SQLException e) {
-        throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
+        throw SQLExceptionCatalog.lookup(e);
       }
 
       inited = true;
@@ -59,7 +61,7 @@ public class Transaction implements AutoCloseable {
       connection.commit();
     }
     catch (final SQLException e) {
-      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
+      throw SQLExceptionCatalog.lookup(e);
     }
   }
 
@@ -71,7 +73,7 @@ public class Transaction implements AutoCloseable {
       connection.rollback();
     }
     catch (final SQLException e) {
-      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
+      throw SQLExceptionCatalog.lookup(e);
     }
   }
 
@@ -84,7 +86,7 @@ public class Transaction implements AutoCloseable {
       connection.close();
     }
     catch (final SQLException e) {
-      throw SQLErrorSpecException.lookup(e, Schema.getDBVendor(connection));
+      throw SQLExceptionCatalog.lookup(e);
     }
   }
 }

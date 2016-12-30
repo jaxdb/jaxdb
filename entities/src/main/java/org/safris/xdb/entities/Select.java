@@ -34,6 +34,7 @@ import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.Direction;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
+import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
@@ -115,7 +116,7 @@ class Select {
           }
         }
         catch (final SQLException e) {
-          throw SQLErrorSpecException.lookup(e, vendor);
+          throw SQLExceptionCatalog.lookup(e);
         }
 
         if (entity != null) {
@@ -139,7 +140,7 @@ class Select {
           connection.close();
         }
         catch (final SQLException e) {
-          throw SQLErrorSpecException.lookup(e, vendor);
+          throw SQLExceptionCatalog.lookup(e);
         }
         finally {
           prototypes.clear();
@@ -187,7 +188,7 @@ class Select {
         throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
       }
       catch (final SQLException e) {
-        throw SQLErrorSpecException.lookup(e, vendor);
+        throw SQLExceptionCatalog.lookup(e);
       }
     }
   }
@@ -655,7 +656,7 @@ class Select {
                     variable.set(resultSet, ++index);
                 }
                 catch (final SQLException e) {
-                  throw SQLErrorSpecException.lookup(e, finalVendor);
+                  throw SQLExceptionCatalog.lookup(e);
                 }
 
                 rows.add((T[])new Entity[] {out});
@@ -672,7 +673,7 @@ class Select {
                   connection.close();
                 }
                 catch (final SQLException e) {
-                  throw SQLErrorSpecException.lookup(e, finalVendor);
+                  throw SQLExceptionCatalog.lookup(e);
                 }
                 finally {
                   rows.clear();
@@ -682,7 +683,7 @@ class Select {
           }
         }
         catch (final SQLException e) {
-          throw SQLErrorSpecException.lookup(e, vendor);
+          throw SQLExceptionCatalog.lookup(e);
         }
       }
 
