@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.expression;
+import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.schema.DBVendor;
 
@@ -99,6 +100,11 @@ class Update {
     @Override
     public final <T>SET SET(final DataType<T> set, final T to) {
       return new SET(this, set, Variable.valueOf(to));
+    }
+
+    @Override
+    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to) {
+      throw new UnsupportedOperationException();
     }
   }
 
@@ -185,18 +191,6 @@ class Update {
     private final DataType<?> set;
     private final Serializable to;
 
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final Evaluation<T> to) {
-      this.parent = parent;
-      this.set = set;
-      this.to = to;
-    }
-
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final Aggregate<T> to) {
-      this.parent = parent;
-      this.set = set;
-      this.to = to;
-    }
-
     @SuppressWarnings("unchecked")
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
       this.parent = parent;
@@ -214,6 +208,11 @@ class Update {
       this.parent = parent;
       this.set = set;
       this.to = Variable.valueOf(to);
+    }
+
+    @Override
+    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to) {
+      throw new UnsupportedOperationException();
     }
 
     @Override

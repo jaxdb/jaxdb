@@ -51,6 +51,10 @@ public final class Binary extends DataType<byte[]> {
     this.varying = varying;
   }
 
+  public Binary() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, true);
+  }
+
   protected Binary(final Binary copy) {
     super(copy);
     this.length = copy.length;

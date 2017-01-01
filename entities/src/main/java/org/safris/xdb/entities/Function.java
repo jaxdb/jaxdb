@@ -16,48 +16,28 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import org.safris.commons.lang.reflect.Classes;
-
-public class Function<T> extends Variable<T> {
-  private final Class<? extends DataType<? extends T>> dataType;
+public class Function<T> extends Subject<T> {
   private final String function;
+  protected final DML.SetQualifier qualifier;
+  protected final DataType<T> dataType;
 
-  protected Function(final Class<? extends DataType<? extends T>> dataType, final String function) {
-    super(null);
-    this.dataType = dataType;
+  protected Function(final String function, final DML.SetQualifier qualifier, final DataType<T> dataType) {
     this.function = function;
-  }
-
-  @Override
-  protected Entity owner() {
-    return null;
+    this.qualifier = qualifier;
+    this.dataType = dataType;
   }
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    serialization.sql.append(function).append("()");
-  }
+    serialization.sql.append(function).append("(");
+    if (dataType != null) {
+      tableAlias(dataType.owner(), true);
+      if (qualifier != null)
+        serialization.sql.append(qualifier).append(" ");
 
-  @Override
-  @SuppressWarnings("unchecked")
-  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    Class<?> cls = dataType.getClass();
-    do {
-      if (DataType.canSet(cls)) {
-        DataType.set(statement, parameterIndex, (Class<T>)Classes.getGenericSuperclasses(dataType.getClass())[0], this.value);
-        return;
-      }
+      serialization.sql.append(dataType);
     }
-    while ((cls = cls.getSuperclass()) != null);
-  }
 
-  @Override
-  @SuppressWarnings("unchecked")
-  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    this.value = DataType.get((Class<T>)Classes.getGenericSuperclasses(dataType.getClass())[0], resultSet, columnIndex);
+    serialization.sql.append(")");
   }
 }

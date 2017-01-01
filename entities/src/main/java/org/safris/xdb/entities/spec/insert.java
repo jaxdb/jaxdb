@@ -16,7 +16,24 @@
 
 package org.safris.xdb.entities.spec;
 
+import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.DISTINCT;
+import org.safris.xdb.entities.Subject;
+
 public interface insert {
-  public interface INSERT extends ExecuteUpdate {
+  public interface INSERT<T extends Subject<?>> extends ExecuteUpdate {
+    public select._SELECT<T> SELECT(final select.SELECT<T> select);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities);
   }
 }

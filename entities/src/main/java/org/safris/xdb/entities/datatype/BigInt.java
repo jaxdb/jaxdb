@@ -22,12 +22,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class BigInt extends DataType<BigInteger> {
+public final class BigInt extends Numeric<BigInteger> {
   protected static final int sqlType = Types.BIGINT;
 
   protected static BigInteger get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -65,17 +63,16 @@ public final class BigInt extends DataType<BigInteger> {
     this.max = max;
   }
 
+  public BigInt() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, null, null);
+  }
+
   protected BigInt(final BigInt copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

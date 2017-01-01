@@ -45,6 +45,10 @@ public final class Boolean extends DataType<java.lang.Boolean> {
     super(sqlType, java.lang.Boolean.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
+  public Boolean() {
+    this(null, null, null, null, false, false, true, null, null);
+  }
+
   protected Boolean(final Boolean copy) {
     super(copy);
   }

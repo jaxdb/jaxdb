@@ -20,11 +20,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Duration;
-import java.time.temporal.Temporal;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
+import org.safris.xdb.entities.datatype.Numeric;
+import org.safris.xdb.entities.datatype.Temporal;
 import org.safris.xdb.entities.spec.delete;
 import org.safris.xdb.entities.spec.expression;
 import org.safris.xdb.entities.spec.insert;
@@ -210,224 +212,193 @@ public abstract class DML {
 
   /** INSERT **/
 
-  public static insert.INSERT INSERT(final Entity entity) {
-    return new Insert.INSERT(entity);
+  @SafeVarargs
+  public static <T extends DataType<?>>insert.INSERT<T> INSERT(final T ... entities) {
+    return new Insert.INSERT<T>(entities);
+  }
+
+  public static <T extends Entity>insert.INSERT<T> INSERT(final T entity) {
+    return new Insert.INSERT<T>(entity);
   }
 
   /** Aggregate **/
 
-  public static class AVG<T> extends Aggregate<T> {
-    protected AVG(final SetQualifier qualifier, final DataType<T> dataType) {
-      super(qualifier, dataType);
-    }
-
-    protected AVG(final AVG<T> max) {
-      super(max);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.owner(), true);
-      serialization.sql.append("AVG(");
-      if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
-
-      serialization.sql.append(dataType).append(")");
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static org.safris.xdb.entities.datatype.Long COUNT(final DataType<?> dataType) {
+    final org.safris.xdb.entities.datatype.Long wrapper = new org.safris.xdb.entities.datatype.Long();
+    wrapper.setWrapper(new Function("COUNT", null, dataType));
+    return wrapper;
   }
 
-  public static <T>AVG<T> AVG(final DataType<T> dataType) {
-    return new AVG<T>(null, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static org.safris.xdb.entities.datatype.Long COUNT(final DISTINCT distinct, final DataType<?> dataType) {
+    final org.safris.xdb.entities.datatype.Long wrapper = new org.safris.xdb.entities.datatype.Long();
+    wrapper.setWrapper(new Function("COUNT", distinct, dataType));
+    return wrapper;
   }
 
-  public static <T>AVG<T> AVG(final DISTINCT distinct, final DataType<T> dataType) {
-    return new AVG<T>(distinct, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static org.safris.xdb.entities.datatype.Long COUNT(final ALL all, final DataType<?> dataType) {
+    final org.safris.xdb.entities.datatype.Long wrapper = new org.safris.xdb.entities.datatype.Long();
+    wrapper.setWrapper(new Function("COUNT", all, dataType));
+    return wrapper;
   }
 
-  public static <T>AVG<T> AVG(final ALL all, final DataType<T> dataType) {
-    return new AVG<T>(all, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SUM(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SUM", null, dataType));
+    return wrapper;
   }
 
-  public static class MAX<T> extends Aggregate<T> {
-    protected MAX(final SetQualifier qualifier, final DataType<T> dataType) {
-      super(qualifier, dataType);
-    }
-
-    protected MAX(final MAX<T> max) {
-      super(max);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.owner(), true);
-      serialization.sql.append("MAX(");
-      if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
-
-      serialization.sql.append(dataType).append(")");
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SUM(final DISTINCT distinct, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SUM", distinct, dataType));
+    return wrapper;
   }
 
-  public static <T>MAX<T> MAX(final DataType<T> dataType) {
-    return new MAX<T>(null, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SUM(final ALL all, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SUM", all, dataType));
+    return wrapper;
   }
 
-  public static <T>MAX<T> MAX(final DISTINCT distinct, final DataType<T> dataType) {
-    return new MAX<T>(distinct, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T AVG(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("AVG", null, dataType));
+    return wrapper;
   }
 
-  public static <T>MAX<T> MAX(final ALL all, final DataType<T> dataType) {
-    return new MAX<T>(all, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T AVG(final DISTINCT distinct, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("AVG", distinct, dataType));
+    return wrapper;
   }
 
-  public static class MIN<T> extends Aggregate<T> {
-    protected MIN(final SetQualifier qualifier, final DataType<T> dataType) {
-      super(qualifier, dataType);
-    }
-
-    protected MIN(final MIN<T> max) {
-      super(max);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.owner(), true);
-      serialization.sql.append("MIN(");
-      if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
-
-      serialization.sql.append(dataType).append(")");
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T AVG(final ALL all, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("AVG", all, dataType));
+    return wrapper;
   }
 
-  public static <T>MIN<T> MIN(final DataType<T> dataType) {
-    return new MIN<T>(null, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MAX(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MAX", null, dataType));
+    return wrapper;
   }
 
-  public static <T>MIN<T> MIN(final DISTINCT distinct, final DataType<T> dataType) {
-    return new MIN<T>(distinct, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MAX(final DISTINCT distinct, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MAX", distinct, dataType));
+    return wrapper;
   }
 
-  public static <T>MIN<T> MIN(final ALL all, final DataType<T> dataType) {
-    return new MIN<T>(all, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MAX(final ALL all, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MAX", all, dataType));
+    return wrapper;
   }
 
-  public static class SUM<T> extends Aggregate<T> {
-    protected SUM(final SetQualifier qualifier, final DataType<T> dataType) {
-      super(qualifier, dataType);
-    }
-
-    protected SUM(final SUM<T> max) {
-      super(max);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.owner(), true);
-      serialization.sql.append("SUM(");
-      if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
-
-      serialization.sql.append(dataType).append(")");
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MIN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MIN", null, dataType));
+    return wrapper;
   }
 
-  public static <T>SUM<T> SUM(final DataType<T> dataType) {
-    return new SUM<T>(null, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MIN(final DISTINCT distinct, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MIN", distinct, dataType));
+    return wrapper;
   }
 
-  public static <T>SUM<T> SUM(final DISTINCT distinct, final DataType<T> dataType) {
-    return new SUM<T>(distinct, dataType);
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends DataType<?>>T MIN(final ALL all, final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("MIN", all, dataType));
+    return wrapper;
   }
 
-  public static <T>SUM<T> SUM(final ALL all, final DataType<T> dataType) {
-    return new SUM<T>(all, dataType);
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Numeric<? super T> b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    return wrapper;
   }
 
-  public static class COUNT<T> extends Aggregate<T> {
-    protected COUNT(final SetQualifier qualifier, final DataType<T> dataType) {
-      super(qualifier, dataType);
-    }
-
-    protected COUNT(final COUNT<T> max) {
-      super(max);
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      tableAlias(dataType.owner(), true);
-      serialization.sql.append("COUNT(");
-      if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
-
-      serialization.sql.append(dataType).append(")");
-    }
+  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<? super T> b) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    return wrapper;
   }
 
-  public static <T>COUNT<T> COUNT(final DataType<T> dataType) {
-    return new COUNT<T>(null, dataType);
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final T b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    return wrapper;
   }
 
-  public static <T>COUNT<T> COUNT(final DISTINCT distinct, final DataType<T> dataType) {
-    return new COUNT<T>(distinct, dataType);
+  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final T b) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    return wrapper;
   }
 
-  public static <T>COUNT<T> COUNT(final ALL all, final DataType<T> dataType) {
-    return new COUNT<T>(all, dataType);
+  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Duration duration) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, duration));
+    return wrapper;
   }
 
-  private static final class PLUS<T> extends Evaluation<T> {
-    protected PLUS(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
-      super(a, operator, b);
-    }
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Numeric<? super T> b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    return wrapper;
   }
 
-  public static <T extends Number>PLUS<T> PLUS(final Variable<T> a, final Variable<? super T> b) {
-    return new PLUS<T>(a, Operator.PLUS, b);
+  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<? super T> b) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    return wrapper;
   }
 
-  public static <T extends Number>PLUS<T> PLUS(final Variable<T> a, final T b) {
-    return new PLUS<T>(a, Operator.PLUS, b);
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final T b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    return wrapper;
   }
 
-  public static <T extends Number>PLUS<T> PLUS(final T a, final T b) {
-    return new PLUS<T>(Variable.valueOf(a), Operator.PLUS, b);
+  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final T b) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    return wrapper;
   }
 
-  public static <T extends Temporal>PLUS<T> PLUS(final Variable<T> a, final Duration duration) {
-    return new PLUS<T>(a, Operator.PLUS, duration);
+  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Duration duration) {
+    final Temporal<T> wrapper = (Temporal<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, duration));
+    return wrapper;
   }
 
-  private static final class MINUS<T> extends Evaluation<T> {
-    protected MINUS(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
-      super(a, Operator.MINUS, b);
-    }
-  }
-
-  public static <T extends Number>MINUS<T> MINUS(final Variable<T> a, final Variable<? super T> b) {
-    return new MINUS<T>(a, Operator.MINUS, b);
-  }
-
-  public static <T extends Number>MINUS<T> MINUS(final Variable<T> a, final T b) {
-    return new MINUS<T>(a, Operator.MINUS, b);
-  }
-
-  public static <T extends Number>MINUS<T> MINUS(final T a, final T b) {
-    return new MINUS<T>(Variable.valueOf(a), Operator.MINUS, b);
-  }
-
-  public static <T extends Temporal>MINUS<T> MINUS(final Variable<T> a, final Duration duration) {
-    return new MINUS<T>(a, Operator.MINUS, duration);
-  }
-
-  private static class NOW extends Function<Temporal> {
+  private static class NOW extends DateTime {
     protected NOW() {
-      super(DateTime.class, "NOW");
+      super();
+      this.wrapper = new Function<LocalDateTime>("NOW", null, null);
     }
   }
+
+  private static final NOW NOW = new NOW();
 
   public static NOW NOW() {
-    return new NOW();
+    return NOW;
   }
 
   /** Condition **/
@@ -458,7 +429,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
+  public static <T>LogicalCondition<T> GT(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
+  }
+
   public static <T>LogicalCondition<T> GT(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.GT, a, b);
+  }
+
+  public static <T>LogicalCondition<T> GT(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
@@ -474,7 +453,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
+  public static <T>LogicalCondition<T> GTE(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
+  }
+
   public static <T>LogicalCondition<T> GTE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.GTE, a, b);
+  }
+
+  public static <T>LogicalCondition<T> GTE(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
@@ -490,7 +477,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
+  public static <T>LogicalCondition<T> EQ(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.EQ, a, b);
+  }
+
   public static <T>LogicalCondition<T> EQ(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(b != null ? Operator.EQ : Operator.IS, a, b);
+  }
+
+  public static <T>LogicalCondition<T> EQ(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
@@ -506,7 +501,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
+  public static <T>LogicalCondition<T> NE(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.NE, a, b);
+  }
+
   public static <T>LogicalCondition<T> NE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(b != null ? Operator.NE : Operator.IS_NOT, a, b);
+  }
+
+  public static <T>LogicalCondition<T> NE(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(b != null ? Operator.NE : Operator.IS_NOT, a, b);
   }
 
@@ -522,7 +525,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
+  public static <T>LogicalCondition<T> LT(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
+  }
+
   public static <T>LogicalCondition<T> LT(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.LT, a, b);
+  }
+
+  public static <T>LogicalCondition<T> LT(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
@@ -538,7 +549,15 @@ public abstract class DML {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
+  public static <T>LogicalCondition<T> LTE(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
+  }
+
   public static <T>LogicalCondition<T> LTE(final Variable<T> a, final T b) {
+    return new LogicalCondition<T>(Operator.LTE, a, b);
+  }
+
+  public static <T>LogicalCondition<T> LTE(final select.SELECT<? extends Variable<T>> a, final T b) {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
@@ -562,7 +581,17 @@ public abstract class DML {
   }
 
   @SafeVarargs
+  public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> ... b) {
+    return new Predicate<T>("IN", a, b);
+  }
+
+  @SafeVarargs
   public static <T>Predicate<T> IN(final Variable<T> a, final T ... b) {
+    return new Predicate<T>("IN", a, b);
+  }
+
+  @SafeVarargs
+  public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final T ... b) {
     return new Predicate<T>("IN", a, b);
   }
 
@@ -570,7 +599,15 @@ public abstract class DML {
     return new Predicate<T>("IN", a, b.toArray());
   }
 
+  public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final Collection<T> b) {
+    return new Predicate<T>("IN", a, b.toArray());
+  }
+
   public static <T>Predicate<T> IN(final Variable<T> a, final select.SELECT<? extends Variable<T>> b) {
+    return new Predicate<T>("IN", a, b);
+  }
+
+  public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final select.SELECT<? extends Variable<T>> b) {
     return new Predicate<T>("IN", a, b);
   }
 
@@ -589,7 +626,17 @@ public abstract class DML {
     }
 
     @SafeVarargs
+    public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final Variable<? super T> ... b) {
+      return new Predicate<T>("NOT IN", a, b);
+    }
+
+    @SafeVarargs
     public static <T>Predicate<T> IN(final Variable<T> a, final T ... b) {
+      return new Predicate<T>("NOT IN", a, b);
+    }
+
+    @SafeVarargs
+    public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final T ... b) {
       return new Predicate<T>("NOT IN", a, b);
     }
 
@@ -597,7 +644,15 @@ public abstract class DML {
       return new Predicate<T>("NOT IN", a, b.toArray());
     }
 
+    public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final Collection<T> b) {
+      return new Predicate<T>("NOT IN", a, b.toArray());
+    }
+
     public static <T>Predicate<T> IN(final Variable<T> a, final select.SELECT<? extends Variable<T>> b) {
+      return new Predicate<T>("NOT IN", a, b);
+    }
+
+    public static <T>Predicate<T> IN(final select.SELECT<? extends Variable<T>> a, final select.SELECT<? extends Variable<T>> b) {
       return new Predicate<T>("NOT IN", a, b);
     }
 

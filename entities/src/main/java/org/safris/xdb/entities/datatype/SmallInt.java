@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class SmallInt extends DataType<Short> {
+public final class SmallInt extends Numeric<Short> {
   protected static final int sqlType = Types.TINYINT;
 
   protected static Short get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -54,17 +52,16 @@ public final class SmallInt extends DataType<Short> {
     this.max = max;
   }
 
+  public SmallInt() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE);
+  }
+
   protected SmallInt(final SmallInt copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

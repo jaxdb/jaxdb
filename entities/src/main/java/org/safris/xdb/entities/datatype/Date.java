@@ -21,14 +21,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.time.LocalDate;
-import java.time.temporal.Temporal;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class Date extends DataType<LocalDate> {
+public final class Date extends Temporal<LocalDate> {
   protected static final int sqlType = Types.DATE;
 
   @SuppressWarnings("deprecation")
@@ -45,17 +42,16 @@ public final class Date extends DataType<LocalDate> {
       statement.setNull(parameterIndex, sqlType);
   }
 
-  public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<Temporal> generateOnInsert, final GenerateOn<Temporal> generateOnUpdate) {
+  public Date(final Entity owner, final String specName, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
     super(sqlType, LocalDate.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  }
+
+  public Date() {
+    this(null, null, null, null, false, false, true, null, null);
   }
 
   protected Date(final Date copy) {
     super(copy);
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

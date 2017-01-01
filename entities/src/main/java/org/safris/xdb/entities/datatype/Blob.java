@@ -54,6 +54,10 @@ public final class Blob extends DataType<InputStream> {
     this.length = length;
   }
 
+  public Blob() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE);
+  }
+
   protected Blob(final Blob copy) {
     super(copy);
     this.length = copy.length;

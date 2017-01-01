@@ -48,6 +48,10 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
     super(sqlType, type, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
+  public Enum(final Class<T> type) {
+    this(null, null, null, null, false, false, true, null, null, type);
+  }
+
   protected Enum(final Enum<T> copy) {
     super(copy);
   }

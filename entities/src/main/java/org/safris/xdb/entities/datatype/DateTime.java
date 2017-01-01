@@ -24,12 +24,10 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class DateTime extends DataType<LocalDateTime> {
+public class DateTime extends Temporal<LocalDateTime> {
   protected static final int sqlType = Types.TIMESTAMP;
 
   @SuppressWarnings("deprecation")
@@ -49,13 +47,12 @@ public final class DateTime extends DataType<LocalDateTime> {
     super(sqlType, LocalDateTime.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected DateTime(final DateTime copy) {
-    super(copy);
+  public DateTime() {
+    this(null, null, null, null, false, false, true, null, null);
   }
 
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
+  protected DateTime(final DateTime copy) {
+    super(copy);
   }
 
   @Override

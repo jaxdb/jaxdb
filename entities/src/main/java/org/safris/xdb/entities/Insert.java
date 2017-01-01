@@ -21,15 +21,26 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
+import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
 class Insert {
-  protected static class INSERT extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT {
-    protected final Entity entity;
+  protected static class INSERT<T extends Subject<?>> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT<T> {
+    protected final T[] entities;
+    protected final T entity;
 
-    protected INSERT(final Entity entity) {
+    @SafeVarargs
+    protected INSERT(final T ... entities) {
+      this.entities = entities;
+      this.entity = null;
+    }
+
+    protected INSERT(final T entity) {
       this.entity = entity;
+      this.entities = null;
     }
 
     @Override
@@ -40,90 +51,146 @@ class Insert {
     @Override
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("INSERT INTO ");
-      entity.serialize(this, serialization);
-      final StringBuilder columns = new StringBuilder();
-      final StringBuilder values = new StringBuilder();
-      if (serialization.statementType == PreparedStatement.class) {
-        for (final DataType dataType : entity.column()) {
-          if (!dataType.wasSet()) {
-            if (dataType.generateOnInsert == null)
-              continue;
+      if (entity != null) {
+        serialization.sql.append("INSERT INTO ");
+        entity.serialize(this, serialization);
+        final StringBuilder columns = new StringBuilder();
+        final StringBuilder values = new StringBuilder();
+        if (serialization.statementType == PreparedStatement.class) {
+          if (entity instanceof Entity) {
+            for (final DataType dataType : ((Entity)entity).column()) {
+              if (!dataType.wasSet()) {
+                if (dataType.generateOnInsert == null)
+                  continue;
 
-            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
+                dataType.value = dataType.generateOnInsert.generateStatic(dataType);
+              }
+
+              columns.append(", ").append(dataType.name);
+              values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
+              serialization.addParameter(dataType);
+            }
           }
-
-          columns.append(", ").append(dataType.name);
-          values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
-          serialization.addParameter(dataType);
+          else {
+            throw new UnsupportedOperationException();
+          }
         }
+        else if (serialization.statementType == Statement.class) {
+          if (entity instanceof Entity) {
+            for (final DataType dataType : ((Entity)entity).column()) {
+              if (!dataType.wasSet()) {
+                if (dataType.generateOnInsert == null)
+                  continue;
+
+                dataType.value = dataType.generateOnInsert.generateStatic(dataType);
+              }
+
+              columns.append(", ").append(dataType.name);
+              values.append(", ").append(VariableWrapper.toString(dataType.get()));
+            }
+          }
+          else {
+            throw new UnsupportedOperationException();
+          }
+        }
+        else {
+          throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+        }
+
+        serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
       }
-      else if (serialization.statementType == Statement.class) {
-        for (final DataType dataType : entity.column()) {
-          if (!dataType.wasSet()) {
-            if (dataType.generateOnInsert == null)
-              continue;
-
-            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-          }
-
-          columns.append(", ").append(dataType.name);
-          values.append(", ").append(VariableWrapper.toString(dataType.get()));
-        }
+      else if (entities != null) {
+        throw new UnsupportedOperationException("INSERT of individual columns is not yet implemented");
       }
       else {
-        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+        throw new RuntimeException("How did we get here?");
       }
-
-      serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     public int execute(final Transaction transaction) throws SQLException {
-      final Keyword<?> insert = getParentRoot(this);
-      final Class<? extends Schema> schema = (((INSERT)insert).entity).schema();
-      DBVendor vendor = null;
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(this, serialization);
-        Subject.clearAliases();
-        if (serialization.statementType == PreparedStatement.class) {
-          final int count;
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            count = statement.executeUpdate();
+      if (entity != null) {
+        final Keyword<?> insert = getParentRoot(this);
+        final Class<? extends Schema> schema = ((Entity)(((INSERT)insert).entity)).schema();
+        DBVendor vendor = null;
+        try {
+          final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
+          vendor = Schema.getDBVendor(connection);
+          final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
+          serialize(this, serialization);
+          Subject.clearAliases();
+          if (serialization.statementType == PreparedStatement.class) {
+            final int count;
+            try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
+              serialization.set(statement);
+              count = statement.executeUpdate();
+            }
+
+            if (transaction == null)
+              connection.close();
+
+            return count;
           }
 
-          if (transaction == null)
-            connection.close();
+          if (serialization.statementType == Statement.class) {
+            final int count;
+            try (final Statement statement = connection.createStatement()) {
+              count = statement.executeUpdate(serialization.sql.toString());
+            }
 
-          return count;
-        }
+            if (transaction == null)
+              connection.close();
 
-        if (serialization.statementType == Statement.class) {
-          final int count;
-          try (final Statement statement = connection.createStatement()) {
-            count = statement.executeUpdate(serialization.sql.toString());
+            return count;
           }
 
-          if (transaction == null)
-            connection.close();
-
-          return count;
+          throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
         }
-
-        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+        catch (final SQLException e) {
+          throw SQLExceptionCatalog.lookup(e);
+        }
       }
-      catch (final SQLException e) {
-        throw SQLExceptionCatalog.lookup(e);
+      else if (entities != null) {
+        throw new UnsupportedOperationException("INSERT of individual columns is not yet implemented");
+      }
+      else {
+        throw new RuntimeException("How did we get here?");
       }
     }
 
     @Override
     public int execute() throws SQLException {
       return execute(null);
+    }
+
+    @Override
+    public select._SELECT<T> SELECT(final select.SELECT<T> select) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final T ... entities) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final T ... entities) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+      throw new UnsupportedOperationException();
     }
   }
 }

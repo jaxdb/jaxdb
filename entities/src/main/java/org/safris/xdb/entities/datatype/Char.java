@@ -49,6 +49,10 @@ public final class Char extends DataType<String> {
     this.national = national;
   }
 
+  public Char() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, true, false);
+  }
+
   protected Char(final Char copy) {
     super(copy);
     this.length = copy.length;

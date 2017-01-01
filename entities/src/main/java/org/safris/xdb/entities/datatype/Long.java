@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class Long extends DataType<java.lang.Long> {
+public final class Long extends Numeric<java.lang.Long> {
   protected static final int sqlType = Types.INTEGER;
 
   protected static java.lang.Long get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -54,17 +52,16 @@ public final class Long extends DataType<java.lang.Long> {
     this.max = max;
   }
 
+  public Long() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE);
+  }
+
   protected Long(final Long copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

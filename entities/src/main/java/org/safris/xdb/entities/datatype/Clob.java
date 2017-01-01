@@ -49,6 +49,10 @@ public final class Clob extends DataType<Reader> {
     this.national = national;
   }
 
+  public Clob() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false);
+  }
+
   protected Clob(final Clob copy) {
     super(copy);
     this.length = copy.length;

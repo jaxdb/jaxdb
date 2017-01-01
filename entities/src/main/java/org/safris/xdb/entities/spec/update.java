@@ -18,6 +18,7 @@ package org.safris.xdb.entities.spec;
 
 import org.safris.xdb.entities.Condition;
 import org.safris.xdb.entities.DataType;
+import org.safris.xdb.entities.Subject;
 import org.safris.xdb.entities.Variable;
 
 public interface update {
@@ -29,6 +30,7 @@ public interface update {
     public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
     public <T>SET SET(final DataType<T> set, final Variable<T> to);
     public <T>SET SET(final DataType<T> set, final T to);
+    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to);
   }
 
   public interface UPDATE extends ExecuteUpdate {

@@ -16,7 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -134,6 +133,11 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
+    if (wrapper != null) {
+      wrapper.serialize(caller, serialization);
+      return;
+    }
+
     if (serialization.statementType == PreparedStatement.class) {
       if (Entity.tableAlias(entity, false) == null) {
         serialization.addParameter(this);
@@ -156,19 +160,6 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
   }
 
   protected abstract String getPreparedStatementMark(final DBVendor vendor);
-
-  @Override
-  @SuppressWarnings("unchecked")
-  public DataType<T> clone() {
-    try {
-      final Constructor<DataType<T>> constructor = (Constructor<DataType<T>>)getClass().getDeclaredConstructor(getClass());
-      constructor.setAccessible(true);
-      return constructor.newInstance(this);
-    }
-    catch (final ReflectiveOperationException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   @Override
   public boolean equals(final Object obj) {

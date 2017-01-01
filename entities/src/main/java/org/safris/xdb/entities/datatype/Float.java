@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class Float extends DataType<java.lang.Float> {
+public final class Float extends Numeric<java.lang.Float> {
   protected static final int sqlType = Types.FLOAT;
 
   protected static java.lang.Float get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -55,17 +53,16 @@ public final class Float extends DataType<java.lang.Float> {
     this.max = max;
   }
 
+  public Float() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, false, java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE);
+  }
+
   protected Float(final Float copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

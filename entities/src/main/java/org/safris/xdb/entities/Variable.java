@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.lang.reflect.Constructor;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -49,7 +50,26 @@ public abstract class Variable<T> extends Subject<Variable<T>> {
     return value;
   }
 
+  protected Subject<T> wrapper;
+
+  protected void setWrapper(final Subject<T> wrapper) {
+    this.wrapper = wrapper;
+  }
+
   protected abstract Entity owner();
   protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Variable<T> clone() {
+    try {
+      final Constructor<? extends Variable<T>> constructor = (Constructor<? extends Variable<T>>)getClass().getDeclaredConstructor(getClass());
+      constructor.setAccessible(true);
+      return constructor.newInstance(this);
+    }
+    catch (final ReflectiveOperationException e) {
+      throw new UnsupportedOperationException(e);
+    }
+  }
 }

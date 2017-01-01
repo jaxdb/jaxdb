@@ -23,12 +23,10 @@ import java.sql.Types;
 import java.time.LocalTime;
 
 import org.safris.commons.util.DateUtil;
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class Time extends DataType<LocalTime> {
+public final class Time extends Temporal<LocalTime> {
   protected static final int sqlType = Types.TIME;
 
   protected static LocalTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -49,13 +47,12 @@ public final class Time extends DataType<LocalTime> {
     super(sqlType, LocalTime.class, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
-  protected Time(final Time copy) {
-    super(copy);
+  public Time() {
+    this(null, null, null, null, false, false, true, null, null);
   }
 
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
+  protected Time(final Time copy) {
+    super(copy);
   }
 
   @Override

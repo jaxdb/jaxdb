@@ -16,23 +16,18 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Set;
 
-import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.entities.binding.Interval;
 import org.safris.xdb.entities.binding.Interval.Unit;
 import org.safris.xdb.schema.DBVendor;
 
-public abstract class Evaluation<T> extends Variable<T> {
+public class Evaluation<T> extends Subject<T> {
   private final Variable<T> a;
   private final Operator<Predicate<?>> operator;
   private final Object b;
 
   protected Evaluation(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
-    super(null);
     this.a = a;
     this.operator = operator;
     this.b = b;
@@ -61,22 +56,5 @@ public abstract class Evaluation<T> extends Variable<T> {
       serialization.sql.append(operator).append(" ");
       Keyword.format(this, b, serialization);
     }
-  }
-
-  @Override
-  protected Entity owner() {
-    return null;
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    DataType.set(statement, parameterIndex, (Class<T>)Classes.getGenericSuperclasses(value.getClass())[0], this.value);
-  }
-
-  @Override
-  @SuppressWarnings("unchecked")
-  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    this.value = DataType.get((Class<T>)Classes.getGenericSuperclasses(a.getClass())[0], resultSet, columnIndex);
   }
 }

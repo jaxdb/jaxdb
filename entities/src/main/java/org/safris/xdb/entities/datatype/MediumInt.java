@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class MediumInt extends DataType<Integer> {
+public final class MediumInt extends Numeric<Integer> {
   protected static final int sqlType = Types.SMALLINT;
 
   protected static Integer get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -54,17 +52,16 @@ public final class MediumInt extends DataType<Integer> {
     this.max = max;
   }
 
+  public MediumInt() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
+  }
+
   protected MediumInt(final MediumInt copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

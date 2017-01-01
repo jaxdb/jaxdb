@@ -21,12 +21,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
-public final class Decimal extends DataType<java.lang.Double> {
+public final class Decimal extends Numeric<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;
 
   protected static java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -55,17 +53,16 @@ public final class Decimal extends DataType<java.lang.Double> {
     this.max = max;
   }
 
+  public Decimal() {
+    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, false, java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE);
+  }
+
   protected Decimal(final Decimal copy) {
     super(copy);
     this.precision = copy.precision;
     this.unsigned = copy.unsigned;
     this.min = copy.min;
     this.max = copy.max;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

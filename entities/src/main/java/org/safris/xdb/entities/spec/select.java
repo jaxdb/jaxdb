@@ -17,11 +17,12 @@
 package org.safris.xdb.entities.spec;
 
 import org.safris.xdb.entities.Condition;
+import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.NATURAL;
+import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.Subject;
 import org.safris.xdb.entities.Variable;
-import org.safris.xdb.entities.DML.NATURAL;
-import org.safris.xdb.entities.DML.TYPE;
 
 public interface select {
   public interface _LIMIT<T extends Subject<?>> {
@@ -87,5 +88,8 @@ public interface select {
   }
 
   public interface SELECT<T extends Subject<?>> extends ExecuteQuery<T> {
+    public T AS(final T as);
+    public SELECT<T> UNION(final SELECT<T> as);
+    public SELECT<T> UNION(final ALL all, final SELECT<T> as);
   }
 }

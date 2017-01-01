@@ -86,10 +86,10 @@ class Select {
           entity = null;
           for (int i = 0; i < noColumns; i++) {
             final Pair<DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
-            final DataType dataType;
+            final Variable variable;
             if (dataTypePrototype.b == -1) {
-              dataType = dataTypePrototype.a.clone();
-              row[index++] = dataType;
+              variable = dataTypePrototype.a.clone();
+              row[index++] = variable;
             }
             else {
               if (currentTable != null && currentTable != dataTypePrototype.a.entity) {
@@ -109,10 +109,10 @@ class Select {
               if (entity == null)
                 prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
-              dataType = entity.column()[dataTypePrototype.b];
+              variable = entity.column()[dataTypePrototype.b];
             }
 
-            dataType.set(resultSet, i + 1);
+            variable.set(resultSet, i + 1);
           }
         }
         catch (final SQLException e) {
@@ -154,6 +154,21 @@ class Select {
   }
 
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
+    @Override
+    public T AS(final T as) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final select.SELECT<T> as) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+      throw new UnsupportedOperationException();
+    }
+
     @Override
     public final RowIterator<T> execute() throws SQLException {
       return execute(null);
@@ -546,6 +561,21 @@ class Select {
     }
 
     @Override
+    public T AS(final T as) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final select.SELECT<T> as) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     protected Keyword<T> parent() {
       return null;
     }
@@ -590,10 +620,6 @@ class Select {
             final DataType<?> dataType = (DataType<?>)subject;
             dataType.serialize(this, serialization);
           }
-          else if (subject instanceof Aggregate<?>) {
-            final Aggregate<?> aggregate = (Aggregate<?>)subject;
-            aggregate.serialize(this, serialization);
-          }
         }
 
         return;
@@ -624,11 +650,8 @@ class Select {
         }
 
         sql += select.substring(2) + " FROM " + entity.name() + " WHERE " + where.substring(5);
-        DBVendor vendor = null;
         try {
           final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
-          vendor = Schema.getDBVendor(connection);
-          final DBVendor finalVendor = vendor;
           final PreparedStatement statement = connection.prepareStatement(sql);
           int index = 0;
           for (final DataType<?> dataType : dataTypes)
