@@ -4,7 +4,7 @@
 
 ### Introduction
 
-**xdb-data** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. Based on the CohesionFirst™ approach, the **xdb-data** framework utilizes a strongly-typed [XDS (eXtensible Data Schema)][xds.xsd] file to generate a XML Schema document that translates XDS constructs into the XSD language. With a [single XSLT transform][data.xsl], the **xdb-data** tool leverages the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL data (that conforms to your SQL schema, defined in a XSD file).
+**xdb-data** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. Based on the CohesionFirst™ approach, the **xdb-data** framework utilizes a strongly-typed [XDS (eXtensible Data Schema)][xds.xsd] file to generate a XML Schema document that translates XDS constructs into the XSD language. With a [single XSLT transform][xdd.xsl], the **xdb-data** tool leverages the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL data (that conforms to your SQL schema, defined in a XSD file).
 
 ### Why **xdb-data**?
 
@@ -86,7 +86,7 @@ How can one create a SQL static data files that are not vendor specific? Often, 
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[data.xsl]: https://github.com/SevaSafris/xdb/blob/master/data/src/main/resources/data.xsl
+[xdd.xsl]: https://github.com/SevaSafris/xdb/blob/master/data/src/main/resources/xdd.xsl
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart

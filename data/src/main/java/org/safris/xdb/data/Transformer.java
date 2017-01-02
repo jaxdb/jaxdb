@@ -33,6 +33,6 @@ public class Transformer {
 
   public static void xdsToXsd(final URL file, final File out) throws IOException, TransformerException {
     out.getParentFile().mkdirs();
-    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("data.xsl").getURL(), file, out);
+    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("xdd.xsl").getURL(), file, out);
   }
 }

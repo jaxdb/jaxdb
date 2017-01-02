@@ -78,7 +78,7 @@
             <configuration>
               <destdir>target/generated-test-resources/xdb</destdir>
               <rename>/\.\S+$/.xsd/</rename>
-              <stylesheet>src/main/resources/data.xsl</stylesheet>
+              <stylesheet>src/main/resources/xdd.xsl</stylesheet>
               <includes>
                 <include>src/test/resources/world.xds</include>
               </includes>
