@@ -26,21 +26,35 @@ import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
+import org.safris.xdb.xdd.xe.$xdd_xdd;
 
 class Insert {
   protected static class INSERT<T extends Subject<?>> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT<T> {
-    protected final T[] entities;
-    protected final T entity;
+    private final Entity parent;
+    private final T[] entities;
+    private final T entity;
+    private final $xdd_xdd xdd;
 
     @SafeVarargs
-    protected INSERT(final T ... entities) {
+    protected INSERT(final Entity parent, final T ... entities) {
+      this.parent = parent;
       this.entities = entities;
       this.entity = null;
+      this.xdd = null;
     }
 
     protected INSERT(final T entity) {
+      this.parent = (Entity)entity;
       this.entity = entity;
       this.entities = null;
+      this.xdd = null;
+    }
+
+    protected INSERT(final $xdd_xdd xdd) {
+      this.parent = null;
+      this.entity = null;
+      this.entities = null;
+      this.xdd = xdd;
     }
 
     @Override
@@ -102,6 +116,9 @@ class Insert {
       else if (entities != null) {
         throw new UnsupportedOperationException("INSERT of individual columns is not yet implemented");
       }
+      else if (xdd != null) {
+        throw new UnsupportedOperationException("INSERT of $xdd_data is not yet implemented");
+      }
       else {
         throw new RuntimeException("How did we get here?");
       }
@@ -153,6 +170,9 @@ class Insert {
       }
       else if (entities != null) {
         throw new UnsupportedOperationException("INSERT of individual columns is not yet implemented");
+      }
+      else if (xdd != null) {
+        throw new UnsupportedOperationException("INSERT of $xdd_data is not yet implemented");
       }
       else {
         throw new RuntimeException("How did we get here?");

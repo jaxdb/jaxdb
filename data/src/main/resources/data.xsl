@@ -19,10 +19,12 @@
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:xds="http://xdb.safris.org/xds.xsd"
+  xmlns:xdd="http://xdb.safris.org/xdd.xsd"
   xmlns:function="http://xdb.safris.org/xdd.xsl"
   xmlns:ext="http://exslt.org/common" 
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
-  exclude-result-prefixes="function xs xsi ext xds math"
+  xmlns:saxon="http://saxon.sf.net/"
+  exclude-result-prefixes="ext function math saxon xds xs xsi"
   version="2.0">
   
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
@@ -33,9 +35,36 @@
   </xsl:variable>  
   
   <xsl:variable name="xmlns">
-    <xsl:element name="xdd:x" namespace="{$namespace}"/>
+    <xsl:element name="ns:x" namespace="{$namespace}"/>
   </xsl:variable>
   
+  <xsl:variable name="noTables">
+    <xsl:value-of select="count(/xds:schema/xds:table)"/>
+  </xsl:variable>
+  
+  <!-- This function is used to sort the tables in topological dependency order -->
+  <xsl:function name="function:computeWeight" as="xs:integer*" saxon:memo-function="yes">
+    <xsl:param name="node"/>
+    <xsl:param name="i"/>
+    <!-- generate a sequence containing the weights of each node I reference -->
+    <xsl:variable name="weights" as="xs:integer*">
+      <xsl:sequence select="0"/>
+      <xsl:for-each select="$node/xds:column/xds:foreignKey/@references">
+        <xsl:value-of select="function:computeWeight(/xds:schema/xds:table[@name=current() and $node/@name!=current()], $i + 1)"/>
+      </xsl:for-each>
+    </xsl:variable>
+    <!-- make my weight higher than any of the nodes I reference -->
+    <xsl:choose>
+      <xsl:when test="$noTables > $i">
+        <xsl:value-of select="max($weights)+1"/>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:message>ERROR: Loop detected in FOREIGN KEY relationship</xsl:message>
+        <xsl:value-of select="0"/>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:function>
+
   <xsl:function name="function:camel-case">
     <xsl:param name="string"/>
     <xsl:value-of select="string-join(for $s in tokenize($string, '\W+') return concat(upper-case(substring($s, 1, 1)), substring($s, 2)), '')"/>
@@ -70,49 +99,64 @@
         <xsl:value-of select="$namespace"/>
       </xsl:attribute>
       
+      <xs:import namespace="http://xdb.safris.org/xdd.xsd" schemaLocation="http://xdb.safris.org/xdd.xsd"/>
+      
       <xsl:for-each select="xds:table">
         <xs:complexType>
           <xsl:attribute name="name">
-            <xsl:value-of select="function:camel-case(@name)"/>
+            <xsl:value-of select="@name"/>
           </xsl:attribute>
-          <xsl:choose>
-            <xsl:when test="@extends">
-              <xs:complexContent>
-                <xs:extension>
-                  <xsl:attribute name="base">
-                    <xsl:text>xdd:</xsl:text>
-                    <xsl:value-of select="function:camel-case(@extends)"/>
-                  </xsl:attribute>
+          <xs:complexContent>
+            <xs:extension base="xdd:data">
+              <xsl:choose>
+                <xsl:when test="@extends">
+                  <xs:complexContent>
+                    <xs:extension>
+                      <xsl:attribute name="base">
+                        <xsl:text>ns:</xsl:text>
+                        <xsl:value-of select="function:camel-case(@extends)"/>
+                      </xsl:attribute>
+                      <xsl:apply-templates select="xds:column"/>
+                    </xs:extension>
+                  </xs:complexContent>
+                </xsl:when>
+                <xsl:otherwise>
                   <xsl:apply-templates select="xds:column"/>
-                </xs:extension>
-              </xs:complexContent>
-            </xsl:when>
-            <xsl:otherwise>
-              <xsl:apply-templates select="xds:column"/>
-            </xsl:otherwise>
-          </xsl:choose>
+                </xsl:otherwise>
+              </xsl:choose>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xsl:for-each>
       
       <xs:element name="data">
         <xs:complexType>
-          <xs:sequence>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xsl:for-each select="xds:table">
-                <xsl:if test="not(@abstract='true')">
-                  <xs:element>
-                    <xsl:attribute name="name">
-                      <xsl:value-of select="function:camel-case(@name)"/>
-                    </xsl:attribute>
-                    <xsl:attribute name="type">
-                      <xsl:text>xdd:</xsl:text>
-                      <xsl:value-of select="function:camel-case(@name)"/>
-                    </xsl:attribute>
-                  </xs:element>
-                </xsl:if>
-              </xsl:for-each>
-            </xs:choice>
-          </xs:sequence>
+          <xs:complexContent>
+            <xs:extension base="xdd:xdd">
+              <xs:sequence>
+                <xsl:for-each select="xds:table">
+                  <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
+                  <xsl:if test="not(@abstract='true')">
+                    <xs:element>
+                      <xsl:attribute name="name">
+                        <xsl:value-of select="function:camel-case(@name)"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="type">
+                        <xsl:text>ns:</xsl:text>
+                        <xsl:value-of select="@name"/>
+                      </xsl:attribute>
+                      <xsl:attribute name="minOccurs">
+                        <xsl:text>0</xsl:text>
+                      </xsl:attribute>
+                      <xsl:attribute name="maxOccurs">
+                        <xsl:text>unbounded</xsl:text>
+                      </xsl:attribute>
+                    </xs:element>
+                  </xsl:if>
+                </xsl:for-each>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
         <xsl:for-each select="xds:table">
           <xsl:if test="xds:constraints/xds:primaryKey">
@@ -122,7 +166,7 @@
               </xsl:attribute>
               <xs:selector>
                 <xsl:attribute name="xpath">
-                  <xsl:text>xdd:</xsl:text>
+                  <xsl:text>ns:</xsl:text>
                   <xsl:value-of select="function:camel-case(@name)"/>
                 </xsl:attribute>
               </xs:selector>
@@ -140,14 +184,14 @@
             <xsl:if test="xds:foreignKey">
               <xs:keyref>
                 <xsl:attribute name="refer">
-                  <xsl:value-of select="concat('xdd:key', function:camel-case(xds:foreignKey/@references))"/>
+                  <xsl:value-of select="concat('ns:key', function:camel-case(xds:foreignKey/@references))"/>
                 </xsl:attribute>
                 <xsl:attribute name="name">
                   <xsl:value-of select="concat('keyRef', function:camel-case(../@name), function:camel-case(xds:foreignKey/@references), function:camel-case(xds:foreignKey/@column))"/>
                 </xsl:attribute>
                 <xs:selector>
                   <xsl:attribute name="xpath">
-                    <xsl:text>xdd:</xsl:text>
+                    <xsl:text>ns:</xsl:text>
                     <xsl:value-of select="function:camel-case(../@name)"/>
                   </xsl:attribute>
                 </xs:selector>
@@ -211,10 +255,10 @@
       <xsl:if test="@xsi:type='enum'">
         <xs:simpleType>
           <xs:restriction base="xs:token">
-            <xsl:for-each select="tokenize(@values, ' ')">
+            <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
               <xs:enumeration>
                 <xsl:attribute name="value">
-                  <xsl:value-of select="."/>
+                  <xsl:value-of select="replace(., '\\`', ' ')"/>
                 </xsl:attribute>
               </xs:enumeration>
             </xsl:for-each>

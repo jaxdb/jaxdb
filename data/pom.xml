@@ -32,19 +32,55 @@
     <plugins>
       <plugin>
         <groupId>org.safris.maven.plugin</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
+        <artifactId>xsb-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>default</id>
+            <configuration>
+              <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+                <destdir explodeJars="true">${project.build.directory}/generated-sources/xsb</destdir>
+                <schemas>
+                  <schema>${basedir}/src/main/resources/xdd.xsd</schema>
+                </schemas>
+              </manifest>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test</id>
             <goals>
-              <goal>transform</goal>
+              <goal>generate</goal>
             </goals>
             <phase>generate-test-resources</phase>
             <configuration>
-              <destdir>target/generated-test-resources</destdir>
+              <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+                <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xsb</destdir>
+                <schemas>
+                  <schema>${basedir}/target/generated-test-resources/xdb/world.xsd</schema>
+                </schemas>
+                <excludes>
+                  <exclude>http://xdb.safris.org/xdd.xsd</exclude>
+                </excludes>
+              </manifest>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.safris.maven.plugin</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default-transform</id>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+            <configuration>
+              <destdir>target/generated-test-resources/xdb</destdir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/data.xsl</stylesheet>
               <includes>
-                <include>src/test/resources/classicmodels.xds</include>
+                <include>src/test/resources/world.xds</include>
               </includes>
             </configuration>
           </execution>
@@ -52,4 +88,16 @@
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <groupId>org.safris.xsb</groupId>
+      <artifactId>xsb-generator</artifactId>
+      <version>2.1.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>commons-xml</artifactId>
+      <version>1.0.2</version>
+    </dependency>
+  </dependencies>
 </project>
