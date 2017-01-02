@@ -92,12 +92,12 @@ public class Generator {
     // First create the abstract entities
     for (final $xds_table table : schema._table())
       if (table._abstract$().text())
-        tables += "\n\n" + makeTable(table);
+        tables += "\n\n" + makeEntity(table);
 
     // Then, in proper inheritance order, the real entities
     for (final $xds_table table : schema._table())
       if (!table._abstract$().text())
-        tables += "\n\n" + makeTable(table);
+        tables += "\n\n" + makeEntity(table);
 
     code += tables.substring(2) + "\n\n";
 
@@ -337,18 +337,15 @@ public class Generator {
     return count;
   }
 
-  public static String makeTable(final $xds_table table) {
+  public static String makeEntity(final $xds_table table) {
     final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Entity.class.getName();
     String out = "";
-    String abs = "";
-    if (table._abstract$().text())
-      abs = table._abstract$().text() ? " abstract" : "";
 
     final String entityName = Strings.toTitleCase(table._name$().text());
     final int totalColumnCount = getColumnCount(table, true);
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
-    out += "  public static" + abs + " class " + entityName + " extends " + ext + " {\n";
+    out += "  public static" + (table._abstract$().text() ? " abstract" : "") + " class " + entityName + " extends " + ext + " {\n";
     if (!table._abstract$().text()) {
       out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
       out += "    protected final " + DataType.class.getName() + "<?>[] column;\n";
@@ -376,32 +373,36 @@ public class Generator {
       out += "      this(wasSelected, new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
-      // Constructor with params
       String set = "";
-      if (table._column() != null) {
-        out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
-        String params = "";
-        for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
-          params += ", " + makeParam(table, column);
-        }
+      if (!table._abstract$().text()) {
+        // Constructor with primary columns
+        if (table._column() != null) {
+          out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
+          String params = "";
+          $xds_table t = table;
+          do {
+            for (int i = 0; i < t._column().size(); i++) {
+              final $xds_column column = t._column().get(i);
+              if (isPrimary(t, column)) {
+                params += ", " + makeParam(t, column);
+                final String columnName = Strings.toCamelCase(column._name$().text());
+                set += "\n      this." + columnName + ".set(" + columnName + ");";
+              }
+            }
+          }
+          while (!t._extends$().isNull() && (t = tableNameToTable.get(t._extends$().text())) != null);
 
-        out += params.substring(2) + ") {\n";
-        out += "      this();\n";
-        for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
-          final String columnName = Strings.toCamelCase(column._name$().text());
-          set += "\n      this." + columnName + ".set(" + columnName + ");";
+          out += params.substring(2) + ") {\n";
+          out += "      this();\n";
+          out += set.substring(1) + "\n    }\n\n";
         }
-
-        out += set.substring(1) + "\n    }\n\n";
       }
 
       // Copy constructor
       out += "    public " + Strings.toTitleCase(table._name$().text()) + "(final " + Strings.toTitleCase(table._name$().text()) + " copy) {\n";
       out += "      this();\n";
-      set = "";
       if (table._column() != null) {
+        set = "";
         for (int i = 0; i < table._column().size(); i++) {
           final $xds_column column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
@@ -488,15 +489,17 @@ public class Generator {
     return out;
   }
 
-  private static boolean isPrimary(final $xds_table table, final $xds_column column) {
-    final $xds_columns constraint = table._constraints(0)._primaryKey(0);
-    if (constraint.isNull())
-      return false;
+  private static boolean isPrimary($xds_table table, final $xds_column column) {
+    do {
+      final $xds_columns constraint = table._constraints(0)._primaryKey(0);
+      if (constraint.isNull())
+        return false;
 
-    for (final $xds_named col : constraint._column())
-      if (column._name$().text().equals(col._name$().text()))
-        return true;
-
+      for (final $xds_named col : constraint._column())
+        if (column._name$().text().equals(col._name$().text()))
+          return true;
+    }
+    while (!table._extends$().isNull() && (table = tableNameToTable.get(table._extends$().text())) != null);
     return false;
   }
 
