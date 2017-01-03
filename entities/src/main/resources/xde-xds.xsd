@@ -265,7 +265,7 @@
       <xs:field xpath="@name"/>
     </xs:key>
     <xs:keyref name="keyrefTableName" refer="xds:keyTableName">
-      <xs:selector xpath="./xds:table/xds:column/xds:constraints/xds:foreignKey | ./xds:table/xds:constraints/xds:foreignKey"/>
+      <xs:selector xpath="./xds:table/xds:column/xds:foreignKey | ./xds:table/xds:constraints/xds:foreignKey"/>
       <xs:field xpath="@references"/>
     </xs:keyref>
     <xs:keyref name="keyrefExtendsTableName" refer="xds:keyTableName">
