@@ -14,7 +14,7 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<data xmlns="xdd.world"
+<World xmlns="xdd.world"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="xdd.world ../../../target/generated-test-resources/xdb/world.xsd">
   <Country
@@ -32923,4 +32923,4 @@
     language="Shona"
     official="F"
     percentage="72.1"/>
-</data>
+</World>

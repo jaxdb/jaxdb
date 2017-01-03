@@ -14,7 +14,7 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<data xmlns="xdd.classicmodels"
+<Classicmodels xmlns="xdd.classicmodels"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="xdd.classicmodels ../../../target/generated-test-resources/xdb/classicmodels.xsd">
   <Office
@@ -24611,4 +24611,4 @@
     quantity="18"
     priceEach="94.92"
     orderLineNumber="2"/>
-</data>
+</Classicmodels>

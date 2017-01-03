@@ -106,58 +106,68 @@
           <xsl:attribute name="name">
             <xsl:value-of select="@name"/>
           </xsl:attribute>
-          <xs:complexContent>
-            <xs:extension base="xdd:data">
-              <xsl:choose>
-                <xsl:when test="@extends">
-                  <xs:complexContent>
-                    <xs:extension>
-                      <xsl:attribute name="base">
-                        <xsl:text>ns:</xsl:text>
-                        <xsl:value-of select="function:camel-case(@extends)"/>
-                      </xsl:attribute>
-                      <xsl:apply-templates select="xds:column"/>
-                    </xs:extension>
-                  </xs:complexContent>
-                </xsl:when>
-                <xsl:otherwise>
+          <xsl:choose>
+            <xsl:when test="@extends">
+              <xs:complexContent>
+                <xs:extension>
+                  <xsl:attribute name="base">
+                    <xsl:text>ns:</xsl:text>
+                    <xsl:value-of select="@extends"/>
+                  </xsl:attribute>
                   <xsl:apply-templates select="xds:column"/>
-                </xsl:otherwise>
-              </xsl:choose>
-            </xs:extension>
-          </xs:complexContent>
+                </xs:extension>
+              </xs:complexContent>
+            </xsl:when>
+            <xsl:otherwise>
+              <xs:complexContent>
+                <xs:extension base="xdd:data">
+                  <xsl:apply-templates select="xds:column"/>
+                </xs:extension>
+              </xs:complexContent>
+            </xsl:otherwise>
+          </xsl:choose>
         </xs:complexType>
       </xsl:for-each>
       
-      <xs:element name="data">
-        <xs:complexType>
-          <xs:complexContent>
-            <xs:extension base="xdd:xdd">
-              <xs:sequence>
-                <xsl:for-each select="xds:table">
-                  <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
-                  <xsl:if test="not(@abstract='true')">
-                    <xs:element>
-                      <xsl:attribute name="name">
-                        <xsl:value-of select="function:camel-case(@name)"/>
-                      </xsl:attribute>
-                      <xsl:attribute name="type">
-                        <xsl:text>ns:</xsl:text>
-                        <xsl:value-of select="@name"/>
-                      </xsl:attribute>
-                      <xsl:attribute name="minOccurs">
-                        <xsl:text>0</xsl:text>
-                      </xsl:attribute>
-                      <xsl:attribute name="maxOccurs">
-                        <xsl:text>unbounded</xsl:text>
-                      </xsl:attribute>
-                    </xs:element>
-                  </xsl:if>
-                </xsl:for-each>
-              </xs:sequence>
-            </xs:extension>
-          </xs:complexContent>
-        </xs:complexType>
+      <xs:complexType>
+        <xsl:attribute name="name">
+          <xsl:value-of select="@name"/>
+        </xsl:attribute>
+        <xs:complexContent>
+          <xs:extension base="xdd:xdd">
+            <xs:sequence>
+              <xsl:for-each select="xds:table">
+                <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
+                <xsl:if test="not(@abstract='true')">
+                  <xs:element>
+                    <xsl:attribute name="name">
+                      <xsl:value-of select="function:camel-case(@name)"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="type">
+                      <xsl:text>ns:</xsl:text>
+                      <xsl:value-of select="@name"/>
+                    </xsl:attribute>
+                    <xsl:attribute name="minOccurs">
+                      <xsl:text>0</xsl:text>
+                    </xsl:attribute>
+                    <xsl:attribute name="maxOccurs">
+                      <xsl:text>unbounded</xsl:text>
+                    </xsl:attribute>
+                  </xs:element>
+                </xsl:if>
+              </xsl:for-each>
+            </xs:sequence>
+          </xs:extension>
+        </xs:complexContent>
+      </xs:complexType>
+      <xs:element>
+        <xsl:attribute name="name">
+          <xsl:value-of select="function:camel-case(@name)"/>
+        </xsl:attribute>
+        <xsl:attribute name="type">
+          <xsl:text>ns:</xsl:text>
+          <xsl:value-of select="@name"/>
+        </xsl:attribute>
         <xsl:for-each select="xds:table">
           <xsl:if test="xds:constraints/xds:primaryKey">
             <xs:key>

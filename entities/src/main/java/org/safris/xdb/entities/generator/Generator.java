@@ -83,7 +83,7 @@ public class Generator {
       if (!dir.mkdirs())
         throw new Error("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String classSimpleName = schema._name$().text();
+    final String classSimpleName = Strings.toInstanceCase(schema._name$().text());
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
