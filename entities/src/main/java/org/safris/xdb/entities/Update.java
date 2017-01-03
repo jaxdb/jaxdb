@@ -156,13 +156,9 @@ class Update {
       if (!(caller instanceof Update.SET)) {
         final StringBuilder setClause = new StringBuilder();
         for (final DataType dataType : entity.column()) {
-          if (!dataType.primary) {
-            if (!dataType.wasSet()) {
-              if (dataType.generateOnUpdate == null)
-                continue;
-
+          if (!dataType.primary && (dataType.wasSet() || dataType.generateOnUpdate != null)) {
+            if (dataType.generateOnUpdate != null)
               dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
-            }
 
             serialization.addParameter(dataType);
             setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));

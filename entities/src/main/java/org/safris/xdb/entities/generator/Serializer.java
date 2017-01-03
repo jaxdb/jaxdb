@@ -43,10 +43,10 @@ public final class Serializer {
     if (object instanceof Short)
       return "(short)" + object;
 
-    if (object instanceof Float && Numbers.isWhole((float)object))
+    if (object instanceof Float && Numbers.isInteger((float)object))
       return object + "f";
 
-    if (object instanceof Double && Numbers.isWhole((double)object))
+    if (object instanceof Double && Numbers.isInteger((double)object))
       return object + "d";
 
     if (object instanceof Long)
