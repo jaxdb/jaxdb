@@ -120,7 +120,7 @@
             </xsl:when>
             <xsl:otherwise>
               <xs:complexContent>
-                <xs:extension base="xdd:data">
+                <xs:extension base="xdd:row">
                   <xsl:apply-templates select="xds:column"/>
                 </xs:extension>
               </xs:complexContent>
@@ -134,7 +134,7 @@
           <xsl:value-of select="@name"/>
         </xsl:attribute>
         <xs:complexContent>
-          <xs:extension base="xdd:xdd">
+          <xs:extension base="xdd:data">
             <xs:sequence>
               <xsl:for-each select="xds:table">
                 <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>

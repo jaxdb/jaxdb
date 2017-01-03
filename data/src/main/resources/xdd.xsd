@@ -19,8 +19,8 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://xdb.safris.org/xdd.xsd">
   
-  <xs:complexType name="xdd"/>
+  <xs:complexType name="data"/>
   
-  <xs:complexType name="data" abstract="true"/>
+  <xs:complexType name="row" abstract="true"/>
   
 </xs:schema>
