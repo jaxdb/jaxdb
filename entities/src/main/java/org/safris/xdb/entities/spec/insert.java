@@ -21,7 +21,10 @@ import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.Subject;
 
 public interface insert {
-  public interface INSERT<T extends Subject<?>> extends ExecuteUpdate {
+  public interface INSERT extends ExecuteUpdate {
+  }
+
+  public interface INSERT_SELECT<T extends Subject<?>> extends INSERT {
     public select._SELECT<T> SELECT(final select.SELECT<T> select);
 
     @SuppressWarnings("unchecked")

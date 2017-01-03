@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,28 +14,25 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.data;
+package org.safris.xdb.schema;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-
-import javax.xml.transform.TransformerException;
-
-import org.safris.commons.lang.Resources;
-
-public final class Transformer {
-  public static void main(final String[] args) throws IOException, TransformerException {
-    final File file = new File(args[0]);
-    final File out = new File(args[1]);
-    xdsToXsd(file.toURI().toURL(), out);
+public class Statement {
+  public static enum Type {
+    CREATE,
+    DROP
   }
 
-  public static void xdsToXsd(final URL file, final File out) throws IOException, TransformerException {
-    out.getParentFile().mkdirs();
-    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("xdd.xsl").getURL(), file, out);
+  public final String name;
+  public final String[] drop;
+  public final String[] create;
+
+  public Statement(final String name, final String[] drop, final String[] create) {
+    this.name = name;
+    this.drop = drop;
+    this.create = create;
   }
 
-  private Transformer() {
+  public String[] get(final Type type) {
+    return type == Type.CREATE ? create : type == Type.DROP ? drop : null;
   }
 }

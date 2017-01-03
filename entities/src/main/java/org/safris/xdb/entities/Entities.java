@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.safris.commons.lang.Strings;
 import org.safris.xdb.xdd.xe.$xdd_data;
-import org.safris.xdb.xdd.xe.$xdd_xdd;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.Element;
 import org.safris.xsb.runtime.QName;
@@ -61,8 +60,8 @@ public final class Entities {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Entity>T[] toEntities(final $xdd_xdd xdd) {
-    final Iterator<Binding> iterator = xdd.elementIterator();
+  public static <T extends Entity>T[] toEntities(final $xdd_data data) {
+    final Iterator<Binding> iterator = data.elementIterator();
     final List<Entity> entities = new ArrayList<Entity>();
     while (iterator.hasNext())
       entities.add(toEntity(($xdd_data)iterator.next()));

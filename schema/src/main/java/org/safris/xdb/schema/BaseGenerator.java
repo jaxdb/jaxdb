@@ -58,8 +58,7 @@ public abstract class BaseGenerator {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try (final InputStream in = url.openStream()) {
-      final xds_schema schema = (xds_schema)Bindings.parse(new InputSource(in));
-      return schema;
+      return (xds_schema)Bindings.parse(new InputSource(in));
     }
   }
 

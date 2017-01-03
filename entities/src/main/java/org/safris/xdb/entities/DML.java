@@ -32,6 +32,7 @@ import org.safris.xdb.entities.spec.expression;
 import org.safris.xdb.entities.spec.insert;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
+import org.safris.xdb.xdd.xe.$xdd_data;
 
 public abstract class DML {
   /** Direction **/
@@ -213,8 +214,13 @@ public abstract class DML {
   /** INSERT **/
 
   @SafeVarargs
-  public static <T extends Entity>insert.INSERT<T> INSERT(final T ... entities) {
+  public static <T extends Entity>insert.INSERT_SELECT<T> INSERT(final T ... entities) {
     return new Insert.INSERT<T>(entities);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static insert.INSERT INSERT(final $xdd_data data) {
+    return new Insert.INSERT(Entities.toEntities(data));
   }
 
   /** Aggregate **/

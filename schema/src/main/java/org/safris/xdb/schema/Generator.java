@@ -65,13 +65,17 @@ public final class Generator extends BaseGenerator {
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.parse(args[0]), null);
   }
 
-  public static DDL[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
+  public static String[] createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, XMLException {
+    return Generator.createDDL(url, vendor, null);
+  }
+
+  public static String[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
     return Generator.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static DDL[] createDDL(final xds_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+  public static String[] createDDL(final xds_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
     final Generator creator = new Generator(schema);
-    final DDL[] ddls = creator.parse(vendor);
+    final Statement[] ddls = creator.parse(vendor);
     final StringBuilder sql = new StringBuilder();
     for (int i = ddls.length - 1; i >= 0; --i)
       if (ddls[i].drop != null)
@@ -81,13 +85,13 @@ public final class Generator extends BaseGenerator {
     if (sql.length() > 0)
       sql.append("\n");
 
-    for (final DDL ddl : ddls)
+    for (final Statement ddl : ddls)
       for (final String create : ddl.create)
         sql.append(create).append(";\n\n");
 
     final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + schema._name$().text() + ";\n\n" + sql : sql.toString();
     writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
-    return ddls;
+    return out.split("\\s*;\\s*");
   }
 
   public static Generator transformDDL(final URL url) throws IOException, XMLException {
@@ -463,7 +467,7 @@ public final class Generator extends BaseGenerator {
       dependants.add(source);
   }
 
-  public DDL[] parse(final DBVendor vendor) throws GeneratorExecutionException {
+  public Statement[] parse(final DBVendor vendor) throws GeneratorExecutionException {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
 
     final Map<String,String[]> dropStatements = new HashMap<String,String[]>();
@@ -486,11 +490,11 @@ public final class Generator extends BaseGenerator {
         createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
     sortedTableOrder = TopologicalSort.sort(dependencyGraph);
-    final List<DDL> ddls = new ArrayList<DDL>();
+    final List<Statement> ddls = new ArrayList<Statement>();
     for (final String tableName : sortedTableOrder)
       if (!skipTables.contains(tableName))
-        ddls.add(new DDL(tableName, dropStatements.get(tableName), createTableStatements.get(tableName)));
+        ddls.add(new Statement(tableName, dropStatements.get(tableName), createTableStatements.get(tableName)));
 
-    return ddls.toArray(new DDL[ddls.size()]);
+    return ddls.toArray(new Statement[ddls.size()]);
   }
 }

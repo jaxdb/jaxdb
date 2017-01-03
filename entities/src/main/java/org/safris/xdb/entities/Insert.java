@@ -28,7 +28,7 @@ import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
 class Insert {
-  protected static class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT<T> {
+  protected static class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
     private final T[] entities;
 
     @SafeVarargs

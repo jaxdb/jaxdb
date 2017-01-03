@@ -16,6 +16,9 @@
 
 package org.safris.xdb.schema;
 
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
+
 import org.safris.xdb.schema.spec.DerbySQLSpec;
 import org.safris.xdb.schema.spec.MySQLSpec;
 import org.safris.xdb.schema.spec.PostgreSQLSpec;
@@ -25,6 +28,15 @@ public enum DBVendor {
   DERBY("Derby", new DerbySQLSpec()),
   MY_SQL("MySQL", new MySQLSpec()),
   POSTGRE_SQL("PostgreSQL", new PostgreSQLSpec());
+
+  public static DBVendor parse(final DatabaseMetaData metaData) throws SQLException {
+    final String vendorName = metaData.getDatabaseProductName().toLowerCase();
+    for (final DBVendor vendor : DBVendor.values())
+      if (vendorName.contains(vendor.name.toLowerCase()))
+        return vendor;
+
+    return null;
+  }
 
   public static DBVendor parse(final String value) {
     for (final DBVendor vendor : DBVendor.values())
