@@ -18,11 +18,11 @@ package org.safris.xdb.schema;
 
 import java.math.BigInteger;
 
+import org.safris.commons.lang.Arrays;
 import org.safris.xdb.xds.xe.$xds_index;
 import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.commons.lang.Strings;
 import org.safris.xsb.runtime.BindingList;
 
 public final class SQLDataTypes {
@@ -78,7 +78,7 @@ public final class SQLDataTypes {
   }
 
   public static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
-    final BigInteger maxForPrecision = new BigInteger(Strings.createRepeat('9', precision));
+    final BigInteger maxForPrecision = new BigInteger(String.valueOf(Arrays.createRepeat('9', precision)));
     if (max == null)
       max = maxForPrecision;
     else if (maxForPrecision.compareTo(max) == -1)
