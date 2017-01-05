@@ -16,14 +16,33 @@
 
 package org.safris.xdb.entities;
 
-import java.lang.reflect.Array;
+import java.io.ByteArrayInputStream;
+import java.io.StringReader;
 import java.lang.reflect.Field;
+import java.math.BigInteger;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.safris.commons.lang.Strings;
+import org.safris.commons.xml.binding.Base64Binary;
+import org.safris.xdb.entities.datatype.BigInt;
+import org.safris.xdb.entities.datatype.Long;
+import org.safris.xdb.entities.datatype.MediumInt;
+import org.safris.xdb.entities.datatype.SmallInt;
+import org.safris.xdb.xdd.xe.$xdd_binary;
+import org.safris.xdb.xdd.xe.$xdd_blob;
+import org.safris.xdb.xdd.xe.$xdd_clob;
 import org.safris.xdb.xdd.xe.$xdd_data;
+import org.safris.xdb.xdd.xe.$xdd_date;
+import org.safris.xdb.xdd.xe.$xdd_dateTime;
+import org.safris.xdb.xdd.xe.$xdd_enum;
+import org.safris.xdb.xdd.xe.$xdd_integer;
+import org.safris.xdb.xdd.xe.$xdd_row;
+import org.safris.xdb.xdd.xe.$xdd_time;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.Element;
 import org.safris.xsb.runtime.QName;
@@ -35,21 +54,50 @@ public final class Entities {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static Entity toEntity(final $xdd_data data) {
-    final Element element = (Element)data;
+  private static Entity toEntity(final $xdd_row row) {
+    final Element element = (Element)row;
     final $xs_anySimpleType owner = element.owner();
     final QName schemaName = getName(owner.getClass().getSuperclass());
-    final QName entityName = getName(data.getClass().getSuperclass());
+    final QName entityName = getName(row.getClass().getSuperclass());
 
     try {
-      final Class<?> binding = Class.forName("xdb.ddl." + Strings.toInstanceCase(schemaName.localPart()) + "." + Strings.toTitleCase(entityName.localPart()));
+      final Class<?> binding = Class.forName("xdb.ddl." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
       final Entity entity = (Entity)binding.newInstance();
-      final Iterator<? extends $xs_anySimpleType> attributeIterator = data.attributeIterator();
+      final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
       while (attributeIterator.hasNext()) {
         final $xs_anySimpleType attribute = attributeIterator.next();
         final Field field = binding.getField(Strings.toCamelCase(attribute.name().getLocalPart()));
         final DataType dataType = (DataType<?>)field.get(entity);
-        dataType.set(attribute.text());
+        final Object value = attribute.text();
+        if (value == null)
+          dataType.set(null);
+        else if (attribute instanceof $xdd_integer) {
+          // FIXME: Are we bounded by the size of long for BigInt here?
+          if (dataType instanceof BigInt)
+            dataType.set(value);
+          else if (dataType instanceof Long)
+            dataType.set(((BigInteger)value).longValue());
+          else if (dataType instanceof MediumInt)
+            dataType.set(((BigInteger)value).intValue());
+          else if (dataType instanceof SmallInt)
+            dataType.set((short)value);
+        }
+        else if (attribute instanceof $xdd_date)
+          dataType.set(LocalDate.parse((String)value));
+        else if (attribute instanceof $xdd_time)
+          dataType.set(LocalTime.parse((String)value));
+        else if (attribute instanceof $xdd_dateTime)
+          dataType.set(LocalDateTime.parse((String)value));
+        else if (attribute instanceof $xdd_enum)
+          dataType.set(dataType.type.getMethod("valueOf", String.class).invoke(null, (String)value));
+        else if (attribute instanceof $xdd_binary)
+          dataType.set(((Base64Binary)value).getBytes());
+        else if (attribute instanceof $xdd_blob)
+          dataType.set(new ByteArrayInputStream(((Base64Binary)value).getBytes()));
+        else if (attribute instanceof $xdd_clob)
+          dataType.set(new StringReader((String)value));
+        else
+          dataType.set(value);
       }
 
       return entity;
@@ -64,10 +112,9 @@ public final class Entities {
     final Iterator<Binding> iterator = data.elementIterator();
     final List<Entity> entities = new ArrayList<Entity>();
     while (iterator.hasNext())
-      entities.add(toEntity(($xdd_data)iterator.next()));
+      entities.add(toEntity(($xdd_row)iterator.next()));
 
-    final T[] array = (T[])Array.newInstance(entities.get(0).getClass(), entities.size());
-    return entities.toArray(array);
+    return (T[])entities.toArray(new Entity[entities.size()]);
   }
 
   private Entities() {

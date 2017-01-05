@@ -26,43 +26,43 @@ public abstract class Keyword<T extends Subject<?>> extends Serializable {
     }
     else if (serialization.statementType == PreparedStatement.class) {
       if (obj == null) {
-        serialization.sql.append("NULL");
+        serialization.append("NULL");
       }
       else if (obj instanceof Object[]) {
-        serialization.sql.append("(");
+        serialization.append("(");
         final Object[] arr = (Object[])obj;
         if (arr.length > 0) {
           if (arr[0] != null) {
             serialization.addParameter(VariableWrapper.valueOf(arr[0]));
-            serialization.sql.append("?");
+            serialization.append("?");
           }
           else {
-            serialization.sql.append("NULL");
+            serialization.append("NULL");
           }
 
           for (int i = 1; i < arr.length; i++) {
             if (arr[i] != null) {
               serialization.addParameter(VariableWrapper.valueOf(arr[i]));
-              serialization.sql.append(", ?");
+              serialization.append(", ?");
             }
             else {
-              serialization.sql.append("NULL");
+              serialization.append("NULL");
             }
           }
         }
 
-        serialization.sql.append(")");
+        serialization.append(")");
       }
       else if (obj instanceof Select.Execute<?>) {
         ((Select.Execute<?>)obj).serialize(caller, serialization);
       }
       else {
         serialization.addParameter(VariableWrapper.valueOf(obj));
-        serialization.sql.append("?");
+        serialization.append("?");
       }
     }
     else if (serialization.statementType == Statement.class) {
-      serialization.sql.append(VariableWrapper.toString(obj));
+      serialization.append(VariableWrapper.toString(obj));
     }
     else {
       throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());

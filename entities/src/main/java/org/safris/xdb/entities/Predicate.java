@@ -45,10 +45,10 @@ final class Predicate<T> extends Condition<Subject<T>> {
   protected void serialize(final Serializable caller, final Serialization serialization) {
     if (variable != null) {
       format(this, variable, serialization);
-      serialization.sql.append(" ");
+      serialization.append(" ");
     }
 
-    serialization.sql.append(predicate).append(" ");
+    serialization.append(predicate).append(" ");
     format(this, condition, serialization);
   }
 }

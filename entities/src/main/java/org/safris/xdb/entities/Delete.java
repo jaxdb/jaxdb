@@ -17,9 +17,7 @@
 package org.safris.xdb.entities;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.delete;
@@ -28,7 +26,7 @@ import org.safris.xdb.schema.DBVendor;
 class Delete {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
     @Override
-    public int execute(final Transaction transaction) throws SQLException {
+    public int[] execute(final Transaction transaction) throws SQLException {
       final Keyword<?> delete = getParentRoot(this);
       final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
@@ -38,32 +36,11 @@ class Delete {
         final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Subject.clearAliases();
-        if (serialization.statementType == PreparedStatement.class) {
-          final int count;
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            count = statement.executeUpdate();
-          }
+        final int[] count = serialization.executeUpdate(connection);
+        if (transaction == null)
+          connection.close();
 
-          if (transaction == null)
-            connection.close();
-
-          return count;
-        }
-
-        if (serialization.statementType == Statement.class) {
-          final int count;
-          try (final Statement statement = connection.createStatement()) {
-            count = statement.executeUpdate(serialization.sql.toString());
-          }
-
-          if (transaction == null)
-            connection.close();
-
-          return count;
-        }
-
-        throw new UnsupportedOperationException("Unsupported Statement type: " + serialization.statementType.getName());
+        return count;
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -71,7 +48,7 @@ class Delete {
     }
 
     @Override
-    public int execute() throws SQLException {
+    public int[] execute() throws SQLException {
       return execute(null);
     }
   }
@@ -93,7 +70,7 @@ class Delete {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       parent.serialize(this, serialization);
-      serialization.sql.append(" WHERE ");
+      serialization.append(" WHERE ");
       condition.serialize(this, serialization);
     }
   }
@@ -126,7 +103,7 @@ class Delete {
       if (caller == this && !entity.wasSelected())
         throw new UnsupportedOperationException("Entity '" + entity.name() + "' did not come from a SELECT");
 
-      serialization.sql.append("DELETE FROM ");
+      serialization.append("DELETE FROM ");
       entity.serialize(this, serialization);
 
       if (caller == this) {
@@ -136,7 +113,7 @@ class Delete {
           whereClause.append(" AND ").append(dataType.name).append(" = ?");
         }
 
-        serialization.sql.append(" WHERE ").append(whereClause.substring(5));
+        serialization.append(" WHERE ").append(whereClause.substring(5));
       }
     }
   }

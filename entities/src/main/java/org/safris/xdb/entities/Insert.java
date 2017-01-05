@@ -19,7 +19,6 @@ package org.safris.xdb.entities;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 import org.safris.xdb.entities.DML.ALL;
 import org.safris.xdb.entities.DML.DISTINCT;
@@ -47,12 +46,14 @@ class Insert {
       if (entities.length == 0)
         throw new IllegalArgumentException("entities.length == 0");
 
-      serialization.sql.append("INSERT INTO ");
+      serialization.append("INSERT INTO ");
       entities[0].serialize(this, serialization);
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
+      serialization.setHeading();
       if (serialization.statementType == PreparedStatement.class) {
-        for (final Entity entity : entities) {
+        for (int i = 0; i < entities.length; i++) {
+          final Entity entity = entities[i];
           for (final DataType dataType : entity.column()) {
             if (!dataType.wasSet()) {
               if (dataType.generateOnInsert == null)
@@ -65,10 +66,14 @@ class Insert {
             values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
             serialization.addParameter(dataType);
           }
+
+          if (i < entities.length - 2)
+            serialization.addBatch();
         }
       }
-      else if (serialization.statementType == Statement.class) {
-        for (final Entity entity : entities) {
+      else {
+        for (int i = 0; i < entities.length; i++) {
+          final Entity entity = entities[i];
           for (final DataType dataType : entity.column()) {
             if (!dataType.wasSet()) {
               if (dataType.generateOnInsert == null)
@@ -80,18 +85,18 @@ class Insert {
             columns.append(", ").append(dataType.name);
             values.append(", ").append(VariableWrapper.toString(dataType.get()));
           }
+
+          if (i < entities.length - 2)
+            serialization.addBatch();
         }
       }
-      else {
-        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
-      }
 
-      serialization.sql.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
+      serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    public int execute(final Transaction transaction) throws SQLException {
+    public int[] execute(final Transaction transaction) throws SQLException {
       final Keyword<?> insert = getParentRoot(this);
       final Class<? extends Schema> schema = (((INSERT)insert).entities[0]).schema();
       DBVendor vendor = null;
@@ -101,32 +106,12 @@ class Insert {
         final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Subject.clearAliases();
-        if (serialization.statementType == PreparedStatement.class) {
-          final int count;
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            count = statement.executeUpdate();
-          }
+        final int[] count = serialization.executeUpdate(connection);
 
-          if (transaction == null)
-            connection.close();
+        if (transaction == null)
+          connection.close();
 
-          return count;
-        }
-
-        if (serialization.statementType == Statement.class) {
-          final int count;
-          try (final Statement statement = connection.createStatement()) {
-            count = statement.executeUpdate(serialization.sql.toString());
-          }
-
-          if (transaction == null)
-            connection.close();
-
-          return count;
-        }
-
-        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+        return count;
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -134,7 +119,7 @@ class Insert {
     }
 
     @Override
-    public int execute() throws SQLException {
+    public int[] execute() throws SQLException {
       return execute(null);
     }
 

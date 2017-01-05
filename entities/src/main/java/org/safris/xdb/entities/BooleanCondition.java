@@ -27,9 +27,9 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
         condition.serialize(caller, serialization);
       }
       else {
-        serialization.sql.append("(");
+        serialization.append("(");
         condition.serialize(caller, serialization);
-        serialization.sql.append(")");
+        serialization.append(")");
       }
     }
     else {
@@ -55,7 +55,7 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   protected void serialize(final Serializable caller, final Serialization serialization) {
     for (int i = 0; i < conditions.length; i++) {
       formatBraces(this, operator, conditions[i], serialization);
-      serialization.sql.append(i < conditions.length - 1 ? " " + operator + " " : "");
+      serialization.append(i < conditions.length - 1 ? " " + operator + " " : "");
     }
   }
 }

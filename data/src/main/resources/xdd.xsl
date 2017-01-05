@@ -236,17 +236,24 @@
         </xsl:attribute>
       </xsl:if>
       <xsl:if test="@xsi:type='date'">
-        <xsl:attribute name="type">xs:date</xsl:attribute>
+        <xsl:attribute name="type">xdd:date</xsl:attribute>
       </xsl:if>
       <xsl:if test="@xsi:type='time'">
-        <xsl:attribute name="type">xs:time</xsl:attribute>
+        <xsl:attribute name="type">xdd:time</xsl:attribute>
       </xsl:if>
       <xsl:if test="@xsi:type='dateTime'">
-        <xsl:attribute name="type">xs:dateTime</xsl:attribute>
+        <xsl:attribute name="type">xdd:dateTime</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@xsi:type='float'">
+        <xsl:attribute name="type">xdd:float</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@xsi:type='boolean'">
+        <xsl:attribute name="type">xdd:boolean</xsl:attribute>
       </xsl:if>
       <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
         <xs:simpleType>
-          <xs:restriction base="xs:token">
+          <xs:restriction>
+            <xsl:attribute name="base">xdd:<xsl:value-of select="@xsi:type"/></xsl:attribute>
             <xs:maxLength>
               <xsl:attribute name="value">
                 <xsl:value-of select="@length"/>
@@ -262,9 +269,28 @@
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
+      <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
+        <xs:simpleType>
+          <xs:restriction>
+            <xsl:attribute name="base">xdd:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+            <xs:maxLength>
+              <xsl:attribute name="value">
+                <xsl:value-of select="@length"/>
+              </xsl:attribute>
+            </xs:maxLength>
+            <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
+              <xs:minLength>
+                <xsl:attribute name="value">
+                  <xsl:value-of select="@length"/>
+                </xsl:attribute>
+              </xs:minLength>
+            </xsl:if>
+          </xs:restriction>
+        </xs:simpleType>
+      </xsl:if>
       <xsl:if test="@xsi:type='enum'">
         <xs:simpleType>
-          <xs:restriction base="xs:token">
+          <xs:restriction base="xdd:enum">
             <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
               <xs:enumeration>
                 <xsl:attribute name="value">
@@ -277,7 +303,7 @@
       </xsl:if>
       <xsl:if test="@xsi:type='integer'">
         <xs:simpleType>
-          <xs:restriction base="xs:long">
+          <xs:restriction base="xdd:integer">
             <xs:maxInclusive>
               <xsl:attribute name="value">
                 <xsl:value-of select="function:precision-scale(@precision)"/>
@@ -301,7 +327,7 @@
       </xsl:if>
       <xsl:if test="@xsi:type='decimal'">
         <xs:simpleType>
-          <xs:restriction base="xs:decimal">
+          <xs:restriction base="xdd:decimal">
             <xs:fractionDigits>
               <xsl:attribute name="value">
                 <xsl:value-of select="@decimal"/>
@@ -325,6 +351,12 @@
                 </xsl:choose>
               </xsl:attribute>
             </xs:minInclusive>
+          </xs:restriction>
+        </xs:simpleType>
+      </xsl:if>
+      <xsl:if test="@xsi:type='float'">
+        <xs:simpleType>
+          <xs:restriction base="xdd:float">
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>

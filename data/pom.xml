@@ -59,6 +59,7 @@
                 </schemas>
                 <excludes>
                   <exclude>http://xdb.safris.org/xdd.xsd</exclude>
+                  <exclude>http://commons.safris.org/xml/datatypes.xsd</exclude>
                 </excludes>
               </manifest>
             </configuration>

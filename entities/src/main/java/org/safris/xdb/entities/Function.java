@@ -29,15 +29,15 @@ public class Function<T> extends Subject<T> {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    serialization.sql.append(function).append("(");
+    serialization.append(function).append("(");
     if (dataType != null) {
       tableAlias(dataType.owner(), true);
       if (qualifier != null)
-        serialization.sql.append(qualifier).append(" ");
+        serialization.append(qualifier.toString()).append(" ");
 
-      serialization.sql.append(dataType);
+      serialization.append(dataType.toString());
     }
 
-    serialization.sql.append(")");
+    serialization.append(")");
   }
 }

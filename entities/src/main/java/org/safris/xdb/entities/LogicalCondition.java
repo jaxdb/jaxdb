@@ -38,7 +38,7 @@ final class LogicalCondition<T> extends Condition<T> {
       throw new IllegalArgumentException("Left hand side of condition cannot be null");
 
     format(this, a, serialization);
-    serialization.sql.append(" ").append(operator).append(" ");
+    serialization.append(" ").append(operator).append(" ");
     format(this, b, serialization);
   }
 }

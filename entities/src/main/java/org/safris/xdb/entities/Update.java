@@ -17,9 +17,7 @@
 package org.safris.xdb.entities;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,7 +36,7 @@ class Update {
      * @exception SQLException if a database access error occurs
      */
     @Override
-    public int execute(final Transaction transaction) throws SQLException {
+    public int[] execute(final Transaction transaction) throws SQLException {
       final Keyword<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
@@ -48,32 +46,11 @@ class Update {
         final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
         serialize(this, serialization);
         Subject.clearAliases();
-        if (serialization.statementType == PreparedStatement.class) {
-          final int count;
-          try (final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString())) {
-            serialization.set(statement);
-            count = statement.executeUpdate();
-          }
+        final int[] count = serialization.executeUpdate(connection);
+        if (transaction == null)
+          connection.close();
 
-          if (transaction == null)
-            connection.close();
-
-          return count;
-        }
-
-        if (serialization.statementType == Statement.class) {
-          final int count;
-          try (final Statement statement = connection.createStatement()) {
-            count = statement.executeUpdate(serialization.sql.toString());
-          }
-
-          if (transaction == null)
-            connection.close();
-
-          return count;
-        }
-
-        throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+        return count;
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -81,7 +58,7 @@ class Update {
     }
 
     @Override
-    public int execute() throws SQLException {
+    public int[] execute() throws SQLException {
       return execute(null);
     }
   }
@@ -125,7 +102,7 @@ class Update {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       parent.serialize(this, serialization);
-      serialization.sql.append(" WHERE ");
+      serialization.append(" WHERE ");
       condition.serialize(this, serialization);
     }
   }
@@ -151,7 +128,7 @@ class Update {
       if (!(caller instanceof Update.SET) && entity.primary().length == 0)
         throw new UnsupportedOperationException("Entity '" + entity.name() + "' does not have a primary key, nor was WHERE clause specified");
 
-      serialization.sql.append("UPDATE ");
+      serialization.append("UPDATE ");
       entity.serialize(this, serialization);
       if (!(caller instanceof Update.SET)) {
         final StringBuilder setClause = new StringBuilder();
@@ -165,7 +142,7 @@ class Update {
           }
         }
 
-        serialization.sql.append(" SET ").append(setClause.substring(2));
+        serialization.append(" SET ").append(setClause.substring(2));
         final StringBuilder whereClause = new StringBuilder();
         for (final DataType dataType : entity.column()) {
           if (dataType.primary) {
@@ -177,7 +154,7 @@ class Update {
           }
         }
 
-        serialization.sql.append(" WHERE ").append(whereClause.substring(5));
+        serialization.append(" WHERE ").append(whereClause.substring(5));
       }
     }
   }
@@ -237,13 +214,13 @@ class Update {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       parent.serialize(this, serialization);
       if (parent instanceof Update.UPDATE)
-        serialization.sql.append(" SET ");
+        serialization.append(" SET ");
 
       set.serialize(this, serialization);
-      serialization.sql.append(" = ");
+      serialization.append(" = ");
       format(this, to, serialization);
       if (caller instanceof Update.SET) {
-        serialization.sql.append(", ");
+        serialization.append(", ");
       }
       else {
         final Set<DataType<?>> setColumns = new HashSet<DataType<?>>();
@@ -253,7 +230,7 @@ class Update {
           if (!setColumns.contains(column) && column.generateOnUpdate != null)
             setClause.append(", ").append(column.name).append(" = ").append(column.generateOnUpdate.generateDynamic(serialization, column));
 
-        serialization.sql.append(setClause);
+        serialization.append(setClause);
       }
     }
   }

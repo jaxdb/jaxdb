@@ -141,18 +141,18 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
     if (serialization.statementType == PreparedStatement.class) {
       if (Entity.tableAlias(entity, false) == null) {
         serialization.addParameter(this);
-        serialization.sql.append(getPreparedStatementMark(serialization.vendor));
+        serialization.append(getPreparedStatementMark(serialization.vendor));
       }
       else if (serialization.getType() != Select.class) {
-        serialization.sql.append(name);
+        serialization.append(name);
       }
       else {
-        serialization.sql.append(toString());
+        serialization.append(toString());
       }
     }
     else if (serialization.statementType == Statement.class) {
       final String alias = Entity.tableAlias(entity, false);
-      serialization.sql.append(alias == null ? String.valueOf(get()) : serialization.getType() == Select.class ? alias + "." + name : name);
+      serialization.append(alias == null ? String.valueOf(get()) : serialization.getType() == Select.class ? alias + "." + name : name);
     }
     else {
       throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());

@@ -17,8 +17,11 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://xdb.safris.org/xds.xsd"
+  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
   xmlns:xds="http://xdb.safris.org/xds.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
   
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
@@ -99,7 +102,7 @@
       <xs:maxInclusive value="18446744073709551615"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="columns">
     <xs:sequence maxOccurs="unbounded">
       <xs:element name="column" type="xds:named"/>
@@ -221,6 +224,132 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:attributeGroup name="char">
+    <xs:attribute name="varying" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:string"/>
+    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="national" type="xs:boolean" default="false"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="UUID"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="clob">
+    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="national" type="xs:boolean" default="false"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="binary">
+    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="varying" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:base64Binary"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="blob">
+    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="float">
+    <xs:attributeGroup ref="xds:numeric"/>
+    <xs:attribute name="double" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:double"/>
+    <xs:attribute name="min" type="xs:double"/>
+    <xs:attribute name="max" type="xs:double"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="integer">
+    <xs:attributeGroup ref="xds:numeric"/>
+    <xs:attribute name="default" type="xds:integerType"/>
+    <xs:attribute name="min" type="xds:integerType"/>
+    <xs:attribute name="max" type="xds:integerType"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="AUTO_INCREMENT"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="decimal">
+    <xs:attributeGroup ref="xds:numeric"/>
+    <xs:attribute name="decimal" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:maxInclusive value="65"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="xs:decimal"/>
+    <xs:attribute name="min" type="xs:decimal"/>
+    <xs:attribute name="max" type="xs:decimal"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="date">
+    <xs:attribute name="default" type="xs:date"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="generateOnUpdate">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="time">
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
+    <xs:attribute name="default" type="dt:time"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="generateOnUpdate">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="dateTime">
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
+    <xs:attribute name="default" type="xs:dateTime"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="boolean">
+    <xs:attribute name="default" type="xs:boolean"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="enum">
+    <xs:attribute name="values" use="required">
+      <xs:simpleType>
+        <xs:list>
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:pattern value="[^ ]*"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:list>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="xs:string"/>
+  </xs:attributeGroup>
   
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>

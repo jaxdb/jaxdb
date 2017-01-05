@@ -21,6 +21,6 @@ import java.sql.SQLException;
 import org.safris.xdb.entities.Transaction;
 
 public interface ExecuteUpdate {
-  public int execute(final Transaction transaction) throws SQLException;
-  public int execute() throws SQLException;
+  public int[] execute(final Transaction transaction) throws SQLException;
+  public int[] execute() throws SQLException;
 }

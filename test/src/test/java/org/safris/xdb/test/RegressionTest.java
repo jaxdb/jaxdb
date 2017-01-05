@@ -19,6 +19,7 @@ package org.safris.xdb.test;
 import static org.safris.xdb.entities.DML.INSERT;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -27,13 +28,20 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Collections;
+import java.util.logging.Level;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.safris.commons.io.Files;
+import org.safris.commons.jci.CompilationException;
+import org.safris.commons.jci.JavaCompiler;
 import org.safris.commons.lang.Resources;
+import org.safris.commons.logging.Logging;
+import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.xml.XMLException;
 import org.safris.xdb.data.Transformer;
 import org.safris.xdb.entities.EntityDataSource;
@@ -49,23 +57,36 @@ import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public class RegressionTest {
+  private static final FileFilter fileFilter = new FileFilter() {
+    @Override
+    public boolean accept(final File pathname) {
+      return pathname.getName().endsWith(".java");
+    }
+  };
+
   @SuppressWarnings("unchecked")
   @BeforeClass
-  public static void generateBindings() throws GeneratorExecutionException, IOException, SQLException, TransformerException, XMLException, ClassNotFoundException {
+  public static void generateBindings() throws GeneratorExecutionException, CompilationException, IOException, SQLException, TransformerException, XMLException, ClassNotFoundException {
+    Logging.setLevel(Level.FINER);
     final URL xds = Resources.getResource("classicmodels.xds").getURL();
     final File destFile = new File("target/generated-test-resources/xdb/classicmodels.xsd");
     Transformer.xdsToXsd(xds, destFile);
 
-    final GeneratorContext generatorContext = new GeneratorContext(System.currentTimeMillis(), new File("target/generated-test-sources/xsb"), true, true);
+    final File xsbDestDir = new File("target/generated-test-sources/xsb");
+    final GeneratorContext generatorContext = new GeneratorContext(System.currentTimeMillis(), xsbDestDir, true, true);
     new org.safris.xsb.generator.Generator(generatorContext, Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null, null).generate();
 
-    org.safris.xdb.entities.generator.Generator.generate(xds, new File("target/generated-test-sources/xdb"));
+    final File xdeDestDir = new File("target/generated-test-sources/xdb");
+    org.safris.xdb.entities.generator.Generator.generate(xds, xdeDestDir);
+
+    final JavaCompiler compiler = new JavaCompiler(new File("target/test-classes"));
+    compiler.compile(Files.listAll(xdeDestDir, fileFilter));
 
     new EmbeddedDriver();
     final EntityDataSource entityDataSource = new EntityDataSource() {
       @Override
       public Connection getConnection() throws SQLException {
-        return DriverManager.getConnection("jdbc:derby:xdb-test;create=true");
+        return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:target/test-db;create=true"));
       }
     };
 
@@ -91,5 +112,11 @@ public class RegressionTest {
     }
 
     INSERT(data).execute();
+  }
+
+  @AfterClass
+  public static void after() throws IOException, SQLException {
+    DriverManager.getConnection("jdbc:derby:target/test-db;shutdown=true");
+    Files.deleteAllOnExit(new File("target/test-db").toPath());
   }
 }

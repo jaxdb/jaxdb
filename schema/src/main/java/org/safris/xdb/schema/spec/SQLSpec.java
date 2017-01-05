@@ -127,7 +127,7 @@ public abstract class SQLSpec {
       if (type._default$().isNull())
         return null;
 
-      if (type._default$().text().length() > type._length$().text())
+      if (type._default$().text().getBytes().length > type._length$().text())
         throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH " + type._length$().text());
 
       return "'" + type._default$().text() + "'";

@@ -17,13 +17,11 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://xdb.safris.org/xds.xsd"
-  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
   xmlns:xds="http://xdb.safris.org/xds.xsd"
   xmlns:xde="http://xdb.safris.org/xde.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
   <xs:import namespace="http://xdb.safris.org/xde.xsd" schemaLocation="xde.xsd"/>
-  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
   
   <xs:include schemaLocation="http://xdb.safris.org/xds-common.xsd"/>
   
@@ -40,10 +38,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="varying" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:string"/>
-        <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="national" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="xds:char"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -59,8 +54,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="national" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="xds:clob"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -70,9 +64,7 @@
   <xs:complexType name="binary">
     <xs:complexContent>
       <xs:extension base="xde:binary">
-        <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
-        <xs:attribute name="varying" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="dt:base64string"/>
+        <xs:attributeGroup ref="xds:binary"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -80,7 +72,7 @@
   <xs:complexType name="blob">
     <xs:complexContent>
       <xs:extension base="xde:blob">
-        <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+        <xs:attributeGroup ref="xds:blob"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -98,17 +90,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attributeGroup ref="xds:numeric"/>
-        <xs:attribute name="default" type="xds:integerType"/>
-        <xs:attribute name="min" type="xds:integerType"/>
-        <xs:attribute name="max" type="xds:integerType"/>
-        <xs:attribute name="generateOnInsert">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:enumeration value="AUTO_INCREMENT"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:attributeGroup ref="xds:integer"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -126,11 +108,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attributeGroup ref="xds:numeric"/>
-        <xs:attribute name="double" type="xs:boolean" default="false"/>
-        <xs:attribute name="default" type="xs:double"/>
-        <xs:attribute name="min" type="xs:double"/>
-        <xs:attribute name="max" type="xs:double"/>
+        <xs:attributeGroup ref="xds:float"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -148,17 +126,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attributeGroup ref="xds:numeric"/>
-        <xs:attribute name="decimal" use="required">
-          <xs:simpleType>
-            <xs:restriction base="xs:positiveInteger">
-              <xs:maxInclusive value="65"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default" type="xs:decimal"/>
-        <xs:attribute name="min" type="xs:decimal"/>
-        <xs:attribute name="max" type="xs:decimal"/>
+        <xs:attributeGroup ref="xds:decimal"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -168,7 +136,7 @@
   <xs:complexType name="date">
     <xs:complexContent>
       <xs:extension base="xde:date">
-        <xs:attribute name="default" type="xs:date"/>
+        <xs:attributeGroup ref="xds:date"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -176,8 +144,7 @@
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="xde:time">
-        <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
-        <xs:attribute name="default" type="xs:string"/>
+        <xs:attributeGroup ref="xds:time"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -185,8 +152,7 @@
   <xs:complexType name="dateTime">
     <xs:complexContent>
       <xs:extension base="xde:dateTime">
-        <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
-        <xs:attribute name="default" type="xs:dateTime"/>
+        <xs:attributeGroup ref="xds:dateTime"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -196,7 +162,7 @@
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="xde:boolean">
-        <xs:attribute name="default" type="xs:boolean"/>
+        <xs:attributeGroup ref="xds:boolean"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -206,18 +172,7 @@
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="xde:enum">
-        <xs:attribute name="values" use="required">
-          <xs:simpleType>
-            <xs:list>
-              <xs:simpleType>
-                <xs:restriction base="xs:string">
-                  <xs:pattern value="[^ ]*"/>
-                </xs:restriction>
-              </xs:simpleType>
-            </xs:list>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default" type="xs:NMTOKEN"/>
+        <xs:attributeGroup ref="xds:enum"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

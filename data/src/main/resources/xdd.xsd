@@ -15,12 +15,63 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <xs:schema elementFormDefault="qualified"
+  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
   xmlns:xdd="http://xdb.safris.org/xdd.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   targetNamespace="http://xdb.safris.org/xdd.xsd">
   
-  <xs:complexType name="data"/>
+  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
+
+  <xs:simpleType name="char">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="clob">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="binary">
+    <xs:restriction base="xs:base64Binary"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="blob">
+    <xs:restriction base="xs:base64Binary"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="integer">
+    <xs:restriction base="xs:integer"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="float">
+    <xs:restriction base="xs:double"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="decimal">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="date">
+    <xs:restriction base="xs:date"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="time">
+    <xs:restriction base="dt:time"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="dateTime">
+    <xs:restriction base="xs:dateTime"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="boolean">
+    <xs:restriction base="xs:boolean"/>
+  </xs:simpleType>
+  
+  <xs:simpleType name="enum">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
   
   <xs:complexType name="row" abstract="true"/>
+  
+  <xs:complexType name="data"/>
   
 </xs:schema>

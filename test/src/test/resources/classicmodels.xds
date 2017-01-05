@@ -82,27 +82,27 @@
     </constraints>
   </table>
   
-  <table name="order_detail">
-    <column name="order_number" xsi:type="integer" precision="8" unsigned="true" null="false">
-      <foreignKey references="order" column="order_number"/>
+  <table name="purchase_detail">
+    <column name="purchase_number" xsi:type="integer" precision="8" unsigned="true" null="false">
+      <foreignKey references="purchase" column="purchase_number"/>
     </column>
     <column name="product_code" xsi:type="char" length="8" null="false">
       <foreignKey references="product" column="code"/>
     </column>
     <column name="quantity" xsi:type="integer" precision="11" unsigned="true" null="false"/>
     <column name="price_each" xsi:type="decimal" precision="10" decimal="2" unsigned="true" null="false"/>
-    <column name="order_line_number" xsi:type="integer" precision="6" unsigned="true" null="false"/>
+    <column name="purchase_line_number" xsi:type="integer" precision="6" unsigned="true" null="false"/>
     <constraints>
       <primaryKey>
-        <column name="order_number"/>
+        <column name="purchase_number"/>
         <column name="product_code"/>
       </primaryKey>
     </constraints>
   </table>
   
-  <table name="order">
-    <column name="order_number" xsi:type="integer" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="order_date" xsi:type="date" null="false"/>
+  <table name="purchase">
+    <column name="purchase_number" xsi:type="integer" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="purchase_date" xsi:type="date" null="false"/>
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
     <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELLED"  null="false"/>
@@ -114,7 +114,7 @@
     </column>
     <constraints>
       <primaryKey>
-        <column name="order_number"/>
+        <column name="purchase_number"/>
       </primaryKey>
     </constraints>
   </table>

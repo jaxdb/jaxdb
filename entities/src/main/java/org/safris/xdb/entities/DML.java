@@ -48,7 +48,7 @@ public abstract class DML {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       variable.serialize(this, serialization);
-      serialization.sql.append(" ").append(getClass().getSimpleName());
+      serialization.append(" ").append(getClass().getSimpleName());
     }
 
     @Override
@@ -97,7 +97,7 @@ public abstract class DML {
 
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("NATURAL");
+      serialization.append("NATURAL");
     }
   }
 
@@ -115,35 +115,35 @@ public abstract class DML {
   public static final TYPE INNER = new TYPE() {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("INNER");
+      serialization.append("INNER");
     }
   };
 
   public static final TYPE LEFT = new TYPE() {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("LEFT OUTER");
+      serialization.append("LEFT OUTER");
     }
   };
 
   public static final TYPE RIGHT = new TYPE() {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("RIGHT OUTER");
+      serialization.append("RIGHT OUTER");
     }
   };
 
   public static final TYPE FULL = new TYPE() {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("FULL OUTER");
+      serialization.append("FULL OUTER");
     }
   };
 
   public static final TYPE UNION = new TYPE() {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("UNION");
+      serialization.append("UNION");
     }
   };
 
@@ -159,14 +159,14 @@ public abstract class DML {
   public static class ALL extends SetQualifier {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("ALL");
+      serialization.append("ALL");
     }
   }
 
   public static class DISTINCT extends SetQualifier {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
-      serialization.sql.append("DISTINCT");
+      serialization.append("DISTINCT");
     }
   }
 

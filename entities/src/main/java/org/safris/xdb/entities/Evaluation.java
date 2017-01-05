@@ -36,7 +36,7 @@ public class Evaluation<T> extends Subject<T> {
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
     a.serialize(this, serialization);
-    serialization.sql.append(" ");
+    serialization.append(" ");
     if (b instanceof Interval) {
       final Interval interval = (Interval)b;
 
@@ -46,14 +46,14 @@ public class Evaluation<T> extends Subject<T> {
         for (final Unit unit : units)
           clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
 
-        serialization.sql.append(" '").append(clause.substring(1)).append("'");
+        serialization.append(" '").append(clause.substring(1)).append("'");
       }
       else {
         throw new UnsupportedOperationException();
       }
     }
     else {
-      serialization.sql.append(operator).append(" ");
+      serialization.append(operator.toString()).append(" ");
       Keyword.format(this, b, serialization);
     }
   }

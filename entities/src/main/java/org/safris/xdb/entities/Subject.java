@@ -62,7 +62,7 @@ public abstract class Subject<T> extends Serializable {
       return entity.getClass().getEnclosingClass().getSimpleName() + "." + entity.name();
     }
 
-    if (serialization.vendor == DBVendor.POSTGRE_SQL) {
+    if (serialization.vendor == DBVendor.POSTGRE_SQL || serialization.vendor == DBVendor.DERBY) {
       return entity.name();
     }
 

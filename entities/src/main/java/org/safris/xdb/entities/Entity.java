@@ -41,10 +41,10 @@ public abstract class Entity extends Subject<Entity> {
 
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
-    serialization.sql.append(tableName(this, serialization));
+    serialization.append(tableName(this, serialization));
     final String alias = tableAlias(this, true);
     if (serialization.getType() == Select.class)
-      serialization.sql.append(" ").append(alias);
+      serialization.append(" ").append(alias);
   }
 
   @SuppressWarnings("unchecked")

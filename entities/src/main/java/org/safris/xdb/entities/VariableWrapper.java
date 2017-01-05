@@ -68,14 +68,14 @@ class VariableWrapper<T> extends Variable<T> {
   @Override
   protected void serialize(final Serializable caller, final Serialization serialization) {
     if (get() == null) {
-      serialization.sql.append("NULL");
+      serialization.append("NULL");
     }
     else if (serialization.statementType == PreparedStatement.class) {
       serialization.addParameter(this);
-      serialization.sql.append("?");
+      serialization.append("?");
     }
     else {
-      serialization.sql.append(toString(get()));
+      serialization.append(toString(get()));
     }
   }
 

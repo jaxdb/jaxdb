@@ -20,7 +20,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -54,7 +53,7 @@ class Select {
     }
   }
 
-  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final Statement statement, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
     final List<Pair<DataType<?>,Integer>> dataTypes = new ArrayList<Pair<DataType<?>,Integer>>();
     for (final Subject<?> entity : select.entities)
       Select.serialize(dataTypes, entity);
@@ -136,7 +135,7 @@ class Select {
       public void close() throws SQLException {
         try {
           resultSet.close();
-          statement.close();
+          resultSet.getStatement().close();
           connection.close();
         }
         catch (final SQLException e) {
@@ -187,20 +186,8 @@ class Select {
         serialize(this, serialization);
         Subject.clearAliases();
 
-        if (serialization.statementType == PreparedStatement.class) {
-          final PreparedStatement statement = connection.prepareStatement(serialization.sql.toString());
-          serialization.set(statement);
-          final ResultSet resultSet = statement.executeQuery();
-          return parseResultSet(serialization.vendor, connection, statement, resultSet, select);
-        }
-
-        if (serialization.statementType == Statement.class) {
-          final Statement statement = connection.createStatement();
-          final ResultSet resultSet = statement.executeQuery(serialization.sql.toString());
-          return parseResultSet(serialization.vendor, connection, statement, resultSet, select);
-        }
-
-        throw new UnsupportedOperationException("Unsupported Statement prototype class: " + serialization.statementType.getName());
+        final ResultSet resultSet = serialization.executeQuery(connection);
+        return parseResultSet(serialization.vendor, connection, resultSet, select);
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -273,15 +260,15 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" FROM ");
+        serialization.append(" FROM ");
 
         // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
         // FIXME: referring to, because this table must be the last in the table order here
         for (int i = 0; i < tables.length; i++) {
           if (i > 0)
-            serialization.sql.append(", ");
+            serialization.append(", ");
 
-          serialization.sql.append(Subject.tableName(tables[i], serialization)).append(" ").append(Subject.tableAlias(tables[i], true));
+          serialization.append(Subject.tableName(tables[i], serialization)).append(" ").append(Subject.tableAlias(tables[i], true));
         }
       }
       else {
@@ -322,7 +309,7 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" GROUP BY ").append(Subject.columnRef(variable));
+        serialization.append(" GROUP BY ").append(Subject.columnRef(variable));
       }
 
       throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
@@ -357,7 +344,7 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" HAVING ");
+        serialization.append(" HAVING ");
         condition.serialize(this, serialization);
         return;
       }
@@ -405,13 +392,13 @@ class Select {
         // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
         Subject.tableAlias(entity, true);
         parent.serialize(this, serialization);
-        serialization.sql.append(natural != null ? " NATURAL" : "");
+        serialization.append(natural != null ? " NATURAL" : "");
         if (type != null) {
-          serialization.sql.append(" ");
+          serialization.append(" ");
           type.serialize(this, serialization);
         }
 
-        serialization.sql.append(" JOIN ").append(Subject.tableName(entity, serialization)).append(" ").append(Subject.tableAlias(entity, true));
+        serialization.append(" JOIN ").append(Subject.tableName(entity, serialization)).append(" ").append(Subject.tableAlias(entity, true));
         return;
       }
 
@@ -446,9 +433,9 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" ON (");
+        serialization.append(" ON (");
         condition.serialize(this, serialization);
-        serialization.sql.append(")");
+        serialization.append(")");
         return;
       }
 
@@ -479,17 +466,17 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" ORDER BY ");
+        serialization.append(" ORDER BY ");
         for (int i = 0; i < columns.length; i++) {
           final Variable<?> variable = columns[i];
           if (i > 0)
-            serialization.sql.append(", ");
+            serialization.append(", ");
 
           if (variable instanceof DataType<?>) {
             final DataType<?> dataType = (DataType<?>)variable;
             Subject.tableAlias(dataType.entity, true);
             dataType.serialize(this, serialization);
-            serialization.sql.append(" ASC");
+            serialization.append(" ASC");
           }
           else if (variable instanceof Direction<?>) {
             ((Direction<?>)variable).serialize(this, serialization);
@@ -524,7 +511,7 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" LIMIT " + limit);
+        serialization.append(" LIMIT " + limit);
         return;
       }
 
@@ -587,21 +574,21 @@ class Select {
     @Override
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        serialization.sql.append("SELECT ");
+        serialization.append("SELECT ");
         if (all != null) {
           all.serialize(this, serialization);
-          serialization.sql.append(" ");
+          serialization.append(" ");
         }
 
         if (distinct != null) {
           distinct.serialize(this, serialization);
-          serialization.sql.append(" ");
+          serialization.append(" ");
         }
 
         for (int i = 0; i < entities.length; i++) {
           final Subject<?> subject = entities[i];
           if (i > 0)
-            serialization.sql.append(", ");
+            serialization.append(", ");
 
           if (subject instanceof Entity) {
             final Entity entity = (Entity)subject;
@@ -610,9 +597,9 @@ class Select {
             for (int j = 0; j < dataTypes.length; j++) {
               final DataType<?> dataType = dataTypes[j];
               if (j > 0)
-                serialization.sql.append(", ");
+                serialization.append(", ");
 
-              serialization.sql.append(alias).append(".").append(dataType.name);
+              serialization.append(alias).append(".").append(dataType.name);
             }
           }
           else if (subject instanceof DataType<?>) {
@@ -772,7 +759,7 @@ class Select {
     protected void serialize(final Serializable caller, final Serialization serialization) {
       if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
         parent.serialize(this, serialization);
-        serialization.sql.append(" WHERE ");
+        serialization.append(" WHERE ");
         condition.serialize(this, serialization);
       }
       else {
