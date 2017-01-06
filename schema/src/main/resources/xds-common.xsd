@@ -291,7 +291,7 @@
   </xs:attributeGroup>
   
   <xs:attributeGroup name="date">
-    <xs:attribute name="default" type="xs:date"/>
+    <xs:attribute name="default" type="dt:localDate"/>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:NCName">

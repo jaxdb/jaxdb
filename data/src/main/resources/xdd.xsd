@@ -51,7 +51,7 @@
   </xs:simpleType>
   
   <xs:simpleType name="date">
-    <xs:restriction base="xs:date"/>
+    <xs:restriction base="dt:localDate"/>
   </xs:simpleType>
   
   <xs:simpleType name="time">
