@@ -92,7 +92,7 @@ public class DataTest extends LoggableTest {
     final GeneratorContext generatorContext = new GeneratorContext(destDir, true, true);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd")), null).generate();
     try (final URLClassLoader classLoader = new URLClassLoader(new URL[] {destDir.toURI().toURL()})) {
-      classLoader.loadClass("classicmodels.xdd.xe");
+      Class.forName("classicmodels.xdd.xe", true, classLoader);
     }
 
     final URL xdd = Resources.getResource("classicmodels.xdd").getURL();
