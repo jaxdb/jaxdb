@@ -24,31 +24,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.jar.JarFile;
+import java.util.logging.Level;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.safris.commons.io.Files;
-import org.safris.commons.io.JarFiles;
 import org.safris.commons.jci.CompilationException;
 import org.safris.commons.jci.JavaCompiler;
-import org.safris.commons.lang.PackageNotFoundException;
-import org.safris.commons.lang.Resource;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.net.URLs;
-import org.safris.commons.sql.ConnectionProxy;
+import org.safris.commons.logging.Logging;
+import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.data.DataTest;
 import org.safris.xdb.entities.generator.Generator;
 import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-public class EntitiesTest {
+public class EntitiesTest extends LoggableTest {
+  static {
+    Logging.setLevel(Level.FINE);
+  }
+
   private static final FileFilter fileFilter = new FileFilter() {
     @Override
     public boolean accept(final File pathname) {
@@ -58,36 +58,30 @@ public class EntitiesTest {
 
   private static Connection connection;
 
-  @BeforeClass
   @SuppressWarnings("unchecked")
-  public static void create() throws ClassNotFoundException, CompilationException, IOException, PackageNotFoundException, SQLException, XMLException {
-    final Resource resource = Resources.getResource("test-db");
-    final File db = new File("target/generated-test-resources/test-db");
-    if (URLs.isJar(resource.getURL())) {
-      final JarFile jarFile = new JarFile(URLs.getParentJar(resource.getURL()).getPath());
-      final String path = URLs.getPathInJar(resource.getURL());
-      JarFiles.extract(jarFile, path, db.getParentFile());
-    }
-    else {
-      Files.copy(new File(resource.getURL().getPath()), db);
-    }
-
-    final URL xds = Resources.getResource("classicmodels.xds").getURL();
-    final File xdeDestDir = new File("target/generated-test-sources/xdb");
-    Generator.generate(xds, xdeDestDir);
-
-    final JavaCompiler compiler = new JavaCompiler(new File("target/test-classes"));
-    compiler.compile(Files.listAll(xdeDestDir, fileFilter));
-
-    connection = new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
-    final Statement s = connection.createStatement();
-    s.executeQuery("SELECT * from Office");
+  private static void createConnection() throws ClassNotFoundException, IOException, SQLException {
+    connection = DataTest.createConnection();
     EntityRegistry.register((Class<? extends Schema>)Class.forName("xdb.ddl.classicmodels"), PreparedStatement.class, new EntityDataSource() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;
       }
     });
+  }
+
+  private static void createEntities() throws CompilationException, IOException, XMLException {
+    final URL xds = Resources.getResource("classicmodels.xds").getURL();
+    final File xdeDestDir = new File("target/generated-test-sources/xdb");
+    Generator.generate(xds, xdeDestDir);
+
+    final JavaCompiler compiler = new JavaCompiler(new File("target/test-classes"));
+    compiler.compile(Files.listAll(xdeDestDir, fileFilter));
+  }
+
+  @BeforeClass
+  public static void create() throws ClassNotFoundException, CompilationException, IOException, SQLException, XMLException {
+    createEntities();
+    createConnection();
   }
 
   @Test

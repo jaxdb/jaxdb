@@ -125,6 +125,17 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>commons-sql</artifactId>
+      <version>1.1.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.safris.xdb</groupId>
+      <artifactId>xdb-schema</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
       <groupId>org.safris.xdb</groupId>
       <artifactId>xdb-schema</artifactId>
       <version>1.2.1</version>
@@ -140,6 +151,11 @@
       <groupId>org.safris.commons</groupId>
       <artifactId>commons-xml</artifactId>
       <version>1.0.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.derby</groupId>
+      <artifactId>derby</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>

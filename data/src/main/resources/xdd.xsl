@@ -114,14 +114,22 @@
                     <xsl:text>ns:</xsl:text>
                     <xsl:value-of select="@extends"/>
                   </xsl:attribute>
-                  <xsl:apply-templates select="xds:column"/>
+                  <xsl:apply-templates select="xds:column">
+                    <xsl:with-param name="tableName">
+                      <xsl:value-of select="@name"/>
+                    </xsl:with-param>
+                  </xsl:apply-templates>
                 </xs:extension>
               </xs:complexContent>
             </xsl:when>
             <xsl:otherwise>
               <xs:complexContent>
                 <xs:extension base="xdd:row">
-                  <xsl:apply-templates select="xds:column"/>
+                  <xsl:apply-templates select="xds:column">
+                    <xsl:with-param name="tableName">
+                      <xsl:value-of select="@name"/>
+                    </xsl:with-param>
+                  </xsl:apply-templates>
                 </xs:extension>
               </xs:complexContent>
             </xsl:otherwise>
@@ -220,7 +228,11 @@
   </xsl:template>
   
   <xsl:template name="column" match="xds:table/xds:column">
+    <xsl:param name="tableName"/>
     <xs:attribute>
+      <xsl:attribute name="id">
+        <xsl:value-of select="concat($tableName, '.', @name)"/>
+      </xsl:attribute>
       <xsl:attribute name="name">
         <xsl:value-of select="function:instance-case(@name)"/>
       </xsl:attribute>

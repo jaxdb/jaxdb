@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import org.safris.xdb.xds.xe.xds_schema;
 
-public final class DDL {
+public final class Schemas {
   public static void create(final xds_schema schema, final Connection connection) throws GeneratorExecutionException, SQLException {
     final DBVendor vendor = DBVendor.parse(connection.getMetaData());
     final java.sql.Statement statement = connection.createStatement();
@@ -32,6 +32,6 @@ public final class DDL {
     statement.executeBatch();
   }
 
-  private DDL() {
+  private Schemas() {
   }
 }

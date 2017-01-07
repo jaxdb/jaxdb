@@ -33,6 +33,7 @@ import org.safris.commons.io.Files;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.logging.Logging;
 import org.safris.commons.sql.ConnectionProxy;
+import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.validate.ValidationException;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
@@ -40,18 +41,17 @@ import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 @SuppressWarnings("unused")
-public class SchemaTest {
+public class SchemaTest extends LoggableTest {
   static {
     Logging.setLevel(Level.FINE);
     new EmbeddedDriver();
   }
 
-  private static final File db = new File("target/generated-test-resources/test-db");
-
   private static Connection connection;
 
   @BeforeClass
   public static void create() throws IOException, SQLException {
+    final File db = new File("target/generated-test-resources/test-db");
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
@@ -66,7 +66,7 @@ public class SchemaTest {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 
-    DDL.create(schema, connection);
+    Schemas.create(schema, connection);
   }
 
   @AfterClass

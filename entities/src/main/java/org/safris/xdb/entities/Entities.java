@@ -59,8 +59,7 @@ public final class Entities {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private static Entity toEntity(final $xdd_row row) {
     final Element element = (Element)row;
-    final $xs_anySimpleType owner = element.owner();
-    final QName schemaName = getName(owner.getClass().getSuperclass());
+    final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName entityName = getName(row.getClass().getSuperclass());
 
     try {
