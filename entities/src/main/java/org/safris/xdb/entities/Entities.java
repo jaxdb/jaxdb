@@ -29,6 +29,8 @@ import java.util.List;
 
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.binding.Base64Binary;
+import org.safris.commons.xml.binding.DateTime;
+import org.safris.commons.xml.binding.Decimal;
 import org.safris.xdb.entities.datatype.BigInt;
 import org.safris.xdb.entities.datatype.Long;
 import org.safris.xdb.entities.datatype.MediumInt;
@@ -39,6 +41,7 @@ import org.safris.xdb.xdd.xe.$xdd_clob;
 import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xdb.xdd.xe.$xdd_date;
 import org.safris.xdb.xdd.xe.$xdd_dateTime;
+import org.safris.xdb.xdd.xe.$xdd_decimal;
 import org.safris.xdb.xdd.xe.$xdd_enum;
 import org.safris.xdb.xdd.xe.$xdd_integer;
 import org.safris.xdb.xdd.xe.$xdd_row;
@@ -66,6 +69,9 @@ public final class Entities {
       final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
       while (attributeIterator.hasNext()) {
         final $xs_anySimpleType attribute = attributeIterator.next();
+        if (attribute == null)
+          continue;
+
         final Field field = binding.getField(Strings.toCamelCase(attribute.name().getLocalPart()));
         final DataType dataType = (DataType<?>)field.get(entity);
         final Object value = attribute.text();
@@ -80,14 +86,16 @@ public final class Entities {
           else if (dataType instanceof MediumInt)
             dataType.set(((BigInteger)value).intValue());
           else if (dataType instanceof SmallInt)
-            dataType.set((short)value);
+            dataType.set(((BigInteger)value).shortValue());
         }
+        else if (attribute instanceof $xdd_decimal)
+          dataType.set(((Decimal)value).doubleValue());
         else if (attribute instanceof $xdd_date)
           dataType.set(LocalDate.parse((String)value));
         else if (attribute instanceof $xdd_time)
           dataType.set(LocalTime.parse((String)value));
         else if (attribute instanceof $xdd_dateTime)
-          dataType.set(LocalDateTime.parse((String)value));
+          dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum)
           dataType.set(dataType.type.getMethod("valueOf", String.class).invoke(null, (String)value));
         else if (attribute instanceof $xdd_binary)

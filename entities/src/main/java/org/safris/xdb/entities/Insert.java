@@ -46,14 +46,13 @@ class Insert {
       if (entities.length == 0)
         throw new IllegalArgumentException("entities.length == 0");
 
-      serialization.append("INSERT INTO ");
-      entities[0].serialize(this, serialization);
       final StringBuilder columns = new StringBuilder();
       final StringBuilder values = new StringBuilder();
-      serialization.setHeading();
       if (serialization.statementType == PreparedStatement.class) {
         for (int i = 0; i < entities.length; i++) {
           final Entity entity = entities[i];
+          serialization.append("INSERT INTO ");
+          entity.serialize(this, serialization);
           for (final DataType dataType : entity.column()) {
             if (!dataType.wasSet()) {
               if (dataType.generateOnInsert == null)
@@ -67,13 +66,19 @@ class Insert {
             serialization.addParameter(dataType);
           }
 
-          if (i < entities.length - 2)
+          serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
+          if (i < entities.length - 1) {
             serialization.addBatch();
+            columns.setLength(0);
+            values.setLength(0);
+          }
         }
       }
       else {
         for (int i = 0; i < entities.length; i++) {
           final Entity entity = entities[i];
+          serialization.append("INSERT INTO ");
+          entity.serialize(this, serialization);
           for (final DataType dataType : entity.column()) {
             if (!dataType.wasSet()) {
               if (dataType.generateOnInsert == null)
@@ -86,12 +91,14 @@ class Insert {
             values.append(", ").append(VariableWrapper.toString(dataType.get()));
           }
 
-          if (i < entities.length - 2)
+          serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
+          if (i < entities.length - 1) {
             serialization.addBatch();
+            columns.setLength(0);
+            values.setLength(0);
+          }
         }
       }
-
-      serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
     }
 
     @Override

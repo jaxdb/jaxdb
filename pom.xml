@@ -41,7 +41,6 @@
     <module>data</module>
     <module>entities</module>
     <module>schema</module>
-    <!--module>test</module-->
   </modules>
   <repositories>
     <repository>

@@ -23,7 +23,7 @@ import org.safris.xdb.schema.SQLDataTypes;
 
 public class SQLDataTypesTest extends LoggableTest {
   @Test
-  public void test() {
+  public void testGetNumericByteCount() {
     final int[] byteCounts = {1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9};
     for (int i = 0; i < byteCounts.length; i++) {
       log((i + 1) + " digits needs: " + byteCounts[i] + " bytes");

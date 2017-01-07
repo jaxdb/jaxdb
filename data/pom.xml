@@ -29,7 +29,28 @@
   <version>1.0.1</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
+    <testResources>
+      <testResource>
+        <directory>target/generated-test-sources/xsb</directory>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+    </testResources>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>package-testResources</id>
+            <goals>
+              <goal>testResources</goal>
+            </goals>
+            <phase>prepare-package</phase>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.safris.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
@@ -71,6 +92,13 @@
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
+            <id>test-compile</id>
+            <goals>
+              <goal>validate</goal>
+            </goals>
+            <phase>integration-test</phase>
+          </execution>
+          <execution>
             <id>default-transform</id>
             <goals>
               <goal>transform</goal>
@@ -90,6 +118,19 @@
     </plugins>
   </build>
   <dependencies>
+    <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>commons-logging</artifactId>
+      <version>1.0.6</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.safris.xdb</groupId>
+      <artifactId>xdb-schema</artifactId>
+      <version>1.2.1</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.safris.xsb</groupId>
       <artifactId>xsb-generator</artifactId>
