@@ -35,6 +35,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.safris.commons.io.Files;
 import org.safris.commons.io.JarFiles;
+import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resource;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.logging.Logging;
@@ -83,7 +84,7 @@ public class DataTest extends LoggableTest {
   }
 
   @Test
-  public void testData() throws ClassNotFoundException, IOException, SQLException, TransformerException, XMLException {
+  public void testData() throws IOException, SQLException, TransformerException, XMLException, ReflectiveOperationException {
     final URL xds = Resources.getResource("classicmodels.xds").getURL();
     final File destFile = new File("target/generated-test-resources/xdb/classicmodels.xsd");
     Datas.createXSD(xds, destFile);
@@ -91,9 +92,7 @@ public class DataTest extends LoggableTest {
     final File destDir = new File("target/generated-test-sources/xsb");
     final GeneratorContext generatorContext = new GeneratorContext(destDir, true, true);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd")), null).generate();
-    try (final URLClassLoader classLoader = new URLClassLoader(new URL[] {destDir.toURI().toURL()})) {
-      Class.forName("classicmodels.xdd.xe", true, classLoader);
-    }
+    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), destDir.toURI().toURL());
 
     final URL xdd = Resources.getResource("classicmodels.xdd").getURL();
     final $xdd_data data;
