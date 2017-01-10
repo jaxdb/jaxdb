@@ -339,13 +339,7 @@
   <xs:attributeGroup name="enum">
     <xs:attribute name="values" use="required">
       <xs:simpleType>
-        <xs:list>
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:pattern value="[^ ]*"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:list>
+        <xs:restriction base="xs:string"/>
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="default" type="xs:string"/>
