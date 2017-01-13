@@ -169,11 +169,12 @@ public final class MySQLSpec extends SQLSpec {
     if (type._values$().isNull())
       return "ENUM()";
 
-    String values = "";
-    for (final String value : type._values$().text())
-      values += ", '" + SQLDataTypes.toEnumValue(value) + "'";
+    final List<String> enums = parseEnum(type._values$().text());
+    final StringBuilder builder = new StringBuilder("ENUM(");
+    for (final String value : enums)
+      builder.append(", '").append(value).append("'");
 
-    return "ENUM(" + values.substring(2) + ")";
+    return builder.append(")").substring(2);
   }
 
   @Override

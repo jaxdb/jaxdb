@@ -50,10 +50,17 @@ public abstract class Variable<T> extends Subject<Variable<T>> {
     return value;
   }
 
-  protected Subject<T> wrapper;
+  protected Subject<?> wrapper;
 
-  protected void setWrapper(final Subject<T> wrapper) {
+  public void setWrapper(final Subject<?> wrapper) {
     this.wrapper = wrapper;
+  }
+
+  @SuppressWarnings("unchecked")
+  public Variable<T> AS(final Variable<? extends T> variable) {
+    final Variable<T> wrapper = (Variable<T>)variable.clone();
+    wrapper.setWrapper(new As<T>(this, variable));
+    return wrapper;
   }
 
   protected abstract Entity owner();

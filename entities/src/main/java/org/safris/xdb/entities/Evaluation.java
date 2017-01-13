@@ -16,45 +16,24 @@
 
 package org.safris.xdb.entities;
 
-import java.util.Set;
+class Evaluation<T> extends Subject<T> {
+  protected final Object a;
+  protected final Operator<Predicate<?>> operator;
+  protected final Object[] args;
+  protected final int startIndex;
 
-import org.safris.xdb.entities.binding.Interval;
-import org.safris.xdb.entities.binding.Interval.Unit;
-import org.safris.xdb.schema.DBVendor;
-
-public class Evaluation<T> extends Subject<T> {
-  private final Variable<T> a;
-  private final Operator<Predicate<?>> operator;
-  private final Object b;
-
-  protected Evaluation(final Variable<T> a, final Operator<Predicate<?>> operator, final Object b) {
+  protected Evaluation(final Operator<Predicate<?>> operator, final Object a, final Object ... args) {
     this.a = a;
     this.operator = operator;
-    this.b = b;
+    this.args = args;
+    this.startIndex = 0;
   }
 
-  @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
-    a.serialize(this, serialization);
-    serialization.append(" ");
-    if (b instanceof Interval) {
-      final Interval interval = (Interval)b;
-
-      if (serialization.vendor == DBVendor.MY_SQL || serialization.vendor == DBVendor.POSTGRE_SQL) {
-        final Set<Unit> units = interval.getUnits();
-        final StringBuilder clause = new StringBuilder();
-        for (final Unit unit : units)
-          clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
-
-        serialization.append(" '").append(clause.substring(1)).append("'");
-      }
-      else {
-        throw new UnsupportedOperationException();
-      }
-    }
-    else {
-      serialization.append(operator.toString()).append(" ");
-      Keyword.format(this, b, serialization);
-    }
+  @SafeVarargs
+  protected Evaluation(final Operator<Predicate<?>> operator, final Variable<T> ... args) {
+    this.a = args[0];
+    this.operator = operator;
+    this.args = args;
+    startIndex = 1;
   }
 }

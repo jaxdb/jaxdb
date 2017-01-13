@@ -22,11 +22,11 @@
     <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
     <column name="continent" xsi:type="enum" values="Asia Europe North\ America Oceania Antarctica South\ America Africa" null="false"/>
     <column name="region" xsi:type="char" varying="true" length="26" null="false"/>
-    <column name="surface_area" xsi:type="decimal" precision="8" decimal="2" null="false"/>
+    <column name="surface_area" xsi:type="decimal" precision="10" decimal="2" null="false"/>
     <column name="indep_year" xsi:type="integer" precision="4"/>
     <column name="population" xsi:type="integer" precision="11" unsigned="true" null="false"/>
-    <column name="life_expectancy" xsi:type="decimal" precision="2" decimal="1"/>
-    <column name="gnp" xsi:type="decimal" precision="7" decimal="1"/>
+    <column name="life_expectancy" xsi:type="decimal" precision="3" decimal="1"/>
+    <column name="gnp" xsi:type="decimal" precision="8" decimal="1"/>
     <column name="local_name" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="government_form" xsi:type="char" varying="true" length="45" null="false"/>
     <column name="head_of_state" xsi:type="char" varying="true" length="60" null="false"/>
@@ -37,12 +37,12 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="country_language">
+  <table name="lang">
     <column name="country_code" xsi:type="char" length="3" null="false">
       <foreignKey references="country" column="code"/>
     </column>
-    <column name="language" xsi:type="char" varying="true" length="30" null="false"/>
+    <column name="lang" xsi:type="char" varying="true" length="30" null="false"/>
     <column name="official" xsi:type="boolean" null="false"/>
-    <column name="percentage" xsi:type="decimal" precision="3" decimal="1" null="false"/>
+    <column name="percentage" xsi:type="decimal" precision="4" decimal="1" null="false"/>
   </table>
 </schema>

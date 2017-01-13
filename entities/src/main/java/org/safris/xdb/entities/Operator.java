@@ -33,6 +33,7 @@ final class Operator<T extends Condition<?>> {
   public static final Operator<Predicate<?>> MINUS = new Operator<Predicate<?>>("-");
   public static final Operator<Predicate<?>> MULTIPLY = new Operator<Predicate<?>>("*");
   public static final Operator<Predicate<?>> DIVIDE = new Operator<Predicate<?>>("/");
+  public static final Operator<Predicate<?>> MOD = new Operator<Predicate<?>>("%");
 
   private final String symbol;
 

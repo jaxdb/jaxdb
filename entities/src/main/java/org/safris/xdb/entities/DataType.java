@@ -29,7 +29,6 @@ import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.entities.datatype.Char;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class DataType<T> extends Variable<T> implements Cloneable {
   private static final Map<Type,Method> typeToGetter = new HashMap<Type,Method>();
@@ -132,16 +131,17 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
   }
 
   @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
     if (wrapper != null) {
-      wrapper.serialize(caller, serialization);
+      wrapper.serialize(serialization);
       return;
     }
 
     if (serialization.statementType == PreparedStatement.class) {
-      if (Entity.tableAlias(entity, false) == null) {
+      if (Entity.subjectAlias(entity, false) == null) {
         serialization.addParameter(this);
-        serialization.append(getPreparedStatementMark(serialization.vendor));
+        serialization.append(serialization.getSerializer(this).getPreparedStatementMark(this));
       }
       else if (serialization.getType() != Select.class) {
         serialization.append(name);
@@ -151,15 +151,13 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
       }
     }
     else if (serialization.statementType == Statement.class) {
-      final String alias = Entity.tableAlias(entity, false);
+      final String alias = Entity.subjectAlias(entity, false);
       serialization.append(alias == null ? String.valueOf(get()) : serialization.getType() == Select.class ? alias + "." + name : name);
     }
     else {
       throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
     }
   }
-
-  protected abstract String getPreparedStatementMark(final DBVendor vendor);
 
   @Override
   public boolean equals(final Object obj) {
@@ -175,7 +173,12 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
 
   @Override
   public String toString() {
-    final String alias = Entity.tableAlias(entity, false);
-    return alias != null ? alias + "." + name : String.valueOf(get());
+    if (entity != null) {
+      final String alias = Entity.subjectAlias(entity, false);
+      return alias != null ? alias + "." + name : String.valueOf(get());
+    }
+
+    final String alias = Entity.subjectAlias(this, false);
+    return alias != null ? alias : String.valueOf(get());
   }
 }

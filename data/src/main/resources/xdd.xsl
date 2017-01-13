@@ -347,7 +347,7 @@
             </xs:fractionDigits>
             <xs:maxInclusive>
               <xsl:attribute name="value">
-                <xsl:value-of select="function:precision-scale(@precision)"/>
+                <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
               </xsl:attribute>
             </xs:maxInclusive>
             <xs:minInclusive>
@@ -355,7 +355,7 @@
                 <xsl:choose>
                   <xsl:when test="not(@unsigned='true')">
                     <xsl:text>-</xsl:text>
-                    <xsl:value-of select="function:precision-scale(@precision)"/>
+                    <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:value-of select="0"/>

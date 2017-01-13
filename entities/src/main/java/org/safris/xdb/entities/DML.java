@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
+import org.safris.xdb.entities.datatype.Decimal;
 import org.safris.xdb.entities.datatype.Numeric;
 import org.safris.xdb.entities.datatype.Temporal;
 import org.safris.xdb.entities.spec.delete;
@@ -46,8 +47,9 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      variable.serialize(this, serialization);
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
+      serialization.append(variable.toString());
       serialization.append(" ").append(getClass().getSimpleName());
     }
 
@@ -96,7 +98,8 @@ public abstract class DML {
     }
 
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("NATURAL");
     }
   }
@@ -114,35 +117,40 @@ public abstract class DML {
 
   public static final TYPE INNER = new TYPE() {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("INNER");
     }
   };
 
   public static final TYPE LEFT = new TYPE() {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("LEFT OUTER");
     }
   };
 
   public static final TYPE RIGHT = new TYPE() {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("RIGHT OUTER");
     }
   };
 
   public static final TYPE FULL = new TYPE() {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("FULL OUTER");
     }
   };
 
   public static final TYPE UNION = new TYPE() {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("UNION");
     }
   };
@@ -158,14 +166,16 @@ public abstract class DML {
 
   public static class ALL extends SetQualifier {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("ALL");
     }
   }
 
   public static class DISTINCT extends SetQualifier {
     @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
+    protected void serialize(final Serialization serialization) {
+      serialization.addCaller(this);
       serialization.append("DISTINCT");
     }
   }
@@ -223,12 +233,157 @@ public abstract class DML {
     return new Insert.INSERT(Entities.toEntities(data));
   }
 
+  /** Math Functions **/
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SIGN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SIGN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T FLOOR(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("FLOOR", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T CEIL(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("CEIL", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T POW(final T x, final double y) {
+    final T wrapper = (T)x.clone();
+    wrapper.setWrapper(new Power(x, y));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ROUND(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ROUND", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ROUND(final T dataType, final int decimal) {
+    if (decimal < 0)
+      throw new IllegalArgumentException("decimal < 0");
+
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ROUND", dataType, decimal));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SQRT(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SQRT", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T SIN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("SIN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ASIN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ASIN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T COS(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("COS", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ACOS(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ACOS", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T TAN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("TAN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ATAN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ATAN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Number>Numeric<T> ATAN2(final Numeric<T> a, final Numeric<T> b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Function("ATAN2", a, b));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T EXP(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("EXP", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T LN(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("LN", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T LOG(final T a, final T b) {
+    final T wrapper = (T)a.clone();
+    wrapper.setWrapper(new Function("LOG", a, b));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T LOG(final T a, final Number b) {
+    final T wrapper = (T)a.clone();
+    wrapper.setWrapper(new Function("LOG", a, b));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T LOG2(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("LOG2", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T LOG10(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("COS", dataType));
+    return wrapper;
+  }
+
   /** Aggregate **/
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static org.safris.xdb.entities.datatype.Long COUNT(final DataType<?> dataType) {
     final org.safris.xdb.entities.datatype.Long wrapper = new org.safris.xdb.entities.datatype.Long();
-    wrapper.setWrapper(new Function("COUNT", null, dataType));
+    wrapper.setWrapper(new Function("COUNT", dataType));
     return wrapper;
   }
 
@@ -249,7 +404,7 @@ public abstract class DML {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Numeric<?>>T SUM(final T dataType) {
     final T wrapper = (T)dataType.clone();
-    wrapper.setWrapper(new Function("SUM", null, dataType));
+    wrapper.setWrapper(new Function("SUM", dataType));
     return wrapper;
   }
 
@@ -270,7 +425,7 @@ public abstract class DML {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Numeric<?>>T AVG(final T dataType) {
     final T wrapper = (T)dataType.clone();
-    wrapper.setWrapper(new Function("AVG", null, dataType));
+    wrapper.setWrapper(new Function("AVG", dataType));
     return wrapper;
   }
 
@@ -291,7 +446,7 @@ public abstract class DML {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends DataType<?>>T MAX(final T dataType) {
     final T wrapper = (T)dataType.clone();
-    wrapper.setWrapper(new Function("MAX", null, dataType));
+    wrapper.setWrapper(new Function("MAX", dataType));
     return wrapper;
   }
 
@@ -312,7 +467,7 @@ public abstract class DML {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends DataType<?>>T MIN(final T dataType) {
     final T wrapper = (T)dataType.clone();
-    wrapper.setWrapper(new Function("MIN", null, dataType));
+    wrapper.setWrapper(new Function("MIN", dataType));
     return wrapper;
   }
 
@@ -330,70 +485,200 @@ public abstract class DML {
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Numeric<? super T> b) {
-    final Numeric<T> wrapper = (Numeric<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> DIV(final Numeric<T> ... args) {
+    if (args.length <= 1)
+      throw new IllegalArgumentException("args.length <= 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, args));
     return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> DIV(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T> ... b) {
+    if (b.length == 0)
+      throw new IllegalArgumentException("b.length == 0");
+
+    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> MUL(final Numeric<T> ... args) {
+    if (args.length <= 1)
+      throw new IllegalArgumentException("args.length <= 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MUL(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T> ... b) {
+    if (b.length == 0)
+      throw new IllegalArgumentException("b.length == 0");
+
+    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, b));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<? super T> b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MOD, a, b));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MOD, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> ADD(final Numeric<T> ... args) {
+    if (args.length <= 1)
+      throw new IllegalArgumentException("args.length <= 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> ADD(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T> ... b) {
+    if (b.length ==0 )
+      throw new IllegalArgumentException("b.length == 0");
+
+    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> ... args) {
+    return ADD(args);
+  }
+
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Number b) {
+    return ADD(a, b);
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T> ... b) {
+    return ADD(a, b);
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<? super T> b) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
-    return wrapper;
-  }
-
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final T b) {
-    final Numeric<T> wrapper = (Numeric<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b));
     return wrapper;
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final T b) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, b));
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b));
     return wrapper;
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Duration duration) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.PLUS, duration));
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, duration));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Numeric<? super T> b) {
-    final Numeric<T> wrapper = (Numeric<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> SUB(final Numeric<T> ... args) {
+    if (args.length <= 1)
+      throw new IllegalArgumentException("args.length <= 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, args));
     return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> SUB(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> SUB(final Number a, Numeric<T> b) {
+    final Numeric<T> wrapper = (Numeric<T>)b.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T> ... b) {
+    if (b.length == 0)
+      throw new IllegalArgumentException("b.length == 0");
+
+    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> ... args) {
+    return SUB(args);
+  }
+
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Number b) {
+    return SUB(a, b);
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T> ... b) {
+    return SUB(a, b);
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<? super T> b) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
-    return wrapper;
-  }
-
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final T b) {
-    final Numeric<T> wrapper = (Numeric<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
     return wrapper;
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final T b) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, b));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
     return wrapper;
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Duration duration) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(a, Operator.MINUS, duration));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, duration));
     return wrapper;
   }
 
   private static class NOW extends DateTime {
     protected NOW() {
       super();
-      this.wrapper = new Function<LocalDateTime>("NOW", null, null);
+      this.wrapper = new Function<LocalDateTime>("NOW");
+    }
+
+    @Override
+    public NOW clone() {
+      return new NOW();
     }
   }
 
@@ -401,6 +686,24 @@ public abstract class DML {
 
   public static NOW NOW() {
     return NOW;
+  }
+
+  private static class PI extends Decimal {
+    protected PI() {
+      super();
+      this.wrapper = new Function<Double>("PI");
+    }
+
+    @Override
+    public PI clone() {
+      return new PI();
+    }
+  }
+
+  private static final PI PI = new PI();
+
+  public static PI PI() {
+    return PI;
   }
 
   /** Condition **/

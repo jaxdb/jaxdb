@@ -19,7 +19,6 @@ package org.safris.xdb.entities.datatype;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
   protected Temporal(final int sqlType, final Class<T> type, final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
@@ -28,10 +27,5 @@ public abstract class Temporal<T extends java.time.temporal.Temporal> extends Da
 
   protected Temporal(final Temporal<T> dataType) {
     super(dataType);
-  }
-
-  @Override
-  protected final String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 }

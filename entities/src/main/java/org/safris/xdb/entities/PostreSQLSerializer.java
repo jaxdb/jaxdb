@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,30 +16,18 @@
 
 package org.safris.xdb.entities;
 
-final class LogicalCondition<T> extends Condition<T> {
-  private final Operator<LogicalCondition<?>> operator;
-  private final Object a;
-  private final Object b;
+import org.safris.xdb.entities.datatype.Enum;
+import org.safris.xdb.schema.DBVendor;
+import org.safris.xdb.schema.spec.PostgreSQLSpec;
 
-  protected LogicalCondition(final Operator<LogicalCondition<?>> operator, final Object a, final Object b) {
-    this.operator = operator;
-    this.a = a;
-    this.b = b;
+class PostreSQLSerializer extends Serializer {
+  @Override
+  protected DBVendor getVendor() {
+    return DBVendor.POSTGRE_SQL;
   }
 
   @Override
-  protected Keyword<Subject<T>> parent() {
-    return null;
-  }
-
-  @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    if (a == null)
-      throw new IllegalArgumentException("Left hand side of condition cannot be null");
-
-    format(a, serialization);
-    serialization.append(" ").append(operator).append(" ");
-    format(b, serialization);
+  protected String getPreparedStatementMark(final DataType<?> dataType) {
+    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(dataType.entity), dataType.name) : "?";
   }
 }

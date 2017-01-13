@@ -26,7 +26,9 @@
     locality="CA"
     country="US"
     postalCode="94080"
-    territory="NA"/>
+    territory="NA"
+    latitude="37.7942635"
+    longitude="-122.3955861"/>
   <Office
     officeCode="2"
     city="Boston"
@@ -36,17 +38,21 @@
     locality="MA"
     country="US"
     postalCode="02107"
-    territory="NA"/>
+    territory="NA"
+    latitude="42.3519343"
+    longitude="-71.0900118"/>
   <Office
     officeCode="3"
-    city="NYC"
+    city="New York City"
     phone="12125553000"
     address1="523 East 53rd Street"
     address2="apt. 5A"
     locality="NY"
     country="US"
     postalCode="10022"
-    territory="NA"/>
+    territory="NA"
+    latitude="40.7548902"
+    longitude="-73.9627258"/>
   <Office
     officeCode="4"
     city="Paris"
@@ -54,7 +60,9 @@
     address1="43 Rue Jouffroy D'abbans"
     country="FR"
     postalCode="75017"
-    territory="EMEA"/>
+    territory="EMEA"
+    latitude="48.8852922"
+    longitude="2.3079787"/>
   <Office
     officeCode="5"
     city="Tokyo"
@@ -63,7 +71,9 @@
     locality="Chiyoda-Ku"
     country="JP"
     postalCode="102-8578"
-    territory="Japan"/>
+    territory="Japan"
+    latitude="35.6811759"
+    longitude="139.734872"/>
   <Office
     officeCode="6"
     city="Sydney"
@@ -72,7 +82,9 @@
     address2="Floor #2"
     country="AU"
     postalCode="NSW 2010"
-    territory="APAC"/>
+    territory="APAC"
+    latitude="-33.8774518"
+    longitude="151.2118393"/>
   <Office
     officeCode="7"
     city="London"
@@ -81,7 +93,9 @@
     address2="Level 7"
     country="BR"
     postalCode="EC2N 1HN"
-    territory="EMEA"/>
+    territory="EMEA"
+    latitude="51.5151536"
+    longitude="-0.0838496"/>
   <ProductLine
     productLine="Classic Cars"
     description="Attention car enthusiasts: Make your wildest car ownership dreams come true. Whether you are looking for classic muscle cars, dream sports cars or movie-inspired miniatures, you will find great choices in this category. These replicas feature superb attention to detail and craftsmanship and offer features such as working steering system, opening forward compartment, opening rear trunk with removable spare wheel, 4-wheel independent spring suspension, and so on. The models range in size from 1:10 to 1:24 scale and include numerous limited edition and several out-of-production vehicles. All models include a certificate of authenticity from their manufacturers and come fully assembled and ready for display in the home or office."/>
@@ -1409,7 +1423,7 @@
     quantityInStock="414"
     price="33.30"
     msrp="54.60"/>
-    <Customer
+<Customer
     customerNumber="103"
     companyName="Atelier graphique"
     lastName="Schmitt"
@@ -1420,7 +1434,9 @@
     postalCode="44000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="21000.00"/>
+    creditLimit="21000.00"
+    latitude="47.2143049"
+    longitude="-1.558138"/>
   <Customer
     customerNumber="112"
     companyName="Signal Gift Stores"
@@ -1433,7 +1449,9 @@
     postalCode="83030"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="71800.00"/>
+    creditLimit="71800.00"
+    latitude="36.3033072"
+    longitude="-115.2624808"/>
   <Customer
     customerNumber="114"
     companyName="Australian Collectors, Co."
@@ -1447,7 +1465,9 @@
     postalCode="3004"
     country="AU"
     salesEmployeeNumber="1611"
-    creditLimit="117300.00"/>
+    creditLimit="117300.00"
+    latitude="-37.8547989"
+    longitude="144.9814778"/>
   <Customer
     customerNumber="119"
     companyName="La Rochelle Gifts"
@@ -1459,7 +1479,9 @@
     postalCode="44000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="118200.00"/>
+    creditLimit="118200.00"
+    latitude="47.2185896"
+    longitude="-1.55716"/>
   <Customer
     customerNumber="121"
     companyName="Baane Mini Imports"
@@ -1471,7 +1493,9 @@
     postalCode="4110"
     country="NO"
     salesEmployeeNumber="1504"
-    creditLimit="81700.00"/>
+    creditLimit="81700.00"
+    latitude="63.429511"
+    longitude="10.3805126"/>
   <Customer
     customerNumber="124"
     companyName="Mini Gifts Distributors Ltd."
@@ -1484,7 +1508,9 @@
     postalCode="97562"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="210500.00"/>
+    creditLimit="210500.00"
+    latitude="34.0052253"
+    longitude="-117.3740661"/>
   <Customer
     customerNumber="125"
     companyName="Havel &amp; Zbyszek Co"
@@ -1495,7 +1521,9 @@
     city="Warszawa"
     postalCode="01-012"
     country="PL"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="52.2195630"
+    longitude="20.985878"/>
   <Customer
     customerNumber="128"
     companyName="Blauer See Auto, Co."
@@ -1507,33 +1535,39 @@
     postalCode="60528"
     country="DE"
     salesEmployeeNumber="1504"
-    creditLimit="59700.00"/>
+    creditLimit="59700.00"
+    latitude="50.0785185"
+    longitude="8.62341930"/>
   <Customer
     customerNumber="129"
     companyName="Mini Wheels Co."
     lastName="Murphy"
     firstName="Julie"
     phone="6505555787"
-    address1="5557 North Pendale Street"
+    address1="312 Fillmore St."
     city="San Francisco"
     locality="CA"
-    postalCode="94217"
+    postalCode="94117"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="64600.00"/>
+    creditLimit="64600.00"
+    latitude="37.772407"
+    longitude="-122.4303972"/>
   <Customer
     customerNumber="131"
     companyName="Land of Toys Inc."
     lastName="Lee"
     firstName="Kwai"
     phone="2125557818"
-    address1="897 Long Airport Avenue"
-    city="NYC"
+    address1="897 West 29th Street"
+    city="New York City"
     locality="NY"
     postalCode="10022"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="114900.00"/>
+    creditLimit="114900.00"
+    latitude="40.7537835"
+    longitude="-74.0070193"/>
   <Customer
     customerNumber="141"
     companyName="Euro+ Shopping Channel"
@@ -1545,31 +1579,37 @@
     postalCode="28034"
     country="ES"
     salesEmployeeNumber="1370"
-    creditLimit="227600.00"/>
+    creditLimit="227600.00"
+    latitude="40.4938993"
+    longitude="-3.7123061"/>
   <Customer
     customerNumber="144"
     companyName="Volvo Model Replicas, Co"
     lastName="Berglund"
     firstName="Christina"
     phone="0921123555"
-    address1="Berguvsvägen  8"
-    city="Luleå"
-    postalCode="S-958 22"
+    address1="Volvovägen"
+    city="Skövde"
+    postalCode="541 36"
     country="SE"
     salesEmployeeNumber="1504"
-    creditLimit="53100.00"/>
+    creditLimit="53100.00"
+    latitude="58.3768042"
+    longitude="13.8588164"/>
   <Customer
     customerNumber="145"
     companyName="Danish Wholesale Imports"
     lastName="Petersen"
     firstName="Jytte"
     phone="31123555"
-    address1="Vinbæltet 34"
+    address1="Købmagergade 52A"
     city="Kobenhavn"
-    postalCode="1734"
+    postalCode="1150"
     country="DK"
     salesEmployeeNumber="1401"
-    creditLimit="83400.00"/>
+    creditLimit="83400.00"
+    latitude="55.681365"
+    longitude="12.5757825"/>
   <Customer
     customerNumber="146"
     companyName="Saveley &amp; Henriot, Co."
@@ -1581,20 +1621,24 @@
     postalCode="69004"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="123900.00"/>
+    creditLimit="123900.00"
+    latitude="45.78501"
+    longitude="4.8123691"/>
   <Customer
     customerNumber="148"
     companyName="Dragon Souveniers, Ltd."
     lastName="Natividad"
     firstName="Eric"
     phone="652217555"
-    address1="Bronz Sok."
-    address2="Bronz Apt. 3/6 Tesvikiye"
+    address1="18 Cross Street #02-18"
+    address2="Marsh &amp; Mclennan Centre"
     city="Singapore"
-    postalCode="079903"
+    postalCode="048423"
     country="SG"
     salesEmployeeNumber="1621"
-    creditLimit="103800.00"/>
+    creditLimit="103800.00"
+    latitude="42.3879258"
+    longitude="-71.086221"/>
   <Customer
     customerNumber="151"
     companyName="Muscle Machine Inc"
@@ -1603,78 +1647,89 @@
     phone="2125557413"
     address1="4092 Furth Circle"
     address2="Suite 400"
-    city="NYC"
+    city="New York City"
     locality="NY"
     postalCode="10022"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="138500.00"/>
+    creditLimit="138500.00"
+    latitude="40.6515807"
+    longitude="-74.0073804"/>
   <Customer
     customerNumber="157"
     companyName="Diecast Classics Inc."
     lastName="Leong"
     firstName="Kelvin"
     phone="2155551555"
-    address1="7586 Pompton St."
+    address1="1002 Hamilton St."
     city="Allentown"
     locality="PA"
-    postalCode="70267"
+    postalCode="18101"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="100600.00"/>
+    creditLimit="100600.00"
+    latitude="40.6000563"
+    longitude="-75.4779931"/>
   <Customer
     customerNumber="161"
     companyName="Technics Stores Inc."
     lastName="Hashimoto"
     firstName="Juri"
     phone="6505556809"
-    address1="9408 Furth Circle"
+    address1="1384 Hillside Circle"
     city="Burlingame"
     locality="CA"
-    postalCode="94217"
+    postalCode="94010"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="84600.00"/>
+    creditLimit="84600.00"
+    latitude="37.578152"
+    longitude="-122.379504"/>
   <Customer
     customerNumber="166"
     companyName="Handji Gifts&amp; Co"
     lastName="Victorino"
     firstName="Wendy"
     phone="652241555"
-    address1="106 Linden Road Sandown"
+    address1="1 Maju Ave"
     address2="2nd Floor"
     city="Singapore"
-    postalCode="069045"
+    postalCode="556679"
     country="SG"
     salesEmployeeNumber="1612"
-    creditLimit="97900.00"/>
+    creditLimit="97900.00"
+    latitude="1.3652169"
+    longitude="103.865262"/>
   <Customer
     customerNumber="167"
     companyName="Herkku Gifts"
     lastName="Oeztan"
     firstName="Veysel"
     phone="4722673215"
-    address1="Brehmen St. 121"
-    address2="PR 334 Sentrum"
-    city="Bergen"
-    postalCode="N 5804"
+    address1="Karl Johans gate 35"
+    city="Oslo"
+    postalCode="0162"
     country="NO"
     salesEmployeeNumber="1504"
-    creditLimit="96800.00"/>
+    creditLimit="96800.00"
+    latitude="59.914185"
+    longitude="10.7382783"/>
   <Customer
     customerNumber="168"
     companyName="American Souvenirs Inc"
     lastName="Franco"
     firstName="Keith"
     phone="2035557845"
-    address1="149 Spinnaker Dr."
+    address1="382 Grand Ave"
     address2="Suite 101"
     city="New Haven"
     locality="CT"
-    postalCode="97823"
+    postalCode="06513"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="41.3083032"
+    longitude="-72.9025353"/>
   <Customer
     customerNumber="169"
     companyName="Porto Imports Co."
@@ -1685,7 +1740,9 @@
     city="Lisboa"
     postalCode="1756"
     country="PT"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="38.7156155"
+    longitude="-9.1360141"/>
   <Customer
     customerNumber="171"
     companyName="Daedalus Designs Imports"
@@ -1697,7 +1754,9 @@
     postalCode="59000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="82900.00"/>
+    creditLimit="82900.00"
+    latitude="50.634804"
+    longitude="3.0723128"/>
   <Customer
     customerNumber="172"
     companyName="La Corne D'abondance, Co."
@@ -1709,33 +1768,39 @@
     postalCode="75012"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="84300.00"/>
+    creditLimit="84300.00"
+    latitude="48.8579114"
+    longitude="2.3920887"/>
   <Customer
     customerNumber="173"
     companyName="Cambridge Collectables Co."
     lastName="Tseng"
     firstName="Jerry"
     phone="6175555555"
-    address1="4658 Baden Av."
+    address1="393 Broadway"
     city="Cambridge"
     locality="MA"
-    postalCode="51247"
+    postalCode="02139"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="43400.00"/>
+    creditLimit="43400.00"
+    latitude="42.37168810"
+    longitude="-71.1064289"/>
   <Customer
     customerNumber="175"
     companyName="Gift Depot Inc."
     lastName="King"
     firstName="Julie"
     phone="2035552570"
-    address1="25593 South Bay Ln."
+    address1="132 Hut Hill Rd"
     city="Bridgewater"
     locality="CT"
-    postalCode="97562"
+    postalCode="06752"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="84300.00"/>
+    creditLimit="84300.00"
+    latitude="41.5252603"
+    longitude="-73.3576108"/>
   <Customer
     customerNumber="177"
     companyName="Osaka Souveniers Co."
@@ -1748,7 +1813,9 @@
     postalCode="530-0003"
     country="JP"
     salesEmployeeNumber="1621"
-    creditLimit="81200.00"/>
+    creditLimit="81200.00"
+    latitude="34.6969817"
+    longitude="135.496446"/>
   <Customer
     customerNumber="181"
     companyName="Vitachrome Inc."
@@ -1757,12 +1824,14 @@
     phone="2125551500"
     address1="2678 Kingston Rd."
     address2="Suite 101"
-    city="NYC"
+    city="New York City"
     locality="NY"
     postalCode="10022"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="76400.00"/>
+    creditLimit="76400.00"
+    latitude="40.67653"
+    longitude="-73.941218"/>
   <Customer
     customerNumber="186"
     companyName="Toys of Finland, Co."
@@ -1774,19 +1843,24 @@
     postalCode="21240"
     country="FI"
     salesEmployeeNumber="1501"
-    creditLimit="96500.00"/>
+    creditLimit="96500.00"
+    latitude="60.1700276"
+    longitude="24.9427726"/>
   <Customer
     customerNumber="187"
     companyName="AV Stores, Co."
     lastName="Ashworth"
     firstName="Rachel"
     phone="1715551555"
-    address1="Fauntleroy Circus"
+    address1="25 Swan St"
+    address2="The Northern Quarter"
     city="Manchester"
-    postalCode="EC2 5NT"
+    postalCode="M4 5JZ"
     country="BR"
     salesEmployeeNumber="1501"
-    creditLimit="136800.00"/>
+    creditLimit="136800.00"
+    latitude="53.4852339"
+    longitude="-2.2343645"/>
   <Customer
     customerNumber="189"
     companyName="Clover Collections, Co."
@@ -1799,83 +1873,98 @@
     postalCode="2"
     country="IE"
     salesEmployeeNumber="1504"
-    creditLimit="69400.00"/>
+    creditLimit="69400.00"
+    latitude="53.3488406"
+    longitude="-6.3447685"/>
   <Customer
     customerNumber="198"
     companyName="Auto-Moto Classics Inc."
     lastName="Taylor"
     firstName="Leslie"
     phone="6175558428"
-    address1="16780 Pompton St."
-    city="Brickhaven"
+    address1="121 Brick Kiln Rd"
+    city="Chelmsford"
     locality="MA"
-    postalCode="58339"
+    postalCode="01824"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="23000.00"/>
+    creditLimit="23000.00"
+    latitude="42.5919981"
+    longitude="-71.3062556"/>
   <Customer
     customerNumber="201"
     companyName="UK Collectables, Ltd."
     lastName="Devon"
     firstName="Elizabeth"
     phone="1715552282"
-    address1="12, Berkeley Gardens Blvd"
+    address1="7UF, 22 Sherwood Rd"
+    address2="Waterloo"
     city="Liverpool"
-    postalCode="WX1 6LT"
+    postalCode="L23"
     country="BR"
     salesEmployeeNumber="1501"
-    creditLimit="92700.00"/>
+    creditLimit="92700.00"
+    latitude="53.4943536"
+    longitude="-3.0355896"/>
   <Customer
     customerNumber="202"
     companyName="Canadian Gift Exchange Network"
     lastName="Tamuri"
     firstName="Yoshi"
     phone="6045553392"
-    address1="1900 Oak St."
+    address1="5840 Oak St."
     city="Vancouver"
     locality="BC"
-    postalCode="V3F 2K1"
+    postalCode="V5Z 3W6"
     country="CA"
     salesEmployeeNumber="1323"
-    creditLimit="90300.00"/>
+    creditLimit="90300.00"
+    latitude="49.2338904"
+    longitude="-123.1279849"/>
   <Customer
     customerNumber="204"
     companyName="Online Mini Collectables"
     lastName="Barajas"
     firstName="Miguel"
     phone="6175557555"
-    address1="7635 Spinnaker Dr."
-    city="Brickhaven"
+    address1="1050 Waltham St #600"
+    city="Lexington"
     locality="MA"
-    postalCode="58339"
+    postalCode="02421"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="68700.00"/>
+    creditLimit="68700.00"
+    latitude="42.4136976"
+    longitude="-71.23196270"/>
   <Customer
     customerNumber="205"
     companyName="Toys4GrownUps.com"
     lastName="Young"
     firstName="Julie"
     phone="6265557265"
-    address1="78934 Hillside Dr."
+    address1="940 Avenue 64"
     city="Pasadena"
     locality="CA"
-    postalCode="90003"
+    postalCode="91105"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="90700.00"/>
+    creditLimit="90700.00"
+    latitude="34.1244844"
+    longitude="-118.1758621"/>
   <Customer
     customerNumber="206"
     companyName="Asian Shopping Network, Co"
     lastName="Walker"
     firstName="Brydey"
     phone="61294111555"
-    address1="Suntec Tower Three"
-    address2="8 Temasek"
+    address1="60A Orchard Road"
+    address2="#B1-04/05/06 The Atrium @ Orchard"
     city="Singapore"
-    postalCode="038988"
+    postalCode="238890"
     country="SG"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="1.2995942"
+    longitude="103.8452495"/>
   <Customer
     customerNumber="209"
     companyName="Mini Caravy"
@@ -1887,20 +1976,23 @@
     postalCode="67000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="53800.00"/>
+    creditLimit="53800.00"
+    latitude="48.5834375"
+    longitude="7.7448033"/>
   <Customer
     customerNumber="211"
     companyName="King Kong Collectables, Co."
     lastName="Gao"
     firstName="Mike"
     phone="85222511555"
-    address1="Bank of China Tower"
-    address2="1 Garden Road"
-    city="Central Hong Kong"
+    address1="45 Tai Po Rd"
+    address2="Sham Shui Po"
+    city="Hong Kong"
     country="HK"
-    postalCode="999077"
     salesEmployeeNumber="1621"
-    creditLimit="58600.00"/>
+    creditLimit="58600.00"
+    latitude="22.330229"
+    longitude="114.165764"/>
   <Customer
     customerNumber="216"
     companyName="Enaco Distributors"
@@ -1912,56 +2004,66 @@
     postalCode="08022"
     country="ES"
     salesEmployeeNumber="1702"
-    creditLimit="60300.00"/>
+    creditLimit="60300.00"
+    latitude="41.3888287"
+    longitude="2.1662708"/>
   <Customer
     customerNumber="219"
     companyName="Boards &amp; Toys Co."
     lastName="Young"
     firstName="Mary"
     phone="3105552373"
-    address1="4097 Douglas Av."
+    address1="407 Douglas St."
     city="Glendale"
     locality="CA"
-    postalCode="92561"
+    postalCode="91104"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="11000.00"/>
+    creditLimit="11000.00"
+    latitude="34.1656578"
+    longitude="-118.1421923"/>
   <Customer
     customerNumber="223"
     companyName="Natürlich Autos"
     lastName="Kloss"
     firstName="Horst"
     phone="0372555188"
-    address1="Taucherstraße 10"
-    city="Cunewalde"
-    postalCode="01307"
+    address1="Macherstraße 53"
+    city="Kamenz"
+    postalCode="01917"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="51.28200870"
+    longitude="14.1063269"/>
   <Customer
     customerNumber="227"
     companyName="Heintze Collectables"
     lastName="Ibsen"
     firstName="Palle"
     phone="86213555"
-    address1="Smagsloget 45"
-    city="Århus"
-    postalCode="8200"
+    address1="Paludan-Müllers Vej 92"
+    city="Aarhus"
+    postalCode="N 8200"
     country="DK"
     salesEmployeeNumber="1401"
-    creditLimit="120800.00"/>
+    creditLimit="120800.00"
+    latitude="56.177472"
+    longitude="10.178696"/>
   <Customer
     customerNumber="233"
     companyName="Québec Home Shopping Network"
     lastName="Fresnière"
     firstName="Jean"
     phone="15145558054"
-    address1="43 rue St. Laurent"
+    address1="6862 Boul St-Laurent"
     city="Montréal"
     locality="Québec"
-    postalCode="H1J 1C3"
+    postalCode="QC H2S 3C7"
     country="CA"
     salesEmployeeNumber="1286"
-    creditLimit="48700.00"/>
+    creditLimit="48700.00"
+    latitude="45.532801"
+    longitude="-73.614601"/>
   <Customer
     customerNumber="237"
     companyName="ANG Resellers"
@@ -1972,34 +2074,39 @@
     city="Madrid"
     postalCode="28001"
     country="ES"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="40.4648534"
+    longitude="-3.659181"/>
   <Customer
     customerNumber="239"
     companyName="Collectable Mini Designs Co."
     lastName="Thompson"
     firstName="Valarie"
     phone="7605558146"
-    address1="361 Furth Circle"
+    address1="1800 Cabrillo Memorial Dr"
     city="San Diego"
     locality="CA"
-    postalCode="91217"
+    postalCode="92106"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="105000.00"/>
+    creditLimit="105000.00"
+    latitude="32.6744953"
+    longitude="-117.2394923"/>
   <Customer
     customerNumber="240"
     companyName="giftsbymail.co.uk"
     lastName="Bennett"
     firstName="Helen"
     phone="1985558888"
-    address1="Garden House"
-    address2="Crowther Way 23"
+    address1="99 Bellevue Rd"
     city="Cowes"
     locality="Isle of Wight"
-    postalCode="PO31 7PJ"
+    postalCode="PO31 7LE"
     country="BR"
     salesEmployeeNumber="1501"
-    creditLimit="93900.00"/>
+    creditLimit="93900.00"
+    latitude="50.7568228"
+    longitude="-1.3056259"/>
   <Customer
     customerNumber="242"
     companyName="Alpha Cognac"
@@ -2011,18 +2118,22 @@
     postalCode="31000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="61100.00"/>
+    creditLimit="61100.00"
+    latitude="43.5996235"
+    longitude="1.4454683"/>
   <Customer
     customerNumber="247"
     companyName="Messner Shopping Network"
     lastName="Messner"
     firstName="Renate"
     phone="0690555984"
-    address1="Magazinweg 7"
+    address1="Eschersheimer Landstraße 248"
     city="Frankfurt"
-    postalCode="60528"
+    postalCode="60320"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="50.1395019"
+    longitude="8.6706404"/>
   <Customer
     customerNumber="249"
     companyName="Amica Models &amp; Co."
@@ -2034,7 +2145,9 @@
     postalCode="10100"
     country="IT"
     salesEmployeeNumber="1401"
-    creditLimit="113000.00"/>
+    creditLimit="113000.00"
+    latitude="45.015025"
+    longitude="7.666591"/>
   <Customer
     customerNumber="250"
     companyName="Lyon Souveniers"
@@ -2046,7 +2159,9 @@
     postalCode="75508"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="68100.00"/>
+    creditLimit="68100.00"
+    latitude="48.829493"
+    longitude="2.2758216"/>
   <Customer
     customerNumber="256"
     companyName="Auto Associés &amp; Cie."
@@ -2058,7 +2173,9 @@
     postalCode="78000"
     country="FR"
     salesEmployeeNumber="1370"
-    creditLimit="77900.00"/>
+    creditLimit="77900.00"
+    latitude="48.8027571"
+    longitude="2.1298841"/>
   <Customer
     customerNumber="259"
     companyName="Toms Spezialitäten, Ltd"
@@ -2070,20 +2187,24 @@
     postalCode="50739"
     country="DE"
     salesEmployeeNumber="1504"
-    creditLimit="120400.00"/>
+    creditLimit="120400.00"
+    latitude="50.9734578"
+    longitude="6.9460623"/>
   <Customer
     customerNumber="260"
     companyName="Royal Canadian Collectables, Ltd."
     lastName="Lincoln"
     firstName="Elizabeth"
     phone="16045554555"
-    address1="23 Tsawassen Blvd."
-    city="Tsawassen"
+    address1="5410 10 Ave"
+    city="Delta"
     locality="BC"
-    postalCode="T2F 8M4"
+    postalCode="BC V4M 3X8"
     country="CA"
     salesEmployeeNumber="1323"
-    creditLimit="89600.00"/>
+    creditLimit="89600.00"
+    latitude="49.021519"
+    longitude="-123.073644"/>
   <Customer
     customerNumber="273"
     companyName="Franken Gifts, Co"
@@ -2094,7 +2215,9 @@
     city="München"
     postalCode="80805"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="48.1730861"
+    longitude="11.5879194"/>
   <Customer
     customerNumber="276"
     companyName="Anna's Decorations, Ltd"
@@ -2108,46 +2231,53 @@
     postalCode="2060"
     country="AU"
     salesEmployeeNumber="1611"
-    creditLimit="107800.00"/>
+    creditLimit="107800.00"
+    latitude="-33.8363471"
+    longitude="151.207781"/>
   <Customer
     customerNumber="278"
     companyName="Rovelli Gifts"
     lastName="Rovelli"
     firstName="Giovanni"
     phone="035640555"
-    address1="Via Ludovico il Moro 22"
+    address1="Via Daniele Piccinini, 2"
     city="Bergamo"
-    postalCode="24100"
+    postalCode="24122"
     country="IT"
     salesEmployeeNumber="1401"
-    creditLimit="119600.00"/>
+    creditLimit="119600.00"
+    latitude="45.6951845"
+    longitude="9.6669261"/>
   <Customer
     customerNumber="282"
     companyName="Souveniers And Things Co."
     lastName="Huxley"
     firstName="Adrian"
     phone="61294958555"
-    address1="Monitor Money Building"
-    address2="815 Pacific Hwy"
+    address1="445 Victoria Ave"
     city="Chatswood"
     locality="NSW"
     postalCode="2067"
     country="AU"
     salesEmployeeNumber="1611"
-    creditLimit="93300.00"/>
+    creditLimit="93300.00"
+    latitude="-33.7962175"
+    longitude="151.1819227"/>
   <Customer
     customerNumber="286"
     companyName="Marta's Replicas Co."
     lastName="Hernandez"
     firstName="Marta"
     phone="6175558555"
-    address1="39323 Spinnaker Dr."
+    address1="575 Memorial Dr"
     city="Cambridge"
     locality="MA"
-    postalCode="51247"
+    postalCode="02139"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="123700.00"/>
+    creditLimit="123700.00"
+    latitude="42.3542631"
+    longitude="-71.105517"/>
   <Customer
     customerNumber="293"
     companyName="BG&amp;E Collectables"
@@ -2158,32 +2288,37 @@
     city="Fribourg"
     postalCode="1700"
     country="CH"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="46.7962279"
+    longitude="7.1523395"/>
   <Customer
     customerNumber="298"
     companyName="Vida Sport, Ltd"
     lastName="Holz"
     firstName="Mihael"
     phone="0897034555"
-    address1="Grenzacherweg 237"
+    address1="Rue Henri-Fazy 1"
     city="Genève"
-    postalCode="1203"
+    postalCode="1204"
     country="CH"
     salesEmployeeNumber="1702"
-    creditLimit="141300.00"/>
+    creditLimit="141300.00"
+    latitude="46.2008205"
+    longitude="6.1464983"/>
   <Customer
     customerNumber="299"
     companyName="Norway Gifts By Mail, Co."
     lastName="Klaeboe"
     firstName="Jan"
     phone="4722121555"
-    address1="Drammensveien 126A"
-    address2="PB 211 Sentrum"
+    address1="B12, Drammensveien 130"
     city="Oslo"
-    postalCode="N 0106"
+    postalCode="0277"
     country="NO"
     salesEmployeeNumber="1504"
-    creditLimit="95100.00"/>
+    creditLimit="95100.00"
+    latitude="59.9208066"
+    longitude="10.6864506"/>
   <Customer
     customerNumber="303"
     companyName="Schuyler Imports"
@@ -2194,7 +2329,9 @@
     city="Amsterdam"
     postalCode="1043 GR"
     country="NL"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="52.3856134"
+    longitude="4.8431668"/>
   <Customer
     customerNumber="307"
     companyName="Der Hund Imports"
@@ -2205,7 +2342,9 @@
     city="Berlin"
     postalCode="12209"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="53.24939"
+    longitude="14.43286"/>
   <Customer
     customerNumber="311"
     companyName="Oulu Toy Supplies, Inc."
@@ -2217,7 +2356,9 @@
     postalCode="90110"
     country="FI"
     salesEmployeeNumber="1501"
-    creditLimit="90500.00"/>
+    creditLimit="90500.00"
+    latitude="65.010279"
+    longitude="25.4650189"/>
   <Customer
     customerNumber="314"
     companyName="Petit Auto"
@@ -2229,84 +2370,98 @@
     postalCode="B-1180"
     country="BE"
     salesEmployeeNumber="1401"
-    creditLimit="79900.00"/>
+    creditLimit="79900.00"
+    latitude="50.8070375"
+    longitude="4.3332521"/>
   <Customer
     customerNumber="319"
     companyName="Mini Classics"
     lastName="Frick"
     firstName="Steve"
     phone="9145554562"
-    address1="3758 North Pendale Street"
+    address1="180 S Broadway #403"
     city="White Plains"
     locality="NY"
-    postalCode="24067"
+    postalCode="10605"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="102700.00"/>
+    creditLimit="102700.00"
+    latitude="40.71865"
+    longitude="-74.014353"/>
   <Customer
     customerNumber="320"
     companyName="Mini Creations Ltd."
     lastName="Huang"
     firstName="Wing"
     phone="5085559555"
-    address1="4575 Hillside Dr."
+    address1="457 Hillside Dr."
     city="New Bedford"
     locality="MA"
-    postalCode="50553"
+    postalCode="02703"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="94500.00"/>
+    creditLimit="94500.00"
+    latitude="41.9425741"
+    longitude="-71.2685695"/>
   <Customer
     customerNumber="321"
     companyName="Corporate Gift Ideas Co."
     lastName="Brown"
     firstName="Julie"
     phone="6505551386"
-    address1="7734 Strong St."
+    address1="487 Fremont St"
     city="San Francisco"
     locality="CA"
-    postalCode="94217"
+    postalCode="94105"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="105000.00"/>
+    creditLimit="105000.00"
+    latitude="37.7867954"
+    longitude="-122.392138"/>
   <Customer
     customerNumber="323"
     companyName="Down Under Souveniers, Inc"
     lastName="Graham"
     firstName="Mike"
     phone="6493125555"
-    address1="162-164 Grafton Road"
+    address1="549/547 Mount Eden Rd"
     address2="Level 2"
-    city="Auckland"
-    postalCode="1024"
+    city="Mount Eden"
+    postalCode="1204"
     country="NZ"
     salesEmployeeNumber="1612"
-    creditLimit="88000.00"/>
+    creditLimit="88000.00"
+    latitude="-36.8861083"
+    longitude="174.7608993"/>
   <Customer
     customerNumber="324"
     companyName="Stylish Desk Decors, Co."
     lastName="Brown"
     firstName="Ann"
     phone="1715550297"
-    address1="35 King George"
+    address1="35 King George St"
     city="London"
-    postalCode="WX3 6FW"
+    postalCode="SE10 8QD"
     country="BR"
     salesEmployeeNumber="1501"
-    creditLimit="77000.00"/>
+    creditLimit="77000.00"
+    latitude="51.4760276"
+    longitude="-0.010818"/>
   <Customer
     customerNumber="328"
     companyName="Tekni Collectables Inc."
     lastName="Brown"
     firstName="William"
     phone="2015559350"
-    address1="7476 Moss Rd."
-    city="Newark"
+    address1="776 Montgomery St"
+    city="Elizabeth"
     locality="NJ"
-    postalCode="94019"
+    postalCode="07202"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="43000.00"/>
+    creditLimit="43000.00"
+    latitude="40.6564136"
+    longitude="-74.2145435"/>
   <Customer
     customerNumber="333"
     companyName="Australian Gift Network, Co"
@@ -2319,31 +2474,36 @@
     postalCode="4101"
     country="AU"
     salesEmployeeNumber="1611"
-    creditLimit="51600.00"/>
+    creditLimit="51600.00"
+    latitude="-27.4845413"
+    longitude="152.9998064"/>
   <Customer
     customerNumber="334"
     companyName="Suominen Souveniers"
     lastName="Suominen"
     firstName="Kalle"
     phone="35898045555"
-    address1="Software Engineering Center"
-    address2="SEC Oy"
+    address1="Säterinkatu 6"
     city="Espoo"
-    postalCode="FIN-02271"
+    postalCode="02600"
     country="FI"
     salesEmployeeNumber="1501"
-    creditLimit="98800.00"/>
+    creditLimit="98800.00"
+    latitude="60.21399"
+    longitude="24.813883"/>
   <Customer
     customerNumber="335"
     companyName="Cramer Spezialitäten, Ltd"
     lastName="Cramer"
     firstName="Philip"
     phone="055509555"
-    address1="Maubelstr. 90"
-    city="Brandenburg"
-    postalCode="14776"
+    address1="Unter den Eichen 1"
+    city="Bestensee"
+    postalCode="15741"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="52.2376588"
+    longitude="13.60125"/>
   <Customer
     customerNumber="339"
     companyName="Classic Gift Ideas, Inc"
@@ -2353,23 +2513,26 @@
     address1="782 First Street"
     city="Philadelphia"
     locality="PA"
-    postalCode="71270"
+    postalCode="08004"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="81100.00"/>
+    creditLimit="81100.00"
+    latitude="39.7606948"
+    longitude="-74.8781761"/>
   <Customer
     customerNumber="344"
     companyName="CAF Imports"
     lastName="Fernandez"
     firstName="Jesus"
     phone="34913728555"
-    address1="Merchants House"
-    address2="27-30 Merchant's Quay"
+    address1="Av. Madrid"
     city="Madrid"
-    postalCode="28023"
+    postalCode="28053"
     country="ES"
     salesEmployeeNumber="1702"
-    creditLimit="59600.00"/>
+    creditLimit="59600.00"
+    latitude="40.3622261"
+    longitude="-3.6652293"/>
   <Customer
     customerNumber="347"
     companyName="Men 'R' US Retailers, Ltd."
@@ -2382,7 +2545,9 @@
     postalCode="91003"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="57700.00"/>
+    creditLimit="57700.00"
+    latitude="33.9346432"
+    longitude="-118.3834882"/>
   <Customer
     customerNumber="348"
     companyName="Asian Treasures, Inc."
@@ -2394,7 +2559,9 @@
     postalCode="902"
     locality="Co. Cork"
     country="IR"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="51.9126151"
+    longitude="-8.3223801"/>
   <Customer
     customerNumber="350"
     companyName="Marseille Mini Autos"
@@ -2406,7 +2573,9 @@
     postalCode="13008"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="65000.00"/>
+    creditLimit="65000.00"
+    latitude="43.2611295"
+    longitude="5.3886613"/>
   <Customer
     customerNumber="353"
     companyName="Reims Collectables"
@@ -2418,19 +2587,23 @@
     postalCode="51100"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="81100.00"/>
+    creditLimit="81100.00"
+    latitude="49.2558395"
+    longitude="4.1554198"/>
   <Customer
     customerNumber="356"
     companyName="SAR Distributors, Co"
     lastName="Kuger"
     firstName="Armand"
     phone="27215503555"
-    address1="1250 Pretorius Street"
-    city="Hatfield"
+    address1="39 Matanela St"
+    city="Saulsville"
     locality="Pretoria"
-    postalCode="0028"
+    postalCode="0125"
     country="SA"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="-25.7754029"
+    longitude="28.051957"/>
   <Customer
     customerNumber="357"
     companyName="GiftsForHim.com"
@@ -2442,7 +2615,9 @@
     postalCode="1024"
     country="NZ"
     salesEmployeeNumber="1612"
-    creditLimit="77700.00"/>
+    creditLimit="77700.00"
+    latitude="-36.8637763"
+    longitude="174.7474686"/>
   <Customer
     customerNumber="361"
     companyName="Kommission Auto"
@@ -2453,33 +2628,39 @@
     city="Münster"
     postalCode="44087"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="51.5746007"
+    longitude="7.1140206"/>
   <Customer
     customerNumber="362"
     companyName="Gifts4AllAges.com"
     lastName="Yoshido"
     firstName="Juri"
     phone="6175559555"
-    address1="8616 Spinnaker Dr."
+    address1="816 William T Morrissey Blvd."
     city="Boston"
     locality="MA"
-    postalCode="51003"
+    postalCode="02122"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="41900.00"/>
+    creditLimit="41900.00"
+    latitude="42.2944588"
+    longitude="-71.0472905"/>
   <Customer
     customerNumber="363"
     companyName="Online Diecast Creations Co."
     lastName="Young"
     firstName="Dorothy"
     phone="6035558647"
-    address1="2304 Long Airport Avenue"
+    address1="204 Harris Rd"
     city="Nashua"
     locality="NH"
-    postalCode="62005"
+    postalCode="03062"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="114200.00"/>
+    creditLimit="114200.00"
+    latitude="42.7258925"
+    longitude="-71.4882545"/>
   <Customer
     customerNumber="369"
     companyName="Lisboa Souveniers, Inc"
@@ -2490,7 +2671,9 @@
     city="Lisboa"
     postalCode="1675"
     country="PT"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="38.7639293"
+    longitude="-9.1995368"/>
   <Customer
     customerNumber="376"
     companyName="Precious Collectables"
@@ -2502,20 +2685,24 @@
     postalCode="3012"
     country="CH"
     salesEmployeeNumber="1702"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="46.9711166"
+    longitude="7.3565644"/>
   <Customer
     customerNumber="379"
     companyName="Collectables For Less Inc."
     lastName="Nelson"
     firstName="Allen"
     phone="6175558555"
-    address1="7825 Douglas Av."
-    city="Brickhaven"
+    address1="725 Douglas St"
+    city="Uxbridge"
     locality="MA"
-    postalCode="58339"
+    postalCode="01569"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="70700.00"/>
+    creditLimit="70700.00"
+    latitude="42.061175"
+    longitude="-71.6716434"/>
   <Customer
     customerNumber="381"
     companyName="Royale Belge"
@@ -2527,32 +2714,38 @@
     postalCode="B-6000"
     country="BE"
     salesEmployeeNumber="1401"
-    creditLimit="23500.00"/>
+    creditLimit="23500.00"
+    latitude="50.4062634"
+    longitude="4.4470125"/>
   <Customer
     customerNumber="382"
     companyName="Salzburg Collectables"
     lastName="Pipps"
     firstName="Georg"
     phone="65629555"
-    address1="Geislweg 14"
+    address1="Nonntaler Hauptstraße 55"
     city="Salzburg"
     postalCode="5020"
     country="AU"
     salesEmployeeNumber="1401"
-    creditLimit="71700.00"/>
+    creditLimit="71700.00"
+    latitude="47.7860143"
+    longitude="13.0524659"/>
   <Customer
     customerNumber="385"
     companyName="Cruz &amp; Sons Co."
     lastName="Cruz"
     firstName="Arnold"
     phone="6325553587"
-    address1="15 McCallum Street"
-    address2="NatWest Center #13-03"
-    city="Makati City"
-    postalCode="1227 MM"
+    address1="50 McKinley Road"
+    address2="2/FL San Antonio Plaza Arcade"
+    locality="Manila"
+    city="Makati"
     country="PH"
     salesEmployeeNumber="1621"
-    creditLimit="81500.00"/>
+    creditLimit="81500.00"
+    latitude="14.5474244"
+    longitude="121.037479"/>
   <Customer
     customerNumber="386"
     companyName="L'ordine Souveniers"
@@ -2564,7 +2757,9 @@
     postalCode="42100"
     country="IT"
     salesEmployeeNumber="1401"
-    creditLimit="121400.00"/>
+    creditLimit="121400.00"
+    latitude="44.7454793"
+    longitude="10.6062737"/>
   <Customer
     customerNumber="398"
     companyName="Tokyo Collectables, Ltd"
@@ -2577,7 +2772,9 @@
     postalCode="106-0032"
     country="JP"
     salesEmployeeNumber="1621"
-    creditLimit="94400.00"/>
+    creditLimit="94400.00"
+    latitude="35.6672666"
+    longitude="139.7388945"/>
   <Customer
     customerNumber="406"
     companyName="Auto Canal+ Petit"
@@ -2589,7 +2786,9 @@
     postalCode="75016"
     country="FR"
     salesEmployeeNumber="1337"
-    creditLimit="95000.00"/>
+    creditLimit="95000.00"
+    latitude="48.8691179"
+    longitude="2.2898399"/>
   <Customer
     customerNumber="409"
     companyName="Stuttgart Collectable Exchange"
@@ -2600,20 +2799,24 @@
     city="Stuttgart"
     postalCode="70563"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="48.7794494"
+    longitude="9.1852878"/>
   <Customer
     customerNumber="412"
     companyName="Extreme Desk Decorations, Ltd"
     lastName="McRoy"
     firstName="Sarah"
     phone="044999555"
-    address1="101 Lambton Quay"
-    address2="Level 11"
+    address1="11 Tory St"
+    address2="Te Aro"
     city="Wellington"
-    postalCode="1024"
+    postalCode="6011"
     country="NZ"
     salesEmployeeNumber="1612"
-    creditLimit="86800.00"/>
+    creditLimit="86800.00"
+    latitude="-41.2926994"
+    longitude="174.7817783"/>
   <Customer
     customerNumber="415"
     companyName="Bavarian Collectables Imports, Co."
@@ -2625,109 +2828,127 @@
     postalCode="80686"
     country="DE"
     salesEmployeeNumber="1504"
-    creditLimit="77000.00"/>
+    creditLimit="77000.00"
+    latitude="48.13472"
+    longitude="11.52624"/>
   <Customer
     customerNumber="424"
     companyName="Classic Legends Inc."
     lastName="Hernandez"
     firstName="Maria"
     phone="2125558493"
-    address1="5905 Pompton St."
+    address1="590 St James Pl"
     address2="Suite 750"
-    city="NYC"
+    city="Brooklyn"
     locality="NY"
-    postalCode="10022"
+    postalCode="11238"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="67500.00"/>
+    creditLimit="67500.00"
+    latitude="40.681839"
+    longitude="-73.9633317"/>
   <Customer
     customerNumber="443"
     companyName="Feuer Online Stores, Inc"
     lastName="Feuer"
     firstName="Alexander"
     phone="0342555176"
-    address1="Heerstr. 22"
+    address1="Dresdner Str. 69"
     city="Leipzig"
-    postalCode="04179"
+    postalCode="04317"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="51.33835000"
+    longitude="12.40504"/>
   <Customer
     customerNumber="447"
     companyName="Gift Ideas Corp."
     lastName="Lewis"
     firstName="Dan"
     phone="2035554407"
-    address1="2440 Pompton St."
-    city="Glendale"
-    locality="CT"
-    postalCode="97561"
+    address1="2440 Glendale St"
+    city="Paragould"
+    locality="AR"
+    postalCode="72450"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="49700.00"/>
+    creditLimit="49700.00"
+    latitude="36.0476369"
+    longitude="-90.5119429"/>
   <Customer
     customerNumber="448"
     companyName="Scandinavian Gift Ideas"
     lastName="Larsson"
     firstName="Martha"
     phone="0695346555"
-    address1="Åkergatan 24"
-    city="Bräcke"
-    postalCode="S-844 67"
+    address1="34, Ivar Claessons gata"
+    city="Kungälv"
+    postalCode="442 32"
     country="SE"
     salesEmployeeNumber="1504"
-    creditLimit="116400.00"/>
+    creditLimit="116400.00"
+    latitude="57.8764872"
+    longitude="11.9871365"/>
   <Customer
     customerNumber="450"
     companyName="The Sharp Gifts Warehouse"
     lastName="Frick"
     firstName="Sue"
     phone="4085553659"
-    address1="3086 Ingle Ln."
-    city="San Jose"
+    address1="3086 Kearney Ave"
+    city="Santa Clara"
     locality="CA"
-    postalCode="94217"
+    postalCode="95051"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="77600.00"/>
+    creditLimit="77600.00"
+    latitude="37.3649569"
+    longitude="-121.9807491"/>
   <Customer
     customerNumber="452"
     companyName="Mini Auto Werke"
     lastName="Mendel"
     firstName="Roland"
     phone="76753555"
-    address1="Kirchgasse 6"
+    address1="Jakominipl. 18"
     city="Graz"
     postalCode="8010"
     country="AU"
     salesEmployeeNumber="1401"
-    creditLimit="45300.00"/>
+    creditLimit="45300.00"
+    latitude="47.0666027"
+    longitude="15.4416038"/>
   <Customer
     customerNumber="455"
     companyName="Super Scale Inc."
     lastName="Murphy"
     firstName="Leslie"
     phone="2035559545"
-    address1="567 North Pendale Street"
-    city="New Haven"
-    locality="CT"
-    postalCode="97823"
+    address1="567 Pendale St"
+    city="Staten Island"
+    locality="NY"
+    postalCode="10306"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="95400.00"/>
+    creditLimit="95400.00"
+    latitude="40.5585761"
+    longitude="-74.1232835"/>
   <Customer
     customerNumber="456"
     companyName="Microscale Inc."
     lastName="Choi"
     firstName="Yu"
     phone="2125551957"
-    address1="5290 North Pendale Street"
+    address1="5290 Jackson St"
     address2="Suite 200"
-    city="NYC"
-    locality="NY"
-    postalCode="10022"
+    city="New York City"
+    locality="CO"
+    postalCode="80216"
     country="US"
     salesEmployeeNumber="1286"
-    creditLimit="39800.00"/>
+    creditLimit="39800.00"
+    latitude="39.7926133"
+    longitude="-104.9428737"/>
   <Customer
     customerNumber="458"
     companyName="Corrida Auto Replicas, Ltd"
@@ -2739,18 +2960,22 @@
     postalCode="28023"
     country="ES"
     salesEmployeeNumber="1702"
-    creditLimit="104600.00"/>
+    creditLimit="104600.00"
+    latitude="40.4604681"
+    longitude="-3.7798503"/>
   <Customer
     customerNumber="459"
     companyName="Warburg Exchange"
     lastName="Ottlieb"
     firstName="Sven"
     phone="0241039123"
-    address1="Walserweg 21"
+    address1="Zollamtstraße 1"
     city="Aachen"
-    postalCode="52066"
+    postalCode="52064"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="50.7676124"
+    longitude="6.0887865"/>
   <Customer
     customerNumber="462"
     companyName="FunGiftIdeas.com"
@@ -2763,18 +2988,23 @@
     postalCode="50553"
     country="US"
     salesEmployeeNumber="1216"
-    creditLimit="85800.00"/>
+    creditLimit="85800.00"
+    latitude="41.6146206"
+    longitude="-70.9199867"/>
   <Customer
     customerNumber="465"
     companyName="Anton Designs, Ltd."
     lastName="Anton"
     firstName="Carmen"
     phone="34913728555"
-    address1="c/ Gobelas, 19-1 Urb. La Florida"
+    address1="Urbanización La Florida"
+    address2="Calle Guecho, 40"
     city="Madrid"
     postalCode="28023"
     country="ES"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="40.4754395"
+    longitude="-3.8224211"/>
   <Customer
     customerNumber="471"
     companyName="Australian Collectables, Ltd"
@@ -2787,7 +3017,9 @@
     postalCode="3150"
     country="AU"
     salesEmployeeNumber="1611"
-    creditLimit="60300.00"/>
+    creditLimit="60300.00"
+    latitude="-37.8873307"
+    longitude="145.1621328"/>
   <Customer
     customerNumber="473"
     companyName="Frau da Collezione"
@@ -2800,20 +3032,24 @@
     postalCode="20121"
     country="IT"
     salesEmployeeNumber="1401"
-    creditLimit="34800.00"/>
+    creditLimit="34800.00"
+    latitude="45.5247956"
+    longitude="9.285038"/>
   <Customer
     customerNumber="475"
     companyName="West Coast Collectables Co."
     lastName="Thompson"
     firstName="Steve"
     phone="3105553722"
-    address1="3675 Furth Circle"
+    address1="3675 Burbank Blvd"
     city="Burbank"
     locality="CA"
-    postalCode="94019"
+    postalCode="91505"
     country="US"
     salesEmployeeNumber="1166"
-    creditLimit="55400.00"/>
+    creditLimit="55400.00"
+    latitude="34.1746883"
+    longitude="-118.3502702"/>
   <Customer
     customerNumber="477"
     companyName="Mit Vergnügen &amp; Co."
@@ -2824,7 +3060,9 @@
     city="Mannheim"
     postalCode="68306"
     country="DE"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="49.501991"
+    longitude="8.5068841"/>
   <Customer
     customerNumber="480"
     companyName="Kremlin Collectables, Co."
@@ -2835,7 +3073,9 @@
     city="Saint Petersburg"
     postalCode="196143"
     country="RU"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="59.842607"
+    longitude="30.325748"/>
   <Customer
     customerNumber="481"
     companyName="Raanan Stores, Inc"
@@ -2846,7 +3086,9 @@
     city="Herzlia"
     postalCode="47625"
     country="IL"
-    creditLimit="0.00"/>
+    creditLimit="0.00"
+    latitude="32.2147676"
+    longitude="34.815871"/>
   <Customer
     customerNumber="484"
     companyName="Iberia Gift Imports, Corp."
@@ -2858,70 +3100,83 @@
     postalCode="41101"
     country="ES"
     salesEmployeeNumber="1702"
-    creditLimit="65700.00"/>
+    creditLimit="65700.00"
+    latitude="37.4076213"
+    longitude="-5.972254"/>
   <Customer
     customerNumber="486"
     companyName="Motor Mint Distributors Inc."
     lastName="Salazar"
     firstName="Rosa"
     phone="2155559857"
-    address1="11328 Douglas Av."
-    city="Philadelphia"
+    address1="118 Welcome Ave"
+    city="Norwood"
     locality="PA"
-    postalCode="71270"
+    postalCode="19074"
     country="US"
     salesEmployeeNumber="1323"
-    creditLimit="72600.00"/>
+    creditLimit="72600.00"
+    latitude="39.892697"
+    longitude="-75.297461"/>
   <Customer
     customerNumber="487"
     companyName="Signal Collectibles Ltd."
     lastName="Taylor"
     firstName="Sue"
     phone="4155554312"
-    address1="2793 Furth Circle"
-    city="Brisbane"
+    address1="293 Taylor Dr"
+    city="South San Francisco"
     locality="CA"
-    postalCode="94217"
+    postalCode="94080"
     country="US"
     salesEmployeeNumber="1165"
-    creditLimit="60300.00"/>
+    creditLimit="60300.00"
+    latitude="37.6437441"
+    longitude="-122.4335289"/>
   <Customer
     customerNumber="489"
     companyName="Double Decker Gift Stores, Ltd"
     lastName="Smith"
     firstName="Thomas"
     phone="1715557555"
-    address1="120 Hanover Sq."
+    address1="120 Hanover Square"
+    locality="Mayfair"
     city="London"
-    postalCode="WA1 1DP"
+    postalCode="W1S 1JD"
     country="BR"
     salesEmployeeNumber="1501"
-    creditLimit="43300.00"/>
+    creditLimit="43300.00"
+    latitude="51.5135364"
+    longitude="-0.1438398"/>
   <Customer
     customerNumber="495"
     companyName="Diecast Collectables"
     lastName="Franco"
     firstName="Valarie"
     phone="6175552555"
-    address1="6251 Ingle Ln."
-    city="Boston"
+    address1="651 Boston Turnpike"
+    city="Shrewsbury"
     locality="MA"
-    postalCode="51003"
+    postalCode="01545"
     country="US"
     salesEmployeeNumber="1188"
-    creditLimit="85100.00"/>
+    creditLimit="85100.00"
+    latitude="42.2766619"
+    longitude="-71.7049766"/>
   <Customer
     customerNumber="496"
     companyName="Kelly's Gift Shop"
     lastName="Snowden"
     firstName="Tony"
     phone="6495555500"
-    address1="Arenales 1938 3'A'"
-    postalCode="1024"
+    address1="8-10 Queen St"
+    postalCode="1010"
     city="Auckland"
     country="NZ"
     salesEmployeeNumber="1612"
-    creditLimit="110000.00"/>
+    creditLimit="110000.00"
+    latitude="-36.8437363"
+    longitude="174.7668388"/>
   <Purchase
     purchaseNumber="10100"
     purchaseDate="2003-01-06"

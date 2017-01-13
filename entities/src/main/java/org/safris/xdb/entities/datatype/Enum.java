@@ -24,9 +24,6 @@ import java.sql.Types;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.entities.Tables;
-import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
 
 public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
   protected static final int sqlType = Types.VARCHAR;
@@ -54,11 +51,6 @@ public final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
 
   protected Enum(final Enum<T> copy) {
     super(copy);
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return vendor == DBVendor.POSTGRE_SQL ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(entity), name) : "?";
   }
 
   @Override

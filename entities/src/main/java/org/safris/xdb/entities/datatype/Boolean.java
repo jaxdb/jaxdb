@@ -24,7 +24,6 @@ import java.sql.Types;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public final class Boolean extends DataType<java.lang.Boolean> {
   protected static final int sqlType = Types.BOOLEAN;
@@ -51,11 +50,6 @@ public final class Boolean extends DataType<java.lang.Boolean> {
 
   protected Boolean(final Boolean copy) {
     super(copy);
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

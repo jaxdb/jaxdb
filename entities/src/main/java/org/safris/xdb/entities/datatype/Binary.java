@@ -24,7 +24,6 @@ import java.sql.Types;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public final class Binary extends DataType<byte[]> {
   protected static byte[] get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -59,11 +58,6 @@ public final class Binary extends DataType<byte[]> {
     super(copy);
     this.length = copy.length;
     this.varying = copy.varying;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

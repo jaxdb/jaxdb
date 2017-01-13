@@ -83,7 +83,7 @@ public abstract class GenerateOn<T> {
     public String generateDynamic(final Serialization serialization, final DataType<Temporal> dataType) {
       dataType.set(generate(dataType));
       serialization.addParameter(dataType);
-      return dataType.getPreparedStatementMark(serialization.vendor);
+      return serialization.getSerializer(dataType).getPreparedStatementMark(dataType);
     }
   };
 

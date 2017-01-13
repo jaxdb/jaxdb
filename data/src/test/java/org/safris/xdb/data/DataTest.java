@@ -58,6 +58,8 @@ public class DataTest extends LoggableTest {
     Logging.setLevel(Level.FINE);
   }
 
+  private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
+  private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
   private static Connection connection;
 
   public static Connection createConnection() throws ClassNotFoundException, IOException, SQLException {
@@ -83,24 +85,32 @@ public class DataTest extends LoggableTest {
     connection = createConnection();
   }
 
-  @Test
-  public void testData() throws IOException, SQLException, TransformerException, XMLException, ReflectiveOperationException {
-    final URL xds = Resources.getResource("classicmodels.xds").getURL();
-    final File destFile = new File("target/generated-test-resources/xdb/classicmodels.xsd");
+  private static void testData(final String name) throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    final URL xds = Resources.getResource(name + ".xds").getURL();
+    final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(xds, destFile);
 
-    final File destDir = new File("target/generated-test-sources/xsb");
-    final GeneratorContext generatorContext = new GeneratorContext(destDir, true, true);
+    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd")), null).generate();
-    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), destDir.toURI().toURL());
+    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), sourcesDestDir.toURI().toURL(), resourcesDestDir.toURI().toURL());
 
-    final URL xdd = Resources.getResource("classicmodels.xdd").getURL();
+    final URL xdd = Resources.getResource(name + ".xdd").getURL();
     final $xdd_data data;
     try (final InputStream in = xdd.openStream()) {
       data = ($xdd_data)Bindings.parse(new InputSource(in));
     }
 
     Datas.loadData(connection, data);
+  }
+
+  @Test
+  public void testClassicModels() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    testData("classicmodels");
+  }
+
+  @Test
+  public void testWorld() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    testData("world");
   }
 
   @AfterClass

@@ -39,14 +39,6 @@ public abstract class Entity extends Subject<Entity> {
     return wasSelected;
   }
 
-  @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
-    serialization.append(tableName(this, serialization));
-    final String alias = tableAlias(this, true);
-    if (serialization.getType() == Select.class)
-      serialization.append(" ").append(alias);
-  }
-
   @SuppressWarnings("unchecked")
   protected Class<? extends Schema> schema() {
     return (Class<? extends Schema>)getClass().getEnclosingClass();

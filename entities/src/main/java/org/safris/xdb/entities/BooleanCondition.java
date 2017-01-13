@@ -18,17 +18,17 @@ package org.safris.xdb.entities;
 
 final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   @SuppressWarnings("unchecked")
-  private static <T extends Subject<?>>void formatBraces(final Serializable caller, final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) {
+  private static <T extends Subject<?>>void formatBraces(final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) {
     if (condition instanceof LogicalCondition || condition instanceof Predicate) {
-      condition.serialize(caller, serialization);
+      condition.serialize(serialization);
     }
     else if (condition instanceof BooleanCondition) {
       if (operator == ((BooleanCondition<T>)condition).operator) {
-        condition.serialize(caller, serialization);
+        condition.serialize(serialization);
       }
       else {
         serialization.append("(");
-        condition.serialize(caller, serialization);
+        condition.serialize(serialization);
         serialization.append(")");
       }
     }
@@ -52,9 +52,10 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   }
 
   @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
     for (int i = 0; i < conditions.length; i++) {
-      formatBraces(this, operator, conditions[i], serialization);
+      formatBraces(operator, conditions[i], serialization);
       serialization.append(i < conditions.length - 1 ? " " + operator + " " : "");
     }
   }

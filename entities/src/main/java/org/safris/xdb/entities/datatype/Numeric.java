@@ -19,7 +19,6 @@ package org.safris.xdb.entities.datatype;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Numeric<T extends Number> extends DataType<T> {
   protected Numeric(final int sqlType, final Class<T> type, final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
@@ -28,10 +27,5 @@ public abstract class Numeric<T extends Number> extends DataType<T> {
 
   protected Numeric(final Numeric<T> dataType) {
     super(dataType);
-  }
-
-  @Override
-  protected final String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 }

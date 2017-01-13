@@ -16,26 +16,53 @@
 
 package org.safris.xdb.entities;
 
-public class Function<T> extends Subject<T> {
-  private final String function;
+class Function<T> extends Subject<T> {
+  protected final String function;
   protected final DML.SetQualifier qualifier;
-  protected final DataType<T> dataType;
+  protected final DataType<T> a;
+  protected final Object b;
 
   protected Function(final String function, final DML.SetQualifier qualifier, final DataType<T> dataType) {
     this.function = function;
     this.qualifier = qualifier;
-    this.dataType = dataType;
+    this.a = dataType;
+    this.b = null;
+  }
+
+  protected Function(final String function, final DataType<T> dataType) {
+    this(function, (DML.SetQualifier)null, dataType);
+  }
+
+  protected Function(final String function) {
+    this(function, (DML.SetQualifier)null, null);
+  }
+
+  protected Function(final String function, final DataType<T> a, final Object b) {
+    this.function = function;
+    this.qualifier = null;
+    this.a = a;
+    this.b = b;
   }
 
   @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
     serialization.append(function).append("(");
-    if (dataType != null) {
-      tableAlias(dataType.owner(), true);
-      if (qualifier != null)
-        serialization.append(qualifier.toString()).append(" ");
+    if (a != null) {
+      if (b != null) {
+        Keyword.format(a, serialization);
+        serialization.append(", ");
+        if (b instanceof DataType)
+          Keyword.format(b, serialization);
+        else
+          serialization.append(String.valueOf(b));
+      }
+      else {
+        if (qualifier != null)
+          serialization.append(qualifier.toString()).append(" ");
 
-      serialization.append(dataType.toString());
+        Keyword.format(a, serialization);
+      }
     }
 
     serialization.append(")");

@@ -207,6 +207,30 @@ public abstract class SQLSpec {
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
+  public static List<String> parseEnum(final String value) {
+    final List<String> enums = new ArrayList<String>();
+    final char[] chars = value.replace("\\\\", "\\").toCharArray();
+    final StringBuilder builder = new StringBuilder();
+    boolean escaped = false;
+    for (int i = 0; i < chars.length; i++) {
+      char ch = chars[i];
+      if (ch == '\\') {
+        escaped = true;
+      }
+      else if (ch == ' ' && !escaped) {
+        enums.add(builder.toString());
+        builder.setLength(0);
+      }
+      else {
+        escaped = false;
+        builder.append(ch);
+      }
+    }
+
+    enums.add(builder.toString());
+    return enums;
+  }
+
   public abstract String $null(final $xds_table table, final $xds_column column);
   public abstract String $autoIncrement(final $xds_table table, final $xds_integer column);
 }

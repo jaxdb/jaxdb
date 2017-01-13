@@ -17,12 +17,11 @@
 package org.safris.xdb.entities;
 
 import java.sql.PreparedStatement;
-import java.sql.Statement;
 
 public abstract class Keyword<T extends Subject<?>> extends Serializable {
-  protected static void format(final Serializable caller, final Object obj, final Serialization serialization) {
+  protected static void format(final Object obj, final Serialization serialization) {
     if (obj instanceof Serializable) {
-      ((Serializable)obj).serialize(caller, serialization);
+      ((Serializable)obj).serialize(serialization);
     }
     else if (serialization.statementType == PreparedStatement.class) {
       if (obj == null) {
@@ -54,18 +53,15 @@ public abstract class Keyword<T extends Subject<?>> extends Serializable {
         serialization.append(")");
       }
       else if (obj instanceof Select.Execute<?>) {
-        ((Select.Execute<?>)obj).serialize(caller, serialization);
+        ((Select.Execute<?>)obj).serialize(serialization);
       }
       else {
         serialization.addParameter(VariableWrapper.valueOf(obj));
         serialization.append("?");
       }
     }
-    else if (serialization.statementType == Statement.class) {
-      serialization.append(VariableWrapper.toString(obj));
-    }
     else {
-      throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
+      serialization.append(VariableWrapper.toString(obj));
     }
   }
 

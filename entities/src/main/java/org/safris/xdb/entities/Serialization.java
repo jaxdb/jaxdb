@@ -23,17 +23,19 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import org.safris.xdb.schema.DBVendor;
 
-public class Serialization {
+class Serialization {
+  private final Stack<Serializable> callStack = new Stack<Serializable>();
   private final List<String> sqls = new ArrayList<String>();
 
   private final List<List<? extends Variable<?>>> batches;
   private List<Variable<?>> current;
 
   protected final Class<?> type;
-  protected final DBVendor vendor;
+  private final DBVendor vendor;
   protected final Class<? extends Statement> statementType;
   private final StringBuilder sql = new StringBuilder();
 
@@ -50,6 +52,23 @@ public class Serialization {
     }
   }
 
+  protected Stack<Serializable> getCaller() {
+    return callStack;
+  }
+
+  protected DBVendor getVendor() {
+    return vendor;
+  }
+
+  protected Serializer getSerializer(final Serializable serializable) {
+    return Serializer.getSerializer(vendor);
+  }
+
+  protected void addCaller(final Serializable serializable) {
+    if (callStack.empty() || callStack.peek() != serializable)
+      callStack.add(serializable);
+  }
+
   public Class<?> getType() {
     return type;
   }
@@ -61,7 +80,7 @@ public class Serialization {
     current.add(parameter);
   }
 
-  protected StringBuilder append(final CharSequence sql) {
+  public StringBuilder append(final CharSequence sql) {
     return this.sql.append(sql);
   }
 
@@ -75,6 +94,7 @@ public class Serialization {
   protected final ResultSet executeQuery(final Connection connection) throws SQLException {
     if (statementType == PreparedStatement.class) {
       final PreparedStatement statement = connection.prepareStatement(sql.toString());
+      set(statement, current);
       return statement.executeQuery();
     }
 

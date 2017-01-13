@@ -66,7 +66,8 @@ class VariableWrapper<T> extends Variable<T> {
   }
 
   @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
     if (get() == null) {
       serialization.append("NULL");
     }

@@ -64,14 +64,6 @@ public final class SQLDataTypes {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
-  public static String toEnumValue(String value) {
-    value = value.replaceAll("\\\\\\\\", "\\\\"); // \\ is \
-    value = value.replaceAll("\\\\_", " "); // \_ is <space>
-    value = value.replaceAll("\\\\", ""); // anything else escaped is itself
-    value = value.replace("'", "\\'"); // ' must be \'
-    return value;
-  }
-
   public static void checkValidNumber(final String var, final Integer precision, final Integer decimal) {
     if (precision < decimal)
       throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,D), M must be >= D (column '" + var + "').");

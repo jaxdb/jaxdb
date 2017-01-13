@@ -18,7 +18,6 @@ package org.safris.xdb.entities;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
@@ -44,7 +43,7 @@ class Update {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(this, serialization);
+        serialize(serialization);
         Subject.clearAliases();
         final int[] count = serialization.executeUpdate(connection);
         if (transaction == null)
@@ -87,7 +86,7 @@ class Update {
 
   protected final static class WHERE extends Execute implements update.UPDATE {
     private final Keyword<DataType<?>> parent;
-    private final Condition<?> condition;
+    protected final Condition<?> condition;
 
     protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
       this.parent = parent;
@@ -97,13 +96,6 @@ class Update {
     @Override
     protected Keyword<DataType<?>> parent() {
       return parent;
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      parent.serialize(this, serialization);
-      serialization.append(" WHERE ");
-      condition.serialize(this, serialization);
     }
   }
 
@@ -118,51 +110,12 @@ class Update {
     protected Keyword<DataType<?>> parent() {
       return null;
     }
-
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      if (getClass() != UPDATE.class) // means that there are subsequent clauses
-        throw new Error("Need to override this");
-
-      if (!(caller instanceof Update.SET) && entity.primary().length == 0)
-        throw new UnsupportedOperationException("Entity '" + entity.name() + "' does not have a primary key, nor was WHERE clause specified");
-
-      serialization.append("UPDATE ");
-      entity.serialize(this, serialization);
-      if (!(caller instanceof Update.SET)) {
-        final StringBuilder setClause = new StringBuilder();
-        for (final DataType dataType : entity.column()) {
-          if (!dataType.primary && (dataType.wasSet() || dataType.generateOnUpdate != null)) {
-            if (dataType.generateOnUpdate != null)
-              dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
-
-            serialization.addParameter(dataType);
-            setClause.append(", ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
-          }
-        }
-
-        serialization.append(" SET ").append(setClause.substring(2));
-        final StringBuilder whereClause = new StringBuilder();
-        for (final DataType dataType : entity.column()) {
-          if (dataType.primary) {
-            if (dataType.generateOnUpdate != null)
-              dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
-
-            serialization.addParameter(dataType);
-            whereClause.append(" AND ").append(dataType.name).append(" = ").append(dataType.getPreparedStatementMark(serialization.vendor));
-          }
-        }
-
-        serialization.append(" WHERE ").append(whereClause.substring(5));
-      }
-    }
   }
 
   protected final static class SET extends UPDATE_SET implements update.SET {
     private final Keyword<DataType<?>> parent;
-    private final DataType<?> set;
-    private final Serializable to;
+    protected final DataType<?> set;
+    protected final Serializable to;
 
     @SuppressWarnings("unchecked")
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
@@ -198,7 +151,7 @@ class Update {
       return parent;
     }
 
-    private Entity getSetColumns(final Set<DataType<?>> columns) {
+    protected Entity getSetColumns(final Set<DataType<?>> columns) {
       columns.add(set);
       if (parent instanceof Update.SET)
         return ((Update.SET)parent).getSetColumns(columns);
@@ -207,31 +160,6 @@ class Update {
         return ((Update.UPDATE)parent).entity;
 
       throw new Error("This should not happen, as UPDATE is always followed by SET.");
-    }
-
-    @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      parent.serialize(this, serialization);
-      if (parent instanceof Update.UPDATE)
-        serialization.append(" SET ");
-
-      set.serialize(this, serialization);
-      serialization.append(" = ");
-      format(this, to, serialization);
-      if (caller instanceof Update.SET) {
-        serialization.append(", ");
-      }
-      else {
-        final Set<DataType<?>> setColumns = new HashSet<DataType<?>>();
-        final Entity entity = getSetColumns(setColumns);
-        final StringBuilder setClause = new StringBuilder();
-        for (final DataType column : entity.column())
-          if (!setColumns.contains(column) && column.generateOnUpdate != null)
-            setClause.append(", ").append(column.name).append(" = ").append(column.generateOnUpdate.generateDynamic(serialization, column));
-
-        serialization.append(setClause);
-      }
     }
   }
 }

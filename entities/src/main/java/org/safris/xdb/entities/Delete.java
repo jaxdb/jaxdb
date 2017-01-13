@@ -34,7 +34,7 @@ class Delete {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(this, serialization);
+        serialize(serialization);
         Subject.clearAliases();
         final int[] count = serialization.executeUpdate(connection);
         if (transaction == null)
@@ -55,7 +55,7 @@ class Delete {
 
   protected final static class WHERE extends Execute implements delete.DELETE {
     private final Keyword<DataType<?>> parent;
-    private final Condition<?> condition;
+    protected final Condition<?> condition;
 
     protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
       this.parent = parent;
@@ -65,13 +65,6 @@ class Delete {
     @Override
     protected Keyword<DataType<?>> parent() {
       return parent;
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      parent.serialize(this, serialization);
-      serialization.append(" WHERE ");
-      condition.serialize(this, serialization);
     }
   }
 
@@ -90,31 +83,6 @@ class Delete {
     @Override
     protected Keyword<DataType<?>> parent() {
       return null;
-    }
-
-    @Override
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      if (getClass() != DELETE.class) // means that there are subsequent clauses
-        throw new Error("Need to override this");
-
-      if (entity.primary().length == 0)
-        throw new UnsupportedOperationException("Entity '" + entity.name() + "' does not have a primary key");
-
-      if (caller == this && !entity.wasSelected())
-        throw new UnsupportedOperationException("Entity '" + entity.name() + "' did not come from a SELECT");
-
-      serialization.append("DELETE FROM ");
-      entity.serialize(this, serialization);
-
-      if (caller == this) {
-        final StringBuilder whereClause = new StringBuilder();
-        for (final DataType<?> dataType : entity.primary()) {
-          serialization.addParameter(dataType);
-          whereClause.append(" AND ").append(dataType.name).append(" = ?");
-        }
-
-        serialization.append(" WHERE ").append(whereClause.substring(5));
-      }
     }
   }
 }

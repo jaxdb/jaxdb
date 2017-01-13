@@ -66,25 +66,6 @@
               </manifest>
             </configuration>
           </execution>
-          <execution>
-            <id>test</id>
-            <goals>
-              <goal>generate</goal>
-            </goals>
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-                <destdir explodeJars="true">${project.build.directory}/generated-test-sources/xsb</destdir>
-                <schemas>
-                  <schema>${basedir}/target/generated-test-resources/xdb/world.xsd</schema>
-                </schemas>
-                <excludes>
-                  <exclude>http://xdb.safris.org/xdd.xsd</exclude>
-                  <exclude>http://commons.safris.org/xml/datatypes.xsd</exclude>
-                </excludes>
-              </manifest>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
       <plugin>

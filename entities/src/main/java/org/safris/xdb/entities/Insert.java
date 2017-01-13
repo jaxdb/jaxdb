@@ -17,7 +17,6 @@
 package org.safris.xdb.entities;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.safris.xdb.entities.DML.ALL;
@@ -28,7 +27,7 @@ import org.safris.xdb.schema.DBVendor;
 
 class Insert {
   protected static class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
-    private final T[] entities;
+    protected final T[] entities;
 
     @SafeVarargs
     protected INSERT(final T ... entities) {
@@ -41,67 +40,6 @@ class Insert {
     }
 
     @Override
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    protected void serialize(final Serializable caller, final Serialization serialization) {
-      if (entities.length == 0)
-        throw new IllegalArgumentException("entities.length == 0");
-
-      final StringBuilder columns = new StringBuilder();
-      final StringBuilder values = new StringBuilder();
-      if (serialization.statementType == PreparedStatement.class) {
-        for (int i = 0; i < entities.length; i++) {
-          final Entity entity = entities[i];
-          serialization.append("INSERT INTO ");
-          entity.serialize(this, serialization);
-          for (final DataType dataType : entity.column()) {
-            if (!dataType.wasSet()) {
-              if (dataType.generateOnInsert == null)
-                continue;
-
-              dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-            }
-
-            columns.append(", ").append(dataType.name);
-            values.append(", ").append(dataType.getPreparedStatementMark(serialization.vendor));
-            serialization.addParameter(dataType);
-          }
-
-          serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
-          if (i < entities.length - 1) {
-            serialization.addBatch();
-            columns.setLength(0);
-            values.setLength(0);
-          }
-        }
-      }
-      else {
-        for (int i = 0; i < entities.length; i++) {
-          final Entity entity = entities[i];
-          serialization.append("INSERT INTO ");
-          entity.serialize(this, serialization);
-          for (final DataType dataType : entity.column()) {
-            if (!dataType.wasSet()) {
-              if (dataType.generateOnInsert == null)
-                continue;
-
-              dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-            }
-
-            columns.append(", ").append(dataType.name);
-            values.append(", ").append(VariableWrapper.toString(dataType.get()));
-          }
-
-          serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
-          if (i < entities.length - 1) {
-            serialization.addBatch();
-            columns.setLength(0);
-            values.setLength(0);
-          }
-        }
-      }
-    }
-
-    @Override
     @SuppressWarnings("rawtypes")
     public int[] execute(final Transaction transaction) throws SQLException {
       final Keyword<?> insert = getParentRoot(this);
@@ -111,7 +49,7 @@ class Insert {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
         final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(this, serialization);
+        serialize(serialization);
         Subject.clearAliases();
         final int[] count = serialization.executeUpdate(connection);
 

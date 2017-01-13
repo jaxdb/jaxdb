@@ -42,13 +42,14 @@ final class Predicate<T> extends Condition<Subject<T>> {
   }
 
   @Override
-  protected void serialize(final Serializable caller, final Serialization serialization) {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
     if (variable != null) {
-      format(this, variable, serialization);
+      format(variable, serialization);
       serialization.append(" ");
     }
 
     serialization.append(predicate).append(" ");
-    format(this, condition, serialization);
+    format(condition, serialization);
   }
 }

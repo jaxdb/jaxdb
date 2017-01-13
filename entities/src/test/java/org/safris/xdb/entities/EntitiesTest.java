@@ -23,6 +23,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -34,6 +35,7 @@ import org.junit.Test;
 import org.safris.commons.io.Files;
 import org.safris.commons.jci.CompilationException;
 import org.safris.commons.jci.JavaCompiler;
+import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.logging.Logging;
 import org.safris.commons.test.LoggableTest;
@@ -56,26 +58,28 @@ public class EntitiesTest extends LoggableTest {
     }
   };
 
-  private static Connection connection;
-
   @SuppressWarnings("unchecked")
-  private static void createConnection() throws ClassNotFoundException, IOException, SQLException {
-    connection = DataTest.createConnection();
+  public static Connection createConnection() throws ClassNotFoundException, IOException, SQLException {
+    final Connection connection = DataTest.createConnection();
     EntityRegistry.register((Class<? extends Schema>)Class.forName("xdb.ddl.classicmodels"), PreparedStatement.class, new EntityDataSource() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;
       }
     });
+
+    return connection;
   }
 
   private static void createEntities() throws CompilationException, IOException, XMLException {
     final URL xds = Resources.getResource("classicmodels.xds").getURL();
-    final File xdeDestDir = new File("target/generated-test-sources/xdb");
-    Generator.generate(xds, xdeDestDir);
+    final File destDir = new File("target/generated-test-sources/xdb");
+    Generator.generate(xds, destDir);
 
     final JavaCompiler compiler = new JavaCompiler(new File("target/test-classes"));
-    compiler.compile(Files.listAll(xdeDestDir, fileFilter));
+    compiler.compile(Files.listAll(destDir, fileFilter));
+
+    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), destDir.toURI().toURL());
   }
 
   @BeforeClass

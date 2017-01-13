@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.safris.commons.lang.Strings;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Subject<T> extends Serializable {
   // This is implemented as a ThreadLocal variable, because of one main reason:
@@ -28,44 +27,32 @@ public abstract class Subject<T> extends Serializable {
   // such as AND, OR, EQ, etc. A ThreadLocal reference to the aliases list works,
   // because the CQL query is rendered immediately upon construct. As it is
   // guaranteed to run linearly in a single thread, a ThreadLocal variable fits.
-  private static final ThreadLocal<List<Entity>> aliases = new ThreadLocal<List<Entity>>() {
+  private static final ThreadLocal<List<Subject<?>>> aliases = new ThreadLocal<List<Subject<?>>>() {
     @Override
-    protected List<Entity> initialValue() {
-      return new ArrayList<Entity>();
+    protected List<Subject<?>> initialValue() {
+      return new ArrayList<Subject<?>>();
     }
   };
 
-  protected static String tableAlias(final Entity entity, final boolean register) {
-    final List<Entity> list = aliases.get();
+  protected static String subjectAlias(final Subject<?> subject, final boolean register) {
+    final List<Subject<?>> list = aliases.get();
     int i;
     for (i = 0; i < list.size(); i++)
-      if (list.get(i) == entity)
+      if (list.get(i) == subject)
         return Strings.getAlpha(i);
 
     if (!register)
       return null;
 
-    list.add(entity);
+    list.add(subject);
     return Strings.getAlpha(i);
   }
 
   protected static <B>Object columnRef(final Variable<B> variable) {
-    return tableAlias(variable.owner(), false) == null ? variable.get() : variable;
+    return subjectAlias(variable.owner(), false) == null ? variable.get() : variable;
   }
 
   protected static void clearAliases() {
     aliases.get().clear();
-  }
-
-  protected static String tableName(final Entity entity, final Serialization serialization) {
-    if (serialization.vendor == DBVendor.MY_SQL) {
-      return entity.getClass().getEnclosingClass().getSimpleName() + "." + entity.name();
-    }
-
-    if (serialization.vendor == DBVendor.POSTGRE_SQL || serialization.vendor == DBVendor.DERBY) {
-      return entity.name();
-    }
-
-    throw new UnsupportedOperationException(serialization.vendor + " DBVendor is not supported.");
   }
 }

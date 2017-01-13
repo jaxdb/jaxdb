@@ -46,6 +46,7 @@ import org.safris.xdb.entities.datatype.MediumInt;
 import org.safris.xdb.entities.datatype.SmallInt;
 import org.safris.xdb.entities.datatype.Time;
 import org.safris.xdb.schema.SQLDataTypes;
+import org.safris.xdb.schema.spec.SQLSpec;
 import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
@@ -529,17 +530,18 @@ public class Generator {
   public static String makeColumn(final $xds_table table, final $xds_column column, final boolean isLast) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final String typeName = Strings.toTitleCase(column._name$().text());
-    String out = "";
+    final StringBuilder builder = new StringBuilder();
     final Type type = Type.getType(table, column);
     if (column instanceof $xds_enum) {
-      out += "\n    public static enum " + typeName + " {";
-      String values = "";
-      for (final String value : (($xds_enum)column)._values$().text())
-        values += ", " + value;
+      builder.append("\n    public static enum ").append(typeName).append(" {");
+      final StringBuilder enums = new StringBuilder();
+      final List<String> values = SQLSpec.parseEnum((($xds_enum)column)._values$().text());
+      for (final String value : values)
+        enums.append(", ").append(value);
 
-      out += values.substring(2) + "}";
+      builder.append(enums.substring(2)).append("}");
     }
 
-    return out + "\n    public final " + type.getType() + " " + columnName + " = " + type + ";";
+    return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();
   }
 }

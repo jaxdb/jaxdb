@@ -16,6 +16,8 @@
 
 package org.safris.xdb.schema.spec;
 
+import java.util.List;
+
 import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
@@ -105,10 +107,13 @@ public final class DerbySQLSpec extends SQLSpec {
 
   @Override
   public String type(final $xds_table table, final $xds_enum type) {
+    if (type._values$().isNull())
+      return "VARCHAR(0)";
+
+    final List<String> enums = parseEnum(type._values$().text());
     int maxLength = 0;
-    if (!type._values$().isNull())
-      for (final String value : type._values$().text())
-        maxLength = Math.max(maxLength, value.length());
+    for (final String value : enums)
+      maxLength = Math.max(maxLength, value.length());
 
     return "VARCHAR(" + maxLength + ")";
   }

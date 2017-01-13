@@ -26,7 +26,6 @@ import java.sql.Types;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public final class Blob extends DataType<InputStream> {
   protected static InputStream get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -61,11 +60,6 @@ public final class Blob extends DataType<InputStream> {
   protected Blob(final Blob copy) {
     super(copy);
     this.length = copy.length;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

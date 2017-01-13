@@ -59,10 +59,19 @@ public class SchemaTest extends LoggableTest {
   }
 
   @Test
-  public void testSchema() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final URL xds = Resources.getResource("classicmodels.xds").getURL();
+  public void testClassicModels() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final xds_schema schema;
-    try (final InputStream in = xds.openStream()) {
+    try (final InputStream in = Resources.getResource("classicmodels.xds").getURL().openStream()) {
+      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    }
+
+    Schemas.create(schema, connection);
+  }
+
+  @Test
+  public void testWorld() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    final xds_schema schema;
+    try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 

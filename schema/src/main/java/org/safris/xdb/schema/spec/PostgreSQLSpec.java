@@ -71,17 +71,17 @@ public final class PostgreSQLSpec extends SQLSpec {
       for (final $xds_column column : table._column()) {
         if (column instanceof $xds_enum) {
           final $xds_enum type = ($xds_enum)column;
-          String sql = "CREATE TYPE " + getTypeName(table._name$().text(), type._name$().text()) + " AS ENUM (";
+          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(getTypeName(table._name$().text(), type._name$().text())).append(" AS ENUM (");
           if (!type._values$().isNull()) {
-            String values = "";
-            for (final String value : type._values$().text())
-              values += ", '" + SQLDataTypes.toEnumValue(value) + "'";
+            final List<String> enums = parseEnum(type._values$().text());
+            final StringBuilder builder = new StringBuilder();
+            for (final String value : enums)
+              builder.append(", '").append(value).append("'");
 
-            sql += values.substring(2);
+            sql.append(builder.substring(2));
           }
 
-          sql += ")";
-          statements.add(0, sql);
+          statements.add(0, sql.append(")").toString());
         }
         else if (column instanceof $xds_integer) {
           final $xds_integer type = ($xds_integer)column;

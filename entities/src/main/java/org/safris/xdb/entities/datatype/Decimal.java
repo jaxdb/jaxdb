@@ -24,7 +24,7 @@ import java.sql.Types;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 
-public final class Decimal extends Numeric<java.lang.Double> {
+public class Decimal extends Numeric<java.lang.Double> {
   protected static final int sqlType = Types.DECIMAL;
 
   protected static java.lang.Double get(final ResultSet resultSet, final int columnIndex) throws SQLException {

@@ -24,7 +24,6 @@ import java.sql.Types;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
-import org.safris.xdb.schema.DBVendor;
 
 public final class Char extends DataType<String> {
   protected static String get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -58,11 +57,6 @@ public final class Char extends DataType<String> {
     this.length = copy.length;
     this.varying = copy.varying;
     this.national = copy.national;
-  }
-
-  @Override
-  protected String getPreparedStatementMark(final DBVendor vendor) {
-    return "?";
   }
 
   @Override

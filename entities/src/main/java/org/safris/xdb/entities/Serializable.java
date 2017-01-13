@@ -16,6 +16,9 @@
 
 package org.safris.xdb.entities;
 
-public abstract class Serializable {
-  protected abstract void serialize(final Serializable caller, final Serialization serialization);
+abstract class Serializable {
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
+    Serializer.serialize(this, serialization);
+  }
 }

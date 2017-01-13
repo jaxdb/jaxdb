@@ -28003,4924 +28003,4924 @@
     countryCode="PSE"
     district="Rafah"
     population="92020"/>
-  <CountryLanguage
+  <Lang
     countryCode="ABW"
-    language="Dutch"
+    lang="Dutch"
     official="true"
     percentage="5.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ABW"
-    language="English"
+    lang="English"
     official="false"
     percentage="9.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ABW"
-    language="Papiamento"
+    lang="Papiamento"
     official="false"
     percentage="76.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ABW"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="7.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AFG"
-    language="Balochi"
+    lang="Balochi"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="AFG"
-    language="Dari"
+    lang="Dari"
     official="true"
     percentage="32.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="AFG"
-    language="Pashto"
+    lang="Pashto"
     official="true"
     percentage="52.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AFG"
-    language="Turkmenian"
+    lang="Turkmenian"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="AFG"
-    language="Uzbek"
+    lang="Uzbek"
     official="false"
     percentage="8.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Ambo"
+    lang="Ambo"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Chokwe"
+    lang="Chokwe"
     official="false"
     percentage="4.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Kongo"
+    lang="Kongo"
     official="false"
     percentage="13.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Luchazi"
+    lang="Luchazi"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Luimbe-nganguela"
+    lang="Luimbe-nganguela"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Luvale"
+    lang="Luvale"
     official="false"
     percentage="3.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Mbundu"
+    lang="Mbundu"
     official="false"
     percentage="21.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Nyaneka-nkhumbi"
+    lang="Nyaneka-nkhumbi"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AGO"
-    language="Ovimbundu"
+    lang="Ovimbundu"
     official="false"
     percentage="37.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AIA"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ALB"
-    language="Albaniana"
+    lang="Albaniana"
     official="true"
     percentage="97.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="ALB"
-    language="Greek"
+    lang="Greek"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ALB"
-    language="Macedonian"
+    lang="Macedonian"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="AND"
-    language="Catalan"
+    lang="Catalan"
     official="true"
     percentage="32.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="AND"
-    language="French"
+    lang="French"
     official="false"
     percentage="6.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AND"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="10.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="AND"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="44.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="ANT"
-    language="Dutch"
+    lang="Dutch"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ANT"
-    language="English"
+    lang="English"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ANT"
-    language="Papiamento"
+    lang="Papiamento"
     official="true"
     percentage="86.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARE"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="42.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARE"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARG"
-    language="Indian Languages"
+    lang="Indian Languages"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARG"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARG"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="96.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARM"
-    language="Armenian"
+    lang="Armenian"
     official="true"
     percentage="93.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="ARM"
-    language="Azerbaijani"
+    lang="Azerbaijani"
     official="false"
     percentage="2.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="ASM"
-    language="English"
+    lang="English"
     official="true"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ASM"
-    language="Samoan"
+    lang="Samoan"
     official="true"
     percentage="90.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="ASM"
-    language="Tongan"
+    lang="Tongan"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ATG"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="95.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ATG"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="1.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Canton Chinese"
+    lang="Canton Chinese"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="English"
+    lang="English"
     official="true"
     percentage="81.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Greek"
+    lang="Greek"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUS"
-    language="Vietnamese"
+    lang="Vietnamese"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Czech"
+    lang="Czech"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="German"
+    lang="German"
     official="true"
     percentage="92.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Romanian"
+    lang="Romanian"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Slovene"
+    lang="Slovene"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="AUT"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="1.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="AZE"
-    language="Armenian"
+    lang="Armenian"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="AZE"
-    language="Azerbaijani"
+    lang="Azerbaijani"
     official="true"
     percentage="89.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="AZE"
-    language="Lezgian"
+    lang="Lezgian"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="AZE"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BDI"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BDI"
-    language="Kirundi"
+    lang="Kirundi"
     official="true"
     percentage="98.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BDI"
-    language="Swahili"
+    lang="Swahili"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="Dutch"
+    lang="Dutch"
     official="true"
     percentage="59.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="French"
+    lang="French"
     official="true"
     percentage="32.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="German"
+    lang="German"
     official="true"
     percentage="1.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEL"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Adja"
+    lang="Adja"
     official="false"
     percentage="11.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Aizo"
+    lang="Aizo"
     official="false"
     percentage="8.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Bariba"
+    lang="Bariba"
     official="false"
     percentage="8.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Fon"
+    lang="Fon"
     official="false"
     percentage="39.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="5.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Joruba"
+    lang="Joruba"
     official="false"
     percentage="12.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BEN"
-    language="Somba"
+    lang="Somba"
     official="false"
     percentage="6.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Busansi"
+    lang="Busansi"
     official="false"
     percentage="3.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Dagara"
+    lang="Dagara"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Dyula"
+    lang="Dyula"
     official="false"
     percentage="2.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="9.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Gurma"
+    lang="Gurma"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BFA"
-    language="Mossi"
+    lang="Mossi"
     official="false"
     percentage="50.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Bengali"
+    lang="Bengali"
     official="true"
     percentage="97.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Chakma"
+    lang="Chakma"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Garo"
+    lang="Garo"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Khasi"
+    lang="Khasi"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Marma"
+    lang="Marma"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Santhali"
+    lang="Santhali"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGD"
-    language="Tripuri"
+    lang="Tripuri"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGR"
-    language="Bulgariana"
+    lang="Bulgariana"
     official="true"
     percentage="83.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGR"
-    language="Macedonian"
+    lang="Macedonian"
     official="false"
     percentage="2.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGR"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="3.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BGR"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="9.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="BHR"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="67.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BHR"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BHS"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="89.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BHS"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="10.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="BIH"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="true"
     percentage="99.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLR"
-    language="Belorussian"
+    lang="Belorussian"
     official="true"
     percentage="65.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLR"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLR"
-    language="Russian"
+    lang="Russian"
     official="true"
     percentage="32.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLR"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLZ"
-    language="English"
+    lang="English"
     official="true"
     percentage="50.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLZ"
-    language="Garifuna"
+    lang="Garifuna"
     official="false"
     percentage="6.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLZ"
-    language="Maya Languages"
+    lang="Maya Languages"
     official="false"
     percentage="9.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BLZ"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="31.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="BMU"
-    language="English"
+    lang="English"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BOL"
-    language="Aimará"
+    lang="Aimará"
     official="true"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BOL"
-    language="Guaraní"
+    lang="Guaraní"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BOL"
-    language="Ketšua"
+    lang="Ketšua"
     official="true"
     percentage="8.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BOL"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="87.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRA"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRA"
-    language="Indian Languages"
+    lang="Indian Languages"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRA"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRA"
-    language="Japanese"
+    lang="Japanese"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRA"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="97.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRB"
-    language="Bajan"
+    lang="Bajan"
     official="false"
     percentage="95.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRB"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRN"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="9.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRN"
-    language="English"
+    lang="English"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRN"
-    language="Malay"
+    lang="Malay"
     official="true"
     percentage="45.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BRN"
-    language="Malay-English"
+    lang="Malay-English"
     official="false"
     percentage="28.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="BTN"
-    language="Asami"
+    lang="Asami"
     official="false"
     percentage="15.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="BTN"
-    language="Dzongkha"
+    lang="Dzongkha"
     official="true"
     percentage="50.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="BTN"
-    language="Nepali"
+    lang="Nepali"
     official="false"
     percentage="34.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="BWA"
-    language="Khoekhoe"
+    lang="Khoekhoe"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BWA"
-    language="Ndebele"
+    lang="Ndebele"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="BWA"
-    language="San"
+    lang="San"
     official="false"
     percentage="3.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="BWA"
-    language="Shona"
+    lang="Shona"
     official="false"
     percentage="12.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="BWA"
-    language="Tswana"
+    lang="Tswana"
     official="false"
     percentage="75.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Banda"
+    lang="Banda"
     official="false"
     percentage="23.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Gbaya"
+    lang="Gbaya"
     official="false"
     percentage="23.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Mandjia"
+    lang="Mandjia"
     official="false"
     percentage="14.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Mbum"
+    lang="Mbum"
     official="false"
     percentage="6.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Ngbaka"
+    lang="Ngbaka"
     official="false"
     percentage="7.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAF"
-    language="Sara"
+    lang="Sara"
     official="false"
     percentage="6.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Dutch"
+    lang="Dutch"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="English"
+    lang="English"
     official="true"
     percentage="60.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Eskimo Languages"
+    lang="Eskimo Languages"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="French"
+    lang="French"
     official="true"
     percentage="23.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="German"
+    lang="German"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Punjabi"
+    lang="Punjabi"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CAN"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CCK"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CCK"
-    language="Malay"
+    lang="Malay"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHE"
-    language="French"
+    lang="French"
     official="true"
     percentage="19.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHE"
-    language="German"
+    lang="German"
     official="true"
     percentage="63.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHE"
-    language="Italian"
+    lang="Italian"
     official="true"
     percentage="7.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHE"
-    language="Romansh"
+    lang="Romansh"
     official="true"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHL"
-    language="Aimará"
+    lang="Aimará"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHL"
-    language="Araucan"
+    lang="Araucan"
     official="false"
     percentage="9.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHL"
-    language="Rapa nui"
+    lang="Rapa nui"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHL"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="89.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Chinese"
+    lang="Chinese"
     official="true"
     percentage="92.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Dong"
+    lang="Dong"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Hui"
+    lang="Hui"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Mantšu"
+    lang="Mantšu"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Miao"
+    lang="Miao"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Mongolian"
+    lang="Mongolian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Puyi"
+    lang="Puyi"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Tibetan"
+    lang="Tibetan"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Tujia"
+    lang="Tujia"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Uighur"
+    lang="Uighur"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Yi"
+    lang="Yi"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CHN"
-    language="Zhuang"
+    lang="Zhuang"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CIV"
-    language="Akan"
+    lang="Akan"
     official="false"
     percentage="30.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CIV"
-    language="Gur"
+    lang="Gur"
     official="false"
     percentage="11.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CIV"
-    language="Kru"
+    lang="Kru"
     official="false"
     percentage="10.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CIV"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="11.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CIV"
-    language="[South]Mande"
+    lang="[South]Mande"
     official="false"
     percentage="7.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Bamileke-bamum"
+    lang="Bamileke-bamum"
     official="false"
     percentage="18.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Duala"
+    lang="Duala"
     official="false"
     percentage="10.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Fang"
+    lang="Fang"
     official="false"
     percentage="19.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="9.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Maka"
+    lang="Maka"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Mandara"
+    lang="Mandara"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Masana"
+    lang="Masana"
     official="false"
     percentage="3.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="CMR"
-    language="Tikar"
+    lang="Tikar"
     official="false"
     percentage="7.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Boa"
+    lang="Boa"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Chokwe"
+    lang="Chokwe"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Kongo"
+    lang="Kongo"
     official="false"
     percentage="16.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Luba"
+    lang="Luba"
     official="false"
     percentage="18.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Mongo"
+    lang="Mongo"
     official="false"
     percentage="13.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Ngala and Bangi"
+    lang="Ngala and Bangi"
     official="false"
     percentage="5.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Rundi"
+    lang="Rundi"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Rwanda"
+    lang="Rwanda"
     official="false"
     percentage="10.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Teke"
+    lang="Teke"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="COD"
-    language="Zande"
+    lang="Zande"
     official="false"
     percentage="6.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Kongo"
+    lang="Kongo"
     official="false"
     percentage="51.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Mbete"
+    lang="Mbete"
     official="false"
     percentage="4.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Mboshi"
+    lang="Mboshi"
     official="false"
     percentage="11.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Punu"
+    lang="Punu"
     official="false"
     percentage="2.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Sango"
+    lang="Sango"
     official="false"
     percentage="2.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="COG"
-    language="Teke"
+    lang="Teke"
     official="false"
     percentage="17.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="COK"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COK"
-    language="Maori"
+    lang="Maori"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COL"
-    language="Arawakan"
+    lang="Arawakan"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="COL"
-    language="Caribbean"
+    lang="Caribbean"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="COL"
-    language="Chibcha"
+    lang="Chibcha"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="COL"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="COL"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="99.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COM"
-    language="Comorian"
+    lang="Comorian"
     official="true"
     percentage="75.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="COM"
-    language="Comorian-Arabic"
+    lang="Comorian-Arabic"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="COM"
-    language="Comorian-French"
+    lang="Comorian-French"
     official="false"
     percentage="12.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="COM"
-    language="Comorian-madagassi"
+    lang="Comorian-madagassi"
     official="false"
     percentage="5.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="COM"
-    language="Comorian-Swahili"
+    lang="Comorian-Swahili"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CPV"
-    language="Crioulo"
+    lang="Crioulo"
     official="false"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CPV"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CRI"
-    language="Chibcha"
+    lang="Chibcha"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="CRI"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CRI"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CRI"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="97.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CUB"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CXR"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CXR"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CYM"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="CYP"
-    language="Greek"
+    lang="Greek"
     official="true"
     percentage="74.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="CYP"
-    language="Turkish"
+    lang="Turkish"
     official="true"
     percentage="22.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Czech"
+    lang="Czech"
     official="true"
     percentage="81.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Moravian"
+    lang="Moravian"
     official="false"
     percentage="12.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Silesiana"
+    lang="Silesiana"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="CZE"
-    language="Slovak"
+    lang="Slovak"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="German"
+    lang="German"
     official="true"
     percentage="91.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="Greek"
+    lang="Greek"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="Southern Slavic Languages"
+    lang="Southern Slavic Languages"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="DEU"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="2.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="DJI"
-    language="Afar"
+    lang="Afar"
     official="false"
     percentage="34.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="DJI"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="10.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="DJI"
-    language="Somali"
+    lang="Somali"
     official="false"
     percentage="43.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="DMA"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="DMA"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="Danish"
+    lang="Danish"
     official="true"
     percentage="93.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="Norwegian"
+    lang="Norwegian"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="Swedish"
+    lang="Swedish"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="DNK"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="DOM"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="DOM"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="98.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="DZA"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="86.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="DZA"
-    language="Berberi"
+    lang="Berberi"
     official="false"
     percentage="14.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ECU"
-    language="Ketšua"
+    lang="Ketšua"
     official="false"
     percentage="7.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ECU"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="93.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="EGY"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="98.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="EGY"
-    language="Sinaberberi"
+    lang="Sinaberberi"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Afar"
+    lang="Afar"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Bilin"
+    lang="Bilin"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Hadareb"
+    lang="Hadareb"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Saho"
+    lang="Saho"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Tigre"
+    lang="Tigre"
     official="false"
     percentage="31.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ERI"
-    language="Tigrinja"
+    lang="Tigrinja"
     official="true"
     percentage="49.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ESH"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ESP"
-    language="Basque"
+    lang="Basque"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="ESP"
-    language="Catalan"
+    lang="Catalan"
     official="false"
     percentage="16.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="ESP"
-    language="Galecian"
+    lang="Galecian"
     official="false"
     percentage="6.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="ESP"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="74.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="EST"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="EST"
-    language="Estonian"
+    lang="Estonian"
     official="true"
     percentage="65.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="EST"
-    language="Finnish"
+    lang="Finnish"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="EST"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="27.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="EST"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Amhara"
+    lang="Amhara"
     official="false"
     percentage="30.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Gurage"
+    lang="Gurage"
     official="false"
     percentage="4.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Oromo"
+    lang="Oromo"
     official="false"
     percentage="31.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Sidamo"
+    lang="Sidamo"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Somali"
+    lang="Somali"
     official="false"
     percentage="4.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Tigrinja"
+    lang="Tigrinja"
     official="false"
     percentage="7.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ETH"
-    language="Walaita"
+    lang="Walaita"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="FIN"
-    language="Estonian"
+    lang="Estonian"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="FIN"
-    language="Finnish"
+    lang="Finnish"
     official="true"
     percentage="92.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="FIN"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="FIN"
-    language="Saame"
+    lang="Saame"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="FIN"
-    language="Swedish"
+    lang="Swedish"
     official="true"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="FJI"
-    language="Fijian"
+    lang="Fijian"
     official="true"
     percentage="50.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="FJI"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="43.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="FLK"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="French"
+    lang="French"
     official="true"
     percentage="93.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRA"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRO"
-    language="Danish"
+    lang="Danish"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="FRO"
-    language="Faroese"
+    lang="Faroese"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Kosrean"
+    lang="Kosrean"
     official="false"
     percentage="7.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Mortlock"
+    lang="Mortlock"
     official="false"
     percentage="7.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Pohnpei"
+    lang="Pohnpei"
     official="false"
     percentage="23.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Trukese"
+    lang="Trukese"
     official="false"
     percentage="41.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Wolea"
+    lang="Wolea"
     official="false"
     percentage="3.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="FSM"
-    language="Yap"
+    lang="Yap"
     official="false"
     percentage="5.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GAB"
-    language="Fang"
+    lang="Fang"
     official="false"
     percentage="35.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GAB"
-    language="Mbete"
+    lang="Mbete"
     official="false"
     percentage="13.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GAB"
-    language="Mpongwe"
+    lang="Mpongwe"
     official="false"
     percentage="14.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GAB"
-    language="Punu-sira-nzebi"
+    lang="Punu-sira-nzebi"
     official="false"
     percentage="17.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="GBR"
-    language="English"
+    lang="English"
     official="true"
     percentage="97.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GBR"
-    language="Gaeli"
+    lang="Gaeli"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="GBR"
-    language="Kymri"
+    lang="Kymri"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Abhyasi"
+    lang="Abhyasi"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Armenian"
+    lang="Armenian"
     official="false"
     percentage="6.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Azerbaijani"
+    lang="Azerbaijani"
     official="false"
     percentage="5.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Georgiana"
+    lang="Georgiana"
     official="true"
     percentage="71.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Osseetti"
+    lang="Osseetti"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="GEO"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="8.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Akan"
+    lang="Akan"
     official="false"
     percentage="52.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Ewe"
+    lang="Ewe"
     official="false"
     percentage="11.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Ga-adangme"
+    lang="Ga-adangme"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Gurma"
+    lang="Gurma"
     official="false"
     percentage="3.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Joruba"
+    lang="Joruba"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GHA"
-    language="Mossi"
+    lang="Mossi"
     official="false"
     percentage="15.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIB"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="7.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIB"
-    language="English"
+    lang="English"
     official="true"
     percentage="88.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="38.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Kissi"
+    lang="Kissi"
     official="false"
     percentage="6.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Kpelle"
+    lang="Kpelle"
     official="false"
     percentage="4.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Loma"
+    lang="Loma"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="23.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Susu"
+    lang="Susu"
     official="false"
     percentage="11.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GIN"
-    language="Yalunka"
+    lang="Yalunka"
     official="false"
     percentage="2.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GLP"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="95.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GLP"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GMB"
-    language="Diola"
+    lang="Diola"
     official="false"
     percentage="9.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="GMB"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="16.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="GMB"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="34.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="GMB"
-    language="Soninke"
+    lang="Soninke"
     official="false"
     percentage="7.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GMB"
-    language="Wolof"
+    lang="Wolof"
     official="false"
     percentage="12.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Balante"
+    lang="Balante"
     official="false"
     percentage="14.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Crioulo"
+    lang="Crioulo"
     official="false"
     percentage="36.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="16.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="6.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Mandyako"
+    lang="Mandyako"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNB"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="8.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNQ"
-    language="Bubi"
+    lang="Bubi"
     official="false"
     percentage="8.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GNQ"
-    language="Fang"
+    lang="Fang"
     official="false"
     percentage="84.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="GRC"
-    language="Greek"
+    lang="Greek"
     official="true"
     percentage="98.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="GRC"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GRD"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GRL"
-    language="Danish"
+    lang="Danish"
     official="true"
     percentage="12.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="GRL"
-    language="Greenlandic"
+    lang="Greenlandic"
     official="true"
     percentage="87.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="GTM"
-    language="Cakchiquel"
+    lang="Cakchiquel"
     official="false"
     percentage="8.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GTM"
-    language="Kekchí"
+    lang="Kekchí"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GTM"
-    language="Mam"
+    lang="Mam"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GTM"
-    language="Quiché"
+    lang="Quiché"
     official="false"
     percentage="10.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="GTM"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="64.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUF"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="94.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUF"
-    language="Indian Languages"
+    lang="Indian Languages"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUM"
-    language="Chamorro"
+    lang="Chamorro"
     official="true"
     percentage="29.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUM"
-    language="English"
+    lang="English"
     official="true"
     percentage="37.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUM"
-    language="Japanese"
+    lang="Japanese"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUM"
-    language="Korean"
+    lang="Korean"
     official="false"
     percentage="3.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUM"
-    language="Philippene Languages"
+    lang="Philippene Languages"
     official="false"
     percentage="19.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUY"
-    language="Arawakan"
+    lang="Arawakan"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUY"
-    language="Caribbean"
+    lang="Caribbean"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="GUY"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="96.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="HKG"
-    language="Canton Chinese"
+    lang="Canton Chinese"
     official="false"
     percentage="88.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="HKG"
-    language="Chiu chau"
+    lang="Chiu chau"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="HKG"
-    language="English"
+    lang="English"
     official="true"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="HKG"
-    language="Fukien"
+    lang="Fukien"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="HKG"
-    language="Hakka"
+    lang="Hakka"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="HND"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="HND"
-    language="Garifuna"
+    lang="Garifuna"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="HND"
-    language="Miskito"
+    lang="Miskito"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="HND"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="97.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="HRV"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="true"
     percentage="95.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="HRV"
-    language="Slovene"
+    lang="Slovene"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="HTI"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="HTI"
-    language="Haiti Creole"
+    lang="Haiti Creole"
     official="false"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="Hungarian"
+    lang="Hungarian"
     official="true"
     percentage="98.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="Romanian"
+    lang="Romanian"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="HUN"
-    language="Slovak"
+    lang="Slovak"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Bali"
+    lang="Bali"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Banja"
+    lang="Banja"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Batakki"
+    lang="Batakki"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Bugi"
+    lang="Bugi"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Javanese"
+    lang="Javanese"
     official="false"
     percentage="39.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Madura"
+    lang="Madura"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Malay"
+    lang="Malay"
     official="true"
     percentage="12.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Minangkabau"
+    lang="Minangkabau"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="IDN"
-    language="Sunda"
+    lang="Sunda"
     official="false"
     percentage="15.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Asami"
+    lang="Asami"
     official="false"
     percentage="1.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Bengali"
+    lang="Bengali"
     official="false"
     percentage="8.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Gujarati"
+    lang="Gujarati"
     official="false"
     percentage="4.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Hindi"
+    lang="Hindi"
     official="true"
     percentage="39.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Kannada"
+    lang="Kannada"
     official="false"
     percentage="3.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Malajalam"
+    lang="Malajalam"
     official="false"
     percentage="3.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Marathi"
+    lang="Marathi"
     official="false"
     percentage="7.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Orija"
+    lang="Orija"
     official="false"
     percentage="3.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Punjabi"
+    lang="Punjabi"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Tamil"
+    lang="Tamil"
     official="false"
     percentage="6.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Telugu"
+    lang="Telugu"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IND"
-    language="Urdu"
+    lang="Urdu"
     official="false"
     percentage="5.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRL"
-    language="English"
+    lang="English"
     official="true"
     percentage="98.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRL"
-    language="Irish"
+    lang="Irish"
     official="true"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Azerbaijani"
+    lang="Azerbaijani"
     official="false"
     percentage="16.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Bakhtyari"
+    lang="Bakhtyari"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Balochi"
+    lang="Balochi"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Gilaki"
+    lang="Gilaki"
     official="false"
     percentage="5.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Kurdish"
+    lang="Kurdish"
     official="false"
     percentage="9.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Luri"
+    lang="Luri"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Mazandarani"
+    lang="Mazandarani"
     official="false"
     percentage="3.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Persian"
+    lang="Persian"
     official="true"
     percentage="45.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRN"
-    language="Turkmenian"
+    lang="Turkmenian"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRQ"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="77.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRQ"
-    language="Assyrian"
+    lang="Assyrian"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRQ"
-    language="Azerbaijani"
+    lang="Azerbaijani"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRQ"
-    language="Kurdish"
+    lang="Kurdish"
     official="false"
     percentage="19.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="IRQ"
-    language="Persian"
+    lang="Persian"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ISL"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ISL"
-    language="Icelandic"
+    lang="Icelandic"
     official="true"
     percentage="95.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ISR"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="18.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ISR"
-    language="Hebrew"
+    lang="Hebrew"
     official="true"
     percentage="63.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ISR"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="8.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Albaniana"
+    lang="Albaniana"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="French"
+    lang="French"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Friuli"
+    lang="Friuli"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Italian"
+    lang="Italian"
     official="true"
     percentage="94.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Sardinian"
+    lang="Sardinian"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ITA"
-    language="Slovene"
+    lang="Slovene"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="JAM"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="94.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="JAM"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="JOR"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="97.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="JOR"
-    language="Armenian"
+    lang="Armenian"
     official="false"
     percentage="1.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="JOR"
-    language="Circassian"
+    lang="Circassian"
     official="false"
     percentage="1.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="Ainu"
+    lang="Ainu"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="Japanese"
+    lang="Japanese"
     official="true"
     percentage="99.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="Korean"
+    lang="Korean"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="JPN"
-    language="Philippene Languages"
+    lang="Philippene Languages"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="German"
+    lang="German"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="Kazakh"
+    lang="Kazakh"
     official="true"
     percentage="46.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="34.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="Tatar"
+    lang="Tatar"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="5.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="KAZ"
-    language="Uzbek"
+    lang="Uzbek"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Gusii"
+    lang="Gusii"
     official="false"
     percentage="6.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Kalenjin"
+    lang="Kalenjin"
     official="false"
     percentage="10.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Kamba"
+    lang="Kamba"
     official="false"
     percentage="11.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Kikuyu"
+    lang="Kikuyu"
     official="false"
     percentage="20.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Luhya"
+    lang="Luhya"
     official="false"
     percentage="13.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Luo"
+    lang="Luo"
     official="false"
     percentage="12.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Masai"
+    lang="Masai"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Meru"
+    lang="Meru"
     official="false"
     percentage="5.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Nyika"
+    lang="Nyika"
     official="false"
     percentage="4.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KEN"
-    language="Turkana"
+    lang="Turkana"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Kazakh"
+    lang="Kazakh"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Kirgiz"
+    lang="Kirgiz"
     official="true"
     percentage="59.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Russian"
+    lang="Russian"
     official="true"
     percentage="16.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Tadzhik"
+    lang="Tadzhik"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Tatar"
+    lang="Tatar"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="KGZ"
-    language="Uzbek"
+    lang="Uzbek"
     official="false"
     percentage="14.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KHM"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="3.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KHM"
-    language="Khmer"
+    lang="Khmer"
     official="true"
     percentage="88.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="KHM"
-    language="Tšam"
+    lang="Tšam"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="KHM"
-    language="Vietnamese"
+    lang="Vietnamese"
     official="false"
     percentage="5.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="KIR"
-    language="Kiribati"
+    lang="Kiribati"
     official="true"
     percentage="98.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="KIR"
-    language="Tuvalu"
+    lang="Tuvalu"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="KNA"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="KNA"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="KOR"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KOR"
-    language="Korean"
+    lang="Korean"
     official="true"
     percentage="99.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="KWT"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="78.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="KWT"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LAO"
-    language="Lao"
+    lang="Lao"
     official="true"
     percentage="67.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LAO"
-    language="Lao-Soung"
+    lang="Lao-Soung"
     official="false"
     percentage="5.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LAO"
-    language="Mon-khmer"
+    lang="Mon-khmer"
     official="false"
     percentage="16.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="LAO"
-    language="Thai"
+    lang="Thai"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBN"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="93.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBN"
-    language="Armenian"
+    lang="Armenian"
     official="false"
     percentage="5.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBN"
-    language="French"
+    lang="French"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Bassa"
+    lang="Bassa"
     official="false"
     percentage="13.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Gio"
+    lang="Gio"
     official="false"
     percentage="7.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Grebo"
+    lang="Grebo"
     official="false"
     percentage="8.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Kpelle"
+    lang="Kpelle"
     official="false"
     percentage="19.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Kru"
+    lang="Kru"
     official="false"
     percentage="7.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Loma"
+    lang="Loma"
     official="false"
     percentage="5.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="5.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBR"
-    language="Mano"
+    lang="Mano"
     official="false"
     percentage="7.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBY"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="96.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LBY"
-    language="Berberi"
+    lang="Berberi"
     official="false"
     percentage="1.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LCA"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="80.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LCA"
-    language="English"
+    lang="English"
     official="true"
     percentage="20.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LIE"
-    language="German"
+    lang="German"
     official="true"
     percentage="89.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LIE"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="LIE"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="LKA"
-    language="Mixed Languages"
+    lang="Mixed Languages"
     official="false"
     percentage="19.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="LKA"
-    language="Singali"
+    lang="Singali"
     official="true"
     percentage="60.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="LKA"
-    language="Tamil"
+    lang="Tamil"
     official="true"
     percentage="19.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="LSO"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LSO"
-    language="Sotho"
+    lang="Sotho"
     official="true"
     percentage="85.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LSO"
-    language="Zulu"
+    lang="Zulu"
     official="false"
     percentage="15.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LTU"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="LTU"
-    language="Lithuanian"
+    lang="Lithuanian"
     official="true"
     percentage="81.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="LTU"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="7.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LTU"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="8.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LTU"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LUX"
-    language="French"
+    lang="French"
     official="true"
     percentage="4.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LUX"
-    language="German"
+    lang="German"
     official="true"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="LUX"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="4.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="LUX"
-    language="Luxembourgish"
+    lang="Luxembourgish"
     official="true"
     percentage="64.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="LUX"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="13.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="4.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Latvian"
+    lang="Latvian"
     official="true"
     percentage="55.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Lithuanian"
+    lang="Lithuanian"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="2.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="32.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="LVA"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="2.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAC"
-    language="Canton Chinese"
+    lang="Canton Chinese"
     official="false"
     percentage="85.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAC"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAC"
-    language="Mandarin Chinese"
+    lang="Mandarin Chinese"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAC"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAR"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="65.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MAR"
-    language="Berberi"
+    lang="Berberi"
     official="false"
     percentage="33.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MCO"
-    language="English"
+    lang="English"
     official="false"
     percentage="6.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MCO"
-    language="French"
+    lang="French"
     official="true"
     percentage="41.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MCO"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="16.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MCO"
-    language="Monegasque"
+    lang="Monegasque"
     official="false"
     percentage="16.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDA"
-    language="Bulgariana"
+    lang="Bulgariana"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDA"
-    language="Gagauzi"
+    lang="Gagauzi"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDA"
-    language="Romanian"
+    lang="Romanian"
     official="true"
     percentage="61.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDA"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="23.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDA"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="8.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDG"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDG"
-    language="Malagasy"
+    lang="Malagasy"
     official="true"
     percentage="98.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDV"
-    language="Dhivehi"
+    lang="Dhivehi"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MDV"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Mixtec"
+    lang="Mixtec"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Náhuatl"
+    lang="Náhuatl"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Otomí"
+    lang="Otomí"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="92.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Yucatec"
+    lang="Yucatec"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MEX"
-    language="Zapotec"
+    lang="Zapotec"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MHL"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MHL"
-    language="Marshallese"
+    lang="Marshallese"
     official="true"
     percentage="96.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MKD"
-    language="Albaniana"
+    lang="Albaniana"
     official="false"
     percentage="22.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MKD"
-    language="Macedonian"
+    lang="Macedonian"
     official="true"
     percentage="66.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MKD"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MKD"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MKD"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="4.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Bambara"
+    lang="Bambara"
     official="false"
     percentage="31.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="13.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Senufo and Minianka"
+    lang="Senufo and Minianka"
     official="false"
     percentage="12.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Songhai"
+    lang="Songhai"
     official="false"
     percentage="6.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Soninke"
+    lang="Soninke"
     official="false"
     percentage="8.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLI"
-    language="Tamashek"
+    lang="Tamashek"
     official="false"
     percentage="7.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLT"
-    language="English"
+    lang="English"
     official="true"
     percentage="2.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MLT"
-    language="Maltese"
+    lang="Maltese"
     official="true"
     percentage="95.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Burmese"
+    lang="Burmese"
     official="true"
     percentage="69.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Chin"
+    lang="Chin"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Kachin"
+    lang="Kachin"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Karen"
+    lang="Karen"
     official="false"
     percentage="6.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Kayah"
+    lang="Kayah"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Mon"
+    lang="Mon"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Rakhine"
+    lang="Rakhine"
     official="false"
     percentage="4.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MMR"
-    language="Shan"
+    lang="Shan"
     official="false"
     percentage="8.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Bajad"
+    lang="Bajad"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Buryat"
+    lang="Buryat"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Dariganga"
+    lang="Dariganga"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Dorbet"
+    lang="Dorbet"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Kazakh"
+    lang="Kazakh"
     official="false"
     percentage="5.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNG"
-    language="Mongolian"
+    lang="Mongolian"
     official="true"
     percentage="78.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="Carolinian"
+    lang="Carolinian"
     official="false"
     percentage="4.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="Chamorro"
+    lang="Chamorro"
     official="false"
     percentage="30.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="7.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="English"
+    lang="English"
     official="true"
     percentage="4.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="Korean"
+    lang="Korean"
     official="false"
     percentage="6.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MNP"
-    language="Philippene Languages"
+    lang="Philippene Languages"
     official="false"
     percentage="34.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Chuabo"
+    lang="Chuabo"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Lomwe"
+    lang="Lomwe"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Makua"
+    lang="Makua"
     official="false"
     percentage="27.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Marendje"
+    lang="Marendje"
     official="false"
     percentage="3.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Nyanja"
+    lang="Nyanja"
     official="false"
     percentage="3.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Ronga"
+    lang="Ronga"
     official="false"
     percentage="3.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Sena"
+    lang="Sena"
     official="false"
     percentage="9.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Shona"
+    lang="Shona"
     official="false"
     percentage="6.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Tsonga"
+    lang="Tsonga"
     official="false"
     percentage="12.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MOZ"
-    language="Tswa"
+    lang="Tswa"
     official="false"
     percentage="6.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Hassaniya"
+    lang="Hassaniya"
     official="false"
     percentage="81.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Soninke"
+    lang="Soninke"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Tukulor"
+    lang="Tukulor"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Wolof"
+    lang="Wolof"
     official="false"
     percentage="6.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MRT"
-    language="Zenaga"
+    lang="Zenaga"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MSR"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MTQ"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="96.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MTQ"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="Bhojpuri"
+    lang="Bhojpuri"
     official="false"
     percentage="21.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="70.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="French"
+    lang="French"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="Marathi"
+    lang="Marathi"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MUS"
-    language="Tamil"
+    lang="Tamil"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MWI"
-    language="Chichewa"
+    lang="Chichewa"
     official="true"
     percentage="58.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MWI"
-    language="Lomwe"
+    lang="Lomwe"
     official="false"
     percentage="18.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MWI"
-    language="Ngoni"
+    lang="Ngoni"
     official="false"
     percentage="6.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="MWI"
-    language="Yao"
+    lang="Yao"
     official="false"
     percentage="13.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="9.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="Dusun"
+    lang="Dusun"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="English"
+    lang="English"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="Iban"
+    lang="Iban"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="Malay"
+    lang="Malay"
     official="true"
     percentage="58.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYS"
-    language="Tamil"
+    lang="Tamil"
     official="false"
     percentage="3.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYT"
-    language="French"
+    lang="French"
     official="true"
     percentage="20.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYT"
-    language="Mahoré"
+    lang="Mahoré"
     official="false"
     percentage="41.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="MYT"
-    language="Malagasy"
+    lang="Malagasy"
     official="false"
     percentage="16.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Afrikaans"
+    lang="Afrikaans"
     official="false"
     percentage="9.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Caprivi"
+    lang="Caprivi"
     official="false"
     percentage="4.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Herero"
+    lang="Herero"
     official="false"
     percentage="8.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Kavango"
+    lang="Kavango"
     official="false"
     percentage="9.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Nama"
+    lang="Nama"
     official="false"
     percentage="12.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="Ovambo"
+    lang="Ovambo"
     official="false"
     percentage="50.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NAM"
-    language="San"
+    lang="San"
     official="false"
     percentage="1.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NCL"
-    language="French"
+    lang="French"
     official="true"
     percentage="34.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="NCL"
-    language="Malenasian Languages"
+    lang="Malenasian Languages"
     official="false"
     percentage="45.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NCL"
-    language="Polynesian Languages"
+    lang="Polynesian Languages"
     official="false"
     percentage="11.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NER"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="9.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NER"
-    language="Hausa"
+    lang="Hausa"
     official="false"
     percentage="53.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="NER"
-    language="Kanuri"
+    lang="Kanuri"
     official="false"
     percentage="4.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NER"
-    language="Songhai-zerma"
+    lang="Songhai-zerma"
     official="false"
     percentage="21.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="NER"
-    language="Tamashek"
+    lang="Tamashek"
     official="false"
     percentage="10.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NFK"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Bura"
+    lang="Bura"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Edo"
+    lang="Edo"
     official="false"
     percentage="3.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="11.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Hausa"
+    lang="Hausa"
     official="false"
     percentage="21.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Ibibio"
+    lang="Ibibio"
     official="false"
     percentage="5.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Ibo"
+    lang="Ibo"
     official="false"
     percentage="18.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Ijo"
+    lang="Ijo"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Joruba"
+    lang="Joruba"
     official="false"
     percentage="21.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Kanuri"
+    lang="Kanuri"
     official="false"
     percentage="4.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="NGA"
-    language="Tiv"
+    lang="Tiv"
     official="false"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIC"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIC"
-    language="Miskito"
+    lang="Miskito"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIC"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="97.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIC"
-    language="Sumo"
+    lang="Sumo"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIU"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NIU"
-    language="Niue"
+    lang="Niue"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NLD"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NLD"
-    language="Dutch"
+    lang="Dutch"
     official="true"
     percentage="95.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NLD"
-    language="Fries"
+    lang="Fries"
     official="false"
     percentage="3.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NLD"
-    language="Turkish"
+    lang="Turkish"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="NOR"
-    language="Danish"
+    lang="Danish"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NOR"
-    language="English"
+    lang="English"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NOR"
-    language="Norwegian"
+    lang="Norwegian"
     official="true"
     percentage="96.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="NOR"
-    language="Saame"
+    lang="Saame"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NOR"
-    language="Swedish"
+    lang="Swedish"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Bhojpuri"
+    lang="Bhojpuri"
     official="false"
     percentage="7.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Maithili"
+    lang="Maithili"
     official="false"
     percentage="11.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Nepali"
+    lang="Nepali"
     official="true"
     percentage="50.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Newari"
+    lang="Newari"
     official="false"
     percentage="3.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Tamang"
+    lang="Tamang"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NPL"
-    language="Tharu"
+    lang="Tharu"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="NRU"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="8.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NRU"
-    language="English"
+    lang="English"
     official="true"
     percentage="7.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NRU"
-    language="Kiribati"
+    lang="Kiribati"
     official="false"
     percentage="17.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="NRU"
-    language="Nauru"
+    lang="Nauru"
     official="true"
     percentage="57.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NRU"
-    language="Tuvalu"
+    lang="Tuvalu"
     official="false"
     percentage="8.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="NZL"
-    language="English"
+    lang="English"
     official="true"
     percentage="87.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="NZL"
-    language="Maori"
+    lang="Maori"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="OMN"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="76.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="OMN"
-    language="Balochi"
+    lang="Balochi"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Balochi"
+    lang="Balochi"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Brahui"
+    lang="Brahui"
     official="false"
     percentage="1.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Hindko"
+    lang="Hindko"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Pashto"
+    lang="Pashto"
     official="false"
     percentage="13.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Punjabi"
+    lang="Punjabi"
     official="false"
     percentage="48.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Saraiki"
+    lang="Saraiki"
     official="false"
     percentage="9.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Sindhi"
+    lang="Sindhi"
     official="false"
     percentage="11.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAK"
-    language="Urdu"
+    lang="Urdu"
     official="true"
     percentage="7.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="14.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Cuna"
+    lang="Cuna"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Embera"
+    lang="Embera"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Guaymí"
+    lang="Guaymí"
     official="false"
     percentage="5.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PAN"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="76.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PCN"
-    language="Pitcairnese"
+    lang="Pitcairnese"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PER"
-    language="Aimará"
+    lang="Aimará"
     official="true"
     percentage="2.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PER"
-    language="Ketšua"
+    lang="Ketšua"
     official="true"
     percentage="16.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="PER"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="79.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Bicol"
+    lang="Bicol"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Cebuano"
+    lang="Cebuano"
     official="false"
     percentage="23.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Hiligaynon"
+    lang="Hiligaynon"
     official="false"
     percentage="9.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Ilocano"
+    lang="Ilocano"
     official="false"
     percentage="9.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Maguindanao"
+    lang="Maguindanao"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Maranao"
+    lang="Maranao"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Pampango"
+    lang="Pampango"
     official="false"
     percentage="3.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Pangasinan"
+    lang="Pangasinan"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Pilipino"
+    lang="Pilipino"
     official="true"
     percentage="29.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PHL"
-    language="Waray-waray"
+    lang="Waray-waray"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PLW"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="PLW"
-    language="English"
+    lang="English"
     official="true"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PLW"
-    language="Palau"
+    lang="Palau"
     official="true"
     percentage="82.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PLW"
-    language="Philippene Languages"
+    lang="Philippene Languages"
     official="false"
     percentage="9.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PNG"
-    language="Malenasian Languages"
+    lang="Malenasian Languages"
     official="false"
     percentage="20.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PNG"
-    language="Papuan Languages"
+    lang="Papuan Languages"
     official="false"
     percentage="78.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="POL"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="POL"
-    language="German"
+    lang="German"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="POL"
-    language="Polish"
+    lang="Polish"
     official="true"
     percentage="97.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="POL"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRI"
-    language="English"
+    lang="English"
     official="false"
     percentage="47.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRI"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="51.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRK"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRK"
-    language="Korean"
+    lang="Korean"
     official="true"
     percentage="99.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRT"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="99.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRY"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRY"
-    language="Guaraní"
+    lang="Guaraní"
     official="true"
     percentage="40.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRY"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="PRY"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="55.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PSE"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="95.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="PSE"
-    language="Hebrew"
+    lang="Hebrew"
     official="false"
     percentage="4.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="PYF"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="2.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="PYF"
-    language="French"
+    lang="French"
     official="true"
     percentage="40.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="PYF"
-    language="Tahitian"
+    lang="Tahitian"
     official="false"
     percentage="46.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="QAT"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="40.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="QAT"
-    language="Urdu"
+    lang="Urdu"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="REU"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="REU"
-    language="Comorian"
+    lang="Comorian"
     official="false"
     percentage="2.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="REU"
-    language="Creole French"
+    lang="Creole French"
     official="false"
     percentage="91.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="REU"
-    language="Malagasy"
+    lang="Malagasy"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="REU"
-    language="Tamil"
+    lang="Tamil"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="7.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="Romani"
+    lang="Romani"
     official="true"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="Romanian"
+    lang="Romanian"
     official="true"
     percentage="90.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ROM"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Avarian"
+    lang="Avarian"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Bashkir"
+    lang="Bashkir"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Chechen"
+    lang="Chechen"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Chuvash"
+    lang="Chuvash"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Kazakh"
+    lang="Kazakh"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Mari"
+    lang="Mari"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Mordva"
+    lang="Mordva"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Russian"
+    lang="Russian"
     official="true"
     percentage="86.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Tatar"
+    lang="Tatar"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Udmur"
+    lang="Udmur"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="RUS"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="RWA"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="RWA"
-    language="Rwanda"
+    lang="Rwanda"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SAU"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="95.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="49.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Bari"
+    lang="Bari"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Beja"
+    lang="Beja"
     official="false"
     percentage="6.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Chilluk"
+    lang="Chilluk"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Dinka"
+    lang="Dinka"
     official="false"
     percentage="11.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Fur"
+    lang="Fur"
     official="false"
     percentage="2.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Lotuko"
+    lang="Lotuko"
     official="false"
     percentage="1.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Nubian Languages"
+    lang="Nubian Languages"
     official="false"
     percentage="8.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Nuer"
+    lang="Nuer"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="SDN"
-    language="Zande"
+    lang="Zande"
     official="false"
     percentage="2.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Diola"
+    lang="Diola"
     official="false"
     percentage="5.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="21.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Malinke"
+    lang="Malinke"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Serer"
+    lang="Serer"
     official="false"
     percentage="12.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Soninke"
+    lang="Soninke"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SEN"
-    language="Wolof"
+    lang="Wolof"
     official="true"
     percentage="48.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SGP"
-    language="Chinese"
+    lang="Chinese"
     official="true"
     percentage="77.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SGP"
-    language="Malay"
+    lang="Malay"
     official="true"
     percentage="14.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SGP"
-    language="Tamil"
+    lang="Tamil"
     official="true"
     percentage="7.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SHN"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SJM"
-    language="Norwegian"
+    lang="Norwegian"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SJM"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLB"
-    language="Malenasian Languages"
+    lang="Malenasian Languages"
     official="false"
     percentage="85.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLB"
-    language="Papuan Languages"
+    lang="Papuan Languages"
     official="false"
     percentage="8.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLB"
-    language="Polynesian Languages"
+    lang="Polynesian Languages"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Bullom-sherbro"
+    lang="Bullom-sherbro"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Ful"
+    lang="Ful"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Kono-vai"
+    lang="Kono-vai"
     official="false"
     percentage="5.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Kuranko"
+    lang="Kuranko"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Limba"
+    lang="Limba"
     official="false"
     percentage="8.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Mende"
+    lang="Mende"
     official="false"
     percentage="34.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Temne"
+    lang="Temne"
     official="false"
     percentage="31.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLE"
-    language="Yalunka"
+    lang="Yalunka"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLV"
-    language="Nahua"
+    lang="Nahua"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SLV"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SMR"
-    language="Italian"
+    lang="Italian"
     official="true"
     percentage="100.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SOM"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SOM"
-    language="Somali"
+    lang="Somali"
     official="true"
     percentage="98.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SPM"
-    language="French"
+    lang="French"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="STP"
-    language="Crioulo"
+    lang="Crioulo"
     official="false"
     percentage="86.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="STP"
-    language="French"
+    lang="French"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="SUR"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SUR"
-    language="Sranantonga"
+    lang="Sranantonga"
     official="false"
     percentage="81.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVK"
-    language="Czech and Moravian"
+    lang="Czech and Moravian"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVK"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="10.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVK"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="1.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVK"
-    language="Slovak"
+    lang="Slovak"
     official="true"
     percentage="85.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVK"
-    language="Ukrainian and Russian"
+    lang="Ukrainian and Russian"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVN"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVN"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="false"
     percentage="7.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="SVN"
-    language="Slovene"
+    lang="Slovene"
     official="true"
     percentage="87.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="0.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Finnish"
+    lang="Finnish"
     official="false"
     percentage="2.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Norwegian"
+    lang="Norwegian"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Southern Slavic Languages"
+    lang="Southern Slavic Languages"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWE"
-    language="Swedish"
+    lang="Swedish"
     official="true"
     percentage="89.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWZ"
-    language="Swazi"
+    lang="Swazi"
     official="true"
     percentage="89.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="SWZ"
-    language="Zulu"
+    lang="Zulu"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SYC"
-    language="English"
+    lang="English"
     official="true"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="SYC"
-    language="French"
+    lang="French"
     official="true"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SYC"
-    language="Seselwa"
+    lang="Seselwa"
     official="false"
     percentage="91.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="SYR"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="90.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="SYR"
-    language="Kurdish"
+    lang="Kurdish"
     official="false"
     percentage="9.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCA"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="12.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Gorane"
+    lang="Gorane"
     official="false"
     percentage="6.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Hadjarai"
+    lang="Hadjarai"
     official="false"
     percentage="6.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Kanem-bornu"
+    lang="Kanem-bornu"
     official="false"
     percentage="9.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Mayo-kebbi"
+    lang="Mayo-kebbi"
     official="false"
     percentage="11.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Ouaddai"
+    lang="Ouaddai"
     official="false"
     percentage="8.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Sara"
+    lang="Sara"
     official="false"
     percentage="27.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TCD"
-    language="Tandjile"
+    lang="Tandjile"
     official="false"
     percentage="6.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Ane"
+    lang="Ane"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Ewe"
+    lang="Ewe"
     official="true"
     percentage="23.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Gurma"
+    lang="Gurma"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Kabyé"
+    lang="Kabyé"
     official="true"
     percentage="13.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Kotokoli"
+    lang="Kotokoli"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Moba"
+    lang="Moba"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Naudemba"
+    lang="Naudemba"
     official="false"
     percentage="4.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="TGO"
-    language="Watyi"
+    lang="Watyi"
     official="false"
     percentage="10.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="12.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Khmer"
+    lang="Khmer"
     official="false"
     percentage="1.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Kuy"
+    lang="Kuy"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Lao"
+    lang="Lao"
     official="false"
     percentage="26.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Malay"
+    lang="Malay"
     official="false"
     percentage="3.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="THA"
-    language="Thai"
+    lang="Thai"
     official="true"
     percentage="52.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="TJK"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="9.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TJK"
-    language="Tadzhik"
+    lang="Tadzhik"
     official="true"
     percentage="62.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TJK"
-    language="Uzbek"
+    lang="Uzbek"
     official="false"
     percentage="23.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKL"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKL"
-    language="Tokelau"
+    lang="Tokelau"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKM"
-    language="Kazakh"
+    lang="Kazakh"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKM"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="6.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKM"
-    language="Turkmenian"
+    lang="Turkmenian"
     official="true"
     percentage="76.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TKM"
-    language="Uzbek"
+    lang="Uzbek"
     official="false"
     percentage="9.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TMP"
-    language="Portuguese"
+    lang="Portuguese"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TMP"
-    language="Sunda"
+    lang="Sunda"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TON"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TON"
-    language="Tongan"
+    lang="Tongan"
     official="true"
     percentage="98.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="TTO"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="2.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TTO"
-    language="English"
+    lang="English"
     official="false"
     percentage="93.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TTO"
-    language="Hindi"
+    lang="Hindi"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUN"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="69.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUN"
-    language="Arabic-French"
+    lang="Arabic-French"
     official="false"
     percentage="26.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUN"
-    language="Arabic-French-English"
+    lang="Arabic-French-English"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUR"
-    language="Arabic"
+    lang="Arabic"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUR"
-    language="Kurdish"
+    lang="Kurdish"
     official="false"
     percentage="10.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUR"
-    language="Turkish"
+    lang="Turkish"
     official="true"
     percentage="87.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUV"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUV"
-    language="Kiribati"
+    lang="Kiribati"
     official="false"
     percentage="7.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TUV"
-    language="Tuvalu"
+    lang="Tuvalu"
     official="true"
     percentage="92.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Ami"
+    lang="Ami"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Atayal"
+    lang="Atayal"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Hakka"
+    lang="Hakka"
     official="false"
     percentage="11.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Mandarin Chinese"
+    lang="Mandarin Chinese"
     official="true"
     percentage="20.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Min"
+    lang="Min"
     official="false"
     percentage="66.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="TWN"
-    language="Paiwan"
+    lang="Paiwan"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Chaga and Pare"
+    lang="Chaga and Pare"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Gogo"
+    lang="Gogo"
     official="false"
     percentage="3.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Ha"
+    lang="Ha"
     official="false"
     percentage="3.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Haya"
+    lang="Haya"
     official="false"
     percentage="5.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Hehet"
+    lang="Hehet"
     official="false"
     percentage="6.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Luguru"
+    lang="Luguru"
     official="false"
     percentage="4.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Makonde"
+    lang="Makonde"
     official="false"
     percentage="5.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Nyakusa"
+    lang="Nyakusa"
     official="false"
     percentage="5.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Nyamwesi"
+    lang="Nyamwesi"
     official="false"
     percentage="21.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Shambala"
+    lang="Shambala"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="TZA"
-    language="Swahili"
+    lang="Swahili"
     official="true"
     percentage="8.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Acholi"
+    lang="Acholi"
     official="false"
     percentage="4.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Ganda"
+    lang="Ganda"
     official="false"
     percentage="18.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Gisu"
+    lang="Gisu"
     official="false"
     percentage="4.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Kiga"
+    lang="Kiga"
     official="false"
     percentage="8.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Lango"
+    lang="Lango"
     official="false"
     percentage="5.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Lugbara"
+    lang="Lugbara"
     official="false"
     percentage="4.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Nkole"
+    lang="Nkole"
     official="false"
     percentage="10.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Rwanda"
+    lang="Rwanda"
     official="false"
     percentage="3.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Soga"
+    lang="Soga"
     official="false"
     percentage="8.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="UGA"
-    language="Teso"
+    lang="Teso"
     official="false"
     percentage="6.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Belorussian"
+    lang="Belorussian"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Bulgariana"
+    lang="Bulgariana"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Romanian"
+    lang="Romanian"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="32.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="UKR"
-    language="Ukrainian"
+    lang="Ukrainian"
     official="true"
     percentage="64.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="UMI"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="URY"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="95.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="English"
+    lang="English"
     official="true"
     percentage="86.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="French"
+    lang="French"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="German"
+    lang="German"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Italian"
+    lang="Italian"
     official="false"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Japanese"
+    lang="Japanese"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Korean"
+    lang="Korean"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Polish"
+    lang="Polish"
     official="false"
     percentage="0.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Portuguese"
+    lang="Portuguese"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="7.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Tagalog"
+    lang="Tagalog"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="USA"
-    language="Vietnamese"
+    lang="Vietnamese"
     official="false"
     percentage="0.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Karakalpak"
+    lang="Karakalpak"
     official="false"
     percentage="2.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Kazakh"
+    lang="Kazakh"
     official="false"
     percentage="3.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Russian"
+    lang="Russian"
     official="false"
     percentage="10.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Tadzhik"
+    lang="Tadzhik"
     official="false"
     percentage="4.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Tatar"
+    lang="Tatar"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="UZB"
-    language="Uzbek"
+    lang="Uzbek"
     official="true"
     percentage="72.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="VAT"
-    language="Italian"
+    lang="Italian"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="VCT"
-    language="Creole English"
+    lang="Creole English"
     official="false"
     percentage="99.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="VCT"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="VEN"
-    language="Goajiro"
+    lang="Goajiro"
     official="false"
     percentage="0.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="VEN"
-    language="Spanish"
+    lang="Spanish"
     official="true"
     percentage="96.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="VEN"
-    language="Warrau"
+    lang="Warrau"
     official="false"
     percentage="0.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="VGB"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="VIR"
-    language="English"
+    lang="English"
     official="true"
     percentage="81.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="VIR"
-    language="French"
+    lang="French"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="VIR"
-    language="Spanish"
+    lang="Spanish"
     official="false"
     percentage="13.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Chinese"
+    lang="Chinese"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Khmer"
+    lang="Khmer"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Man"
+    lang="Man"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Miao"
+    lang="Miao"
     official="false"
     percentage="0.9"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Muong"
+    lang="Muong"
     official="false"
     percentage="1.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Nung"
+    lang="Nung"
     official="false"
     percentage="1.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Thai"
+    lang="Thai"
     official="false"
     percentage="1.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Tho"
+    lang="Tho"
     official="false"
     percentage="1.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="VNM"
-    language="Vietnamese"
+    lang="Vietnamese"
     official="true"
     percentage="86.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="VUT"
-    language="Bislama"
+    lang="Bislama"
     official="true"
     percentage="56.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="VUT"
-    language="English"
+    lang="English"
     official="true"
     percentage="28.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="VUT"
-    language="French"
+    lang="French"
     official="true"
     percentage="14.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="WLF"
-    language="Futuna"
+    lang="Futuna"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="WLF"
-    language="Wallis"
+    lang="Wallis"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="WSM"
-    language="English"
+    lang="English"
     official="true"
     percentage="0.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="WSM"
-    language="Samoan"
+    lang="Samoan"
     official="true"
     percentage="47.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="WSM"
-    language="Samoan-English"
+    lang="Samoan-English"
     official="false"
     percentage="52.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="YEM"
-    language="Arabic"
+    lang="Arabic"
     official="true"
     percentage="99.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="YEM"
-    language="Soqutri"
+    lang="Soqutri"
     official="false"
     percentage="0.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Albaniana"
+    lang="Albaniana"
     official="false"
     percentage="16.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Hungarian"
+    lang="Hungarian"
     official="false"
     percentage="3.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Macedonian"
+    lang="Macedonian"
     official="false"
     percentage="0.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Romani"
+    lang="Romani"
     official="false"
     percentage="1.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Serbo-Croatian"
+    lang="Serbo-Croatian"
     official="true"
     percentage="75.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="YUG"
-    language="Slovak"
+    lang="Slovak"
     official="false"
     percentage="0.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Afrikaans"
+    lang="Afrikaans"
     official="true"
     percentage="14.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="English"
+    lang="English"
     official="true"
     percentage="8.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Ndebele"
+    lang="Ndebele"
     official="false"
     percentage="1.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Northsotho"
+    lang="Northsotho"
     official="false"
     percentage="9.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Southsotho"
+    lang="Southsotho"
     official="false"
     percentage="7.6"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Swazi"
+    lang="Swazi"
     official="false"
     percentage="2.5"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Tsonga"
+    lang="Tsonga"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Tswana"
+    lang="Tswana"
     official="false"
     percentage="8.1"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Venda"
+    lang="Venda"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Xhosa"
+    lang="Xhosa"
     official="true"
     percentage="17.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZAF"
-    language="Zulu"
+    lang="Zulu"
     official="true"
     percentage="22.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Bemba"
+    lang="Bemba"
     official="false"
     percentage="29.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Chewa"
+    lang="Chewa"
     official="false"
     percentage="5.7"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Lozi"
+    lang="Lozi"
     official="false"
     percentage="6.4"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Nsenga"
+    lang="Nsenga"
     official="false"
     percentage="4.3"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Nyanja"
+    lang="Nyanja"
     official="false"
     percentage="7.8"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZMB"
-    language="Tongan"
+    lang="Tongan"
     official="false"
     percentage="11.0"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZWE"
-    language="English"
+    lang="English"
     official="true"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZWE"
-    language="Ndebele"
+    lang="Ndebele"
     official="false"
     percentage="16.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZWE"
-    language="Nyanja"
+    lang="Nyanja"
     official="false"
     percentage="2.2"/>
-  <CountryLanguage
+  <Lang
     countryCode="ZWE"
-    language="Shona"
+    lang="Shona"
     official="false"
     percentage="72.1"/>
 </World>

@@ -40,7 +40,7 @@ public interface select {
   }
 
   public interface _GROUP_BY<T extends Subject<?>> {
-    public GROUP_BY<T> GROUP_BY(final Variable<?> variable);
+    public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
   }
 
   public interface GROUP_BY<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {
@@ -81,7 +81,7 @@ public interface select {
     public FROM<T> FROM(final Entity ... tables);
   }
 
-  public interface FROM<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
+  public interface FROM<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
   }
 
   public interface _SELECT<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T> {

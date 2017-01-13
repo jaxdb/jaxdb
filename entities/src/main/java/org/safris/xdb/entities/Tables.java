@@ -280,56 +280,6 @@ public final class Tables {
     }
   }
 
-  /*public static int select(final Table ... entity) throws SQLException {
-    int count = 0;
-    for (final Table e : entity)
-      if (e.select())
-        ++count;
-
-    return count;
-  }
-
-  public static int select(final Collection<Table> entities) throws SQLException {
-    int count = 0;
-    for (final Table e : entities)
-      if (e.select())
-        ++count;
-
-    return count;
-  }
-
-  public static int insert(final Table ... entity) throws SQLException {
-    int count = 0;
-    for (final Table e : entity)
-      count += e.insert();
-
-    return count;
-  }
-
-  public static int insert(final Collection<Table> entities) throws SQLException {
-    int count = 0;
-    for (final Table e : entities)
-      count += e.insert();
-
-    return count;
-  }
-
-  public static int update(final Table ... entity) throws SQLException {
-    int count = 0;
-    for (final Table e : entity)
-      count += e.update();
-
-    return count;
-  }
-
-  public static int update(final Collection<Table> entities) throws SQLException {
-    int count = 0;
-    for (final Table e : entities)
-      count += e.update();
-
-    return count;
-  }*/
-
   private Tables() {
   }
 }
