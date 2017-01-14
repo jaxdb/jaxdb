@@ -24,6 +24,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.logging.Level;
 
@@ -88,8 +89,9 @@ public class DataTest extends LoggableTest {
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(xds, destFile);
 
-    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false);
-    new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd")), null).generate();
+    final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd"));
+    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
+    new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
 
     final URL xdd = Resources.getResource(name + ".xdd").getURL();
     final $xdd_data data;
