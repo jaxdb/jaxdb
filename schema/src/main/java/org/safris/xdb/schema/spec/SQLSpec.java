@@ -217,13 +217,13 @@ public abstract class SQLSpec {
       if (ch == '\\') {
         escaped = true;
       }
-      else if (ch == ' ' && !escaped) {
-        enums.add(builder.toString());
-        builder.setLength(0);
-      }
-      else {
+      else if (ch != ' ' || escaped) {
         escaped = false;
         builder.append(ch);
+      }
+      else if (builder.length() > 0) {
+        enums.add(builder.toString());
+        builder.setLength(0);
       }
     }
 
