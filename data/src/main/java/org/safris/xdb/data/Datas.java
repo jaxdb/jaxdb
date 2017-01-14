@@ -19,6 +19,7 @@ package org.safris.xdb.data;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -26,6 +27,7 @@ import java.util.Iterator;
 
 import javax.xml.transform.TransformerException;
 
+import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
 import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.xdd.xe.$xdd_data;
@@ -104,6 +106,7 @@ public final class Datas {
   public static void createXSD(final URL xdsFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
     org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("xdd.xsl").getURL(), xdsFile, xsdFile);
+    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), xsdFile.getParentFile().toURI().toURL());
   }
 
   private Datas() {

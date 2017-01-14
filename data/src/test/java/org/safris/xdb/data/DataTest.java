@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -35,7 +34,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.safris.commons.io.Files;
 import org.safris.commons.io.JarFiles;
-import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resource;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.logging.Logging;
@@ -90,9 +88,8 @@ public class DataTest extends LoggableTest {
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(xds, destFile);
 
-    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true);
+    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd")), null).generate();
-    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), sourcesDestDir.toURI().toURL(), resourcesDestDir.toURI().toURL());
 
     final URL xdd = Resources.getResource(name + ".xdd").getURL();
     final $xdd_data data;

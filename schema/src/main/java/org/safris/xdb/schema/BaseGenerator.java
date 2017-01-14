@@ -78,8 +78,8 @@ public abstract class BaseGenerator {
         out.write(output.trim().getBytes());
       }
     }
-    catch (final Exception e) {
-      throw new RuntimeException(e);
+    catch (final IOException e) {
+      throw new UnsupportedOperationException(e);
     }
   }
 

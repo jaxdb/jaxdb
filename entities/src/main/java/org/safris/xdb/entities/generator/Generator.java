@@ -22,11 +22,15 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.safris.commons.jci.CompilationException;
+import org.safris.commons.jci.JavaCompiler;
+import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
@@ -71,7 +75,7 @@ import org.xml.sax.InputSource;
 public class Generator {
   private static final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
 
-  public static void generate(final URL url, final File outDir) throws IOException, XMLException {
+  public static void generate(final URL url, final File destDir, final boolean compile) throws IOException, XMLException {
     final xds_schema schema = (xds_schema)Bindings.parse(new InputSource(url.openStream()));
     Log.info("Generating database entities: " + schema._name$().text());
     for (final $xds_table table : schema._table())
@@ -79,10 +83,10 @@ public class Generator {
 
     final String pkg = "xdb.ddl";
 
-    final File dir = new File(outDir, pkg.replace('.', '/'));
+    final File dir = new File(destDir, pkg.replace('.', '/'));
     if (!dir.exists())
       if (!dir.mkdirs())
-        throw new Error("Unable to create output dir: " + dir.getAbsolutePath());
+        throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
     final String classSimpleName = Strings.toInstanceCase(schema._name$().text());
 
@@ -116,6 +120,17 @@ public class Generator {
     final File javaFile = new File(dir, classSimpleName + ".java");
     try (final FileOutputStream out = new FileOutputStream(javaFile)) {
       out.write(code.getBytes());
+    }
+
+    if (compile) {
+      try {
+        new JavaCompiler(destDir).compile(destDir);
+      }
+      catch (final CompilationException e) {
+        throw new UnsupportedOperationException(e);
+      }
+
+      ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), destDir.toURI().toURL());
     }
   }
 
@@ -315,7 +330,7 @@ public class Generator {
       return value.text();
     }
     catch (final Exception e) {
-      throw new Error(e);
+      throw new UnsupportedOperationException(e);
     }
   }
 
