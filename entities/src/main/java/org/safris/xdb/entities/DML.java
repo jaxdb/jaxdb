@@ -16,13 +16,11 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
+import org.safris.commons.lang.Arrays;
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
 import org.safris.xdb.entities.datatype.Decimal;
@@ -35,43 +33,8 @@ import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.xdd.xe.$xdd_data;
 
-public abstract class DML {
+public final class DML {
   /** Direction **/
-
-  protected static abstract class Direction<T> extends Variable<T> {
-    private final Variable<?> variable;
-
-    public Direction(final Variable<T> variable) {
-      super(variable.value);
-      this.variable = variable;
-    }
-
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.addCaller(this);
-      serialization.append(serialize());
-    }
-
-    @Override
-    protected Entity owner() {
-      throw new UnsupportedOperationException("Implement me");
-    }
-
-    @Override
-    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      throw new UnsupportedOperationException("Implement me");
-    }
-
-    @Override
-    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      throw new UnsupportedOperationException("Implement me");
-    }
-
-    @Override
-    protected String serialize() {
-      return variable.serialize() + " " + getClass().getSimpleName();
-    }
-  }
 
   protected static final class ASC<T> extends Direction<T> {
     protected ASC(final Variable<T> variable) {
@@ -490,12 +453,18 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> DIV(final Numeric<T> ... args) {
-    if (args.length <= 1)
-      throw new IllegalArgumentException("args.length <= 1");
+  public static <T extends Number>Numeric<T> DIV(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, b, (Object[])args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> DIV(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
 
     final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, args));
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, args[0], args[1], (Object[])Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -506,22 +475,34 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T> ... b) {
-    if (b.length == 0)
-      throw new IllegalArgumentException("b.length == 0");
+  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)b.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, b, (Object[])args));
+    return wrapper;
+  }
 
-    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, b));
+  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.DIVIDE, a, args[0], (Object[])Arrays.subArray(args, 1)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MUL(final Numeric<T> ... args) {
-    if (args.length <= 1)
-      throw new IllegalArgumentException("args.length <= 1");
+  public static <T extends Number>Numeric<T> MUL(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, b, (Object[])args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MUL(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
 
     final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, args));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, args[0], args[1], (Object[])Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -532,12 +513,18 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T> ... b) {
-    if (b.length == 0)
-      throw new IllegalArgumentException("b.length == 0");
+  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)b.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, b, (Object[])args));
+    return wrapper;
+  }
 
-    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, b));
+  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MULTIPLY, a, args[0], (Object[])Arrays.subArray(args, 1)));
     return wrapper;
   }
 
@@ -554,12 +541,18 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> ADD(final Numeric<T> ... args) {
-    if (args.length <= 1)
-      throw new IllegalArgumentException("args.length <= 1");
+  public static <T extends Number>Numeric<T> ADD(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b, (Object[])args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> ADD(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
 
     final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, args));
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, args[0], args[1], (Object[])Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -570,18 +563,31 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T> ... b) {
-    if (b.length ==0 )
-      throw new IllegalArgumentException("b.length == 0");
+  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)b.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b, (Object[])args));
+    return wrapper;
+  }
 
-    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, b));
+  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, args[0], (Object[])Arrays.subArray(args, 1)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> ... args) {
-    return ADD(args);
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    return ADD(a, b, args);
+  }
+
+  public static <T extends Number>Numeric<T> PLUS(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
+
+    return ADD(args[0], args[1], Arrays.subArray(args, 2));
   }
 
   public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Number b) {
@@ -589,8 +595,15 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T> ... b) {
-    return ADD(a, b);
+  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    return ADD(a, b, args);
+  }
+
+  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    return ADD(a, args[0], Arrays.subArray(args, 1));
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<? super T> b) {
@@ -612,12 +625,18 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> SUB(final Numeric<T> ... args) {
-    if (args.length <= 1)
-      throw new IllegalArgumentException("args.length <= 1");
+  public static <T extends Number>Numeric<T> SUB(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)a.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b, (Object[])args));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> SUB(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
 
     final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, args));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, args[0], args[1], (Object[])Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -634,17 +653,31 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T> ... b) {
-    if (b.length == 0)
-      throw new IllegalArgumentException("b.length == 0");
-
-    final Numeric<T> wrapper = (Numeric<T>)b[0].clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b));
+  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    final Numeric<T> wrapper = (Numeric<T>)b.clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, b, (Object[])args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> ... args) {
-    return SUB(args);
+  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    final Numeric<T> wrapper = (Numeric<T>)args[0].clone();
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, args[0], (Object[])Arrays.subArray(args, 1)));
+    return wrapper;
+  }
+
+  @SafeVarargs
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+    return SUB(a, b, args);
+  }
+
+  public static <T extends Number>Numeric<T> MINUS(final Numeric<T>[] args) {
+    if (args.length < 2)
+      throw new IllegalArgumentException("args.length < 2");
+
+    return SUB(args[0], args[1], Arrays.subArray(args, 2));
   }
 
   public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Number b) {
@@ -652,8 +685,15 @@ public abstract class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T> ... b) {
-    return SUB(a, b);
+  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+    return SUB(a, b, args);
+  }
+
+  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T>[] args) {
+    if (args.length < 1)
+      throw new IllegalArgumentException("args.length < 1");
+
+    return SUB(a, args[0], Arrays.subArray(args, 1));
   }
 
   public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<? super T> b) {
@@ -714,24 +754,64 @@ public abstract class DML {
 
   @SafeVarargs
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static BooleanCondition<?> AND(final Condition<?> ... conditions) {
-    return new BooleanCondition(Operator.AND, conditions);
+  public static BooleanCondition<?> AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanCondition(Operator.AND, a, b, conditions);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> AND(final Condition<?> a, final Condition<?>[] conditions) {
+    if (conditions.length < 1)
+      throw new IllegalArgumentException("conditions.length < 1");
+
+    return new BooleanCondition(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> AND(final Condition<?>[] conditions) {
+    if (conditions.length < 2)
+      throw new IllegalArgumentException("conditions.length < 2");
+
+    return new BooleanCondition(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static BooleanCondition<?> AND(final Collection<Condition<?>> conditions) {
-    return new BooleanCondition(Operator.AND, conditions.toArray(new Condition<?>[conditions.size()]));
+    if (conditions.size() < 2)
+      throw new IllegalArgumentException("conditions.size() < 2");
+
+    final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
+    return new BooleanCondition(Operator.AND, array[0], array[1], Arrays.subArray(array, 2));
   }
 
   @SafeVarargs
   @SuppressWarnings({"rawtypes", "unchecked"})
-  public static BooleanCondition<?> OR(final Condition<?> ... conditions) {
-    return new BooleanCondition(Operator.OR, conditions);
+  public static BooleanCondition<?> OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanCondition(Operator.OR, a, b, conditions);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> OR(final Condition<?> a, final Condition<?>[] conditions) {
+    if (conditions.length < 1)
+      throw new IllegalArgumentException("conditions.length < 1");
+
+    return new BooleanCondition(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  public static BooleanCondition<?> OR(final Condition<?>[] conditions) {
+    if (conditions.length < 2)
+      throw new IllegalArgumentException("conditions.length < 2");
+
+    return new BooleanCondition(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static BooleanCondition<?> OR(final Collection<Condition<?>> conditions) {
-    return new BooleanCondition(Operator.OR, conditions.toArray(new Condition<?>[conditions.size()]));
+    if (conditions.size() < 2)
+      throw new IllegalArgumentException("conditions.size() < 2");
+
+    final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
+    return new BooleanCondition(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
   public static <T>LogicalCondition<T> GT(final Variable<T> a, final Variable<? super T> b) {
@@ -968,5 +1048,8 @@ public abstract class DML {
     public static <T>Predicate<T> EXISTS(final select.SELECT<? extends Variable<T>> b) {
       return new Predicate<T>("NOT EXISTS", b);
     }
+  }
+
+  private DML() {
   }
 }

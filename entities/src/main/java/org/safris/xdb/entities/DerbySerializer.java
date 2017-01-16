@@ -42,7 +42,9 @@ class DerbySerializer extends Serializer {
   protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
     serialization.append("(");
     Keyword.format(serializable.a, serialization);
-    for (int i = serializable.startIndex; i < serializable.args.length; i++) {
+    serialization.append(" ").append(serializable.operator.toString()).append(" ");
+    Keyword.format(serializable.b, serialization);
+    for (int i = 0; i < serializable.args.length; i++) {
       final Object arg = serializable.args[i];
       if (arg instanceof Interval)
         throw new UnsupportedOperationException("Derby does not support INTERVAL: https://db.apache.org/derby/docs/10.8/ref/rrefsql9241891.html");

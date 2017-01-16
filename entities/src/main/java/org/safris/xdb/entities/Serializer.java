@@ -30,7 +30,6 @@ import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.lang.reflect.Classes;
-import org.safris.xdb.entities.DML.Direction;
 import org.safris.xdb.entities.Delete.DELETE;
 import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.binding.Interval;
@@ -128,7 +127,9 @@ abstract class Serializer {
   protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
     serialization.append("(");
     Keyword.format(serializable.a, serialization);
-    for (int i = serializable.startIndex; i < serializable.args.length; i++) {
+    serialization.append(" ").append(serializable.operator.toString()).append(" ");
+    Keyword.format(serializable.b, serialization);
+    for (int i = 0; i < serializable.args.length; i++) {
       final Object arg = serializable.args[i];
       if (arg instanceof Interval) {
         final Interval interval = (Interval)arg;

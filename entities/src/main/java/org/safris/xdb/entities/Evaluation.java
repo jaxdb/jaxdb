@@ -17,23 +17,15 @@
 package org.safris.xdb.entities;
 
 class Evaluation<T> extends Subject<T> {
-  protected final Object a;
   protected final Operator<Predicate<?>> operator;
+  protected final Object a;
+  protected final Object b;
   protected final Object[] args;
-  protected final int startIndex;
 
-  protected Evaluation(final Operator<Predicate<?>> operator, final Object a, final Object ... args) {
+  protected Evaluation(final Operator<Predicate<?>> operator, final Object a, final Object b, final Object ... args) {
+    this.operator = operator;
     this.a = a;
-    this.operator = operator;
+    this.b = b;
     this.args = args;
-    this.startIndex = 0;
-  }
-
-  @SafeVarargs
-  protected Evaluation(final Operator<Predicate<?>> operator, final Variable<T> ... args) {
-    this.a = args[0];
-    this.operator = operator;
-    this.args = args;
-    startIndex = 1;
   }
 }

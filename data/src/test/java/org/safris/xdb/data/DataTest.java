@@ -66,6 +66,10 @@ public class DataTest extends LoggableTest {
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
+    final File testClasses = new File("target/test-classes/test-db");
+    if (testClasses.exists() && !Files.deleteAll(testClasses.toPath()))
+      throw new IOException("Unable to delete " + db.getPath());
+
     final Resource resource = Resources.getResource("test-db");
     if (URLs.isJar(resource.getURL())) {
       final JarFile jarFile = new JarFile(URLs.getParentJar(resource.getURL()).getPath());

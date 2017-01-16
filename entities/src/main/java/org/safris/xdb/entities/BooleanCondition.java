@@ -38,10 +38,14 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   }
 
   protected final Operator<BooleanCondition<?>> operator;
+  private final Condition<?> a;
+  private final Condition<?> b;
   private final Condition<?>[] conditions;
 
   @SafeVarargs
-  protected BooleanCondition(final Operator<BooleanCondition<?>> operator, final Condition<?> ... conditions) {
+  protected BooleanCondition(final Operator<BooleanCondition<?>> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    this.a = a;
+    this.b = b;
     this.operator = operator;
     this.conditions = conditions;
   }
@@ -54,9 +58,12 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   @Override
   protected void serialize(final Serialization serialization) {
     serialization.addCaller(this);
+    formatBraces(operator, a, serialization);
+    serialization.append(" ").append(operator).append(" ");
+    formatBraces(operator, b, serialization);
     for (int i = 0; i < conditions.length; i++) {
+      serialization.append(" ").append(operator).append(" ");
       formatBraces(operator, conditions[i], serialization);
-      serialization.append(i < conditions.length - 1 ? " " + operator + " " : "");
     }
   }
 }
