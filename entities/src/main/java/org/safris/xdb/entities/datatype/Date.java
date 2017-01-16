@@ -20,12 +20,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 
+import org.safris.commons.util.Formats;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 
 public final class Date extends Temporal<LocalDate> {
+  private static final ThreadLocal<SimpleDateFormat> dateFormat = Formats.createSimpleDateFormat("yyyy-MM-dd");
+
   protected static final int sqlType = Types.DATE;
 
   @SuppressWarnings("deprecation")
@@ -62,5 +66,11 @@ public final class Date extends Temporal<LocalDate> {
   @Override
   protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
     this.value = get(resultSet, columnIndex);
+  }
+
+  @Override
+  public String toString() {
+    final LocalDate value = get();
+    return value == null ? null : dateFormat.get().format(value);
   }
 }

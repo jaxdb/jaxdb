@@ -19,7 +19,6 @@ package org.safris.xdb.schema;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -51,7 +50,7 @@ public class SchemaTest extends LoggableTest {
 
   @BeforeClass
   public static void create() throws IOException, SQLException {
-    final File db = new File("target/generated-test-resources/test-db");
+    final File db = new File("target/generated-test-resources/derby/test-db");
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 

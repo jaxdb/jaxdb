@@ -16,6 +16,10 @@
 
 package org.safris.xdb.entities;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 import org.safris.xdb.entities.Select.FROM;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
@@ -29,16 +33,14 @@ class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected <T extends Subject<?>>void serialize(final Power<T> serializable, final Serialization serialization) {
-    serialization.append("EXP(LN(");
-    Keyword.format(serializable.a, serialization);
-    serialization.append(") * ");
-    Keyword.format(serializable.b, serialization);
-    serialization.append(")");
+  protected void onRegister(final Connection connection) throws SQLException {
+    final Statement statement = connection.createStatement();
+    statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.pow'");
   }
 
   @Override
   protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
+    serialization.append("(");
     Keyword.format(serializable.a, serialization);
     for (int i = serializable.startIndex; i < serializable.args.length; i++) {
       final Object arg = serializable.args[i];
@@ -48,6 +50,7 @@ class DerbySerializer extends Serializer {
       serialization.append(" ").append(serializable.operator.toString()).append(" ");
       Keyword.format(arg, serialization);
     }
+    serialization.append(")");
   }
 
   @Override

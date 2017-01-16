@@ -16,6 +16,9 @@
 
 package org.safris.xdb.entities;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
 import org.safris.xdb.entities.datatype.Enum;
 import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.schema.spec.PostgreSQLSpec;

@@ -62,7 +62,7 @@ public class DataTest extends LoggableTest {
   private static Connection connection;
 
   public static Connection createConnection() throws ClassNotFoundException, IOException, SQLException {
-    final File db = new File("target/generated-test-resources/test-db");
+    final File db = new File("target/generated-test-resources/derby/test-db");
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
@@ -84,7 +84,7 @@ public class DataTest extends LoggableTest {
     connection = createConnection();
   }
 
-  private static void testData(final String name) throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+  private static void testData(final String name, final boolean loadData) throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
     final URL xds = Resources.getResource(name + ".xds").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(xds, destFile);
@@ -93,27 +93,36 @@ public class DataTest extends LoggableTest {
     final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
 
-    final URL xdd = Resources.getResource(name + ".xdd").getURL();
-    final $xdd_data data;
-    try (final InputStream in = xdd.openStream()) {
-      data = ($xdd_data)Bindings.parse(new InputSource(in));
-    }
+    if (loadData) {
+      final URL xdd = Resources.getResource(name + ".xdd").getURL();
+      final $xdd_data data;
+      try (final InputStream in = xdd.openStream()) {
+        data = ($xdd_data)Bindings.parse(new InputSource(in));
+      }
 
-    Datas.loadData(connection, data);
+      Datas.loadData(connection, data);
+    }
   }
 
   @Test
   public void testClassicModels() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("classicmodels");
+    testData("classicmodels", true);
   }
 
   @Test
   public void testWorld() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("world");
+    testData("world", false);
   }
 
   @AfterClass
-  public static void destroy() {
+  public static void destroy() throws SQLException {
     new File("derby.log").deleteOnExit();
+    try {
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch (final SQLException e) {
+      if (!"XJ015".equals(e.getSQLState()))
+        throw e;
+    }
   }
 }

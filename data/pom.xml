@@ -31,6 +31,9 @@
   <build>
     <testResources>
       <testResource>
+        <directory>target/generated-test-resources/derby</directory>
+      </testResource>
+      <testResource>
         <directory>target/generated-test-sources/xsb</directory>
       </testResource>
       <testResource>

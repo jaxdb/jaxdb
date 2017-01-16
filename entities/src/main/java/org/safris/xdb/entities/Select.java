@@ -87,23 +87,24 @@ class Select {
           for (int i = 0; i < noColumns; i++) {
             final Pair<DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
             final Variable variable;
+            if (currentTable != null && currentTable != dataTypePrototype.a.entity) {
+              final Entity cached = cache.get(entity);
+              if (cached != null) {
+                row[index++] = cached;
+              }
+              else {
+                row[index++] = entity;
+                cache.put(entity, entity);
+                prototypes.put(entity.getClass(), entity.newInstance());
+              }
+            }
+
             if (dataTypePrototype.b == -1) {
+              entity = null;
               variable = dataTypePrototype.a.clone();
               row[index++] = variable;
             }
             else {
-              if (currentTable != null && currentTable != dataTypePrototype.a.entity) {
-                final Entity cached = cache.get(entity);
-                if (cached != null) {
-                  row[index++] = cached;
-                }
-                else {
-                  row[index++] = entity;
-                  cache.put(entity, entity);
-                  prototypes.put(entity.getClass(), entity.newInstance());
-                }
-              }
-
               currentTable = dataTypePrototype.a.entity;
               entity = prototypes.get(currentTable.getClass());
               if (entity == null)

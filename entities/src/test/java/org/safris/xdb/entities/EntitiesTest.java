@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -46,9 +47,9 @@ public class EntitiesTest extends LoggableTest {
   }
 
   @SuppressWarnings("unchecked")
-  public static Connection createConnection() throws ClassNotFoundException, IOException, SQLException {
+  public static Connection createConnection(final String name) throws ClassNotFoundException, IOException, SQLException {
     final Connection connection = DataTest.createConnection();
-    EntityRegistry.register((Class<? extends Schema>)Class.forName("xdb.ddl.classicmodels"), PreparedStatement.class, new EntityDataSource() {
+    EntityRegistry.register((Class<? extends Schema>)Class.forName("xdb.ddl." + name), PreparedStatement.class, new EntityDataSource() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;
@@ -58,21 +59,22 @@ public class EntitiesTest extends LoggableTest {
     return connection;
   }
 
-  private static void createEntities() throws IOException, XMLException {
-    final URL xds = Resources.getResource("classicmodels.xds").getURL();
+  private static void createEntities(final String name) throws IOException, XMLException {
+    final URL xds = Resources.getResource(name + ".xds").getURL();
     final File destDir = new File("target/generated-test-sources/xdb");
     Generator.generate(xds, destDir, true);
   }
 
   @BeforeClass
   public static void create() throws ClassNotFoundException, IOException, SQLException, XMLException {
-    createEntities();
-    createConnection();
+    createEntities("classicmodels");
+    createEntities("world");
+    createConnection("world");
   }
 
   @Test
   public void testEntities() throws IOException, SQLException, XMLException {
-    final URL xdd = Resources.getResource("classicmodels.xdd").getURL();
+    final URL xdd = Resources.getResource("world.xdd").getURL();
     final $xdd_data data;
     try (final InputStream in = xdd.openStream()) {
       data = ($xdd_data)Bindings.parse(new InputSource(in));
@@ -82,7 +84,14 @@ public class EntitiesTest extends LoggableTest {
   }
 
   @AfterClass
-  public static void destroy() {
+  public static void destroy() throws SQLException {
     new File("derby.log").deleteOnExit();
+    try {
+      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+    }
+    catch (final SQLException e) {
+      if (!"XJ015".equals(e.getSQLState()))
+        throw e;
+    }
   }
 }

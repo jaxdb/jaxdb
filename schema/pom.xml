@@ -31,7 +31,7 @@
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-resources</directory>
+        <directory>target/generated-test-resources/derby</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>

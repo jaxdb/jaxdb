@@ -135,10 +135,8 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
     serialization.addCaller(this);
     if (wrapper != null) {
       wrapper.serialize(serialization);
-      return;
     }
-
-    if (serialization.statementType == PreparedStatement.class) {
+    else if (serialization.statementType == PreparedStatement.class) {
       if (Entity.subjectAlias(entity, false) == null) {
         serialization.addParameter(this);
         serialization.append(serialization.getSerializer(this).getPreparedStatementMark(this));
@@ -147,7 +145,7 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
         serialization.append(name);
       }
       else {
-        serialization.append(toString());
+        serialization.append(serialize());
       }
     }
     else if (serialization.statementType == Statement.class) {
@@ -172,7 +170,7 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
   }
 
   @Override
-  public String toString() {
+  protected final String serialize() {
     if (entity != null) {
       final String alias = Entity.subjectAlias(entity, false);
       return alias != null ? alias + "." + name : String.valueOf(get());
@@ -180,5 +178,10 @@ public abstract class DataType<T> extends Variable<T> implements Cloneable {
 
     final String alias = Entity.subjectAlias(this, false);
     return alias != null ? alias : String.valueOf(get());
+  }
+
+  @Override
+  public String toString() {
+    return String.valueOf(get());
   }
 }

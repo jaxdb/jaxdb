@@ -18,12 +18,16 @@ package org.safris.xdb.entities;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.exception.SQLInvalidSchemaNameException;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class Schema {
+  private static final Set<Class<? extends Schema>> inited = new HashSet<Class<? extends Schema>>();
+
   protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
       return null;
@@ -49,10 +53,16 @@ public abstract class Schema {
   protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
     final EntityDataSource dataSource = EntityRegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new SQLInvalidSchemaNameException("No XDEDataSource has been registered for " + schema.getName());
+      throw new SQLInvalidSchemaNameException("No " + EntityDataSource.class.getSimpleName() + " has been registered for " + schema.getName());
 
     try {
-      return dataSource.getConnection();
+      final Connection connection = dataSource.getConnection();
+      if (!inited.contains(schema)) {
+        Serializer.getSerializer(getDBVendor(connection)).onRegister(connection);
+        inited.add(schema);
+      }
+
+      return connection;
     }
     catch (final SQLException e) {
       throw SQLExceptionCatalog.lookup(e);

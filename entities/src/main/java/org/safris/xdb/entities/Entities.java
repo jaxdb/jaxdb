@@ -96,7 +96,7 @@ public final class Entities {
         else if (attribute instanceof $xdd_dateTime)
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum)
-          dataType.set(dataType.type.getMethod("valueOf", String.class).invoke(null, (String)value));
+          dataType.set(dataType.type.getMethod("valueOf", String.class).invoke(null, ((String)value).toUpperCase().replace(' ', '_')));
         else if (attribute instanceof $xdd_binary)
           dataType.set(((Base64Binary)value).getBytes());
         else if (attribute instanceof $xdd_blob)

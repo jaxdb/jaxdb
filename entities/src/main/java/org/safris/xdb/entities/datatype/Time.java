@@ -20,13 +20,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalTime;
 
 import org.safris.commons.util.DateUtil;
+import org.safris.commons.util.Formats;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 
 public final class Time extends Temporal<LocalTime> {
+  private static final ThreadLocal<SimpleDateFormat> timeFormat = Formats.createSimpleDateFormat("HH:mm:ss.SSS");
+
   protected static final int sqlType = Types.TIME;
 
   protected static LocalTime get(final ResultSet resultSet, final int columnIndex) throws SQLException {
@@ -63,5 +67,11 @@ public final class Time extends Temporal<LocalTime> {
   @Override
   protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
     this.value = get(resultSet, columnIndex);
+  }
+
+  @Override
+  public String toString() {
+    final LocalTime value = get();
+    return value == null ? null : timeFormat.get().format(value);
   }
 }

@@ -16,16 +16,27 @@
 
 package org.safris.xdb.entities.datatype;
 
+import java.text.DecimalFormat;
+
+import org.safris.commons.util.Formats;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 
 public abstract class Numeric<T extends Number> extends DataType<T> {
+  private static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
+
   protected Numeric(final int sqlType, final Class<T> type, final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
     super(sqlType, type, owner, specName, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
   }
 
   protected Numeric(final Numeric<T> dataType) {
     super(dataType);
+  }
+
+  @Override
+  public String toString() {
+    final T value = get();
+    return value == null ? null : numberFormat.get().format(value);
   }
 }

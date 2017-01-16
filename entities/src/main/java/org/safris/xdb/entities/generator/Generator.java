@@ -500,6 +500,19 @@ public class Generator {
       out += "\n    }";
     }
 
+    out += "\n\n";
+    out += "    @" + Override.class.getName() + "\n";
+    out += "    public " + String.class.getName() + " toString() {\n";
+    out += "      final " + StringBuilder.class.getName() + " builder = new " + StringBuilder.class.getName() + "(super.toString());\n";
+    out += "      if (builder.charAt(builder.length() - 1) == '}')\n";
+    out += "        builder.setLength(builder.length() - 1);\n";
+    out += "      else\n";
+    out += "        builder.append(\" {\\n\");\n\n";
+    for (final $xds_column column : table._column())
+      out += "      builder.append(\"  " + Strings.toInstanceCase(column._name$().text()) + ": \").append(" + Strings.toInstanceCase(column._name$().text()) + ").append(\"\\n\");\n";
+    out += "      return builder.append('}').toString();";
+    out += "\n    }";
+
     out += "\n  }";
 
     return out;
@@ -552,7 +565,7 @@ public class Generator {
       final StringBuilder enums = new StringBuilder();
       final List<String> values = SQLSpec.parseEnum((($xds_enum)column)._values$().text());
       for (final String value : values)
-        enums.append(", ").append(value);
+        enums.append(", ").append(value.toUpperCase().replace(' ', '_'));
 
       builder.append(enums.substring(2)).append("}");
     }

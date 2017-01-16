@@ -19,7 +19,9 @@ package org.safris.xdb.entities;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -104,6 +106,10 @@ abstract class Serializer {
 
   protected abstract DBVendor getVendor();
 
+  @SuppressWarnings("unused")
+  protected void onRegister(final Connection connection) throws SQLException {
+  }
+
   protected String tableName(final Entity entity, final Serialization serialization) {
     return entity.name();
   }
@@ -119,15 +125,8 @@ abstract class Serializer {
       serialization.append(" ").append(alias);
   }
 
-  protected <T extends Subject<?>>void serialize(final Power<T> serializable, final Serialization serialization) {
-    serialization.append("POWER(");
-    Keyword.format(serializable.a, serialization);
-    serialization.append(", ");
-    Keyword.format(serializable.b, serialization);
-    serialization.append(")");
-  }
-
   protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
+    serialization.append("(");
     Keyword.format(serializable.a, serialization);
     for (int i = serializable.startIndex; i < serializable.args.length; i++) {
       final Object arg = serializable.args[i];
@@ -146,6 +145,7 @@ abstract class Serializer {
         Keyword.format(arg, serialization);
       }
     }
+    serialization.append(")");
   }
 
   protected <T extends Subject<?>>void serialize(final Select.SELECT<T> serializable, final Serialization serialization) {
@@ -250,7 +250,7 @@ abstract class Serializer {
   protected <T>void serialize(final As<T> serializable, final Serialization serialization) {
     Subject.subjectAlias(serializable.getVariable(), true);
     serializable.getParent().serialize(serialization);
-    serialization.append(" AS ").append(serializable.getVariable());
+    serialization.append(" AS ").append(serializable.getVariable().serialize());
     serializable.getVariable().setWrapper(serializable.getParent());
   }
 

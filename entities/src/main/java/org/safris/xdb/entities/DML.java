@@ -49,8 +49,7 @@ public abstract class DML {
     @Override
     protected void serialize(final Serialization serialization) {
       serialization.addCaller(this);
-      serialization.append(variable.toString());
-      serialization.append(" ").append(getClass().getSimpleName());
+      serialization.append(serialize());
     }
 
     @Override
@@ -66,6 +65,11 @@ public abstract class DML {
     @Override
     protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       throw new UnsupportedOperationException("Implement me");
+    }
+
+    @Override
+    protected String serialize() {
+      return variable.serialize() + " " + getClass().getSimpleName();
     }
   }
 
@@ -259,7 +263,7 @@ public abstract class DML {
   @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Numeric<?>>T POW(final T x, final double y) {
     final T wrapper = (T)x.clone();
-    wrapper.setWrapper(new Power(x, y));
+    wrapper.setWrapper(new Function("POWER", x, y));
     return wrapper;
   }
 

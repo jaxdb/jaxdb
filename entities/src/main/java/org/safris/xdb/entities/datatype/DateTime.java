@@ -21,13 +21,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
+import org.safris.commons.util.Formats;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 
 public class DateTime extends Temporal<LocalDateTime> {
+  private static final ThreadLocal<SimpleDateFormat> dateTimeFormat = Formats.createSimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
   protected static final int sqlType = Types.TIMESTAMP;
 
   @SuppressWarnings("deprecation")
@@ -63,5 +67,11 @@ public class DateTime extends Temporal<LocalDateTime> {
   @Override
   protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
     this.value = get(resultSet, columnIndex);
+  }
+
+  @Override
+  public String toString() {
+    final LocalDateTime value = get();
+    return value == null ? null : dateTimeFormat.get().format(value);
   }
 }

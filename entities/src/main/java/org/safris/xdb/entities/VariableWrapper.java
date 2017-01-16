@@ -81,7 +81,7 @@ class VariableWrapper<T> extends Variable<T> {
   }
 
   @Override
-  public String toString() {
+  protected String serialize() {
     return toString(get());
   }
 
@@ -94,5 +94,10 @@ class VariableWrapper<T> extends Variable<T> {
   @Override
   protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String toString() {
+    return serialize();
   }
 }

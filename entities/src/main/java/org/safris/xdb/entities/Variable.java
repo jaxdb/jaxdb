@@ -64,6 +64,7 @@ public abstract class Variable<T> extends Subject<Variable<T>> {
   }
 
   protected abstract Entity owner();
+  protected abstract String serialize();
   protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
 
