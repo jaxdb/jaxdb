@@ -203,6 +203,13 @@ public final class DML {
   /** Math Functions **/
 
   @SuppressWarnings({"rawtypes", "unchecked"})
+  public static <T extends Numeric<?>>T ABS(final T dataType) {
+    final T wrapper = (T)dataType.clone();
+    wrapper.setWrapper(new Function("ABS", dataType));
+    return wrapper;
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
   public static <T extends Numeric<?>>T SIGN(final T dataType) {
     final T wrapper = (T)dataType.clone();
     wrapper.setWrapper(new Function("SIGN", dataType));
@@ -814,7 +821,7 @@ public final class DML {
     return new BooleanCondition(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
-  public static <T>LogicalCondition<T> GT(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> GT(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
@@ -822,7 +829,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
-  public static <T>LogicalCondition<T> GT(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> GT(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
@@ -838,7 +845,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.GT, a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> GTE(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
@@ -846,7 +853,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> GTE(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> GTE(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
@@ -862,7 +869,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.GTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> EQ(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
@@ -870,7 +877,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
-  public static <T>LogicalCondition<T> EQ(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> EQ(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
@@ -886,7 +893,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.EQ, a, b);
   }
 
-  public static <T>LogicalCondition<T> NE(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> NE(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
@@ -894,7 +901,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
-  public static <T>LogicalCondition<T> NE(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> NE(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(b != null ? Operator.NE : Operator.IS_NOT, a, b);
   }
 
@@ -910,7 +917,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.NE, a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> LT(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
@@ -918,7 +925,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
-  public static <T>LogicalCondition<T> LT(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> LT(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
@@ -934,7 +941,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.LT, a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Variable<T> a, final Variable<? super T> b) {
+  public static <T>LogicalCondition<T> LTE(final Variable<? extends T> a, final Variable<? super T> b) {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
@@ -942,7 +949,7 @@ public final class DML {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 
-  public static <T>LogicalCondition<T> LTE(final Variable<T> a, final T b) {
+  public static <T>LogicalCondition<T> LTE(final Variable<? extends T> a, final T b) {
     return new LogicalCondition<T>(Operator.LTE, a, b);
   }
 

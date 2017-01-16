@@ -87,7 +87,7 @@ class Select {
           for (int i = 0; i < noColumns; i++) {
             final Pair<DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
             final Variable variable;
-            if (currentTable != null && currentTable != dataTypePrototype.a.entity) {
+            if (currentTable != null && (currentTable != dataTypePrototype.a.entity || dataTypePrototype.b == -1)) {
               final Entity cached = cache.get(entity);
               if (cached != null) {
                 row[index++] = cached;
@@ -101,6 +101,7 @@ class Select {
 
             if (dataTypePrototype.b == -1) {
               entity = null;
+              currentTable = null;
               variable = dataTypePrototype.a.clone();
               row[index++] = variable;
             }
