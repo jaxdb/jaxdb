@@ -16,11 +16,11 @@
 
 package org.safris.xdb.entities;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.safris.commons.lang.Arrays;
+import org.safris.xdb.entities.binding.Interval;
 import org.safris.xdb.entities.datatype.Char;
 import org.safris.xdb.entities.datatype.DateTime;
 import org.safris.xdb.entities.datatype.Decimal;
@@ -625,9 +625,9 @@ public final class DML {
     return wrapper;
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Duration duration) {
+  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Interval interval) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, duration));
+    wrapper.setWrapper(new Evaluation<T>(Operator.PLUS, a, interval));
     return wrapper;
   }
 
@@ -715,9 +715,9 @@ public final class DML {
     return wrapper;
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Duration duration) {
+  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Interval interval) {
     final Temporal<T> wrapper = (Temporal<T>)a.clone();
-    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, duration));
+    wrapper.setWrapper(new Evaluation<T>(Operator.MINUS, a, interval));
     return wrapper;
   }
 
