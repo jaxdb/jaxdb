@@ -93,6 +93,7 @@ final class VariableWrapper<T> extends Variable<T> {
 
   @Override
   protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    // TODO:
     throw new UnsupportedOperationException();
   }
 

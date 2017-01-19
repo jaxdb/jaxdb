@@ -66,30 +66,35 @@ final class Insert {
 
     @Override
     public select._SELECT<T> SELECT(final select.SELECT<T> select) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public select._SELECT<T> SELECT(final T ... entities) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public select._SELECT<T> SELECT(final ALL all, final T ... entities) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
   }

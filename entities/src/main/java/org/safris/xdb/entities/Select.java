@@ -26,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-import java.util.logging.Logger;
 
 import org.safris.commons.lang.Pair;
 import org.safris.commons.util.Collections;
@@ -162,16 +161,19 @@ final class Select {
 
     @Override
     public T AS(final T as) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     public select.SELECT<T> UNION(final select.SELECT<T> as) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
@@ -207,44 +209,75 @@ final class Select {
       super(parent);
     }
 
+    protected final WHERE<T> where() {
+      return where;
+    }
+
+    protected final HAVING<T> having() {
+      return having;
+    }
+
+    protected final JOIN<T> join() {
+      return join;
+    }
+
+    protected final LIMIT<T> limit() {
+      return limit;
+    }
+
+    private WHERE<T> where;
+    private HAVING<T> having;
+    private JOIN<T> join;
+    private LIMIT<T> limit;
+
     @Override
     public final WHERE<T> WHERE(final Condition<?> condition) {
-      return new WHERE<T>(this, condition);
+      return where = new WHERE<T>(this, condition);
     }
 
     @Override
     public HAVING<T> HAVING(final Condition<?> condition) {
-      return new HAVING<T>(this, condition);
+      return having = new HAVING<T>(this, condition);
     }
 
     @Override
     public final JOIN<T> JOIN(final Entity entity) {
-      return new JOIN<T>(this, null, null, entity);
+      return join = new JOIN<T>(this, null, null, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final TYPE type, final Entity entity) {
-      return new JOIN<T>(this, null, type, entity);
+      return join = new JOIN<T>(this, null, type, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final NATURAL natural, final Entity entity) {
-      return new JOIN<T>(this, natural, null, entity);
+      return join = new JOIN<T>(this, natural, null, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity) {
-      return new JOIN<T>(this, natural, type, entity);
+      return join = new JOIN<T>(this, natural, type, entity);
     }
 
     @Override
-    public final LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public final LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
   }
 
   protected static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
+    protected final GROUP_BY<T> groupBy() {
+      return groupBy;
+    }
+
+    protected final ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
     protected final Entity[] tables;
+    private GROUP_BY<T> groupBy;
+    private ORDER_BY<T> orderBy;
 
     protected FROM(final Keyword<T> parent, final Entity ... tables) {
       super(parent);
@@ -253,17 +286,32 @@ final class Select {
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return new GROUP_BY<T>(this, subjects);
+      return groupBy = new GROUP_BY<T>(this, subjects);
     }
 
     @Override
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return new ORDER_BY<T>(this, variables);
+      return orderBy = new ORDER_BY<T>(this, variables);
     }
   }
 
   protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
+    protected ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
+    protected HAVING<T> having() {
+      return having;
+    }
+
+    protected LIMIT<T> limit() {
+      return limit;
+    }
+
     protected final LinkedHashSet<? extends Subject<?>> subjects;
+    private ORDER_BY<T> orderBy;
+    private HAVING<T> having;
+    private LIMIT<T> limit;
 
     protected GROUP_BY(final Keyword<T> parent, final LinkedHashSet<? extends Subject<?>> subjects) {
       super(parent);
@@ -275,22 +323,32 @@ final class Select {
     }
 
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... columns) {
-      return new ORDER_BY<T>(this, columns);
+      return orderBy = new ORDER_BY<T>(this, columns);
     }
 
     @Override
     public HAVING<T> HAVING(final Condition<?> condition) {
-      return new HAVING<T>(this, condition);
+      return having = new HAVING<T>(this, condition);
     }
 
     @Override
-    public LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
   }
 
   protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
+    protected ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
+    protected LIMIT<T> limit() {
+      return limit;
+    }
+
     protected final Condition<?> condition;
+    private ORDER_BY<T> orderBy;
+    private LIMIT<T> limit;
 
     protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -299,19 +357,34 @@ final class Select {
 
     @Override
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... column) {
-      return new ORDER_BY<T>(this, column);
+      return orderBy = new ORDER_BY<T>(this, column);
     }
 
     @Override
-    public LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
   }
 
   protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
+    protected final ON<T> on() {
+      return on;
+    }
+
+    protected final GROUP_BY<T> groupBy() {
+      return groupBy;
+    }
+
+    protected final ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
     protected final NATURAL natural;
     protected final TYPE type;
     protected final Entity entity;
+    private ON<T> on;
+    private GROUP_BY<T> groupBy;
+    private ORDER_BY<T> orderBy;
 
     protected JOIN(final Keyword<T> parent, final NATURAL natural, final TYPE type, final Entity entity) {
       super(parent);
@@ -322,22 +395,32 @@ final class Select {
 
     @Override
     public ON<T> ON(final Condition<?> condition) {
-      return new ON<T>(this, condition);
+      return on = new ON<T>(this, condition);
     }
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return new GROUP_BY<T>(this, subjects);
+      return groupBy = new GROUP_BY<T>(this, subjects);
     }
 
     @Override
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return new ORDER_BY<T>(this, variables);
+      return orderBy = new ORDER_BY<T>(this, variables);
     }
   }
 
   protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
+    protected final GROUP_BY<T> groupBy() {
+      return groupBy;
+    }
+
+    protected final ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
     protected final Condition<?> condition;
+    private GROUP_BY<T> groupBy;
+    private ORDER_BY<T> orderBy;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -346,17 +429,22 @@ final class Select {
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return new GROUP_BY<T>(this, subjects);
+      return groupBy = new GROUP_BY<T>(this, subjects);
     }
 
     @Override
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return new ORDER_BY<T>(this, variables);
+      return orderBy = new ORDER_BY<T>(this, variables);
     }
   }
 
   protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
+    protected LIMIT<T> limit() {
+      return limit;
+    }
+
     protected final Variable<?>[] columns;
+    private LIMIT<T> limit;
 
     protected ORDER_BY(final Keyword<T> parent, final Variable<?> ... columns) {
       super(parent);
@@ -364,8 +452,8 @@ final class Select {
     }
 
     @Override
-    public LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
   }
 
@@ -379,7 +467,12 @@ final class Select {
   }
 
   protected static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
+    protected OFFSET<T> offset() {
+      return offset;
+    }
+
     protected final int limit;
+    private OFFSET<T> offset;
 
     protected LIMIT(final Keyword<T> parent, final int limit) {
       super(parent);
@@ -387,18 +480,25 @@ final class Select {
     }
 
     @Override
-    public OFFSET<T> OFFSET(final int offset) {
-      return new OFFSET<T>(this, offset);
+    public OFFSET<T> OFFSET(final int rows) {
+      return offset = new OFFSET<T>(this, rows);
     }
   }
 
   protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
-    private static final Logger logger = Logger.getLogger(SELECT.class.getName());
+    protected FROM<T> from() {
+      return from;
+    }
+
+    protected LIMIT<T> limit() {
+      return limit;
+    }
 
     protected final ALL all;
     protected final DISTINCT distinct;
     protected final LinkedHashSet<T> entities;
     private FROM<T> from;
+    private LIMIT<T> limit;
 
     @SafeVarargs
     public SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
@@ -410,34 +510,30 @@ final class Select {
 
     @Override
     public FROM<T> FROM(final Entity ... table) {
-      if (from != null)
-        throw new IllegalStateException("FROM() has already been called for this SELECT object.");
-
       return from = new FROM<T>(this, table);
     }
 
     @Override
-    public LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
 
     @Override
     public T AS(final T as) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     public select.SELECT<T> UNION(final select.SELECT<T> as) {
+      // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
     public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+      // TODO:
       throw new UnsupportedOperationException();
-    }
-
-    protected FROM<T> from() {
-      return from;
     }
 
     private static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
@@ -486,7 +582,6 @@ final class Select {
               if (dataType.primary)
                 dataType.get(statement, ++index);
 
-            logger.info(statement.toString());
             try (final ResultSet resultSet = statement.executeQuery()) {
               return new RowIterator<T>() {
                 @Override
@@ -569,7 +664,22 @@ final class Select {
   }
 
   protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
+    protected final GROUP_BY<T> groupBy() {
+      return groupBy;
+    }
+
+    protected final ORDER_BY<T> orderBy() {
+      return orderBy;
+    }
+
+    protected LIMIT<T> limit() {
+      return limit;
+    }
+
     protected final Condition<?> condition;
+    private GROUP_BY<T> groupBy;
+    private ORDER_BY<T> orderBy;
+    private LIMIT<T> limit;
 
     protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -578,17 +688,17 @@ final class Select {
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return new GROUP_BY<T>(this, subjects);
+      return groupBy = new GROUP_BY<T>(this, subjects);
     }
 
     @Override
     public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return new ORDER_BY<T>(this, variables);
+      return orderBy = new ORDER_BY<T>(this, variables);
     }
 
     @Override
-    public LIMIT<T> LIMIT(final int limit) {
-      return new LIMIT<T>(this, limit);
+    public LIMIT<T> LIMIT(final int rows) {
+      return limit = new LIMIT<T>(this, rows);
     }
   }
 }
