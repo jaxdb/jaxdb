@@ -16,18 +16,25 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Enum;
-import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
+final class LikePredicate extends Predicate<String> {
+  private final boolean positive;
+  private final Variable<String> variable;
+  private final CharSequence pattern;
 
-final class PostreSQLSerializer extends Serializer {
-  @Override
-  protected DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  protected LikePredicate(final boolean positive, final Variable<String> variable, final CharSequence pattern) {
+    this.positive = positive;
+    this.variable = variable;
+    this.pattern = pattern;
   }
 
   @Override
-  protected String getPreparedStatementMark(final DataType<?> dataType) {
-    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(dataType.entity), dataType.name) : "?";
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
+    format(variable, serialization);
+    serialization.append(" ");
+    if (!positive)
+      serialization.append("NOT ");
+
+    serialization.append("LIKE").append(" '").append(pattern).append("'");
   }
 }

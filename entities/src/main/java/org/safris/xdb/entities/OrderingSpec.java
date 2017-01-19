@@ -16,41 +16,19 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-abstract class Direction<T> extends Variable<T> {
+final class OrderingSpec<T extends Subject<?>> extends Subject<T> {
+  private final Operator<OrderingSpec<?>> operator;
   private final Variable<?> variable;
 
-  public Direction(final Variable<T> variable) {
-    super(variable.value);
+  public OrderingSpec(final Operator<OrderingSpec<?>> operator, final Variable<T> variable) {
+    this.operator = operator;
     this.variable = variable;
   }
 
   @Override
   protected void serialize(final Serialization serialization) {
     serialization.addCaller(this);
-    serialization.append(serialize());
-  }
-
-  @Override
-  protected Entity owner() {
-    throw new UnsupportedOperationException("Implement me");
-  }
-
-  @Override
-  protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    throw new UnsupportedOperationException("Implement me");
-  }
-
-  @Override
-  protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    throw new UnsupportedOperationException("Implement me");
-  }
-
-  @Override
-  protected String serialize() {
-    return variable.serialize() + " " + getClass().getSimpleName();
+    variable.serialize(serialization);
+    serialization.append(" ").append(operator);
   }
 }

@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-public abstract class Condition<T> extends Keyword<Subject<T>> {
+public abstract class Condition<T> extends Provision<Subject<T>> {
 }

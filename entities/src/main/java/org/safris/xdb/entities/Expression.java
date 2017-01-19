@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-abstract class Expression<T extends Subject<?>> extends Keyword<T> {
+abstract class Expression<T extends Subject<?>> extends Subject<T> {
 }

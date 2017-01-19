@@ -25,18 +25,14 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-class Insert {
-  protected static class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
+final class Insert {
+  protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
     protected final T[] entities;
 
     @SafeVarargs
     protected INSERT(final T ... entities) {
+      super(null);
       this.entities = entities;
-    }
-
-    @Override
-    protected Keyword<Subject<?>> parent() {
-      return null;
     }
 
     @Override

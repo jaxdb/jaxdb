@@ -49,7 +49,11 @@ public final class Char extends DataType<String> {
   }
 
   public Char() {
-    this(null, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, true, false);
+    this((Entity)null);
+  }
+
+  public Char(final Entity owner) {
+    this(owner, null, null, null, false, false, true, null, null, Integer.MAX_VALUE, true, false);
   }
 
   protected Char(final Char copy) {

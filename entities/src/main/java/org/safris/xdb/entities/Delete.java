@@ -23,8 +23,12 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.delete;
 import org.safris.xdb.schema.DBVendor;
 
-class Delete {
+final class Delete {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
+    protected Execute(final Keyword<DataType<?>> parent) {
+      super(parent);
+    }
+
     @Override
     public int[] execute(final Transaction transaction) throws SQLException {
       final Keyword<?> delete = getParentRoot(this);
@@ -53,36 +57,26 @@ class Delete {
     }
   }
 
-  protected final static class WHERE extends Execute implements delete.DELETE {
-    private final Keyword<DataType<?>> parent;
+  protected static final class WHERE extends Execute implements delete.DELETE {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
-      this.parent = parent;
+      super(parent);
       this.condition = condition;
-    }
-
-    @Override
-    protected Keyword<DataType<?>> parent() {
-      return parent;
     }
   }
 
-  protected final static class DELETE extends Execute implements delete.DELETE_WHERE {
+  protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
     protected final Entity entity;
 
     protected DELETE(final Entity entity) {
+      super(null);
       this.entity = entity;
     }
 
     @Override
     public WHERE WHERE(final Condition<?> condition) {
       return new WHERE(this, condition);
-    }
-
-    @Override
-    protected Keyword<DataType<?>> parent() {
-      return null;
     }
   }
 }

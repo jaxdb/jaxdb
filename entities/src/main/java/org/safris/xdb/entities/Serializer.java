@@ -34,6 +34,7 @@ import org.safris.xdb.entities.Delete.DELETE;
 import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.binding.Interval;
 import org.safris.xdb.entities.binding.Interval.Unit;
+import org.safris.xdb.entities.datatype.Numeric;
 import org.safris.xdb.schema.DBVendor;
 
 abstract class Serializer {
@@ -124,7 +125,7 @@ abstract class Serializer {
       serialization.append(" ").append(alias);
   }
 
-  protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
+  protected <T extends Numeric<?>>void serialize(final NumericExpression<T> serializable, final Serialization serialization) {
     serialization.append("(");
     Keyword.format(serializable.a, serialization);
     serialization.append(" ").append(serializable.operator.toString()).append(" ");
@@ -232,9 +233,6 @@ abstract class Serializer {
         Subject.subjectAlias(dataType.entity, true);
         serialization.append(dataType.toString());
         serialization.append(" ASC");
-      }
-      else if (variable instanceof Direction<?>) {
-        ((Direction<?>)variable).serialize(serialization);
       }
       else {
         throw new UnsupportedOperationException("Unsupported column type: " + variable.getClass().getName());

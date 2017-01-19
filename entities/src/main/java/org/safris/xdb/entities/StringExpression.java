@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,18 +16,18 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Enum;
-import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
+import org.safris.xdb.entities.datatype.Char;
 
-final class PostreSQLSerializer extends Serializer {
-  @Override
-  protected DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
-  }
+final class StringExpression extends Expression<Char> {
+  protected final Operator<StringExpression> operator;
+  protected final Object a;
+  protected final Object b;
+  protected final Object[] args;
 
-  @Override
-  protected String getPreparedStatementMark(final DataType<?> dataType) {
-    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(dataType.entity), dataType.name) : "?";
+  protected StringExpression(final Operator<StringExpression> operator, final Object a, final Object b, final Object ... args) {
+    this.operator = operator;
+    this.a = a;
+    this.b = b;
+    this.args = args;
   }
 }

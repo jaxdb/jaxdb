@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2016 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,16 +16,19 @@
 
 package org.safris.xdb.entities;
 
-class Evaluation<T> extends Subject<T> {
-  protected final Operator<Predicate<?>> operator;
-  protected final Object a;
-  protected final Object b;
-  protected final Object[] args;
+import org.safris.xdb.entities.datatype.Temporal;
 
-  protected Evaluation(final Operator<Predicate<?>> operator, final Object a, final Object b, final Object ... args) {
-    this.operator = operator;
-    this.a = a;
-    this.b = b;
-    this.args = args;
+final class TemporalFunction<T extends Temporal<?>> extends Expression<T> {
+  protected final String function;
+
+  protected TemporalFunction(final String function) {
+    this.function = function;
+  }
+
+  @Override
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
+    serialization.append(function).append("(");
+    serialization.append(")");
   }
 }

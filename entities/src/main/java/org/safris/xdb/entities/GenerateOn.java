@@ -26,7 +26,7 @@ import org.safris.xdb.entities.datatype.DateTime;
 import org.safris.xdb.entities.datatype.Time;
 
 public abstract class GenerateOn<T> {
-  public static GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
+  public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     private Number generate(final DataType<Number> dataType) {
       if (dataType.get() == null)
         throw new IllegalArgumentException("value is missing");
@@ -60,7 +60,7 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public static GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
+  public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     private Temporal generate(final DataType<? extends Temporal> dataType) {
       if (dataType instanceof Date)
         return LocalDate.now();
@@ -87,7 +87,7 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public static GenerateOn<String> UUID = new GenerateOn<String>() {
+  public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     private String generate(final DataType<String> dataType) {
       return java.util.UUID.randomUUID().toString().toUpperCase();
     }

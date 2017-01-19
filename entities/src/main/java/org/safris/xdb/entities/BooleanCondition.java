@@ -19,7 +19,7 @@ package org.safris.xdb.entities;
 final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   @SuppressWarnings("unchecked")
   private static <T extends Subject<?>>void formatBraces(final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) {
-    if (condition instanceof LogicalCondition || condition instanceof Predicate) {
+    if (condition instanceof ComparisonPredicate || condition instanceof Predicate) {
       condition.serialize(serialization);
     }
     else if (condition instanceof BooleanCondition) {
@@ -48,11 +48,6 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
     this.b = b;
     this.operator = operator;
     this.conditions = conditions;
-  }
-
-  @Override
-  protected Keyword<Subject<T>> parent() {
-    return null;
   }
 
   @Override

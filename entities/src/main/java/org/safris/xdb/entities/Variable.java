@@ -21,7 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public abstract class Variable<T> extends Subject<Variable<T>> {
+public abstract class Variable<T> extends Subject<Variable<T>> implements Cloneable {
   protected static <T>Variable<T> valueOf(final T object) {
     if (object instanceof Serializable)
       throw new AssertionError("Should not happen!");

@@ -25,11 +25,15 @@ import org.safris.xdb.entities.Subject;
 import org.safris.xdb.entities.Variable;
 
 public interface select {
+  public interface OFFSET<T extends Subject<?>> extends SELECT<T> {
+  }
+
   public interface _LIMIT<T extends Subject<?>> {
     public LIMIT<T> LIMIT(final int limit);
   }
 
   public interface LIMIT<T extends Subject<?>> extends SELECT<T> {
+    public OFFSET<T> OFFSET(final int offset);
   }
 
   public interface _ORDER_BY<T extends Subject<?>> {

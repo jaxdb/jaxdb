@@ -30,7 +30,7 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.reflect.Classes;
 import org.safris.xdb.entities.datatype.Char;
 
-public abstract class DataType<T> extends Variable<T> implements Cloneable {
+public abstract class DataType<T> extends Variable<T> {
   private static final Map<Type,Method> typeToGetter = new HashMap<Type,Method>();
   private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
 

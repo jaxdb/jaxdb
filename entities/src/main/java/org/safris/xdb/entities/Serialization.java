@@ -27,7 +27,7 @@ import java.util.Stack;
 
 import org.safris.xdb.schema.DBVendor;
 
-class Serialization {
+final class Serialization {
   private final Stack<Serializable> callStack = new Stack<Serializable>();
   private final List<String> sqls = new ArrayList<String>();
 

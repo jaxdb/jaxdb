@@ -16,24 +16,29 @@
 
 package org.safris.xdb.entities;
 
-final class Operator<T extends Condition<?>> {
+final class Operator<T extends Serializable> {
   public static final Operator<BooleanCondition<?>> AND = new Operator<BooleanCondition<?>>("AND");
   public static final Operator<BooleanCondition<?>> OR = new Operator<BooleanCondition<?>>("OR");
 
-  public static final Operator<LogicalCondition<?>> EQ = new Operator<LogicalCondition<?>>("=");
-  public static final Operator<LogicalCondition<?>> LT = new Operator<LogicalCondition<?>>("<");
-  public static final Operator<LogicalCondition<?>> LTE = new Operator<LogicalCondition<?>>("<=");
-  public static final Operator<LogicalCondition<?>> GT = new Operator<LogicalCondition<?>>(">");
-  public static final Operator<LogicalCondition<?>> GTE = new Operator<LogicalCondition<?>>(">=");
-  public static final Operator<LogicalCondition<?>> NE = new Operator<LogicalCondition<?>>("<>");
-  public static final Operator<LogicalCondition<?>> IS = new Operator<LogicalCondition<?>>("IS");
-  public static final Operator<LogicalCondition<?>> IS_NOT = new Operator<LogicalCondition<?>>("IS NOT");
+  public static final Operator<ComparisonPredicate<?>> EQ = new Operator<ComparisonPredicate<?>>("=");
+  public static final Operator<ComparisonPredicate<?>> LT = new Operator<ComparisonPredicate<?>>("<");
+  public static final Operator<ComparisonPredicate<?>> LTE = new Operator<ComparisonPredicate<?>>("<=");
+  public static final Operator<ComparisonPredicate<?>> GT = new Operator<ComparisonPredicate<?>>(">");
+  public static final Operator<ComparisonPredicate<?>> GTE = new Operator<ComparisonPredicate<?>>(">=");
+  public static final Operator<ComparisonPredicate<?>> NE = new Operator<ComparisonPredicate<?>>("<>");
+  public static final Operator<ComparisonPredicate<?>> IS = new Operator<ComparisonPredicate<?>>("IS");
+  public static final Operator<ComparisonPredicate<?>> IS_NOT = new Operator<ComparisonPredicate<?>>("IS NOT");
 
-  public static final Operator<Predicate<?>> PLUS = new Operator<Predicate<?>>("+");
-  public static final Operator<Predicate<?>> MINUS = new Operator<Predicate<?>>("-");
-  public static final Operator<Predicate<?>> MULTIPLY = new Operator<Predicate<?>>("*");
-  public static final Operator<Predicate<?>> DIVIDE = new Operator<Predicate<?>>("/");
-  public static final Operator<Predicate<?>> MOD = new Operator<Predicate<?>>("%");
+  public static final Operator<NumericExpression<?>> PLUS = new Operator<NumericExpression<?>>("+");
+  public static final Operator<NumericExpression<?>> MINUS = new Operator<NumericExpression<?>>("-");
+  public static final Operator<NumericExpression<?>> MULTIPLY = new Operator<NumericExpression<?>>("*");
+  public static final Operator<NumericExpression<?>> DIVIDE = new Operator<NumericExpression<?>>("/");
+  public static final Operator<NumericExpression<?>> MOD = new Operator<NumericExpression<?>>("%");
+
+  public static final Operator<StringExpression> CONCAT = new Operator<StringExpression>("||");
+
+  public static final Operator<OrderingSpec<?>> ASC = new Operator<OrderingSpec<?>>("ASC");
+  public static final Operator<OrderingSpec<?>> DESC = new Operator<OrderingSpec<?>>("DESC");
 
   private final String symbol;
 

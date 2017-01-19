@@ -16,55 +16,7 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.PreparedStatement;
-
-public abstract class Keyword<T extends Subject<?>> extends Serializable {
-  protected static void format(final Object obj, final Serialization serialization) {
-    if (obj instanceof Serializable) {
-      ((Serializable)obj).serialize(serialization);
-    }
-    else if (serialization.statementType == PreparedStatement.class) {
-      if (obj == null) {
-        serialization.append("NULL");
-      }
-      else if (obj instanceof Object[]) {
-        serialization.append("(");
-        final Object[] arr = (Object[])obj;
-        if (arr.length > 0) {
-          if (arr[0] != null) {
-            serialization.addParameter(VariableWrapper.valueOf(arr[0]));
-            serialization.append("?");
-          }
-          else {
-            serialization.append("NULL");
-          }
-
-          for (int i = 1; i < arr.length; i++) {
-            if (arr[i] != null) {
-              serialization.addParameter(VariableWrapper.valueOf(arr[i]));
-              serialization.append(", ?");
-            }
-            else {
-              serialization.append("NULL");
-            }
-          }
-        }
-
-        serialization.append(")");
-      }
-      else if (obj instanceof Select.Execute<?>) {
-        ((Select.Execute<?>)obj).serialize(serialization);
-      }
-      else {
-        serialization.addParameter(VariableWrapper.valueOf(obj));
-        serialization.append("?");
-      }
-    }
-    else {
-      serialization.append(VariableWrapper.toString(obj));
-    }
-  }
-
+abstract class Keyword<T extends Subject<?>> extends Provision<T> {
   protected static Keyword<?> getParentRoot(Keyword<?> keyword) {
     while (keyword.parent() != null)
       keyword = keyword.parent();
@@ -72,5 +24,13 @@ public abstract class Keyword<T extends Subject<?>> extends Serializable {
     return keyword;
   }
 
-  protected abstract Keyword<T> parent();
+  private final Keyword<T> parent;
+
+  protected Keyword(final Keyword<T> parent) {
+    this.parent = parent;
+  }
+
+  protected final Keyword<T> parent() {
+    return parent;
+  }
 }

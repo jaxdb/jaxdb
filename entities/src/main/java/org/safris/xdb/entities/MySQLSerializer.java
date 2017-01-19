@@ -16,15 +16,12 @@
 
 package org.safris.xdb.entities;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.safris.xdb.entities.Select.FROM;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
 import org.safris.xdb.schema.DBVendor;
 
-class MySQLSerializer extends Serializer {
+final class MySQLSerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;

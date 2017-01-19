@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 Seva Safris
+/* Copyright (c) 2014 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,18 +16,25 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Enum;
-import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
+final class ComparisonPredicate<T> extends Predicate<T> {
+  private final Operator<ComparisonPredicate<?>> operator;
+  private final Object a;
+  private final Object b;
 
-final class PostreSQLSerializer extends Serializer {
-  @Override
-  protected DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final Object a, final Object b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = b;
   }
 
   @Override
-  protected String getPreparedStatementMark(final DataType<?> dataType) {
-    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(dataType.entity), dataType.name) : "?";
+  protected void serialize(final Serialization serialization) {
+    serialization.addCaller(this);
+    if (a == null)
+      throw new IllegalArgumentException("Left hand side of condition cannot be null");
+
+    format(a, serialization);
+    serialization.append(" ").append(operator).append(" ");
+    format(b, serialization);
   }
 }

@@ -24,9 +24,10 @@ import org.safris.xdb.entities.Select.FROM;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
 import org.safris.xdb.entities.binding.Interval;
+import org.safris.xdb.entities.datatype.Numeric;
 import org.safris.xdb.schema.DBVendor;
 
-class DerbySerializer extends Serializer {
+final class DerbySerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.DERBY;
@@ -39,7 +40,7 @@ class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected <T extends Subject<?>>void serialize(final Evaluation<T> serializable, final Serialization serialization) {
+  protected <T extends Numeric<?>>void serialize(final NumericExpression<T> serializable, final Serialization serialization) {
     serialization.append("(");
     Keyword.format(serializable.a, serialization);
     serialization.append(" ").append(serializable.operator.toString()).append(" ");

@@ -16,40 +16,5 @@
 
 package org.safris.xdb.entities;
 
-final class Predicate<T> extends Condition<Subject<T>> {
-  private final String predicate;
-  private final Variable<T> variable;
-  private final Object[] condition;
-
-  protected Predicate(final String predicate, final Variable<T> variable, final Object ... condition) {
-    if (variable == null)
-      throw new NullPointerException("variable == null");
-
-    this.predicate = predicate;
-    this.variable = variable;
-    this.condition = condition;
-  }
-
-  protected Predicate(final String predicate, final Object ... condition) {
-    this.predicate = predicate;
-    this.variable = null;
-    this.condition = condition;
-  }
-
-  @Override
-  protected Keyword<Subject<Subject<T>>> parent() {
-    return null;
-  }
-
-  @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    if (variable != null) {
-      format(variable, serialization);
-      serialization.append(" ");
-    }
-
-    serialization.append(predicate).append(" ");
-    format(condition, serialization);
-  }
+abstract class Predicate<T> extends Condition<Subject<T>> {
 }

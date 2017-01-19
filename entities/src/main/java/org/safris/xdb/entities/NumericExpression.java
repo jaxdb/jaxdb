@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,30 +16,18 @@
 
 package org.safris.xdb.entities;
 
-final class LogicalCondition<T> extends Condition<T> {
-  private final Operator<LogicalCondition<?>> operator;
-  private final Object a;
-  private final Object b;
+import org.safris.xdb.entities.datatype.Numeric;
 
-  protected LogicalCondition(final Operator<LogicalCondition<?>> operator, final Object a, final Object b) {
+final class NumericExpression<T extends Numeric<?>> extends Expression<T> {
+  protected final Operator<NumericExpression<?>> operator;
+  protected final Object a;
+  protected final Object b;
+  protected final Object[] args;
+
+  protected NumericExpression(final Operator<NumericExpression<?>> operator, final Object a, final Object b, final Object ... args) {
     this.operator = operator;
     this.a = a;
     this.b = b;
-  }
-
-  @Override
-  protected Keyword<Subject<T>> parent() {
-    return null;
-  }
-
-  @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    if (a == null)
-      throw new IllegalArgumentException("Left hand side of condition cannot be null");
-
-    format(a, serialization);
-    serialization.append(" ").append(operator).append(" ");
-    format(b, serialization);
+    this.args = args;
   }
 }

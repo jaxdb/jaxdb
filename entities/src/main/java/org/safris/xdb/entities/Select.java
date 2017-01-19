@@ -38,7 +38,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-class Select {
+final class Select {
   private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
@@ -156,6 +156,10 @@ class Select {
   }
 
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
+    protected Execute(final Keyword<T> parent) {
+      super(parent);
+    }
+
     @Override
     public T AS(final T as) {
       throw new UnsupportedOperationException();
@@ -199,10 +203,8 @@ class Select {
   }
 
   protected static abstract class FROM_JOIN_ON<T extends Subject<?>> extends Execute<T> implements select.FROM<T> {
-    private final Keyword<T> parent;
-
     protected FROM_JOIN_ON(final Keyword<T> parent) {
-      this.parent = parent;
+      super(parent);
     }
 
     @Override
@@ -239,14 +241,9 @@ class Select {
     public final LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
-
-    @Override
-    protected final Keyword<T> parent() {
-      return parent;
-    }
   }
 
-  protected final static class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
+  protected static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
     protected final Entity[] tables;
 
     protected FROM(final Keyword<T> parent, final Entity ... tables) {
@@ -265,12 +262,11 @@ class Select {
     }
   }
 
-  protected final static class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
-    private final Keyword<T> parent;
+  protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
     protected final LinkedHashSet<? extends Subject<?>> subjects;
 
     protected GROUP_BY(final Keyword<T> parent, final LinkedHashSet<? extends Subject<?>> subjects) {
-      this.parent = parent;
+      super(parent);
       this.subjects = subjects;
     }
 
@@ -291,19 +287,13 @@ class Select {
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
-
-    @Override
-    protected Keyword<T> parent() {
-      return parent;
-    }
   }
 
-  protected final static class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
-    private final Keyword<T> parent;
+  protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
     protected final Condition<?> condition;
 
     protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
-      this.parent = parent;
+      super(parent);
       this.condition = condition;
     }
 
@@ -316,14 +306,9 @@ class Select {
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
-
-    @Override
-    protected Keyword<T> parent() {
-      return parent;
-    }
   }
 
-  protected final static class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
+  protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
     protected final NATURAL natural;
     protected final TYPE type;
     protected final Entity entity;
@@ -351,7 +336,7 @@ class Select {
     }
   }
 
-  protected final static class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
+  protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
     protected final Condition<?> condition;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
@@ -370,12 +355,11 @@ class Select {
     }
   }
 
-  protected final static class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
-    private final Keyword<T> parent;
+  protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
     protected final Variable<?>[] columns;
 
     protected ORDER_BY(final Keyword<T> parent, final Variable<?> ... columns) {
-      this.parent = parent;
+      super(parent);
       this.columns = columns;
     }
 
@@ -383,29 +367,32 @@ class Select {
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
     }
+  }
 
-    @Override
-    protected Keyword<T> parent() {
-      return parent;
+  protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
+    protected final int offset;
+
+    protected OFFSET(final Keyword<T> parent, final int offset) {
+      super(parent);
+      this.offset = offset;
     }
   }
 
-  protected final static class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
-    private final Keyword<T> parent;
+  protected static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
     protected final int limit;
 
     protected LIMIT(final Keyword<T> parent, final int limit) {
-      this.parent = parent;
+      super(parent);
       this.limit = limit;
     }
 
     @Override
-    protected Keyword<T> parent() {
-      return parent;
+    public OFFSET<T> OFFSET(final int offset) {
+      return new OFFSET<T>(this, offset);
     }
   }
 
-  protected final static class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
+  protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
     private static final Logger logger = Logger.getLogger(SELECT.class.getName());
 
     protected final ALL all;
@@ -415,6 +402,7 @@ class Select {
 
     @SafeVarargs
     public SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+      super(null);
       this.all = all;
       this.distinct = distinct;
       this.entities = Collections.asCollection(LinkedHashSet.class, entities);
@@ -446,11 +434,6 @@ class Select {
     @Override
     public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
       throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected Keyword<T> parent() {
-      return null;
     }
 
     protected FROM<T> from() {
@@ -585,12 +568,11 @@ class Select {
     }
   }
 
-  protected final static class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
-    private final Keyword<T> parent;
+  protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
-      this.parent = parent;
+      super(parent);
       this.condition = condition;
     }
 
@@ -607,11 +589,6 @@ class Select {
     @Override
     public LIMIT<T> LIMIT(final int limit) {
       return new LIMIT<T>(this, limit);
-    }
-
-    @Override
-    protected Keyword<T> parent() {
-      return parent;
     }
   }
 }

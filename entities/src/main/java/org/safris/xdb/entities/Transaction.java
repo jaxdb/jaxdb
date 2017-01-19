@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 
-public class Transaction implements AutoCloseable {
+public final class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private volatile Boolean inited = false;
 

@@ -26,8 +26,12 @@ import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.schema.DBVendor;
 
-class Update {
+final class Update {
   private static abstract class Execute extends Keyword<DataType<?>> implements update.UPDATE {
+    protected Execute(final Keyword<DataType<?>> parent) {
+      super(parent);
+    }
+
     /**
      * Executes the SQL statement in this <code>XDE</code> object.
      *
@@ -63,6 +67,10 @@ class Update {
   }
 
   private abstract static class UPDATE_SET extends Execute implements update.UPDATE_SET {
+    protected UPDATE_SET(final Keyword<DataType<?>> parent) {
+      super(parent);
+    }
+
     @Override
     public final <T>SET SET(final DataType<T> set, final expression.CASE<T> to) {
       return new SET(this, set, to);
@@ -84,54 +92,43 @@ class Update {
     }
   }
 
-  protected final static class WHERE extends Execute implements update.UPDATE {
-    private final Keyword<DataType<?>> parent;
+  protected static final class WHERE extends Execute implements update.UPDATE {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
-      this.parent = parent;
+      super(parent);
       this.condition = condition;
-    }
-
-    @Override
-    protected Keyword<DataType<?>> parent() {
-      return parent;
     }
   }
 
-  protected final static class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
+  protected static final class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
     protected final Entity entity;
 
     protected UPDATE(final Entity entity) {
+      super(null);
       this.entity = entity;
-    }
-
-    @Override
-    protected Keyword<DataType<?>> parent() {
-      return null;
     }
   }
 
-  protected final static class SET extends UPDATE_SET implements update.SET {
-    private final Keyword<DataType<?>> parent;
+  protected static final class SET extends UPDATE_SET implements update.SET {
     protected final DataType<?> set;
     protected final Serializable to;
 
     @SuppressWarnings("unchecked")
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
-      this.parent = parent;
+      super(parent);
       this.set = set;
-      this.to = (Expression<Variable<T>>)to;
+      this.to = (Provision<Variable<T>>)to;
     }
 
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final Variable<T> to) {
-      this.parent = parent;
+      super(parent);
       this.set = set;
       this.to = to;
     }
 
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final T to) {
-      this.parent = parent;
+      super(parent);
       this.set = set;
       this.to = Variable.valueOf(to);
     }
@@ -146,18 +143,13 @@ class Update {
       return new WHERE(this, condition);
     }
 
-    @Override
-    protected Keyword<DataType<?>> parent() {
-      return parent;
-    }
-
     protected Entity getSetColumns(final Set<DataType<?>> columns) {
       columns.add(set);
-      if (parent instanceof Update.SET)
-        return ((Update.SET)parent).getSetColumns(columns);
+      if (parent() instanceof Update.SET)
+        return ((Update.SET)parent()).getSetColumns(columns);
 
-      if (parent instanceof Update.UPDATE)
-        return ((Update.UPDATE)parent).entity;
+      if (parent() instanceof Update.UPDATE)
+        return ((Update.UPDATE)parent()).entity;
 
       throw new Error("This should not happen, as UPDATE is always followed by SET.");
     }
