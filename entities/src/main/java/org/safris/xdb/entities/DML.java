@@ -144,7 +144,7 @@ public final class DML {
 
   /** CASE **/
 
-  public static <T extends Subject<?>>expression.WHEN<T> CASE_WHEN(final Condition<T> condition) {
+  public static <T>expression.WHEN<T> CASE_WHEN(final Condition<T> condition) {
     return new Case.CASE_WHEN<T>(condition);
   }
 

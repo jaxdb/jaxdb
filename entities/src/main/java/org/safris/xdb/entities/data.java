@@ -690,7 +690,6 @@ public final class data {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final String value = resultSet.getString(columnIndex);
       if (value == null) {
@@ -698,7 +697,6 @@ public final class data {
         return;
       }
 
-      final Class<T> type = (Class<T>)getClass().getGenericInterfaces()[0];
       for (final T constant : type.getEnumConstants()) {
         if (constant.toString().equals(value)) {
           this.value = constant;

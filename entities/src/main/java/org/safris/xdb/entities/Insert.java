@@ -16,7 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -41,11 +40,6 @@ final class Insert implements SQLStatement {
       final InsertCommand command = (InsertCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (InsertCommand)normalize(), serialization);
     }
 
     @Override

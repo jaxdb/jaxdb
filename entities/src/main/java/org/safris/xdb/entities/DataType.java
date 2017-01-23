@@ -44,7 +44,9 @@ public abstract class DataType<T> extends Subject<T> {
   @SuppressWarnings("unchecked")
   protected static <T,V extends DataType<T>>V wrap(final T value) {
     try {
-      return (V)data.typeToClass.get(value.getClass()).newInstance();
+      final V dataType = (V)data.typeToClass.get(value.getClass()).newInstance();
+      dataType.set(value);
+      return dataType;
     }
     catch (final ReflectiveOperationException e) {
       throw new UnsupportedOperationException(e);
@@ -110,6 +112,10 @@ public abstract class DataType<T> extends Subject<T> {
 
   protected final void setWrapper(final Subject<? super T> wrapper) {
     this.wrapper = wrapper;
+  }
+
+  public final <V extends DataType<? super T>>V AS(final V as) {
+    return null;
   }
 
   @Override

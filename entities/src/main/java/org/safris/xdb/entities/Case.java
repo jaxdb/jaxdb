@@ -16,16 +16,14 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 class Case {
-  protected static abstract class CASE<T extends Subject<?>> extends Keyword<T> implements org.safris.xdb.entities.spec.expression.CASE<T> {
+  protected static abstract class CASE<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.CASE<T> {
     protected CASE() {
       super(null);
     }
   }
 
-  protected static final class CASE_WHEN<T extends Subject<?>> extends Keyword<T> implements org.safris.xdb.entities.spec.expression.WHEN<T> {
+  protected static final class CASE_WHEN<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.WHEN<T> {
     private final Condition<T> condition;
 
     protected CASE_WHEN(final Condition<T> condition) {
@@ -49,17 +47,12 @@ class Case {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
-    }
   }
 
-  protected static final class THEN<T extends Subject<?>> extends Keyword<T> implements org.safris.xdb.entities.spec.expression.THEN<T> {
+  protected static final class THEN<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.THEN<T> {
     private final DataType<T> value;
 
-    protected THEN(final Keyword<T> parent, final DataType<T> value) {
+    protected THEN(final Keyword<Subject<T>> parent, final DataType<T> value) {
       super(parent);
       this.value = value;
     }
@@ -86,14 +79,9 @@ class Case {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
-    }
   }
 
-  protected static final class ELSE<T extends Subject<?>> extends CASE<T> implements org.safris.xdb.entities.spec.expression.ELSE<T> {
+  protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.entities.spec.expression.ELSE<T> {
     private final DataType<T> value;
 
     protected ELSE(final THEN<T> parent, final DataType<T> value) {
@@ -105,11 +93,6 @@ class Case {
       final CaseCommand command = (CaseCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
     }
   }
 

@@ -84,7 +84,7 @@ public abstract class Serializer {
       final Subject<?> subject = iterator.next();
       if (subject instanceof Entity) {
         final Entity entity = (Entity)subject;
-        final Alias alias = serialization.getAlias(entity, true);
+        final Alias alias = serialization.registerAlias(entity);
         final DataType<?>[] dataTypes = entity.column();
         for (int j = 0; j < dataTypes.length; j++) {
           final DataType<?> dataType = dataTypes[j];
@@ -96,7 +96,7 @@ public abstract class Serializer {
         }
       }
       else if (subject instanceof DataType<?>) {
-        serialization.getAlias(((DataType<?>)subject).owner, true);
+        serialization.registerAlias(((DataType<?>)subject).owner);
         final DataType<?> dataType = (DataType<?>)subject;
         dataType.serialize(serialization);
       }
@@ -161,14 +161,14 @@ public abstract class Serializer {
         serialization.append(", ");
 
       serialization.append(tableName(tables[i], serialization)).append(" ");
-      serialization.getAlias(tables[i], true).serialize(serialization);
+      serialization.registerAlias(tables[i]).serialize(serialization);
     }
   }
 
   protected void serialize(final Select.JOIN<?> join, final Select.ON<?> on, final SelectCommand command, final Serialization serialization) throws IOException {
     // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
     // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-    serialization.getAlias(join.entity, true);
+    serialization.registerAlias(join.entity);
     serialization.append(join.natural != null ? " NATURAL" : "");
     if (join.type != null) {
       serialization.append(" ");
@@ -176,7 +176,7 @@ public abstract class Serializer {
     }
 
     serialization.append(" JOIN ").append(tableName(join.entity, serialization)).append(" ");
-    serialization.getAlias(join.entity, true).serialize(serialization);
+    serialization.registerAlias(join.entity).serialize(serialization);
     if (on != null) {
       serialization.append(" ON (");
       on.condition.serialize(serialization);
@@ -185,8 +185,10 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Select.WHERE<?> where, final SelectCommand command, final Serialization serialization) throws IOException {
-    serialization.append(" WHERE ");
-    where.condition.serialize(serialization);
+    if (where != null) {
+      serialization.append(" WHERE ");
+      where.condition.serialize(serialization);
+    }
   }
 
   protected void serialize(final Select.GROUP_BY<?> groupBy, final SelectCommand command, final Serialization serialization) throws IOException {
@@ -200,15 +202,17 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Select.ORDER_BY<?> orderBy, final SelectCommand command, final Serialization serialization) {
-    serialization.append(" ORDER BY ");
-    for (int i = 0; i < orderBy.columns.length; i++) {
-      final DataType<?> dataType = orderBy.columns[i];
-      if (i > 0)
-        serialization.append(", ");
+    if (orderBy != null) {
+      serialization.append(" ORDER BY ");
+      for (int i = 0; i < orderBy.columns.length; i++) {
+        final DataType<?> dataType = orderBy.columns[i];
+        if (i > 0)
+          serialization.append(", ");
 
-      serialization.getAlias(dataType.owner, true);
-      serialization.append(dataType.toString());
-      serialization.append(" ASC");
+        serialization.registerAlias(dataType.owner);
+        serialization.append(dataType.toString());
+        serialization.append(" ASC");
+      }
     }
   }
 
@@ -334,20 +338,20 @@ public abstract class Serializer {
     }
   }
 
-  protected void serialize(final Update.WHERE serializable, final UpdateCommand command, final Serialization serialization) throws IOException {
+  protected void serialize(final Update.WHERE where, final UpdateCommand command, final Serialization serialization) throws IOException {
     serialization.append(" WHERE ");
-    serializable.condition.serialize(serialization);
+    where.condition.serialize(serialization);
   }
 
-  protected void serialize(final Delete.DELETE serializable, final DeleteCommand command, final Serialization serialization) throws IOException {
-    if (serializable.entity.primary().length == 0)
-      throw new UnsupportedOperationException("Entity '" + serializable.entity.name() + "' does not have a primary key");
+  protected void serialize(final Delete.DELETE delete, final DeleteCommand command, final Serialization serialization) throws IOException {
+    if (delete.entity.primary().length == 0)
+      throw new UnsupportedOperationException("Entity '" + delete.entity.name() + "' does not have a primary key");
 
 //    if (serialization.getCaller().peek() == serializable && !serializable.entity.wasSelected())
 //      throw new UnsupportedOperationException("Entity '" + serializable.entity.name() + "' did not come from a SELECT");
 
     serialization.append("DELETE FROM ");
-    serializable.entity.serialize(serialization);
+    delete.entity.serialize(serialization);
 
 //    if (serialization.getCaller().peek() == serializable) {
 //      final StringBuilder whereClause = new StringBuilder();
@@ -360,14 +364,14 @@ public abstract class Serializer {
 //    }
   }
 
-  protected void serialize(final Delete.WHERE serializable, final DeleteCommand command, final Serialization serialization) throws IOException {
+  protected void serialize(final Delete.WHERE where, final DeleteCommand command, final Serialization serialization) throws IOException {
     serialization.append(" WHERE ");
-    serializable.condition.serialize(serialization);
+    where.condition.serialize(serialization);
   }
 
-  protected <T extends Subject<?>>void serialize(final Entity serializable, final Serialization serialization) throws IOException {
-    serialization.append(tableName(serializable, serialization));
-    final Alias alias = serialization.getAlias(serializable, true);
+  protected <T extends Subject<?>>void serialize(final Entity entity, final Serialization serialization) throws IOException {
+    serialization.append(tableName(entity, serialization));
+    final Alias alias = serialization.registerAlias(entity);
     if (serialization.sqlStatementType == Select.class) {
       serialization.append(" ");
       alias.serialize(serialization);
@@ -379,9 +383,8 @@ public abstract class Serializer {
     for (int i = 0; i < serializable.args.length; i++) {
       final Serializable arg = serializable.args[i];
       if (i > 0)
-        serialization.append(" ");
+        serialization.append(" ").append(serializable.operator.toString()).append(" ");
 
-      serialization.append(serializable.operator.toString()).append(" ");
       arg.serialize(serialization);
     }
     serialization.append(")");
@@ -429,28 +432,26 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final DataType<?> serializable, final Serialization serialization) throws IOException {
-    if (serializable.wrapper() != null) {
-      serializable.wrapper().serialize(serialization);
-    }
-    else if (serialization.prepared) {
-      serialization.addParameter(serializable);
+  protected void serialize(final DataType<?> dataType, final Serialization serialization) throws IOException {
+    if (dataType.wrapper() != null) {
+      dataType.wrapper().serialize(serialization);
     }
     else {
-      if (serializable.owner != null) {
-        final Alias alias = serialization.getAlias(serializable.owner, false);
+      if (dataType.owner != null) {
+        final Alias alias = serialization.getAlias(dataType.owner);
         if (alias != null) {
           if (serialization.sqlStatementType == Select.class) {
             alias.serialize(serialization);
             serialization.append(".");
           }
 
-          serialization.append(serializable.name);
+          serialization.append(dataType.name);
           return;
         }
       }
-
-      serialization.append(serializable.serialize(serialization.vendor));
+      else {
+        serialization.addParameter(dataType);
+      }
     }
   }
 
@@ -459,7 +460,7 @@ public abstract class Serializer {
   }
 
   protected <T>void serialize(final As<T> as, final Serialization serialization) throws IOException {
-    serialization.getAlias(as.getVariable(), true);
+    serialization.registerAlias(as.getVariable());
     as.parent().serialize(serialization);
     serialization.append(" AS ").append(as.getVariable().serialize(serialization.vendor));
     as.getVariable().setWrapper(as.parent());
@@ -577,67 +578,73 @@ public abstract class Serializer {
     return "(" + builder.substring(2) + ")";
   }
 
-  public String serialize(final BigInt serializable) {
+  protected String serialize(final BigInt serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final Binary serializable) {
+  protected String serialize(final Binary serializable) {
     return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(serializable.get()) + "'";
   }
 
-  public String serialize(final Blob serializable) throws IOException {
+  protected String serialize(final Blob serializable) throws IOException {
     return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.getBytes(serializable.get())) + "'";
   }
 
-  public String serialize(final Boolean serializable) {
+  protected String serialize(final Boolean serializable) {
     return String.valueOf(serializable.get()).toUpperCase();
   }
 
-  public String serialize(final Char serializable) {
+  protected String serialize(final Char serializable) {
     return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
   }
 
-  public String serialize(final Clob serializable) throws IOException {
+  protected String serialize(final Clob serializable) throws IOException {
     return serializable.get() == null ? "NULL" : "'" + Readers.readFully(serializable.get()) + "'";
   }
 
-  public String serialize(final Date serializable) {
+  protected String serialize(final Date serializable) {
     return serializable.get() == null ? "NULL" : Date.dateFormat.format(serializable.get());
   }
 
-  public String serialize(final DateTime serializable) {
+  protected String serialize(final DateTime serializable) {
     return serializable.get() == null ? "NULL" : DateTime.dateTimeFormat.format(serializable.get());
   }
 
-  public String serialize(final Decimal serializable) {
+  protected String serialize(final Decimal serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final Double serializable) {
+  protected String serialize(final Double serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final Enum<?> serializable) {
+  protected String serialize(final Enum<?> serializable) {
     return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
   }
 
-  public String serialize(final Float serializable) {
+  protected String serialize(final Float serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final Long serializable) {
+  protected String serialize(final Long serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final MediumInt serializable) {
+  protected String serialize(final MediumInt serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final SmallInt serializable) {
+  protected String serialize(final SmallInt serializable) {
     return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
   }
 
-  public String serialize(final Time serializable) {
+  protected String serialize(final Time serializable) {
     return serializable.get() == null ? "NULL" : Time.timeFormat.format(serializable.get());
+  }
+
+  public void assignAliases(final Select.FROM<?> from, final SelectCommand command, final Serialization serialization) {
+    if (from != null)
+      for (final Entity table : from.tables)
+        serialization.registerAlias(table);
   }
 }

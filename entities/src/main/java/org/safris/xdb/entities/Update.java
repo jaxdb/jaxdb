@@ -114,11 +114,6 @@ final class Update implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
-    }
   }
 
   protected static final class SET extends UPDATE_SET implements update.SET {
@@ -166,11 +161,6 @@ final class Update implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
-    }
   }
 
   protected static final class WHERE extends Execute implements update.UPDATE {
@@ -186,11 +176,6 @@ final class Update implements SQLStatement {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
     }
   }
 }

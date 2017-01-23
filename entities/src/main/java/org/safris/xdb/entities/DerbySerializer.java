@@ -55,28 +55,35 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final Select.GROUP_BY<?> serializable, final SelectCommand command, final Serialization serialization) throws IOException {
-    serializable.subjects.addAll(command.select().getEntitiesWithOwners());
-    super.serialize(serializable, command, serialization);
+  protected void serialize(final Select.GROUP_BY<?> groupBy, final SelectCommand command, final Serialization serialization) throws IOException {
+    if (groupBy != null) {
+      groupBy.subjects.addAll(command.select().getEntitiesWithOwners());
+      super.serialize(groupBy, command, serialization);
+    }
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void serialize(final Select.HAVING<?> serializable, final SelectCommand command, final Serialization serialization) throws IOException {
-    final SELECT<?> select = (SELECT<?>)Keyword.getParentRoot(serializable.parent());
-    if (command.groupBy() == null) {
-      final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());
-      serialize(groupBy, command, serialization);
-    }
+  protected void serialize(final Select.HAVING<?> having, final SelectCommand command, final Serialization serialization) throws IOException {
+    if (having != null) {
+      final SELECT<?> select = (SELECT<?>)Keyword.getParentRoot(having.parent());
+      if (command.groupBy() == null) {
+        final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());
+        serialize(groupBy, command, serialization);
+      }
 
-    serialization.append(" HAVING ");
-    serializable.condition.serialize(serialization);
+      serialization.append(" HAVING ");
+      having.condition.serialize(serialization);
+    }
   }
 
   @Override
   protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final SelectCommand command, final Serialization serialization) {
-    serialization.append(" FETCH FIRST " + limit.rows + " ROWS ONLY");
-    // TODO
-    throw new UnsupportedOperationException();
+    if (limit != null) {
+      if (offset != null)
+        serialization.append(" OFFSET ").append(offset.rows).append(" ROWS");
+
+      serialization.append(" FETCH NEXT ").append(limit.rows).append(" ROWS ONLY");
+    }
   }
 }

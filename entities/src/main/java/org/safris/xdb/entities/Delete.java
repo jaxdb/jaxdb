@@ -77,11 +77,6 @@ final class Delete implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (DeleteCommand)normalize(), serialization);
-    }
   }
 
   protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
@@ -102,11 +97,6 @@ final class Delete implements SQLStatement {
       final DeleteCommand command = (DeleteCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (DeleteCommand)normalize(), serialization);
     }
   }
 }

@@ -193,7 +193,21 @@ final class Select implements SQLStatement {
         final DBVendor vendor = Schema.getDBVendor(connection);
 
         final Serialization serialization = new Serialization(Select.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(serialization);
+
+        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+        serializer.assignAliases(command.from(), command, serialization);
+        serializer.serialize(command.select(), command, serialization);
+        serializer.serialize(command.from(), command, serialization);
+        if (command.join() != null)
+          for (int i = 0; i < command.join().size(); i++)
+            serializer.serialize(command.join().get(i), i < command.on().size() ? command.on().get(i) : null, command, serialization);
+
+        serializer.serialize(command.where(), command, serialization);
+        serializer.serialize(command.groupBy(), command, serialization);
+        serializer.serialize(command.having(), command, serialization);
+        serializer.serialize(command.orderBy(), command, serialization);
+        serializer.serialize(command.limit(), command.offset(), command, serialization);
+
         final ResultSet resultSet = serialization.executeQuery(connection);
         return parseResultSet(vendor, connection, resultSet, command.select());
       }
@@ -268,11 +282,6 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
-    }
   }
 
   protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
@@ -307,11 +316,6 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
-    }
   }
 
   protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
@@ -337,11 +341,6 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 
@@ -378,11 +377,6 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, null, (SelectCommand)normalize(), serialization);
-    }
   }
 
   protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
@@ -409,11 +403,6 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize((JOIN<?>)parent(), this, (SelectCommand)normalize(), serialization);
-    }
   }
 
   protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
@@ -435,11 +424,6 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
-    }
   }
 
   protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
@@ -455,11 +439,6 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize((LIMIT<?>)parent(), this, (SelectCommand)normalize(), serialization);
     }
   }
 
@@ -481,11 +460,6 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, null, (SelectCommand)normalize(), serialization);
     }
   }
 
@@ -533,23 +507,6 @@ final class Select implements SQLStatement {
     @Override
     protected final Command normalize() {
       return new SelectCommand(this);
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-      final SelectCommand command = (SelectCommand)normalize();
-      serializer.serialize(command.select(), command, serialization);
-      serializer.serialize(command.from(), command, serialization);
-      if (command.join() != null)
-        for (int i = 0; i < command.join().size(); i++)
-          serializer.serialize(command.join().get(i), i < command.on().size() ? command.on().get(i) : null, command, serialization);
-
-      serializer.serialize(command.where(), command, serialization);
-      serializer.serialize(command.groupBy(), command, serialization);
-      serializer.serialize(command.having(), command, serialization);
-      serializer.serialize(command.orderBy(), command, serialization);
-      serializer.serialize(command.limit(), command.offset(), command, serialization);
     }
 
     private static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
@@ -706,11 +663,6 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected final void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 }

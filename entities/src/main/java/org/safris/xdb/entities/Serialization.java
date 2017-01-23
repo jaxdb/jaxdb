@@ -48,16 +48,16 @@ final class Serialization {
 
   private final Map<Subject<?>,Alias> aliases = new IdentityHashMap<Subject<?>,Alias>();
 
-  protected Alias getAlias(final Subject<?> subject, final boolean register) {
+  protected Alias registerAlias(final Subject<?> subject) {
     Alias alias = aliases.get(subject);
-    if (alias != null)
-      return alias;
+    if (alias == null)
+      aliases.put(subject, alias = new Alias(aliases.size()));
 
-    if (!register)
-      return null;
-
-    aliases.put(subject, alias = new Alias(aliases.size()));
     return alias;
+  }
+
+  protected Alias getAlias(final Subject<?> subject) {
+    return aliases.get(subject);
   }
 
   protected StringBuilder append(final CharSequence seq) {
@@ -76,6 +76,7 @@ final class Serialization {
 
   protected ResultSet executeQuery(final Connection connection) throws SQLException {
     if (prepared) {
+      System.err.println(builder.toString());
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
       for (int i = 0; i < parameters.size(); i++)
         parameters.get(i).get(statement, i + 1);
