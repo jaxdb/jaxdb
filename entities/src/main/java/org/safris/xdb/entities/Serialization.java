@@ -32,9 +32,10 @@ import org.safris.xdb.schema.DBVendor;
 final class Serialization {
   private final StringBuilder builder = new StringBuilder();
   private final List<DataType<?>> parameters = new ArrayList<DataType<?>>();
+  private final boolean prepared;
+
   protected final Class<? extends SQLStatement> sqlStatementType;
   protected final DBVendor vendor;
-  protected final boolean prepared;
   protected final Serializer serializer;
 
   protected Serialization(final Class<? extends SQLStatement> sqlStatementType, final DBVendor vendor, final Class<? extends Statement> statementType) {
@@ -76,7 +77,6 @@ final class Serialization {
 
   protected ResultSet executeQuery(final Connection connection) throws SQLException {
     if (prepared) {
-      System.err.println(builder.toString());
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
       for (int i = 0; i < parameters.size(); i++)
         parameters.get(i).get(statement, i + 1);

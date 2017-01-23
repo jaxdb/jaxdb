@@ -60,7 +60,7 @@ public abstract class DataType<T> extends Subject<T> {
     return array;
   }
 
-  protected final int sqlType = getSQLType();
+  protected final int sqlType = sqlType();
   protected final Entity owner;
   protected final String name;
   protected final boolean unique;
@@ -114,8 +114,9 @@ public abstract class DataType<T> extends Subject<T> {
     this.wrapper = wrapper;
   }
 
-  public final <V extends DataType<? super T>>V AS(final V as) {
-    return null;
+  public final <V extends DataType<T>>V AS(final V dataType) {
+    dataType.setWrapper(new As<T>(this, dataType));
+    return dataType;
   }
 
   @Override
@@ -123,7 +124,7 @@ public abstract class DataType<T> extends Subject<T> {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 
-  protected abstract int getSQLType();
+  protected abstract int sqlType();
   protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
   protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
   protected abstract String serialize(final DBVendor vendor) throws IOException;

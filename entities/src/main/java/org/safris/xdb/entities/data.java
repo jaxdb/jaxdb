@@ -74,7 +74,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.ARRAY;
     }
 
@@ -131,7 +131,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.BIGINT;
     }
 
@@ -192,7 +192,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return varying ? Types.VARBINARY : Types.BINARY;
     }
 
@@ -248,7 +248,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.BLOB;
     }
 
@@ -296,7 +296,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.BOOLEAN;
     }
 
@@ -351,7 +351,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return varying ? (national ? Types.NVARCHAR : Types.VARCHAR) : (national ? Types.NCHAR : Types.CHAR);
     }
 
@@ -404,7 +404,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return national ? Types.NCLOB : Types.CLOB;
     }
 
@@ -455,7 +455,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.DATE;
     }
 
@@ -508,7 +508,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.TIMESTAMP;
     }
 
@@ -568,7 +568,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.DECIMAL;
     }
 
@@ -626,7 +626,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.DOUBLE;
     }
 
@@ -677,7 +677,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.CHAR;
     }
 
@@ -749,7 +749,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.FLOAT;
     }
 
@@ -806,7 +806,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.INTEGER;
     }
 
@@ -863,7 +863,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.SMALLINT;
     }
 
@@ -928,7 +928,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.TINYINT;
     }
 
@@ -984,7 +984,7 @@ public final class data {
     }
 
     @Override
-    protected final int getSQLType() {
+    protected final int sqlType() {
       return Types.TIME;
     }
 

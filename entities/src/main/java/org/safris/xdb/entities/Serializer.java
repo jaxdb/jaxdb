@@ -31,7 +31,6 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.xdb.entities.Interval.Unit;
-import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.data.Array;
 import org.safris.xdb.entities.data.BigInt;
 import org.safris.xdb.entities.data.Binary;
@@ -201,7 +200,7 @@ public abstract class Serializer {
     having.condition.serialize(serialization);
   }
 
-  protected void serialize(final Select.ORDER_BY<?> orderBy, final SelectCommand command, final Serialization serialization) {
+  protected void serialize(final Select.ORDER_BY<?> orderBy, final SelectCommand command, final Serialization serialization) throws IOException {
     if (orderBy != null) {
       serialization.append(" ORDER BY ");
       for (int i = 0; i < orderBy.columns.length; i++) {
@@ -210,8 +209,7 @@ public abstract class Serializer {
           serialization.append(", ");
 
         serialization.registerAlias(dataType.owner);
-        serialization.append(dataType.toString());
-        serialization.append(" ASC");
+        dataType.serialize(serialization);
       }
     }
   }
@@ -280,9 +278,6 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Update.UPDATE update, final UpdateCommand command, final Serialization serialization) throws IOException {
-    if (update.getClass() != UPDATE.class) // means that there are subsequent clauses
-      throw new Error("Need to override this");
-
     if (command.set() == null && update.entity.primary().length == 0)
       throw new UnsupportedOperationException("Entity '" + update.entity.name() + "' does not have a primary key, nor was WHERE clause specified");
 
@@ -460,9 +455,10 @@ public abstract class Serializer {
   }
 
   protected <T>void serialize(final As<T> as, final Serialization serialization) throws IOException {
-    serialization.registerAlias(as.getVariable());
+    final Alias alias = serialization.registerAlias(as.getVariable());
     as.parent().serialize(serialization);
-    serialization.append(" AS ").append(as.getVariable().serialize(serialization.vendor));
+    serialization.append(" AS ");
+    alias.serialize(serialization);
     as.getVariable().setWrapper(as.parent());
   }
 
@@ -483,7 +479,7 @@ public abstract class Serializer {
       }
     }
     else {
-      throw new Error("Unknown condition type: " + condition.getClass().getName());
+      throw new UnsupportedOperationException("Unknown condition type: " + condition.getClass().getName());
     }
   }
 
