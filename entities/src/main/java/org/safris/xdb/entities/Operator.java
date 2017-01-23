@@ -27,7 +27,7 @@ final class Operator<T extends Serializable> {
   public static final Operator<ComparisonPredicate<?>> GTE = new Operator<ComparisonPredicate<?>>(">=");
   public static final Operator<ComparisonPredicate<?>> NE = new Operator<ComparisonPredicate<?>>("<>");
   public static final Operator<ComparisonPredicate<?>> IS = new Operator<ComparisonPredicate<?>>("IS");
-  public static final Operator<ComparisonPredicate<?>> IS_NOT = new Operator<ComparisonPredicate<?>>("IS NOT");
+  public static final Operator<ComparisonPredicate<?>> NOT = new Operator<ComparisonPredicate<?>>("IS NOT");
 
   public static final Operator<NumericExpression<?>> PLUS = new Operator<NumericExpression<?>>("+");
   public static final Operator<NumericExpression<?>> MINUS = new Operator<NumericExpression<?>>("-");

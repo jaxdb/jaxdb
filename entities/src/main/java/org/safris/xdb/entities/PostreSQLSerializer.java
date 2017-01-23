@@ -16,7 +16,12 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Enum;
+import java.io.IOException;
+import java.math.BigInteger;
+
+import org.safris.commons.io.Streams;
+import org.safris.xdb.entities.data.Blob;
+import org.safris.xdb.entities.data.Enum;
 import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.schema.spec.PostgreSQLSpec;
 
@@ -28,6 +33,15 @@ final class PostreSQLSerializer extends Serializer {
 
   @Override
   protected String getPreparedStatementMark(final DataType<?> dataType) {
-    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(Tables.name(dataType.entity), dataType.name) : "?";
+    return dataType instanceof Enum ? "?::" + PostgreSQLSpec.getTypeName(dataType.owner.name(), dataType.name) : "?";
+  }
+
+  @Override
+  public String serialize(final Blob dataType) throws IOException {
+    if (dataType.get() == null)
+      return "NULL";
+
+    final BigInteger integer = new BigInteger(Streams.getBytes(dataType.get()));
+    return "E'\\" + integer.toString(8); // FIXME: This is only half done
   }
 }

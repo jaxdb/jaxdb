@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-abstract class Predicate<T> extends Condition<Subject<T>> {
+abstract class Predicate<T> extends Condition<T> {
 }

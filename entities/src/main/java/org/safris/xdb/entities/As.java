@@ -16,20 +16,27 @@
 
 package org.safris.xdb.entities;
 
-class As<T> extends Subject<T> {
-  private final Variable<T> parent;
-  private final Variable<? extends T> variable;
+import java.io.IOException;
 
-  public As(final Variable<T> parent, final Variable<? extends T> variable) {
+final class As<T> extends Subject<T> {
+  private final DataType<T> parent;
+  private final DataType<? extends T> variable;
+
+  public As(final DataType<T> parent, final DataType<? extends T> variable) {
     this.parent = parent;
     this.variable = variable;
   }
 
-  public Variable<T> getParent() {
+  protected DataType<T> parent() {
     return parent;
   }
 
-  public Variable<? extends T> getVariable() {
+  protected DataType<? extends T> getVariable() {
     return variable;
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

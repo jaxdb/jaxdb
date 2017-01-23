@@ -33,4 +33,6 @@ abstract class Keyword<T extends Subject<?>> extends Provision<T> {
   protected final Keyword<T> parent() {
     return parent;
   }
+
+  protected abstract Command normalize();
 }

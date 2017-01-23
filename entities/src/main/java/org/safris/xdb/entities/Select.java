@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -37,7 +38,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Select {
+final class Select implements SQLStatement {
   private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
@@ -85,8 +86,8 @@ final class Select {
           entity = null;
           for (int i = 0; i < noColumns; i++) {
             final Pair<DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
-            final Variable variable;
-            if (currentTable != null && (currentTable != dataTypePrototype.a.entity || dataTypePrototype.b == -1)) {
+            final DataType dataType;
+            if (currentTable != null && (currentTable != dataTypePrototype.a.owner || dataTypePrototype.b == -1)) {
               final Entity cached = cache.get(entity);
               if (cached != null) {
                 row[index++] = cached;
@@ -101,19 +102,19 @@ final class Select {
             if (dataTypePrototype.b == -1) {
               entity = null;
               currentTable = null;
-              variable = dataTypePrototype.a.clone();
-              row[index++] = variable;
+              dataType = dataTypePrototype.a.clone();
+              row[index++] = dataType;
             }
             else {
-              currentTable = dataTypePrototype.a.entity;
+              currentTable = dataTypePrototype.a.owner;
               entity = prototypes.get(currentTable.getClass());
               if (entity == null)
                 prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
-              variable = entity.column()[dataTypePrototype.b];
+              dataType = entity.column()[dataTypePrototype.b];
             }
 
-            variable.set(resultSet, i + 1);
+            dataType.set(resultSet, i + 1);
           }
         }
         catch (final SQLException e) {
@@ -178,25 +179,23 @@ final class Select {
     }
 
     @Override
-    public final RowIterator<T> execute() throws SQLException {
+    public final RowIterator<T> execute() throws IOException, SQLException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws SQLException {
-      final SELECT<?> select = (SELECT<?>)getParentRoot(this);
-      final Class<? extends Schema> schema = select.from().tables[0].schema();
-      DBVendor vendor = null;
+    public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
+      final SelectCommand command = (SelectCommand)normalize();
+
+      final Class<? extends Schema> schema = command.from().tables[0].schema();
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        vendor = Schema.getDBVendor(connection);
+        final DBVendor vendor = Schema.getDBVendor(connection);
+
         final Serialization serialization = new Serialization(Select.class, vendor, EntityRegistry.getStatementType(schema));
-
         serialize(serialization);
-        Subject.clearAliases();
-
         final ResultSet resultSet = serialization.executeQuery(connection);
-        return parseResultSet(serialization.getVendor(), connection, resultSet, select);
+        return parseResultSet(vendor, connection, resultSet, command.select());
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -209,75 +208,44 @@ final class Select {
       super(parent);
     }
 
-    protected final WHERE<T> where() {
-      return where;
-    }
-
-    protected final HAVING<T> having() {
-      return having;
-    }
-
-    protected final JOIN<T> join() {
-      return join;
-    }
-
-    protected final LIMIT<T> limit() {
-      return limit;
-    }
-
-    private WHERE<T> where;
-    private HAVING<T> having;
-    private JOIN<T> join;
-    private LIMIT<T> limit;
-
     @Override
     public final WHERE<T> WHERE(final Condition<?> condition) {
-      return where = new WHERE<T>(this, condition);
+      return new WHERE<T>(this, condition);
     }
 
     @Override
     public HAVING<T> HAVING(final Condition<?> condition) {
-      return having = new HAVING<T>(this, condition);
+      return new HAVING<T>(this, condition);
     }
 
     @Override
     public final JOIN<T> JOIN(final Entity entity) {
-      return join = new JOIN<T>(this, null, null, entity);
+      return new JOIN<T>(this, null, null, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final TYPE type, final Entity entity) {
-      return join = new JOIN<T>(this, null, type, entity);
+      return new JOIN<T>(this, null, type, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final NATURAL natural, final Entity entity) {
-      return join = new JOIN<T>(this, natural, null, entity);
+      return new JOIN<T>(this, natural, null, entity);
     }
 
     @Override
     public final JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity) {
-      return join = new JOIN<T>(this, natural, type, entity);
+      return new JOIN<T>(this, natural, type, entity);
     }
 
     @Override
     public final LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
     }
   }
 
   protected static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
-    protected final GROUP_BY<T> groupBy() {
-      return groupBy;
-    }
-
-    protected final ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
-
     protected final Entity[] tables;
-    private GROUP_BY<T> groupBy;
-    private ORDER_BY<T> orderBy;
 
     protected FROM(final Keyword<T> parent, final Entity ... tables) {
       super(parent);
@@ -285,70 +253,69 @@ final class Select {
     }
 
     @Override
-    public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return groupBy = new GROUP_BY<T>(this, subjects);
+    public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      return new GROUP_BY<T>(this, columns);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return orderBy = new ORDER_BY<T>(this, variables);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
-    protected ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
+    protected final LinkedHashSet<Subject<?>> subjects;
 
-    protected HAVING<T> having() {
-      return having;
-    }
-
-    protected LIMIT<T> limit() {
-      return limit;
-    }
-
-    protected final LinkedHashSet<? extends Subject<?>> subjects;
-    private ORDER_BY<T> orderBy;
-    private HAVING<T> having;
-    private LIMIT<T> limit;
-
-    protected GROUP_BY(final Keyword<T> parent, final LinkedHashSet<? extends Subject<?>> subjects) {
+    protected GROUP_BY(final Keyword<T> parent, final LinkedHashSet<Subject<?>> subjects) {
       super(parent);
       this.subjects = subjects;
     }
 
     protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-      this(parent, (LinkedHashSet<? extends Subject<?>>)Collections.asCollection(LinkedHashSet.class, subjects));
+      this(parent, (LinkedHashSet<Subject<?>>)Collections.asCollection(LinkedHashSet.class, subjects));
     }
 
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... columns) {
-      return orderBy = new ORDER_BY<T>(this, columns);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
     }
 
     @Override
     public HAVING<T> HAVING(final Condition<?> condition) {
-      return having = new HAVING<T>(this, condition);
+      return new HAVING<T>(this, condition);
     }
 
     @Override
     public LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
-    protected ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
-
-    protected LIMIT<T> limit() {
-      return limit;
-    }
-
     protected final Condition<?> condition;
-    private ORDER_BY<T> orderBy;
-    private LIMIT<T> limit;
 
     protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -356,35 +323,32 @@ final class Select {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... column) {
-      return orderBy = new ORDER_BY<T>(this, column);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
     }
 
     @Override
     public LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
-    protected final ON<T> on() {
-      return on;
-    }
-
-    protected final GROUP_BY<T> groupBy() {
-      return groupBy;
-    }
-
-    protected final ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
-
     protected final NATURAL natural;
     protected final TYPE type;
     protected final Entity entity;
-    private ON<T> on;
-    private GROUP_BY<T> groupBy;
-    private ORDER_BY<T> orderBy;
 
     protected JOIN(final Keyword<T> parent, final NATURAL natural, final TYPE type, final Entity entity) {
       super(parent);
@@ -395,32 +359,34 @@ final class Select {
 
     @Override
     public ON<T> ON(final Condition<?> condition) {
-      return on = new ON<T>(this, condition);
+      return new ON<T>(this, condition);
     }
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return groupBy = new GROUP_BY<T>(this, subjects);
+      return new GROUP_BY<T>(this, subjects);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return orderBy = new ORDER_BY<T>(this, variables);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, null, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
-    protected final GROUP_BY<T> groupBy() {
-      return groupBy;
-    }
-
-    protected final ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
-
     protected final Condition<?> condition;
-    private GROUP_BY<T> groupBy;
-    private ORDER_BY<T> orderBy;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -429,76 +395,104 @@ final class Select {
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return groupBy = new GROUP_BY<T>(this, subjects);
+      return new GROUP_BY<T>(this, subjects);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return orderBy = new ORDER_BY<T>(this, variables);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize((JOIN<?>)parent(), this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
-    protected LIMIT<T> limit() {
-      return limit;
-    }
+    protected final DataType<?>[] columns;
 
-    protected final Variable<?>[] columns;
-    private LIMIT<T> limit;
-
-    protected ORDER_BY(final Keyword<T> parent, final Variable<?> ... columns) {
+    protected ORDER_BY(final Keyword<T> parent, final DataType<?> ... columns) {
       super(parent);
       this.columns = columns;
     }
 
     @Override
     public LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
-    protected final int offset;
+    protected final int rows;
 
-    protected OFFSET(final Keyword<T> parent, final int offset) {
+    protected OFFSET(final Keyword<T> parent, final int rows) {
       super(parent);
-      this.offset = offset;
+      this.rows = rows;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize((LIMIT<?>)parent(), this, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
-    protected OFFSET<T> offset() {
-      return offset;
-    }
+    protected final int rows;
 
-    protected final int limit;
-    private OFFSET<T> offset;
-
-    protected LIMIT(final Keyword<T> parent, final int limit) {
+    protected LIMIT(final Keyword<T> parent, final int rows) {
       super(parent);
-      this.limit = limit;
+      this.rows = rows;
     }
 
     @Override
     public OFFSET<T> OFFSET(final int rows) {
-      return offset = new OFFSET<T>(this, rows);
+      return new OFFSET<T>(this, rows);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, null, (SelectCommand)normalize(), serialization);
     }
   }
 
   protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
-    protected FROM<T> from() {
-      return from;
-    }
-
-    protected LIMIT<T> limit() {
-      return limit;
-    }
-
     protected final ALL all;
     protected final DISTINCT distinct;
     protected final LinkedHashSet<T> entities;
-    private FROM<T> from;
-    private LIMIT<T> limit;
 
     @SafeVarargs
     public SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
@@ -510,12 +504,12 @@ final class Select {
 
     @Override
     public FROM<T> FROM(final Entity ... table) {
-      return from = new FROM<T>(this, table);
+      return new FROM<T>(this, table);
     }
 
     @Override
     public LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
     }
 
     @Override
@@ -536,10 +530,32 @@ final class Select {
       throw new UnsupportedOperationException();
     }
 
+    @Override
+    protected final Command normalize() {
+      return new SelectCommand(this);
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+      final SelectCommand command = (SelectCommand)normalize();
+      serializer.serialize(command.select(), command, serialization);
+      serializer.serialize(command.from(), command, serialization);
+      if (command.join() != null)
+        for (int i = 0; i < command.join().size(); i++)
+          serializer.serialize(command.join().get(i), i < command.on().size() ? command.on().get(i) : null, command, serialization);
+
+      serializer.serialize(command.where(), command, serialization);
+      serializer.serialize(command.groupBy(), command, serialization);
+      serializer.serialize(command.having(), command, serialization);
+      serializer.serialize(command.orderBy(), command, serialization);
+      serializer.serialize(command.limit(), command.offset(), command, serialization);
+    }
+
     private static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
       @Override
       public boolean test(final Subject<?> t) {
-        return (t instanceof DataType) && ((DataType<?>)t).owner() == null;
+        return (t instanceof DataType) && ((DataType<?>)t).owner == null;
       }
     };
 
@@ -598,8 +614,8 @@ final class Select {
                       return false;
 
                     int index = 0;
-                    for (final Variable variable : out.column())
-                      variable.set(resultSet, ++index);
+                    for (final DataType dataType : out.column())
+                      dataType.set(resultSet, ++index);
                   }
                   catch (final SQLException e) {
                     throw SQLExceptionCatalog.lookup(e);
@@ -634,7 +650,6 @@ final class Select {
         }
       }
 
-      Subject.clearAliases();
       return null;
     }
 
@@ -664,22 +679,7 @@ final class Select {
   }
 
   protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
-    protected final GROUP_BY<T> groupBy() {
-      return groupBy;
-    }
-
-    protected final ORDER_BY<T> orderBy() {
-      return orderBy;
-    }
-
-    protected LIMIT<T> limit() {
-      return limit;
-    }
-
     protected final Condition<?> condition;
-    private GROUP_BY<T> groupBy;
-    private ORDER_BY<T> orderBy;
-    private LIMIT<T> limit;
 
     protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
       super(parent);
@@ -688,17 +688,29 @@ final class Select {
 
     @Override
     public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
-      return groupBy = new GROUP_BY<T>(this, subjects);
+      return new GROUP_BY<T>(this, subjects);
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... variables) {
-      return orderBy = new ORDER_BY<T>(this, variables);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+      return new ORDER_BY<T>(this, columns);
     }
 
     @Override
     public LIMIT<T> LIMIT(final int rows) {
-      return limit = new LIMIT<T>(this, rows);
+      return new LIMIT<T>(this, rows);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (SelectCommand)normalize(), serialization);
     }
   }
 }

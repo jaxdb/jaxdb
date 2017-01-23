@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,16 +14,18 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import org.safris.xdb.entities.Insert.INSERT;
 
-import org.safris.xdb.entities.RowIterator;
-import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Transaction;
+public class InsertCommand extends Command {
+  private INSERT<?> insert;
 
-public interface ExecuteQuery<T extends Subject<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  public INSERT<?> insert() {
+    return insert;
+  }
+
+  public void add(final INSERT<?> insert) {
+    this.insert = insert;
+  }
 }

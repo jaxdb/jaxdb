@@ -16,18 +16,69 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Char;
+import java.io.IOException;
 
-final class StringExpression extends Expression<Char> {
+final class StringExpression extends Expression<String> {
   protected final Operator<StringExpression> operator;
-  protected final Object a;
-  protected final Object b;
-  protected final Object[] args;
+  protected final Serializable[] args;
 
-  protected StringExpression(final Operator<StringExpression> operator, final Object a, final Object b, final Object ... args) {
+  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final DataType<?> b) {
     this.operator = operator;
-    this.a = a;
-    this.b = b;
-    this.args = args;
+    this.args = new Serializable[] {a, b};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final DataType<?> b, final CharSequence c) {
+    this.operator = operator;
+    this.args = new Serializable[] {a, b, DataType.wrap(c)};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b) {
+    this.operator = operator;
+    this.args = new Serializable[] {a, DataType.wrap(b)};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b, final DataType<?> c) {
+    this.operator = operator;
+    this.args = new Serializable[] {a, DataType.wrap(b), c};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b, final DataType<?> c, final CharSequence d) {
+    this.operator = operator;
+    this.args = new Serializable[] {a, DataType.wrap(b), c, DataType.wrap(d)};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final DataType<?> c) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b, c};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c)};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final DataType<?> c, final CharSequence d) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b, c, DataType.wrap(d)};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c, final DataType<?> d) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c), d};
+  }
+
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c, final DataType<?> d, final CharSequence e) {
+    this.operator = operator;
+    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c), d, DataType.wrap(e)};
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

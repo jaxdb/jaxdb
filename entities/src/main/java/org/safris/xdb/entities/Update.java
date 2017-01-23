@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
@@ -26,7 +27,7 @@ import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.schema.DBVendor;
 
-final class Update {
+final class Update implements SQLStatement {
   private static abstract class Execute extends Keyword<DataType<?>> implements update.UPDATE {
     protected Execute(final Keyword<DataType<?>> parent) {
       super(parent);
@@ -39,17 +40,22 @@ final class Update {
      * @exception SQLException if a database access error occurs
      */
     @Override
-    public int[] execute(final Transaction transaction) throws SQLException {
+    public int[] execute(final Transaction transaction) throws IOException, SQLException {
       final Keyword<?> update = getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(serialization);
-        Subject.clearAliases();
-        final int[] count = serialization.executeUpdate(connection);
+        final Serialization serialization = null;
+        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+        final UpdateCommand command = (UpdateCommand)normalize();
+        serializer.serialize(command.update(), command, serialization);
+        serializer.serialize(command.set(), command, serialization);
+        serializer.serialize(command.where(), command, serialization);
+//        final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
+//        serialize(serialization);
+        final int[] count = null;//serialization.executeUpdate(connection);
         if (transaction == null)
           connection.close();
 
@@ -61,7 +67,7 @@ final class Update {
     }
 
     @Override
-    public int[] execute() throws SQLException {
+    public int[] execute() throws IOException, SQLException {
       return execute(null);
     }
   }
@@ -77,13 +83,14 @@ final class Update {
     }
 
     @Override
-    public final <T>SET SET(final DataType<T> set, final Variable<T> to) {
+    public final <T>SET SET(final DataType<T> set, final DataType<T> to) {
       return new SET(this, set, to);
     }
 
     @Override
     public final <T>SET SET(final DataType<T> set, final T to) {
-      return new SET(this, set, Variable.valueOf(to));
+      final DataType<T> wrap = DataType.wrap(to);
+      return new SET(this, set, wrap);
     }
 
     @Override
@@ -93,21 +100,24 @@ final class Update {
     }
   }
 
-  protected static final class WHERE extends Execute implements update.UPDATE {
-    protected final Condition<?> condition;
-
-    protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
-      super(parent);
-      this.condition = condition;
-    }
-  }
-
   protected static final class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
     protected final Entity entity;
 
     protected UPDATE(final Entity entity) {
       super(null);
       this.entity = entity;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final UpdateCommand command = (UpdateCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
     }
   }
 
@@ -119,19 +129,13 @@ final class Update {
     protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
       super(parent);
       this.set = set;
-      this.to = (Provision<Variable<T>>)to;
+      this.to = (Provision<DataType<T>>)to;
     }
 
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final Variable<T> to) {
+    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final DataType<T> to) {
       super(parent);
       this.set = set;
       this.to = to;
-    }
-
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final T to) {
-      super(parent);
-      this.set = set;
-      this.to = Variable.valueOf(to);
     }
 
     @Override
@@ -154,6 +158,39 @@ final class Update {
         return ((Update.UPDATE)parent()).entity;
 
       throw new Error("This should not happen, as UPDATE is always followed by SET.");
+    }
+
+    @Override
+    protected final Command normalize() {
+      final UpdateCommand command = (UpdateCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
+    }
+  }
+
+  protected static final class WHERE extends Execute implements update.UPDATE {
+    protected final Condition<?> condition;
+
+    protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
+      super(parent);
+      this.condition = condition;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final UpdateCommand command = (UpdateCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (UpdateCommand)normalize(), serialization);
     }
   }
 }

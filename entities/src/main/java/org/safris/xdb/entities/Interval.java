@@ -14,8 +14,9 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.binding;
+package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
@@ -23,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Interval {
+public class Interval extends Serializable {
   public static enum Unit {
     MICROS(ChronoUnit.MICROS),
     MILLIS(ChronoUnit.MILLIS),
@@ -68,5 +69,10 @@ public class Interval {
 
   public Integer getComponent(final Unit unit) {
     return intervals.get(unit);
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

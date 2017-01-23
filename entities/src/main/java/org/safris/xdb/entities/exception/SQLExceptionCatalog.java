@@ -65,11 +65,11 @@ public class SQLExceptionCatalog {
       return exception;
 
     try {
-      final Constructor<? extends SQLException> c = category.getConstructor(String.class, String.class, int.class);
-      final SQLException e = c.newInstance(exception.getMessage(), exception.getSQLState(), exception.getErrorCode());
-      e.setStackTrace(exception.getStackTrace());
-      Throwables.set(e, exception.getCause());
-      return e;
+      final Constructor<? extends SQLException> constructor = category.getConstructor(String.class, String.class, int.class);
+      final SQLException sqlException = constructor.newInstance(exception.getMessage(), exception.getSQLState(), exception.getErrorCode());
+      sqlException.setStackTrace(exception.getStackTrace());
+      Throwables.set(sqlException, exception.getCause());
+      return sqlException;
     }
     catch (final ReflectiveOperationException e) {
       throw new UnsupportedOperationException("Attempted to instantiate " + category.getName(), e);

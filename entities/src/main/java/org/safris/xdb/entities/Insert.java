@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -25,7 +26,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Insert {
+final class Insert implements SQLStatement {
   protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
     protected final T[] entities;
 
@@ -33,6 +34,18 @@ final class Insert {
     protected INSERT(final T ... entities) {
       super(null);
       this.entities = entities;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final InsertCommand command = (InsertCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (InsertCommand)normalize(), serialization);
     }
 
     @Override
@@ -44,10 +57,10 @@ final class Insert {
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(serialization);
-        Subject.clearAliases();
-        final int[] count = serialization.executeUpdate(connection);
+        final Serialization serialization = null;
+//        final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
+//        serialize(serialization);
+        final int[] count = null;//serialization.executeUpdate(connection);
 
         if (transaction == null)
           connection.close();

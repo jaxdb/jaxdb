@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,23 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.xdb.entities.DML.SetQualifier;
 
-final class NumericFunction<T extends Number> extends Expression<T> {
+final class GeneralSetFunction<T> extends Expression<T> {
   protected final String function;
-  protected final DataType<T> a;
+  protected final DML.SetQualifier qualifier;
+  protected final DataType<?> a;
   protected final DataType<?> b;
 
-  protected NumericFunction(final String function, final DataType<T> a, final Numeric<?> b) {
+  protected GeneralSetFunction(final String function, final SetQualifier qualifier, final DataType<?> dataType) {
     this.function = function;
-    this.a = a;
-    this.b = b;
+    this.qualifier = qualifier;
+    this.a = dataType;
+    this.b = null;
   }
 
-  protected NumericFunction(final String function, final DataType<T> a, final Number b) {
-    this.function = function;
-    this.a = a;
-    this.b = DataType.wrap(b);
-  }
-
-  protected NumericFunction(final String function, final DataType<T> dataType) {
-    this(function, dataType, (Numeric<?>)null);
-  }
-
-  protected NumericFunction(final String function) {
-    this(function, null, (Numeric<?>)null);
+  protected GeneralSetFunction(final String function, final DataType<?> dataType) {
+    this(function, (DML.SetQualifier)null, dataType);
   }
 
   @Override

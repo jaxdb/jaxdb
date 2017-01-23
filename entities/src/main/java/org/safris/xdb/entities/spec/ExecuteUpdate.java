@@ -16,11 +16,12 @@
 
 package org.safris.xdb.entities.spec;
 
+import java.io.IOException;
 import java.sql.SQLException;
 
 import org.safris.xdb.entities.Transaction;
 
 public interface ExecuteUpdate {
-  public int[] execute(final Transaction transaction) throws SQLException;
-  public int[] execute() throws SQLException;
+  public int[] execute(final Transaction transaction) throws IOException, SQLException;
+  public int[] execute() throws IOException, SQLException;
 }

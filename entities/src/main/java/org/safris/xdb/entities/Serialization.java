@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,156 +16,74 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 
 import org.safris.xdb.schema.DBVendor;
 
 final class Serialization {
-  private final Stack<Serializable> callStack = new Stack<Serializable>();
-  private final List<String> sqls = new ArrayList<String>();
+  private final StringBuilder builder = new StringBuilder();
+  private final List<DataType<?>> parameters = new ArrayList<DataType<?>>();
+  protected final Class<? extends SQLStatement> sqlStatementType;
+  protected final DBVendor vendor;
+  protected final boolean prepared;
+  protected final Serializer serializer;
 
-  private final List<List<? extends Variable<?>>> batches;
-  private List<Variable<?>> current;
-
-  protected final Class<?> type;
-  private final DBVendor vendor;
-  protected final Class<? extends Statement> statementType;
-  private final StringBuilder sql = new StringBuilder();
-
-  protected Serialization(final Class<?> type, final DBVendor vendor, final Class<? extends Statement> statementType) {
-    this.type = type;
+  protected Serialization(final Class<? extends SQLStatement> sqlStatementType, final DBVendor vendor, final Class<? extends Statement> statementType) {
+    this.sqlStatementType = sqlStatementType;
     this.vendor = vendor;
-    this.statementType = statementType;
-    if (statementType == PreparedStatement.class) {
-      batches = new ArrayList<List<? extends Variable<?>>>();
-      batches.add(current = new ArrayList<Variable<?>>());
+    if (!(this.prepared = statementType == PreparedStatement.class) && statementType != Statement.class)
+      throw new UnsupportedOperationException("Unsupported statement type: " + statementType.getName());
+
+    this.serializer = Serializer.getSerializer(vendor);
+  }
+
+  private final Map<Subject<?>,Alias> aliases = new IdentityHashMap<Subject<?>,Alias>();
+
+  protected Alias getAlias(final Subject<?> subject, final boolean register) {
+    Alias alias = aliases.get(subject);
+    if (alias != null)
+      return alias;
+
+    if (!register)
+      return null;
+
+    aliases.put(subject, alias = new Alias(aliases.size()));
+    return alias;
+  }
+
+  protected StringBuilder append(final CharSequence seq) {
+    return builder.append(seq);
+  }
+
+  protected void addParameter(final DataType<?> dataType) throws IOException {
+    if (prepared) {
+      builder.append(Serializer.getSerializer(vendor).getPreparedStatementMark(dataType));
+      parameters.add(dataType);
     }
     else {
-      batches = null;
+      builder.append(dataType.serialize(vendor));
     }
   }
 
-  protected Stack<Serializable> getCaller() {
-    return callStack;
-  }
+  protected ResultSet executeQuery(final Connection connection) throws SQLException {
+    if (prepared) {
+      final PreparedStatement statement = connection.prepareStatement(builder.toString());
+      for (int i = 0; i < parameters.size(); i++)
+        parameters.get(i).get(statement, i + 1);
 
-  protected DBVendor getVendor() {
-    return vendor;
-  }
-
-  protected Serializer getSerializer(final Serializable serializable) {
-    return Serializer.getSerializer(vendor);
-  }
-
-  protected void addCaller(final Serializable serializable) {
-    if (callStack.empty() || callStack.peek() != serializable)
-      callStack.add(serializable);
-  }
-
-  public Class<?> getType() {
-    return type;
-  }
-
-  protected void addParameter(final Variable<?> parameter) {
-    if (parameter == null)
-      throw new IllegalArgumentException("parameter cannot be null");
-
-    current.add(parameter);
-  }
-
-  public StringBuilder append(final CharSequence sql) {
-    return this.sql.append(sql);
-  }
-
-  protected void addBatch() {
-    sqls.add(sql.toString());
-    sql.setLength(0);
-    if (statementType == PreparedStatement.class)
-      batches.add(current = new ArrayList<Variable<?>>());
-  }
-
-  protected final ResultSet executeQuery(final Connection connection) throws SQLException {
-    if (statementType == PreparedStatement.class) {
-      final PreparedStatement statement = connection.prepareStatement(sql.toString());
-      set(statement, current);
       return statement.executeQuery();
     }
 
     final Statement statement = connection.createStatement();
-    return statement.executeQuery(sql.toString());
-  }
-
-  protected int[] executeUpdate(final Connection connection) throws SQLException {
-    sqls.add(sql.toString());
-    final int[] counts = new int[sqls.size()];
-    boolean batching = false;
-    String lastSQL = null;
-    if (statementType == PreparedStatement.class) {
-      PreparedStatement statement = null;
-      String sql = null;
-      List<? extends Variable<?>> parameters = null;
-      for (int i = 0;; i++) {
-        if (i < sqls.size()) {
-          sql = sqls.get(i);
-          parameters = batches.get(i);
-          if (sql.equals(lastSQL)) {
-            statement.addBatch();
-            set(statement, parameters);
-            batching = true;
-            continue;
-          }
-        }
-
-        if (batching) {
-          final int[] batchCounts = statement.executeBatch();
-          statement.close();
-          System.arraycopy(batchCounts, 0, counts, i - batchCounts.length - 1, batchCounts.length);
-          batching = false;
-        }
-        else if (statement != null) {
-          counts[i - 1] = statement.executeUpdate();
-          statement.close();
-        }
-
-        if (i == sqls.size())
-          break;
-
-        statement = connection.prepareStatement(sql);
-        set(statement, parameters);
-      }
-
-      return counts;
-    }
-
-    try (final Statement statement = connection.createStatement()) {
-      if (sqls.size() == 1)
-        return new int[] {statement.executeUpdate(sql.toString())};
-
-      if (connection.getMetaData().supportsBatchUpdates()) {
-        for (final String sql : sqls)
-          statement.addBatch(sql);
-
-        return statement.executeBatch();
-      }
-
-      for (int i = 0; i < sqls.size(); i++)
-        counts[i] = statement.executeUpdate(sqls.get(i));
-
-      return counts;
-    }
-  }
-
-  private static PreparedStatement set(final PreparedStatement statement, final List<? extends Variable<?>> parameters) throws SQLException {
-    for (int i = 0; i < parameters.size(); i++)
-      parameters.get(i).get(statement, i + 1);
-
-    return statement;
+    return statement.executeQuery(builder.toString());
   }
 }

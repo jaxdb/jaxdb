@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,16 +14,28 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import org.safris.xdb.entities.Delete.DELETE;
+import org.safris.xdb.entities.Delete.WHERE;
 
-import org.safris.xdb.entities.RowIterator;
-import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Transaction;
+public class DeleteCommand extends Command {
+  private DELETE delete;
+  private WHERE where;
 
-public interface ExecuteQuery<T extends Subject<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  public DELETE delete() {
+    return delete;
+  }
+
+  public void add(final DELETE delete) {
+    this.delete = delete;
+  }
+
+  public WHERE where() {
+    return where;
+  }
+
+  public void add(final WHERE where) {
+    this.where = where;
+  }
 }

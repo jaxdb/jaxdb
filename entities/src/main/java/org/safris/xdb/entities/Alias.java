@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -18,31 +18,13 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.commons.lang.Strings;
 
-final class NumericFunction<T extends Number> extends Expression<T> {
-  protected final String function;
-  protected final DataType<T> a;
-  protected final DataType<?> b;
+public final class Alias extends Serializable {
+  protected final String name;
 
-  protected NumericFunction(final String function, final DataType<T> a, final Numeric<?> b) {
-    this.function = function;
-    this.a = a;
-    this.b = b;
-  }
-
-  protected NumericFunction(final String function, final DataType<T> a, final Number b) {
-    this.function = function;
-    this.a = a;
-    this.b = DataType.wrap(b);
-  }
-
-  protected NumericFunction(final String function, final DataType<T> dataType) {
-    this(function, dataType, (Numeric<?>)null);
-  }
-
-  protected NumericFunction(final String function) {
-    this(function, null, (Numeric<?>)null);
+  public Alias(final int index) {
+    this.name = Strings.getAlpha(index);
   }
 
   @Override

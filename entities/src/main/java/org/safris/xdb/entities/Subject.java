@@ -16,43 +16,5 @@
 
 package org.safris.xdb.entities;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.safris.commons.lang.Strings;
-
 public abstract class Subject<T> extends Serializable {
-  // This is implemented as a ThreadLocal variable, because of one main reason:
-  // The CQL query construct crosses into static space when applying Condition(s),
-  // such as AND, OR, EQ, etc. A ThreadLocal reference to the aliases list works,
-  // because the CQL query is rendered immediately upon construct. As it is
-  // guaranteed to run linearly in a single thread, a ThreadLocal variable fits.
-  private static final ThreadLocal<List<Subject<?>>> aliases = new ThreadLocal<List<Subject<?>>>() {
-    @Override
-    protected List<Subject<?>> initialValue() {
-      return new ArrayList<Subject<?>>();
-    }
-  };
-
-  protected static String subjectAlias(final Subject<?> subject, final boolean register) {
-    final List<Subject<?>> list = aliases.get();
-    int i;
-    for (i = 0; i < list.size(); i++)
-      if (list.get(i) == subject)
-        return Strings.getAlpha(i);
-
-    if (!register)
-      return null;
-
-    list.add(subject);
-    return Strings.getAlpha(i);
-  }
-
-  protected static <B>Object columnRef(final Variable<B> variable) {
-    return subjectAlias(variable.owner(), false) == null ? variable.get() : variable;
-  }
-
-  protected static void clearAliases() {
-    aliases.get().clear();
-  }
 }

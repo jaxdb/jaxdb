@@ -16,18 +16,35 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Temporal;
+import java.io.IOException;
 
-final class TemporalExpression<T extends Temporal<?>> extends Expression<T> {
+import org.safris.xdb.entities.data.Temporal;
+
+final class TemporalExpression<T extends java.time.temporal.Temporal> extends Expression<T> {
   protected final Operator<NumericExpression<?>> operator;
-  protected final Object a;
-  protected final Object b;
-  protected final Object[] args;
+  protected final Serializable a;
+  protected final Serializable b;
 
-  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Object a, final Object b, final Object ... args) {
+  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final Temporal<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
-    this.args = args;
+  }
+
+  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final Interval b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = DataType.wrap(b);
+  }
+
+  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final java.time.temporal.Temporal b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = DataType.wrap(b);
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

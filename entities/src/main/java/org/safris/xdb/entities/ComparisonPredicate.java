@@ -16,25 +16,53 @@
 
 package org.safris.xdb.entities;
 
-final class ComparisonPredicate<T> extends Predicate<T> {
-  private final Operator<ComparisonPredicate<?>> operator;
-  private final Object a;
-  private final Object b;
+import java.io.IOException;
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final Object a, final Object b) {
+import org.safris.xdb.entities.spec.select;
+
+final class ComparisonPredicate<T> extends Predicate<T> {
+  protected final Operator<ComparisonPredicate<?>> operator;
+  protected final Serializable a;
+  protected final Serializable b;
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final DataType<?> b) {
+    this.operator = operator;
+    this.a = (Serializable)a;
+    this.b = b;
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final T b) {
+    this.operator = operator;
+    this.a = (Serializable)a;
+    this.b = DataType.wrap(b);
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final select.SELECT<?> b) {
+    this.operator = operator;
+    this.a = DataType.wrap(a);
+    this.b = (Serializable)b;
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final T b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = DataType.wrap(b);
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final DataType<?> b) {
+    this.operator = operator;
+    this.a = DataType.wrap(a);
+    this.b = b;
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final DataType<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    if (a == null)
-      throw new IllegalArgumentException("Left hand side of condition cannot be null");
-
-    format(a, serialization);
-    serialization.append(" ").append(operator).append(" ");
-    format(b, serialization);
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

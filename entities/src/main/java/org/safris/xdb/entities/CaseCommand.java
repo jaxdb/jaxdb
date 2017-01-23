@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,16 +14,38 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import org.safris.xdb.entities.Case.CASE_WHEN;
+import org.safris.xdb.entities.Case.ELSE;
+import org.safris.xdb.entities.Case.THEN;
 
-import org.safris.xdb.entities.RowIterator;
-import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Transaction;
+final class CaseCommand extends Command {
+  private CASE_WHEN<?> caseWhen;
+  private THEN<?> then;
+  private ELSE<?> els;
 
-public interface ExecuteQuery<T extends Subject<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  protected CASE_WHEN<?> caseWhen() {
+    return caseWhen;
+  }
+
+  protected void add(final CASE_WHEN<?> caseWhen) {
+    this.caseWhen = caseWhen;
+  }
+
+  protected THEN<?> then() {
+    return then;
+  }
+
+  protected void add(THEN<?> then) {
+    this.then = then;
+  }
+
+  protected ELSE<?> els() {
+    return els;
+  }
+
+  protected void add(final ELSE<?> els) {
+    this.els = els;
+  }
 }

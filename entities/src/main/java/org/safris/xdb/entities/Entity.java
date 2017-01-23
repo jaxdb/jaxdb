@@ -16,10 +16,12 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 public abstract class Entity extends Subject<Entity> {
   private final boolean wasSelected;
 
-  protected Entity(final boolean wasSelected, final DataType<?>[] dataType, final DataType<?>[] primary) {
+  protected Entity(final boolean wasSelected, final DataType<?>[] column, final DataType<?>[] primary) {
     this.wasSelected = wasSelected;
   }
 
@@ -31,17 +33,18 @@ public abstract class Entity extends Subject<Entity> {
     this.wasSelected = false;
   }
 
-  protected Entity entity() {
-    return null;
-  }
-
-  protected boolean wasSelected() {
+  protected final boolean wasSelected() {
     return wasSelected;
   }
 
   @SuppressWarnings("unchecked")
-  protected Class<? extends Schema> schema() {
+  protected final Class<? extends Schema> schema() {
     return (Class<? extends Schema>)getClass().getEnclosingClass();
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 
   protected abstract String name();

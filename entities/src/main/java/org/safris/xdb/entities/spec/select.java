@@ -20,9 +20,9 @@ import org.safris.xdb.entities.Condition;
 import org.safris.xdb.entities.DML.ALL;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
+import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Variable;
 
 public interface select {
   public interface OFFSET<T extends Subject<?>> extends SELECT<T> {
@@ -37,7 +37,7 @@ public interface select {
   }
 
   public interface _ORDER_BY<T extends Subject<?>> {
-    public ORDER_BY<T> ORDER_BY(final Variable<?> ... column);
+    public ORDER_BY<T> ORDER_BY(final DataType<?> ... column);
   }
 
   public interface ORDER_BY<T extends Subject<?>> extends SELECT<T>, _LIMIT<T> {
@@ -78,7 +78,7 @@ public interface select {
     public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity);
   }
 
-  public interface JOIN<T extends Subject<?>> extends _ON<T> {
+  public interface JOIN<T extends Subject<?>> extends _JOIN<T>, _ON<T> {
   }
 
   public interface _FROM<T extends Subject<?>> {

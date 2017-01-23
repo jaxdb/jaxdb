@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -23,24 +24,29 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.delete;
 import org.safris.xdb.schema.DBVendor;
 
-final class Delete {
+final class Delete implements SQLStatement {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
     protected Execute(final Keyword<DataType<?>> parent) {
       super(parent);
     }
 
     @Override
-    public int[] execute(final Transaction transaction) throws SQLException {
+    public int[] execute(final Transaction transaction) throws IOException, SQLException {
       final Keyword<?> delete = getParentRoot(this);
       final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
-        serialize(serialization);
-        Subject.clearAliases();
-        final int[] count = serialization.executeUpdate(connection);
+        final Serialization serialization = null;
+        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+        final DeleteCommand command = (DeleteCommand)normalize();
+        serializer.serialize(command.delete(), command, serialization);
+        serializer.serialize(command.where(), command, serialization);
+
+//        final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
+//        serialize(serialization);
+        final int[] count = null;//serialization.executeUpdate(connection);
         if (transaction == null)
           connection.close();
 
@@ -52,7 +58,7 @@ final class Delete {
     }
 
     @Override
-    public int[] execute() throws SQLException {
+    public int[] execute() throws IOException, SQLException {
       return execute(null);
     }
   }
@@ -63,6 +69,18 @@ final class Delete {
     protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final DeleteCommand command = (DeleteCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (DeleteCommand)normalize(), serialization);
     }
   }
 
@@ -77,6 +95,18 @@ final class Delete {
     @Override
     public WHERE WHERE(final Condition<?> condition) {
       return new WHERE(this, condition);
+    }
+
+    @Override
+    protected final Command normalize() {
+      final DeleteCommand command = (DeleteCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (DeleteCommand)normalize(), serialization);
     }
   }
 }

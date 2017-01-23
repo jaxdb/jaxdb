@@ -16,9 +16,9 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Temporal;
+import java.io.IOException;
 
-final class TemporalFunction<T extends Temporal<?>> extends Expression<T> {
+final class TemporalFunction<T extends java.time.temporal.Temporal> extends Expression<T> {
   protected final String function;
 
   protected TemporalFunction(final String function) {
@@ -26,9 +26,7 @@ final class TemporalFunction<T extends Temporal<?>> extends Expression<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    serialization.append(function).append("(");
-    serialization.append(")");
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

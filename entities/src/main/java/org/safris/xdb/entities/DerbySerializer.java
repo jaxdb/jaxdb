@@ -16,15 +16,13 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.safris.xdb.entities.Select.FROM;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
-import org.safris.xdb.entities.binding.Interval;
-import org.safris.xdb.entities.datatype.Numeric;
 import org.safris.xdb.schema.DBVendor;
 
 final class DerbySerializer extends Serializer {
@@ -40,38 +38,35 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected <T extends Numeric<?>>void serialize(final NumericExpression<T> serializable, final Serialization serialization) {
+  protected void serialize(final NumericExpression<?> serializable, final Serialization serialization) throws IOException {
     serialization.append("(");
-    Keyword.format(serializable.a, serialization);
+    serializable.a.serialize(serialization);
     serialization.append(" ").append(serializable.operator.toString()).append(" ");
-    Keyword.format(serializable.b, serialization);
+    serializable.b.serialize(serialization);
     for (int i = 0; i < serializable.args.length; i++) {
-      final Object arg = serializable.args[i];
-      if (arg instanceof Interval)
+      final Serializable arg = serializable.args[i];
+      if (arg instanceof Interval) // FIXME: This needs to go to TemporalExpression serializer
         throw new UnsupportedOperationException("Derby does not support INTERVAL: https://db.apache.org/derby/docs/10.8/ref/rrefsql9241891.html");
 
       serialization.append(" ").append(serializable.operator.toString()).append(" ");
-      Keyword.format(arg, serialization);
+      arg.serialize(serialization);
     }
     serialization.append(")");
   }
 
   @Override
+  protected void serialize(final Select.GROUP_BY<?> serializable, final SelectCommand command, final Serialization serialization) throws IOException {
+    serializable.subjects.addAll(command.select().getEntitiesWithOwners());
+    super.serialize(serializable, command, serialization);
+  }
+
+  @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected <T extends Subject<?>>void serialize(final Select.HAVING<T> serializable, final Serialization serialization) {
+  protected void serialize(final Select.HAVING<?> serializable, final SelectCommand command, final Serialization serialization) throws IOException {
     final SELECT<?> select = (SELECT<?>)Keyword.getParentRoot(serializable.parent());
-    if (serializable.parent() instanceof FROM) {
-      final GROUP_BY<T> groupBy = new GROUP_BY<T>(null, select.getEntitiesWithOwners());
-      serializable.parent().serialize(serialization);
-      groupBy.serialize(serialization);
-    }
-    else if (serializable.parent() instanceof GROUP_BY) {
-      final GROUP_BY groupBy = (GROUP_BY)serializable.parent();
-      groupBy.subjects.addAll(select.getEntitiesWithOwners());
-      serializable.parent().serialize(serialization);
-    }
-    else {
-      throw new UnsupportedOperationException("Unexpected parent to HAVING clause: " + serializable.parent().getClass());
+    if (command.groupBy() == null) {
+      final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());
+      serialize(groupBy, command, serialization);
     }
 
     serialization.append(" HAVING ");
@@ -79,8 +74,9 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected <T extends Subject<?>>void serialize(final Select.LIMIT<T> serializable, final Serialization serialization) {
-    serializable.parent().serialize(serialization);
-    serialization.append(" FETCH FIRST " + serializable.limit + " ROWS ONLY");
+  protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final SelectCommand command, final Serialization serialization) {
+    serialization.append(" FETCH FIRST " + limit.rows + " ROWS ONLY");
+    // TODO
+    throw new UnsupportedOperationException();
   }
 }

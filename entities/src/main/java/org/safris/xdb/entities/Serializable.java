@@ -16,9 +16,8 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 abstract class Serializable {
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    Serializer.serialize(this, serialization);
-  }
+  protected abstract void serialize(final Serialization serialization) throws IOException;
 }

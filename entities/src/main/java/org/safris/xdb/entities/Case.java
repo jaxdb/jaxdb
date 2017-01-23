@@ -16,12 +16,12 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 class Case {
-  protected static abstract class CASE<T extends Subject<?>> extends Provision<T> implements org.safris.xdb.entities.spec.expression.CASE<T> {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.addCaller(this);
-      throw new Error("Have to override this");
+  protected static abstract class CASE<T extends Subject<?>> extends Keyword<T> implements org.safris.xdb.entities.spec.expression.CASE<T> {
+    protected CASE() {
+      super(null);
     }
   }
 
@@ -34,28 +34,32 @@ class Case {
     }
 
     @Override
-    public THEN<T> THEN(final Variable<T> variable) {
-      return new THEN<T>(this, variable);
+    public THEN<T> THEN(final DataType<T> dataType) {
+      return new THEN<T>(this, dataType);
     }
 
     @Override
     public THEN<T> THEN(final T value) {
-      return new THEN<T>(this, Variable.valueOf(value));
+      return new THEN<T>(this, DataType.wrap(value));
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.addCaller(this);
-      serialization.append("CASE WHEN ");
-      throw new UnsupportedOperationException("implement this");
-      //serialize(condition, serialization);
+    protected final Command normalize() {
+      final CaseCommand command = (CaseCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
     }
   }
 
   protected static final class THEN<T extends Subject<?>> extends Keyword<T> implements org.safris.xdb.entities.spec.expression.THEN<T> {
-    private final Variable<T> value;
+    private final DataType<T> value;
 
-    protected THEN(final Keyword<T> parent, final Variable<T> value) {
+    protected THEN(final Keyword<T> parent, final DataType<T> value) {
       super(parent);
       this.value = value;
     }
@@ -67,39 +71,45 @@ class Case {
     }
 
     @Override
-    public ELSE<T> ELSE(final Variable<T> variable) {
-      return new ELSE<T>(this, variable);
+    public ELSE<T> ELSE(final DataType<T> dataType) {
+      return new ELSE<T>(this, dataType);
     }
 
     @Override
     public ELSE<T> ELSE(final T value) {
-      return new ELSE<T>(this, Variable.valueOf(value));
+      return new ELSE<T>(this, DataType.wrap(value));
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.addCaller(this);
-      //serialize(parent, serialization);
-      serialization.append(" THEN ");
-      value.serialize(serialization);
-      throw new UnsupportedOperationException("implement this");
+    protected final Command normalize() {
+      final CaseCommand command = (CaseCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
     }
   }
 
   protected static final class ELSE<T extends Subject<?>> extends CASE<T> implements org.safris.xdb.entities.spec.expression.ELSE<T> {
-    private final Variable<T> value;
+    private final DataType<T> value;
 
-    protected ELSE(final THEN<T> parent, final Variable<T> value) {
+    protected ELSE(final THEN<T> parent, final DataType<T> value) {
       this.value = value;
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.addCaller(this);
-//      serialize(parent, serialization);
-      serialization.append(" ELSE ");
-      value.serialize(serialization);
-      throw new UnsupportedOperationException("implement this");
+    protected final Command normalize() {
+      final CaseCommand command = (CaseCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected final void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, (CaseCommand)normalize(), serialization);
     }
   }
 

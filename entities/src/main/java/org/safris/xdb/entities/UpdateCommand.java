@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,16 +14,38 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import org.safris.xdb.entities.Update.SET;
+import org.safris.xdb.entities.Update.UPDATE;
+import org.safris.xdb.entities.Update.WHERE;
 
-import org.safris.xdb.entities.RowIterator;
-import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Transaction;
+public class UpdateCommand extends Command {
+  private UPDATE update;
+  private SET set;
+  private WHERE where;
 
-public interface ExecuteQuery<T extends Subject<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  public UPDATE update() {
+    return update;
+  }
+
+  public void add(final UPDATE update) {
+    this.update = update;
+  }
+
+  public SET set() {
+    return set;
+  }
+
+  public void add(final SET set) {
+    this.set = set;
+  }
+
+  public WHERE where() {
+    return where;
+  }
+
+  public void add(final WHERE where) {
+    this.where = where;
+  }
 }

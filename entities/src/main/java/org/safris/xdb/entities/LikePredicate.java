@@ -16,25 +16,21 @@
 
 package org.safris.xdb.entities;
 
-final class LikePredicate extends Predicate<String> {
-  private final boolean positive;
-  private final Variable<String> variable;
-  private final CharSequence pattern;
+import java.io.IOException;
 
-  protected LikePredicate(final boolean positive, final Variable<String> variable, final CharSequence pattern) {
+final class LikePredicate extends Predicate<String> {
+  protected final boolean positive;
+  protected final DataType<String> dataType;
+  protected final CharSequence pattern;
+
+  protected LikePredicate(final boolean positive, final DataType<String> dataType, final CharSequence pattern) {
     this.positive = positive;
-    this.variable = variable;
+    this.dataType = dataType;
     this.pattern = pattern;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    format(variable, serialization);
-    serialization.append(" ");
-    if (!positive)
-      serialization.append("NOT ");
-
-    serialization.append("LIKE").append(" '").append(pattern).append("'");
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

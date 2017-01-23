@@ -16,18 +16,39 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.datatype.Numeric;
+import java.io.IOException;
 
-final class NumericExpression<T extends Numeric<?>> extends Expression<T> {
+import org.safris.xdb.entities.data.Numeric;
+
+final class NumericExpression<T extends Number> extends Expression<T> {
   protected final Operator<NumericExpression<?>> operator;
-  protected final Object a;
-  protected final Object b;
-  protected final Object[] args;
+  protected final Serializable a;
+  protected final Serializable b;
+  protected final Serializable[] args;
 
-  protected NumericExpression(final Operator<NumericExpression<?>> operator, final Object a, final Object b, final Object ... args) {
+  protected NumericExpression(final Operator<NumericExpression<?>> operator, final Numeric<?> a, final Numeric<?> b, final Numeric<?> ... args) {
     this.operator = operator;
     this.a = a;
     this.b = b;
     this.args = args;
+  }
+
+  protected NumericExpression(final Operator<NumericExpression<?>> operator, final Number a, final Numeric<?> b, final Numeric<?> ... args) {
+    this.operator = operator;
+    this.a = DataType.wrap(a);
+    this.b = b;
+    this.args = args;
+  }
+
+  protected NumericExpression(final Operator<NumericExpression<?>> operator, final Numeric<?> a, final Number b, final Numeric<?> ... args) {
+    this.operator = operator;
+    this.a = a;
+    this.b = DataType.wrap(b);
+    this.args = args;
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

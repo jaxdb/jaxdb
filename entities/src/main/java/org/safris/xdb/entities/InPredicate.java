@@ -16,38 +16,30 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 import org.safris.xdb.entities.spec.select;
 
 final class InPredicate<T> extends Predicate<T> {
-  private final boolean positive;
-  private final Variable<T> variable;
-  private final T[] values;
-  private final select.SELECT<? extends Variable<T>> query;
+  protected final boolean positive;
+  protected final DataType<T> dataType;
+  protected final Serializable value;
 
   @SafeVarargs
-  protected InPredicate(final boolean positive, final Variable<T> variable, final T ... values) {
+  protected InPredicate(final boolean positive, final DataType<T> dataType, final T ... values) {
     this.positive = positive;
-    this.variable = variable;
-    this.values = values;
-    this.query = null;
+    this.dataType = dataType;
+    this.value = DataType.wrap(values);
   }
 
-  protected InPredicate(final boolean positive, final Variable<T> variable, final select.SELECT<? extends Variable<T>> query) {
+  protected InPredicate(final boolean positive, final DataType<T> dataType, final select.SELECT<? extends DataType<T>> query) {
     this.positive = positive;
-    this.variable = variable;
-    this.values = null;
-    this.query = query;
+    this.dataType = dataType;
+    this.value = (Serializable)query;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    format(variable, serialization);
-    serialization.append(" ");
-    if (!positive)
-      serialization.append("NOT ");
-
-    serialization.append("IN").append(" ");
-    format(values != null ? values : query, serialization);
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

@@ -16,86 +16,50 @@
 
 package org.safris.xdb.entities;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.lang.reflect.Type;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.sql.SQLException;
 
-import org.safris.commons.lang.PackageLoader;
-import org.safris.commons.lang.reflect.Classes;
-import org.safris.xdb.entities.datatype.Char;
+import org.safris.xdb.entities.data.Array;
+import org.safris.xdb.schema.DBVendor;
 
-public abstract class DataType<T> extends Variable<T> {
-  private static final Map<Type,Method> typeToGetter = new HashMap<Type,Method>();
-  private static final Map<Type,Method> typeToSetter = new HashMap<Type,Method>();
-
-  static {
-    try {
-      final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(Char.class.getPackage());
-      if (classes.size() == 0)
-        throw new ExceptionInInitializerError("No classes found, wrong package?");
-
-      for (final Class<?> cls : classes) {
-        final Method[] methods = cls.getDeclaredMethods();
-        for (final Method method : methods) {
-          if (Modifier.isStatic(method.getModifiers())) {
-            if ("get".equals(method.getName())) {
-              typeToGetter.put(cls == org.safris.xdb.entities.datatype.Enum.class ? Enum.class : Classes.getGenericSuperclasses(cls)[0], method);
-              method.setAccessible(true);
-              continue;
-            }
-
-            if ("set".equals(method.getName())) {
-              final Class<?> parameterType = method.getParameterTypes()[2];
-              typeToSetter.put(cls == org.safris.xdb.entities.datatype.Enum.class ? Enum.class : parameterType, method);
-              method.setAccessible(true);
-              continue;
-            }
-          }
-        }
-      }
-    }
-    catch (final Exception e) {
-      throw new ExceptionInInitializerError(e);
-    }
+public abstract class DataType<T> extends Subject<T> {
+  protected static <T>void setValue(final DataType<T> dataType, final T value) {
+    dataType.value = value;
   }
 
-  protected static <T>boolean canGet(final Class<T> type) {
-    return (type.isEnum() ? typeToGetter.get(Enum.class) : typeToGetter.get(type)) != null;
+  protected static <T>String serialize(final DataType<T> dataType, final DBVendor vendor) throws IOException {
+    return dataType.serialize(vendor);
+  }
+
+  protected static <T>void get(final DataType<T> dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    dataType.get(statement, parameterIndex);
+  }
+
+  protected static <T>void set(final DataType<T> dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    dataType.set(resultSet, columnIndex);
   }
 
   @SuppressWarnings("unchecked")
-  protected static <T>T get(final Class<T> type, final ResultSet resultSet, final int columnIndex) {
+  protected static <T,V extends DataType<T>>V wrap(final T value) {
     try {
-      return type.isEnum() ? (T)typeToGetter.get(Enum.class).invoke(null, resultSet, columnIndex, type) : (T)typeToGetter.get(type).invoke(null, resultSet, columnIndex);
+      return (V)data.typeToClass.get(value.getClass()).newInstance();
     }
     catch (final ReflectiveOperationException e) {
-      throw new RuntimeException(e);
+      throw new UnsupportedOperationException(e);
     }
   }
 
-  protected static <T>boolean canSet(final Class<T> type) {
-    return (type.isEnum() ? typeToSetter.get(Enum.class) : typeToSetter.get(type)) != null;
+  @SuppressWarnings("unchecked")
+  protected static <T>Array<T> wrap(final T[] value) {
+    final Array<T> array = new Array<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
+    array.set(value);
+    return array;
   }
 
-  protected static <T>void set(final PreparedStatement statement, final int parameterIndex, final Class<T> type, final T value) {
-    try {
-      typeToSetter.get(type.isEnum() ? Enum.class : type).invoke(null, statement, parameterIndex, value);
-    }
-    catch (final ReflectiveOperationException e) {
-      throw new RuntimeException(e);
-    }
-  }
-
-  protected final int sqlType;
-  protected final Class<T> type;
-  protected final Entity entity;
-  protected final String specName;
+  protected final int sqlType = getSQLType();
+  protected final Entity owner;
   protected final String name;
   protected final boolean unique;
   protected final boolean primary;
@@ -103,12 +67,9 @@ public abstract class DataType<T> extends Variable<T> {
   protected final GenerateOn<? super T> generateOnInsert;
   protected final GenerateOn<? super T> generateOnUpdate;
 
-  protected DataType(final int sqlType, final Class<T> type, final Entity owner, final String specName, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-    super(_default);
-    this.sqlType = sqlType;
-    this.type = type;
-    this.entity = owner;
-    this.specName = specName;
+  protected DataType(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+    this.value = _default;
+    this.owner = owner;
     this.name = name;
     this.unique = unique;
     this.primary = primary;
@@ -118,44 +79,52 @@ public abstract class DataType<T> extends Variable<T> {
   }
 
   protected DataType(final DataType<T> dataType) {
-    this(dataType.sqlType, dataType.type, dataType.entity, dataType.specName, dataType.name, dataType.get(), dataType.unique, dataType.primary, dataType.nullable, dataType.generateOnInsert, dataType.generateOnUpdate);
+    this(dataType.owner, dataType.name, dataType.get(), dataType.unique, dataType.primary, dataType.nullable, dataType.generateOnInsert, dataType.generateOnUpdate);
   }
 
   protected DataType() {
-    this(0, null, null, null, null, null, false, false, false, null, null);
+    this(null, null, null, false, false, false, null, null);
+  }
+
+  protected T value;
+  protected boolean wasSet;
+
+  public void set(final T value) {
+    this.wasSet = true;
+    this.value = value;
+  }
+
+  public T get() {
+    return value;
+  }
+
+  public boolean wasSet() {
+    return wasSet;
+  }
+
+  private Subject<? super T> wrapper;
+
+  protected final Subject<? super T> wrapper() {
+    return wrapper;
+  }
+
+  protected final void setWrapper(final Subject<? super T> wrapper) {
+    this.wrapper = wrapper;
   }
 
   @Override
-  protected Entity owner() {
-    return entity;
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 
+  protected abstract int getSQLType();
+  protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
+  protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
+  protected abstract String serialize(final DBVendor vendor) throws IOException;
+  protected abstract <V,D extends DataType<V>>D newInstance(final Entity owner);
+
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    if (wrapper != null) {
-      wrapper.serialize(serialization);
-    }
-    else if (serialization.statementType == PreparedStatement.class) {
-      if (Entity.subjectAlias(entity, false) == null) {
-        serialization.addParameter(this);
-        serialization.append(serialization.getSerializer(this).getPreparedStatementMark(this));
-      }
-      else if (serialization.getType() != Select.class) {
-        serialization.append(name);
-      }
-      else {
-        serialization.append(serialize());
-      }
-    }
-    else if (serialization.statementType == Statement.class) {
-      final String alias = Entity.subjectAlias(entity, false);
-      serialization.append(alias == null ? String.valueOf(get()) : serialization.getType() == Select.class ? alias + "." + name : name);
-    }
-    else {
-      throw new UnsupportedOperationException("Unsupported statement type: " + serialization.statementType.getName());
-    }
-  }
+  protected abstract DataType<T> clone();
 
   @Override
   public boolean equals(final Object obj) {
@@ -167,21 +136,5 @@ public abstract class DataType<T> extends Variable<T> {
 
     final T get = get();
     return get != null ? get.equals(((DataType<?>)obj).get()) : ((DataType<?>)obj).get() == null;
-  }
-
-  @Override
-  protected final String serialize() {
-    if (entity != null) {
-      final String alias = Entity.subjectAlias(entity, false);
-      return alias != null ? alias + "." + name : String.valueOf(get());
-    }
-
-    final String alias = Entity.subjectAlias(this, false);
-    return alias != null ? alias : String.valueOf(get());
-  }
-
-  @Override
-  public String toString() {
-    return String.valueOf(get());
   }
 }

@@ -16,19 +16,19 @@
 
 package org.safris.xdb.entities;
 
-final class OrderingSpec<T extends Subject<?>> extends Subject<T> {
-  private final Operator<OrderingSpec<?>> operator;
-  private final Variable<?> variable;
+import java.io.IOException;
 
-  public OrderingSpec(final Operator<OrderingSpec<?>> operator, final Variable<T> variable) {
+final class OrderingSpec<T> extends Subject<T> {
+  protected final Operator<OrderingSpec<?>> operator;
+  protected final DataType<T> dataType;
+
+  public OrderingSpec(final Operator<OrderingSpec<?>> operator, final DataType<T> dataType) {
     this.operator = operator;
-    this.variable = variable;
+    this.dataType = dataType;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    variable.serialize(serialization);
-    serialization.append(" ").append(operator);
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

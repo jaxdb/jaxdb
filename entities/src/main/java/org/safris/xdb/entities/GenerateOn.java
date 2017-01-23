@@ -16,14 +16,15 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.safris.xdb.entities.datatype.Date;
-import org.safris.xdb.entities.datatype.DateTime;
-import org.safris.xdb.entities.datatype.Time;
+import org.safris.xdb.entities.data.Date;
+import org.safris.xdb.entities.data.DateTime;
+import org.safris.xdb.entities.data.Time;
 
 public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
@@ -80,10 +81,10 @@ public abstract class GenerateOn<T> {
     }
 
     @Override
-    public String generateDynamic(final Serialization serialization, final DataType<Temporal> dataType) {
+    public String generateDynamic(final Serialization serialization, final DataType<Temporal> dataType) throws IOException {
       dataType.set(generate(dataType));
       serialization.addParameter(dataType);
-      return serialization.getSerializer(dataType).getPreparedStatementMark(dataType);
+      return serialization.serializer.getPreparedStatementMark(dataType);
     }
   };
 
@@ -104,5 +105,5 @@ public abstract class GenerateOn<T> {
   };
 
   public abstract T generateStatic(final DataType<T> dataType);
-  public abstract String generateDynamic(final Serialization serialization, final DataType<T> dataType);
+  public abstract String generateDynamic(final Serialization serialization, final DataType<T> dataType) throws IOException;
 }

@@ -31,24 +31,24 @@ import java.util.Map;
 import org.safris.commons.jci.CompilationException;
 import org.safris.commons.jci.JavaCompiler;
 import org.safris.commons.lang.ClassLoaders;
+import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Strings;
-import org.safris.commons.lang.reflect.Classes;
 import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
 import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.entities.Schema;
-import org.safris.xdb.entities.datatype.BigInt;
-import org.safris.xdb.entities.datatype.Binary;
-import org.safris.xdb.entities.datatype.Blob;
-import org.safris.xdb.entities.datatype.Char;
-import org.safris.xdb.entities.datatype.Clob;
-import org.safris.xdb.entities.datatype.DateTime;
-import org.safris.xdb.entities.datatype.Decimal;
-import org.safris.xdb.entities.datatype.MediumInt;
-import org.safris.xdb.entities.datatype.SmallInt;
-import org.safris.xdb.entities.datatype.Time;
+import org.safris.xdb.entities.data.BigInt;
+import org.safris.xdb.entities.data.Binary;
+import org.safris.xdb.entities.data.Blob;
+import org.safris.xdb.entities.data.Char;
+import org.safris.xdb.entities.data.Clob;
+import org.safris.xdb.entities.data.DateTime;
+import org.safris.xdb.entities.data.Decimal;
+import org.safris.xdb.entities.data.MediumInt;
+import org.safris.xdb.entities.data.SmallInt;
+import org.safris.xdb.entities.data.Time;
 import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.schema.spec.SQLSpec;
 import org.safris.xdb.xds.xe.$xds_binary;
@@ -91,7 +91,7 @@ public class Generator {
     final String classSimpleName = Strings.toInstanceCase(schema._name$().text());
 
     String code = "package " + pkg + ";\n\n";
-    code += "public final class " + classSimpleName + " extends " + Schema.class.getName() + " {\n";
+    code += "public final class " + classSimpleName + " extends " + Classes.getStrictName(Schema.class) + " {\n";
 
     String tables = "";
     // First create the abstract entities
@@ -106,9 +106,9 @@ public class Generator {
 
     code += tables.substring(2) + "\n\n";
 
-    /*code += "  private " + String.class.getName() + " name = \"" + classSimpleName + "\";\n\n";
+    /*code += "  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
 
-    code += "  public boolean equals(final " + Object.class.getName() + " obj) {\n";
+    code += "  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
     code += "    if (obj == this)\n      return true;\n\n";
     code += "    if (!(obj instanceof " + className + "))\n      return false;\n\n";
     code += "    return name.equals(((" + className + ")obj).name);\n  }\n\n";
@@ -142,7 +142,7 @@ public class Generator {
       final Object _default = getDefault(column);
       GenerateOn<?> generateOnInsert = null;
       GenerateOn<?> generateOnUpdate = null;
-      final Object[] params = new Object[] {THIS, Strings.toInstanceCase(column._name$().text()), column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
+      final Object[] params = new Object[] {THIS, column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
       if (column instanceof $xds_char) {
         final $xds_char type = ($xds_char)column;
         if (!type.xde_generateOnInsert$().isNull() && $xds_char.xde_generateOnInsert$.UUID.text().equals(type.xde_generateOnInsert$().text()))
@@ -181,7 +181,7 @@ public class Generator {
           return new Type(column, MediumInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
         if (noBytes <= 8)
-          return new Type(column, org.safris.xdb.entities.datatype.Long.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+          return new Type(column, org.safris.xdb.entities.data.Long.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
 
         return new Type(column, BigInt.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
@@ -192,12 +192,12 @@ public class Generator {
         final Number min;
         final Number max;
         if (type._double$().text()) {
-          javaType = org.safris.xdb.entities.datatype.Double.class;
+          javaType = org.safris.xdb.entities.data.Double.class;
           min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
           max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
         }
         else {
-          javaType = org.safris.xdb.entities.datatype.Float.class;
+          javaType = org.safris.xdb.entities.data.Float.class;
           min = type._min$().text() != null ? type._min$().text().floatValue() : null;
           max = type._max$().text() != null ? type._max$().text().floatValue() : null;
         }
@@ -220,7 +220,7 @@ public class Generator {
           if ($xds_date.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
-        return new Type(column, org.safris.xdb.entities.datatype.Date.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.entities.data.Date.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xds_time) {
@@ -250,11 +250,11 @@ public class Generator {
       }
 
       if (column instanceof $xds_boolean) {
-        return new Type(column, org.safris.xdb.entities.datatype.Boolean.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.entities.data.Boolean.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xds_enum) {
-        return new Type(column, org.safris.xdb.entities.datatype.Enum.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, org.safris.xdb.entities.data.Enum.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
@@ -293,12 +293,12 @@ public class Generator {
     }
 
     public String getType() {
-      return type.getName() + (type == org.safris.xdb.entities.datatype.Enum.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
+      return Classes.getStrictName(type) + (type == org.safris.xdb.entities.data.Enum.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
     }
 
     @Override
     public String toString() {
-      return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.entities.datatype.Enum.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
+      return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.entities.data.Enum.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
     }
   }
 
@@ -354,7 +354,7 @@ public class Generator {
   }
 
   public static String makeTable(final $xds_table table) {
-    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Entity.class.getName();
+    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(Entity.class);
     String out = "";
     String abs = "";
     if (table._abstract$().text())
@@ -367,29 +367,29 @@ public class Generator {
     out += "  public static" + abs + " class " + entityName + " extends " + ext + " {\n";
     if (!table._abstract$().text()) {
       out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
-      out += "    protected final " + DataType.class.getName() + "<?>[] column;\n";
-      out += "    protected final " + DataType.class.getName() + "<?>[] primary;\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + DataType.class.getName() + "<?>[] column() {\n";
+      out += "    protected final " + Classes.getStrictName(DataType.class) + "<?>[] column;\n";
+      out += "    protected final " + Classes.getStrictName(DataType.class) + "<?>[] primary;\n\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    protected " + Classes.getStrictName(DataType.class) + "<?>[] column() {\n";
       out += "      return column;\n";
       out += "    }\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + DataType.class.getName() + "<?>[] primary() {\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    protected " + Classes.getStrictName(DataType.class) + "<?>[] primary() {\n";
       out += "      return primary;\n";
       out += "    }\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + String.class.getName() + " name() {\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    protected " + Classes.getStrictName(String.class) + " name() {\n";
       out += "      return \"" + table._name$().text() + "\";\n";
       out += "    }\n\n";
-      out += "    @" + Override.class.getName() + "\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
       out += "    protected " + entityName + " newInstance() {\n";
       out += "      return new " + entityName + "(true);\n";
       out += "    }\n\n";
       out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
-      out += "      this(false, new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(false, new " + Classes.getStrictName(DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(DataType.class) + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
       out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected) {\n";
-      out += "      this(wasSelected, new " + DataType.class.getName() + "[" + totalColumnCount + "], new " + DataType.class.getName() + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(wasSelected, new " + Classes.getStrictName(DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(DataType.class) + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
       // Constructor with primary key columns
@@ -432,7 +432,7 @@ public class Generator {
     }
 
     String defs = "";
-    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected, final " + DataType.class.getName() + "<?>[] column, final " + DataType.class.getName() + "<?>[] primary) {\n";
+    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected, final " + Classes.getStrictName(DataType.class) + "<?>[] column, final " + Classes.getStrictName(DataType.class) + "<?>[] primary) {\n";
     out += "      super(wasSelected, column, primary);\n";
     if (!table._abstract$().text()) {
       out += "      this.column = column;\n";
@@ -463,8 +463,8 @@ public class Generator {
     }
 
     out += "\n";
-    out += "    @" + Override.class.getName() + "\n";
-    out += "    public boolean equals(final " + Object.class.getName() + " obj) {\n";
+    out += "    @" + Classes.getStrictName(Override.class) + "\n";
+    out += "    public boolean equals(final " + Classes.getStrictName(Object.class) + " obj) {\n";
     out += "      if (obj == this)\n        return true;\n\n";
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
@@ -492,7 +492,7 @@ public class Generator {
     eq = "";
     if (equalsColumns != null && equalsColumns.size() > 0) {
       out += "\n\n";
-      out += "    @" + Override.class.getName() + "\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
       out += "    public int hashCode() {\n";
       for (final $xds_column column : equalsColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
@@ -501,9 +501,9 @@ public class Generator {
     }
 
     out += "\n\n";
-    out += "    @" + Override.class.getName() + "\n";
-    out += "    public " + String.class.getName() + " toString() {\n";
-    out += "      final " + StringBuilder.class.getName() + " builder = new " + StringBuilder.class.getName() + "(super.toString());\n";
+    out += "    @" + Classes.getStrictName(Override.class) + "\n";
+    out += "    public " + Classes.getStrictName(String.class) + " toString() {\n";
+    out += "      final " + Classes.getStrictName(StringBuilder.class) + " builder = new " + Classes.getStrictName(StringBuilder.class) + "(super.toString());\n";
     out += "      if (builder.charAt(builder.length() - 1) == '}')\n";
     out += "        builder.setLength(builder.length() - 1);\n";
     out += "      else\n";
@@ -550,7 +550,7 @@ public class Generator {
     if (column instanceof $xds_enum)
       rawType = Strings.toTitleCase(column._name$().text());
     else
-      rawType = Classes.getName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
+      rawType = Classes.getStrictName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
 
     return "final " + rawType + " " + columnName;
   }

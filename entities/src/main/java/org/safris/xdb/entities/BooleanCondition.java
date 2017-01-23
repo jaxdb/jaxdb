@@ -16,31 +16,13 @@
 
 package org.safris.xdb.entities;
 
-final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
-  @SuppressWarnings("unchecked")
-  private static <T extends Subject<?>>void formatBraces(final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) {
-    if (condition instanceof ComparisonPredicate || condition instanceof Predicate) {
-      condition.serialize(serialization);
-    }
-    else if (condition instanceof BooleanCondition) {
-      if (operator == ((BooleanCondition<T>)condition).operator) {
-        condition.serialize(serialization);
-      }
-      else {
-        serialization.append("(");
-        condition.serialize(serialization);
-        serialization.append(")");
-      }
-    }
-    else {
-      throw new Error("Unknown condition type: " + condition.getClass().getName());
-    }
-  }
+import java.io.IOException;
 
+final class BooleanCondition<T> extends Condition<T> {
   protected final Operator<BooleanCondition<?>> operator;
-  private final Condition<?> a;
-  private final Condition<?> b;
-  private final Condition<?>[] conditions;
+  protected final Condition<?> a;
+  protected final Condition<?> b;
+  protected final Condition<?>[] conditions;
 
   @SafeVarargs
   protected BooleanCondition(final Operator<BooleanCondition<?>> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
@@ -51,14 +33,7 @@ final class BooleanCondition<T extends Subject<?>> extends Condition<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
-    serialization.addCaller(this);
-    formatBraces(operator, a, serialization);
-    serialization.append(" ").append(operator).append(" ");
-    formatBraces(operator, b, serialization);
-    for (int i = 0; i < conditions.length; i++) {
-      serialization.append(" ").append(operator).append(" ");
-      formatBraces(operator, conditions[i], serialization);
-    }
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }
