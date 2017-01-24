@@ -17,6 +17,8 @@
 package org.safris.xdb.entities;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.Collection;
 
 import org.safris.xdb.entities.spec.select;
 
@@ -30,6 +32,11 @@ final class InPredicate<T> extends Predicate<T> {
     this.positive = positive;
     this.dataType = dataType;
     this.value = DataType.wrap(values);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected InPredicate(final boolean positive, final DataType<T> dataType, final Collection<T> values) {
+    this(positive, dataType, values.toArray((T[])Array.newInstance(dataType.type(), values.size())));
   }
 
   protected InPredicate(final boolean positive, final DataType<T> dataType, final select.SELECT<? extends DataType<T>> query) {

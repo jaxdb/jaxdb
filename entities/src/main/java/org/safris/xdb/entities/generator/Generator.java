@@ -508,8 +508,9 @@ public class Generator {
     out += "        builder.setLength(builder.length() - 1);\n";
     out += "      else\n";
     out += "        builder.append(\" {\\n\");\n\n";
-    for (final $xds_column column : table._column())
-      out += "      builder.append(\"  " + Strings.toInstanceCase(column._name$().text()) + ": \").append(" + Strings.toInstanceCase(column._name$().text()) + ").append(\"\\n\");\n";
+    if (table._column() != null)
+      for (final $xds_column column : table._column())
+        out += "      builder.append(\"  " + Strings.toInstanceCase(column._name$().text()) + ": \").append(" + Strings.toInstanceCase(column._name$().text()) + ").append(\"\\n\");\n";
     out += "      return builder.append('}').toString();";
     out += "\n    }";
 

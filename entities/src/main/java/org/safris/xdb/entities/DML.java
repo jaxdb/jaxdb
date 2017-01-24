@@ -1135,6 +1135,10 @@ public final class DML {
     return new LikePredicate(true, a, b);
   }
 
+  public static <T>Predicate<T> IN(final DataType<T> a, final Collection<T> b) {
+    return new InPredicate<T>(true, a, b);
+  }
+
   @SafeVarargs
   public static <T>Predicate<T> IN(final DataType<T> a, final T ... b) {
     return new InPredicate<T>(true, a, b);

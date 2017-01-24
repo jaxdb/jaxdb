@@ -49,6 +49,8 @@ public final class data {
       final Type type = Classes.getGenericSuperclasses(cls)[0];
       if (type instanceof Class<?>)
         typeToClass.put((Class<?>)type, cls);
+      else
+        System.out.println("XXX");
     }
   }
 
@@ -674,6 +676,11 @@ public final class data {
 
     public Enum(final Class<T> type) {
       this(null, type);
+    }
+
+    @Override
+    protected final Class<T> type() {
+      return type;
     }
 
     @Override

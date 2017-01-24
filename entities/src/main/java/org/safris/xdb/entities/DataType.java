@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.safris.commons.lang.Classes;
 import org.safris.xdb.entities.data.Array;
 import org.safris.xdb.schema.DBVendor;
 
@@ -122,6 +123,13 @@ public abstract class DataType<T> extends Subject<T> {
   @Override
   protected final void serialize(final Serialization serialization) throws IOException {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  }
+
+  private Class<T> type;
+
+  @SuppressWarnings("unchecked")
+  protected Class<T> type() {
+    return type == null ? type = (Class<T>)Classes.getGenericSuperclasses(getClass())[0] : type;
   }
 
   protected abstract int sqlType();
