@@ -559,6 +559,17 @@ public abstract class Serializer {
     serialization.append("LIKE").append(" '").append(predicate.pattern).append("'");
   }
 
+  protected <T>void serialize(final BetweenPredicate<T> predicate, final Serialization serialization) throws IOException {
+    predicate.dataType.serialize(serialization);
+    if (!predicate.positive)
+      serialization.append(" NOT ");
+
+    serialization.append(" BETWEEN ");
+    predicate.a.serialize(serialization);
+    serialization.append(" AND ");
+    predicate.b.serialize(serialization);
+  }
+
   protected <T>void serialize(final NullPredicate<T> predicate, final Serialization serialization) throws IOException {
     predicate.dataType.serialize(serialization);
     serialization.append(" IS ");
@@ -601,7 +612,7 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final GeneralSetFunction<?> function, final Serialization serialization) throws IOException {
+  protected void serialize(final SetFunction<?> function, final Serialization serialization) throws IOException {
     serialization.append(function.function).append("(");
     if (function.a != null) {
       if (function.qualifier != null) {

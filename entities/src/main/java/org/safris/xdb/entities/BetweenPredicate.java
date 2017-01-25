@@ -18,23 +18,17 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.DML.SetQualifier;
-
-final class GeneralSetFunction<T> extends Expression<T> {
-  protected final String function;
-  protected final DML.SetQualifier qualifier;
-  protected final Subject<?> a;
+final class BetweenPredicate<T> extends Predicate<T> {
+  protected final boolean positive;
+  protected final DataType<?> dataType;
+  protected final DataType<?> a;
   protected final DataType<?> b;
 
-  protected GeneralSetFunction(final String function, final SetQualifier qualifier, final Subject<?> subject) {
-    this.function = function;
-    this.qualifier = qualifier;
-    this.a = subject;
-    this.b = null;
-  }
-
-  protected GeneralSetFunction(final String function, final Subject<?> subject) {
-    this(function, (DML.SetQualifier)null, subject);
+  protected BetweenPredicate(final boolean positive, final DataType<?> dataType, final DataType<?> a, final DataType<?> b) {
+    this.positive = positive;
+    this.dataType = dataType;
+    this.a = a;
+    this.b = b;
   }
 
   @Override

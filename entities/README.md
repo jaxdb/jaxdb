@@ -198,6 +198,99 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 * Inner statements are currently not implemented.
 * MySQL, PostgreSQL, and Derby are the only vendors currently supported by **xdb-entities**. However, as the vendor-specific facets of the DML have been abstracted, support for any other vendor can be added hastily.
 
+### Class Diagram
+
+![PlantUML model](http://www.plantuml.com/plantuml/svg/ZPHBafim48RtEeKlC3V8XXWveS9Wne95bZ9qY18XKPAO6L8vVCI0UKYoAnlJ_VtzqAFbYbEj3mGKevpzeLSE2DqyK8TFVv-U3Z6ewx12JtyUo4lwGC-bDes2VH3QzfpY8iwe3l2ZR5igQZH_9qY0GsM2KY8qgB1KTZKr49HYMt2L_5Kame1wfJmWdJjGr4WLa4X__MNNQRSx6VDEzTu_gzfcYePqKA6jCuUJOu36sE9T6VpUAT2QIO5MytQ6lJ2dNbGcf6PzQujN3_89tCycPbpOW-G2saugolyZP6dYx4mOPWOqVIRKW1XF7MedDAQ65aDdv_XcpOUe51qSzfarzbezAAZo8hcykaXA3bGuzFYJAXVvkTQ302fOws6eM6kdpg6o7v_g7cBHjmuwSKdT_QLID0vwXfhrhNyKn7RcFlvOPc3OSoLVsSVreiMS1omgoakKUhpudcCq_inlBClmPUEd-5Hit4lovUlMFvLfkd7BB3bdNWixkI-zNUSFDlthhDuy5xQ6J-E454bsBBnots1uayeEtMpCLnmHl2S4fzYcxrYI4NnnM9d7KU7anZRNChVrKOgQJOzZCNUZk0OuUgxi1LVZpA75d3F1l068DS3HyJlJHj-La_kPAViDTyMivtn1_m00)
+<!--
+@startuml
+class Serializable
+
+Serializer <|-- DerbySerializer
+Serializer <|-- MySQLSerializer
+Serializer <|-- PostgreSQLSerializer
+
+Serializable <|-- Alias
+Serializable <|-- Command
+Command <|-- SelectCommand
+Command <|-- InsertCommand
+Command <|-- UpdateCommand
+Command <|-- DeleteCommand
+Serializable <|-- Interval
+Serializable <|-- Operator
+Serializable <|-- Subject
+
+Subject <|-- As
+Subject <|-- OrderingSpec
+OrderingSpec <|-- ASC
+OrderingSpec <|-- DESC
+Subject <|-- Expression
+Expression <|-- CountFunction
+Expression <|-- NumericExpression
+Expression <|-- SetFunction
+Expression <|-- StringExpression
+Expression <|-- TemporalExpression
+Expression <|-- TemporalFunction
+
+Subject <|-- Entity
+Entity <|-- generated
+
+Subject <|-- DataType
+
+DataType <|-- Array
+DataType <|-- BigInt
+DataType <|-- Binary
+DataType <|-- Blob
+DataType <|-- Boolean
+DataType <|-- Char
+DataType <|-- Clob
+DataType <|-- Date
+DataType <|-- DateTime
+DataType <|-- Decimal
+DataType <|-- Double
+DataType <|-- Enum
+DataType <|-- Float
+DataType <|-- Long
+DataType <|-- MediumInt
+DataType <|-- SmallInt
+DataType <|-- Time
+
+Serializable <|-- Provision
+
+Provision <|-- NATURAL
+
+Provision <|-- TYPE
+TYPE <|-- INNER
+TYPE <|-- LEFT
+TYPE <|-- RIGHT
+TYPE <|-- FULL
+TYPE <|-- UNION
+
+Provision <|-- SetQualifier
+
+SetQualifier <|-- ALL
+SetQualifier <|-- DISTINCT
+
+Provision <|-- Keyword
+
+Keyword <|-- CASE
+Keyword <|-- SELECT
+Keyword <|-- INSERT
+Keyword <|-- UPDATE
+Keyword <|-- DELETE
+
+Provision <|-- Condition
+
+Condition <|-- BooleanCondition
+Condition <|-- Predicate
+
+Predicate <|-- BetweenPredicate
+Predicate <|-- ExistsPredicate
+Predicate <|-- InPredicate
+Predicate <|-- LikePredicate
+Predicate <|-- NullPredicate
+@enduml
+-->
+
 ### Dev Status
 
 Specification                                                                                                                                                         |        Derby        |        MySQL        |     PostgreSQL      |
@@ -334,7 +427,7 @@ Specification                                                                   
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="predicate">&lt;predicate&gt;</a>** ::=</samp>                                                                                                        | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
 &ensp;&ensp;<samp>{ [&lt;comparison predicate&gt;](#comparison_predicate) \|</samp>                                                                                   | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;between predicate&gt;](#between_predicate) \|</samp>                                                                               |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;between predicate&gt;](#between_predicate) \|</samp>                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;in predicate&gt;](#in_predicate) \|</samp>                                                                                         | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;like predicate&gt;](#like_predicate) \|</samp>                                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;null predicate&gt;](#null_predicate) \|</samp>                                                                                     | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
@@ -347,10 +440,10 @@ Specification                                                                   
 **<samp><a name="comparison_predicate">&lt;comparison predicate&gt;</a>** ::=</samp>                                                                                  | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
 &ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) { = \| != \| &lt; \| &gt; \| &lt;= \| &gt;= } [&lt;value expression&gt;](#value_expression)</samp>    | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="between_predicate">&lt;between predicate&gt;</a>** ::=</samp>                                                                                        | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                                          |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>BETWEEN [&lt;value expression&gt;](#value_expression) AND [&lt;value expression&gt;](#value_expression)</samp>              |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+**<samp><a name="between_predicate">&lt;between predicate&gt;</a>** ::=</samp>                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>BETWEEN [&lt;value expression&gt;](#value_expression) AND [&lt;value expression&gt;](#value_expression)</samp>              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="in_predicate">&lt;in predicate&gt;</a>** ::=</samp>                                                                                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
@@ -393,7 +486,7 @@ Specification                                                                   
 &ensp;&ensp;<samp>:row_count</samp>                                                                                                                                   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[ OFFSET offset ]</samp>                                                                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 
-### License 
+### License
  
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details. 
 

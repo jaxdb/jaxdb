@@ -560,74 +560,74 @@ public final class DML {
   // DT shall not be character string, bit string, or datetime.
   public static <T extends Number,N extends Numeric<T>>N SUM(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("SUM", dataType));
+    wrapper.setWrapper(new SetFunction<T>("SUM", dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SUM(final DISTINCT distinct, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("SUM", distinct, dataType));
+    wrapper.setWrapper(new SetFunction<T>("SUM", distinct, dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SUM(final ALL all, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("SUM", all, dataType));
+    wrapper.setWrapper(new SetFunction<T>("SUM", all, dataType));
     return wrapper;
   }
 
   // DT shall not be character string, bit string, or datetime.
   public static <T extends Number,N extends Numeric<T>>N AVG(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("AVG", dataType));
+    wrapper.setWrapper(new SetFunction<T>("AVG", dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N AVG(final DISTINCT distinct, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("AVG", distinct, dataType));
+    wrapper.setWrapper(new SetFunction<T>("AVG", distinct, dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N AVG(final ALL all, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("AVG", all, dataType));
+    wrapper.setWrapper(new SetFunction<T>("AVG", all, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MAX", dataType));
+    wrapper.setWrapper(new SetFunction<T>("MAX", dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final DISTINCT distinct, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MAX", distinct, dataType));
+    wrapper.setWrapper(new SetFunction<T>("MAX", distinct, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final ALL all, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MAX", all, dataType));
+    wrapper.setWrapper(new SetFunction<T>("MAX", all, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MIN", dataType));
+    wrapper.setWrapper(new SetFunction<T>("MIN", dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final DISTINCT distinct, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MIN", distinct, dataType));
+    wrapper.setWrapper(new SetFunction<T>("MIN", distinct, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final ALL all, final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new GeneralSetFunction<T>("MIN", all, dataType));
+    wrapper.setWrapper(new SetFunction<T>("MIN", all, dataType));
     return wrapper;
   }
 
@@ -1137,6 +1137,22 @@ public final class DML {
 
   /** Predicate **/
 
+  public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final DataType<T> a, final DataType<T> b) {
+    return new BetweenPredicate<T>(true, dataType, a, b);
+  }
+
+  public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final DataType<T> a, final T b) {
+    return new BetweenPredicate<T>(true, dataType, a, DataType.wrap(b));
+  }
+
+  public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final T a, final DataType<T> b) {
+    return new BetweenPredicate<T>(true, dataType, DataType.wrap(a), b);
+  }
+
+  public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final T a, final T b) {
+    return new BetweenPredicate<T>(true, dataType, DataType.wrap(a), DataType.wrap(b));
+  }
+
   public static Predicate<String> LIKE(final Char a, final CharSequence b) {
     return new LikePredicate(true, a, b);
   }
@@ -1159,6 +1175,22 @@ public final class DML {
   }
 
   public static final class NOT {
+    public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final DataType<T> a, final DataType<T> b) {
+      return new BetweenPredicate<T>(false, dataType, a, b);
+    }
+
+    public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final DataType<T> a, final T b) {
+      return new BetweenPredicate<T>(false, dataType, a, DataType.wrap(b));
+    }
+
+    public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final T a, final DataType<T> b) {
+      return new BetweenPredicate<T>(false, dataType, DataType.wrap(a), b);
+    }
+
+    public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final T a, final T b) {
+      return new BetweenPredicate<T>(false, dataType, DataType.wrap(a), DataType.wrap(b));
+    }
+
     public static Predicate<String> LIKE(final Char a, final String b) {
       return new LikePredicate(false, a, b);
     }
