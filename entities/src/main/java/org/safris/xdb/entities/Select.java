@@ -426,10 +426,18 @@ final class Select extends SQLStatement {
 
   protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
     protected final DataType<?>[] columns;
+    protected final int[] columnNumbers;
 
     protected ORDER_BY(final Keyword<T> parent, final DataType<?> ... columns) {
       super(parent);
       this.columns = columns;
+      this.columnNumbers = null;
+    }
+
+    protected ORDER_BY(final Keyword<T> parent, final int ... columnNumbers) {
+      super(parent);
+      this.columns = null;
+      this.columnNumbers = columnNumbers;
     }
 
     @Override

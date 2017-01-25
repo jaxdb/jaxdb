@@ -211,13 +211,24 @@ public abstract class Serializer {
   protected void serialize(final Select.ORDER_BY<?> orderBy, final Serialization serialization) throws IOException {
     if (orderBy != null) {
       serialization.append(" ORDER BY ");
-      for (int i = 0; i < orderBy.columns.length; i++) {
-        final DataType<?> dataType = orderBy.columns[i];
-        if (i > 0)
-          serialization.append(", ");
+      if (orderBy.columns != null) {
+        for (int i = 0; i < orderBy.columns.length; i++) {
+          final DataType<?> dataType = orderBy.columns[i];
+          if (i > 0)
+            serialization.append(", ");
 
-        serialization.registerAlias(dataType.owner);
-        dataType.serialize(serialization);
+          serialization.registerAlias(dataType.owner);
+          dataType.serialize(serialization);
+        }
+      }
+      else {
+        for (int i = 0; i < orderBy.columnNumbers.length; i++) {
+          final int columnNumber = orderBy.columnNumbers[i];
+          if (i > 0)
+            serialization.append(", ");
+
+          serialization.append(String.valueOf(columnNumber));
+        }
       }
     }
   }
