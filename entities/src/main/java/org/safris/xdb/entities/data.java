@@ -82,12 +82,17 @@ public final class data {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      DataType.get(dataType, statement, parameterIndex);
+      if (value == null)
+        statement.setNull(parameterIndex, Types.ARRAY);
+      else
+        statement.setArray(parameterIndex, new SQLArray<T>(this));
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      DataType.set(dataType, resultSet, columnIndex);
+      final java.sql.Array array = resultSet.getArray(columnIndex);
+      set((T[])array.getArray());
     }
 
     @Override

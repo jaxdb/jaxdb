@@ -16,11 +16,13 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 import org.safris.xdb.entities.Update.SET;
 import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.Update.WHERE;
 
-public class UpdateCommand extends Command {
+final class UpdateCommand extends Command {
   private UPDATE update;
   private SET set;
   private WHERE where;
@@ -47,5 +49,9 @@ public class UpdateCommand extends Command {
 
   public void add(final WHERE where) {
     this.where = where;
+  }
+
+  @Override
+  protected void serialize(final Serialization serialization) throws IOException {
   }
 }

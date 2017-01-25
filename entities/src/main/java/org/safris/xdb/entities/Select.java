@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,7 +39,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Select implements SQLStatement {
+final class Select extends SQLStatement {
   private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
@@ -162,18 +163,19 @@ final class Select implements SQLStatement {
 
     @Override
     public T AS(final T as) {
+      final Command command = normalize();
+      as.setWrapper(new As<T>(command, as));
+      return as;
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final select.SELECT<T> union) {
       // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public select.SELECT<T> UNION(final select.SELECT<T> as) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> union) {
       // TODO:
       throw new UnsupportedOperationException();
     }
@@ -187,26 +189,14 @@ final class Select implements SQLStatement {
     public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
       final SelectCommand command = (SelectCommand)normalize();
 
-      final Class<? extends Schema> schema = command.from().tables[0].schema();
+      // FIXME: This means that there MUST BE a FROM clause
+      final Class<? extends Schema> schema = command.from().tables.iterator().next().schema();
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(Select.class, vendor, EntityRegistry.getStatementType(schema));
-
-        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-        serializer.assignAliases(command.from(), command, serialization);
-        serializer.serialize(command.select(), command, serialization);
-        serializer.serialize(command.from(), command, serialization);
-        if (command.join() != null)
-          for (int i = 0; i < command.join().size(); i++)
-            serializer.serialize(command.join().get(i), i < command.on().size() ? command.on().get(i) : null, command, serialization);
-
-        serializer.serialize(command.where(), command, serialization);
-        serializer.serialize(command.groupBy(), command, serialization);
-        serializer.serialize(command.having(), command, serialization);
-        serializer.serialize(command.orderBy(), command, serialization);
-        serializer.serialize(command.limit(), command.offset(), command, serialization);
+        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        command.serialize(serialization);
 
         final ResultSet resultSet = serialization.executeQuery(connection);
         return parseResultSet(vendor, connection, resultSet, command.select());
@@ -259,11 +249,15 @@ final class Select implements SQLStatement {
   }
 
   protected static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
-    protected final Entity[] tables;
+    protected final Collection<Entity> tables;
 
-    protected FROM(final Keyword<T> parent, final Entity ... tables) {
+    protected FROM(final Keyword<T> parent, final Collection<Entity> tables) {
       super(parent);
       this.tables = tables;
+    }
+
+    protected FROM(final Keyword<T> parent, final Entity ... tables) {
+      this(parent, Collections.asCollection(ArrayList.class, tables));
     }
 
     @Override
@@ -282,18 +276,23 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected FROM<T> clone(final Keyword<T> parent) {
+      return new FROM<T>(parent, new ArrayList<Entity>(tables));
+    }
   }
 
   protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
-    protected final LinkedHashSet<Subject<?>> subjects;
+    protected final Collection<Subject<?>> subjects;
 
-    protected GROUP_BY(final Keyword<T> parent, final LinkedHashSet<Subject<?>> subjects) {
+    protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
       super(parent);
       this.subjects = subjects;
     }
 
     protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-      this(parent, (LinkedHashSet<Subject<?>>)Collections.asCollection(LinkedHashSet.class, subjects));
+      this(parent, Collections.asCollection(LinkedHashSet.class, subjects));
     }
 
     public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
@@ -315,6 +314,11 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
+    }
+
+    @Override
+    protected GROUP_BY<T> clone(final Keyword<T> parent) {
+      return new GROUP_BY<T>(parent, subjects);
     }
   }
 
@@ -341,6 +345,11 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
+    }
+
+    @Override
+    protected HAVING<T> clone(final Keyword<T> parent) {
+      return new HAVING<T>(parent, condition);
     }
   }
 
@@ -377,6 +386,11 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected JOIN<T> clone(final Keyword<T> parent) {
+      return new JOIN<T>(parent, natural, type, entity);
+    }
   }
 
   protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
@@ -403,6 +417,11 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected ON<T> clone(final Keyword<T> parent) {
+      return new ON<T>(parent, condition);
+    }
   }
 
   protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
@@ -424,21 +443,10 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
-  }
-
-  protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
-    protected final int rows;
-
-    protected OFFSET(final Keyword<T> parent, final int rows) {
-      super(parent);
-      this.rows = rows;
-    }
 
     @Override
-    protected final Command normalize() {
-      final SelectCommand command = (SelectCommand)parent().normalize();
-      command.add(this);
-      return command;
+    protected ORDER_BY<T> clone(final Keyword<T> parent) {
+      return new ORDER_BY<T>(parent, columns);
     }
   }
 
@@ -461,19 +469,64 @@ final class Select implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected LIMIT<T> clone(final Keyword<T> parent) {
+      return new LIMIT<T>(parent, rows);
+    }
   }
+
+  protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
+    protected final int rows;
+
+    protected OFFSET(final Keyword<T> parent, final int rows) {
+      super(parent);
+      this.rows = rows;
+    }
+
+    @Override
+    protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+
+    @Override
+    protected OFFSET<T> clone(final Keyword<T> parent) {
+      return new OFFSET<T>(parent, rows);
+    }
+  }
+
+  protected static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
+    @Override
+    public boolean test(final Subject<?> t) {
+      return (t instanceof DataType) && ((DataType<?>)t).owner == null;
+    }
+  };
 
   protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
     protected final ALL all;
     protected final DISTINCT distinct;
-    protected final LinkedHashSet<T> entities;
+    protected final Collection<T> entities;
 
-    @SafeVarargs
-    public SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
+    public SELECT(final ALL all, final DISTINCT distinct, final Collection<T> entities) {
       super(null);
+      if (entities.size() < 1)
+        throw new IllegalArgumentException("entities.size() < 1");
+
       this.all = all;
       this.distinct = distinct;
-      this.entities = Collections.asCollection(LinkedHashSet.class, entities);
+      this.entities = entities;
+    }
+
+    @SafeVarargs
+    public SELECT(final ALL all, final DISTINCT distinct, final T entity, T ... entities) {
+      this(all, distinct, Collections.asCollection(ArrayList.class, entity));
+      Collections.addAll(this.entities, entities);
+    }
+
+    public SELECT(final ALL all, final DISTINCT distinct, T[] entities) {
+      this(all, distinct, Collections.asCollection(ArrayList.class, entities));
     }
 
     @Override
@@ -488,18 +541,19 @@ final class Select implements SQLStatement {
 
     @Override
     public T AS(final T as) {
+      final Command command = normalize();
+      as.setWrapper(new As<T>(command, as));
+      return as;
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final select.SELECT<T> union) {
       // TODO:
       throw new UnsupportedOperationException();
     }
 
     @Override
-    public select.SELECT<T> UNION(final select.SELECT<T> as) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> as) {
+    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> union) {
       // TODO:
       throw new UnsupportedOperationException();
     }
@@ -509,16 +563,8 @@ final class Select implements SQLStatement {
       return new SelectCommand(this);
     }
 
-    private static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
-      @Override
-      public boolean test(final Subject<?> t) {
-        return (t instanceof DataType) && ((DataType<?>)t).owner == null;
-      }
-    };
-
-    @SuppressWarnings("unchecked")
-    protected LinkedHashSet<T> getEntitiesWithOwners() {
-      final LinkedHashSet<T> clone = (LinkedHashSet<T>)entities.clone();
+    protected ArrayList<T> getEntitiesWithOwners() {
+      final ArrayList<T> clone = Collections.clone(entities);
       clone.removeIf(entitiesWithOwnerPredicate);
       return clone;
     }
@@ -633,6 +679,11 @@ final class Select implements SQLStatement {
       ++mask;
       return Collections.hashCode(entities) ^ mask;
     }
+
+    @Override
+    protected SELECT<T> clone(final Keyword<T> parent) {
+      return new SELECT<T>(all, distinct, entities);
+    }
   }
 
   protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
@@ -663,6 +714,11 @@ final class Select implements SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
+    }
+
+    @Override
+    protected WHERE<T> clone(final Keyword<T> parent) {
+      return new WHERE<T>(parent, condition);
     }
   }
 }

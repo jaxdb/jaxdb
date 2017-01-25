@@ -35,6 +35,7 @@ final class DerbySerializer extends Serializer {
   protected void onRegister(final Connection connection) throws SQLException {
     final Statement statement = connection.createStatement();
     statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.pow'");
+    statement.execute("CREATE FUNCTION ROUND(a DOUBLE) RETURNS BIGINT PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.round'");
   }
 
   @Override
@@ -55,21 +56,23 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final Select.GROUP_BY<?> groupBy, final SelectCommand command, final Serialization serialization) throws IOException {
+  protected void serialize(final Select.GROUP_BY<?> groupBy, final Serialization serialization) throws IOException {
     if (groupBy != null) {
+      final SelectCommand command = (SelectCommand)serialization.command;
       groupBy.subjects.addAll(command.select().getEntitiesWithOwners());
-      super.serialize(groupBy, command, serialization);
+      super.serialize(groupBy, serialization);
     }
   }
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void serialize(final Select.HAVING<?> having, final SelectCommand command, final Serialization serialization) throws IOException {
+  protected void serialize(final Select.HAVING<?> having, final Serialization serialization) throws IOException {
     if (having != null) {
       final SELECT<?> select = (SELECT<?>)Keyword.getParentRoot(having.parent());
+      final SelectCommand command = (SelectCommand)serialization.command;
       if (command.groupBy() == null) {
         final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());
-        serialize(groupBy, command, serialization);
+        serialize(groupBy, serialization);
       }
 
       serialization.append(" HAVING ");
@@ -78,7 +81,7 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final SelectCommand command, final Serialization serialization) {
+  protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Serialization serialization) {
     if (limit != null) {
       if (offset != null)
         serialization.append(" OFFSET ").append(offset.rows).append(" ROWS");

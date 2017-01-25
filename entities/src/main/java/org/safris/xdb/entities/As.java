@@ -19,19 +19,19 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 
 final class As<T> extends Subject<T> {
-  private final DataType<T> parent;
-  private final DataType<? extends T> variable;
+  private final Serializable parent;
+  private final Subject<?> variable;
 
-  public As(final DataType<T> parent, final DataType<? extends T> variable) {
+  public As(final Serializable parent, final Subject<?> variable) {
     this.parent = parent;
     this.variable = variable;
   }
 
-  protected DataType<T> parent() {
+  protected Serializable parent() {
     return parent;
   }
 
-  protected DataType<? extends T> getVariable() {
+  protected Subject<?> getVariable() {
     return variable;
   }
 

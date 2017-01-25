@@ -27,7 +27,7 @@ import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.entities.spec.update;
 import org.safris.xdb.schema.DBVendor;
 
-final class Update implements SQLStatement {
+final class Update extends SQLStatement {
   private static abstract class Execute extends Keyword<DataType<?>> implements update.UPDATE {
     protected Execute(final Keyword<DataType<?>> parent) {
       super(parent);
@@ -50,9 +50,9 @@ final class Update implements SQLStatement {
         final Serialization serialization = null;
         final Serializer serializer = Serializer.getSerializer(serialization.vendor);
         final UpdateCommand command = (UpdateCommand)normalize();
-        serializer.serialize(command.update(), command, serialization);
-        serializer.serialize(command.set(), command, serialization);
-        serializer.serialize(command.where(), command, serialization);
+        serializer.serialize(command.update(), serialization);
+        serializer.serialize(command.set(), serialization);
+        serializer.serialize(command.where(), serialization);
 //        final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
 //        serialize(serialization);
         final int[] count = null;//serialization.executeUpdate(connection);
@@ -114,6 +114,11 @@ final class Update implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected UPDATE clone(final Keyword<DataType<?>> parent) {
+      return new UPDATE(entity);
+    }
   }
 
   protected static final class SET extends UPDATE_SET implements update.SET {
@@ -161,6 +166,11 @@ final class Update implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected Keyword<DataType<?>> clone(Keyword<DataType<?>> parent) {
+      return null;
+    }
   }
 
   protected static final class WHERE extends Execute implements update.UPDATE {
@@ -176,6 +186,11 @@ final class Update implements SQLStatement {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;
+    }
+
+    @Override
+    protected Keyword<DataType<?>> clone(Keyword<DataType<?>> parent) {
+      return null;
     }
   }
 }

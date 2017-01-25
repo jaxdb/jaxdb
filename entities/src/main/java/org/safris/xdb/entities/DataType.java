@@ -34,14 +34,6 @@ public abstract class DataType<T> extends Subject<T> {
     return dataType.serialize(vendor);
   }
 
-  protected static <T>void get(final DataType<T> dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    dataType.get(statement, parameterIndex);
-  }
-
-  protected static <T>void set(final DataType<T> dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    dataType.set(resultSet, columnIndex);
-  }
-
   @SuppressWarnings("unchecked")
   protected static <T,V extends DataType<T>>V wrap(final T value) {
     try {
@@ -56,7 +48,8 @@ public abstract class DataType<T> extends Subject<T> {
 
   @SuppressWarnings("unchecked")
   protected static <T>Array<T> wrap(final T[] value) {
-    final Array<T> array = new Array<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
+    final Class<? extends DataType<T>> dataTypeClass = (Class<? extends DataType<T>>)data.typeToClass.get(value.getClass().getComponentType());
+    final Array<T> array = new Array<T>(dataTypeClass);
     array.set(value);
     return array;
   }
@@ -103,16 +96,6 @@ public abstract class DataType<T> extends Subject<T> {
 
   public boolean wasSet() {
     return wasSet;
-  }
-
-  private Subject<? super T> wrapper;
-
-  protected final Subject<? super T> wrapper() {
-    return wrapper;
-  }
-
-  protected final void setWrapper(final Subject<? super T> wrapper) {
-    this.wrapper = wrapper;
   }
 
   public final <V extends DataType<T>>V AS(final V dataType) {

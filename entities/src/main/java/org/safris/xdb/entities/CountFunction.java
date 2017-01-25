@@ -20,21 +20,21 @@ import java.io.IOException;
 
 import org.safris.xdb.entities.DML.SetQualifier;
 
-final class GeneralSetFunction<T> extends Expression<T> {
-  protected final String function;
-  protected final DML.SetQualifier qualifier;
-  protected final Subject<?> a;
-  protected final DataType<?> b;
+final class CountFunction extends Expression<Long> {
+  protected static final CountFunction STAR  = new CountFunction();
 
-  protected GeneralSetFunction(final String function, final SetQualifier qualifier, final Subject<?> subject) {
-    this.function = function;
+  protected final String function = "COUNT";
+  protected final DML.SetQualifier qualifier;
+  protected final DataType<?> column;
+
+  protected CountFunction(final SetQualifier qualifier, final DataType<?> column) {
     this.qualifier = qualifier;
-    this.a = subject;
-    this.b = null;
+    this.column = column;
   }
 
-  protected GeneralSetFunction(final String function, final Subject<?> subject) {
-    this(function, (DML.SetQualifier)null, subject);
+  private CountFunction() {
+    this.qualifier = null;
+    this.column = null;
   }
 
   @Override

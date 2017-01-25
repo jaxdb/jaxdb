@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import org.safris.xdb.entities.Select.ORDER_BY;
 import org.safris.xdb.entities.Select.SELECT;
 import org.safris.xdb.entities.Select.WHERE;
 
-public final class SelectCommand extends Command {
+final class SelectCommand extends Command {
   private final SELECT<?> select;
   private FROM<?> from;
   private WHERE<?> where;
@@ -130,5 +131,22 @@ public final class SelectCommand extends Command {
 
   protected OFFSET<?> offset() {
     return offset;
+  }
+
+  @Override
+  protected void serialize(final Serialization serialization) throws IOException {
+    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+    serializer.assignAliases(from(), serialization);
+    serializer.serialize(select(), serialization);
+    serializer.serialize(from(), serialization);
+    if (join() != null)
+      for (int i = 0; i < join().size(); i++)
+        serializer.serialize(join().get(i), i < on().size() ? on().get(i) : null, serialization);
+
+    serializer.serialize(where(), serialization);
+    serializer.serialize(groupBy(), serialization);
+    serializer.serialize(having(), serialization);
+    serializer.serialize(orderBy(), serialization);
+    serializer.serialize(limit(), offset(), serialization);
   }
 }

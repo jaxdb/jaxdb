@@ -16,7 +16,9 @@
 
 package org.safris.xdb.entities;
 
-abstract class Keyword<T extends Subject<?>> {
+import java.io.IOException;
+
+abstract class Keyword<T extends Subject<?>> extends Provision<T> {
   protected static Keyword<?> getParentRoot(Keyword<?> keyword) {
     while (keyword.parent() != null)
       keyword = keyword.parent();
@@ -34,5 +36,11 @@ abstract class Keyword<T extends Subject<?>> {
     return parent;
   }
 
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    normalize().serialize(serialization);
+  }
+
   protected abstract Command normalize();
+  protected abstract Keyword<T> clone(final Keyword<T> parent);
 }

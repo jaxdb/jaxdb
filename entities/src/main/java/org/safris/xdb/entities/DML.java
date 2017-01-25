@@ -533,21 +533,27 @@ public final class DML {
   /** Aggregate **/
 
   // FIXME: Need COUNT(*) or COUNT(a.*) or COUNT(a.a)
+  public static org.safris.xdb.entities.data.Long COUNT() {
+    final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
+    wrapper.setWrapper(CountFunction.STAR);
+    return wrapper;
+  }
+
   public static org.safris.xdb.entities.data.Long COUNT(final DataType<?> dataType) {
     final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new GeneralSetFunction<Long>("COUNT", dataType));
+    wrapper.setWrapper(new CountFunction(null, dataType));
     return wrapper;
   }
 
   public static org.safris.xdb.entities.data.Long COUNT(final DISTINCT distinct, final DataType<?> dataType) {
     final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new GeneralSetFunction<Long>("COUNT", distinct, dataType));
+    wrapper.setWrapper(new CountFunction(distinct, dataType));
     return wrapper;
   }
 
   public static org.safris.xdb.entities.data.Long COUNT(final ALL all, final DataType<?> dataType) {
     final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new GeneralSetFunction<Long>("COUNT", all, dataType));
+    wrapper.setWrapper(new CountFunction(all, dataType));
     return wrapper;
   }
 

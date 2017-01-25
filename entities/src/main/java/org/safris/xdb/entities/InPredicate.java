@@ -25,13 +25,15 @@ import org.safris.xdb.entities.spec.select;
 final class InPredicate<T> extends Predicate<T> {
   protected final boolean positive;
   protected final DataType<T> dataType;
-  protected final Serializable value;
+  protected final Serializable[] values;
 
   @SafeVarargs
   protected InPredicate(final boolean positive, final DataType<T> dataType, final T ... values) {
     this.positive = positive;
     this.dataType = dataType;
-    this.value = DataType.wrap(values);
+    this.values = new DataType<?>[values.length];
+    for (int i = 0; i < values.length; i++)
+      this.values[i] = DataType.wrap(values[i]);
   }
 
   @SuppressWarnings("unchecked")
@@ -42,7 +44,7 @@ final class InPredicate<T> extends Predicate<T> {
   protected InPredicate(final boolean positive, final DataType<T> dataType, final select.SELECT<? extends DataType<T>> query) {
     this.positive = positive;
     this.dataType = dataType;
-    this.value = (Serializable)query;
+    this.values = new Serializable[] {(Serializable)query};
   }
 
   @Override

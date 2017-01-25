@@ -93,7 +93,7 @@ public interface select {
 
   public interface SELECT<T extends Subject<?>> extends ExecuteQuery<T> {
     public T AS(final T as);
-    public SELECT<T> UNION(final SELECT<T> as);
-    public SELECT<T> UNION(final ALL all, final SELECT<T> as);
+    public SELECT<T> UNION(final SELECT<T> union);
+    public SELECT<T> UNION(final ALL all, final SELECT<T> union);
   }
 }

@@ -24,7 +24,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.delete;
 import org.safris.xdb.schema.DBVendor;
 
-final class Delete implements SQLStatement {
+final class Delete extends SQLStatement {
   private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
     protected Execute(final Keyword<DataType<?>> parent) {
       super(parent);
@@ -41,8 +41,8 @@ final class Delete implements SQLStatement {
         final Serialization serialization = null;
         final Serializer serializer = Serializer.getSerializer(serialization.vendor);
         final DeleteCommand command = (DeleteCommand)normalize();
-        serializer.serialize(command.delete(), command, serialization);
-        serializer.serialize(command.where(), command, serialization);
+        serializer.serialize(command.delete(), serialization);
+        serializer.serialize(command.where(), serialization);
 
 //        final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
 //        serialize(serialization);
@@ -77,6 +77,11 @@ final class Delete implements SQLStatement {
       command.add(this);
       return command;
     }
+
+    @Override
+    protected WHERE clone(final Keyword<DataType<?>> parent) {
+      return new WHERE(parent, condition);
+    }
   }
 
   protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
@@ -97,6 +102,11 @@ final class Delete implements SQLStatement {
       final DeleteCommand command = (DeleteCommand)parent().normalize();
       command.add(this);
       return command;
+    }
+
+    @Override
+    protected DELETE clone(final Keyword<DataType<?>> parent) {
+      return new DELETE(entity);
     }
   }
 }

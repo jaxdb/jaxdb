@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-abstract class Command {
+abstract class Command extends Serializable {
 }

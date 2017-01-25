@@ -34,12 +34,12 @@ final class Serialization {
   private final List<DataType<?>> parameters = new ArrayList<DataType<?>>();
   private final boolean prepared;
 
-  protected final Class<? extends SQLStatement> sqlStatementType;
+  protected final Command command;
   protected final DBVendor vendor;
   protected final Serializer serializer;
 
-  protected Serialization(final Class<? extends SQLStatement> sqlStatementType, final DBVendor vendor, final Class<? extends Statement> statementType) {
-    this.sqlStatementType = sqlStatementType;
+  protected Serialization(final Command command, final DBVendor vendor, final Class<? extends Statement> statementType) {
+    this.command = command;
     this.vendor = vendor;
     if (!(this.prepared = statementType == PreparedStatement.class) && statementType != Statement.class)
       throw new UnsupportedOperationException("Unsupported statement type: " + statementType.getName());

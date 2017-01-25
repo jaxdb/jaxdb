@@ -16,6 +16,8 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 import org.safris.xdb.entities.Case.CASE_WHEN;
 import org.safris.xdb.entities.Case.ELSE;
 import org.safris.xdb.entities.Case.THEN;
@@ -47,5 +49,9 @@ final class CaseCommand extends Command {
 
   protected void add(final ELSE<?> els) {
     this.els = els;
+  }
+
+  @Override
+  protected void serialize(final Serialization serialization) throws IOException {
   }
 }

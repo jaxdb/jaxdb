@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-public interface SQLStatement {
+public abstract class SQLStatement {
 }

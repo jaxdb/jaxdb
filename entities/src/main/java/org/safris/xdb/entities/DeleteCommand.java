@@ -16,10 +16,12 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 import org.safris.xdb.entities.Delete.DELETE;
 import org.safris.xdb.entities.Delete.WHERE;
 
-public class DeleteCommand extends Command {
+final class DeleteCommand extends Command {
   private DELETE delete;
   private WHERE where;
 
@@ -37,5 +39,9 @@ public class DeleteCommand extends Command {
 
   public void add(final WHERE where) {
     this.where = where;
+  }
+
+  @Override
+  protected void serialize(final Serialization serialization) throws IOException {
   }
 }

@@ -17,4 +17,13 @@
 package org.safris.xdb.entities;
 
 public abstract class Subject<T> extends Serializable {
+  private Serializable wrapper;
+
+  protected final Serializable wrapper() {
+    return wrapper;
+  }
+
+  protected final void setWrapper(final Serializable wrapper) {
+    this.wrapper = wrapper;
+  }
 }

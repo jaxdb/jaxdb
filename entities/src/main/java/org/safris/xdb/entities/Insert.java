@@ -25,7 +25,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.spec.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Insert implements SQLStatement {
+final class Insert extends SQLStatement {
   protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
     protected final T[] entities;
 
@@ -103,6 +103,11 @@ final class Insert implements SQLStatement {
     public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
       // TODO:
       throw new UnsupportedOperationException();
+    }
+
+    @Override
+    protected INSERT<T> clone(final Keyword<Subject<?>> parent) {
+      return new INSERT<T>(entities);
     }
   }
 }
