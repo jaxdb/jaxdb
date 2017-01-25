@@ -1158,9 +1158,13 @@ public final class DML {
     return new ExistsPredicate<T>(subQuery);
   }
 
-  public static class NOT {
+  public static final class NOT {
     public static Predicate<String> LIKE(final Char a, final String b) {
       return new LikePredicate(false, a, b);
+    }
+
+    public static <T>Predicate<T> IN(final DataType<T> a, final Collection<T> b) {
+      return new InPredicate<T>(true, a, b);
     }
 
     @SafeVarargs
@@ -1170,6 +1174,18 @@ public final class DML {
 
     public static <T>Predicate<T> IN(final DataType<T> a, final select.SELECT<? extends DataType<T>> b) {
       return new InPredicate<T>(false, a, b);
+    }
+  }
+
+  public static final class IS {
+    public static final class NOT {
+      public static <T>Predicate<T> NULL(final DataType<T> dataType) {
+        return new NullPredicate<T>(false, dataType);
+      }
+    }
+
+    public static <T>Predicate<T> NULL(final DataType<T> dataType) {
+      return new NullPredicate<T>(true, dataType);
     }
   }
 

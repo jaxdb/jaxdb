@@ -559,6 +559,15 @@ public abstract class Serializer {
     serialization.append("LIKE").append(" '").append(predicate.pattern).append("'");
   }
 
+  protected <T>void serialize(final NullPredicate<T> predicate, final Serialization serialization) throws IOException {
+    predicate.dataType.serialize(serialization);
+    serialization.append(" IS ");
+    if (!predicate.positive)
+      serialization.append("NOT ");
+
+    serialization.append("NULL");
+  }
+
   protected void serialize(final NumericFunction<? extends Number> function, final Serialization serialization) throws IOException {
     serialization.append(function.function).append("(");
     if (function.a != null) {
