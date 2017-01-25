@@ -17,8 +17,8 @@
 package org.safris.xdb.entities;
 
 final class Operator<T extends Serializable> {
-  public static final Operator<BooleanCondition<?>> AND = new Operator<BooleanCondition<?>>("AND");
-  public static final Operator<BooleanCondition<?>> OR = new Operator<BooleanCondition<?>>("OR");
+  public static final Operator<BooleanTerm<?>> AND = new Operator<BooleanTerm<?>>("AND");
+  public static final Operator<BooleanTerm<?>> OR = new Operator<BooleanTerm<?>>("OR");
 
   public static final Operator<ComparisonPredicate<?>> EQ = new Operator<ComparisonPredicate<?>>("=");
   public static final Operator<ComparisonPredicate<?>> LT = new Operator<ComparisonPredicate<?>>("<");

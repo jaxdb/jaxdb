@@ -491,12 +491,12 @@ public abstract class Serializer {
 
   // FIXME: Move this to a Util class or something
   @SuppressWarnings("unchecked")
-  protected static <T extends Subject<?>>void formatBraces(final Operator<BooleanCondition<?>> operator, final Condition<?> condition, final Serialization serialization) throws IOException {
+  protected static <T extends Subject<?>>void formatBraces(final Operator<BooleanTerm<?>> operator, final Condition<?> condition, final Serialization serialization) throws IOException {
     if (condition instanceof ComparisonPredicate || condition instanceof Predicate) {
       condition.serialize(serialization);
     }
-    else if (condition instanceof BooleanCondition) {
-      if (operator == ((BooleanCondition<T>)condition).operator) {
+    else if (condition instanceof BooleanTerm) {
+      if (operator == ((BooleanTerm<T>)condition).operator) {
         condition.serialize(serialization);
       }
       else {
@@ -510,7 +510,7 @@ public abstract class Serializer {
     }
   }
 
-  protected void serialize(final BooleanCondition<?> condition, final Serialization serialization) throws IOException {
+  protected void serialize(final BooleanTerm<?> condition, final Serialization serialization) throws IOException {
     formatBraces(condition.operator, condition.a, serialization);
     serialization.append(" ").append(condition.operator).append(" ");
     formatBraces(condition.operator, condition.b, serialization);
@@ -559,8 +559,16 @@ public abstract class Serializer {
     serialization.append("LIKE").append(" '").append(predicate.pattern).append("'");
   }
 
+  protected void serialize(final QuantifiedComparisonPredicate<?> predicate, final Serialization serialization) throws IOException {
+    serialization.append(predicate.qualifier).append(" (");
+    predicate.subQuery.serialize(serialization);
+    serialization.append(")");
+  }
+
   protected <T>void serialize(final BetweenPredicate<T> predicate, final Serialization serialization) throws IOException {
+    serialization.append("(");
     predicate.dataType.serialize(serialization);
+    serialization.append(")");
     if (!predicate.positive)
       serialization.append(" NOT ");
 

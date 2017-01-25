@@ -104,7 +104,7 @@ public abstract class DataType<T> extends Subject<T> {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) throws IOException {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 

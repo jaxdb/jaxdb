@@ -200,96 +200,8 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Class Diagram
 
-![PlantUML model](http://www.plantuml.com/plantuml/svg/ZPHBafim48RtEeKlC3V8XXWveS9Wne95bZ9qY18XKPAO6L8vVCI0UKYoAnlJ_VtzqAFbYbEj3mGKevpzeLSE2DqyK8TFVv-U3Z6ewx12JtyUo4lwGC-bDes2VH3QzfpY8iwe3l2ZR5igQZH_9qY0GsM2KY8qgB1KTZKr49HYMt2L_5Kame1wfJmWdJjGr4WLa4X__MNNQRSx6VDEzTu_gzfcYePqKA6jCuUJOu36sE9T6VpUAT2QIO5MytQ6lJ2dNbGcf6PzQujN3_89tCycPbpOW-G2saugolyZP6dYx4mOPWOqVIRKW1XF7MedDAQ65aDdv_XcpOUe51qSzfarzbezAAZo8hcykaXA3bGuzFYJAXVvkTQ302fOws6eM6kdpg6o7v_g7cBHjmuwSKdT_QLID0vwXfhrhNyKn7RcFlvOPc3OSoLVsSVreiMS1omgoakKUhpudcCq_inlBClmPUEd-5Hit4lovUlMFvLfkd7BB3bdNWixkI-zNUSFDlthhDuy5xQ6J-E454bsBBnots1uayeEtMpCLnmHl2S4fzYcxrYI4NnnM9d7KU7anZRNChVrKOgQJOzZCNUZk0OuUgxi1LVZpA75d3F1l068DS3HyJlJHj-La_kPAViDTyMivtn1_m00)
-<!--
-@startuml
-class Serializable
-
-Serializer <|-- DerbySerializer
-Serializer <|-- MySQLSerializer
-Serializer <|-- PostgreSQLSerializer
-
-Serializable <|-- Alias
-Serializable <|-- Command
-Command <|-- SelectCommand
-Command <|-- InsertCommand
-Command <|-- UpdateCommand
-Command <|-- DeleteCommand
-Serializable <|-- Interval
-Serializable <|-- Operator
-Serializable <|-- Subject
-
-Subject <|-- As
-Subject <|-- OrderingSpec
-OrderingSpec <|-- ASC
-OrderingSpec <|-- DESC
-Subject <|-- Expression
-Expression <|-- CountFunction
-Expression <|-- NumericExpression
-Expression <|-- SetFunction
-Expression <|-- StringExpression
-Expression <|-- TemporalExpression
-Expression <|-- TemporalFunction
-
-Subject <|-- Entity
-Entity <|-- generated
-
-Subject <|-- DataType
-
-DataType <|-- Array
-DataType <|-- BigInt
-DataType <|-- Binary
-DataType <|-- Blob
-DataType <|-- Boolean
-DataType <|-- Char
-DataType <|-- Clob
-DataType <|-- Date
-DataType <|-- DateTime
-DataType <|-- Decimal
-DataType <|-- Double
-DataType <|-- Enum
-DataType <|-- Float
-DataType <|-- Long
-DataType <|-- MediumInt
-DataType <|-- SmallInt
-DataType <|-- Time
-
-Serializable <|-- Provision
-
-Provision <|-- NATURAL
-
-Provision <|-- TYPE
-TYPE <|-- INNER
-TYPE <|-- LEFT
-TYPE <|-- RIGHT
-TYPE <|-- FULL
-TYPE <|-- UNION
-
-Provision <|-- SetQualifier
-
-SetQualifier <|-- ALL
-SetQualifier <|-- DISTINCT
-
-Provision <|-- Keyword
-
-Keyword <|-- CASE
-Keyword <|-- SELECT
-Keyword <|-- INSERT
-Keyword <|-- UPDATE
-Keyword <|-- DELETE
-
-Provision <|-- Condition
-
-Condition <|-- BooleanCondition
-Condition <|-- Predicate
-
-Predicate <|-- BetweenPredicate
-Predicate <|-- ExistsPredicate
-Predicate <|-- InPredicate
-Predicate <|-- LikePredicate
-Predicate <|-- NullPredicate
-@enduml
--->
+![PlantUML model](http://www.plantuml.com/plantuml/svg/bPHDTfim4CVtdC8NI4_GZMlabbUC7GilifHXGjKAYKeY2NqzV8U0RP24NxE1cTz_PlGrKY6OCIiAcZF1_x2pW2YwUA1Nd_y-FAnYqEVk1Zrzrz77z8v-KCPM6kP1qNJC8MujE3C1lb5rpMGPZVy1KX1GsA2KI0CwB9sQaba8IZ4Ml4d-B19fGRym4P3s3MXcbGv8j3t_n7dYSWTZNAcP-tjTOgQiQ0D5D7N6SBe9q9WWdfKXRuq6OxYIqSsyx64hxRQLXGsfMLjZyU9EFeNbR6hxYTr9pg5kb6RYFqAkWpWhavRRBXf-0wf0zhiEfHCQCylohi4-lbZZ9chDEeTzuHKUgmSbqrwaK6SNAIM0IOTkVZ3j8ZyNFGYWdDSUXeBNs7KELMr_LUUGoBPsq5OevgulLR9oq0vAtjR-Lb0SMVZuVPg1PZzezSBVZpUwccE3hVFJSPrwF7ywaAZ_Z7SioyXnugTacq_SO_BrszJVdj9qufwoP9zvGs3dFhOupsS-l3etR-mBhE7JEA5vacrohzntw5wLngORZV68rvJC2IKfmVGPIp9AZWux7U9rxkJ6c8lC7NgZPCc7ot4rPwru2t31B2m7NIz4uFFNCCsDaWUDFL7qRUeEDb6kvbWVx2l09DNHoHitrYpAoN9cod_1efYrGYoAUAxuQE31bi6rtPM72h_7pYW_zQtoiOJiwMC9TByZ_m00)
+<!-- http://www.plantuml.com/plantuml/uml/bPLDTfim4CVtdC8NI4_GHLmZjxnYx5XuaQKC4rU9aAWaaj3NmtS8s0P9-3KRC_Fxpuo-HlAziKpRfX9H8PWn2mgQCy7_iAE0A3fxe1TV_zxTBMBGn_OAFNtJqeVqXhvJnfuqJ8EYyPXzt59mPW9yfQgAoJ8QlZsa8A2mGIcH1dHOEjGbin2KOYnubVnP9DA2VcKY86rhqCmg7P1eStp6UU9oUsDOgPdwMrrYfZpH6efex0pXT1MWCK4yAKFUQmt6S2MZgtdUmqRQTICB6rApfiBYnOry2lFPr7OJkv6SGrKhpSH_X5m6SLOcBRTjr7zwT0BPxJgKJcZCBClR6lluR0sRg3Lh7VQDd_1OFIYPzYA5Ehf8AG5CEdJrYsaN-RdeGG3blF8m5Bp2hdEeQhghEeL4DfM3ra8nTtsfaYS7RQ3aJULl1SMHXOy_fXbezfrMh_pZUAEBEJJOCZ_ibwd7yySTYRgVuOvb6TcF_9Iiyv6xJxx_6FlhGvgEt4EMR3Dl2EpSXmRd-SJxL-Vg3Ns1DNmQ9pHFibNkbVi9xPlIs7I3CHpnaf8feIGbc3vXIKR9tc67NRpCdTmOSv6vGw-KB7b_EIxcf1Ml0IwOXEMWgva8VFvgfhbHSgUn9ugkJTt1Hih57Eg3VGCOfJewUUV6cbavcSzC-GlCYbaZnAo8vugF1Xvi6LpRJRcly7leZF9BrogVIyWUFvT0jniItOCiyR_v7m00 -->
 
 ### Dev Status
 
@@ -301,9 +213,9 @@ Specification                                                                   
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;select list&gt;](#select_list)</samp>                                                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[ FROM [&lt;table references&gt;](#table_references)</samp>                                                                             | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ [&lt;joined tables&gt;](#joined_tables) ]</samp>                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ WHERE [&lt;where conditions&gt;](#where_conditions) ]</samp>                                                              | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ WHERE [&lt;where conditions&gt;](#where_conditions) ]</samp>                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ GROUP BY [&lt;column names&gt;](#column_names) ]</samp>                                                                   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ HAVING [&lt;having conditions&gt;](#having_conditions) ] ]</samp>                                                         | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ HAVING [&lt;having conditions&gt;](#having_conditions) ] ]</samp>                                                         | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[ ORDER BY [&lt;order expressions&gt;](#order_expressions) ]</samp>                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[ LIMIT [&lt;limit expression&gt;](#limit_expression) ]</samp>                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
@@ -353,25 +265,25 @@ Specification                                                                   
 **<samp><a name="column_names">&lt;column names&gt;</a>** ::=</samp>                                                                                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>:column_name [ , [&lt;column names&gt;](#column_names) ]</samp>                                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="where_conditions">&lt;where conditions&gt;</a>** ::=</samp>                                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;where condition&gt;](#where_condition) [ { OR \| AND } [&lt;where conditions&gt;](#where_conditions) ]</samp>                                  | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="where_conditions">&lt;where conditions&gt;</a>** ::=</samp>                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;where condition&gt;](#where_condition) [ { OR \| AND } [&lt;where conditions&gt;](#where_conditions) ]</samp>                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="where_condition">&lt;where condition&gt;</a>** ::=</samp>                                                                                            | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) [&lt;predicate&gt;](#predicate) [&lt;value expression&gt;](#value_expression)</samp>                  | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="where_condition">&lt;where condition&gt;</a>** ::=</samp>                                                                                            | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) [&lt;predicate&gt;](#predicate) [&lt;value expression&gt;](#value_expression)</samp>                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="having_conditions">&lt;having conditions&gt;</a>** ::=</samp>                                                                                        | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;having condition&gt;](#having_condition) [ { OR \| AND } [&lt;having conditions&gt;](#where_conditions) ]</samp>                               | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="having_conditions">&lt;having conditions&gt;</a>** ::=</samp>                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;having condition&gt;](#having_condition) [ { OR \| AND } [&lt;having conditions&gt;](#where_conditions) ]</samp>                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="having_condition">&lt;having condition&gt;</a>** ::=</samp>                                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>{ [&lt;value expression&gt;](#value_expression) \|</samp>                                                                                           | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;set function&gt;](#set_function) }</samp>                                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;predicate&gt;](#predicate)</samp>                                                                                                  | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;<samp>{ [&lt;value expression&gt;](#value_expression) \|</samp>                                                                               | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;set function&gt;](#set_function) }</samp>                                                                              | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="having_condition">&lt;having condition&gt;</a>** ::=</samp>                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>{ [&lt;value expression&gt;](#value_expression) \|</samp>                                                                                           | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;set function&gt;](#set_function) }</samp>                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;predicate&gt;](#predicate)</samp>                                                                                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;<samp>{ [&lt;value expression&gt;](#value_expression) \|</samp>                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;set function&gt;](#set_function) }</samp>                                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="value_expression">&lt;value expression&gt;</a>** ::=</samp>                                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="value_expression">&lt;value expression&gt;</a>** ::=</samp>                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>{ [&lt;reference value expression&gt;](#reference_value_expression) \|</samp>                                                                       | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) \|</samp>                                                                 | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) \|</samp>                                                                 | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;string value expression&gt;](#string_value_expression) \|</samp>                                                                   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;numeric value expression&gt;](#numeric_value_expression) \|</samp>                                                                 | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;datetime value expression&gt;](#datetime_value_expression) }</samp>                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
@@ -379,15 +291,15 @@ Specification                                                                   
 **<samp><a name="reference_value_expression">&lt;reference value expression&gt;</a>** ::=</samp>                                                                      | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>[ [&lt;table reference&gt;](#table_reference) . ] :column_name</samp>                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="boolean_value_expression">&lt;boolean value expression&gt;</a>** ::=</samp>                                                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                                                      |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+**<samp><a name="boolean_value_expression">&lt;boolean value expression&gt;</a>** ::=</samp>                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                                                      |    :white_circle:   |    :white_circle:   |    :white_circle:   |
 &ensp;&ensp;&ensp;&ensp;<samp>{ { [&lt;reference value expression&gt;](#reference_value_expression) \|</samp>                                                         | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) }</samp>                                          |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ IS</samp>                                                                                                                 |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                  |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>{ TRUE \| FALSE \| UNKNOWN } ]</samp>                                                               |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ { OR \| AND }</samp>                                                                                                      |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) ]</samp>                                          |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) }</samp>                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ IS</samp>                                                                                                                 |    :white_circle:   |    :white_circle:   |    :white_circle:   |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                  |    :white_circle:   |    :white_circle:   |    :white_circle:   |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>{ TRUE \| FALSE \| UNKNOWN } ]</samp>                                                               |    :white_circle:   |    :white_circle:   |    :white_circle:   |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ { OR \| AND }</samp>                                                                                                      | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;boolean value expression&gt;](#boolean_value_expression) ]</samp>                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="numeric_value_expression">&lt;numeric value expression&gt;</a>** ::=</samp>                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>{ :numeric_term \|</samp>                                                                                                                           | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
@@ -425,20 +337,20 @@ Specification                                                                   
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>{ [&lt;datetime value expression&gt;](#datetime_value_expression) \|</samp>                                                 |    :red_circle:     |    :red_circle:     |    :red_circle:     |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>INTERVAL ':numeric_term { MICROS \| MILLIS \| SECONDS \| MINUTES \| HOURS \| DAYS \| WEEKS \| MONTHS \| QUARTERS \| YEARS \| DECADES \| CENTURIES \| MILLENNIA }' } ]</samp> | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="predicate">&lt;predicate&gt;</a>** ::=</samp>                                                                                                        | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>{ [&lt;comparison predicate&gt;](#comparison_predicate) \|</samp>                                                                                   | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="predicate">&lt;predicate&gt;</a>** ::=</samp>                                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>{ [&lt;comparison predicate&gt;](#comparison_predicate) \|</samp>                                                                                   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;between predicate&gt;](#between_predicate) \|</samp>                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;in predicate&gt;](#in_predicate) \|</samp>                                                                                         | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;like predicate&gt;](#like_predicate) \|</samp>                                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;null predicate&gt;](#null_predicate) \|</samp>                                                                                     | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;&ensp;&ensp;<samp>[&lt;quantified comparison predicate&gt;](#quantified_comparison_predicate) \|</samp>                                                   |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;null predicate&gt;](#null_predicate) \|</samp>                                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;<samp>[&lt;quantified comparison predicate&gt;](#quantified_comparison_predicate) \|</samp>                                                   | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[&lt;exists predicate&gt;](#exists_predicate) \|</samp>                                                                                 | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>unique predicate \|</samp>                                                                                                              |    :white_circle:   |    :white_circle:   |    :white_circle:   |
 &ensp;&ensp;&ensp;&ensp;<samp>match predicate \|</samp>                                                                                                               |    :white_circle:   |    :white_circle:   |    :white_circle:   |
 &ensp;&ensp;&ensp;&ensp;<samp>overlaps predicate }</samp>                                                                                                             |    :white_circle:   |    :white_circle:   |    :white_circle:   |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="comparison_predicate">&lt;comparison predicate&gt;</a>** ::=</samp>                                                                                  | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) { = \| != \| &lt; \| &gt; \| &lt;= \| &gt;= } [&lt;value expression&gt;](#value_expression)</samp>    | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="comparison_predicate">&lt;comparison predicate&gt;</a>** ::=</samp>                                                                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) { = \| != \| &lt; \| &gt; \| &lt;= \| &gt;= } [&lt;value expression&gt;](#value_expression)</samp>    | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="between_predicate">&lt;between predicate&gt;</a>** ::=</samp>                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
@@ -451,26 +363,25 @@ Specification                                                                   
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>IN { ( [&lt;value expressions&gt;](#value_expressions) ) \|</samp>                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;query expression&gt;](#query_expression) }</samp>                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="value_expressions">&lt;value expressions&gt;</a>** ::=</samp>                                                                                        | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) [ , [&lt;value expressions&gt;](#value_expressions) ]</samp>                                          | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="value_expressions">&lt;value expressions&gt;</a>** ::=</samp>                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression) [ , [&lt;value expressions&gt;](#value_expressions) ]</samp>                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="like_predicate">&lt;like predicate&gt;</a>** ::=</samp>                                                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>[&lt;string value expression&gt;](#string_value_expression)</samp>                                                                                  | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>LIKE :pattern</samp>                                                                                                        | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="null_predicate">&lt;null predicate&gt;</a>** ::=</samp>                                                                                              | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
-&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="null_predicate">&lt;null predicate&gt;</a>** ::=</samp>                                                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;<samp>[&lt;value expression&gt;](#value_expression)</samp>                                                                                                | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;<samp>IS</samp>                                                                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ NOT ]</samp>                                                                                                              | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>NULL</samp>                                                                                                     | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
-**<samp><a name="quantified_comparison_predicate">&lt;quantified comparison predicate&gt;</a>** ::=</samp>                                                            | :large_blue_circle: | :large_blue_circle: | :large_blue_circle: |
+**<samp><a name="quantified_comparison_predicate">&lt;quantified comparison predicate&gt;</a>** ::=</samp>                                                            | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>[&lt;reference value expression&gt;](#reference_value_expression)</samp>                                                                            | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
-&ensp;&ensp;&ensp;&ensp;<samp>{ = \| != \| &lt; \| &gt; \| &lt;= \| &gt;= }</samp>                                                                                    |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>{ ALL \|</samp>                                                                                                             |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[ SOME \| ANY ] }</samp>                                                                                        |    :red_circle:     |    :red_circle:     |    :red_circle:     |
-&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;query expression&gt;](#query_expression)</samp>                                                |    :red_circle:     |    :red_circle:     |    :red_circle:     |
+&ensp;&ensp;&ensp;&ensp;<samp>{ = \| != \| &lt; \| &gt; \| &lt;= \| &gt;= }</samp>                                                                                    | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>{ ALL \| SOME \| ANY }</samp>                                                                                               | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<samp>[&lt;query expression&gt;](#query_expression)</samp>                                                            | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;                                                                                                                                                                |                     |                     |                     |
 **<samp><a name="exists_predicate">&lt;exists predicate&gt;</a>** ::=</samp>                                                                                          | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |
 &ensp;&ensp;<samp>EXISTS [&lt;query expression&gt;](#query_expression)</samp>                                                                                         | :white_check_mark:  | :white_check_mark:  | :white_check_mark:  |

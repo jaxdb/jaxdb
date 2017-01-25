@@ -709,7 +709,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<? super T> b) {
+  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MOD, a, b));
     return wrapper;
@@ -789,7 +789,7 @@ public final class DML {
     return ADD(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<? super T> b) {
+  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<T> b) {
     final Temporal<T> wrapper = a.newInstance(a.owner);
     wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, b));
     return wrapper;
@@ -881,7 +881,7 @@ public final class DML {
     return SUB(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<? super T> b) {
+  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<T> b) {
     final Temporal<T> wrapper = a.newInstance(a.owner);
     wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, b));
     return wrapper;
@@ -938,68 +938,68 @@ public final class DML {
   /** Condition **/
 
   @SafeVarargs
-  public static <T>BooleanCondition<T> AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    return new BooleanCondition<T>(Operator.AND, a, b, conditions);
+  public static <T>BooleanTerm<T> AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanTerm<T>(Operator.AND, a, b, conditions);
   }
 
-  public static <T>BooleanCondition<T> AND(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>BooleanTerm<T> AND(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanCondition<T>(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm<T>(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>BooleanCondition<T> AND(final Condition<?>[] conditions) {
+  public static <T>BooleanTerm<T> AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanCondition<T>(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm<T>(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>BooleanCondition<T> AND(final Collection<Condition<?>> conditions) {
+  public static <T>BooleanTerm<T> AND(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanCondition<T>(Operator.AND, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm<T>(Operator.AND, array[0], array[1], Arrays.subArray(array, 2));
   }
 
   @SafeVarargs
-  public static <T>BooleanCondition<T> OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    return new BooleanCondition<T>(Operator.OR, a, b, conditions);
+  public static <T>BooleanTerm<T> OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanTerm<T>(Operator.OR, a, b, conditions);
   }
 
-  public static <T>BooleanCondition<T> OR(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>BooleanTerm<T> OR(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanCondition<T>(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm<T>(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>BooleanCondition<T> OR(final Condition<?>[] conditions) {
+  public static <T>BooleanTerm<T> OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanCondition<T>(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm<T>(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>BooleanCondition<T> OR(final Collection<Condition<?>> conditions) {
+  public static <T>BooleanTerm<T> OR(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanCondition<T>(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm<T>(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
@@ -1015,15 +1015,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
@@ -1039,15 +1051,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
@@ -1063,15 +1087,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b);
   }
 
@@ -1087,15 +1123,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
@@ -1111,15 +1159,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final DataType<? super T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final T b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
@@ -1135,7 +1195,51 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
+  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.ALL<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.ANY<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
+  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.SOME<T> b) {
+    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  }
+
   /** Predicate **/
+
+  protected static final class qualified {
+    protected static final class ALL<T> extends QuantifiedComparisonPredicate<T> {
+      protected ALL(select.SELECT<?> subQuery) {
+        super("ALL", subQuery);
+      }
+    }
+
+    protected static final class ANY<T> extends QuantifiedComparisonPredicate<T> {
+      protected ANY(select.SELECT<?> subQuery) {
+        super("ANY", subQuery);
+      }
+    }
+
+    protected static final class SOME<T> extends QuantifiedComparisonPredicate<T> {
+      protected SOME(select.SELECT<?> subQuery) {
+        super("SOME", subQuery);
+      }
+    }
+  }
+
+  public static <T>qualified.ALL<T> ALL(final select.SELECT<?> subQuery) {
+    return new qualified.ALL<T>(subQuery);
+  }
+
+  public static <T>qualified.ANY<T> ANY(final select.SELECT<?> subQuery) {
+    return new qualified.ANY<T>(subQuery);
+  }
+
+  public static <T>qualified.SOME<T> SOME(final select.SELECT<?> subQuery) {
+    return new qualified.SOME<T>(subQuery);
+  }
 
   public static <T>Predicate<T> BETWEEN(final DataType<T> dataType, final DataType<T> a, final DataType<T> b) {
     return new BetweenPredicate<T>(true, dataType, a, b);

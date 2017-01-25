@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -16,5 +16,21 @@
 
 package org.safris.xdb.entities;
 
-abstract class BooleanCondition<T> extends Condition<T> {
+import java.io.IOException;
+
+import org.safris.xdb.entities.spec.select;
+
+class QuantifiedComparisonPredicate<T> extends Predicate<T> {
+  protected final String qualifier;
+  protected final Serializable subQuery;
+
+  protected QuantifiedComparisonPredicate(final String qualifier, final select.SELECT<?> subQuery) {
+    this.qualifier = qualifier;
+    this.subQuery = (Serializable)subQuery;
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  }
 }

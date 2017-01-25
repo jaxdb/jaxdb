@@ -16,5 +16,24 @@
 
 package org.safris.xdb.entities;
 
-abstract class BooleanCondition<T> extends Condition<T> {
+import java.io.IOException;
+
+final class BooleanTerm<T> extends BooleanCondition<T> {
+  protected final Operator<BooleanTerm<?>> operator;
+  protected final Condition<?> a;
+  protected final Condition<?> b;
+  protected final Condition<?>[] conditions;
+
+  @SafeVarargs
+  protected BooleanTerm(final Operator<BooleanTerm<?>> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    this.a = a;
+    this.b = b;
+    this.operator = operator;
+    this.conditions = conditions;
+  }
+
+  @Override
+  protected final void serialize(final Serialization serialization) throws IOException {
+    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  }
 }

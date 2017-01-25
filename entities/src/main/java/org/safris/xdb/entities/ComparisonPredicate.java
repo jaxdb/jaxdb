@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.safris.xdb.entities.spec.select;
 
-final class ComparisonPredicate<T> extends Predicate<T> {
+final class ComparisonPredicate<T> extends BooleanCondition<T> {
   protected final Operator<ComparisonPredicate<?>> operator;
   protected final Serializable a;
   protected final Serializable b;
@@ -47,6 +47,12 @@ final class ComparisonPredicate<T> extends Predicate<T> {
     this.operator = operator;
     this.a = a;
     this.b = DataType.wrap(b);
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final QuantifiedComparisonPredicate<T> b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = b;
   }
 
   protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final DataType<?> b) {
