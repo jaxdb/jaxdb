@@ -544,6 +544,12 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
+  protected void serialize(final ExistsPredicate<?> predicate, final Serialization serialization) throws IOException {
+    serialization.append("EXISTS").append(" (");
+    predicate.subQuery.serialize(serialization);
+    serialization.append(")");
+  }
+
   protected void serialize(final LikePredicate predicate, final Serialization serialization) throws IOException {
     predicate.dataType.serialize(serialization);
     serialization.append(" ");

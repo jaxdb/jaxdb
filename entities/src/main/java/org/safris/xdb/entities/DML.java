@@ -1154,6 +1154,10 @@ public final class DML {
     return new InPredicate<T>(true, a, b);
   }
 
+  public static <T>Predicate<T> EXISTS(final select.SELECT<?> subQuery) {
+    return new ExistsPredicate<T>(subQuery);
+  }
+
   public static class NOT {
     public static Predicate<String> LIKE(final Char a, final String b) {
       return new LikePredicate(false, a, b);
