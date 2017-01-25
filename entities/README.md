@@ -195,7 +195,6 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Known Issues
 
-* Inner statements are currently not implemented.
 * MySQL, PostgreSQL, and Derby are the only vendors currently supported by **xdb-entities**. However, as the vendor-specific facets of the DML have been abstracted, support for any other vendor can be added hastily.
 
 ### Class Diagram
