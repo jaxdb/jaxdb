@@ -766,6 +766,12 @@ public final class DML {
     return wrapper;
   }
 
+  public static <T extends java.time.temporal.Temporal,V extends Temporal<T>>V ADD(final V a, final Interval interval) {
+    final V wrapper = a.newInstance(a.owner);
+    wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, interval));
+    return wrapper;
+  }
+
   @SafeVarargs
   public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
     return ADD(a, b, args);
@@ -795,22 +801,8 @@ public final class DML {
     return ADD(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Temporal<T> b) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, b));
-    return wrapper;
-  }
-
-  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final T b) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, b));
-    return wrapper;
-  }
-
-  public static <T extends java.time.temporal.Temporal>Temporal<T> PLUS(final Temporal<T> a, final Interval interval) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, interval));
-    return wrapper;
+  public static <T extends java.time.temporal.Temporal,V extends Temporal<T>>V PLUS(final V a, final Interval interval) {
+    return ADD(a, interval);
   }
 
   @SafeVarargs
@@ -858,6 +850,12 @@ public final class DML {
     return wrapper;
   }
 
+  public static <T extends java.time.temporal.Temporal,V extends Temporal<T>>V SUB(final V a, final Interval interval) {
+    final V wrapper = a.newInstance(a.owner);
+    wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, interval));
+    return wrapper;
+  }
+
   @SafeVarargs
   public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
     return SUB(a, b, args);
@@ -887,22 +885,8 @@ public final class DML {
     return SUB(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Temporal<T> b) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, b));
-    return wrapper;
-  }
-
-  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final T b) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, b));
-    return wrapper;
-  }
-
-  public static <T extends java.time.temporal.Temporal>Temporal<T> MINUS(final Temporal<T> a, final Interval interval) {
-    final Temporal<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, interval));
-    return wrapper;
+  public static <T extends java.time.temporal.Temporal,V extends Temporal<T>>V MINUS(final V a, final Interval interval) {
+    return SUB(a, interval);
   }
 
   private static class NOW extends DateTime {

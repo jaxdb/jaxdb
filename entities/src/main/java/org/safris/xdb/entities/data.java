@@ -479,7 +479,7 @@ public final class data {
     @SuppressWarnings("deprecation")
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Date value = resultSet.getDate(columnIndex);
-      this.value = value == null ? null : LocalDate.of(value.getYear(), value.getMonth(), value.getDate());
+      this.value = value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
     }
 
     @Override

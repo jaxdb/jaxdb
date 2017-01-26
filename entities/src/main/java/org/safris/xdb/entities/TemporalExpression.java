@@ -34,7 +34,7 @@ final class TemporalExpression<T extends java.time.temporal.Temporal> extends Ex
   protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final Interval b) {
     this.operator = operator;
     this.a = a;
-    this.b = DataType.wrap(b);
+    this.b = b;
   }
 
   protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final java.time.temporal.Temporal b) {

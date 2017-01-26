@@ -20,35 +20,61 @@ import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class Interval extends Serializable {
+public final class Interval extends Serializable {
   public static enum Unit {
-    MICROS(ChronoUnit.MICROS),
-    MILLIS(ChronoUnit.MILLIS),
-    SECONDS(ChronoUnit.SECONDS),
-    MINUTES(ChronoUnit.MINUTES),
-    HOURS(ChronoUnit.HOURS),
-    DAYS(ChronoUnit.DAYS),
-    WEEKS(ChronoUnit.WEEKS),
-    MONTHS(ChronoUnit.MONTHS),
-    QUARTERS(IsoFields.QUARTER_YEARS),
-    YEARS(ChronoUnit.YEARS),
-    DECADES(ChronoUnit.DECADES),
-    CENTURIES(ChronoUnit.CENTURIES),
-    MILLENNIA(ChronoUnit.MILLENNIA);
+    MICROS(ChronoUnit.MICROS, Calendar.MILLISECOND, 1),
+    MILLIS(ChronoUnit.MILLIS, Calendar.MILLISECOND, 1),
+    SECONDS(ChronoUnit.SECONDS, Calendar.SECOND, 1),
+    MINUTES(ChronoUnit.MINUTES, Calendar.MINUTE, 1),
+    HOURS(ChronoUnit.HOURS, Calendar.HOUR, 1),
+    DAYS(ChronoUnit.DAYS, Calendar.DATE, 1),
+    WEEKS(ChronoUnit.WEEKS, Calendar.DATE, 7),
+    MONTHS(ChronoUnit.MONTHS, Calendar.MONTH, 1),
+    QUARTERS(IsoFields.QUARTER_YEARS, Calendar.MONTH, 3),
+    YEARS(ChronoUnit.YEARS, Calendar.YEAR, 1),
+    DECADES(ChronoUnit.DECADES, Calendar.YEAR, 10),
+    CENTURIES(ChronoUnit.CENTURIES, Calendar.YEAR, 100),
+    MILLENNIA(ChronoUnit.MILLENNIA, Calendar.YEAR, 1000);
 
     private final TemporalUnit unit;
+    private final int calendarField;
+    private final int fieldScale;
 
-    Unit(final TemporalUnit unit) {
+    Unit(final TemporalUnit unit, final int calendarField, final int fieldScale) {
       this.unit = unit;
+      this.calendarField = calendarField;
+      this.fieldScale = fieldScale;
     }
 
     public final TemporalUnit unit() {
       return unit;
     }
+
+    protected int getCalendarField() {
+      return calendarField;
+    }
+
+    protected int getFieldScale() {
+      return fieldScale;
+    }
+  }
+
+  public static Interval valueOf(final String string) {
+    if (string == null)
+      throw new NullPointerException("interval == null");
+
+    final int index = string.indexOf(' ');
+    if (index < 0)
+      throw new IllegalArgumentException("Malformed interval " + string);
+
+    final int value = Integer.parseInt(string.substring(0, index));
+    final Unit unit = Unit.valueOf(string.substring(index + 1));
+    return new Interval(value, unit);
   }
 
   private final Map<Unit,Integer> intervals = new HashMap<Unit,Integer>();
@@ -72,7 +98,7 @@ public class Interval extends Serializable {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) throws IOException {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

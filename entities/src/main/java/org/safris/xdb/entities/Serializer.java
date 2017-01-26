@@ -417,24 +417,26 @@ public abstract class Serializer {
     for (final Unit unit : units)
       clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
 
-    serialization.append("'").append(clause.substring(1)).append("'");
+    serialization.append("INTERVAL '").append(clause.substring(1)).append("'");
   }
 
-  protected void serialize(final TemporalExpression<?> serializable, final Serialization serialization) throws IOException {
+  protected void serialize(final TemporalExpression<?> expression, final Serialization serialization) throws IOException {
     serialization.append("(");
-    serializable.a.serialize(serialization);
+    expression.a.serialize(serialization);
     serialization.append(" ");
-    serializable.b.serialize(serialization);
+    serialization.append(expression.operator.toString());
+    serialization.append(" ");
+    expression.b.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final NumericExpression<?> serializable, final Serialization serialization) throws IOException {
+  protected void serialize(final NumericExpression<?> expression, final Serialization serialization) throws IOException {
     serialization.append("(");
-    serializable.a.serialize(serialization);
-    serialization.append(" ").append(serializable.operator.toString()).append(" ");
-    serializable.b.serialize(serialization);
-    for (int i = 0; i < serializable.args.length; i++) {
-      final Serializable arg = serializable.args[i];
+    expression.a.serialize(serialization);
+    serialization.append(" ").append(expression.operator.toString()).append(" ");
+    expression.b.serialize(serialization);
+    for (int i = 0; i < expression.args.length; i++) {
+      final Serializable arg = expression.args[i];
       if (arg instanceof Interval) {
         final Interval interval = (Interval)arg;
 
@@ -446,7 +448,7 @@ public abstract class Serializer {
         serialization.append(" '").append(clause.substring(1)).append("'");
       }
       else {
-        serialization.append(" ").append(serializable.operator.toString()).append(" ");
+        serialization.append(" ").append(expression.operator.toString()).append(" ");
         arg.serialize(serialization);
       }
     }

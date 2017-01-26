@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
+import org.safris.xdb.entities.Interval.Unit;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
 import org.safris.xdb.schema.DBVendor;
@@ -36,20 +38,57 @@ final class DerbySerializer extends Serializer {
     final Statement statement = connection.createStatement();
     statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.pow'");
     statement.execute("CREATE FUNCTION ROUND(a DOUBLE) RETURNS BIGINT PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.round'");
+    statement.execute("CREATE FUNCTION DATEADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
+    statement.execute("CREATE FUNCTION DATESUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
+    statement.execute("CREATE FUNCTION TIMEADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
+    statement.execute("CREATE FUNCTION TIMESUB(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
+    statement.execute("CREATE FUNCTION DATETIMEADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
+    statement.execute("CREATE FUNCTION DATETIMESUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
   }
 
   @Override
-  protected void serialize(final NumericExpression<?> serializable, final Serialization serialization) throws IOException {
+  protected void serialize(final Interval interval, final Serialization serialization) {
+    final Set<Unit> units = interval.getUnits();
+    final StringBuilder clause = new StringBuilder();
+    if (units.size() > 1)
+      throw new UnsupportedOperationException("FIXME: units.size() > 1");
+
+    for (final Unit unit : units)
+      clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
+
+    serialization.append("'").append(clause.substring(1)).append("'");
+  }
+
+  @Override
+  protected void serialize(final TemporalExpression<?> expression, final Serialization serialization) throws IOException {
+    if (expression.a instanceof data.Date)
+      serialization.append("DATE");
+    else if (expression.a instanceof data.Time)
+      serialization.append("TIME");
+    else if (expression.a instanceof data.DateTime)
+      serialization.append("DATETIME");
+    else
+      throw new UnsupportedOperationException("Unexpected temporal type: " + expression.a.getClass());
+
+    serialization.append(expression.operator == Operator.PLUS ? "ADD(" : "SUB(");
+    expression.a.serialize(serialization);
+    serialization.append(", ");
+    expression.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  @Override
+  protected void serialize(final NumericExpression<?> expression, final Serialization serialization) throws IOException {
     serialization.append("(");
-    serializable.a.serialize(serialization);
-    serialization.append(" ").append(serializable.operator.toString()).append(" ");
-    serializable.b.serialize(serialization);
-    for (int i = 0; i < serializable.args.length; i++) {
-      final Serializable arg = serializable.args[i];
+    expression.a.serialize(serialization);
+    serialization.append(" ").append(expression.operator.toString()).append(" ");
+    expression.b.serialize(serialization);
+    for (int i = 0; i < expression.args.length; i++) {
+      final Serializable arg = expression.args[i];
       if (arg instanceof Interval) // FIXME: This needs to go to TemporalExpression serializer
         throw new UnsupportedOperationException("Derby does not support INTERVAL: https://db.apache.org/derby/docs/10.8/ref/rrefsql9241891.html");
 
-      serialization.append(" ").append(serializable.operator.toString()).append(" ");
+      serialization.append(" ").append(expression.operator.toString()).append(" ");
       arg.serialize(serialization);
     }
     serialization.append(")");
