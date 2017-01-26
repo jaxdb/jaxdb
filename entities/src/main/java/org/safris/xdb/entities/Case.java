@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 final class Case extends SQLStatement {
   protected static abstract class CASE<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.CASE<T> {
     protected CASE() {
@@ -48,11 +46,6 @@ final class Case extends SQLStatement {
       final CaseCommand command = (CaseCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected CASE_WHEN<T> clone(final Keyword<Subject<T>> parent) {
-      return new CASE_WHEN<T>(condition);
     }
   }
 
@@ -86,11 +79,6 @@ final class Case extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected THEN<T> clone(final Keyword<Subject<T>> parent) {
-      return new THEN<T>(parent, value);
-    }
   }
 
   protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.entities.spec.expression.ELSE<T> {
@@ -105,11 +93,6 @@ final class Case extends SQLStatement {
       final CaseCommand command = (CaseCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected ELSE<T> clone(final Keyword<Subject<T>> parent) {
-      return new ELSE<T>(parent, value);
     }
   }
 

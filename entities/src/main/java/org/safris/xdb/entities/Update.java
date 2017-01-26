@@ -114,11 +114,6 @@ final class Update extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected UPDATE clone(final Keyword<DataType<?>> parent) {
-      return new UPDATE(entity);
-    }
   }
 
   protected static final class SET extends UPDATE_SET implements update.SET {
@@ -166,11 +161,6 @@ final class Update extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected Keyword<DataType<?>> clone(Keyword<DataType<?>> parent) {
-      return null;
-    }
   }
 
   protected static final class WHERE extends Execute implements update.UPDATE {
@@ -186,11 +176,6 @@ final class Update extends SQLStatement {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected Keyword<DataType<?>> clone(Keyword<DataType<?>> parent) {
-      return null;
     }
   }
 }

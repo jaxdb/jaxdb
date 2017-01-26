@@ -18,6 +18,8 @@ package org.safris.xdb.entities.spec;
 
 import org.safris.xdb.entities.Condition;
 import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.CROSS;
+import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.DataType;
@@ -72,13 +74,17 @@ public interface select {
   }
 
   public interface _JOIN<T extends Subject<?>> {
-    public JOIN<T> JOIN(final Entity entity);
-    public JOIN<T> JOIN(final TYPE type, final Entity entity);
-    public JOIN<T> JOIN(final NATURAL natural, final Entity entity);
-    public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity);
+    public JOIN<T> JOIN(final Entity table);
+    public CROSS_JOIN<T> JOIN(final CROSS cross, Entity table);
+    public JOIN<T> JOIN(final TYPE type, final Entity table);
+    public CROSS_JOIN<T> JOIN(final NATURAL natural, final Entity table);
+    public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity table);
   }
 
   public interface JOIN<T extends Subject<?>> extends _JOIN<T>, _ON<T> {
+  }
+
+  public interface CROSS_JOIN<T extends Subject<?>> extends SELECT<T>, _JOIN<T> {
   }
 
   public interface _FROM<T extends Subject<?>> {
@@ -95,5 +101,6 @@ public interface select {
     public T AS(final T as);
     public SELECT<T> UNION(final SELECT<T> union);
     public SELECT<T> UNION(final ALL all, final SELECT<T> union);
+    public SELECT<T> UNION(final DISTINCT distinct, final SELECT<T> union);
   }
 }

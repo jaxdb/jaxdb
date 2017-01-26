@@ -104,10 +104,5 @@ final class Insert extends SQLStatement {
       // TODO:
       throw new UnsupportedOperationException();
     }
-
-    @Override
-    protected INSERT<T> clone(final Keyword<Subject<?>> parent) {
-      return new INSERT<T>(entities);
-    }
   }
 }

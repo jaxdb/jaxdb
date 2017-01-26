@@ -42,5 +42,4 @@ abstract class Keyword<T extends Subject<?>> extends Provision<T> {
   }
 
   protected abstract Command normalize();
-  protected abstract Keyword<T> clone(final Keyword<T> parent);
 }

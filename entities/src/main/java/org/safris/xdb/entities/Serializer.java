@@ -175,15 +175,16 @@ public abstract class Serializer {
   protected void serialize(final Select.JOIN<?> join, final Select.ON<?> on, final Serialization serialization) throws IOException {
     // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
     // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-    serialization.registerAlias(join.entity);
+    serialization.registerAlias(join.table);
     serialization.append(join.natural != null ? " NATURAL" : "");
+    serialization.append(join.cross != null ? " CROSS" : "");
     if (join.type != null) {
       serialization.append(" ");
       join.type.serialize(serialization);
     }
 
-    serialization.append(" JOIN ").append(tableName(join.entity, serialization)).append(" ");
-    serialization.registerAlias(join.entity).serialize(serialization);
+    serialization.append(" JOIN ").append(tableName(join.table, serialization)).append(" ");
+    serialization.registerAlias(join.table).serialize(serialization);
     if (on != null) {
       serialization.append(" ON (");
       on.condition.serialize(serialization);

@@ -32,6 +32,7 @@ import java.util.function.Predicate;
 import org.safris.commons.lang.Pair;
 import org.safris.commons.util.Collections;
 import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.CROSS;
 import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
@@ -181,6 +182,12 @@ final class Select extends SQLStatement {
     }
 
     @Override
+    public select.SELECT<T> UNION(final DISTINCT distinct, final select.SELECT<T> union) {
+      // TODO:
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     public final RowIterator<T> execute() throws IOException, SQLException {
       return execute(null);
     }
@@ -223,23 +230,28 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public final JOIN<T> JOIN(final Entity entity) {
-      return new JOIN<T>(this, null, null, entity);
+    public final select.CROSS_JOIN<T> JOIN(final CROSS cross, final Entity table) {
+      return new JOIN<T>(this, cross, table);
     }
 
     @Override
-    public final JOIN<T> JOIN(final TYPE type, final Entity entity) {
-      return new JOIN<T>(this, null, type, entity);
+    public final select.JOIN<T> JOIN(final Entity table) {
+      return new JOIN<T>(this, table);
     }
 
     @Override
-    public final JOIN<T> JOIN(final NATURAL natural, final Entity entity) {
-      return new JOIN<T>(this, natural, null, entity);
+    public final select.JOIN<T> JOIN(final TYPE type, final Entity table) {
+      return new JOIN<T>(this, type, table);
     }
 
     @Override
-    public final JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity entity) {
-      return new JOIN<T>(this, natural, type, entity);
+    public final select.CROSS_JOIN<T> JOIN(final NATURAL natural, final Entity table) {
+      return new JOIN<T>(this, natural, table);
+    }
+
+    @Override
+    public final select.JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity table) {
+      return new JOIN<T>(this, natural, type, table);
     }
 
     @Override
@@ -276,11 +288,6 @@ final class Select extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected FROM<T> clone(final Keyword<T> parent) {
-      return new FROM<T>(parent, new ArrayList<Entity>(tables));
-    }
   }
 
   protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
@@ -315,11 +322,6 @@ final class Select extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected GROUP_BY<T> clone(final Keyword<T> parent) {
-      return new GROUP_BY<T>(parent, subjects);
-    }
   }
 
   protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
@@ -346,23 +348,77 @@ final class Select extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected HAVING<T> clone(final Keyword<T> parent) {
-      return new HAVING<T>(parent, condition);
-    }
   }
 
-  protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T> {
+  protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T>, select.CROSS_JOIN<T> {
+    protected final CROSS cross;
     protected final NATURAL natural;
     protected final TYPE type;
-    protected final Entity entity;
+    protected final Entity table;
 
-    protected JOIN(final Keyword<T> parent, final NATURAL natural, final TYPE type, final Entity entity) {
+    protected JOIN(final Keyword<T> parent, final CROSS cross, final Entity table) {
       super(parent);
+      if (cross == null)
+        throw new IllegalArgumentException("must pass DML.CROSS instance here");
+
+      this.cross = cross;
+      this.natural = null;
+      this.type = null;
+      this.table = table;
+      if (table == null)
+        throw new IllegalArgumentException("table == null");
+    }
+
+    protected JOIN(final Keyword<T> parent, final NATURAL natural, final TYPE type, final Entity table) {
+      super(parent);
+      this.cross = null;
       this.natural = natural;
+      if (natural == null)
+        throw new IllegalArgumentException("must pass DML.NATURAL instance here");
+
       this.type = type;
-      this.entity = entity;
+      if (type == null)
+        throw new IllegalArgumentException("must pass DML.<TYPE> instance here");
+
+      this.table = table;
+      if (table == null)
+        throw new IllegalArgumentException("table == null");
+    }
+
+    protected JOIN(final Keyword<T> parent, final TYPE type, final Entity table) {
+      super(parent);
+      this.cross = null;
+      this.natural = null;
+      this.type = type;
+      if (type == null)
+        throw new IllegalArgumentException("must pass DML.<TYPE> instance here");
+
+      this.table = table;
+      if (table == null)
+        throw new IllegalArgumentException("table == null");
+    }
+
+    protected JOIN(final Keyword<T> parent, final NATURAL natural, final Entity table) {
+      super(parent);
+      this.cross = null;
+      this.natural = natural;
+      if (natural == null)
+        throw new IllegalArgumentException("must pass DML.NATURAL instance here");
+
+      this.type = null;
+      this.table = table;
+      if (table == null)
+        throw new IllegalArgumentException("table == null");
+    }
+
+    protected JOIN(final Keyword<T> parent, final Entity table) {
+      super(parent);
+      this.cross = null;
+      this.natural = null;
+      this.type = null;
+      this.table = table;
+      if (table == null)
+        throw new IllegalArgumentException("table == null");
     }
 
     @Override
@@ -385,11 +441,6 @@ final class Select extends SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected JOIN<T> clone(final Keyword<T> parent) {
-      return new JOIN<T>(parent, natural, type, entity);
     }
   }
 
@@ -416,11 +467,6 @@ final class Select extends SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected ON<T> clone(final Keyword<T> parent) {
-      return new ON<T>(parent, condition);
     }
   }
 
@@ -451,11 +497,6 @@ final class Select extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected ORDER_BY<T> clone(final Keyword<T> parent) {
-      return new ORDER_BY<T>(parent, columns);
-    }
   }
 
   protected static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
@@ -477,11 +518,6 @@ final class Select extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected LIMIT<T> clone(final Keyword<T> parent) {
-      return new LIMIT<T>(parent, rows);
-    }
   }
 
   protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
@@ -497,11 +533,6 @@ final class Select extends SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected OFFSET<T> clone(final Keyword<T> parent) {
-      return new OFFSET<T>(parent, rows);
     }
   }
 
@@ -562,6 +593,12 @@ final class Select extends SQLStatement {
 
     @Override
     public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> union) {
+      // TODO:
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public select.SELECT<T> UNION(final DISTINCT distinct, final select.SELECT<T> union) {
       // TODO:
       throw new UnsupportedOperationException();
     }
@@ -687,11 +724,6 @@ final class Select extends SQLStatement {
       ++mask;
       return Collections.hashCode(entities) ^ mask;
     }
-
-    @Override
-    protected SELECT<T> clone(final Keyword<T> parent) {
-      return new SELECT<T>(all, distinct, entities);
-    }
   }
 
   protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
@@ -722,11 +754,6 @@ final class Select extends SQLStatement {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected WHERE<T> clone(final Keyword<T> parent) {
-      return new WHERE<T>(parent, condition);
     }
   }
 }

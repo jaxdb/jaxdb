@@ -83,7 +83,7 @@ final class SelectCommand extends Command {
       this.on = new ArrayList<ON<?>>();
 
     // Since ON is optional, for each JOIN without ON, add a null to this.on
-    for (int i = 0; i < this.join.size() - this.on.size(); i++)
+    for (int i = 0; i < this.join.size() - this.on.size() - 1; i++)
       this.on.add(null);
 
     this.on.add(on);
@@ -141,7 +141,7 @@ final class SelectCommand extends Command {
     serializer.serialize(from(), serialization);
     if (join() != null)
       for (int i = 0; i < join().size(); i++)
-        serializer.serialize(join().get(i), i < on().size() ? on().get(i) : null, serialization);
+        serializer.serialize(join().get(i), on() != null && i < on().size() ? on().get(i) : null, serialization);
 
     serializer.serialize(where(), serialization);
     serializer.serialize(groupBy(), serialization);

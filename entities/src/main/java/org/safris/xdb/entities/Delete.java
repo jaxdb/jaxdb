@@ -77,11 +77,6 @@ final class Delete extends SQLStatement {
       command.add(this);
       return command;
     }
-
-    @Override
-    protected WHERE clone(final Keyword<DataType<?>> parent) {
-      return new WHERE(parent, condition);
-    }
   }
 
   protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
@@ -102,11 +97,6 @@ final class Delete extends SQLStatement {
       final DeleteCommand command = (DeleteCommand)parent().normalize();
       command.add(this);
       return command;
-    }
-
-    @Override
-    protected DELETE clone(final Keyword<DataType<?>> parent) {
-      return new DELETE(entity);
     }
   }
 }

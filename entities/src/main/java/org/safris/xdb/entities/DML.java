@@ -47,6 +47,17 @@ public final class DML {
     return wrapper;
   }
 
+  /** CROSS **/
+
+  public static class CROSS extends Provision<Subject<?>> {
+    @Override
+    protected void serialize(final Serialization serialization) {
+      serialization.append("CROSS");
+    }
+  }
+
+  public static final CROSS CROSS = new CROSS();
+
   /** NATURAL **/
 
   public static class NATURAL extends Provision<Subject<?>> {
@@ -70,33 +81,28 @@ public final class DML {
     }
   };
 
-  public static final TYPE LEFT = new TYPE() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.append("LEFT OUTER");
-    }
-  };
+  public static final class OUTER {
+    public static final TYPE LEFT = new TYPE() {
+      @Override
+      protected void serialize(final Serialization serialization) {
+        serialization.append("LEFT OUTER");
+      }
+    };
 
-  public static final TYPE RIGHT = new TYPE() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.append("RIGHT OUTER");
-    }
-  };
+    public static final TYPE RIGHT = new TYPE() {
+      @Override
+      protected void serialize(final Serialization serialization) {
+        serialization.append("RIGHT OUTER");
+      }
+    };
 
-  public static final TYPE FULL = new TYPE() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.append("FULL OUTER");
-    }
-  };
-
-  public static final TYPE UNION = new TYPE() {
-    @Override
-    protected void serialize(final Serialization serialization) {
-      serialization.append("UNION");
-    }
-  };
+    public static final TYPE FULL = new TYPE() {
+      @Override
+      protected void serialize(final Serialization serialization) {
+        serialization.append("FULL OUTER");
+      }
+    };
+  }
 
   /** SetQualifier **/
 
@@ -991,51 +997,51 @@ public final class DML {
     return new BooleanTerm<T>(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final T b) {
+  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<? extends T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final T a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T>ComparisonPredicate<T> GT(final T a, final select.SELECT<? extends DataType<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
@@ -1043,7 +1049,7 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
@@ -1051,27 +1057,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
@@ -1079,7 +1085,7 @@ public final class DML {
     return new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
@@ -1087,27 +1093,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b);
   }
 
@@ -1115,7 +1121,7 @@ public final class DML {
     return new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
@@ -1123,27 +1129,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
@@ -1151,7 +1157,7 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
@@ -1159,27 +1165,27 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final T b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
@@ -1187,7 +1193,7 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final T a, final DataType<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final T a, final DataType<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
@@ -1195,15 +1201,15 @@ public final class DML {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.ALL<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.ANY<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<T> a, final qualified.SOME<T> b) {
+  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
