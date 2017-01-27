@@ -36,8 +36,11 @@ final class DerbySerializer extends Serializer {
   @Override
   protected void onRegister(final Connection connection) throws SQLException {
     final Statement statement = connection.createStatement();
+    statement.execute("CREATE FUNCTION LOG(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.log'");
+    statement.execute("CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.log2'");
     statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.pow'");
-    statement.execute("CREATE FUNCTION ROUND(a DOUBLE) RETURNS BIGINT PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.round'");
+    statement.execute("CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.commons.math.Functions.round'");
+    statement.execute("CREATE FUNCTION DMOD(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.mod'");
     statement.execute("CREATE FUNCTION DATEADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
     statement.execute("CREATE FUNCTION DATESUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
     statement.execute("CREATE FUNCTION TIMEADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
@@ -85,12 +88,18 @@ final class DerbySerializer extends Serializer {
     expression.b.serialize(serialization);
     for (int i = 0; i < expression.args.length; i++) {
       final Serializable arg = expression.args[i];
-      if (arg instanceof Interval) // FIXME: This needs to go to TemporalExpression serializer
-        throw new UnsupportedOperationException("Derby does not support INTERVAL: https://db.apache.org/derby/docs/10.8/ref/rrefsql9241891.html");
-
       serialization.append(" ").append(expression.operator.toString()).append(" ");
       arg.serialize(serialization);
     }
+    serialization.append(")");
+  }
+
+  @Override
+  protected void serialize(final function.numeric.Mod<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("DMOD(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
     serialization.append(")");
   }
 

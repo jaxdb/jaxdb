@@ -409,37 +409,43 @@ public final class DML {
 
   public static <T extends Number,N extends Numeric<T>>N ABS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ABS", dataType));
+    wrapper.setWrapper(new function.numeric.Abs<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SIGN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("SIGN", dataType));
+    wrapper.setWrapper(new function.numeric.Sign<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N FLOOR(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("FLOOR", dataType));
+    wrapper.setWrapper(new function.numeric.Floor<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N CEIL(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("CEIL", dataType));
+    wrapper.setWrapper(new function.numeric.Ceil<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N POW(final N x, final double y) {
     final N wrapper = x.newInstance(x.owner);
-    wrapper.setWrapper(new NumericFunction<T>("POWER", x, y));
+    wrapper.setWrapper(new function.numeric.Pow<T>(x, y));
     return wrapper;
   }
 
-  public static <T extends Number,N extends Numeric<T>>N ROUND(final N dataType) {
-    final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ROUND", dataType));
+  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<T> b) {
+    final Numeric<T> wrapper = a.newInstance(a.owner);
+    wrapper.setWrapper(new function.numeric.Mod<T>(a, b));
+    return wrapper;
+  }
+
+  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Number b) {
+    final Numeric<T> wrapper = a.newInstance(a.owner);
+    wrapper.setWrapper(new function.numeric.Mod<T>(a, b));
     return wrapper;
   }
 
@@ -448,91 +454,91 @@ public final class DML {
       throw new IllegalArgumentException("decimal < 0");
 
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ROUND", dataType, decimal));
+    wrapper.setWrapper(new function.numeric.Round<T>(dataType, decimal));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SQRT(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("SQRT", dataType));
+    wrapper.setWrapper(new function.numeric.Sqrt<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("SIN", dataType));
+    wrapper.setWrapper(new function.numeric.Sin<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ASIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ASIN", dataType));
+    wrapper.setWrapper(new function.numeric.Asin<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N COS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("COS", dataType));
+    wrapper.setWrapper(new function.numeric.Cos<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ACOS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ACOS", dataType));
+    wrapper.setWrapper(new function.numeric.Acos<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N TAN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("TAN", dataType));
+    wrapper.setWrapper(new function.numeric.Tan<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ATAN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ATAN", dataType));
+    wrapper.setWrapper(new function.numeric.Atan<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number>Numeric<T> ATAN2(final Numeric<T> a, final Numeric<T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericFunction<T>("ATAN2", a, b));
+    wrapper.setWrapper(new function.numeric.Atan2<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N EXP(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("EXP", dataType));
+    wrapper.setWrapper(new function.numeric.Exp<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("LN", dataType));
+    wrapper.setWrapper(new function.numeric.Ln<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG(final N a, final N b) {
     final N wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericFunction<T>("LOG", a, b));
+    wrapper.setWrapper(new function.numeric.Log<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG(final N a, final Number b) {
     final N wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericFunction<T>("LOG", a, b));
+    wrapper.setWrapper(new function.numeric.Log<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG2(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("LOG2", dataType));
+    wrapper.setWrapper(new function.numeric.Log2<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG10(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new NumericFunction<T>("COS", dataType));
+    wrapper.setWrapper(new function.numeric.Log10<T>(dataType));
     return wrapper;
   }
 
@@ -712,18 +718,6 @@ public final class DML {
 
     final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, args[0], Arrays.subArray(args, 1)));
-    return wrapper;
-  }
-
-  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<T> b) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MOD, a, b));
-    return wrapper;
-  }
-
-  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Number b) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MOD, a, b));
     return wrapper;
   }
 
@@ -910,7 +904,7 @@ public final class DML {
   private static class PI extends Decimal {
     protected PI() {
       super();
-      this.setWrapper(new NumericFunction<java.lang.Double>("PI"));
+      this.setWrapper(new function.numeric.Pi());
     }
 
     @Override

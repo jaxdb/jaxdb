@@ -16,37 +16,27 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 import org.safris.xdb.entities.data.Numeric;
 
-final class NumericFunction<T extends Number> extends Expression<T> {
-  protected final String function;
+abstract class NumericFunction<T extends Number> extends Expression<T> {
   protected final DataType<T> a;
   protected final DataType<?> b;
 
-  protected NumericFunction(final String function, final DataType<T> a, final Numeric<?> b) {
-    this.function = function;
+  protected NumericFunction(final DataType<T> a, final Numeric<?> b) {
     this.a = a;
     this.b = b;
   }
 
-  protected NumericFunction(final String function, final DataType<T> a, final Number b) {
-    this.function = function;
+  protected NumericFunction(final DataType<T> a, final Number b) {
     this.a = a;
     this.b = DataType.wrap(b);
   }
 
-  protected NumericFunction(final String function, final DataType<T> dataType) {
-    this(function, dataType, (Numeric<?>)null);
+  protected NumericFunction(final DataType<T> dataType) {
+    this(dataType, (Numeric<?>)null);
   }
 
-  protected NumericFunction(final String function) {
-    this(function, null, (Numeric<?>)null);
-  }
-
-  @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected NumericFunction() {
+    this(null, (Numeric<?>)null);
   }
 }

@@ -24,6 +24,18 @@ import java.util.Calendar;
 import org.safris.xdb.entities.Interval.Unit;
 
 public final class IntervalUtil {
+  public static double mod(final double a, final double b) {
+    return a % b;
+  }
+
+  public static double log(final double a, final double b) {
+    return Math.log(a) / Math.log(b);
+  }
+
+  public static double log2(final double a) {
+    return Math.log(a) / 0.6931471805599453;
+  }
+
   public static Date add(final Date date, final String string) {
     return add(date, Interval.valueOf(string), 1);
   }

@@ -600,19 +600,137 @@ public abstract class Serializer {
     serialization.append("NULL");
   }
 
-  protected void serialize(final NumericFunction<? extends Number> function, final Serialization serialization) throws IOException {
-    serialization.append(function.function).append("(");
-    if (function.a != null) {
-      if (function.b != null) {
-        function.a.serialize(serialization);
-        serialization.append(", ");
-        function.b.serialize(serialization);
-      }
-      else {
-        function.a.serialize(serialization);
-      }
-    }
+  protected void serialize(final function.numeric.Pi function, final Serialization serialization) {
+    serialization.append("PI()");
+  }
 
+  protected void serialize(final function.numeric.Abs<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ABS(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Sign<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("SIGN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Round<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ROUND(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Floor<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("FLOOR(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Ceil<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("CEIL(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Sqrt<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("SQRT(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Pow<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("POWER(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Mod<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("MOD(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Sin<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("SIN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Asin<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ASIN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Cos<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("COS(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Acos<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ACOS(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Tan<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("TAN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Atan<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ATAN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Atan2<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("ATAN2(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Exp<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("EXP(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Ln<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("LN(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Log<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("LOG(");
+    function.a.serialize(serialization);
+    serialization.append(", ");
+    function.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Log2<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("LOG2(");
+    function.a.serialize(serialization);
+    serialization.append(")");
+  }
+
+  protected void serialize(final function.numeric.Log10<? extends Number> function, final Serialization serialization) throws IOException {
+    serialization.append("LOG10(");
+    function.a.serialize(serialization);
     serialization.append(")");
   }
 
