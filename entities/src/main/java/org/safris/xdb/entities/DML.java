@@ -437,7 +437,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Numeric<T> b) {
+  public static <T extends Number>Numeric<T> MOD(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
     wrapper.setWrapper(new function.numeric.Mod<T>(a, b));
     return wrapper;
@@ -500,7 +500,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> ATAN2(final Numeric<T> a, final Numeric<T> b) {
+  public static <T extends Number>Numeric<T> ATAN2(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
     wrapper.setWrapper(new function.numeric.Atan2<T>(a, b));
     return wrapper;
@@ -975,73 +975,127 @@ public final class DML {
     return new BooleanTerm(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
-  public static <T>data.Boolean GT(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean GT(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean GT(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean GT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<? extends T>> a, final T b) {
+  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final T a, final DataType<? extends T> b) {
+  public static <T>data.Boolean GT(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final T a, final select.SELECT<? extends DataType<? extends T>> b) {
+  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<T>> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean GT(final T a, final Temporal<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T>data.Boolean GT(final T a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T extends Number>data.Boolean GT(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean GT(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GT(final DataType<T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean GT(final Numeric<?> a, final qualified.ALL<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GT(final DataType<T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean GT(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GT(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean GT(final Numeric<?> a, final qualified.SOME<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends java.time.temporal.Temporal>data.Boolean GTE(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean GTE(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean GTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GTE(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
     return dataType;
@@ -1053,7 +1107,19 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final T a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean GTE(final T a, final Temporal<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GTE(final T a, final data.Textual<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean GTE(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
     return dataType;
@@ -1065,37 +1131,67 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T>data.Boolean GTE(final DataType<T> a, final qualified.ALL<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T extends Number>data.Boolean GTE(final Numeric<?> a, final qualified.ALL<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T>data.Boolean GTE(final DataType<T> a, final qualified.ANY<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T extends Number>data.Boolean GTE(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean GTE(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean GTE(final Numeric<?> a, final qualified.SOME<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends java.time.temporal.Temporal>data.Boolean EQ(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean EQ(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean EQ(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean EQ(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean EQ(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b));
     return dataType;
@@ -1107,7 +1203,19 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final T a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean EQ(final T a, final Temporal<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean EQ(final T a, final data.Textual<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean EQ(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
     return dataType;
@@ -1119,37 +1227,67 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T>data.Boolean EQ(final DataType<T> a, final qualified.ALL<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T extends Number>data.Boolean EQ(final Numeric<?> a, final qualified.ALL<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T>data.Boolean EQ(final DataType<T> a, final qualified.ANY<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T extends Number>data.Boolean EQ(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean EQ(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean EQ(final Numeric<?> a, final qualified.SOME<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends java.time.temporal.Temporal>data.Boolean NE(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean NE(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean NE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean NE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean NE(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b));
     return dataType;
@@ -1161,7 +1299,19 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final T a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean NE(final T a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean NE(final T a, final data.Textual<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean NE(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
     return dataType;
@@ -1173,37 +1323,67 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T>data.Boolean NE(final DataType<T> a, final qualified.ALL<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T extends Number>data.Boolean NE(final Numeric<?> a, final qualified.ALL<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T>data.Boolean NE(final DataType<T> a, final qualified.ANY<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T extends Number>data.Boolean NE(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean NE(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean NE(final Numeric<?> a, final qualified.SOME<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends java.time.temporal.Temporal>data.Boolean LT(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean LT(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean LT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LT(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LT(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
     return dataType;
@@ -1215,7 +1395,19 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final T a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean LT(final T a, final Temporal<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LT(final T a, final data.Textual<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean LT(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
     return dataType;
@@ -1227,37 +1419,67 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T>data.Boolean LT(final DataType<T> a, final qualified.ALL<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T extends Number>data.Boolean LT(final Numeric<?> a, final qualified.ALL<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T>data.Boolean LT(final DataType<T> a, final qualified.ANY<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final DataType<? extends T> a, final DataType<? extends T> b) {
+  public static <T extends Number>data.Boolean LT(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LT(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean LT(final Numeric<?> a, final qualified.SOME<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends java.time.temporal.Temporal>data.Boolean LTE(final Temporal<? extends T> a, final Temporal<? extends T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+  public static <T>data.Boolean LTE(final data.Textual<T> a, final data.Textual<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final DataType<? extends T> a, final T b) {
+  public static <T extends Number>data.Boolean LTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LTE(final select.SELECT<? extends DataType<T>> a, final DataType<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LTE(final DataType<T> a, final T b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
     return dataType;
@@ -1269,7 +1491,19 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final T a, final DataType<? extends T> b) {
+  public static <T extends java.time.temporal.Temporal>data.Boolean LTE(final T a, final Temporal<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LTE(final T a, final data.Textual<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean LTE(final T a, final Numeric<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
     return dataType;
@@ -1281,19 +1515,37 @@ public final class DML {
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+  public static <T>data.Boolean LTE(final DataType<T> a, final qualified.ALL<T> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+  public static <T extends Number>data.Boolean LTE(final Numeric<?> a, final qualified.ALL<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
   }
 
-  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+  public static <T>data.Boolean LTE(final DataType<T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean LTE(final Numeric<?> a, final qualified.ANY<?> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T>data.Boolean LTE(final DataType<T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
+  }
+
+  public static <T extends Number>data.Boolean LTE(final Numeric<?> a, final qualified.SOME<?> b) {
     final data.Boolean dataType = new data.Boolean();
     dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
     return dataType;
@@ -1321,15 +1573,15 @@ public final class DML {
     }
   }
 
-  public static <T>qualified.ALL<T> ALL(final select.SELECT<?> subQuery) {
+  public static <T extends Subject<?>>qualified.ALL<T> ALL(final select.SELECT<T> subQuery) {
     return new qualified.ALL<T>(subQuery);
   }
 
-  public static <T>qualified.ANY<T> ANY(final select.SELECT<?> subQuery) {
+  public static <T extends Subject<?>>qualified.ANY<T> ANY(final select.SELECT<T> subQuery) {
     return new qualified.ANY<T>(subQuery);
   }
 
-  public static <T>qualified.SOME<T> SOME(final select.SELECT<?> subQuery) {
+  public static <T extends Subject<?>>qualified.SOME<T> SOME(final select.SELECT<T> subQuery) {
     return new qualified.SOME<T>(subQuery);
   }
 

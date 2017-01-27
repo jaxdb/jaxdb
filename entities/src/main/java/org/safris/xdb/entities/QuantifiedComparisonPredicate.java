@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.safris.xdb.entities.spec.select;
 
-class QuantifiedComparisonPredicate<T> extends Predicate<T> {
+class QuantifiedComparisonPredicate<T> extends Subject<T> {
   protected final String qualifier;
   protected final Serializable subQuery;
 

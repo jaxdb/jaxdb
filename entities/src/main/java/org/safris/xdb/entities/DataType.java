@@ -23,6 +23,7 @@ import java.sql.SQLException;
 
 import org.safris.commons.lang.Classes;
 import org.safris.xdb.entities.data.Array;
+import org.safris.xdb.entities.data.Enum;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class DataType<T> extends Subject<T> {
@@ -34,22 +35,31 @@ public abstract class DataType<T> extends Subject<T> {
     return dataType.serialize(vendor);
   }
 
-  @SuppressWarnings("unchecked")
+  @SuppressWarnings({"rawtypes", "unchecked"})
   protected static <T,V extends DataType<T>>V wrap(final T value) {
     try {
-      final V dataType = (V)data.typeToClass.get(value.getClass()).newInstance();
+      final V dataType;
+      if (value.getClass().isEnum())
+        dataType = (V)new Enum(value.getClass());
+      else
+        dataType = (V)data.typeToClass.get(value.getClass()).newInstance();
+
       dataType.set(value);
       return dataType;
     }
-    catch (final ReflectiveOperationException e) {
+    catch (final Exception e) {
       throw new UnsupportedOperationException(e);
     }
   }
 
   @SuppressWarnings("unchecked")
   protected static <T>Array<T> wrap(final T[] value) {
-    final Class<? extends DataType<T>> dataTypeClass = (Class<? extends DataType<T>>)data.typeToClass.get(value.getClass().getComponentType());
-    final Array<T> array = new Array<T>(dataTypeClass);
+    final Array<T> array;
+    if (value.getClass().getComponentType().isEnum())
+      array = new Array<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
+    else
+      array = new Array<T>((Class<? extends DataType<T>>)data.typeToClass.get(value.getClass().getComponentType()));
+
     array.set(value);
     return array;
   }

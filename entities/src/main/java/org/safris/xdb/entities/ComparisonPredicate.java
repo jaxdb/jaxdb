@@ -50,7 +50,7 @@ final class ComparisonPredicate<T> extends BooleanCondition {
     this.b = DataType.wrap(b);
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final QuantifiedComparisonPredicate<T> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;

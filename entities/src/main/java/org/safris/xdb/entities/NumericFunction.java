@@ -19,20 +19,20 @@ package org.safris.xdb.entities;
 import org.safris.xdb.entities.data.Numeric;
 
 abstract class NumericFunction<T extends Number> extends Expression<T> {
-  protected final DataType<T> a;
+  protected final DataType<? extends T> a;
   protected final DataType<?> b;
 
-  protected NumericFunction(final DataType<T> a, final Numeric<?> b) {
+  protected NumericFunction(final DataType<? extends T> a, final Numeric<?> b) {
     this.a = a;
     this.b = b;
   }
 
-  protected NumericFunction(final DataType<T> a, final Number b) {
+  protected NumericFunction(final DataType<? extends T> a, final Number b) {
     this.a = a;
     this.b = DataType.wrap(b);
   }
 
-  protected NumericFunction(final DataType<T> dataType) {
+  protected NumericFunction(final DataType<? extends T> dataType) {
     this(dataType, (Numeric<?>)null);
   }
 

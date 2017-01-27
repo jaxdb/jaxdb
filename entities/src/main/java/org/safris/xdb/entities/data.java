@@ -19,6 +19,7 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
@@ -45,16 +46,19 @@ public final class data {
 
   static {
     final Class<?>[] classes = data.class.getClasses();
+    typeToClass.put(null, data.Enum.class);
     for (final Class<?> cls : classes) {
-      final Type type = Classes.getGenericSuperclasses(cls)[0];
-      if (type instanceof Class<?>)
-        typeToClass.put((Class<?>)type, cls);
-      else
-        System.out.println("XXX");
+      if (!Modifier.isAbstract(cls.getModifiers())) {
+        final Type type = Classes.getGenericSuperclasses(cls)[0];
+        if (type instanceof Class<?>)
+          typeToClass.put((Class<?>)type, cls);
+        else
+          System.out.println("XXX");
+      }
     }
   }
 
-  public static final class Array<T> extends DataType<T[]> {
+  public static final class Array<T> extends Textual<T[]> {
     protected final DataType<T> dataType;
 
     public Array(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
@@ -180,7 +184,7 @@ public final class data {
     }
   }
 
-  public static final class Binary extends DataType<byte[]> {
+  public static final class Binary extends Textual<byte[]> {
     public final int length;
     public final boolean varying;
 
@@ -238,7 +242,7 @@ public final class data {
     }
   }
 
-  public static final class Blob extends DataType<InputStream> {
+  public static final class Blob extends Textual<InputStream> {
     public final int length;
 
     public Blob(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
@@ -337,7 +341,7 @@ public final class data {
     }
   }
 
-  public static final class Char extends DataType<String> {
+  public static final class Char extends Textual<String> {
     public final int length;
     public final boolean varying;
     public final boolean national;
@@ -392,7 +396,7 @@ public final class data {
     }
   }
 
-  public static final class Clob extends DataType<Reader> {
+  public static final class Clob extends Textual<Reader> {
     public final int length;
     public final boolean national;
 
@@ -667,7 +671,7 @@ public final class data {
     }
   }
 
-  public static final class Enum<T extends java.lang.Enum<?>> extends DataType<T> {
+  public static final class Enum<T extends java.lang.Enum<?>> extends Textual<T> {
     protected final Class<T> type;
 
     public Enum(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final Class<T> type) {
@@ -977,6 +981,20 @@ public final class data {
   public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
     protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    }
+  }
+
+  public static abstract class Textual<T> extends DataType<T> {
+    protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    }
+
+    protected Textual(final Entity owner) {
+      super(owner);
+    }
+
+    protected Textual() {
+      super();
     }
   }
 

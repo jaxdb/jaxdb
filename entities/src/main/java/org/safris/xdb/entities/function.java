@@ -120,7 +120,7 @@ final class function {
     }
 
     static final class Mod<T extends Number> extends NumericFunction<T> {
-      protected Mod(final DataType<T> a, final Numeric<?> b) {
+      protected Mod(final DataType<? extends T> a, final Numeric<?> b) {
         super(a, b);
       }
 
@@ -201,7 +201,7 @@ final class function {
     }
 
     static final class Atan2<T extends Number> extends NumericFunction<T> {
-      protected Atan2(final DataType<T> a, final Numeric<?> b) {
+      protected Atan2(final DataType<? extends T> a, final Numeric<?> b) {
         super(a, b);
       }
 
