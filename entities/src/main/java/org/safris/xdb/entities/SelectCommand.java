@@ -29,6 +29,7 @@ import org.safris.xdb.entities.Select.OFFSET;
 import org.safris.xdb.entities.Select.ON;
 import org.safris.xdb.entities.Select.ORDER_BY;
 import org.safris.xdb.entities.Select.SELECT;
+import org.safris.xdb.entities.Select.UNION;
 import org.safris.xdb.entities.Select.WHERE;
 
 final class SelectCommand extends Command {
@@ -42,6 +43,7 @@ final class SelectCommand extends Command {
   private ORDER_BY<?> orderBy;
   private LIMIT<?> limit;
   private OFFSET<?> offset;
+  private UNION<?> union;
 
   public SelectCommand(final SELECT<?> select) {
     this.select = select;
@@ -133,6 +135,14 @@ final class SelectCommand extends Command {
     return offset;
   }
 
+  protected void add(final UNION<?> union) {
+    this.union = union;
+  }
+
+  protected UNION<?> union() {
+    return union;
+  }
+
   @Override
   protected void serialize(final Serialization serialization) throws IOException {
     final Serializer serializer = Serializer.getSerializer(serialization.vendor);
@@ -148,5 +158,6 @@ final class SelectCommand extends Command {
     serializer.serialize(having(), serialization);
     serializer.serialize(orderBy(), serialization);
     serializer.serialize(limit(), offset(), serialization);
+    serializer.serialize(union(), serialization);
   }
 }

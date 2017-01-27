@@ -238,6 +238,16 @@ public abstract class Serializer {
     serialization.append(" LIMIT " + limit.rows);
   }
 
+  protected void serialize(final Select.UNION<?> union, final Serialization serialization) throws IOException {
+    if (union != null) {
+      serialization.append(" UNION ");
+      if (union.all)
+        serialization.append("ALL ");
+
+      union.select.serialize(serialization);
+    }
+  }
+
   protected void serialize(final Insert.INSERT<?> insert, final Serialization serialization) {
     if (insert.entities.length == 0)
       throw new IllegalArgumentException("entities.length == 0");

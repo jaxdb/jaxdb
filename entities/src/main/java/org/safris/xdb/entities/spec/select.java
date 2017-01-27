@@ -19,7 +19,6 @@ package org.safris.xdb.entities.spec;
 import org.safris.xdb.entities.Condition;
 import org.safris.xdb.entities.DML.ALL;
 import org.safris.xdb.entities.DML.CROSS;
-import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.DataType;
@@ -97,10 +96,15 @@ public interface select {
   public interface _SELECT<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T> {
   }
 
-  public interface SELECT<T extends Subject<?>> extends ExecuteQuery<T> {
+  public interface _UNION<T extends Subject<?>> {
+    public UNION<T> UNION(final SELECT<T> union);
+    public UNION<T> UNION(final ALL all, final SELECT<T> union);
+  }
+
+  public interface UNION<T extends Subject<?>> extends ExecuteQuery<T>, _UNION<T> {
+  }
+
+  public interface SELECT<T extends Subject<?>> extends ExecuteQuery<T>, _UNION<T> {
     public T AS(final T as);
-    public SELECT<T> UNION(final SELECT<T> union);
-    public SELECT<T> UNION(final ALL all, final SELECT<T> union);
-    public SELECT<T> UNION(final DISTINCT distinct, final SELECT<T> union);
   }
 }

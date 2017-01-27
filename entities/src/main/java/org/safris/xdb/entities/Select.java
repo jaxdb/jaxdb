@@ -157,7 +157,7 @@ final class Select extends SQLStatement {
     };
   }
 
-  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T> {
+  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements select.SELECT<T>, select.UNION<T> {
     protected Execute(final Keyword<T> parent) {
       super(parent);
     }
@@ -170,21 +170,16 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public select.SELECT<T> UNION(final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
+    public select.UNION<T> UNION(final select.SELECT<T> union) {
+      return new UNION<T>(this, false, union);
     }
 
     @Override
-    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
+    public select.UNION<T> UNION(final ALL all, final select.SELECT<T> union) {
+      if (all == null)
+        throw new IllegalArgumentException("all must be DML.ALL");
 
-    @Override
-    public select.SELECT<T> UNION(final DISTINCT distinct, final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
+      return new UNION<T>(this, true, union);
     }
 
     @Override
@@ -586,21 +581,16 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public select.SELECT<T> UNION(final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
+    public select.UNION<T> UNION(final select.SELECT<T> union) {
+      return new UNION<T>(this, false, union);
     }
 
     @Override
-    public select.SELECT<T> UNION(final ALL all, final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
+    public select.UNION<T> UNION(final ALL all, final select.SELECT<T> union) {
+      if (all == null)
+        throw new IllegalArgumentException("all must be DML.ALL");
 
-    @Override
-    public select.SELECT<T> UNION(final DISTINCT distinct, final select.SELECT<T> union) {
-      // TODO:
-      throw new UnsupportedOperationException();
+      return new UNION<T>(this, true, union);
     }
 
     @Override
@@ -751,6 +741,24 @@ final class Select extends SQLStatement {
 
     @Override
     protected final Command normalize() {
+      final SelectCommand command = (SelectCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+  }
+
+  protected static final class UNION<T extends Subject<?>> extends Execute<T> implements select.UNION<T> {
+    protected final Serializable select;
+    protected final boolean all;
+
+    protected UNION(final Keyword<T> parent, final boolean all, final select.SELECT<T> select) {
+      super(parent);
+      this.select = (Serializable)select;
+      this.all = all;
+    }
+
+    @Override
+    protected Command normalize() {
       final SelectCommand command = (SelectCommand)parent().normalize();
       command.add(this);
       return command;
