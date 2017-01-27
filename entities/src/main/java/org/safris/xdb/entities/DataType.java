@@ -54,7 +54,6 @@ public abstract class DataType<T> extends Subject<T> {
     return array;
   }
 
-  protected final int sqlType = sqlType();
   protected final Entity owner;
   protected final String name;
   protected final boolean unique;
@@ -74,12 +73,12 @@ public abstract class DataType<T> extends Subject<T> {
     this.generateOnUpdate = generateOnUpdate;
   }
 
-  protected DataType(final DataType<T> dataType) {
-    this(dataType.owner, dataType.name, dataType.get(), dataType.unique, dataType.primary, dataType.nullable, dataType.generateOnInsert, dataType.generateOnUpdate);
+  protected DataType(final Entity owner) {
+    this(owner, null, null, false, false, false, null, null);
   }
 
   protected DataType() {
-    this(null, null, null, false, false, false, null, null);
+    this(null);
   }
 
   protected T value;

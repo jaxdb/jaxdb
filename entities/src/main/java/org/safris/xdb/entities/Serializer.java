@@ -119,12 +119,12 @@ public abstract class Serializer {
     return "?";
   }
 
-  protected void serialize(final Case.CASE_WHEN<?> caseWhen, final CaseCommand command, final Serialization serialization) {
+  protected void serialize(final Case.CASE_WHEN caseWhen, final CaseCommand command, final Serialization serialization) {
     // TODO
     throw new UnsupportedOperationException();
   }
 
-  protected void serialize(final Case.THEN<?> then, final CaseCommand command, final Serialization serialization) {
+  protected void serialize(final Case.THEN then, final CaseCommand command, final Serialization serialization) {
     // TODO
     throw new UnsupportedOperationException();
   }
@@ -503,13 +503,9 @@ public abstract class Serializer {
   }
 
   // FIXME: Move this to a Util class or something
-  @SuppressWarnings("unchecked")
-  protected static <T extends Subject<?>>void formatBraces(final Operator<BooleanTerm<?>> operator, final Condition<?> condition, final Serialization serialization) throws IOException {
-    if (condition instanceof ComparisonPredicate || condition instanceof Predicate) {
-      condition.serialize(serialization);
-    }
-    else if (condition instanceof BooleanTerm) {
-      if (operator == ((BooleanTerm<T>)condition).operator) {
+  protected static <T extends Subject<?>>void formatBraces(final Operator<BooleanTerm> operator, final Condition<?> condition, final Serialization serialization) throws IOException {
+    if (condition instanceof BooleanTerm) {
+      if (operator == ((BooleanTerm)condition).operator) {
         condition.serialize(serialization);
       }
       else {
@@ -519,11 +515,11 @@ public abstract class Serializer {
       }
     }
     else {
-      throw new UnsupportedOperationException("Unknown condition type: " + condition.getClass().getName());
+      condition.serialize(serialization);
     }
   }
 
-  protected void serialize(final BooleanTerm<?> condition, final Serialization serialization) throws IOException {
+  protected void serialize(final BooleanTerm condition, final Serialization serialization) throws IOException {
     formatBraces(condition.operator, condition.a, serialization);
     serialization.append(" ").append(condition.operator).append(" ");
     formatBraces(condition.operator, condition.b, serialization);

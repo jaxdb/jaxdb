@@ -150,8 +150,8 @@ public final class DML {
 
   /** CASE **/
 
-  public static <T>expression.WHEN<T> CASE_WHEN(final Condition<T> condition) {
-    return new Case.CASE_WHEN<T>(condition);
+  public static <T>expression.WHEN CASE_WHEN(final Condition<T> condition) {
+    return new Case.CASE_WHEN(condition);
   }
 
   /** DELETE **/
@@ -922,273 +922,381 @@ public final class DML {
   /** Condition **/
 
   @SafeVarargs
-  public static <T>BooleanTerm<T> AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    return new BooleanTerm<T>(Operator.AND, a, b, conditions);
+  public static <T>BooleanTerm AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanTerm(Operator.AND, a, b, conditions);
   }
 
-  public static <T>BooleanTerm<T> AND(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>BooleanTerm AND(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm<T>(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>BooleanTerm<T> AND(final Condition<?>[] conditions) {
+  public static <T>BooleanTerm AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm<T>(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>BooleanTerm<T> AND(final Collection<Condition<?>> conditions) {
+  public static <T>BooleanTerm AND(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm<T>(Operator.AND, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm(Operator.AND, array[0], array[1], Arrays.subArray(array, 2));
   }
 
   @SafeVarargs
-  public static <T>BooleanTerm<T> OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
-    return new BooleanTerm<T>(Operator.OR, a, b, conditions);
+  public static <T>BooleanTerm OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    return new BooleanTerm(Operator.OR, a, b, conditions);
   }
 
-  public static <T>BooleanTerm<T> OR(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>BooleanTerm OR(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm<T>(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>BooleanTerm<T> OR(final Condition<?>[] conditions) {
+  public static <T>BooleanTerm OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm<T>(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>BooleanTerm<T> OR(final Collection<Condition<?>> conditions) {
+  public static <T>BooleanTerm OR(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm<T>(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm(Operator.OR, array[0], array[1], Arrays.subArray(array, 2));
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final select.SELECT<? extends DataType<? extends T>> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final select.SELECT<? extends DataType<? extends T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final T a, final select.SELECT<? extends DataType<? extends T>> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final T a, final select.SELECT<? extends DataType<? extends T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GT(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GT(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final select.SELECT<? extends DataType<T>> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final select.SELECT<? extends DataType<T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final T a, final select.SELECT<? extends DataType<T>> b) {
-    return new ComparisonPredicate<T>(Operator.GTE, a, b);
+  public static <T>data.Boolean GTE(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> GTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean GTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.EQ, a, b);
+  public static <T>data.Boolean EQ(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.EQ, a, b);
+  public static <T>data.Boolean EQ(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b);
+  public static <T>data.Boolean EQ(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final select.SELECT<? extends DataType<T>> a, final T b) {
-    return new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b);
+  public static <T>data.Boolean EQ(final select.SELECT<? extends DataType<T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.EQ : Operator.IS, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.EQ, a, b);
+  public static <T>data.Boolean EQ(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final T a, final select.SELECT<? extends DataType<T>> b) {
-    return new ComparisonPredicate<T>(Operator.EQ, a, b);
+  public static <T>data.Boolean EQ(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.EQ, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> EQ(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean EQ(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.NE, a, b);
+  public static <T>data.Boolean NE(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.NE, a, b);
+  public static <T>data.Boolean NE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b);
+  public static <T>data.Boolean NE(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final select.SELECT<? extends DataType<T>> a, final T b) {
-    return new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b);
+  public static <T>data.Boolean NE(final select.SELECT<? extends DataType<T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(b != null ? Operator.NE : Operator.NOT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.NE, a, b);
+  public static <T>data.Boolean NE(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final T a, final select.SELECT<? extends DataType<T>> b) {
-    return new ComparisonPredicate<T>(Operator.NE, a, b);
+  public static <T>data.Boolean NE(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.NE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> NE(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean NE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final select.SELECT<? extends DataType<T>> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final select.SELECT<? extends DataType<T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final T a, final select.SELECT<? extends DataType<T>> b) {
-    return new ComparisonPredicate<T>(Operator.LT, a, b);
+  public static <T>data.Boolean LT(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LT(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LT(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final DataType<? extends T> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final select.SELECT<? extends DataType<T>> a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final DataType<? extends T> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final select.SELECT<? extends DataType<T>> a, final T b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final select.SELECT<? extends DataType<T>> a, final T b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final T a, final DataType<? extends T> b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final T a, final DataType<? extends T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final T a, final select.SELECT<? extends DataType<T>> b) {
-    return new ComparisonPredicate<T>(Operator.LTE, a, b);
+  public static <T>data.Boolean LTE(final T a, final select.SELECT<? extends DataType<T>> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.LTE, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.ALL<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.ANY<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
-  public static <T>ComparisonPredicate<T> LTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
-    return new ComparisonPredicate<T>(Operator.GT, a, b);
+  public static <T>data.Boolean LTE(final DataType<? extends T> a, final qualified.SOME<T> b) {
+    final data.Boolean dataType = new data.Boolean();
+    dataType.setWrapper(new ComparisonPredicate<T>(Operator.GT, a, b));
+    return dataType;
   }
 
   /** Predicate **/

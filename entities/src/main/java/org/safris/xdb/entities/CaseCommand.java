@@ -23,23 +23,23 @@ import org.safris.xdb.entities.Case.ELSE;
 import org.safris.xdb.entities.Case.THEN;
 
 final class CaseCommand extends Command {
-  private CASE_WHEN<?> caseWhen;
-  private THEN<?> then;
+  private CASE_WHEN caseWhen;
+  private THEN then;
   private ELSE<?> els;
 
-  protected CASE_WHEN<?> caseWhen() {
+  protected CASE_WHEN caseWhen() {
     return caseWhen;
   }
 
-  protected void add(final CASE_WHEN<?> caseWhen) {
+  protected void add(final CASE_WHEN caseWhen) {
     this.caseWhen = caseWhen;
   }
 
-  protected THEN<?> then() {
+  protected THEN then() {
     return then;
   }
 
-  protected void add(THEN<?> then) {
+  protected void add(final THEN then) {
     this.then = then;
   }
 

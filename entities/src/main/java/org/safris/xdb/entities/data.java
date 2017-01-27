@@ -145,9 +145,9 @@ public final class data {
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
-        statement.setObject(parameterIndex, value, sqlType);
+        statement.setObject(parameterIndex, value, sqlType());
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -289,7 +289,7 @@ public final class data {
     }
   }
 
-  public static final class Boolean extends DataType<java.lang.Boolean> {
+  public static final class Boolean extends Condition<java.lang.Boolean> {
     public Boolean(final Entity owner, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Boolean> generateOnInsert, final GenerateOn<? super java.lang.Boolean> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
@@ -312,7 +312,7 @@ public final class data {
       if (value != null)
         statement.setBoolean(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -367,7 +367,7 @@ public final class data {
       if (value != null)
         statement.setString(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -420,7 +420,7 @@ public final class data {
       if (value != null)
         statement.setClob(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -472,7 +472,7 @@ public final class data {
       if (value != null)
         statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -524,7 +524,7 @@ public final class data {
       if (value != null)
         statement.setTimestamp(parameterIndex, new Timestamp(value.toEpochSecond(ZoneOffset.UTC)));
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -584,7 +584,7 @@ public final class data {
       if (value != null)
         statement.setDouble(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -642,7 +642,7 @@ public final class data {
       if (value != null)
         statement.setDouble(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -698,7 +698,7 @@ public final class data {
       if (value != null)
         statement.setObject(parameterIndex, value.toString());
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -770,7 +770,7 @@ public final class data {
       if (value != null)
         statement.setFloat(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -827,7 +827,7 @@ public final class data {
       if (value != null)
         statement.setLong(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -884,7 +884,7 @@ public final class data {
       if (value != null)
         statement.setInt(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -949,7 +949,7 @@ public final class data {
       if (value != null)
         statement.setShort(parameterIndex, value);
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -1005,7 +1005,7 @@ public final class data {
       if (value != null)
         statement.setTime(parameterIndex, java.sql.Time.valueOf(value));
       else
-        statement.setNull(parameterIndex, sqlType);
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override

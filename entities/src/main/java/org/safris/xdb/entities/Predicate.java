@@ -16,5 +16,17 @@
 
 package org.safris.xdb.entities;
 
-abstract class Predicate<T> extends Condition<T> {
+import java.io.IOException;
+
+import org.safris.xdb.schema.DBVendor;
+
+abstract class Predicate<T> extends ConditionWrapper<T> {
+  protected Predicate() {
+    super(null);
+  }
+
+  @Override
+  protected final String serialize(final DBVendor vendor) throws IOException {
+    throw new UnsupportedOperationException();
+  }
 }

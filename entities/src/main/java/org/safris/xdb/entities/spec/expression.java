@@ -20,15 +20,15 @@ import org.safris.xdb.entities.Condition;
 import org.safris.xdb.entities.DataType;
 
 public interface expression {
-  public interface WHEN<T> {
-    public THEN<T> THEN(final DataType<T> dataType);
-    public THEN<T> THEN(final T value);
+  public interface WHEN {
+    public <T>THEN THEN(final DataType<T> dataType);
+    public <T>THEN THEN(final T value);
   }
 
-  public interface THEN<T> {
-    public THEN<T> WHEN(final Condition<T> condition);
-    public ELSE<T> ELSE(final DataType<T> dataType);
-    public ELSE<T> ELSE(final T value);
+  public interface THEN {
+    public <T>THEN WHEN(final Condition<T> condition);
+    public <T>ELSE<T> ELSE(final DataType<T> dataType);
+    public <T>ELSE<T> ELSE(final T value);
   }
 
   public interface ELSE<T> extends CASE<T> {

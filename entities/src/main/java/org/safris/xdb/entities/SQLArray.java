@@ -37,7 +37,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public int getBaseType() throws SQLException {
-    return array.dataType.sqlType;
+    return array.dataType.sqlType();
   }
 
   @Override

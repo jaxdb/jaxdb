@@ -17,8 +17,8 @@
 package org.safris.xdb.entities;
 
 final class Operator<T extends Serializable> {
-  public static final Operator<BooleanTerm<?>> AND = new Operator<BooleanTerm<?>>("AND");
-  public static final Operator<BooleanTerm<?>> OR = new Operator<BooleanTerm<?>>("OR");
+  public static final Operator<BooleanTerm> AND = new Operator<BooleanTerm>("AND");
+  public static final Operator<BooleanTerm> OR = new Operator<BooleanTerm>("OR");
 
   public static final Operator<ComparisonPredicate<?>> EQ = new Operator<ComparisonPredicate<?>>("=");
   public static final Operator<ComparisonPredicate<?>> LT = new Operator<ComparisonPredicate<?>>("<");
@@ -33,7 +33,6 @@ final class Operator<T extends Serializable> {
   public static final Operator<NumericExpression<?>> MINUS = new Operator<NumericExpression<?>>("-");
   public static final Operator<NumericExpression<?>> MULTIPLY = new Operator<NumericExpression<?>>("*");
   public static final Operator<NumericExpression<?>> DIVIDE = new Operator<NumericExpression<?>>("/");
-  public static final Operator<NumericExpression<?>> MOD = new Operator<NumericExpression<?>>("%");
 
   public static final Operator<StringExpression> CONCAT = new Operator<StringExpression>("||");
 

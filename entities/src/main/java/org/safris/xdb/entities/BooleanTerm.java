@@ -18,18 +18,25 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-final class BooleanTerm<T> extends BooleanCondition<T> {
-  protected final Operator<BooleanTerm<?>> operator;
+import org.safris.xdb.schema.DBVendor;
+
+final class BooleanTerm extends BooleanCondition {
+  protected final Operator<BooleanTerm> operator;
   protected final Condition<?> a;
   protected final Condition<?> b;
   protected final Condition<?>[] conditions;
 
   @SafeVarargs
-  protected BooleanTerm(final Operator<BooleanTerm<?>> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+  protected BooleanTerm(final Operator<BooleanTerm> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
     this.a = a;
     this.b = b;
     this.operator = operator;
     this.conditions = conditions;
+  }
+
+  @Override
+  protected final String serialize(final DBVendor vendor) throws IOException {
+    return operator.toString();
   }
 
   @Override

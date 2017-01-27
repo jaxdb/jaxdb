@@ -19,8 +19,9 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 
 import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.schema.DBVendor;
 
-final class ComparisonPredicate<T> extends BooleanCondition<T> {
+final class ComparisonPredicate<T> extends BooleanCondition {
   protected final Operator<ComparisonPredicate<?>> operator;
   protected final Serializable a;
   protected final Serializable b;
@@ -65,6 +66,11 @@ final class ComparisonPredicate<T> extends BooleanCondition<T> {
     this.operator = operator;
     this.a = a;
     this.b = b;
+  }
+
+  @Override
+  protected final String serialize(final DBVendor vendor) throws IOException {
+    return operator.toString();
   }
 
   @Override

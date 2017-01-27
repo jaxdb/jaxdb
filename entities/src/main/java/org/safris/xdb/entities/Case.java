@@ -23,22 +23,22 @@ final class Case extends SQLStatement {
     }
   }
 
-  protected static final class CASE_WHEN<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.WHEN<T> {
-    private final Condition<T> condition;
+  protected static final class CASE_WHEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.expression.WHEN {
+    private final Condition<?> condition;
 
-    protected CASE_WHEN(final Condition<T> condition) {
+    protected CASE_WHEN(final Condition<?> condition) {
       super(null);
       this.condition = condition;
     }
 
     @Override
-    public THEN<T> THEN(final DataType<T> dataType) {
-      return new THEN<T>(this, dataType);
+    public <T>THEN THEN(final DataType<T> dataType) {
+      return new THEN(this, dataType);
     }
 
     @Override
-    public THEN<T> THEN(final T value) {
-      return new THEN<T>(this, DataType.wrap(value));
+    public <T>THEN THEN(final T value) {
+      return new THEN(this, DataType.wrap(value));
     }
 
     @Override
@@ -49,27 +49,27 @@ final class Case extends SQLStatement {
     }
   }
 
-  protected static final class THEN<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.THEN<T> {
-    private final DataType<T> value;
+  protected static final class THEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.expression.THEN {
+    private final DataType<?> value;
 
-    protected THEN(final Keyword<Subject<T>> parent, final DataType<T> value) {
+    protected THEN(final Keyword<Subject<?>> parent, final DataType<?> value) {
       super(parent);
       this.value = value;
     }
 
     @Override
-    public THEN<T> WHEN(final Condition<T> condition) {
+    public <T>THEN WHEN(final Condition<T> condition) {
       throw new UnsupportedOperationException("implement this");
       //return new THEN<T>(this, condition);
     }
 
     @Override
-    public ELSE<T> ELSE(final DataType<T> dataType) {
+    public <T>ELSE<T> ELSE(final DataType<T> dataType) {
       return new ELSE<T>(this, dataType);
     }
 
     @Override
-    public ELSE<T> ELSE(final T value) {
+    public <T>ELSE<T> ELSE(final T value) {
       return new ELSE<T>(this, DataType.wrap(value));
     }
 

@@ -16,5 +16,16 @@
 
 package org.safris.xdb.entities;
 
-public abstract class Condition<T> extends Provision<Subject<T>> {
+public abstract class Condition<T> extends DataType<T> {
+  protected Condition(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+    super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  }
+
+  protected Condition(final Entity owner) {
+    super(owner);
+  }
+
+  protected Condition() {
+    super();
+  }
 }

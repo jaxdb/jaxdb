@@ -16,5 +16,8 @@
 
 package org.safris.xdb.entities;
 
-abstract class BooleanCondition<T> extends Condition<T> {
+abstract class BooleanCondition extends ConditionWrapper<Boolean> {
+  public BooleanCondition() {
+    super(new data.Boolean());
+  }
 }
