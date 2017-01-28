@@ -1251,118 +1251,133 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> DIV(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N DIV(final N a, final N b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> DIV(final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N DIV(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> DIV(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N DIV(final N a, final Number b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = b.newInstance(b.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N DIV(final Number a, final N b, final N ... args) {
+    final N wrapper = (N)b.newInstance(b.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> DIV(final Number a, final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N DIV(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MUL(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N MUL(final N a, final N b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MUL(final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N MUL(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MUL(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N MUL(final N a, final Number b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = b.newInstance(b.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N MUL(final Number a, final N b, final N ... args) {
+    final N wrapper = (N)b.newInstance(b.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> MUL(final Number a, final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N MUL(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> ADD(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N ADD(final N a, final N b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> ADD(final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N ADD(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> ADD(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N ADD(final N a, final Number b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = b.newInstance(b.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N ADD(final Number a, final N b, final N ... args) {
+    final N wrapper = (N)b.newInstance(b.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> ADD(final Number a, final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N ADD(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
@@ -1374,11 +1389,11 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N PLUS(final N a, final N b, final N ... args) {
     return ADD(a, b, args);
   }
 
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T>[] args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N PLUS(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
@@ -1386,16 +1401,16 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> PLUS(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N PLUS(final N a, final Number b, final N ... args) {
     return ADD(a, b, args);
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N PLUS(final Number a, final N b, final N ... args) {
     return ADD(a, b, args);
   }
 
-  public static <T extends Number>Numeric<T> PLUS(final Number a, final Numeric<T>[] args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N PLUS(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
@@ -1407,46 +1422,52 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> SUB(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final N a, final N b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> SUB(final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> SUB(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = a.newInstance(a.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final N a, final Number b, final N ... args) {
+    final N wrapper = (N)a.newInstance(a.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> SUB(final Number a, Numeric<T> b) {
-    final Numeric<T> wrapper = b.newInstance(b.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final Number a, N b) {
+    final N wrapper = (N)b.newInstance(b.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b));
     return wrapper;
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
-    final Numeric<T> wrapper = b.newInstance(b.owner);
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final Number a, final N b, final N ... args) {
+    final N wrapper = (N)b.newInstance(b.owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
-  public static <T extends Number>Numeric<T> SUB(final Number a, final Numeric<T>[] args) {
+  @SuppressWarnings("unchecked")
+  public static <N extends Numeric<? extends T>,T extends Number>N SUB(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
-    final Numeric<T> wrapper = args[0].newInstance(args[0].owner);
+    final N wrapper = (N)args[0].newInstance(args[0].owner);
     wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
@@ -1458,11 +1479,11 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Numeric<T> b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N MINUS(final N a, final N b, final N ... args) {
     return SUB(a, b, args);
   }
 
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T>[] args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N MINUS(final N[] args) {
     if (args.length < 2)
       throw new IllegalArgumentException("args.length < 2");
 
@@ -1470,16 +1491,16 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MINUS(final Numeric<T> a, final Number b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N MINUS(final N a, final Number b, final N ... args) {
     return SUB(a, b, args);
   }
 
   @SafeVarargs
-  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T> b, final Numeric<T> ... args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N MINUS(final Number a, final N b, final N ... args) {
     return SUB(a, b, args);
   }
 
-  public static <T extends Number>Numeric<T> MINUS(final Number a, final Numeric<T>[] args) {
+  public static <N extends Numeric<? extends T>,T extends Number>N MINUS(final Number a, final N[] args) {
     if (args.length < 1)
       throw new IllegalArgumentException("args.length < 1");
 
@@ -1502,9 +1523,9 @@ public final class DML {
     }
   }
 
-  private static final NOW NOW = new NOW();
+  private static final DateTime NOW = new NOW();
 
-  public static NOW NOW() {
+  public static DateTime NOW() {
     return NOW;
   }
 
@@ -1520,9 +1541,9 @@ public final class DML {
     }
   }
 
-  private static final PI PI = new PI();
+  private static final Decimal PI = new PI();
 
-  public static PI PI() {
+  public static Decimal PI() {
     return PI;
   }
 
