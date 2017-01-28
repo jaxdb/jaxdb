@@ -22,11 +22,11 @@ import java.sql.SQLException;
 import org.safris.xdb.entities.DML.ALL;
 import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
 final class Insert extends SQLStatement {
-  protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.insert.INSERT_SELECT<T> {
+  protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.insert.INSERT_SELECT<T> {
     protected final T[] entities;
 
     @SafeVarargs

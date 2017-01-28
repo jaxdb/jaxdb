@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;
 
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 
 final class InPredicate<T> extends Predicate<T> {
   protected final boolean positive;

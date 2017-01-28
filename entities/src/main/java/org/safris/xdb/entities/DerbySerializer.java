@@ -18,16 +18,72 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.util.Calendar;
 import java.util.Set;
 
+import org.safris.commons.lang.Classes;
+import org.safris.commons.math.Functions;
 import org.safris.xdb.entities.Interval.Unit;
 import org.safris.xdb.entities.Select.GROUP_BY;
 import org.safris.xdb.entities.Select.SELECT;
 import org.safris.xdb.schema.DBVendor;
 
 final class DerbySerializer extends Serializer {
+  public static final class Function {
+    public static double mod(final double a, final double b) {
+      return a % b;
+    }
+
+    public static double log(final double a, final double b) {
+      return Math.log(a) / Math.log(b);
+    }
+
+    public static double log2(final double a) {
+      return Math.log(a) / 0.6931471805599453;
+    }
+
+    public static Date add(final Date date, final String string) {
+      return add(date, Interval.valueOf(string), 1);
+    }
+
+    public static Date add(final Time time, final String string) {
+      return add(time, Interval.valueOf(string), 1);
+    }
+
+    public static Date add(final Timestamp timestamp, final String string) {
+      return add(timestamp, Interval.valueOf(string), 1);
+    }
+
+    public static Date sub(final Date date, final String string) {
+      return add(date, Interval.valueOf(string), -1);
+    }
+
+    public static Date sub(final Time time, final String string) {
+      return add(time, Interval.valueOf(string), -1);
+    }
+
+    public static Date sub(final Timestamp timestamp, final String string) {
+      return add(timestamp, Interval.valueOf(string), -1);
+    }
+
+    private static Date add(final java.util.Date date, final Interval interval, final int sign) {
+      final Calendar calendar = Calendar.getInstance();
+      calendar.setTime(date);
+      for (final Unit unit : interval.getUnits())
+        calendar.add(unit.getCalendarField(), sign * unit.getFieldScale() * interval.getComponent(unit));
+
+      return new Date(calendar.getTimeInMillis());
+    }
+
+    private Function() {
+    }
+  }
+
   @Override
   protected DBVendor getVendor() {
     return DBVendor.DERBY;
@@ -35,24 +91,26 @@ final class DerbySerializer extends Serializer {
 
   @Override
   protected void onRegister(final Connection connection) throws SQLException {
-    final Statement statement = connection.createStatement();
-    statement.execute("CREATE FUNCTION LOG(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.log'");
-    statement.execute("CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.log2'");
-    statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'java.lang.Math.pow'");
-    statement.execute("CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.commons.math.Functions.round'");
-    statement.execute("CREATE FUNCTION DMOD(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.mod'");
-    statement.execute("CREATE FUNCTION DATEADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
-    statement.execute("CREATE FUNCTION DATESUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
-    statement.execute("CREATE FUNCTION TIMEADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
-    statement.execute("CREATE FUNCTION TIMESUB(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
-    statement.execute("CREATE FUNCTION DATETIMEADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.add'");
-    statement.execute("CREATE FUNCTION DATETIMESUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME 'org.safris.xdb.entities.IntervalUtil.sub'");
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute("CREATE FUNCTION LOG(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
+      statement.execute("CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log2'");
+      statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Math.class.getName() + ".pow'");
+      statement.execute("CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Classes.getStrictName(Functions.class) + ".round'");
+      statement.execute("CREATE FUNCTION DMOD(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".mod'");
+      statement.execute("CREATE FUNCTION DATE_ADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      statement.execute("CREATE FUNCTION DATE_SUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+      statement.execute("CREATE FUNCTION TIME_ADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      statement.execute("CREATE FUNCTION TIME_SUB(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+      statement.execute("CREATE FUNCTION TIMESTAMP_ADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      statement.execute("CREATE FUNCTION TIMESTAMP_SUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+    }
   }
 
   @Override
   protected void serialize(final Interval interval, final Serialization serialization) {
     final Set<Unit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
+    // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
@@ -69,11 +127,11 @@ final class DerbySerializer extends Serializer {
     else if (expression.a instanceof data.Time)
       serialization.append("TIME");
     else if (expression.a instanceof data.DateTime)
-      serialization.append("DATETIME");
+      serialization.append("TIMESTAMP");
     else
       throw new UnsupportedOperationException("Unexpected temporal type: " + expression.a.getClass());
 
-    serialization.append(expression.operator == Operator.PLUS ? "ADD(" : "SUB(");
+    serialization.append(expression.operator == Operator.PLUS ? "_ADD(" : "_SUB(");
     expression.a.serialize(serialization);
     serialization.append(", ");
     expression.b.serialize(serialization);

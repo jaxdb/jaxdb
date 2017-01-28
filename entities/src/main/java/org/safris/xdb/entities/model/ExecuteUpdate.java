@@ -1,4 +1,4 @@
-/* Copyright (c) 2014 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,10 +14,14 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities;
+package org.safris.xdb.entities.model;
 
-abstract class BooleanCondition extends ConditionWrapper<Boolean> {
-  public BooleanCondition() {
-    super(new data.Boolean());
-  }
+import java.io.IOException;
+import java.sql.SQLException;
+
+import org.safris.xdb.entities.Transaction;
+
+public interface ExecuteUpdate {
+  public int[] execute(final Transaction transaction) throws IOException, SQLException;
+  public int[] execute() throws IOException, SQLException;
 }

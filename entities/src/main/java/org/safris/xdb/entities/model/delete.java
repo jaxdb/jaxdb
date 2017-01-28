@@ -14,14 +14,15 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities.model;
 
-import java.io.IOException;
-import java.sql.SQLException;
+import org.safris.xdb.entities.Condition;
 
-import org.safris.xdb.entities.Transaction;
+public interface delete {
+  public interface DELETE extends ExecuteUpdate {
+  }
 
-public interface ExecuteUpdate {
-  public int[] execute(final Transaction transaction) throws IOException, SQLException;
-  public int[] execute() throws IOException, SQLException;
+  public interface DELETE_WHERE extends DELETE {
+    public DELETE WHERE(final Condition<?> condition);
+  }
 }

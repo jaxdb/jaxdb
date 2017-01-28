@@ -22,9 +22,9 @@ import java.sql.SQLException;
 import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
-import org.safris.xdb.entities.spec.expression;
-import org.safris.xdb.entities.spec.select;
-import org.safris.xdb.entities.spec.update;
+import org.safris.xdb.entities.model.expression;
+import org.safris.xdb.entities.model.select;
+import org.safris.xdb.entities.model.update;
 import org.safris.xdb.schema.DBVendor;
 
 final class Update extends SQLStatement {

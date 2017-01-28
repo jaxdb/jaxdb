@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 
 final class ExistsPredicate<T> extends Predicate<T> {
   protected final Serializable subQuery;

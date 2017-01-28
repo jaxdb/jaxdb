@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.safris.xdb.schema.DBVendor;
 
-final class BooleanTerm extends BooleanCondition {
+final class BooleanTerm extends data.Boolean {
   protected final Operator<BooleanTerm> operator;
   protected final Condition<?> a;
   protected final Condition<?> b;
@@ -28,9 +28,9 @@ final class BooleanTerm extends BooleanCondition {
 
   @SafeVarargs
   protected BooleanTerm(final Operator<BooleanTerm> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+    this.operator = operator;
     this.a = a;
     this.b = b;
-    this.operator = operator;
     this.conditions = conditions;
   }
 

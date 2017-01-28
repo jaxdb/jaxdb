@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 
 class QuantifiedComparisonPredicate<T> extends Subject<T> {
   protected final String qualifier;

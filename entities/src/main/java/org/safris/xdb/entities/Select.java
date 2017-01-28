@@ -37,7 +37,7 @@ import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
 final class Select extends SQLStatement {

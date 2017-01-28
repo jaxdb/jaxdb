@@ -14,16 +14,29 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities.model;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
-import org.safris.xdb.entities.RowIterator;
+import org.safris.xdb.entities.DML.ALL;
+import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.Subject;
-import org.safris.xdb.entities.Transaction;
 
-public interface ExecuteQuery<T extends Subject<?>> {
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+public interface insert {
+  public interface INSERT extends ExecuteUpdate {
+  }
+
+  public interface INSERT_SELECT<T extends Subject<?>> extends INSERT {
+    public select._SELECT<T> SELECT(final select.SELECT<T> select);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities);
+
+    @SuppressWarnings("unchecked")
+    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities);
+  }
 }

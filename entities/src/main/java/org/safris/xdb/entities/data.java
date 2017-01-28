@@ -58,7 +58,7 @@ public final class data {
     }
   }
 
-  public static final class Array<T> extends Textual<T[]> {
+  public static final class Array<T> extends DataType<T[]> {
     protected final DataType<T> dataType;
 
     public Array(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
@@ -184,7 +184,7 @@ public final class data {
     }
   }
 
-  public static final class Binary extends Textual<byte[]> {
+  public static final class Binary extends Serial<byte[]> {
     public final int length;
     public final boolean varying;
 
@@ -242,7 +242,7 @@ public final class data {
     }
   }
 
-  public static final class Blob extends Textual<InputStream> {
+  public static final class Blob extends LargeObject<InputStream> {
     public final int length;
 
     public Blob(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
@@ -293,7 +293,7 @@ public final class data {
     }
   }
 
-  public static final class Boolean extends Condition<java.lang.Boolean> {
+  public static class Boolean extends Condition<java.lang.Boolean> {
     public Boolean(final Entity owner, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Boolean> generateOnInsert, final GenerateOn<? super java.lang.Boolean> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
@@ -325,7 +325,7 @@ public final class data {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -396,7 +396,7 @@ public final class data {
     }
   }
 
-  public static final class Clob extends Textual<Reader> {
+  public static final class Clob extends LargeObject<Reader> {
     public final int length;
     public final boolean national;
 
@@ -799,6 +799,12 @@ public final class data {
     }
   }
 
+  public static abstract class LargeObject<T> extends DataType<T> {
+    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    }
+  }
+
   public static final class Long extends Numeric<java.lang.Long> {
     public final int precision;
     public final boolean unsigned;
@@ -917,6 +923,12 @@ public final class data {
     protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
 
     protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    }
+  }
+
+  public static abstract class Serial<T> extends DataType<T> {
+    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
   }

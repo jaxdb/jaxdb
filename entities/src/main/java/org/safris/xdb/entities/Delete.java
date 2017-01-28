@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
-import org.safris.xdb.entities.spec.delete;
+import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.schema.DBVendor;
 
 final class Delete extends SQLStatement {

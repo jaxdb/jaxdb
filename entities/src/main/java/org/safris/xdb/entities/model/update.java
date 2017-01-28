@@ -14,29 +14,24 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities.model;
 
-import org.safris.xdb.entities.DML.ALL;
-import org.safris.xdb.entities.DML.DISTINCT;
+import org.safris.xdb.entities.Condition;
+import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Subject;
 
-public interface insert {
-  public interface INSERT extends ExecuteUpdate {
+public interface update {
+  public interface SET extends UPDATE_SET {
+    public UPDATE WHERE(final Condition<?> condition);
   }
 
-  public interface INSERT_SELECT<T extends Subject<?>> extends INSERT {
-    public select._SELECT<T> SELECT(final select.SELECT<T> select);
+  public interface UPDATE_SET extends UPDATE {
+    public <T>SET SET(final DataType<T> set, final expression.CASE<T> to);
+    public <T>SET SET(final DataType<T> set, final DataType<T> to);
+    public <T>SET SET(final DataType<T> set, final T to);
+    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to);
+  }
 
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities);
+  public interface UPDATE extends ExecuteUpdate {
   }
 }

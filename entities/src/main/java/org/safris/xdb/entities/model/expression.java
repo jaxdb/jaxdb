@@ -14,15 +14,26 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.spec;
+package org.safris.xdb.entities.model;
 
 import org.safris.xdb.entities.Condition;
+import org.safris.xdb.entities.DataType;
 
-public interface delete {
-  public interface DELETE extends ExecuteUpdate {
+public interface expression {
+  public interface WHEN {
+    public <T>THEN THEN(final DataType<T> dataType);
+    public <T>THEN THEN(final T value);
   }
 
-  public interface DELETE_WHERE extends DELETE {
-    public DELETE WHERE(final Condition<?> condition);
+  public interface THEN {
+    public <T>THEN WHEN(final Condition<T> condition);
+    public <T>ELSE<T> ELSE(final DataType<T> dataType);
+    public <T>ELSE<T> ELSE(final T value);
+  }
+
+  public interface ELSE<T> extends CASE<T> {
+  }
+
+  public interface CASE<T> {
   }
 }

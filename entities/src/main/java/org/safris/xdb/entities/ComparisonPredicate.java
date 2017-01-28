@@ -18,10 +18,10 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.spec.select;
+import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class ComparisonPredicate<T> extends BooleanCondition {
+final class ComparisonPredicate<T> extends data.Boolean {
   protected final Operator<ComparisonPredicate<?>> operator;
   protected final Serializable a;
   protected final Serializable b;
@@ -41,6 +41,12 @@ final class ComparisonPredicate<T> extends BooleanCondition {
   protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final select.SELECT<?> b) {
     this.operator = operator;
     this.a = DataType.wrap(a);
+    this.b = (Serializable)b;
+  }
+
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final select.SELECT<?> b) {
+    this.operator = operator;
+    this.a = a;
     this.b = (Serializable)b;
   }
 

@@ -17,13 +17,13 @@
 package org.safris.xdb.entities;
 
 final class Case extends SQLStatement {
-  protected static abstract class CASE<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.spec.expression.CASE<T> {
+  protected static abstract class CASE<T> extends Keyword<Subject<T>> implements org.safris.xdb.entities.model.expression.CASE<T> {
     protected CASE() {
       super(null);
     }
   }
 
-  protected static final class CASE_WHEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.expression.WHEN {
+  protected static final class CASE_WHEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.expression.WHEN {
     private final Condition<?> condition;
 
     protected CASE_WHEN(final Condition<?> condition) {
@@ -49,7 +49,7 @@ final class Case extends SQLStatement {
     }
   }
 
-  protected static final class THEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.spec.expression.THEN {
+  protected static final class THEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.expression.THEN {
     private final DataType<?> value;
 
     protected THEN(final Keyword<Subject<?>> parent, final DataType<?> value) {
@@ -81,7 +81,7 @@ final class Case extends SQLStatement {
     }
   }
 
-  protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.entities.spec.expression.ELSE<T> {
+  protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.entities.model.expression.ELSE<T> {
     private final DataType<T> value;
 
     protected ELSE(final Keyword<?> parent, final DataType<T> value) {
