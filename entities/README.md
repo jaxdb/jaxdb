@@ -20,11 +20,11 @@ In addition to generating Java classes that bind to a DDL, the **xdb-entities** 
 public static basis.Account findAccount(final String email) throws SQLException {
   final basis.Account a = new basis.Account();
   try (final RowIterator<basis.Account> rows =
-    SELECT(a).
-    FROM(a).
-    WHERE(EQ(a.email, email)).
-    execute()) {
-    return rows.nextRow() ? rows.nextEntity() : null;
+  **SELECT(a).
+  **FROM(a).
+  **WHERE(EQ(a.email, email)).
+  **execute()) {
+  **return rows.nextRow() ? rows.nextEntity() : null;
   }
 }
 ```
@@ -56,9 +56,9 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dependency>
-    <groupId>org.safris.xdb</groupId>
-    <artifactId>xdb-entities</artifactId>
-    <version>1.3.3</version>
+  **<groupId>org.safris.xdb</groupId>
+  **<artifactId>xdb-entities</artifactId>
+  **<version>1.3.3</version>
   </dependency>
   ```
 
@@ -66,23 +66,23 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <plugin>
-    <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>xdb-maven-plugin</artifactId>
-    <version>1.3.2</version>
-    <executions>
-      <!-- [...] the xdl <execution> is here -->
-      <execution>
-        <id>xde</id>
-        <configuration>
-          <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-sources/xde</destdir>
-            <schemas>
-              <schema>${basedir}/src/main/resources/schema.xdl</schema>
-            </schemas>
-          </manifest>
-        </configuration>
-      </execution>
-    </executions>
+  **<groupId>org.safris.maven.plugin</groupId>
+  **<artifactId>xdb-maven-plugin</artifactId>
+  **<version>1.3.2</version>
+  **<executions>
+    **<!-- [...] the xdl <execution> is here -->
+    **<execution>
+      **<id>xde</id>
+      **<configuration>
+        **<manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+          **<destdir>${project.build.directory}/generated-sources/xde</destdir>
+          **<schemas>
+            **<schema>${basedir}/src/main/resources/schema.xdl</schema>
+          **</schemas>
+        **</manifest>
+      **</configuration>
+    **</execution>
+  **</executions>
   </plugin>
   ```
 
@@ -92,31 +92,31 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```java
   public static void main(final String[] args) throws SQLException {
-    basis.Account account = new basis.Account();
-    account.email.set("john@doe");
-    account.firstName.set("John");
-    account.lastName.set("Doe");
-    account.password.set("w3lcome");
+  **basis.Account account = new basis.Account();
+  **account.email.set("john@doe");
+  **account.firstName.set("John");
+  **account.lastName.set("Doe");
+  **account.password.set("w3lcome");
 
-    INSERT(account).execute();
+  **INSERT(account).execute();
 
-    account.firstName.set("Bob");
+  **account.firstName.set("Bob");
 
-    UPDATE(account).execute();
+  **UPDATE(account).execute();
 
-    final basis.Account found = findAccount(account.email.get());
-    System.out.println(found != null ? found.firstName.get() : "null");
+  **final basis.Account found = findAccount(account.email.get());
+  **System.out.println(found != null ? found.firstName.get() : "null");
   }
   
   public static basis.Account findAccount(final String email) throws SQLException {
-    final basis.Account a = new basis.Account();
-    try (final RowIterator<basis.Account> rows =
-      SELECT(a).
-      FROM(a).
-      WHERE(EQ(a.email, email)).
-      execute()) {
-      return rows.nextRow() ? rows.nextEntity() : null;
-    }
+  **final basis.Account a = new basis.Account();
+  **try (final RowIterator<basis.Account> rows =
+    **SELECT(a).
+    **FROM(a).
+    **WHERE(EQ(a.email, email)).
+    **execute()) {
+    **return rows.nextRow() ? rows.nextEntity() : null;
+  **}
   }
   ```
 
@@ -124,47 +124,47 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://commons.safris.org/dbcp.xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://commons.safris.org/dbcp.xsd http://commons.safris.org/dbcp.xsd">
-    <jdbc>
-      <url>jdbc:postgresql://localhost/basis</url>
-      <driverClassName>org.postgresql.Driver</driverClassName>
-      <username>basis</username>
-      <password>basis</password>
-      <loginTimeout>5000</loginTimeout>
-    </jdbc>
-    <default>
-      <autoCommit>true</autoCommit>
-      <readOnly>false</readOnly>
-      <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
-    </default>
-    <size>
-      <initialSize>0</initialSize>
-      <maxActive>16</maxActive>
-      <maxIdle>16</maxIdle>
-      <minIdle>0</minIdle>
-      <maxWait>1000</maxWait>
-    </size>
-    <management>
-      <timeBetweenEvictionRuns>-1</timeBetweenEvictionRuns>
-      <numTestsPerEvictionRun>3</numTestsPerEvictionRun>
-      <minEvictableIdleTime>1800000</minEvictableIdleTime>
-    </management>
-    <preparedStatements>
-      <poolPreparedStatements>false</poolPreparedStatements>
-      <maxOpenPreparedStatements>-1</maxOpenPreparedStatements>
-    </preparedStatements>
-    <removal>
-      <removeAbandoned>false</removeAbandoned>
-      <removeAbandonedTimeout>300</removeAbandonedTimeout>
-      <logAbandoned>false</logAbandoned>
-    </removal>
-    <logging>
-      <level>ALL</level>
-      <logExpiredConnections>true</logExpiredConnections>
-      <logAbandoned>true</logAbandoned>
-    </logging>
+  **xmlns="http://commons.safris.org/dbcp.xsd"
+  **xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  **xsi:schemaLocation="http://commons.safris.org/dbcp.xsd http://commons.safris.org/dbcp.xsd">
+  **<jdbc>
+    **<url>jdbc:postgresql://localhost/basis</url>
+    **<driverClassName>org.postgresql.Driver</driverClassName>
+    **<username>basis</username>
+    **<password>basis</password>
+    **<loginTimeout>5000</loginTimeout>
+  **</jdbc>
+  **<default>
+    **<autoCommit>true</autoCommit>
+    **<readOnly>false</readOnly>
+    **<transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
+  **</default>
+  **<size>
+    **<initialSize>0</initialSize>
+    **<maxActive>16</maxActive>
+    **<maxIdle>16</maxIdle>
+    **<minIdle>0</minIdle>
+    **<maxWait>1000</maxWait>
+  **</size>
+  **<management>
+    **<timeBetweenEvictionRuns>-1</timeBetweenEvictionRuns>
+    **<numTestsPerEvictionRun>3</numTestsPerEvictionRun>
+    **<minEvictableIdleTime>1800000</minEvictableIdleTime>
+  **</management>
+  **<preparedStatements>
+    **<poolPreparedStatements>false</poolPreparedStatements>
+    **<maxOpenPreparedStatements>-1</maxOpenPreparedStatements>
+  **</preparedStatements>
+  **<removal>
+    **<removeAbandoned>false</removeAbandoned>
+    **<removeAbandonedTimeout>300</removeAbandonedTimeout>
+    **<logAbandoned>false</logAbandoned>
+  **</removal>
+  **<logging>
+    **<level>ALL</level>
+    **<logExpiredConnections>true</logExpiredConnections>
+    **<logAbandoned>true</logAbandoned>
+  **</logging>
   </dbcp>
   ```
 
@@ -172,9 +172,9 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dependency>
-    <groupId>org.safris.commons</groupId>
-    <artifactId>commons-dbcp</artifactId>
-    <version>2.0.2</version>
+  **<groupId>org.safris.commons</groupId>
+  **<artifactId>commons-dbcp</artifactId>
+  **<version>2.0.2</version>
   </dependency>
   ```
   
@@ -184,10 +184,10 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
   final DataSource dataSource = DataSources.createDataSource(dbcp);
   EntityRegistry.register(basis.class, PreparedStatement.class, new EntityDataSource() {
-    @Override
-    public Connection getConnection() throws SQLException {
-      return new ConnectionProxy(dataSource.getConnection());
-    }
+  **@Override
+  **public Connection getConnection() throws SQLException {
+    **return new ConnectionProxy(dataSource.getConnection());
+  **}
   });
   ```
 
@@ -406,6 +406,26 @@ Specification                                                                   
 &ensp;&ensp;<samp>:row_count</samp>                                                                                                                                | [:white_check_mark:][LimitExpressionTest]  | [:white_check_mark:][LimitExpressionTest]  | [:white_check_mark:][LimitExpressionTest]  |
 &ensp;&ensp;<samp>[ OFFSET :row_count ]</samp>                                                                                                                     | [:white_check_mark:][LimitExpressionTest]  | [:white_check_mark:][LimitExpressionTest]  | [:white_check_mark:][LimitExpressionTest]  |
 &ensp;                                                                                                                                                             |                     |                     |                     |
+
+**CAST([&lt;value expression&gt;](#value_expression) AS &lt;DATA TYPE&gt;) Type Matrix**
+
+   &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>t</samp><br><samp>o</samp><br>**<samp>from</samp>**&ensp;&ensp;&ensp;&ensp;&ensp; | &ensp;<br>&ensp;<br><samp>B</samp><br><samp>O</samp><br><samp>O</samp><br><samp>L</samp><br><samp>E</samp><br><samp>A</samp><br><samp>N</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>F</samp><br><samp>L</samp><br><samp>O</samp><br><samp>A</samp><br><samp>T</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>D</samp><br><samp>O</samp><br><samp>U</samp><br><samp>B</samp><br><samp>L</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br><samp>D</samp><br><samp>E</samp><br><samp>C</samp><br><samp>I</samp><br><samp>M</samp><br><samp>A</samp><br><samp>L</samp> | &ensp;<br><samp>S</samp><br><samp>M</samp><br><samp>A</samp><br><samp>L</samp><br><samp>L</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | M<br><samp>E</samp><br><samp>D</samp><br><samp>I</samp><br><samp>U</samp><br><samp>M</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>L</samp><br><samp>O</samp><br><samp>N</samp><br><samp>G</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>I</samp><br><samp>G</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | <samp>C</samp><br><samp>H</samp><br><samp>A</samp><br><samp>R</samp><br><samp>/</samp><br><samp>E</samp><br><samp>N</samp><br><samp>U</samp><br><samp>M</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>D</samp><br><samp>A</samp><br><samp>T</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>T</samp><br><samp>I</samp><br><samp>M</samp><br><samp>E</samp> | &ensp;<br><samp>D</samp><br><samp>A</samp><br><samp>T</samp><br><samp>E</samp><br><samp>T</samp><br><samp>I</samp><br><samp>M</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>C</samp><br><samp>L</samp><br><samp>O</samp><br><samp>B</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>L</samp><br><samp>O</samp><br><samp>B</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>I</samp><br><samp>N</samp><br><samp>A</samp><br><samp>R</samp><br><samp>Y</samp> |
+--------------------------:|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|--------------------------|
+  **<samp>BOOLEAN</samp>** |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: |                          |                          |                          | :heavy_multiplication_x: |                          |                          |
+    **<samp>FLOAT</samp>** |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+   **<samp>DOUBLE</samp>** |                          | :heavy_multiplication_x: |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+  **<samp>DECIMAL</samp>** |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+ **<samp>SMALLINT</samp>** |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+**<samp>MEDIUMINT</samp>** |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+     **<samp>LONG</samp>** |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+   **<samp>BIGINT</samp>** |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |
+**<samp>CHAR/ENUM</samp>** | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |
+     **<samp>DATE</samp>** |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |                          |                          |
+     **<samp>TIME</samp>** |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: |                          | :heavy_multiplication_x: |                          |                          |                          |                          |
+ **<samp>DATETIME</samp>** |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: | :heavy_multiplication_x: |                          |                          |                          |
+     **<samp>CLOB</samp>** | :heavy_multiplication_x: |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: |                          |                          |                          | :heavy_multiplication_x: |                          |                          |
+     **<samp>BLOB</samp>** |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: |
+   **<samp>BINARY</samp>** |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: |
 
 ### License
  
