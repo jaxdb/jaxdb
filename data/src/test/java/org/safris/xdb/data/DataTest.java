@@ -17,12 +17,18 @@
 package org.safris.xdb.data;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -37,11 +43,14 @@ import org.safris.commons.io.Files;
 import org.safris.commons.io.JarFiles;
 import org.safris.commons.lang.Resource;
 import org.safris.commons.lang.Resources;
+import org.safris.commons.lang.Strings;
 import org.safris.commons.logging.Logging;
 import org.safris.commons.net.URLs;
 import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.test.LoggableTest;
 import org.safris.commons.util.Collections;
+import org.safris.commons.util.Hexadecimal;
+import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
 import org.safris.xdb.xdd.xe.$xdd_data;
@@ -108,6 +117,33 @@ public class DataTest extends LoggableTest {
     }
   }
 
+  private static void createTypeData(final OutputStream out) throws IOException {
+    out.write("<Types xmlns=\"xdd.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"xdd.types types.xsd\">\n".getBytes());
+    for (int i = 0; i < 1000; i++) {
+      final String bigInt = Random.numeric(18);
+      final String binary = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
+      final String blob = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
+      final String bool = String.valueOf(Math.random() < .5);
+      final String ch = Strings.getRandomAlphaNumericString(255);
+      final String clob = Strings.getRandomAlphaNumericString(255);
+      final String date = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
+      final String dateTime = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
+      final String decimal = (int)(Math.random() * 10000000) + "." +  (int)(Math.random() * 1000);
+      final String flt = String.valueOf(Long.valueOf(Random.numeric(8)) / 13d);
+      final String dbl = String.valueOf(Long.valueOf(Random.numeric(10)) / 13d);
+      final String lng = String.valueOf((int)(Math.random() * 65536 * 65536));
+      final String mediumInt = String.valueOf((int)(Math.random() * 65536));
+      final String smallInt = String.valueOf((int)(Math.random() * 255));
+      final String time = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
+      final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
+      final String enm = values[(int)(Math.random() * values.length)];
+
+      out.write(("  <Type\n    typeBigint=\"" + bigInt + "\"\n    typeBinary=\"" + binary + "\"\n    typeBlob=\"" + blob + "\"\n    typeBoolean=\"" + bool + "\"\n    typeChar=\"" + ch + "\"\n    typeClob=\"" + clob + "\"\n    typeDate=\"" + date + "\"\n    typeDatetime=\"" + dateTime + "\"\n    typeDecimal=\"" + decimal + "\"\n    typeDouble=\"" + dbl + "\"\n    typeEnum=\"" + enm + "\"\n    typeFloat=\"" + flt + "\"\n    typeLong=\"" + lng + "\"\n    typeMediumint=\"" + mediumInt + "\"\n    typeSmallint=\"" + smallInt + "\"\n    typeTime=\"" + time + "\"/>\n").getBytes());
+    }
+
+    out.write("</Types>".getBytes());
+  }
+
   @Test
   public void testClassicModels() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
     testData("classicmodels", true);
@@ -120,6 +156,10 @@ public class DataTest extends LoggableTest {
 
   @Test
   public void testTypes() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.xdd"))) {
+      createTypeData(out);
+    }
+
     testData("types", true);
   }
 
