@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.data.Temporal;
+import org.safris.xdb.entities.type.Temporal;
 
 final class TemporalExpression<T extends java.time.temporal.Temporal> extends Expression<T> {
   protected final Operator<NumericExpression<?>> operator;

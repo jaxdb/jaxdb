@@ -127,11 +127,11 @@ final class DerbySerializer extends Serializer {
 
   @Override
   protected void serialize(final TemporalExpression<?> expression, final Serialization serialization) throws IOException {
-    if (expression.a instanceof data.Date)
+    if (expression.a instanceof type.Date)
       serialization.append("DATE");
-    else if (expression.a instanceof data.Time)
+    else if (expression.a instanceof type.Time)
       serialization.append("TIME");
-    else if (expression.a instanceof data.DateTime)
+    else if (expression.a instanceof type.DateTime)
       serialization.append("TIMESTAMP");
     else
       throw new UnsupportedOperationException("Unexpected temporal type: " + expression.a.getClass());

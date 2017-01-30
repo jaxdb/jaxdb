@@ -151,7 +151,7 @@ public class DataTest extends LoggableTest {
 
   @Test
   public void testWorld() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("world", false);
+    testData("world", true);
   }
 
   @Test

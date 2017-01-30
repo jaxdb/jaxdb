@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.xdb.entities.type.Numeric;
 
 final class function {
   static final class numeric {

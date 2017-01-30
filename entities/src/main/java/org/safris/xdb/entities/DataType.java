@@ -22,8 +22,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.safris.commons.lang.Classes;
-import org.safris.xdb.entities.data.Array;
-import org.safris.xdb.entities.data.Enum;
+import org.safris.xdb.entities.type.Array;
+import org.safris.xdb.entities.type.Enum;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class DataType<T> extends Subject<T> {
@@ -42,7 +42,7 @@ public abstract class DataType<T> extends Subject<T> {
       if (value.getClass().isEnum())
         dataType = (V)new Enum(value.getClass());
       else
-        dataType = (V)data.typeToClass.get(value.getClass()).newInstance();
+        dataType = (V)org.safris.xdb.entities.type.typeToClass.get(value.getClass()).newInstance();
 
       dataType.set(value);
       return dataType;
@@ -58,7 +58,7 @@ public abstract class DataType<T> extends Subject<T> {
     if (value.getClass().getComponentType().isEnum())
       array = new Array<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
     else
-      array = new Array<T>((Class<? extends DataType<T>>)data.typeToClass.get(value.getClass().getComponentType()));
+      array = new Array<T>((Class<? extends DataType<T>>)org.safris.xdb.entities.type.typeToClass.get(value.getClass().getComponentType()));
 
     array.set(value);
     return array;
@@ -108,7 +108,7 @@ public abstract class DataType<T> extends Subject<T> {
   }
 
   public final <V extends DataType<T>>V AS(final V dataType) {
-    dataType.setWrapper(new As<T>(this, dataType));
+    dataType.wrapper(new As<T>(this, dataType));
     return dataType;
   }
 

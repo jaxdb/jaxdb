@@ -24,9 +24,9 @@ import java.util.Map;
 import org.safris.commons.lang.Arrays;
 
 final class SQLArray<T> implements Array {
-  private final data.Array<T> array;
+  private final type.Array<T> array;
 
-  public SQLArray(final data.Array<T> array) {
+  public SQLArray(final type.Array<T> array) {
     this.array = array;
   }
 

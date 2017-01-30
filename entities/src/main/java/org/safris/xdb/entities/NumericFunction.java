@@ -16,7 +16,7 @@
 
 package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.xdb.entities.type.Numeric;
 
 abstract class NumericFunction<T extends Number> extends Expression<T> {
   protected final DataType<? extends T> a;

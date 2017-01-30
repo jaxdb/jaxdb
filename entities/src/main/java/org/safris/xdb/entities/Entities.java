@@ -31,11 +31,11 @@ import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.binding.Base64Binary;
 import org.safris.commons.xml.binding.DateTime;
 import org.safris.commons.xml.binding.Decimal;
-import org.safris.xdb.entities.data.BigInt;
-import org.safris.xdb.entities.data.Enum;
-import org.safris.xdb.entities.data.Long;
-import org.safris.xdb.entities.data.MediumInt;
-import org.safris.xdb.entities.data.SmallInt;
+import org.safris.xdb.entities.type.BigInt;
+import org.safris.xdb.entities.type.Enum;
+import org.safris.xdb.entities.type.Long;
+import org.safris.xdb.entities.type.MediumInt;
+import org.safris.xdb.entities.type.SmallInt;
 import org.safris.xdb.xdd.xe.$xdd_binary;
 import org.safris.xdb.xdd.xe.$xdd_blob;
 import org.safris.xdb.xdd.xe.$xdd_clob;
@@ -98,7 +98,7 @@ public final class Entities {
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum) {
           final String enumValue = ((String)value).toUpperCase().replace(' ', '_');
-          for (final Object constant : ((Enum)dataType).type.getEnumConstants())
+          for (final Object constant : ((Enum)dataType).type().getEnumConstants())
             if (constant.toString().equals(enumValue))
               dataType.set(constant);
         }

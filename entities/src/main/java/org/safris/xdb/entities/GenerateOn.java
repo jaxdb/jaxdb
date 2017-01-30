@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.safris.xdb.entities.data.Date;
-import org.safris.xdb.entities.data.DateTime;
-import org.safris.xdb.entities.data.Time;
+import org.safris.xdb.entities.type.Date;
+import org.safris.xdb.entities.type.DateTime;
+import org.safris.xdb.entities.type.Time;
 
 public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {

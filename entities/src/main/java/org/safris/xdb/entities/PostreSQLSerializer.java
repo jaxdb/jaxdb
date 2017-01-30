@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.safris.commons.io.Streams;
-import org.safris.xdb.entities.data.Blob;
-import org.safris.xdb.entities.data.Enum;
+import org.safris.xdb.entities.type.Blob;
+import org.safris.xdb.entities.type.Enum;
 import org.safris.xdb.schema.DBVendor;
 import org.safris.xdb.schema.spec.PostgreSQLSpec;
 

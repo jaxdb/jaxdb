@@ -33,7 +33,6 @@ import org.safris.commons.lang.Pair;
 import org.safris.commons.util.Collections;
 import org.safris.xdb.entities.DML.ALL;
 import org.safris.xdb.entities.DML.CROSS;
-import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.DML.NATURAL;
 import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
@@ -165,7 +164,7 @@ final class Select extends SQLStatement {
     @Override
     public T AS(final T as) {
       final Command command = normalize();
-      as.setWrapper(new As<T>(command, as));
+      as.wrapper(new As<T>(command, as));
       return as;
     }
 
@@ -539,28 +538,26 @@ final class Select extends SQLStatement {
   };
 
   protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
-    protected final ALL all;
-    protected final DISTINCT distinct;
+    protected final DML.SetQualifier qualifier;
     protected final Collection<T> entities;
 
-    public SELECT(final ALL all, final DISTINCT distinct, final Collection<T> entities) {
+    public SELECT(final DML.SetQualifier qualifier, final Collection<T> entities) {
       super(null);
       if (entities.size() < 1)
         throw new IllegalArgumentException("entities.size() < 1");
 
-      this.all = all;
-      this.distinct = distinct;
+      this.qualifier = qualifier;
       this.entities = entities;
     }
 
     @SafeVarargs
-    public SELECT(final ALL all, final DISTINCT distinct, final T entity, T ... entities) {
-      this(all, distinct, Collections.asCollection(ArrayList.class, entity));
+    public SELECT(final DML.SetQualifier qulifier, final T entity, T ... entities) {
+      this(qulifier, Collections.asCollection(ArrayList.class, entity));
       Collections.addAll(this.entities, entities);
     }
 
-    public SELECT(final ALL all, final DISTINCT distinct, T[] entities) {
-      this(all, distinct, Collections.asCollection(ArrayList.class, entities));
+    public SELECT(final DML.SetQualifier qulifier, T[] entities) {
+      this(qulifier, Collections.asCollection(ArrayList.class, entities));
     }
 
     @Override
@@ -576,7 +573,7 @@ final class Select extends SQLStatement {
     @Override
     public T AS(final T as) {
       final Command command = normalize();
-      as.setWrapper(new As<T>(command, as));
+      as.wrapper(new As<T>(command, as));
       return as;
     }
 
@@ -689,30 +686,6 @@ final class Select extends SQLStatement {
       }
 
       return null;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-      if (this == obj)
-        return true;
-
-      if (!(obj instanceof SELECT<?>))
-        return false;
-
-      final SELECT<?> that = (SELECT<?>)obj;
-      return all == that.all && distinct == that.distinct && Collections.equals(entities, that.entities);
-    }
-
-    @Override
-    public int hashCode() {
-      int mask = 0;
-      if (all != null)
-        mask |= 1;
-      if (distinct != null)
-        mask |= 2;
-
-      ++mask;
-      return Collections.hashCode(entities) ^ mask;
     }
   }
 

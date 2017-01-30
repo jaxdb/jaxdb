@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.xdb.entities.type.Numeric;
 
 final class NumericExpression<T extends Number> extends Expression<T> {
   protected final Operator<NumericExpression<?>> operator;

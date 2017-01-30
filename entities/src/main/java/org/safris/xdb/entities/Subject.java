@@ -23,7 +23,7 @@ public abstract class Subject<T> extends Serializable {
     return wrapper;
   }
 
-  protected final void setWrapper(final Serializable wrapper) {
+  protected final void wrapper(final Serializable wrapper) {
     this.wrapper = wrapper;
   }
 }

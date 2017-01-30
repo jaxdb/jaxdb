@@ -41,12 +41,12 @@ import org.safris.commons.util.DateUtil;
 import org.safris.commons.util.Formats;
 import org.safris.xdb.schema.DBVendor;
 
-public final class data {
+public final class type {
   protected static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
 
   static {
-    final Class<?>[] classes = data.class.getClasses();
-    typeToClass.put(null, data.Enum.class);
+    final Class<?>[] classes = type.class.getClasses();
+    typeToClass.put(null, type.Enum.class);
     for (final Class<?> cls : classes) {
       if (!Modifier.isAbstract(cls.getModifiers())) {
         final Type type = Classes.getGenericSuperclasses(cls)[0];
@@ -59,6 +59,8 @@ public final class data {
   }
 
   public static final class Array<T> extends DataType<T[]> {
+    public static final Array<Object> type = new Array<Object>(null);
+
     protected final DataType<T> dataType;
 
     public Array(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
@@ -119,6 +121,8 @@ public final class data {
   }
 
   public static final class BigInt extends Numeric<BigInteger> {
+    public static final BigInt type = new BigInt();
+
     public final int precision;
     public final boolean unsigned;
     public final BigInteger min;
@@ -185,6 +189,8 @@ public final class data {
   }
 
   public static final class Binary extends Serial<byte[]> {
+    public static final Binary type = new Binary();
+
     public final int length;
     public final boolean varying;
 
@@ -243,6 +249,8 @@ public final class data {
   }
 
   public static final class Blob extends LargeObject<InputStream> {
+    public static final Blob type = new Blob();
+
     public final int length;
 
     public Blob(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
@@ -294,6 +302,8 @@ public final class data {
   }
 
   public static class Boolean extends Condition<java.lang.Boolean> {
+    public static final Boolean type = new Boolean();
+
     public Boolean(final Entity owner, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Boolean> generateOnInsert, final GenerateOn<? super java.lang.Boolean> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
@@ -342,6 +352,8 @@ public final class data {
   }
 
   public static final class Char extends Textual<String> {
+    public static final Char type = new Char();
+
     public final int length;
     public final boolean varying;
     public final boolean national;
@@ -397,6 +409,8 @@ public final class data {
   }
 
   public static final class Clob extends LargeObject<Reader> {
+    public static final Clob type = new Clob();
+
     public final int length;
     public final boolean national;
 
@@ -451,6 +465,8 @@ public final class data {
   }
 
   public static final class Date extends Temporal<LocalDate> {
+    public static final Date type = new Date();
+
     protected static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_LOCAL_DATE;
 
     public Date(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
@@ -504,6 +520,8 @@ public final class data {
   }
 
   public static class DateTime extends Temporal<LocalDateTime> {
+    public static final DateTime type = new DateTime();
+
     protected static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
 
     public DateTime(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate) {
@@ -556,6 +574,8 @@ public final class data {
   }
 
   public static class Decimal extends Numeric<java.lang.Double> {
+    public static final Decimal type = new Decimal();
+
     public final int precision;
     public int decimal;
     public final boolean unsigned;
@@ -614,6 +634,8 @@ public final class data {
   }
 
   public static final class Double extends Numeric<java.lang.Double> {
+    public static final Double type = new Double();
+
     public final int precision;
     public int decimal;
     public final boolean unsigned;
@@ -672,11 +694,13 @@ public final class data {
   }
 
   public static final class Enum<T extends java.lang.Enum<?>> extends Textual<T> {
-    protected final Class<T> type;
+    public static final Enum<java.lang.Enum<?>> type = new Enum<java.lang.Enum<?>>(null);
+
+    private final Class<T> enumClass;
 
     public Enum(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final Class<T> type) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.type = type;
+      this.enumClass = type;
     }
 
     public Enum(final Entity owner, final Class<T> type) {
@@ -689,7 +713,7 @@ public final class data {
 
     @Override
     protected final Class<T> type() {
-      return type;
+      return enumClass;
     }
 
     @Override
@@ -713,7 +737,7 @@ public final class data {
         return;
       }
 
-      for (final T constant : type.getEnumConstants()) {
+      for (final T constant : enumClass.getEnumConstants()) {
         if (constant.toString().equals(value)) {
           this.value = constant;
           return;
@@ -730,18 +754,20 @@ public final class data {
 
     @Override
     protected final Enum<T> clone() {
-      return new Enum<T>(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, type);
+      return new Enum<T>(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, enumClass);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     // NOTE: This creates a new instance that has the same type as this instance
     protected final Enum<T> newInstance(final Entity owner) {
-      return new Enum<T>(owner, type);
+      return new Enum<T>(owner, enumClass);
     }
   }
 
   public static final class Float extends Numeric<java.lang.Float> {
+    public static final Float type = new Float();
+
     public final int precision;
     public int decimal;
     public final boolean unsigned;
@@ -806,6 +832,8 @@ public final class data {
   }
 
   public static final class Long extends Numeric<java.lang.Long> {
+    public static final Long type = new Long();
+
     public final int precision;
     public final boolean unsigned;
     public final java.lang.Long min;
@@ -863,6 +891,8 @@ public final class data {
   }
 
   public static final class MediumInt extends Numeric<Integer> {
+    public static final MediumInt type = new MediumInt();
+
     public final int precision;
     public final boolean unsigned;
     public final Integer min;
@@ -934,6 +964,8 @@ public final class data {
   }
 
   public static final class SmallInt extends Numeric<Short> {
+    public static final SmallInt type = new SmallInt();
+
     public final int precision;
     public final boolean unsigned;
     public final Short min;
@@ -1011,6 +1043,8 @@ public final class data {
   }
 
   public static final class Time extends Temporal<LocalTime> {
+    public static final Time type = new Time();
+
     protected static final DateTimeFormatter timeFormat = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public Time(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate) {

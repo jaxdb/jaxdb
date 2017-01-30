@@ -20,11 +20,11 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 
 import org.safris.commons.lang.Arrays;
-import org.safris.xdb.entities.data.Char;
-import org.safris.xdb.entities.data.DateTime;
-import org.safris.xdb.entities.data.Decimal;
-import org.safris.xdb.entities.data.Enum;
-import org.safris.xdb.entities.data.Numeric;
+import org.safris.xdb.entities.type.Char;
+import org.safris.xdb.entities.type.DateTime;
+import org.safris.xdb.entities.type.Decimal;
+import org.safris.xdb.entities.type.Enum;
+import org.safris.xdb.entities.type.Numeric;
 import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.entities.model.expression;
 import org.safris.xdb.entities.model.insert;
@@ -38,13 +38,13 @@ public final class DML {
 
   public static <T,V extends DataType<T>>V ASC(final V dataType) {
     final V wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new OrderingSpec<T>(Operator.ASC, dataType));
+    wrapper.wrapper(new OrderingSpec<T>(Operator.ASC, dataType));
     return wrapper;
   }
 
   public static <V extends DataType<T>,T>V DESC(final V dataType) {
     final V wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new OrderingSpec<T>(Operator.DESC, dataType));
+    wrapper.wrapper(new OrderingSpec<T>(Operator.DESC, dataType));
     return wrapper;
   }
 
@@ -69,6 +69,28 @@ public final class DML {
   }
 
   public static final NATURAL NATURAL = new NATURAL();
+
+  /** VARYING **/
+
+  public static class VARYING extends Provision<Subject<?>> {
+    @Override
+    protected void serialize(final Serialization serialization) {
+      serialization.append("VARYING");
+    }
+  }
+
+  public static final VARYING VARYING = new VARYING();
+
+  /** NATIONAL **/
+
+  public static class NATIONAL extends Provision<Subject<?>> {
+    @Override
+    protected void serialize(final Serialization serialization) {
+      serialization.append("NATIONAL");
+    }
+  }
+
+  public static final NATIONAL NATIONAL = new NATIONAL();
 
   /** TYPE **/
 
@@ -105,605 +127,669 @@ public final class DML {
     };
   }
 
+  /** START Cast **/
+
+  public static Cast.BigInt CAST(final type.BigInt a) {
+    return new Cast.BigInt(a);
+  }
+
+  public static Cast.Binary CAST(final type.Binary a) {
+    return new Cast.Binary(a);
+  }
+
+  public static Cast.Blob CAST(final type.Blob a) {
+    return new Cast.Blob(a);
+  }
+
+  public static Cast.Boolean CAST(final type.Boolean a) {
+    return new Cast.Boolean(a);
+  }
+
+  public static Cast.Char CAST(final type.Textual<?> a) {
+    return new Cast.Char(a);
+  }
+
+  public static Cast.Clob CAST(final type.Clob a) {
+    return new Cast.Clob(a);
+  }
+
+  public static Cast.Date CAST(final type.Date a) {
+    return new Cast.Date(a);
+  }
+
+  public static Cast.DateTime CAST(final type.DateTime a) {
+    return new Cast.DateTime(a);
+  }
+
+  public static Cast.Decimal CAST(final type.Decimal a) {
+    return new Cast.Decimal(a);
+  }
+
+  public static Cast.Double CAST(final type.Double a) {
+    return new Cast.Double(a);
+  }
+
+  public static Cast.Float CAST(final type.Float a) {
+    return new Cast.Float(a);
+  }
+
+  public static Cast.Long CAST(final type.Long a) {
+    return new Cast.Long(a);
+  }
+
+  public static Cast.MediumInt CAST(final type.MediumInt a) {
+    return new Cast.MediumInt(a);
+  }
+
+  public static Cast.SmallInt CAST(final type.SmallInt a) {
+    return new Cast.SmallInt(a);
+  }
+
+  public static Cast.Time CAST(final type.Time a) {
+    return new Cast.Time(a);
+  }
+
+  /** END Cast **/
+
   /** START ComparisonPredicate **/
 
-  public static <T extends Number>data.Boolean EQ(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean EQ(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean EQ(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean EQ(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean EQ(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean EQ(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean EQ(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean EQ(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean EQ(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean EQ(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean EQ(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean EQ(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean EQ(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean EQ(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean EQ(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean EQ(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean EQ(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean EQ(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean EQ(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean EQ(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean EQ(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean EQ(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean EQ(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean EQ(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean EQ(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean EQ(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean EQ(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T>data.Boolean EQ(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean EQ(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.EQ, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean NE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean NE(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean NE(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean NE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean NE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean NE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean NE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean NE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean NE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean NE(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean NE(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean NE(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean NE(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean NE(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean NE(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean NE(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean NE(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean NE(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean NE(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean NE(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean NE(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean NE(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean NE(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean NE(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean NE(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean NE(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T>data.Boolean NE(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean NE(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.NE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean LT(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LT(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean LT(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LT(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean LT(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean LT(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LT(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean LT(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LT(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean LT(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean LT(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean LT(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LT(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean LT(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean LT(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LT(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LT(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean LT(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean LT(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean LT(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean LT(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean LT(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean LT(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean LT(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean LT(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T>data.Boolean LT(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean LT(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GT(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean GT(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GT(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean GT(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GT(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean GT(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean GT(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean GT(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean GT(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GT(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean GT(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean GT(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean GT(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GT(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean GT(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean GT(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GT(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GT(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean GT(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean GT(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean GT(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean GT(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean GT(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean GT(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean GT(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean GT(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T>data.Boolean GT(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean GT(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GT, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean LTE(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LTE(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean LTE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean LTE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean LTE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean LTE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean LTE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean LTE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LTE(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean LTE(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean LTE(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean LTE(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LTE(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean LTE(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean LTE(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean LTE(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean LTE(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean LTE(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean LTE(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean LTE(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean LTE(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean LTE(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean LTE(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean LTE(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean LTE(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T>data.Boolean LTE(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean LTE(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.LTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GTE(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final Numeric<? extends T> a, final T b) {
+  public static <T extends Number>type.Boolean GTE(final Numeric<? extends T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final T a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GTE(final T a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
+  public static <T extends Number>type.Boolean GTE(final Numeric<? extends T> a, final select.SELECT<? extends DataType<T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
+  public static <T extends Number>type.Boolean GTE(final select.SELECT<? extends Numeric<? extends T>> a, final Numeric<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
+  public static <T extends Number>type.Boolean GTE(final T a, final select.SELECT<? extends Numeric<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
+  public static <T extends Number>type.Boolean GTE(final select.SELECT<? extends Numeric<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Number>data.Boolean GTE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Number>type.Boolean GTE(final Numeric<? extends T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final data.Temporal<? extends T> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GTE(final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final data.Temporal<? super T> a, final T b) {
+  public static <T extends Temporal>type.Boolean GTE(final type.Temporal<? super T> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final T a, final data.Temporal<? super T> b) {
+  public static <T extends Temporal>type.Boolean GTE(final T a, final type.Temporal<? super T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final data.Temporal<? extends T> a, final select.SELECT<? extends data.Temporal<? extends T>> b) {
+  public static <T extends Temporal>type.Boolean GTE(final type.Temporal<? extends T> a, final select.SELECT<? extends type.Temporal<? extends T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final select.SELECT<? extends data.Temporal<? extends T>> a, final data.Temporal<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GTE(final select.SELECT<? extends type.Temporal<? extends T>> a, final type.Temporal<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final T a, final select.SELECT<? extends data.Temporal<? super T>> b) {
+  public static <T extends Temporal>type.Boolean GTE(final T a, final select.SELECT<? extends type.Temporal<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final select.SELECT<? extends data.Temporal<? super T>> a, final T b) {
+  public static <T extends Temporal>type.Boolean GTE(final select.SELECT<? extends type.Temporal<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T extends Temporal>data.Boolean GTE(final data.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T extends Temporal>type.Boolean GTE(final type.Temporal<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final data.Textual<? extends T> a, final data.Textual<? extends T> b) {
+  public static <T>type.Boolean GTE(final type.Textual<? extends T> a, final type.Textual<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final data.Textual<?> a, final T b) {
+  public static <T>type.Boolean GTE(final type.Textual<?> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final T a, final data.Textual<?> b) {
+  public static <T>type.Boolean GTE(final T a, final type.Textual<?> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final data.Boolean a, final data.Boolean b) {
+  public static <T>type.Boolean GTE(final type.Boolean a, final type.Boolean b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final data.Textual<? super T> a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean GTE(final type.Textual<? super T> a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final select.SELECT<? extends data.Textual<? super T>> a, final data.Textual<? super T> b) {
+  public static <T>type.Boolean GTE(final select.SELECT<? extends type.Textual<? super T>> a, final type.Textual<? super T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final T a, final select.SELECT<? extends data.Textual<? super T>> b) {
+  public static <T>type.Boolean GTE(final T a, final select.SELECT<? extends type.Textual<? super T>> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final select.SELECT<? extends data.Textual<? super T>> a, final T b) {
+  public static <T>type.Boolean GTE(final select.SELECT<? extends type.Textual<? super T>> a, final T b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
-  public static <T>data.Boolean GTE(final data.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
+  public static <T>type.Boolean GTE(final type.Textual<? super T> a, final QuantifiedComparisonPredicate<? extends T> b) {
     return new ComparisonPredicate<T>(Operator.GTE, a, b);
   }
 
@@ -735,22 +821,19 @@ public final class DML {
 
   @SafeVarargs
   public static <T extends Subject<?>>select._SELECT<T> SELECT(final T ... entities) {
-    return DML.<T>SELECT(null, null, entities);
+    return new Select.SELECT<T>(null, entities);
   }
 
   @SafeVarargs
   public static <T extends Subject<?>>select._SELECT<T> SELECT(final ALL all, final T ... entities) {
-    return DML.<T>SELECT(all, null, entities);
+    assert(all != null);
+    return new Select.SELECT<T>(all, entities);
   }
 
   @SafeVarargs
   public static <T extends Subject<?>>select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
-    return DML.<T>SELECT(null, distinct, entities);
-  }
-
-  @SafeVarargs
-  public static <T extends Subject<?>>select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
-    return new Select.SELECT<T>(all, distinct, entities);
+    assert(distinct != null);
+    return new Select.SELECT<T>(distinct, entities);
   }
 
   /** CASE **/
@@ -784,229 +867,229 @@ public final class DML {
 
   public static Char CONCAT(final Char a, final Char b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final Char c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final CharSequence b, final Char c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final Char b, final CharSequence c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final CharSequence c, final Char d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final CharSequence b, final Char c, final CharSequence d) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final Char c, final CharSequence d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final CharSequence c, final Char d, final CharSequence e) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final Enum<?> b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final Enum<?> c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final CharSequence b, final Enum<?> c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final Enum<?> b, final CharSequence c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final CharSequence c, final Enum<?> d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final CharSequence b, final Enum<?> c, final CharSequence d) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final Enum<?> c, final CharSequence d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final CharSequence c, final Enum<?> d, final CharSequence e) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final Enum<?> b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final Enum<?> c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final CharSequence b, final Enum<?> c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final CharSequence c, final Enum<?> d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final Enum<?> c, final CharSequence d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final Enum<?> b, final CharSequence c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final CharSequence b, final Enum<?> c, final CharSequence d) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final CharSequence c, final Enum<?> d, final CharSequence e) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final Char b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final Char c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final CharSequence b, final Char c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final Char b, final CharSequence c) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final CharSequence c, final Char d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final CharSequence b, final Char c, final CharSequence d) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final Char c, final CharSequence d) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final CharSequence c, final Char d, final CharSequence e) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
 
   public static Char CONCAT(final Char a, final CharSequence b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Char b, final CharSequence c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final Enum<?> a, final CharSequence b) {
     final Char wrapper = new Char(a.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static Char CONCAT(final CharSequence a, final Enum<?> b, final CharSequence c) {
     final Char wrapper = new Char(b.owner);
-    wrapper.setWrapper(new StringExpression(Operator.CONCAT, a, b, c));
+    wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
@@ -1014,44 +1097,44 @@ public final class DML {
 
   public static <T extends Number,N extends Numeric<T>>N ABS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Abs<T>(dataType));
+    wrapper.wrapper(new function.numeric.Abs<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SIGN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Sign<T>(dataType));
+    wrapper.wrapper(new function.numeric.Sign<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N FLOOR(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Floor<T>(dataType));
+    wrapper.wrapper(new function.numeric.Floor<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N CEIL(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Ceil<T>(dataType));
+    wrapper.wrapper(new function.numeric.Ceil<T>(dataType));
     return wrapper;
   }
 
   // FIXME: Need to raise the precition here!
   public static <T extends Number,N extends Numeric<T>>N POW(final N x, final double y) {
     final N wrapper = x.newInstance(x.owner);
-    wrapper.setWrapper(new function.numeric.Pow<T>(x, y));
+    wrapper.wrapper(new function.numeric.Pow<T>(x, y));
     return wrapper;
   }
 
   public static <T extends Number>Numeric<T> MOD(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new function.numeric.Mod<T>(a, b));
+    wrapper.wrapper(new function.numeric.Mod<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number>Numeric<T> MOD(final Numeric<T> a, final Number b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new function.numeric.Mod<T>(a, b));
+    wrapper.wrapper(new function.numeric.Mod<T>(a, b));
     return wrapper;
   }
 
@@ -1060,193 +1143,203 @@ public final class DML {
       throw new IllegalArgumentException("decimal < 0");
 
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Round<T>(dataType, decimal));
+    wrapper.wrapper(new function.numeric.Round<T>(dataType, decimal));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SQRT(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Sqrt<T>(dataType));
+    wrapper.wrapper(new function.numeric.Sqrt<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Sin<T>(dataType));
+    wrapper.wrapper(new function.numeric.Sin<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ASIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Asin<T>(dataType));
+    wrapper.wrapper(new function.numeric.Asin<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N COS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Cos<T>(dataType));
+    wrapper.wrapper(new function.numeric.Cos<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ACOS(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Acos<T>(dataType));
+    wrapper.wrapper(new function.numeric.Acos<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N TAN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Tan<T>(dataType));
+    wrapper.wrapper(new function.numeric.Tan<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N ATAN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Atan<T>(dataType));
+    wrapper.wrapper(new function.numeric.Atan<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number>Numeric<T> ATAN2(final Numeric<? extends T> a, final Numeric<? extends T> b) {
     final Numeric<T> wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new function.numeric.Atan2<T>(a, b));
+    wrapper.wrapper(new function.numeric.Atan2<T>(a, b));
     return wrapper;
   }
 
   // FIXME: Need to raise the precition here!
   public static <T extends Number,N extends Numeric<T>>N EXP(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Exp<T>(dataType));
+    wrapper.wrapper(new function.numeric.Exp<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Ln<T>(dataType));
+    wrapper.wrapper(new function.numeric.Ln<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG(final N a, final N b) {
     final N wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new function.numeric.Log<T>(a, b));
+    wrapper.wrapper(new function.numeric.Log<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG(final N a, final Number b) {
     final N wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new function.numeric.Log<T>(a, b));
+    wrapper.wrapper(new function.numeric.Log<T>(a, b));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG2(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Log2<T>(dataType));
+    wrapper.wrapper(new function.numeric.Log2<T>(dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N LOG10(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new function.numeric.Log10<T>(dataType));
+    wrapper.wrapper(new function.numeric.Log10<T>(dataType));
     return wrapper;
   }
 
   /** Aggregate **/
 
   // FIXME: Need COUNT(*) or COUNT(a.*) or COUNT(a.a)
-  public static org.safris.xdb.entities.data.Long COUNT() {
-    final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(CountFunction.STAR);
+  public static org.safris.xdb.entities.type.Long COUNT() {
+    final org.safris.xdb.entities.type.Long wrapper = new org.safris.xdb.entities.type.Long();
+    wrapper.wrapper(CountFunction.STAR);
     return wrapper;
   }
 
-  public static org.safris.xdb.entities.data.Long COUNT(final DataType<?> dataType) {
-    final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new CountFunction(null, dataType));
+  public static org.safris.xdb.entities.type.Long COUNT(final DataType<?> dataType) {
+    final org.safris.xdb.entities.type.Long wrapper = new org.safris.xdb.entities.type.Long();
+    wrapper.wrapper(new CountFunction(null, dataType));
     return wrapper;
   }
 
-  public static org.safris.xdb.entities.data.Long COUNT(final DISTINCT distinct, final DataType<?> dataType) {
-    final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new CountFunction(distinct, dataType));
+  public static org.safris.xdb.entities.type.Long COUNT(final DISTINCT distinct, final DataType<?> dataType) {
+    assert(distinct != null);
+    final org.safris.xdb.entities.type.Long wrapper = new org.safris.xdb.entities.type.Long();
+    wrapper.wrapper(new CountFunction(distinct, dataType));
     return wrapper;
   }
 
-  public static org.safris.xdb.entities.data.Long COUNT(final ALL all, final DataType<?> dataType) {
-    final org.safris.xdb.entities.data.Long wrapper = new org.safris.xdb.entities.data.Long();
-    wrapper.setWrapper(new CountFunction(all, dataType));
+  public static org.safris.xdb.entities.type.Long COUNT(final ALL all, final DataType<?> dataType) {
+    assert(all != null);
+    final org.safris.xdb.entities.type.Long wrapper = new org.safris.xdb.entities.type.Long();
+    wrapper.wrapper(new CountFunction(all, dataType));
     return wrapper;
   }
 
   // DT shall not be character string, bit string, or datetime.
   public static <T extends Number,N extends Numeric<T>>N SUM(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("SUM", dataType));
+    wrapper.wrapper(new SetFunction<T>("SUM", dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SUM(final DISTINCT distinct, final N dataType) {
+    assert(distinct != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("SUM", distinct, dataType));
+    wrapper.wrapper(new SetFunction<T>("SUM", distinct, dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N SUM(final ALL all, final N dataType) {
+    assert(all != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("SUM", all, dataType));
+    wrapper.wrapper(new SetFunction<T>("SUM", all, dataType));
     return wrapper;
   }
 
   // DT shall not be character string, bit string, or datetime.
   public static <T extends Number,N extends Numeric<T>>N AVG(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("AVG", dataType));
+    wrapper.wrapper(new SetFunction<T>("AVG", dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N AVG(final DISTINCT distinct, final N dataType) {
+    assert(distinct != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("AVG", distinct, dataType));
+    wrapper.wrapper(new SetFunction<T>("AVG", distinct, dataType));
     return wrapper;
   }
 
   public static <T extends Number,N extends Numeric<T>>N AVG(final ALL all, final N dataType) {
+    assert(all != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("AVG", all, dataType));
+    wrapper.wrapper(new SetFunction<T>("AVG", all, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MAX", dataType));
+    wrapper.wrapper(new SetFunction<T>("MAX", dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final DISTINCT distinct, final N dataType) {
+    assert(distinct != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MAX", distinct, dataType));
+    wrapper.wrapper(new SetFunction<T>("MAX", distinct, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MAX(final ALL all, final N dataType) {
+    assert(all != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MAX", all, dataType));
+    wrapper.wrapper(new SetFunction<T>("MAX", all, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final N dataType) {
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MIN", dataType));
+    wrapper.wrapper(new SetFunction<T>("MIN", dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final DISTINCT distinct, final N dataType) {
+    assert(distinct != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MIN", distinct, dataType));
+    wrapper.wrapper(new SetFunction<T>("MIN", distinct, dataType));
     return wrapper;
   }
 
   public static <T,N extends DataType<T>>N MIN(final ALL all, final N dataType) {
+    assert(all != null);
     final N wrapper = dataType.newInstance(dataType.owner);
-    wrapper.setWrapper(new SetFunction<T>("MIN", all, dataType));
+    wrapper.wrapper(new SetFunction<T>("MIN", all, dataType));
     return wrapper;
   }
 
@@ -1254,7 +1347,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N DIV(final N a, final N b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
@@ -1264,7 +1357,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 2");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, args[0], args[1], Arrays.subArray(args, 2)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.DIVIDE, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -1272,7 +1365,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N DIV(final N a, final Number b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
@@ -1280,7 +1373,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N DIV(final Number a, final N b, final N ... args) {
     final N wrapper = (N)b.newInstance(b.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.DIVIDE, a, b, args));
     return wrapper;
   }
 
@@ -1290,7 +1383,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 1");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.DIVIDE, a, args[0], Arrays.subArray(args, 1)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.DIVIDE, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
@@ -1298,7 +1391,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N MUL(final N a, final N b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
@@ -1308,7 +1401,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 2");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, args[0], args[1], Arrays.subArray(args, 2)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MULTIPLY, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -1316,7 +1409,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N MUL(final N a, final Number b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
@@ -1324,7 +1417,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N MUL(final Number a, final N b, final N ... args) {
     final N wrapper = (N)b.newInstance(b.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MULTIPLY, a, b, args));
     return wrapper;
   }
 
@@ -1334,7 +1427,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 1");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MULTIPLY, a, args[0], Arrays.subArray(args, 1)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MULTIPLY, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
@@ -1342,7 +1435,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N ADD(final N a, final N b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
@@ -1352,7 +1445,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 2");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, args[0], args[1], Arrays.subArray(args, 2)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.PLUS, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -1360,7 +1453,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N ADD(final N a, final Number b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
@@ -1368,7 +1461,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N ADD(final Number a, final N b, final N ... args) {
     final N wrapper = (N)b.newInstance(b.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.PLUS, a, b, args));
     return wrapper;
   }
 
@@ -1378,13 +1471,13 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 1");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.PLUS, a, args[0], Arrays.subArray(args, 1)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.PLUS, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
-  public static <T extends Temporal,V extends data.Temporal<T>>V ADD(final V a, final Interval interval) {
+  public static <T extends Temporal,V extends type.Temporal<T>>V ADD(final V a, final Interval interval) {
     final V wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.PLUS, a, interval));
+    wrapper.wrapper(new TemporalExpression<T>(Operator.PLUS, a, interval));
     return wrapper;
   }
 
@@ -1417,7 +1510,7 @@ public final class DML {
     return ADD(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends Temporal,V extends data.Temporal<T>>V PLUS(final V a, final Interval interval) {
+  public static <T extends Temporal,V extends type.Temporal<T>>V PLUS(final V a, final Interval interval) {
     return ADD(a, interval);
   }
 
@@ -1425,7 +1518,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N SUB(final N a, final N b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
@@ -1435,7 +1528,7 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 2");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, args[0], args[1], Arrays.subArray(args, 2)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, args[0], args[1], Arrays.subArray(args, 2)));
     return wrapper;
   }
 
@@ -1443,14 +1536,14 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N SUB(final N a, final Number b, final N ... args) {
     final N wrapper = (N)a.newInstance(a.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N SUB(final Number a, N b) {
     final N wrapper = (N)b.newInstance(b.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, a, b));
     return wrapper;
   }
 
@@ -1458,7 +1551,7 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <N extends Numeric<? extends T>,T extends Number>N SUB(final Number a, final N b, final N ... args) {
     final N wrapper = (N)b.newInstance(b.owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, a, b, args));
     return wrapper;
   }
 
@@ -1468,13 +1561,13 @@ public final class DML {
       throw new IllegalArgumentException("args.length < 1");
 
     final N wrapper = (N)args[0].newInstance(args[0].owner);
-    wrapper.setWrapper(new NumericExpression<T>(Operator.MINUS, a, args[0], Arrays.subArray(args, 1)));
+    wrapper.wrapper(new NumericExpression<T>(Operator.MINUS, a, args[0], Arrays.subArray(args, 1)));
     return wrapper;
   }
 
-  public static <T extends Temporal,V extends data.Temporal<T>>V SUB(final V a, final Interval interval) {
+  public static <T extends Temporal,V extends type.Temporal<T>>V SUB(final V a, final Interval interval) {
     final V wrapper = a.newInstance(a.owner);
-    wrapper.setWrapper(new TemporalExpression<T>(Operator.MINUS, a, interval));
+    wrapper.wrapper(new TemporalExpression<T>(Operator.MINUS, a, interval));
     return wrapper;
   }
 
@@ -1507,14 +1600,14 @@ public final class DML {
     return SUB(a, args[0], Arrays.subArray(args, 1));
   }
 
-  public static <T extends Temporal,V extends data.Temporal<T>>V MINUS(final V a, final Interval interval) {
+  public static <T extends Temporal,V extends type.Temporal<T>>V MINUS(final V a, final Interval interval) {
     return SUB(a, interval);
   }
 
   private static class NOW extends DateTime {
     protected NOW() {
       super();
-      this.setWrapper(new TemporalFunction<java.time.LocalDateTime>("NOW"));
+      this.wrapper(new TemporalFunction<java.time.LocalDateTime>("NOW"));
     }
 
     @Override
@@ -1532,7 +1625,7 @@ public final class DML {
   private static class PI extends Decimal {
     protected PI() {
       super();
-      this.setWrapper(new function.numeric.Pi());
+      this.wrapper(new function.numeric.Pi());
     }
 
     @Override
@@ -1550,25 +1643,25 @@ public final class DML {
   /** Condition **/
 
   @SafeVarargs
-  public static <T>data.Boolean AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+  public static <T>type.Boolean AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
     return new BooleanTerm(Operator.AND, a, b, conditions);
   }
 
-  public static <T>data.Boolean AND(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>type.Boolean AND(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
     return new BooleanTerm(Operator.AND, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>data.Boolean AND(final Condition<?>[] conditions) {
+  public static <T>type.Boolean AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
     return new BooleanTerm(Operator.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>data.Boolean AND(final Collection<Condition<?>> conditions) {
+  public static <T>type.Boolean AND(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 
@@ -1577,25 +1670,25 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T>data.Boolean OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+  public static <T>type.Boolean OR(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
     return new BooleanTerm(Operator.OR, a, b, conditions);
   }
 
-  public static <T>data.Boolean OR(final Condition<?> a, final Condition<?>[] conditions) {
+  public static <T>type.Boolean OR(final Condition<?> a, final Condition<?>[] conditions) {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
     return new BooleanTerm(Operator.OR, a, conditions[0], Arrays.subArray(conditions, 1));
   }
 
-  public static <T>data.Boolean OR(final Condition<?>[] conditions) {
+  public static <T>type.Boolean OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
     return new BooleanTerm(Operator.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
   }
 
-  public static <T>data.Boolean OR(final Collection<Condition<?>> conditions) {
+  public static <T>type.Boolean OR(final Collection<Condition<?>> conditions) {
     if (conditions.size() < 2)
       throw new IllegalArgumentException("conditions.size() < 2");
 

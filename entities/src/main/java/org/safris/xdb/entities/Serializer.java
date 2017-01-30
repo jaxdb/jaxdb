@@ -31,24 +31,24 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.xdb.entities.Interval.Unit;
-import org.safris.xdb.entities.data.Array;
-import org.safris.xdb.entities.data.BigInt;
-import org.safris.xdb.entities.data.Binary;
-import org.safris.xdb.entities.data.Blob;
-import org.safris.xdb.entities.data.Boolean;
-import org.safris.xdb.entities.data.Char;
-import org.safris.xdb.entities.data.Clob;
-import org.safris.xdb.entities.data.Date;
-import org.safris.xdb.entities.data.DateTime;
-import org.safris.xdb.entities.data.Decimal;
-import org.safris.xdb.entities.data.Double;
-import org.safris.xdb.entities.data.Enum;
-import org.safris.xdb.entities.data.Float;
-import org.safris.xdb.entities.data.Long;
-import org.safris.xdb.entities.data.MediumInt;
-import org.safris.xdb.entities.data.Numeric;
-import org.safris.xdb.entities.data.SmallInt;
-import org.safris.xdb.entities.data.Time;
+import org.safris.xdb.entities.type.Array;
+import org.safris.xdb.entities.type.BigInt;
+import org.safris.xdb.entities.type.Binary;
+import org.safris.xdb.entities.type.Blob;
+import org.safris.xdb.entities.type.Boolean;
+import org.safris.xdb.entities.type.Char;
+import org.safris.xdb.entities.type.Clob;
+import org.safris.xdb.entities.type.Date;
+import org.safris.xdb.entities.type.DateTime;
+import org.safris.xdb.entities.type.Decimal;
+import org.safris.xdb.entities.type.Double;
+import org.safris.xdb.entities.type.Enum;
+import org.safris.xdb.entities.type.Float;
+import org.safris.xdb.entities.type.Long;
+import org.safris.xdb.entities.type.MediumInt;
+import org.safris.xdb.entities.type.Numeric;
+import org.safris.xdb.entities.type.SmallInt;
+import org.safris.xdb.entities.type.Time;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class Serializer {
@@ -136,13 +136,8 @@ public abstract class Serializer {
 
   protected void serialize(final Select.SELECT<?> select, final Serialization serialization) throws IOException {
     serialization.append("SELECT ");
-    if (select.all != null) {
-      select.all.serialize(serialization);
-      serialization.append(" ");
-    }
-
-    if (select.distinct != null) {
-      select.distinct.serialize(serialization);
+    if (select.qualifier != null) {
+      select.qualifier.serialize(serialization);
       serialization.append(" ");
     }
 
@@ -499,7 +494,7 @@ public abstract class Serializer {
     serialization.append(")");
     serialization.append(" AS ");
     alias.serialize(serialization);
-    as.getVariable().setWrapper(as.parent());
+    as.getVariable().wrapper(as.parent());
   }
 
   // FIXME: Move this to a Util class or something
@@ -784,6 +779,11 @@ public abstract class Serializer {
     }
 
     return "(" + builder.substring(2) + ")";
+  }
+
+  public void serialize(final Cast.AS as, final Serialization serialization) {
+    // TODO: Implement this
+    throw new UnsupportedOperationException();
   }
 
   protected String serialize(final BigInt serializable) {

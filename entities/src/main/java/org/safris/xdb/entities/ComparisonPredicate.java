@@ -21,7 +21,7 @@ import java.io.IOException;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class ComparisonPredicate<T> extends data.Boolean {
+final class ComparisonPredicate<T> extends type.Boolean {
   protected final Operator<ComparisonPredicate<?>> operator;
   protected final Serializable a;
   protected final Serializable b;
