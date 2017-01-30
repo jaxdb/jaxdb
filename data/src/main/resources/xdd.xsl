@@ -77,14 +77,7 @@
   
   <xsl:function name="function:precision-scale">
     <xsl:param name="precision"/>
-    <xsl:choose>
-      <xsl:when test="math:pow(10, $precision) &gt; 9223372036854775807">
-        <xsl:value-of select="9223372036854775807"/>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:value-of select="format-number(math:pow(10, $precision) - 1, '#')"/>
-      </xsl:otherwise>
-    </xsl:choose>
+    <xsl:value-of select="format-number(math:pow(10, $precision) - 1, '#')"/>
   </xsl:function>
   
   <xsl:template match="/xds:schema">
@@ -268,13 +261,13 @@
             <xsl:attribute name="base">xdd:<xsl:value-of select="@xsi:type"/></xsl:attribute>
             <xs:maxLength>
               <xsl:attribute name="value">
-                <xsl:value-of select="@length"/>
+                <xsl:value-of select="@length * 2"/>
               </xsl:attribute>
             </xs:maxLength>
             <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
               <xs:minLength>
                 <xsl:attribute name="value">
-                  <xsl:value-of select="@length"/>
+                  <xsl:value-of select="@length * 2"/>
                 </xsl:attribute>
               </xs:minLength>
             </xsl:if>
@@ -290,7 +283,7 @@
                 <xsl:value-of select="@length"/>
               </xsl:attribute>
             </xs:maxLength>
-            <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
+            <xsl:if test="not(@varying='true')">
               <xs:minLength>
                 <xsl:attribute name="value">
                   <xsl:value-of select="@length"/>

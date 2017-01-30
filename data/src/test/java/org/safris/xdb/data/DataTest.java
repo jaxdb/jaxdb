@@ -118,6 +118,11 @@ public class DataTest extends LoggableTest {
     testData("world", false);
   }
 
+  @Test
+  public void testTypes() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    testData("types", true);
+  }
+
   @AfterClass
   public static void destroy() throws SQLException {
     new File("derby.log").deleteOnExit();

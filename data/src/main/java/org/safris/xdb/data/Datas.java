@@ -30,13 +30,24 @@ import javax.xml.transform.TransformerException;
 import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
 import org.safris.xdb.schema.DBVendor;
+import org.safris.xdb.xdd.xe.$xdd_binary;
+import org.safris.xdb.xdd.xe.$xdd_blob;
+import org.safris.xdb.xdd.xe.$xdd_boolean;
+import org.safris.xdb.xdd.xe.$xdd_char;
+import org.safris.xdb.xdd.xe.$xdd_clob;
 import org.safris.xdb.xdd.xe.$xdd_data;
+import org.safris.xdb.xdd.xe.$xdd_date;
+import org.safris.xdb.xdd.xe.$xdd_dateTime;
+import org.safris.xdb.xdd.xe.$xdd_decimal;
+import org.safris.xdb.xdd.xe.$xdd_enum;
+import org.safris.xdb.xdd.xe.$xdd_float;
+import org.safris.xdb.xdd.xe.$xdd_integer;
 import org.safris.xdb.xdd.xe.$xdd_row;
+import org.safris.xdb.xdd.xe.$xdd_time;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.Element;
 import org.safris.xsb.runtime.QName;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
-import org.w3.x2001.xmlschema.xe.$xs_string;
 
 public final class Datas {
   private static QName getName(final Class<?> cls) {
@@ -48,15 +59,48 @@ public final class Datas {
     return id.substring(id.indexOf('.') + 1);
   }
 
-  private static String getValue(final $xs_anySimpleType attribute) {
+  private static String getValue(final Serializer serializer, final $xs_anySimpleType attribute) {
     final Object value = attribute.text();
     if (value == null)
       return "NULL";
 
-    if (attribute instanceof $xs_string)
-      return "'" + String.valueOf(attribute.text()).replace("'", "''") + "'";
+    if (attribute instanceof $xdd_char)
+      return serializer.serialize(($xdd_char)attribute);
 
-    return String.valueOf(value);
+    if (attribute instanceof $xdd_clob)
+      return serializer.serialize(($xdd_clob)attribute);
+
+    if (attribute instanceof $xdd_binary)
+      return serializer.serialize(($xdd_binary)attribute);
+
+    if (attribute instanceof $xdd_blob)
+      return serializer.serialize(($xdd_blob)attribute);
+
+    if (attribute instanceof $xdd_integer)
+      return serializer.serialize(($xdd_integer)attribute);
+
+    if (attribute instanceof $xdd_float)
+      return serializer.serialize(($xdd_float)attribute);
+
+    if (attribute instanceof $xdd_decimal)
+      return serializer.serialize(($xdd_decimal)attribute);
+
+    if (attribute instanceof $xdd_date)
+      return serializer.serialize(($xdd_date)attribute);
+
+    if (attribute instanceof $xdd_time)
+      return serializer.serialize(($xdd_time)attribute);
+
+    if (attribute instanceof $xdd_dateTime)
+      return serializer.serialize(($xdd_dateTime)attribute);
+
+    if (attribute instanceof $xdd_boolean)
+      return serializer.serialize(($xdd_boolean)attribute);
+
+    if (attribute instanceof $xdd_enum)
+      return serializer.serialize(($xdd_enum)attribute);
+
+    throw new UnsupportedOperationException("Unexpected type: " + attribute.getClass());
   }
 
   private static String getTableName(final DBVendor vendor, final $xdd_row row) {
@@ -90,11 +134,12 @@ public final class Datas {
     final Iterator<? extends $xs_anySimpleType> iterator = row.attributeIterator();
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
+    final Serializer serializer = Serializer.getSerializer(vendor);
     while (iterator.hasNext()) {
       final $xs_anySimpleType attribute = iterator.next();
       if (attribute != null) {
         columns.append(", ").append(getColumn(attribute));
-        values.append(", ").append(getValue(attribute));
+        values.append(", ").append(getValue(serializer, attribute));
       }
     }
 
