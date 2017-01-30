@@ -255,7 +255,7 @@
   </xs:attributeGroup>
   
   <xs:attributeGroup name="float">
-    <xs:attributeGroup ref="xds:numeric"/>
+    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="double" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="xs:double"/>
     <xs:attribute name="min" type="xs:double"/>
