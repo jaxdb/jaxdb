@@ -48,7 +48,7 @@ public final class DerbySQLSpec extends SQLSpec {
 
   @Override
   public String type(final $xds_table table, final $xds_binary type) {
-    return "BIT" + (type._varying$().text() ? " VARYING" : "") + "(" + type._length$().text() + ")";
+    return "CHAR" + (type._varying$().text() ? " VARYING" : "") + "(" + type._length$().text() + ") FOR BIT DATA";
   }
 
   @Override
@@ -76,7 +76,7 @@ public final class DerbySQLSpec extends SQLSpec {
 
   @Override
   public String type(final $xds_table table, final $xds_float type) {
-    return (type._double$().text() ? "DOUBLE" : "FLOAT") + "(" + type._precision$().text() + ")";
+    return type._double$().text() ? "DOUBLE" : "FLOAT";
   }
 
   @Override

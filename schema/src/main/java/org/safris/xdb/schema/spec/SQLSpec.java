@@ -102,11 +102,11 @@ public abstract class SQLSpec {
   public abstract String type(final $xds_table table, final $xds_boolean type);
   public abstract String type(final $xds_table table, final $xds_enum type);
 
-  private static void checkNumericDefault(final $xds_column type, final String defalt, final boolean positive, final int precision, final boolean unsigned) {
+  private static void checkNumericDefault(final $xds_column type, final String defalt, final boolean positive, final Integer precision, final boolean unsigned) {
     if (!positive && unsigned)
       throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is negative, but type is declared UNSIGNED");
 
-    if (defalt.toString().length() > precision)
+    if (precision != null && defalt.toString().length() > precision)
       throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is longer than declared PRECISION " + precision + ")");
   }
 
@@ -148,7 +148,7 @@ public abstract class SQLSpec {
       if (type._default$().isNull())
         return null;
 
-      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text(), type._unsigned$().text());
+      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, null, type._unsigned$().text());
       return type._default$().text().toString();
     }
 

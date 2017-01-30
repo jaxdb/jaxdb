@@ -77,6 +77,16 @@ public class SchemaTest extends LoggableTest {
     Schemas.create(schema, connection);
   }
 
+  @Test
+  public void testTypes() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    final xds_schema schema;
+    try (final InputStream in = Resources.getResource("types.xds").getURL().openStream()) {
+      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    }
+
+    Schemas.create(schema, connection);
+  }
+
   @AfterClass
   public static void destroy() throws SQLException {
     new File("derby.log").deleteOnExit();

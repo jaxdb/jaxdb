@@ -126,8 +126,6 @@ public final class MySQLSpec extends SQLSpec {
   @Override
   public String type(final $xds_table table, final $xds_float type) {
     String sql = type._double$().text() ? "DOUBLE" : "FLOAT";
-    sql += "(" + type._precision$().text() + ")";
-
     if (!type._unsigned$().isNull() && type._unsigned$().text())
       sql += " UNSIGNED";
 

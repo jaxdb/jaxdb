@@ -135,7 +135,7 @@ public final class PostgreSQLSpec extends SQLSpec {
 
   @Override
   public String type(final $xds_table table, final $xds_float type) {
-    return (type._double$().text() ? "DOUBLE PRECISION" : "REAL") + "(" + type._precision$().text() + ")";
+    return type._double$().text() ? "DOUBLE PRECISION" : "REAL";
   }
 
   @Override
