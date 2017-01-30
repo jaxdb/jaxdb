@@ -247,11 +247,11 @@
           <xsl:value-of select="@default"/>
         </xsl:attribute>
       </xsl:if>
+      <xsl:if test="@xsi:type='boolean'">
+        <xsl:attribute name="type">xdd:boolean</xsl:attribute>
+      </xsl:if>
       <xsl:if test="@xsi:type='date'">
         <xsl:attribute name="type">xdd:date</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='time'">
-        <xsl:attribute name="type">xdd:time</xsl:attribute>
       </xsl:if>
       <xsl:if test="@xsi:type='dateTime'">
         <xsl:attribute name="type">xdd:dateTime</xsl:attribute>
@@ -259,8 +259,27 @@
       <xsl:if test="@xsi:type='float'">
         <xsl:attribute name="type">xdd:float</xsl:attribute>
       </xsl:if>
-      <xsl:if test="@xsi:type='boolean'">
-        <xsl:attribute name="type">xdd:boolean</xsl:attribute>
+      <xsl:if test="@xsi:type='time'">
+        <xsl:attribute name="type">xdd:time</xsl:attribute>
+      </xsl:if>
+      <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
+        <xs:simpleType>
+          <xs:restriction>
+            <xsl:attribute name="base">xdd:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+            <xs:maxLength>
+              <xsl:attribute name="value">
+                <xsl:value-of select="@length"/>
+              </xsl:attribute>
+            </xs:maxLength>
+            <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
+              <xs:minLength>
+                <xsl:attribute name="value">
+                  <xsl:value-of select="@length"/>
+                </xsl:attribute>
+              </xs:minLength>
+            </xsl:if>
+          </xs:restriction>
+        </xs:simpleType>
       </xsl:if>
       <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
         <xs:simpleType>
@@ -281,22 +300,32 @@
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
-      <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
+      <xsl:if test="@xsi:type='decimal'">
         <xs:simpleType>
-          <xs:restriction>
-            <xsl:attribute name="base">xdd:<xsl:value-of select="@xsi:type"/></xsl:attribute>
-            <xs:maxLength>
+          <xs:restriction base="xdd:decimal">
+            <xs:fractionDigits>
               <xsl:attribute name="value">
-                <xsl:value-of select="@length"/>
+                <xsl:value-of select="@decimal"/>
               </xsl:attribute>
-            </xs:maxLength>
-            <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
-              <xs:minLength>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="@length"/>
-                </xsl:attribute>
-              </xs:minLength>
-            </xsl:if>
+            </xs:fractionDigits>
+            <xs:maxInclusive>
+              <xsl:attribute name="value">
+                <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
+              </xsl:attribute>
+            </xs:maxInclusive>
+            <xs:minInclusive>
+              <xsl:attribute name="value">
+                <xsl:choose>
+                  <xsl:when test="not(@unsigned='true')">
+                    <xsl:text>-</xsl:text>
+                    <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="0"/>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
+            </xs:minInclusive>
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
@@ -334,41 +363,6 @@
                 </xsl:choose>
               </xsl:attribute>
             </xs:minInclusive>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='decimal'">
-        <xs:simpleType>
-          <xs:restriction base="xdd:decimal">
-            <xs:fractionDigits>
-              <xsl:attribute name="value">
-                <xsl:value-of select="@decimal"/>
-              </xsl:attribute>
-            </xs:fractionDigits>
-            <xs:maxInclusive>
-              <xsl:attribute name="value">
-                <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
-              </xsl:attribute>
-            </xs:maxInclusive>
-            <xs:minInclusive>
-              <xsl:attribute name="value">
-                <xsl:choose>
-                  <xsl:when test="not(@unsigned='true')">
-                    <xsl:text>-</xsl:text>
-                    <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="0"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-            </xs:minInclusive>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='float'">
-        <xs:simpleType>
-          <xs:restriction base="xdd:float">
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
