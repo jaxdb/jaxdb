@@ -1,16 +1,16 @@
 <!--
   Copyright (c) 2006 Seva Safris
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
+
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
@@ -20,20 +20,20 @@
   xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
   xmlns:xds="http://xdb.safris.org/xds.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
+
   <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
-  
+
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
       <xs:maxLength value="64"/> <!-- http://dev.mysql.com/doc/refman/5.7/en/identifiers.html -->
       <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="named">
     <xs:attribute name="name" type="xds:name" use="required"/>
   </xs:complexType>
-  
+
   <xs:complexType name="foreignKey">
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="xds:name" use="required"/>
@@ -41,7 +41,7 @@
     <xs:attribute name="onDelete" type="xds:changeAction" default="CASCADE"/>
     <xs:attribute name="onUpdate" type="xds:changeAction" default="CASCADE"/>
   </xs:complexType>
-  
+
   <xs:simpleType name="changeAction">
     <xs:restriction base="xs:string">
       <xs:enumeration value="CASCADE"/>
@@ -50,7 +50,7 @@
       <xs:enumeration value="NO ACTION"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="index">
     <xs:attribute name="unique" type="xs:boolean" use="required"/>
     <xs:attribute name="type" use="required">
@@ -62,7 +62,7 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:complexType>
-  
+
   <xs:complexType name="check">
     <xs:sequence>
       <xs:element name="column" type="xds:name"/>
@@ -77,14 +77,14 @@
       </xs:choice>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:simpleType name="equalityOperator">
     <xs:restriction base="xs:string">
       <xs:enumeration value="eq"/>
       <xs:enumeration value="ne"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="rangeOperator">
     <xs:restriction base="xs:string">
       <xs:enumeration value="eq"/>
@@ -95,7 +95,7 @@
       <xs:enumeration value="lte"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="integerType">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-9223372036854775808"/>
@@ -108,7 +108,7 @@
       <xs:element name="column" type="xds:named"/>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="constraints">
     <xs:sequence>
       <xs:element name="primaryKey" type="xds:columns" minOccurs="0">
@@ -147,7 +147,7 @@
       </xs:sequence>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="triggers">
     <xs:sequence minOccurs="1" maxOccurs="unbounded">
       <xs:element name="trigger">
@@ -177,7 +177,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:complexType name="indexes">
     <xs:sequence>
       <xs:element name="index">
@@ -209,7 +209,7 @@
     </xs:attribute>
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
   </xs:attributeGroup>
-  
+
   <xs:complexType name="compliant">
     <xs:complexContent>
       <xs:extension base="xds:named">
@@ -224,12 +224,13 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
+  <!-- text data -->
+
   <xs:attributeGroup name="char">
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="xs:string"/>
     <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
-    <xs:attribute name="national" type="xs:boolean" default="false"/>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -238,22 +239,25 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="clob">
     <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
-    <xs:attribute name="national" type="xs:boolean" default="false"/>
   </xs:attributeGroup>
-  
+
+  <!-- binary data -->
+
   <xs:attributeGroup name="binary">
     <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="xs:base64Binary"/>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="blob">
     <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
   </xs:attributeGroup>
-  
+
+  <!-- numeric data -->
+
   <xs:attributeGroup name="float">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="double" type="xs:boolean" default="false"/>
@@ -261,7 +265,7 @@
     <xs:attribute name="min" type="xs:double"/>
     <xs:attribute name="max" type="xs:double"/>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="integer">
     <xs:attributeGroup ref="xds:numeric"/>
     <xs:attribute name="default" type="xds:integerType"/>
@@ -275,7 +279,7 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="decimal">
     <xs:attributeGroup ref="xds:numeric"/>
     <xs:attribute name="decimal" use="required">
@@ -289,7 +293,9 @@
     <xs:attribute name="min" type="xs:decimal"/>
     <xs:attribute name="max" type="xs:decimal"/>
   </xs:attributeGroup>
-  
+
+  <!-- time data -->
+
   <xs:attributeGroup name="date">
     <xs:attribute name="default" type="dt:localDate"/>
     <xs:attribute name="generateOnInsert">
@@ -307,10 +313,10 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="time">
     <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
-    <xs:attribute name="default" type="dt:time"/>
+    <xs:attribute name="default" type="dt:localTime"/>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:NCName">
@@ -326,16 +332,16 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="dateTime">
     <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
-    <xs:attribute name="default" type="xs:dateTime"/>
+    <xs:attribute name="default" type="dt:localDateTime"/>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="boolean">
     <xs:attribute name="default" type="xs:boolean"/>
   </xs:attributeGroup>
-  
+
   <xs:attributeGroup name="enum">
     <xs:attribute name="values" use="required">
       <xs:simpleType>
@@ -346,7 +352,7 @@
     </xs:attribute>
     <xs:attribute name="default" type="xs:string"/>
   </xs:attributeGroup>
-  
+
   <xs:complexType name="column" abstract="true">
     <xs:complexContent>
       <xs:extension base="xds:named">
@@ -367,7 +373,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="table">
     <xs:complexContent>
       <xs:extension base="xds:named">
