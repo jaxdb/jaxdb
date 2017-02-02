@@ -49,7 +49,7 @@ public class EntitiesTest extends LoggableTest {
   @SuppressWarnings("unchecked")
   public static Connection createConnection(final String name) throws ClassNotFoundException, IOException, SQLException {
     final Connection connection = DataTest.createConnection();
-    EntityRegistry.register((Class<? extends Schema>)Class.forName("xdb.ddl." + name), PreparedStatement.class, new EntityDataSource() {
+    EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), PreparedStatement.class, new EntityDataSource() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;
@@ -69,6 +69,7 @@ public class EntitiesTest extends LoggableTest {
   public static void create() throws ClassNotFoundException, IOException, SQLException, XMLException {
     createEntities("classicmodels");
     createEntities("world");
+    createEntities("types");
     createConnection("world");
   }
 

@@ -17,17 +17,17 @@
 package org.safris.xdb.entities.model;
 
 import org.safris.xdb.entities.Condition;
-import org.safris.xdb.entities.DataType;
+import org.safris.xdb.entities.type;
 
 public interface expression {
   public interface WHEN {
-    public <T>THEN THEN(final DataType<T> dataType);
+    public <T>THEN THEN(final type.DataType<T> dataType);
     public <T>THEN THEN(final T value);
   }
 
   public interface THEN {
     public <T>THEN WHEN(final Condition<T> condition);
-    public <T>ELSE<T> ELSE(final DataType<T> dataType);
+    public <T>ELSE<T> ELSE(final type.DataType<T> dataType);
     public <T>ELSE<T> ELSE(final T value);
   }
 

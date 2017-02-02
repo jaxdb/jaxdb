@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -46,7 +47,7 @@ public final class type {
 
   static {
     final Class<?>[] classes = type.class.getClasses();
-    typeToClass.put(null, type.Enum.class);
+    typeToClass.put(null, type.ENUM.class);
     for (final Class<?> cls : classes) {
       if (!Modifier.isAbstract(cls.getModifiers())) {
         final Type type = Classes.getGenericSuperclasses(cls)[0];
@@ -58,12 +59,10 @@ public final class type {
     }
   }
 
-  public static final class Array<T> extends DataType<T[]> {
-    public static final Array<Object> type = new Array<Object>(null);
-
+  public static final class ARRAY<T> extends DataType<T[]> {
     protected final DataType<T> dataType;
 
-    public Array(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
+    private ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
       try {
         this.dataType = type.newInstance();
@@ -73,12 +72,19 @@ public final class type {
       }
     }
 
-    public Array(final Entity owner, final Class<? extends DataType<T>> type) {
-      this(owner, null, null, false, false, true, null, null, type);
+    @SuppressWarnings("unchecked")
+    public ARRAY(final ARRAY<T> copy) {
+      this(copy.owner, copy.name, copy.value, copy.unique, copy.primary, copy.nullable, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
     }
 
-    public Array(final Class<? extends DataType<T>> type) {
-      this(null, type);
+    protected ARRAY(final Class<? extends DataType<T>> type) {
+      this(null, null, null, false, false, true, null, null, type);
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      // FIXME
+      throw new UnsupportedOperationException();
     }
 
     @Override
@@ -108,41 +114,45 @@ public final class type {
 
     @Override
     @SuppressWarnings("unchecked")
-    protected final Array<T> clone() {
-      return new Array<T>((Class<? extends DataType<T>>)dataType.getClass());
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    // NOTE: This creates a new instance that has the same type as this instance
-    protected final Array<T> newInstance(final Entity owner) {
-      return new Array<T>(owner, (Class<? extends DataType<T>>)dataType.getClass());
+    public final ARRAY<T> clone() {
+      return new ARRAY<T>((Class<? extends DataType<T>>)dataType.getClass());
     }
   }
 
-  public static final class BigInt extends Numeric<BigInteger> {
-    public static final BigInt type = new BigInt();
-
-    public final int precision;
-    public final boolean unsigned;
-    public final BigInteger min;
-    public final BigInteger max;
+  public static final class BIGINT extends PreciseNumeric<BigInteger> {
+    private final BigInteger min;
+    private final BigInteger max;
 
     // FIXME: This is not properly supported by Derby, as in derby, only signed numbers are allowed. But in MySQL, unsigned values of up to 18446744073709551615 are allowed.
-    public BigInt(final Entity owner, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final int precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    protected BIGINT(final Entity owner, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final int precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
       this.min = min;
       this.max = max;
     }
 
-    public BigInt(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, null, null);
+    protected BIGINT(final BIGINT copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.min = copy.min;
+      this.max = copy.max;
     }
 
-    public BigInt() {
-      this(null);
+    public BIGINT(final int precision, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    public BigInteger min() {
+      return min;
+    }
+
+    public BigInteger max() {
+      return max;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareInt64(precision(), unsigned());
     }
 
     @Override
@@ -165,8 +175,8 @@ public final class type {
         this.value = null;
       else if (value instanceof BigInteger)
         this.value = (BigInteger)value;
-      else if (value instanceof java.lang.Long)
-        this.value = BigInteger.valueOf((java.lang.Long)value);
+      else if (value instanceof Long)
+        this.value = BigInteger.valueOf((Long)value);
       else
         throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
     }
@@ -177,39 +187,49 @@ public final class type {
     }
 
     @Override
-    protected final BigInt clone() {
-      return new BigInt(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final BigInt newInstance(final Entity owner) {
-      return new BigInt(owner);
+    public final BIGINT clone() {
+      return new BIGINT(this);
     }
   }
 
-  public static final class Binary extends Serial<byte[]> {
-    public static final Binary type = new Binary();
+  public static final class BINARY extends Serial<byte[]> {
+    private final boolean varying;
+    private final short length;
 
-    public final int length;
-    public final boolean varying;
-
-    public Binary(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final int length, final boolean varying) {
+    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean varying, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = length;
       this.varying = varying;
+      this.length = (short)length;
     }
 
-    public Binary(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, true);
+    protected BINARY(final BINARY copy) {
+      super(copy);
+      this.varying = copy.varying;
+      this.length = copy.length;
     }
 
-    public Binary() {
-      this(null);
+    public BINARY(final boolean varying, final int length) {
+      super();
+      this.varying = varying;
+      this.length = (short)length;
+    }
+
+    public boolean varying() {
+      return varying;
+    }
+
+    public short length() {
+      return length;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareBinary(varying, length);
     }
 
     @Override
     protected final int sqlType() {
+      // FIXME: Does it matter if we know if this is BIT, BINARY, VARBINARY, or LONGVARBINARY?
       return varying ? Types.VARBINARY : Types.BINARY;
     }
 
@@ -218,13 +238,13 @@ public final class type {
       if (value != null)
         statement.setBytes(parameterIndex, value);
       else
-        // FIXME: Does it matter if we know if this is BIT, BINARY, VARBINARY, or LONGVARBINARY?
         statement.setNull(parameterIndex, statement.getParameterMetaData().getParameterType(parameterIndex));
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final int columnType = resultSet.getMetaData().getColumnType(columnIndex);
+      // FIXME: IS it right to support BIT here? Or should it be in BOOLEAN?
       if (columnType == Types.BIT)
         this.value = new byte[] {resultSet.getBoolean(columnIndex) ? (byte)0x01 : (byte)0x00};
       else
@@ -237,33 +257,36 @@ public final class type {
     }
 
     @Override
-    protected final Binary clone() {
-      return new Binary(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, length, varying);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Binary newInstance(final Entity owner) {
-      return new Binary(owner);
+    public final BINARY clone() {
+      return new BINARY(this);
     }
   }
 
-  public static final class Blob extends LargeObject<InputStream> {
-    public static final Blob type = new Blob();
+  public static final class BLOB extends LargeObject<InputStream> {
+    private final short length;
 
-    public final int length;
-
-    public Blob(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
+    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = length;
+      this.length = (short)length;
     }
 
-    public Blob(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE);
+    protected BLOB(final BLOB copy) {
+      super(copy);
+      this.length = copy.length;
     }
 
-    public Blob() {
-      this(null);
+    public BLOB(final int length) {
+      super();
+      this.length = (short)length;
+    }
+
+    public short length() {
+      return length;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareBlob(length);
     }
 
     @Override
@@ -290,30 +313,27 @@ public final class type {
     }
 
     @Override
-    protected final Blob clone() {
-      return new Blob(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Blob newInstance(final Entity owner) {
-      return new Blob(owner);
+    public final BLOB clone() {
+      return new BLOB(this);
     }
   }
 
-  public static class Boolean extends Condition<java.lang.Boolean> {
-    public static final Boolean type = new Boolean();
-
-    public Boolean(final Entity owner, final String name, final java.lang.Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Boolean> generateOnInsert, final GenerateOn<? super java.lang.Boolean> generateOnUpdate) {
+  public static class BOOLEAN extends Condition<Boolean> {
+    protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
 
-    public Boolean(final Entity owner) {
-      this(null, null, null, false, false, true, null, null);
+    protected BOOLEAN(final BOOLEAN copy) {
+      super(copy);
     }
 
-    public Boolean() {
-      this(null);
+    public BOOLEAN() {
+      super();
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareBoolean();
     }
 
     @Override
@@ -340,42 +360,41 @@ public final class type {
     }
 
     @Override
-    protected final Boolean clone() {
-      return new Boolean(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Boolean newInstance(final Entity owner) {
-      return new Boolean(owner);
+    public final BOOLEAN clone() {
+      return new BOOLEAN(this);
     }
   }
 
-  public static final class Char extends Textual<String> {
-    public static final Char type = new Char();
+  public static final class CHAR extends Textual<String> {
+    private final boolean varying;
 
-    public final int length;
-    public final boolean varying;
-    public final boolean national;
-
-    public Char(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final int length, final boolean varying, final boolean national) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = length;
+    protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean varying, final int length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
-      this.national = national;
     }
 
-    public Char(final Entity owner) {
-      this(owner, null, null, false, false, true, null, null, Integer.MAX_VALUE, true, false);
+    protected CHAR(final CHAR copy) {
+      super(copy, copy.length());
+      this.varying = copy.varying;
     }
 
-    public Char() {
-      this((Entity)null);
+    public CHAR(final boolean varying, final int length) {
+      super((short)length);
+      this.varying = varying;
+    }
+
+    public boolean varying() {
+      return varying;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareChar(varying, length());
     }
 
     @Override
     protected final int sqlType() {
-      return varying ? (national ? Types.NVARCHAR : Types.VARCHAR) : (national ? Types.NCHAR : Types.CHAR);
+      return varying ? Types.VARCHAR : Types.CHAR;
     }
 
     @Override
@@ -397,44 +416,45 @@ public final class type {
     }
 
     @Override
-    protected final Char clone() {
-      return new Char(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, length, varying, national);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Char newInstance(final Entity owner) {
-      return new Char(owner);
+    public final CHAR clone() {
+      return new CHAR(this);
     }
   }
 
-  public static final class Clob extends LargeObject<Reader> {
-    public static final Clob type = new Clob();
+  public static final class CLOB extends LargeObject<Reader> {
+    private final short length;
 
-    public final int length;
-    public final boolean national;
-
-    public Clob(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final int length, final boolean national) {
+    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = length;
-      this.national = national;
+      this.length = (short)length;
     }
 
-    public Clob(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false);
+    protected CLOB(final CLOB copy) {
+      super(copy);
+      this.length = copy.length;
     }
 
-    public Clob() {
-      this(null);
+    public CLOB(final int length) {
+      super();
+      this.length = (short)length;
+    }
+
+    public short length() {
+      return length;
     }
 
     @Override
-    protected final int sqlType() {
-      return national ? Types.NCLOB : Types.CLOB;
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareClob(length);
     }
 
     @Override
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    protected int sqlType() {
+      return Types.CLOB;
+    }
+
+    @Override
+    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
         statement.setClob(parameterIndex, value);
       else
@@ -442,53 +462,50 @@ public final class type {
     }
 
     @Override
-    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Clob value = resultSet.getClob(columnIndex);
       this.value = value == null ? null : value.getCharacterStream();
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
     @Override
-    protected final Clob clone() {
-      return new Clob(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, length, national);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Clob newInstance(final Entity owner) {
-      return new Clob(owner);
+    public CLOB clone() {
+      return new CLOB(this);
     }
   }
 
-  public static final class Date extends Temporal<LocalDate> {
-    public static final Date type = new Date();
-
+  public static final class DATE extends Temporal<LocalDate> {
     protected static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    public Date(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
+    protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
 
-    public Date(final Entity owner) {
-      this(null, null, null, false, false, true, null, null);
+    protected DATE(final DATE copy) {
+      super(copy);
     }
 
-    public Date() {
-      this(null);
+    public DATE() {
+      super();
     }
 
     @Override
-    protected final int sqlType() {
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareDate();
+    }
+
+    @Override
+    protected int sqlType() {
       return Types.DATE;
     }
 
     @Override
     @SuppressWarnings("deprecation")
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
         statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
       else
@@ -497,43 +514,183 @@ public final class type {
 
     @Override
     @SuppressWarnings("deprecation")
-    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Date value = resultSet.getDate(columnIndex);
       this.value = value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
     @Override
-    protected final Date clone() {
-      return new Date(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Date newInstance(final Entity owner) {
-      return new Date(owner);
+    public DATE clone() {
+      return new DATE(this);
     }
   }
 
-  public static class DateTime extends Temporal<LocalDateTime> {
-    public static final DateTime type = new DateTime();
-
-    protected static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-
-    public DateTime(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public static abstract class DataType<T> extends Subject<T> {
+    protected static <T>void setValue(final DataType<T> dataType, final T value) {
+      dataType.value = value;
     }
 
-    public DateTime(final Entity owner) {
+    protected static <T>String serialize(final DataType<T> dataType, final DBVendor vendor) throws IOException {
+      return dataType.serialize(vendor);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    protected static <T,V extends DataType<T>>V wrap(final T value) {
+      try {
+        final V dataType;
+        if (value.getClass().isEnum())
+          dataType = (V)new ENUM(value.getClass());
+        else
+          dataType = (V)org.safris.xdb.entities.type.typeToClass.get(value.getClass()).newInstance();
+
+        dataType.set(value);
+        return dataType;
+      }
+      catch (final Exception e) {
+        throw new UnsupportedOperationException(e);
+      }
+    }
+
+    @SuppressWarnings("unchecked")
+    protected static <T>ARRAY<T> wrap(final T[] value) {
+      final ARRAY<T> array;
+      if (value.getClass().getComponentType().isEnum())
+        array = new ARRAY<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
+      else
+        array = new ARRAY<T>((Class<? extends DataType<T>>)org.safris.xdb.entities.type.typeToClass.get(value.getClass().getComponentType()));
+
+      array.set(value);
+      return array;
+    }
+
+    protected final Entity owner;
+    protected final String name;
+    protected final boolean unique;
+    protected final boolean primary;
+    protected final boolean nullable;
+    protected final GenerateOn<? super T> generateOnInsert;
+    protected final GenerateOn<? super T> generateOnUpdate;
+
+    protected DataType(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+      this.value = _default;
+      this.owner = owner;
+      this.name = name;
+      this.unique = unique;
+      this.primary = primary;
+      this.nullable = nullable;
+      this.generateOnInsert = generateOnInsert;
+      this.generateOnUpdate = generateOnUpdate;
+    }
+
+    protected DataType(final DataType<T> copy) {
+      this.value = copy.value;
+      this.owner = copy.owner;
+      this.name = copy.name;
+      this.unique = copy.unique;
+      this.primary = copy.primary;
+      this.nullable = copy.nullable;
+      this.generateOnInsert = copy.generateOnInsert;
+      this.generateOnUpdate = copy.generateOnUpdate;
+    }
+
+    protected DataType() {
       this(null, null, null, false, false, true, null, null);
     }
 
-    public DateTime() {
-      this(null);
+    protected T value;
+    protected boolean wasSet;
+
+    public void set(final T value) {
+      this.wasSet = true;
+      this.value = value;
+    }
+
+    public T get() {
+      return value;
+    }
+
+    public boolean wasSet() {
+      return wasSet;
+    }
+
+    public final <V extends DataType<T>>V AS(final V dataType) {
+      dataType.wrapper(new As<T>(this, dataType));
+      return dataType;
+    }
+
+    @Override
+    protected void serialize(final Serialization serialization) throws IOException {
+      Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+    }
+
+    private Class<T> type;
+
+    @SuppressWarnings("unchecked")
+    protected Class<T> type() {
+      return type == null ? type = (Class<T>)Classes.getGenericSuperclasses(getClass())[0] : type;
+    }
+
+    protected abstract int sqlType();
+    protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
+    protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
+    protected abstract String serialize(final DBVendor vendor) throws IOException;
+    protected abstract String declare(final DBVendor vendor);
+
+    @Override
+    public abstract DataType<T> clone();
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+
+      if (obj.getClass() != getClass())
+        return false;
+
+      final T get = get();
+      return get != null ? get.equals(((DataType<?>)obj).get()) : ((DataType<?>)obj).get() == null;
+    }
+  }
+
+  public static class DATETIME extends Temporal<LocalDateTime> {
+    private static final short DEFAULT_PRECISION = 6;
+
+    protected static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
+    private final short precision;
+
+    protected DATETIME(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final int precision) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      this.precision = (short)precision;
+    }
+
+    protected DATETIME(final DATETIME copy) {
+      super(copy);
+      this.precision = copy.precision;
+    }
+
+    public DATETIME(final int precision) {
+      super();
+      this.precision = (short)precision;
+    }
+
+    public DATETIME() {
+      super();
+      this.precision = DEFAULT_PRECISION;
+    }
+
+    public short precision() {
+      return precision;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareDateTime(precision);
     }
 
     @Override
@@ -562,40 +719,52 @@ public final class type {
     }
 
     @Override
-    protected DateTime clone() {
-      return new DateTime(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final DateTime newInstance(final Entity owner) {
-      return new DateTime(owner);
+    public DATETIME clone() {
+      return new DATETIME(this);
     }
   }
 
-  public static class Decimal extends Numeric<java.lang.Double> {
-    public static final Decimal type = new Decimal();
+  public static final class DECIMAL extends PreciseNumeric<BigDecimal> {
+    private final short scale;
+    private final BigDecimal min;
+    private final BigDecimal max;
 
-    public final int precision;
-    public int decimal;
-    public final boolean unsigned;
-    public final java.lang.Double min;
-    public final java.lang.Double max;
-
-    public Decimal(final Entity owner, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Double> generateOnInsert, final GenerateOn<? super java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    protected DECIMAL(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final boolean unsigned, final BigDecimal min, final BigDecimal max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
+      this.scale = (short)scale;
       this.min = min;
       this.max = max;
     }
 
-    public Decimal(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, false, java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE);
+    protected DECIMAL(final DECIMAL copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.scale = copy.scale;
+      this.min = copy.min;
+      this.max = copy.max;
     }
 
-    public Decimal() {
-      this(null);
+    public DECIMAL(final int precision, final int scale, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.scale = (short)scale;
+      this.min = null;
+      this.max = null;
+    }
+
+    public short scale() {
+      return scale;
+    }
+
+    public BigDecimal min() {
+      return min;
+    }
+
+    public BigDecimal max() {
+      return max;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareDecimal(precision(), scale(), unsigned());
     }
 
     @Override
@@ -606,14 +775,14 @@ public final class type {
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
-        statement.setDouble(parameterIndex, value);
+        statement.setBigDecimal(parameterIndex, value);
       else
         statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getDouble(columnIndex);
+      this.value = resultSet.wasNull() ? null : resultSet.getBigDecimal(columnIndex);
     }
 
     @Override
@@ -622,40 +791,44 @@ public final class type {
     }
 
     @Override
-    protected Decimal clone() {
-      return new Decimal(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, decimal, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Decimal newInstance(final Entity owner) {
-      return new Decimal(owner);
+    public DECIMAL clone() {
+      return new DECIMAL(this);
     }
   }
 
-  public static final class Double extends Numeric<java.lang.Double> {
-    public static final Double type = new Double();
+  public static class DOUBLE extends Numeric<Double> {
+    private final Double min;
+    private final Double max;
 
-    public final int precision;
-    public int decimal;
-    public final boolean unsigned;
-    public final java.lang.Double min;
-    public final java.lang.Double max;
-
-    public Double(final Entity owner, final String name, final java.lang.Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Double> generateOnInsert, final GenerateOn<? super java.lang.Double> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Double min, final java.lang.Double max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    protected DOUBLE(final Entity owner, final String name, final Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean unsigned, final Double min, final Double max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
       this.min = min;
       this.max = max;
     }
 
-    public Double(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, false, java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE);
+    protected DOUBLE(final DOUBLE copy) {
+      super(copy, copy.unsigned());
+      this.min = null;
+      this.max = null;
     }
 
-    public Double() {
-      this(null);
+    public DOUBLE(final boolean unsigned) {
+      super(unsigned);
+      this.min = null;
+      this.max = null;
+    }
+
+    public final Double min() {
+      return min;
+    }
+
+    public final Double max() {
+      return max;
+    }
+
+    @Override
+    protected final String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareFloat(true, unsigned());
     }
 
     @Override
@@ -682,38 +855,45 @@ public final class type {
     }
 
     @Override
-    protected final Double clone() {
-      return new Double(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, decimal, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Double newInstance(final Entity owner) {
-      return new Double(owner);
+    public DOUBLE clone() {
+      return new DOUBLE(this);
     }
   }
 
-  public static final class Enum<T extends java.lang.Enum<?>> extends Textual<T> {
-    public static final Enum<java.lang.Enum<?>> type = new Enum<java.lang.Enum<?>>(null);
+  public static final class ENUM<T extends Enum<?>> extends Textual<T> {
+    private final Class<T> enumType;
 
-    private final Class<T> enumClass;
+    private static short calcEnumLength(final Class<?> enumType) {
+      short length = 0;
+      for (final Object constant : enumType.getEnumConstants())
+        length = (short)Math.max(length, constant.toString().length());
 
-    public Enum(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final Class<T> type) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.enumClass = type;
+      return length;
     }
 
-    public Enum(final Entity owner, final Class<T> type) {
-      this(owner, null, null, false, false, true, null, null, type);
+    protected ENUM(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final Class<T> type) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, calcEnumLength(type));
+      this.enumType = type;
     }
 
-    public Enum(final Class<T> type) {
-      this(null, type);
+    protected ENUM(final ENUM<T> copy) {
+      super(copy, copy.length());
+      this.enumType = copy.enumType;
+    }
+
+    protected ENUM(final Class<T> enumType) {
+      super(calcEnumLength(enumType));
+      this.enumType = enumType;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      throw new UnsupportedOperationException();
     }
 
     @Override
     protected final Class<T> type() {
-      return enumClass;
+      return enumType;
     }
 
     @Override
@@ -737,7 +917,7 @@ public final class type {
         return;
       }
 
-      for (final T constant : enumClass.getEnumConstants()) {
+      for (final T constant : enumType.getEnumConstants()) {
         if (constant.toString().equals(value)) {
           this.value = constant;
           return;
@@ -753,41 +933,44 @@ public final class type {
     }
 
     @Override
-    protected final Enum<T> clone() {
-      return new Enum<T>(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, enumClass);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    // NOTE: This creates a new instance that has the same type as this instance
-    protected final Enum<T> newInstance(final Entity owner) {
-      return new Enum<T>(owner, enumClass);
+    public final ENUM<T> clone() {
+      return new ENUM<T>(this);
     }
   }
 
-  public static final class Float extends Numeric<java.lang.Float> {
-    public static final Float type = new Float();
+  public static final class FLOAT extends Numeric<Float> {
+    private final Float min;
+    private final Float max;
 
-    public final int precision;
-    public int decimal;
-    public final boolean unsigned;
-    public final java.lang.Float min;
-    public final java.lang.Float max;
-
-    public Float(final Entity owner, final String name, final java.lang.Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Float> generateOnInsert, final GenerateOn<? super java.lang.Float> generateOnUpdate, final int precision, final int decimal, final boolean unsigned, final java.lang.Float min, final java.lang.Float max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    public FLOAT(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean unsigned, final Float min, final Float max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
       this.min = min;
       this.max = max;
     }
 
-    public Float(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, Integer.MAX_VALUE, false, java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE);
+    protected FLOAT(final FLOAT copy) {
+      super(copy, copy.unsigned());
+      this.min = null;
+      this.max = null;
     }
 
-    public Float() {
-      this(null);
+    public FLOAT(final boolean unsigned) {
+      super(unsigned);
+      this.min = null;
+      this.max = null;
+    }
+
+    public Float min() {
+      return min;
+    }
+
+    public Float max() {
+      return max;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareFloat(false, unsigned());
     }
 
     @Override
@@ -814,14 +997,8 @@ public final class type {
     }
 
     @Override
-    protected final Float clone() {
-      return new Float(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, decimal, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Float newInstance(final Entity owner) {
-      return new Float(owner);
+    public final FLOAT clone() {
+      return new FLOAT(this);
     }
   }
 
@@ -829,30 +1006,49 @@ public final class type {
     protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
+
+    protected LargeObject(final LargeObject<T> copy) {
+      super(copy);
+    }
+
+    protected LargeObject() {
+      super();
+    }
   }
 
-  public static final class Long extends Numeric<java.lang.Long> {
-    public static final Long type = new Long();
+  public static final class INTEGER extends PreciseNumeric<Long> {
+    private final Long min;
+    private final Long max;
 
-    public final int precision;
-    public final boolean unsigned;
-    public final java.lang.Long min;
-    public final java.lang.Long max;
-
-    public Long(final Entity owner, final String name, final java.lang.Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super java.lang.Long> generateOnInsert, final GenerateOn<? super java.lang.Long> generateOnUpdate, final int precision, final boolean unsigned, final java.lang.Long min, final java.lang.Long max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    protected INTEGER(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final int precision, final boolean unsigned, final Long min, final Long max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
       this.min = min;
       this.max = max;
     }
 
-    public Long(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, java.lang.Long.MIN_VALUE, java.lang.Long.MAX_VALUE);
+    protected INTEGER(final INTEGER copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.min = null;
+      this.max = null;
     }
 
-    public Long() {
-      this(null);
+    public INTEGER(final int precision, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    public Long min() {
+      return min;
+    }
+
+    public Long max() {
+      return max;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareInt32(precision(), unsigned());
     }
 
     @Override
@@ -879,44 +1075,49 @@ public final class type {
     }
 
     @Override
-    protected final Long clone() {
-      return new Long(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final Long newInstance(final Entity owner) {
-      return new Long(owner);
+    public final INTEGER clone() {
+      return new INTEGER(this);
     }
   }
 
-  public static final class MediumInt extends Numeric<Integer> {
-    public static final MediumInt type = new MediumInt();
+  public static final class MEDIUMINT extends PreciseNumeric<Integer> {
+    private final Integer min;
+    private final Integer max;
 
-    public final int precision;
-    public final boolean unsigned;
-    public final Integer min;
-    public final Integer max;
-
-    public MediumInt(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
+    protected MEDIUMINT(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final boolean unsigned, final Integer min, final Integer max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
       this.min = min;
       this.max = max;
     }
 
-    public MediumInt(final Entity owner) {
-      this(null, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    protected MEDIUMINT(final MEDIUMINT copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.min = null;
+      this.max = null;
     }
 
-    public MediumInt() {
-      this(null);
+    public MEDIUMINT(final int precision, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    public Integer min() {
+      return min;
+    }
+
+    public Integer max() {
+      return max;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareInt24(precision(), unsigned());
     }
 
     @Override
     protected final int sqlType() {
-      return Types.SMALLINT;
+      return Types.INTEGER;
     }
 
     @Override
@@ -938,22 +1139,58 @@ public final class type {
     }
 
     @Override
-    protected final MediumInt clone() {
-      return new MediumInt(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final MediumInt newInstance(final Entity owner) {
-      return new MediumInt(owner);
+    public final MEDIUMINT clone() {
+      return new MEDIUMINT(this);
     }
   }
 
   public static abstract class Numeric<T extends Number> extends DataType<T> {
     protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
 
-    protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+    private final boolean unsigned;
+
+    protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      this.unsigned = unsigned;
+    }
+
+    protected Numeric(final Numeric<T> copy, final boolean unsigned) {
+      super(copy);
+      this.unsigned = unsigned;
+    }
+
+    protected Numeric(final boolean unsigned) {
+      super();
+      this.unsigned = unsigned;
+    }
+
+    public boolean unsigned() {
+      return unsigned;
+    }
+  }
+
+  public static abstract class PreciseNumeric<T extends Number> extends Numeric<T> {
+    protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
+
+    private final short precision;
+
+    protected PreciseNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned, final int precision) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
+      this.precision = (short)precision;
+    }
+
+    protected PreciseNumeric(final Numeric<T> copy, final boolean unsigned, final int precision) {
+      super(copy, unsigned);
+      this.precision = (short)precision;
+    }
+
+    protected PreciseNumeric(final boolean unsigned, final int precision) {
+      super(unsigned);
+      this.precision = (short)precision;
+    }
+
+    public short precision() {
+      return precision;
     }
   }
 
@@ -961,64 +1198,13 @@ public final class type {
     protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
-  }
 
-  public static final class SmallInt extends Numeric<Short> {
-    public static final SmallInt type = new SmallInt();
-
-    public final int precision;
-    public final boolean unsigned;
-    public final Short min;
-    public final Short max;
-
-    public SmallInt(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.precision = precision;
-      this.unsigned = unsigned;
-      this.min = min;
-      this.max = max;
+    protected Serial(final Serial<T> copy) {
+      super(copy);
     }
 
-    public SmallInt(final Entity owner) {
-      this(owner, null, null, false, false, true, null, null, Integer.MAX_VALUE, false, java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE);
-    }
-
-    public SmallInt() {
-      this(null);
-    }
-
-    @Override
-    protected final int sqlType() {
-      return Types.TINYINT;
-    }
-
-    @Override
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setShort(parameterIndex, value);
-      else
-        statement.setNull(parameterIndex, sqlType());
-    }
-
-    @Override
-    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
-    }
-
-    @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
-      return Serializer.getSerializer(vendor).serialize(this);
-    }
-
-    @Override
-    protected final SmallInt clone() {
-      return new SmallInt(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, unsigned, min, max);
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    protected final SmallInt newInstance(final Entity owner) {
-      return new SmallInt(owner);
+    protected Serial() {
+      super();
     }
   }
 
@@ -1026,37 +1212,69 @@ public final class type {
     protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
-  }
 
-  public static abstract class Textual<T> extends DataType<T> {
-    protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected Temporal(final Temporal<T> copy) {
+      super(copy);
     }
 
-    protected Textual(final Entity owner) {
-      super(owner);
-    }
-
-    protected Textual() {
+    protected Temporal() {
       super();
     }
   }
 
-  public static final class Time extends Temporal<LocalTime> {
-    public static final Time type = new Time();
+  public static abstract class Textual<T> extends DataType<T> {
+    private final short length;
+
+    protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      this.length = (short)length;
+    }
+
+    protected Textual(final Textual<T> copy, final int length) {
+      super(copy);
+      this.length = (short)length;
+    }
+
+    protected Textual(final int length) {
+      super();
+      this.length = (short)length;
+    }
+
+    public short length() {
+      return length;
+    }
+  }
+
+  public static final class TIME extends Temporal<LocalTime> {
+    private static final short DEFAULT_PRECISION = 6;
 
     protected static final DateTimeFormatter timeFormat = DateTimeFormatter.ISO_LOCAL_TIME;
 
-    public Time(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate) {
+    private final short precision;
+
+    protected TIME(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final int precision) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      this.precision = (short)precision;
     }
 
-    public Time(final Entity owner) {
-      this(owner, null, null, false, false, true, null, null);
+    protected TIME(final TIME copy) {
+      super(copy);
+      this.precision = copy.precision;
     }
 
-    public Time() {
-      this(null);
+    public TIME(final int precision) {
+      super();
+      this.precision = (short)precision;
+    }
+
+    public TIME() {
+      super();
+      this.precision = DEFAULT_PRECISION;
+    }
+
+    @Override
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareTime(precision);
     }
 
     @Override
@@ -1084,14 +1302,72 @@ public final class type {
     }
 
     @Override
-    protected final Time clone() {
-      return new Time(owner, name, value, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    public final TIME clone() {
+      return new TIME(this);
+    }
+  }
+
+  public static final class TINYINT extends PreciseNumeric<Short> {
+    private final Short min;
+    private final Short max;
+
+    protected TINYINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
+      this.min = min;
+      this.max = max;
+    }
+
+    protected TINYINT(final TINYINT copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.min = null;
+      this.max = null;
+    }
+
+    public TINYINT(final int precision, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    public Short min() {
+      return min;
+    }
+
+    public Short max() {
+      return max;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    protected final Time newInstance(final Entity owner) {
-      return new Time(owner);
+    protected String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareInt8(precision(), unsigned());
+    }
+
+    @Override
+    protected final int sqlType() {
+      return Types.SMALLINT;
+    }
+
+    @Override
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      if (value != null)
+        statement.setShort(parameterIndex, value);
+      else
+        statement.setNull(parameterIndex, sqlType());
+    }
+
+    @Override
+    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
+    }
+
+    @Override
+    protected final String serialize(final DBVendor vendor) throws IOException {
+      return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    public final TINYINT clone() {
+      return new TINYINT(this);
     }
   }
 }

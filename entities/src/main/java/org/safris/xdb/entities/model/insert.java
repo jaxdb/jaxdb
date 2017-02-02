@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities.model;
 
-import org.safris.xdb.entities.DML.ALL;
-import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.Subject;
 
 public interface insert {
@@ -29,14 +27,5 @@ public interface insert {
 
     @SuppressWarnings("unchecked")
     public select._SELECT<T> SELECT(final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities);
   }
 }

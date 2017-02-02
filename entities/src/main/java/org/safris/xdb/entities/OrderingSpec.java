@@ -18,11 +18,11 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-final class OrderingSpec<T> extends Subject<T> {
-  protected final Operator<OrderingSpec<?>> operator;
-  protected final DataType<T> dataType;
+final class OrderingSpec extends Subject<Object> {
+  protected final Operator<OrderingSpec> operator;
+  protected final type.DataType<?> dataType;
 
-  public OrderingSpec(final Operator<OrderingSpec<?>> operator, final DataType<T> dataType) {
+  public OrderingSpec(final Operator<OrderingSpec> operator, final type.DataType<?> dataType) {
     this.operator = operator;
     this.dataType = dataType;
   }

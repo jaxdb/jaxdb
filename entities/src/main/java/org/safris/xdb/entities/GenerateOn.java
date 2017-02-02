@@ -22,13 +22,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.safris.xdb.entities.type.Date;
-import org.safris.xdb.entities.type.DateTime;
-import org.safris.xdb.entities.type.Time;
+import org.safris.xdb.entities.type.DATE;
+import org.safris.xdb.entities.type.DATETIME;
+import org.safris.xdb.entities.type.TIME;
 
 public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
-    private Number generate(final DataType<Number> dataType) {
+    private Number generate(final type.DataType<Number> dataType) {
       if (dataType.get() == null)
         throw new IllegalArgumentException("value is missing");
 
@@ -51,37 +51,37 @@ public abstract class GenerateOn<T> {
     }
 
     @Override
-    public Number generateStatic(final DataType<Number> dataType) {
+    public Number generateStatic(final type.DataType<Number> dataType) {
       return generate(dataType);
     }
 
     @Override
-    public String generateDynamic(final Serialization serialization, final DataType<Number> dataType) {
+    public String generateDynamic(final Serialization serialization, final type.DataType<Number> dataType) {
       return dataType.name + " + 1";
     }
   };
 
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
-    private Temporal generate(final DataType<? extends Temporal> dataType) {
-      if (dataType instanceof Date)
+    private Temporal generate(final type.DataType<? extends Temporal> dataType) {
+      if (dataType instanceof DATE)
         return LocalDate.now();
 
-      if (dataType instanceof Time)
+      if (dataType instanceof TIME)
         return LocalTime.now();
 
-      if (dataType instanceof DateTime)
+      if (dataType instanceof DATETIME)
         return LocalDateTime.now();
 
       throw new UnsupportedOperationException("Unknown type: " + dataType.getClass().getName());
     }
 
     @Override
-    public Temporal generateStatic(final DataType<Temporal> dataType) {
+    public Temporal generateStatic(final type.DataType<Temporal> dataType) {
       return generate(dataType);
     }
 
     @Override
-    public String generateDynamic(final Serialization serialization, final DataType<Temporal> dataType) throws IOException {
+    public String generateDynamic(final Serialization serialization, final type.DataType<Temporal> dataType) throws IOException {
       dataType.set(generate(dataType));
       serialization.addParameter(dataType);
       return serialization.serializer.getPreparedStatementMark(dataType);
@@ -89,21 +89,21 @@ public abstract class GenerateOn<T> {
   };
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
-    private String generate(final DataType<String> dataType) {
+    private String generate(final type.DataType<String> dataType) {
       return java.util.UUID.randomUUID().toString().toUpperCase();
     }
 
     @Override
-    public String generateStatic(final DataType<String> dataType) {
+    public String generateStatic(final type.DataType<String> dataType) {
       return generate(dataType);
     }
 
     @Override
-    public String generateDynamic(final Serialization serialization, final DataType<String> dataType) {
+    public String generateDynamic(final Serialization serialization, final type.DataType<String> dataType) {
       return generate(dataType);
     }
   };
 
-  public abstract T generateStatic(final DataType<T> dataType);
-  public abstract String generateDynamic(final Serialization serialization, final DataType<T> dataType) throws IOException;
+  public abstract T generateStatic(final type.DataType<T> dataType);
+  public abstract String generateDynamic(final Serialization serialization, final type.DataType<T> dataType) throws IOException;
 }

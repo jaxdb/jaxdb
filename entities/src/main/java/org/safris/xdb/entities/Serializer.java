@@ -31,24 +31,6 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.xdb.entities.Interval.Unit;
-import org.safris.xdb.entities.type.Array;
-import org.safris.xdb.entities.type.BigInt;
-import org.safris.xdb.entities.type.Binary;
-import org.safris.xdb.entities.type.Blob;
-import org.safris.xdb.entities.type.Boolean;
-import org.safris.xdb.entities.type.Char;
-import org.safris.xdb.entities.type.Clob;
-import org.safris.xdb.entities.type.Date;
-import org.safris.xdb.entities.type.DateTime;
-import org.safris.xdb.entities.type.Decimal;
-import org.safris.xdb.entities.type.Double;
-import org.safris.xdb.entities.type.Enum;
-import org.safris.xdb.entities.type.Float;
-import org.safris.xdb.entities.type.Long;
-import org.safris.xdb.entities.type.MediumInt;
-import org.safris.xdb.entities.type.Numeric;
-import org.safris.xdb.entities.type.SmallInt;
-import org.safris.xdb.entities.type.Time;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class Serializer {
@@ -84,9 +66,9 @@ public abstract class Serializer {
       if (subject instanceof Entity) {
         final Entity entity = (Entity)subject;
         final Alias alias = serialization.registerAlias(entity);
-        final DataType<?>[] dataTypes = entity.column();
+        final type.DataType<?>[] dataTypes = entity.column();
         for (int j = 0; j < dataTypes.length; j++) {
-          final DataType<?> dataType = dataTypes[j];
+          final type.DataType<?> dataType = dataTypes[j];
           if (j > 0)
             serialization.append(", ");
 
@@ -94,9 +76,9 @@ public abstract class Serializer {
           serialization.append(".").append(dataType.name);
         }
       }
-      else if (subject instanceof DataType<?>) {
-        serialization.registerAlias(((DataType<?>)subject).owner);
-        final DataType<?> dataType = (DataType<?>)subject;
+      else if (subject instanceof type.DataType<?>) {
+        serialization.registerAlias(((type.DataType<?>)subject).owner);
+        final type.DataType<?> dataType = (type.DataType<?>)subject;
         dataType.serialize(serialization);
       }
 
@@ -115,7 +97,7 @@ public abstract class Serializer {
     return entity.name();
   }
 
-  protected String getPreparedStatementMark(final DataType<?> dataType) {
+  protected String getPreparedStatementMark(final type.DataType<?> dataType) {
     return "?";
   }
 
@@ -136,10 +118,8 @@ public abstract class Serializer {
 
   protected void serialize(final Select.SELECT<?> select, final Serialization serialization) throws IOException {
     serialization.append("SELECT ");
-    if (select.qualifier != null) {
-      select.qualifier.serialize(serialization);
-      serialization.append(" ");
-    }
+    if (select.distinct)
+      serialization.append("DISTINCT ");
 
     serializeEntities(select.entities, serialization);
   }
@@ -171,12 +151,18 @@ public abstract class Serializer {
     // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
     // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
     serialization.registerAlias(join.table);
-    serialization.append(join.natural != null ? " NATURAL" : "");
-    serialization.append(join.cross != null ? " CROSS" : "");
-    if (join.type != null) {
-      serialization.append(" ");
-      join.type.serialize(serialization);
-    }
+    if (join.cross)
+      serialization.append(" CROSS");
+
+    if (join.natural)
+      serialization.append(" NATURAL");
+
+    if (join.left && join.right)
+      serialization.append(" FULL OUTER");
+    else if (join.left)
+      serialization.append(" LEFT OUTER");
+    else if (join.right)
+      serialization.append(" LEFT OUTER");
 
     serialization.append(" JOIN ").append(tableName(join.table, serialization)).append(" ");
     serialization.registerAlias(join.table).serialize(serialization);
@@ -209,7 +195,7 @@ public abstract class Serializer {
       serialization.append(" ORDER BY ");
       if (orderBy.columns != null) {
         for (int i = 0; i < orderBy.columns.length; i++) {
-          final DataType<?> dataType = orderBy.columns[i];
+          final type.DataType<?> dataType = orderBy.columns[i];
           if (i > 0)
             serialization.append(", ");
 
@@ -254,7 +240,7 @@ public abstract class Serializer {
 //        final Entity entity = serializable.entities[i];
 //        serialization.append("INSERT INTO ");
 //        entity.serialize(serialization);
-//        for (final DataType dataType : entity.column()) {
+//        for (final type.DataType dataType : entity.column()) {
 //          if (!dataType.wasSet()) {
 //            if (dataType.generateOnInsert == null)
 //              continue;
@@ -280,7 +266,7 @@ public abstract class Serializer {
 //        final Entity entity = serializable.entities[i];
 //        serialization.append("INSERT INTO ");
 //        entity.serialize(serialization);
-//        for (final DataType dataType : entity.column()) {
+//        for (final type.DataType dataType : entity.column()) {
 //          if (!dataType.wasSet()) {
 //            if (dataType.generateOnInsert == null)
 //              continue;
@@ -311,7 +297,7 @@ public abstract class Serializer {
     update.entity.serialize(serialization);
     if (command.set() == null) {
       final StringBuilder setClause = new StringBuilder();
-      for (final DataType dataType : update.entity.column()) {
+      for (final type.DataType dataType : update.entity.column()) {
         if (!dataType.primary && (dataType.wasSet() || dataType.generateOnUpdate != null)) {
           if (dataType.generateOnUpdate != null)
             dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
@@ -323,7 +309,7 @@ public abstract class Serializer {
 
       serialization.append(" SET ").append(setClause.substring(2));
       final StringBuilder whereClause = new StringBuilder();
-      for (final DataType dataType : update.entity.column()) {
+      for (final type.DataType dataType : update.entity.column()) {
         if (dataType.primary) {
           if (dataType.generateOnUpdate != null)
             dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
@@ -348,10 +334,10 @@ public abstract class Serializer {
       serialization.append(", ");
     }
     else {
-      final Set<DataType<?>> setColumns = new HashSet<DataType<?>>();
+      final Set<type.DataType<?>> setColumns = new HashSet<type.DataType<?>>();
       final Entity entity = set.getSetColumns(setColumns);
       final StringBuilder setClause = new StringBuilder();
-      for (final DataType column : entity.column())
+      for (final type.DataType column : entity.column())
         if (!setColumns.contains(column) && column.generateOnUpdate != null)
           setClause.append(", ").append(column.name).append(" = ").append(column.generateOnUpdate.generateDynamic(serialization, column));
 
@@ -376,7 +362,7 @@ public abstract class Serializer {
 
 //    if (serialization.getCaller().peek() == serializable) {
 //      final StringBuilder whereClause = new StringBuilder();
-//      for (final DataType<?> dataType : serializable.entity.primary()) {
+//      for (final type.DataType<?> dataType : serializable.entity.primary()) {
 //        serialization.addParameter(dataType);
 //        whereClause.append(" AND ").append(dataType.name).append(" = ?");
 //      }
@@ -425,7 +411,7 @@ public abstract class Serializer {
     serialization.append("INTERVAL '").append(clause.substring(1)).append("'");
   }
 
-  protected void serialize(final TemporalExpression<?> expression, final Serialization serialization) throws IOException {
+  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
     serialization.append("(");
     expression.a.serialize(serialization);
     serialization.append(" ");
@@ -435,32 +421,15 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final NumericExpression<?> expression, final Serialization serialization) throws IOException {
+  protected void serialize(final NumericExpression expression, final Serialization serialization) throws IOException {
     serialization.append("(");
     expression.a.serialize(serialization);
     serialization.append(" ").append(expression.operator.toString()).append(" ");
     expression.b.serialize(serialization);
-    for (int i = 0; i < expression.args.length; i++) {
-      final Serializable arg = expression.args[i];
-      if (arg instanceof Interval) {
-        final Interval interval = (Interval)arg;
-
-        final Set<Unit> units = interval.getUnits();
-        final StringBuilder clause = new StringBuilder();
-        for (final Unit unit : units)
-          clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
-
-        serialization.append(" '").append(clause.substring(1)).append("'");
-      }
-      else {
-        serialization.append(" ").append(expression.operator.toString()).append(" ");
-        arg.serialize(serialization);
-      }
-    }
     serialization.append(")");
   }
 
-  protected void serialize(final DataType<?> dataType, final Serialization serialization) throws IOException {
+  protected void serialize(final type.DataType<?> dataType, final Serialization serialization) throws IOException {
     if (dataType.wrapper() != null) {
       dataType.wrapper().serialize(serialization);
     }
@@ -595,19 +564,19 @@ public abstract class Serializer {
     serialization.append("PI()");
   }
 
-  protected void serialize(final function.numeric.Abs<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Abs function, final Serialization serialization) throws IOException {
     serialization.append("ABS(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Sign<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Sign function, final Serialization serialization) throws IOException {
     serialization.append("SIGN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Round<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Round function, final Serialization serialization) throws IOException {
     serialization.append("ROUND(");
     function.a.serialize(serialization);
     serialization.append(", ");
@@ -615,25 +584,25 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Floor<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Floor function, final Serialization serialization) throws IOException {
     serialization.append("FLOOR(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Ceil<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Ceil function, final Serialization serialization) throws IOException {
     serialization.append("CEIL(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Sqrt<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Sqrt function, final Serialization serialization) throws IOException {
     serialization.append("SQRT(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Pow<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Pow function, final Serialization serialization) throws IOException {
     serialization.append("POWER(");
     function.a.serialize(serialization);
     serialization.append(", ");
@@ -641,7 +610,7 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Mod<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Mod function, final Serialization serialization) throws IOException {
     serialization.append("MOD(");
     function.a.serialize(serialization);
     serialization.append(", ");
@@ -649,43 +618,43 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Sin<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Sin function, final Serialization serialization) throws IOException {
     serialization.append("SIN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Asin<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Asin function, final Serialization serialization) throws IOException {
     serialization.append("ASIN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Cos<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Cos function, final Serialization serialization) throws IOException {
     serialization.append("COS(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Acos<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Acos function, final Serialization serialization) throws IOException {
     serialization.append("ACOS(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Tan<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Tan function, final Serialization serialization) throws IOException {
     serialization.append("TAN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Atan<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Atan function, final Serialization serialization) throws IOException {
     serialization.append("ATAN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Atan2<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Atan2 function, final Serialization serialization) throws IOException {
     serialization.append("ATAN2(");
     function.a.serialize(serialization);
     serialization.append(", ");
@@ -693,19 +662,19 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Exp<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Exp function, final Serialization serialization) throws IOException {
     serialization.append("EXP(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Ln<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Ln function, final Serialization serialization) throws IOException {
     serialization.append("LN(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Log<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Log function, final Serialization serialization) throws IOException {
     serialization.append("LOG(");
     function.a.serialize(serialization);
     serialization.append(", ");
@@ -713,13 +682,13 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Log2<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Log2 function, final Serialization serialization) throws IOException {
     serialization.append("LOG2(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
 
-  protected void serialize(final function.numeric.Log10<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Log10 function, final Serialization serialization) throws IOException {
     serialization.append("LOG10(");
     function.a.serialize(serialization);
     serialization.append(")");
@@ -731,10 +700,8 @@ public abstract class Serializer {
       serialization.append("*");
     }
     else {
-      if (count.qualifier != null) {
-        count.qualifier.serialize(serialization);
-        serialization.append(" ");
-      }
+      if (count.distinct)
+        serialization.append("DISTINCT ");
 
       count.column.serialize(serialization);
     }
@@ -742,13 +709,11 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final SetFunction<?> function, final Serialization serialization) throws IOException {
+  protected void serialize(final SetFunction function, final Serialization serialization) throws IOException {
     serialization.append(function.function).append("(");
     if (function.a != null) {
-      if (function.qualifier != null) {
-        function.qualifier.serialize(serialization);
-        serialization.append(" ");
-      }
+      if (function.distinct)
+        serialization.append("DISTINCT ");
 
       function.a.serialize(serialization);
 
@@ -761,93 +726,94 @@ public abstract class Serializer {
     serialization.append(")");
   }
 
-  protected void serialize(final OrderingSpec<?> spec, final Serialization serialization) throws IOException {
+  protected void serialize(final OrderingSpec spec, final Serialization serialization) throws IOException {
     spec.dataType.serialize(serialization);
     serialization.append(" ").append(spec.operator);
   }
 
-  protected void serialize(final TemporalFunction<? extends java.time.temporal.Temporal> function, final Serialization serialization) {
+  protected void serialize(final TemporalFunction function, final Serialization serialization) {
     serialization.append(function.function).append("()");
   }
 
-  public <T>String serialize(final Array<T> serializable, final DataType<T> dataType) throws IOException {
+  public <T>String serialize(final type.ARRAY<T> serializable, final type.DataType<T> dataType) throws IOException {
     final StringBuilder builder = new StringBuilder();
-    final DataType<T> clone = dataType.clone();
+    final type.DataType<T> clone = dataType.clone();
     for (final T item : serializable.get()) {
-      DataType.setValue(clone, item);
-      builder.append(", ").append(DataType.serialize(dataType, getVendor()));
+      type.DataType.setValue(clone, item);
+      builder.append(", ").append(type.DataType.serialize(dataType, getVendor()));
     }
 
     return "(" + builder.substring(2) + ")";
   }
 
-  public void serialize(final Cast.AS as, final Serialization serialization) {
-    // TODO: Implement this
-    throw new UnsupportedOperationException();
+  public void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
+    serialization.append("CAST(");
+    as.dataType.serialize(serialization);
+    serialization.append(" AS ").append(as.castAs.declare(serialization.vendor)).append(")");
   }
 
-  protected String serialize(final BigInt serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.BIGINT serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final Binary serializable) {
+  protected String serialize(final type.BINARY serializable) {
     return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(serializable.get()) + "'";
   }
 
-  protected String serialize(final Blob serializable) throws IOException {
+  protected String serialize(final type.BLOB serializable) throws IOException {
     return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.getBytes(serializable.get())) + "'";
   }
 
-  protected String serialize(final Boolean serializable) {
+  protected String serialize(final type.BOOLEAN serializable) {
     return String.valueOf(serializable.get()).toUpperCase();
   }
 
-  protected String serialize(final Char serializable) {
+  protected String serialize(final type.CHAR serializable) {
     return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
   }
 
-  protected String serialize(final Clob serializable) throws IOException {
+  protected String serialize(final type.CLOB serializable) throws IOException {
     return serializable.get() == null ? "NULL" : "'" + Readers.readFully(serializable.get()) + "'";
   }
 
-  protected String serialize(final Date serializable) {
-    return serializable.get() == null ? "NULL" : Date.dateFormat.format(serializable.get());
+  protected String serialize(final type.DATE serializable) {
+    return serializable.get() == null ? "NULL" : type.DATE.dateFormat.format(serializable.get());
   }
 
-  protected String serialize(final DateTime serializable) {
-    return serializable.get() == null ? "NULL" : DateTime.dateTimeFormat.format(serializable.get());
+  protected String serialize(final type.DATETIME serializable) {
+    return serializable.get() == null ? "NULL" : type.DATETIME.dateTimeFormat.format(serializable.get());
   }
 
-  protected String serialize(final Decimal serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.DECIMAL serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final Double serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.DOUBLE serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final Enum<?> serializable) {
+  protected String serialize(final type.ENUM<?> serializable) {
     return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
   }
 
-  protected String serialize(final Float serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.FLOAT serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final Long serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.INTEGER serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final MediumInt serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.MEDIUMINT serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final SmallInt serializable) {
-    return serializable.get() == null ? "NULL" : Numeric.numberFormat.get().format(serializable.get());
+  protected String serialize(final type.TINYINT serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final Time serializable) {
-    return serializable.get() == null ? "NULL" : Time.timeFormat.format(serializable.get());
+  protected String serialize(final type.TIME serializable) {
+    return serializable.get() == null ? "NULL" : type.TIME.timeFormat.format(serializable.get());
   }
 
   public void assignAliases(final Select.FROM<?> from, final Serialization serialization) {

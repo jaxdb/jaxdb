@@ -128,17 +128,17 @@ public class DataTest extends LoggableTest {
       final String clob = Strings.getRandomAlphaNumericString(255);
       final String date = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
       final String dateTime = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-      final String decimal = (int)(Math.random() * 10000000) + "." +  (int)(Math.random() * 1000);
-      final String flt = String.valueOf(Long.valueOf(Random.numeric(8)) / 13d);
-      final String dbl = String.valueOf(Long.valueOf(Random.numeric(10)) / 13d);
-      final String lng = String.valueOf((int)(Math.random() * 65536 * 65536));
-      final String mediumInt = String.valueOf((int)(Math.random() * 65536));
-      final String smallInt = String.valueOf((int)(Math.random() * 255));
+      final double decimal = Math.random() * 255 - 128;
+      final float flt = (float)(Math.random() * 255 - 128);
+      final double dbl = Math.random() * 255 - 128;
+      final String lng = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
+      final String mediumInt = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
+      final String tinyInt = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
       final String time = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
       final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
       final String enm = values[(int)(Math.random() * values.length)];
 
-      out.write(("  <Type\n    typeBigint=\"" + bigInt + "\"\n    typeBinary=\"" + binary + "\"\n    typeBlob=\"" + blob + "\"\n    typeBoolean=\"" + bool + "\"\n    typeChar=\"" + ch + "\"\n    typeClob=\"" + clob + "\"\n    typeDate=\"" + date + "\"\n    typeDatetime=\"" + dateTime + "\"\n    typeDecimal=\"" + decimal + "\"\n    typeDouble=\"" + dbl + "\"\n    typeEnum=\"" + enm + "\"\n    typeFloat=\"" + flt + "\"\n    typeLong=\"" + lng + "\"\n    typeMediumint=\"" + mediumInt + "\"\n    typeSmallint=\"" + smallInt + "\"\n    typeTime=\"" + time + "\"/>\n").getBytes());
+      out.write(("  <Type\n    typeBigint=\"" + bigInt + "\"\n    typeBinary=\"" + binary + "\"\n    typeBlob=\"" + blob + "\"\n    typeBoolean=\"" + bool + "\"\n    typeChar=\"" + ch + "\"\n    typeClob=\"" + clob + "\"\n    typeDate=\"" + date + "\"\n    typeDatetime=\"" + dateTime + "\"\n    typeDecimal=\"" + decimal + "\"\n    typeDouble=\"" + dbl + "\"\n    typeEnum=\"" + enm + "\"\n    typeFloat=\"" + flt + "\"\n    typeLong=\"" + lng + "\"\n    typeMediumint=\"" + mediumInt + "\"\n    typeSmallint=\"" + tinyInt + "\"\n    typeTime=\"" + time + "\"/>\n").getBytes());
     }
 
     out.write("</Types>".getBytes());
@@ -151,11 +151,12 @@ public class DataTest extends LoggableTest {
 
   @Test
   public void testWorld() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("world", true);
+    testData("world", false);
   }
 
   @Test
   public void testTypes() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+    resourcesDestDir.mkdirs();
     try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.xdd"))) {
       createTypeData(out);
     }

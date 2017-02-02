@@ -18,22 +18,20 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.DML.SetQualifier;
-
 final class CountFunction extends Expression<Long> {
   protected static final CountFunction STAR  = new CountFunction();
 
+  protected final boolean distinct;
   protected final String function = "COUNT";
-  protected final DML.SetQualifier qualifier;
-  protected final DataType<?> column;
+  protected final type.DataType<?> column;
 
-  protected CountFunction(final SetQualifier qualifier, final DataType<?> column) {
-    this.qualifier = qualifier;
+  protected CountFunction(final type.DataType<?> column, final boolean distinct) {
     this.column = column;
+    this.distinct = distinct;
   }
 
   private CountFunction() {
-    this.qualifier = null;
+    this.distinct = false;
     this.column = null;
   }
 

@@ -20,11 +20,11 @@ import java.io.IOException;
 
 final class BetweenPredicate<T> extends Predicate<T> {
   protected final boolean positive;
-  protected final DataType<?> dataType;
-  protected final DataType<?> a;
-  protected final DataType<?> b;
+  protected final type.DataType<?> dataType;
+  protected final type.DataType<?> a;
+  protected final type.DataType<?> b;
 
-  protected BetweenPredicate(final boolean positive, final DataType<?> dataType, final DataType<?> a, final DataType<?> b) {
+  protected BetweenPredicate(final boolean positive, final type.DataType<?> dataType, final type.DataType<?> a, final type.DataType<?> b) {
     this.positive = positive;
     this.dataType = dataType;
     this.a = a;

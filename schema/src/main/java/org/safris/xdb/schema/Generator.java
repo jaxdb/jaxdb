@@ -129,40 +129,50 @@ public final class Generator extends BaseGenerator {
     final StringBuilder ddl = new StringBuilder();
     ddl.append(column._name$().text()).append(" ");
     if (column instanceof $xds_char) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_char)column));
+      final $xds_char type = ($xds_char)column;
+      ddl.append(vendor.getSQLSpec().declareChar(type._varying$().text(), type._length$().text()));
     }
     else if (column instanceof $xds_clob) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_clob)column));
+      final $xds_clob type = ($xds_clob)column;
+      ddl.append(vendor.getSQLSpec().declareClob(type._length$().text()));
     }
     else if (column instanceof $xds_binary) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_binary)column));
+      final $xds_binary type = ($xds_binary)column;
+      ddl.append(vendor.getSQLSpec().declareBinary(type._varying$().text(), type._length$().text()));
     }
     else if (column instanceof $xds_blob) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_blob)column));
+      final $xds_blob type = ($xds_blob)column;
+      ddl.append(vendor.getSQLSpec().declareBlob(type._length$().text()));
     }
     else if (column instanceof $xds_integer) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_integer)column));
+      final $xds_integer type = ($xds_integer)column;
+      ddl.append(vendor.getSQLSpec().declareInteger(type._precision$().text().shortValue(), type._unsigned$().text(), type._min$().text(), type._max$().text()));
     }
     else if (column instanceof $xds_float) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_float)column));
+      final $xds_float type = ($xds_float)column;
+      ddl.append(vendor.getSQLSpec().declareFloat(type._double$().text(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_decimal) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_decimal)column));
+      final $xds_decimal type = ($xds_decimal)column;
+      ddl.append(vendor.getSQLSpec().declareDecimal(type._precision$().text().shortValue(), type._scale$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_date) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_date)column));
+      ddl.append(vendor.getSQLSpec().declareDate());
     }
     else if (column instanceof $xds_time) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_time)column));
+      final $xds_time type = ($xds_time)column;
+      ddl.append(vendor.getSQLSpec().declareTime(type._precision$().text().shortValue()));
     }
     else if (column instanceof $xds_dateTime) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_dateTime)column));
+      final $xds_dateTime type = ($xds_dateTime)column;
+      ddl.append(vendor.getSQLSpec().declareDateTime(type._precision$().text().shortValue()));
     }
     else if (column instanceof $xds_boolean) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_boolean)column));
+      ddl.append(vendor.getSQLSpec().declareBoolean());
     }
     else if (column instanceof $xds_enum) {
-      ddl.append(vendor.getSQLSpec().type(table, ($xds_enum)column));
+      final $xds_enum type = ($xds_enum)column;
+      ddl.append(vendor.getSQLSpec().declareEnum(table, type));
     }
 
     final String defaultFragement = vendor.getSQLSpec().$default(table, column);

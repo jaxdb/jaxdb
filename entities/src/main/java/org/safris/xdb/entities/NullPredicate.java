@@ -20,9 +20,9 @@ import java.io.IOException;
 
 final class NullPredicate<T> extends Predicate<T> {
   protected final boolean positive;
-  protected final DataType<T> dataType;
+  protected final type.DataType<T> dataType;
 
-  protected NullPredicate(final boolean positive, final DataType<T> dataType) {
+  protected NullPredicate(final boolean positive, final type.DataType<T> dataType) {
     this.positive = positive;
     this.dataType = dataType;
   }

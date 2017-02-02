@@ -22,7 +22,7 @@ import org.safris.xdb.entities.type.Numeric;
 
 final class function {
   static final class numeric {
-    static final class Pi extends NumericFunction<Double> {
+    static final class Pi extends NumericFunction {
       protected Pi() {
         super();
       }
@@ -33,8 +33,8 @@ final class function {
       }
     }
 
-    static final class Abs<T extends Number> extends NumericFunction<T> {
-      protected Abs(final DataType<T> a) {
+    static final class Abs extends NumericFunction {
+      protected Abs(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -44,8 +44,8 @@ final class function {
       }
     }
 
-    static final class Sign<T extends Number> extends NumericFunction<T> {
-      protected Sign(final DataType<T> a) {
+    static final class Sign extends NumericFunction {
+      protected Sign(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -55,76 +55,12 @@ final class function {
       }
     }
 
-    static final class Round<T extends Number> extends NumericFunction<T> {
-      protected Round(final DataType<T> a, final Numeric<?> b) {
+    static final class Round extends NumericFunction {
+      protected Round(final type.Numeric<? extends Number> a, final Numeric<?> b) {
         super(a, b);
       }
 
-      protected Round(final DataType<T> a, final Number b) {
-        super(a, b);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Floor<T extends Number> extends NumericFunction<T> {
-      protected Floor(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Ceil<T extends Number> extends NumericFunction<T> {
-      protected Ceil(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Sqrt<T extends Number> extends NumericFunction<T> {
-      protected Sqrt(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Pow<T extends Number> extends NumericFunction<T> {
-      protected Pow(final DataType<T> a, final Numeric<?> b) {
-        super(a, b);
-      }
-
-      protected Pow(final DataType<T> a, final Number b) {
-        super(a, b);
-      }
-
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Mod<T extends Number> extends NumericFunction<T> {
-      protected Mod(final DataType<? extends T> a, final Numeric<?> b) {
-        super(a, b);
-      }
-
-      protected Mod(final DataType<T> a, final Number b) {
+      protected Round(final type.Numeric<? extends Number> a, final Number b) {
         super(a, b);
       }
 
@@ -134,8 +70,8 @@ final class function {
       }
     }
 
-    static final class Sin<T extends Number> extends NumericFunction<T> {
-      protected Sin(final DataType<T> a) {
+    static final class Floor extends NumericFunction {
+      protected Floor(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -145,8 +81,8 @@ final class function {
       }
     }
 
-    static final class Asin<T extends Number> extends NumericFunction<T> {
-      protected Asin(final DataType<T> a) {
+    static final class Ceil extends NumericFunction {
+      protected Ceil(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -156,8 +92,8 @@ final class function {
       }
     }
 
-    static final class Cos<T extends Number> extends NumericFunction<T> {
-      protected Cos(final DataType<T> a) {
+    static final class Sqrt extends NumericFunction {
+      protected Sqrt(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -167,45 +103,28 @@ final class function {
       }
     }
 
-    static final class Acos<T extends Number> extends NumericFunction<T> {
-      protected Acos(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Tan<T extends Number> extends NumericFunction<T> {
-      protected Tan(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Atan<T extends Number> extends NumericFunction<T> {
-      protected Atan(final DataType<T> a) {
-        super(a);
-      }
-
-      @Override
-      protected void serialize(final Serialization serialization) throws IOException {
-        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-      }
-    }
-
-    static final class Atan2<T extends Number> extends NumericFunction<T> {
-      protected Atan2(final DataType<? extends T> a, final Numeric<?> b) {
+    static final class Pow extends NumericFunction {
+      protected Pow(final type.Numeric<? extends Number> a, final Numeric<?> b) {
         super(a, b);
       }
 
-      protected Atan2(final DataType<T> a, final Number b) {
+      protected Pow(final type.Numeric<? extends Number> a, final Number b) {
+        super(a, b);
+      }
+
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Mod extends NumericFunction {
+      protected Mod(final type.Numeric<? extends Number> a, final Numeric<?> b) {
+        super(a, b);
+      }
+
+      protected Mod(final type.Numeric<? extends Number> a, final Number b) {
         super(a, b);
       }
 
@@ -215,8 +134,8 @@ final class function {
       }
     }
 
-    static final class Exp<T extends Number> extends NumericFunction<T> {
-      protected Exp(final DataType<T> a) {
+    static final class Sin extends NumericFunction {
+      protected Sin(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -226,8 +145,8 @@ final class function {
       }
     }
 
-    static final class Ln<T extends Number> extends NumericFunction<T> {
-      protected Ln(final DataType<T> a) {
+    static final class Asin extends NumericFunction {
+      protected Asin(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -237,12 +156,56 @@ final class function {
       }
     }
 
-    static final class Log<T extends Number> extends NumericFunction<T> {
-      protected Log(final DataType<T> a, final Numeric<?> b) {
+    static final class Cos extends NumericFunction {
+      protected Cos(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Acos extends NumericFunction {
+      protected Acos(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Tan extends NumericFunction {
+      protected Tan(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Atan extends NumericFunction {
+      protected Atan(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Atan2 extends NumericFunction {
+      protected Atan2(final type.Numeric<? extends Number> a, final Numeric<?> b) {
         super(a, b);
       }
 
-      protected Log(final DataType<T> a, final Number b) {
+      protected Atan2(final type.Numeric<? extends Number> a, final Number b) {
         super(a, b);
       }
 
@@ -252,8 +215,8 @@ final class function {
       }
     }
 
-    static final class Log2<T extends Number> extends NumericFunction<T> {
-      protected Log2(final DataType<T> a) {
+    static final class Exp extends NumericFunction {
+      protected Exp(final type.Numeric<? extends Number> a) {
         super(a);
       }
 
@@ -263,8 +226,45 @@ final class function {
       }
     }
 
-    static final class Log10<T extends Number> extends NumericFunction<T> {
-      protected Log10(final DataType<T> a) {
+    static final class Ln extends NumericFunction {
+      protected Ln(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Log extends NumericFunction {
+      protected Log(final type.Numeric<? extends Number> a, final Numeric<?> b) {
+        super(a, b);
+      }
+
+      protected Log(final type.Numeric<? extends Number> a, final Number b) {
+        super(a, b);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Log2 extends NumericFunction {
+      protected Log2(final type.Numeric<? extends Number> a) {
+        super(a);
+      }
+
+      @Override
+      protected void serialize(final Serialization serialization) throws IOException {
+        Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+      }
+    }
+
+    static final class Log10 extends NumericFunction {
+      protected Log10(final type.Numeric<? extends Number> a) {
         super(a);
       }
 

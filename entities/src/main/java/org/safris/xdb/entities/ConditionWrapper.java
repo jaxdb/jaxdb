@@ -20,12 +20,19 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-abstract class ConditionWrapper<T> extends Condition<T> {
-  private final DataType<T> dataType;
+import org.safris.xdb.schema.DBVendor;
 
-  protected ConditionWrapper(final DataType<T> dataType) {
-    super(dataType != null ? dataType.owner : null);
-    this.dataType = dataType;
+abstract class ConditionWrapper<T> extends Condition<T> {
+  private final type.DataType<T> dataType;
+
+  protected ConditionWrapper(final ConditionWrapper<T> copy) {
+    super(copy);
+    this.dataType = copy;
+  }
+
+  @Override
+  protected final String declare(final DBVendor vendor) {
+    return dataType.declare(vendor);
   }
 
   @Override
@@ -44,12 +51,7 @@ abstract class ConditionWrapper<T> extends Condition<T> {
   }
 
   @Override
-  protected final <V,D extends DataType<V>>D newInstance(final Entity owner) {
-    return dataType.newInstance(owner);
-  }
-
-  @Override
-  protected final DataType<T> clone() {
+  public final type.DataType<T> clone() {
     return dataType.clone();
   }
 }

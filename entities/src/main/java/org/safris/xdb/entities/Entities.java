@@ -31,11 +31,6 @@ import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.binding.Base64Binary;
 import org.safris.commons.xml.binding.DateTime;
 import org.safris.commons.xml.binding.Decimal;
-import org.safris.xdb.entities.type.BigInt;
-import org.safris.xdb.entities.type.Enum;
-import org.safris.xdb.entities.type.Long;
-import org.safris.xdb.entities.type.MediumInt;
-import org.safris.xdb.entities.type.SmallInt;
 import org.safris.xdb.xdd.xe.$xdd_binary;
 import org.safris.xdb.xdd.xe.$xdd_blob;
 import org.safris.xdb.xdd.xe.$xdd_clob;
@@ -64,7 +59,7 @@ public final class Entities {
     final QName entityName = getName(row.getClass().getSuperclass());
 
     try {
-      final Class<?> binding = Class.forName("xdb.ddl." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
+      final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
       final Entity entity = (Entity)binding.newInstance();
       final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
       while (attributeIterator.hasNext()) {
@@ -73,19 +68,19 @@ public final class Entities {
           continue;
 
         final Field field = binding.getField(Strings.toCamelCase(attribute.name().getLocalPart()));
-        final DataType dataType = (DataType<?>)field.get(entity);
+        final type.DataType dataType = (type.DataType<?>)field.get(entity);
         final Object value = attribute.text();
         if (value == null)
           dataType.set(null);
         else if (attribute instanceof $xdd_integer) {
           // FIXME: Are we bounded by the size of long for BigInt here?
-          if (dataType instanceof BigInt)
+          if (dataType instanceof type.BIGINT)
             dataType.set(value);
-          else if (dataType instanceof Long)
+          else if (dataType instanceof type.INTEGER)
             dataType.set(((BigInteger)value).longValue());
-          else if (dataType instanceof MediumInt)
+          else if (dataType instanceof type.MEDIUMINT)
             dataType.set(((BigInteger)value).intValue());
-          else if (dataType instanceof SmallInt)
+          else if (dataType instanceof type.TINYINT)
             dataType.set(((BigInteger)value).shortValue());
         }
         else if (attribute instanceof $xdd_decimal)
@@ -98,7 +93,7 @@ public final class Entities {
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum) {
           final String enumValue = ((String)value).toUpperCase().replace(' ', '_');
-          for (final Object constant : ((Enum)dataType).type().getEnumConstants())
+          for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants())
             if (constant.toString().equals(enumValue))
               dataType.set(constant);
         }

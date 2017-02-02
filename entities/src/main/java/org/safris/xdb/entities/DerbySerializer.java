@@ -126,12 +126,12 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final TemporalExpression<?> expression, final Serialization serialization) throws IOException {
-    if (expression.a instanceof type.Date)
+  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
+    if (expression.a instanceof type.DATE)
       serialization.append("DATE");
-    else if (expression.a instanceof type.Time)
+    else if (expression.a instanceof type.TIME)
       serialization.append("TIME");
-    else if (expression.a instanceof type.DateTime)
+    else if (expression.a instanceof type.DATETIME)
       serialization.append("TIMESTAMP");
     else
       throw new UnsupportedOperationException("Unexpected temporal type: " + expression.a.getClass());
@@ -144,21 +144,16 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final NumericExpression<?> expression, final Serialization serialization) throws IOException {
+  protected void serialize(final NumericExpression expression, final Serialization serialization) throws IOException {
     serialization.append("(");
     expression.a.serialize(serialization);
     serialization.append(" ").append(expression.operator.toString()).append(" ");
     expression.b.serialize(serialization);
-    for (int i = 0; i < expression.args.length; i++) {
-      final Serializable arg = expression.args[i];
-      serialization.append(" ").append(expression.operator.toString()).append(" ");
-      arg.serialize(serialization);
-    }
     serialization.append(")");
   }
 
   @Override
-  protected void serialize(final function.numeric.Mod<? extends Number> function, final Serialization serialization) throws IOException {
+  protected void serialize(final function.numeric.Mod function, final Serialization serialization) throws IOException {
     serialization.append("DMOD(");
     function.a.serialize(serialization);
     serialization.append(", ");

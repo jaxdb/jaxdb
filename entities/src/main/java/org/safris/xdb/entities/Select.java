@@ -31,24 +31,20 @@ import java.util.function.Predicate;
 
 import org.safris.commons.lang.Pair;
 import org.safris.commons.util.Collections;
-import org.safris.xdb.entities.DML.ALL;
-import org.safris.xdb.entities.DML.CROSS;
-import org.safris.xdb.entities.DML.NATURAL;
-import org.safris.xdb.entities.DML.TYPE;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Select extends SQLStatement {
-  private static void serialize(final List<Pair<DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
+public final class Select extends SQLStatement {
+  private static void serialize(final List<Pair<type.DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
       for (int i = 0; i < entity.column().length; i++)
-        dataTypes.add(new Pair<DataType<?>,Integer>(entity.column()[i], i));
+        dataTypes.add(new Pair<type.DataType<?>,Integer>(entity.column()[i], i));
     }
-    else if (subject instanceof DataType<?>) {
-      final DataType<?> dataType = (DataType<?>)subject;
-      dataTypes.add(new Pair<DataType<?>,Integer>(dataType, -1));
+    else if (subject instanceof type.DataType<?>) {
+      final type.DataType<?> dataType = (type.DataType<?>)subject;
+      dataTypes.add(new Pair<type.DataType<?>,Integer>(dataType, -1));
     }
     else {
       throw new UnsupportedOperationException("Unknown entity type: " + subject.getClass().getName());
@@ -56,7 +52,7 @@ final class Select extends SQLStatement {
   }
 
   private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
-    final List<Pair<DataType<?>,Integer>> dataTypes = new ArrayList<Pair<DataType<?>,Integer>>();
+    final List<Pair<type.DataType<?>,Integer>> dataTypes = new ArrayList<Pair<type.DataType<?>,Integer>>();
     for (final Subject<?> entity : select.entities)
       Select.serialize(dataTypes, entity);
 
@@ -86,8 +82,8 @@ final class Select extends SQLStatement {
           index = 0;
           entity = null;
           for (int i = 0; i < noColumns; i++) {
-            final Pair<DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
-            final DataType dataType;
+            final Pair<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
+            final type.DataType dataType;
             if (currentTable != null && (currentTable != dataTypePrototype.a.owner || dataTypePrototype.b == -1)) {
               final Entity cached = cache.get(entity);
               if (cached != null) {
@@ -170,15 +166,17 @@ final class Select extends SQLStatement {
 
     @Override
     public select.UNION<T> UNION(final select.SELECT<T> union) {
-      return new UNION<T>(this, false, union);
+      return new Select.UNION<T>(this, false, union);
     }
 
     @Override
-    public select.UNION<T> UNION(final ALL all, final select.SELECT<T> union) {
-      if (all == null)
-        throw new IllegalArgumentException("all must be DML.ALL");
-
-      return new UNION<T>(this, true, union);
+    public select._UNION.ALL<T> UNION() {
+      return new select.UNION.ALL<T>(){
+        @Override
+        public Select.UNION<T> ALL(final select.SELECT<T> union) {
+          return new Select.UNION<T>(Execute.this, true, union);
+        }
+      };
     }
 
     @Override
@@ -223,29 +221,54 @@ final class Select extends SQLStatement {
       return new HAVING<T>(this, condition);
     }
 
-    @Override
-    public final select.CROSS_JOIN<T> JOIN(final CROSS cross, final Entity table) {
-      return new JOIN<T>(this, cross, table);
+    public final class CROSS implements select.FROM.CROSS<T> {
+      @Override
+      public final select.ADV_JOIN<T> JOIN(final Entity table) {
+        return new JOIN<T>(FROM_JOIN_ON.this, table, true, false, false, false);
+      }
     }
+
+    public final CROSS CROSS = new CROSS();
+
+    public final class NATURAL implements select.FROM.NATURAL<T> {
+      @Override
+      public final select.ADV_JOIN<T> JOIN(final Entity table) {
+        return new JOIN<T>(FROM_JOIN_ON.this, table, false, true, false, false);
+      }
+    }
+
+    public final NATURAL NATURAL = new NATURAL();
+
+    public final class LEFT implements select.FROM.OUTER<T> {
+      @Override
+      public final select.JOIN<T> JOIN(final Entity table) {
+        return new JOIN<T>(FROM_JOIN_ON.this, table, false, false, true, false);
+      }
+    }
+
+    public final LEFT LEFT = new LEFT();
+
+    public final class RIGHT implements select.FROM.OUTER<T> {
+      @Override
+      public final select.JOIN<T> JOIN(final Entity table) {
+        return new JOIN<T>(FROM_JOIN_ON.this, table, false, false, false, true);
+      }
+    }
+
+    public final RIGHT RIGHT = new RIGHT();
+
+    public final class FULL implements select.FROM.OUTER<T> {
+      @Override
+      public final select.JOIN<T> JOIN(final Entity table) {
+        return new JOIN<T>(FROM_JOIN_ON.this, table, false, false, true, true);
+      }
+    }
+
+    public final FULL FULL = new FULL();
 
     @Override
     public final select.JOIN<T> JOIN(final Entity table) {
-      return new JOIN<T>(this, table);
-    }
-
-    @Override
-    public final select.JOIN<T> JOIN(final TYPE type, final Entity table) {
-      return new JOIN<T>(this, type, table);
-    }
-
-    @Override
-    public final select.CROSS_JOIN<T> JOIN(final NATURAL natural, final Entity table) {
-      return new JOIN<T>(this, natural, table);
-    }
-
-    @Override
-    public final select.JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity table) {
-      return new JOIN<T>(this, natural, type, table);
+      return new JOIN<T>(this, table, false, false, false, false);
     }
 
     @Override
@@ -254,7 +277,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
+  public static final class FROM<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.FROM<T> {
     protected final Collection<Entity> tables;
 
     protected FROM(final Keyword<T> parent, final Collection<Entity> tables) {
@@ -272,7 +295,7 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -284,7 +307,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
+  public static final class GROUP_BY<T extends Subject<?>> extends Execute<T> implements select.GROUP_BY<T> {
     protected final Collection<Subject<?>> subjects;
 
     protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
@@ -296,7 +319,7 @@ final class Select extends SQLStatement {
       this(parent, Collections.asCollection(LinkedHashSet.class, subjects));
     }
 
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -318,7 +341,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
+  public static final class HAVING<T extends Subject<?>> extends Execute<T> implements select.HAVING<T> {
     protected final Condition<?> condition;
 
     protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
@@ -327,7 +350,7 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -344,72 +367,19 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T>, select.CROSS_JOIN<T> {
-    protected final CROSS cross;
-    protected final NATURAL natural;
-    protected final TYPE type;
+  protected static final class JOIN<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.JOIN<T>, select.ADV_JOIN<T> {
+    protected final boolean cross;
+    protected final boolean natural;
+    protected final boolean left;
+    protected final boolean right;
     protected final Entity table;
 
-    protected JOIN(final Keyword<T> parent, final CROSS cross, final Entity table) {
+    protected JOIN(final Keyword<T> parent, final Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
       super(parent);
-      if (cross == null)
-        throw new IllegalArgumentException("must pass DML.CROSS instance here");
-
       this.cross = cross;
-      this.natural = null;
-      this.type = null;
-      this.table = table;
-      if (table == null)
-        throw new IllegalArgumentException("table == null");
-    }
-
-    protected JOIN(final Keyword<T> parent, final NATURAL natural, final TYPE type, final Entity table) {
-      super(parent);
-      this.cross = null;
       this.natural = natural;
-      if (natural == null)
-        throw new IllegalArgumentException("must pass DML.NATURAL instance here");
-
-      this.type = type;
-      if (type == null)
-        throw new IllegalArgumentException("must pass DML.<TYPE> instance here");
-
-      this.table = table;
-      if (table == null)
-        throw new IllegalArgumentException("table == null");
-    }
-
-    protected JOIN(final Keyword<T> parent, final TYPE type, final Entity table) {
-      super(parent);
-      this.cross = null;
-      this.natural = null;
-      this.type = type;
-      if (type == null)
-        throw new IllegalArgumentException("must pass DML.<TYPE> instance here");
-
-      this.table = table;
-      if (table == null)
-        throw new IllegalArgumentException("table == null");
-    }
-
-    protected JOIN(final Keyword<T> parent, final NATURAL natural, final Entity table) {
-      super(parent);
-      this.cross = null;
-      this.natural = natural;
-      if (natural == null)
-        throw new IllegalArgumentException("must pass DML.NATURAL instance here");
-
-      this.type = null;
-      this.table = table;
-      if (table == null)
-        throw new IllegalArgumentException("table == null");
-    }
-
-    protected JOIN(final Keyword<T> parent, final Entity table) {
-      super(parent);
-      this.cross = null;
-      this.natural = null;
-      this.type = null;
+      this.left = left;
+      this.right = right;
       this.table = table;
       if (table == null)
         throw new IllegalArgumentException("table == null");
@@ -426,7 +396,7 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -438,7 +408,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
+  public static final class ON<T extends Subject<?>> extends FROM_JOIN_ON<T> implements select.ON<T> {
     protected final Condition<?> condition;
 
     protected ON(final Keyword<T> parent, final Condition<?> condition) {
@@ -452,7 +422,7 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 
@@ -464,11 +434,11 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
-    protected final DataType<?>[] columns;
+  public static final class ORDER_BY<T extends Subject<?>> extends Execute<T> implements select.ORDER_BY<T> {
+    protected final type.DataType<?>[] columns;
     protected final int[] columnNumbers;
 
-    protected ORDER_BY(final Keyword<T> parent, final DataType<?> ... columns) {
+    protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
       super(parent);
       this.columns = columns;
       this.columnNumbers = null;
@@ -493,7 +463,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
+  public static final class LIMIT<T extends Subject<?>> extends Execute<T> implements select.LIMIT<T> {
     protected final int rows;
 
     protected LIMIT(final Keyword<T> parent, final int rows) {
@@ -514,7 +484,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
+  public static final class OFFSET<T extends Subject<?>> extends Execute<T> implements select.OFFSET<T> {
     protected final int rows;
 
     protected OFFSET(final Keyword<T> parent, final int rows) {
@@ -533,31 +503,31 @@ final class Select extends SQLStatement {
   protected static final Predicate<Subject<?>> entitiesWithOwnerPredicate = new Predicate<Subject<?>>() {
     @Override
     public boolean test(final Subject<?> t) {
-      return (t instanceof DataType) && ((DataType<?>)t).owner == null;
+      return (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
     }
   };
 
-  protected static final class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
-    protected final DML.SetQualifier qualifier;
+  protected static class SELECT<T extends Subject<?>> extends Keyword<T> implements select._SELECT<T> {
+    protected final boolean distinct;
     protected final Collection<T> entities;
 
-    public SELECT(final DML.SetQualifier qualifier, final Collection<T> entities) {
+    public SELECT(final boolean distinct, final Collection<T> entities) {
       super(null);
       if (entities.size() < 1)
         throw new IllegalArgumentException("entities.size() < 1");
 
-      this.qualifier = qualifier;
       this.entities = entities;
+      this.distinct = distinct;
     }
 
     @SafeVarargs
-    public SELECT(final DML.SetQualifier qulifier, final T entity, T ... entities) {
-      this(qulifier, Collections.asCollection(ArrayList.class, entity));
+    public SELECT(final boolean distinct, final T entity, T ... entities) {
+      this(distinct, Collections.asCollection(ArrayList.class, entity));
       Collections.addAll(this.entities, entities);
     }
 
-    public SELECT(final DML.SetQualifier qulifier, T[] entities) {
-      this(qulifier, Collections.asCollection(ArrayList.class, entities));
+    public SELECT(final boolean distinct, final T[] entities) {
+      this(distinct, Collections.asCollection(ArrayList.class, entities));
     }
 
     @Override
@@ -579,15 +549,17 @@ final class Select extends SQLStatement {
 
     @Override
     public select.UNION<T> UNION(final select.SELECT<T> union) {
-      return new UNION<T>(this, false, union);
+      return new Select.UNION<T>(this, false, union);
     }
 
     @Override
-    public select.UNION<T> UNION(final ALL all, final select.SELECT<T> union) {
-      if (all == null)
-        throw new IllegalArgumentException("all must be DML.ALL");
-
-      return new UNION<T>(this, true, union);
+    public select._UNION.ALL<T> UNION() {
+      return new select.UNION.ALL<T>(){
+        @Override
+        public Select.UNION<T> ALL(final select.SELECT<T> union) {
+          return new Select.UNION<T>(SELECT.this, true, union);
+        }
+      };
     }
 
     @Override
@@ -613,11 +585,11 @@ final class Select extends SQLStatement {
         if (subject instanceof Entity) {
           final Entity entity = (Entity)subject;
           final Entity out = entity.newInstance();
-          final DataType<?>[] dataTypes = entity.column();
+          final type.DataType<?>[] dataTypes = entity.column();
           String sql = "SELECT ";
           String select = "";
           String where = "";
-          for (final DataType<?> dataType : dataTypes) {
+          for (final type.DataType<?> dataType : dataTypes) {
             if (dataType.primary)
               where += " AND " + dataType.name + " = ?";
             else
@@ -629,7 +601,7 @@ final class Select extends SQLStatement {
             final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
             final PreparedStatement statement = connection.prepareStatement(sql);
             int index = 0;
-            for (final DataType<?> dataType : dataTypes)
+            for (final type.DataType<?> dataType : dataTypes)
               if (dataType.primary)
                 dataType.get(statement, ++index);
 
@@ -649,7 +621,7 @@ final class Select extends SQLStatement {
                       return false;
 
                     int index = 0;
-                    for (final DataType dataType : out.column())
+                    for (final type.DataType dataType : out.column())
                       dataType.set(resultSet, ++index);
                   }
                   catch (final SQLException e) {
@@ -689,7 +661,7 @@ final class Select extends SQLStatement {
     }
   }
 
-  protected static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
+  public static final class WHERE<T extends Subject<?>> extends Execute<T> implements select.WHERE<T> {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
@@ -703,7 +675,7 @@ final class Select extends SQLStatement {
     }
 
     @Override
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... columns) {
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
       return new ORDER_BY<T>(this, columns);
     }
 

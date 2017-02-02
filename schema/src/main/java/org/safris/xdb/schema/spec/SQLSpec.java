@@ -89,19 +89,6 @@ public abstract class SQLSpec {
     return statements;
   }
 
-  public abstract String type(final $xds_table table, final $xds_char type);
-  public abstract String type(final $xds_table table, final $xds_clob type);
-  public abstract String type(final $xds_table table, final $xds_binary type);
-  public abstract String type(final $xds_table table, final $xds_blob type);
-  public abstract String type(final $xds_table table, final $xds_integer type);
-  public abstract String type(final $xds_table table, final $xds_float type);
-  public abstract String type(final $xds_table table, final $xds_decimal type);
-  public abstract String type(final $xds_table table, final $xds_date type);
-  public abstract String type(final $xds_table table, final $xds_time type);
-  public abstract String type(final $xds_table table, final $xds_dateTime type);
-  public abstract String type(final $xds_table table, final $xds_boolean type);
-  public abstract String type(final $xds_table table, final $xds_enum type);
-
   private static void checkNumericDefault(final $xds_column type, final String defalt, final boolean positive, final Integer precision, final boolean unsigned) {
     if (!positive && unsigned)
       throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is negative, but type is declared UNSIGNED");
@@ -233,4 +220,40 @@ public abstract class SQLSpec {
 
   public abstract String $null(final $xds_table table, final $xds_column column);
   public abstract String $autoIncrement(final $xds_table table, final $xds_integer column);
+
+  public abstract String declareFloat(final boolean doublePrecision, final boolean unsigned);
+  public abstract String declareBoolean();
+  public abstract String declareBinary(final boolean varying, final int length);
+  public abstract String declareChar(final boolean varying, final int length);
+  public abstract String declareClob(final int length);
+  public abstract String declareBlob(final int length);
+  public abstract String declareDecimal(final short precision, final short scale, final boolean unsigned);
+  public abstract String declareDate();
+  public abstract String declareDateTime(final short precision);
+  public abstract String declareTime(final short precision);
+  public abstract String declareInterval();
+  public abstract String declareEnum(final $xds_table table, final $xds_enum type);
+
+  public final String declareInteger(final short precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
+    final int noBytes = SQLDataTypes.getNumericByteCount(precision, false, min, max);
+    if (noBytes == 1) // 2^8 = 256
+      return declareInt8(precision, unsigned);
+
+    if (noBytes == 2) // 2^16 = 65536
+      return declareInt16(precision, unsigned);
+
+    if (noBytes == 3) // 2^24 = 16777216
+      return declareInt24(precision, unsigned);
+
+    if (noBytes == 4) // 2^32 = 4294967296
+      return declareInt32(precision, unsigned);
+
+    return declareInt64(precision, unsigned);
+  }
+
+  public abstract String declareInt8(final short precision, final boolean unsigned);
+  public abstract String declareInt16(final short precision, final boolean unsigned);
+  public abstract String declareInt24(final short precision, final boolean unsigned);
+  public abstract String declareInt32(final short precision, final boolean unsigned);
+  public abstract String declareInt64(final short precision, final boolean unsigned);
 }

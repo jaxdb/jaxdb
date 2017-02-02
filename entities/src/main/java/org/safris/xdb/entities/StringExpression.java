@@ -22,59 +22,59 @@ final class StringExpression extends Expression<String> {
   protected final Operator<StringExpression> operator;
   protected final Serializable[] args;
 
-  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final DataType<?> b) {
+  protected StringExpression(final Operator<StringExpression> operator, final type.DataType<?> a, final type.DataType<?> b) {
     this.operator = operator;
     this.args = new Serializable[] {a, b};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final DataType<?> b, final CharSequence c) {
+  protected StringExpression(final Operator<StringExpression> operator, final type.DataType<?> a, final type.DataType<?> b, final CharSequence c) {
     this.operator = operator;
-    this.args = new Serializable[] {a, b, DataType.wrap(c)};
+    this.args = new Serializable[] {a, b, type.DataType.wrap(c)};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b) {
+  protected StringExpression(final Operator<StringExpression> operator, final type.DataType<?> a, final CharSequence b) {
     this.operator = operator;
-    this.args = new Serializable[] {a, DataType.wrap(b)};
+    this.args = new Serializable[] {a, type.DataType.wrap(b)};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b, final DataType<?> c) {
+  protected StringExpression(final Operator<StringExpression> operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c) {
     this.operator = operator;
-    this.args = new Serializable[] {a, DataType.wrap(b), c};
+    this.args = new Serializable[] {a, type.DataType.wrap(b), c};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final DataType<?> a, final CharSequence b, final DataType<?> c, final CharSequence d) {
+  protected StringExpression(final Operator<StringExpression> operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c, final CharSequence d) {
     this.operator = operator;
-    this.args = new Serializable[] {a, DataType.wrap(b), c, DataType.wrap(d)};
+    this.args = new Serializable[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b};
+    this.args = new Serializable[] {type.DataType.wrap(a), b};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final DataType<?> c) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b, c};
+    this.args = new Serializable[] {type.DataType.wrap(a), b, c};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b, final CharSequence c) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c)};
+    this.args = new Serializable[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final DataType<?> c, final CharSequence d) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c, final CharSequence d) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b, c, DataType.wrap(d)};
+    this.args = new Serializable[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c, final DataType<?> d) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c), d};
+    this.args = new Serializable[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
   }
 
-  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final DataType<?> b, final CharSequence c, final DataType<?> d, final CharSequence e) {
+  protected StringExpression(final Operator<StringExpression> operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d, final CharSequence e) {
     this.operator = operator;
-    this.args = new Serializable[] {DataType.wrap(a), b, DataType.wrap(c), d, DataType.wrap(e)};
+    this.args = new Serializable[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
   }
 
   @Override

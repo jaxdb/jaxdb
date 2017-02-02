@@ -64,9 +64,9 @@ public final class SQLDataTypes {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
-  public static void checkValidNumber(final String var, final Integer precision, final Integer decimal) {
-    if (precision < decimal)
-      throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,D), M must be >= D (column '" + var + "').");
+  public static void checkValidNumber(final short precision, final short scale) {
+    if (precision < scale)
+      throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,S), M must be >= S.");
   }
 
   public static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {

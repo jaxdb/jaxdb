@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.safris.xdb.schema.DBVendor;
 
-final class BooleanTerm extends type.Boolean {
+final class BooleanTerm extends type.BOOLEAN {
   protected final Operator<BooleanTerm> operator;
   protected final Condition<?> a;
   protected final Condition<?> b;

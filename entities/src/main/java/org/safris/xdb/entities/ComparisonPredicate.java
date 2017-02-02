@@ -21,12 +21,12 @@ import java.io.IOException;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class ComparisonPredicate<T> extends type.Boolean {
+final class ComparisonPredicate<T> extends type.BOOLEAN {
   protected final Operator<ComparisonPredicate<?>> operator;
   protected final Serializable a;
   protected final Serializable b;
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final DataType<?> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final type.DataType<?> b) {
     this.operator = operator;
     this.a = (Serializable)a;
     this.b = b;
@@ -35,40 +35,40 @@ final class ComparisonPredicate<T> extends type.Boolean {
   protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final T b) {
     this.operator = operator;
     this.a = (Serializable)a;
-    this.b = DataType.wrap(b);
+    this.b = type.DataType.wrap(b);
   }
 
   protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final select.SELECT<?> b) {
     this.operator = operator;
-    this.a = DataType.wrap(a);
+    this.a = type.DataType.wrap(a);
     this.b = (Serializable)b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final select.SELECT<?> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final select.SELECT<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = (Serializable)b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final T b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final T b) {
     this.operator = operator;
     this.a = a;
-    this.b = DataType.wrap(b);
+    this.b = type.DataType.wrap(b);
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final DataType<?> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final type.DataType<?> b) {
     this.operator = operator;
-    this.a = DataType.wrap(a);
+    this.a = type.DataType.wrap(a);
     this.b = b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final DataType<?> a, final DataType<?> b) {
+  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final type.DataType<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;

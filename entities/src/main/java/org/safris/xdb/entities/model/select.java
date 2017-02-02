@@ -17,13 +17,10 @@
 package org.safris.xdb.entities.model;
 
 import org.safris.xdb.entities.Condition;
-import org.safris.xdb.entities.DML.ALL;
-import org.safris.xdb.entities.DML.CROSS;
-import org.safris.xdb.entities.DML.NATURAL;
-import org.safris.xdb.entities.DML.TYPE;
-import org.safris.xdb.entities.DataType;
 import org.safris.xdb.entities.Entity;
+import org.safris.xdb.entities.Select;
 import org.safris.xdb.entities.Subject;
+import org.safris.xdb.entities.type;
 
 public interface select {
   public interface OFFSET<T extends Subject<?>> extends SELECT<T> {
@@ -38,7 +35,7 @@ public interface select {
   }
 
   public interface _ORDER_BY<T extends Subject<?>> {
-    public ORDER_BY<T> ORDER_BY(final DataType<?> ... column);
+    public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... column);
   }
 
   public interface ORDER_BY<T extends Subject<?>> extends SELECT<T>, _LIMIT<T> {
@@ -66,28 +63,36 @@ public interface select {
   }
 
   public interface _ON<T extends Subject<?>> {
-    public ON<T> ON(final Condition<?> condition);
+    public Select.ON<T> ON(final Condition<?> condition);
   }
 
   public interface ON<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
   }
 
   public interface _JOIN<T extends Subject<?>> {
+    public interface CROSS<T extends Subject<?>> {
+      public ADV_JOIN<T> JOIN(final Entity table);
+    }
+
+    public interface NATURAL<T extends Subject<?>> {
+      public ADV_JOIN<T> JOIN(final Entity table);
+    }
+
+    public interface OUTER<T extends Subject<?>> {
+      public JOIN<T> JOIN(final Entity table);
+    }
+
     public JOIN<T> JOIN(final Entity table);
-    public CROSS_JOIN<T> JOIN(final CROSS cross, Entity table);
-    public JOIN<T> JOIN(final TYPE type, final Entity table);
-    public CROSS_JOIN<T> JOIN(final NATURAL natural, final Entity table);
-    public JOIN<T> JOIN(final NATURAL natural, final TYPE type, final Entity table);
   }
 
   public interface JOIN<T extends Subject<?>> extends _JOIN<T>, _ON<T> {
   }
 
-  public interface CROSS_JOIN<T extends Subject<?>> extends SELECT<T>, _JOIN<T> {
+  public interface ADV_JOIN<T extends Subject<?>> extends SELECT<T>, _JOIN<T> {
   }
 
   public interface _FROM<T extends Subject<?>> {
-    public FROM<T> FROM(final Entity ... tables);
+    public Select.FROM<T> FROM(final Entity ... tables);
   }
 
   public interface FROM<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
@@ -98,7 +103,12 @@ public interface select {
 
   public interface _UNION<T extends Subject<?>> {
     public UNION<T> UNION(final SELECT<T> union);
-    public UNION<T> UNION(final ALL all, final SELECT<T> union);
+
+    public interface ALL<T extends Subject<?>> {
+      public UNION<T> ALL(final SELECT<T> union);
+    }
+
+    public ALL<T> UNION();
   }
 
   public interface UNION<T extends Subject<?>> extends ExecuteQuery<T>, _UNION<T> {

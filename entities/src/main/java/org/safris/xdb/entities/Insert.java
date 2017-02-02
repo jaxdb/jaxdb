@@ -19,8 +19,6 @@ package org.safris.xdb.entities;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.safris.xdb.entities.DML.ALL;
-import org.safris.xdb.entities.DML.DISTINCT;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
@@ -78,31 +76,18 @@ final class Insert extends SQLStatement {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final T ... entities) {
+    @SafeVarargs
+    public final SELECT_SET SELECT(final T ... entities) {
       // TODO:
       throw new UnsupportedOperationException();
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final T ... entities) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
+    public class SELECT_SET extends Select.SELECT<T> {
+      public SELECT_SET(final boolean distinct, final T[] entities) {
+        super(distinct, entities);
+      }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final DISTINCT distinct, final T ... entities) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final ALL all, final DISTINCT distinct, final T ... entities) {
-      // TODO:
-      throw new UnsupportedOperationException();
+      public final Select.SELECT<T> DISTINCT = new Select.SELECT<T>(true, entities);
     }
   }
 }

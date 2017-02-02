@@ -24,24 +24,24 @@ import org.safris.xdb.entities.model.select;
 
 final class InPredicate<T> extends Predicate<T> {
   protected final boolean positive;
-  protected final DataType<T> dataType;
+  protected final type.DataType<T> dataType;
   protected final Serializable[] values;
 
   @SafeVarargs
-  protected InPredicate(final boolean positive, final DataType<T> dataType, final T ... values) {
+  protected InPredicate(final boolean positive, final type.DataType<T> dataType, final T ... values) {
     this.positive = positive;
     this.dataType = dataType;
-    this.values = new DataType<?>[values.length];
+    this.values = new type.DataType<?>[values.length];
     for (int i = 0; i < values.length; i++)
-      this.values[i] = DataType.wrap(values[i]);
+      this.values[i] = type.DataType.wrap(values[i]);
   }
 
   @SuppressWarnings("unchecked")
-  protected InPredicate(final boolean positive, final DataType<T> dataType, final Collection<T> values) {
+  protected InPredicate(final boolean positive, final type.DataType<T> dataType, final Collection<T> values) {
     this(positive, dataType, values.toArray((T[])Array.newInstance(dataType.type(), values.size())));
   }
 
-  protected InPredicate(final boolean positive, final DataType<T> dataType, final select.SELECT<? extends DataType<T>> query) {
+  protected InPredicate(final boolean positive, final type.DataType<T> dataType, final select.SELECT<? extends type.DataType<T>> query) {
     this.positive = positive;
     this.dataType = dataType;
     this.values = new Serializable[] {(Serializable)query};

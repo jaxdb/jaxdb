@@ -16,789 +16,810 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 public class Cast {
   protected static final class AS extends Provision<Subject<?>> {
-    private final DataType<?> dataType;
-    private final Integer length;
-    private final Integer decimal;
+    protected final type.DataType<?> castAs;
+    protected final type.DataType<?> dataType;
+    protected final Integer length;
+    protected final Integer scale;
 
-    protected AS(final DataType<?> dataType, final int length, final boolean varying, final boolean national) {
+    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length, final boolean varying) {
       this.dataType = dataType;
+      this.castAs = castAs;
       this.length = length;
-      this.decimal = null;
+      this.scale = null;
     }
 
-    protected AS(final DataType<?> dataType, final int length) {
+    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
       this.dataType = dataType;
+      this.castAs = castAs;
       this.length = length;
-      this.decimal = null;
+      this.scale = null;
     }
 
-    protected AS(final DataType<?> dataType) {
+    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs) {
       this.dataType = dataType;
+      this.castAs = castAs;
       this.length = null;
-      this.decimal = null;
+      this.scale = null;
     }
 
-    protected AS(final DataType<?> dataType, final int length, final int decimal) {
+    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
       this.dataType = dataType;
+      this.castAs = castAs;
       this.length = length;
-      this.decimal = decimal;
+      this.scale = scale;
     }
 
     @Override
-    protected void serialize(final Serialization serialization) {
+    protected void serialize(final Serialization serialization) throws IOException {
       Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
     }
   }
 
-  public static final class Boolean {
+  public static final class BOOLEAN {
     public final class AS {
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-
-          public type.Clob Clob(final int length) {
-            final type.Clob cast = new type.Clob();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
-      }
-
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
 
-      public type.Clob Clob(final int length) {
-        final type.Clob cast = new type.Clob();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CLOB CLOB(final int length) {
+        assert(length > 0);
+        final type.CLOB cast = new type.CLOB((short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Boolean value;
+    private final type.BOOLEAN value;
 
-    public Boolean(final type.Boolean value) {
+    public BOOLEAN(final type.BOOLEAN value) {
       this.value = value;
     }
   }
 
-  public static final class Float {
+  public static final class FLOAT {
     public final class AS {
-      public type.Double Double() {
-        final type.Double cast = new type.Double();
-        cast.wrapper(new Cast.AS(value));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Float value;
+    private final type.FLOAT value;
 
-    public Float(final type.Float value) {
+    public FLOAT(final type.FLOAT value) {
       this.value = value;
     }
   }
 
-  public static final class Double {
+  public static final class DOUBLE {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Double value;
+    private final type.DOUBLE value;
 
-    public Double(final type.Double value) {
+    public DOUBLE(final type.DOUBLE value) {
       this.value = value;
     }
   }
 
-  public static final class Decimal {
+  public static final class DECIMAL {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Double Double() {
-        final type.Double cast = new type.Double();
-        cast.wrapper(new Cast.AS(value));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Decimal value;
+    private final type.DECIMAL value;
 
-    public Decimal(final type.Decimal value) {
+    public DECIMAL(final type.DECIMAL value) {
       this.value = value;
     }
   }
 
-  public static final class SmallInt {
+  public static final class TINYINT {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Double Double() {
-        final type.Double cast = new type.Double();
-        cast.wrapper(new Cast.AS(value));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.SmallInt value;
+    private final type.TINYINT value;
 
-    public SmallInt(final type.SmallInt value) {
+    public TINYINT(final type.TINYINT value) {
       this.value = value;
     }
   }
 
-  public static final class MediumInt {
+  public static final class MEDIUMINT {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Double Double() {
-        final type.Double cast = new type.Double();
-        cast.wrapper(new Cast.AS(value));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.MediumInt value;
+    private final type.MEDIUMINT value;
 
-    public MediumInt(final type.MediumInt value) {
+    public MEDIUMINT(final type.MEDIUMINT value) {
       this.value = value;
     }
   }
 
-  public static final class Long {
+  public static final class INTEGER {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Double Double() {
-        final type.Double cast = new type.Double();
-        cast.wrapper(new Cast.AS(value));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Long value;
+    private final type.INTEGER value;
 
-    public Long(final type.Long value) {
+    public INTEGER(final type.INTEGER value) {
       this.value = value;
     }
   }
 
-  public static final class BigInt {
+  public static final class BIGINT {
     public final class AS {
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
+
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
+      }
+
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-      }
+      public final VARYING VARYING = new VARYING();
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.BigInt value;
+    private final type.BIGINT value;
 
-    public BigInt(final type.BigInt value) {
+    public BIGINT(final type.BIGINT value) {
       this.value = value;
     }
   }
 
-  public static final class Char {
+  public static final class CHAR {
     public final class AS {
-      public type.Boolean Boolean() {
-        return null;
-      }
-
-      public type.Float Float() {
-        final type.Float cast = new type.Float();
-        cast.wrapper(new Cast.AS(value));
+      public type.FLOAT FLOAT(final boolean unsigned) {
+        final type.FLOAT cast = new type.FLOAT(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Decimal Decimal(final int precision, final int decimal) {
-        final type.Decimal cast = new type.Decimal();
-        cast.wrapper(new Cast.AS(value, precision, decimal));
+      public type.DOUBLE DOUBLE(final boolean unsigned) {
+        final type.DOUBLE cast = new type.DOUBLE(unsigned);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.SmallInt SmallInt(final int precision) {
-        final type.SmallInt cast = new type.SmallInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
+        assert((short)precision > 0 && scale > 0);
+        final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
       }
 
-      public type.MediumInt MediumInt(final int precision) {
-        final type.MediumInt cast = new type.MediumInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 3)
+          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+
+        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.Long Long(final int precision) {
-        final type.Long cast = new type.Long();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 8)
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+
+        final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public type.BigInt BigInt(final int precision) {
-        final type.BigInt cast = new type.BigInt();
-        cast.wrapper(new Cast.AS(value, precision));
+      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 10)
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+
+        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
+      public type.BIGINT BIGINT(final int precision, final boolean unsigned) {
+        assert((short)precision > 0);
+        if ((short)precision > 19)
+          throw new IllegalArgumentException("BIGINT has maximum precision 19");
 
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-
-          public type.Clob Clob(final int length) {
-            final type.Clob cast = new type.Clob();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
+        final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
+        cast.wrapper(new Cast.AS(value, cast, precision));
+        return cast;
       }
 
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
 
-      public type.Clob Clob(final int length) {
-        final type.Clob cast = new type.Clob();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CLOB CLOB(final int length) {
+        assert(length > 0);
+        final type.CLOB cast = new type.CLOB((short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
 
-      public type.Date Date() {
-        final type.Date cast = new type.Date();
-        cast.wrapper(new Cast.AS(value));
+      public type.DATE DATE() {
+        final type.DATE cast = new type.DATE();
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Time Time() {
-        final type.Time cast = new type.Time();
-        cast.wrapper(new Cast.AS(value));
+      public type.TIME TIME(final int precision) {
+        final type.TIME cast = new type.TIME((short)precision);
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.DateTime DateTime() {
-        final type.DateTime cast = new type.DateTime();
-        cast.wrapper(new Cast.AS(value));
+      public type.TIME TIME() {
+        final type.TIME cast = new type.TIME();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.DATETIME DATETIME(final int precision) {
+        final type.DATETIME cast = new type.DATETIME((short)precision);
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.DATETIME DATETIME() {
+        final type.DATETIME cast = new type.DATETIME();
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
     }
@@ -807,279 +828,226 @@ public class Cast {
 
     private final type.Textual<?> value;
 
-    public Char(final type.Textual<?> value) {
+    public CHAR(final type.Textual<?> value) {
       this.value = value;
     }
   }
 
-  public static final class Date {
+  public static final class DATE {
     public final class AS {
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
-      }
-
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Date value;
+    private final type.DATE value;
 
-    public Date(final type.Date value) {
+    public DATE(final type.DATE value) {
       this.value = value;
     }
   }
 
-  public static final class Time {
+  public static final class TIME {
     public final class AS {
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
-      }
-
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Time value;
+    private final type.TIME value;
 
-    public Time(final type.Time value) {
+    public TIME(final type.TIME value) {
       this.value = value;
     }
   }
 
-  public static final class DateTime {
+  public static final class DATETIME {
     public final class AS {
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
-      }
-
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
 
-      public type.Date Date() {
-        final type.Date cast = new type.Date();
-        cast.wrapper(new Cast.AS(value));
+      public type.DATE DATE() {
+        final type.DATE cast = new type.DATE();
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
 
-      public type.Time Time() {
-        final type.Time cast = new type.Time();
-        cast.wrapper(new Cast.AS(value));
+      public type.TIME TIME(final int precision) {
+        final type.TIME cast = new type.TIME((short)precision);
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.TIME TIME() {
+        final type.TIME cast = new type.TIME();
+        cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.DateTime value;
+    private final type.DATETIME value;
 
-    public DateTime(final type.DateTime value) {
+    public DATETIME(final type.DATETIME value) {
       this.value = value;
     }
   }
 
-  public static final class Clob {
+  public static final class CLOB {
     public final class AS {
-      public type.Boolean Boolean(final int length) {
-        return null;
-      }
-
-      public class NATIONAL {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, false, true));
-          return cast;
-        }
-
-        public class VARYING {
-          public type.Char Char(final int length) {
-            final type.Char cast = new type.Char();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-
-          public type.Clob Clob(final int length) {
-            final type.Clob cast = new type.Clob();
-            cast.wrapper(new Cast.AS(value, length, true, true));
-            return cast;
-          }
-        }
-      }
-
-      public class VARYING {
-        public type.Char Char(final int length) {
-          final type.Char cast = new type.Char();
-          cast.wrapper(new Cast.AS(value, length, true, false));
-          return cast;
-        }
-
-        public type.Clob Clob(final int length) {
-          final type.Clob cast = new type.Clob();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.CHAR CHAR(final int length) {
+          assert(length > 0);
+          final type.CHAR cast = new type.CHAR(true, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Char Char(final int length) {
-        final type.Char cast = new type.Char();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public final VARYING VARYING = new VARYING();
+
+      public type.CHAR CHAR(final int length) {
+        assert(length > 0);
+        final type.CHAR cast = new type.CHAR(false, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
 
-      public type.Clob Clob(final int length) {
-        final type.Clob cast = new type.Clob();
-        cast.wrapper(new Cast.AS(value, length, false, false));
+      public type.CLOB CLOB(final int length) {
+        assert(length > 0);
+        final type.CLOB cast = new type.CLOB((short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Clob value;
+    private final type.CLOB value;
 
-    public Clob(final type.Clob value) {
+    public CLOB(final type.CLOB value) {
       this.value = value;
     }
   }
 
-  public static final class Blob {
+  public static final class BLOB {
     public final class AS {
-      public type.Blob Blob(final int length) {
-        final type.Blob cast = new type.Blob();
-        cast.wrapper(new Cast.AS(value, length));
+      public type.BLOB BLOB(final int length) {
+        assert(length > 0);
+        final type.BLOB cast = new type.BLOB((short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
-      public class VARYING {
-        public type.Binary Binary(final int length) {
-          final type.Binary cast = new type.Binary();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.BINARY BINARY(final boolean varying, final int length) {
+          assert(length > 0);
+          final type.BINARY cast = new type.BINARY(varying, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Binary Binary(final int length) {
-        final type.Binary cast = new type.Binary();
-        cast.wrapper(new Cast.AS(value, length));
+      public final VARYING VARYING = new VARYING();
+
+      public type.BINARY BINARY(final boolean varying, final int length) {
+        assert(length > 0);
+        final type.BINARY cast = new type.BINARY(varying, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Blob value;
+    private final type.BLOB value;
 
-    public Blob(final type.Blob value) {
+    public BLOB(final type.BLOB value) {
       this.value = value;
     }
   }
 
-  public static final class Binary {
+  public static final class BINARY {
     public final class AS {
-      public type.Blob Blob(final int length) {
-        final type.Blob cast = new type.Blob();
-        cast.wrapper(new Cast.AS(value, length));
+      public type.BLOB BLOB(final int length) {
+        assert(length > 0);
+        final type.BLOB cast = new type.BLOB((short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
-      public class VARYING {
-        public type.Binary Binary(final int length) {
-          final type.Binary cast = new type.Binary();
-          cast.wrapper(new Cast.AS(value, length, true, false));
+      public final class VARYING {
+        public type.BINARY BINARY(final boolean varying, final int length) {
+          assert(length > 0);
+          final type.BINARY cast = new type.BINARY(varying, (short)length);
+          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
           return cast;
         }
       }
 
-      public type.Binary Binary(final int length) {
-        final type.Binary cast = new type.Binary();
-        cast.wrapper(new Cast.AS(value, length));
+      public final VARYING VARYING = new VARYING();
+
+      public type.BINARY BINARY(final boolean varying, final int length) {
+        assert(length > 0);
+        final type.BINARY cast = new type.BINARY(varying, (short)length);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
 
     public final AS AS = new AS();
 
-    private final type.Binary value;
+    private final type.BINARY value;
 
-    public Binary(final type.Binary value) {
+    public BINARY(final type.BINARY value) {
       this.value = value;
     }
   }

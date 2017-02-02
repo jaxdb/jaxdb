@@ -20,27 +20,27 @@ import java.io.IOException;
 
 import org.safris.xdb.entities.type.Temporal;
 
-final class TemporalExpression<T extends java.time.temporal.Temporal> extends Expression<T> {
-  protected final Operator<NumericExpression<?>> operator;
+final class TemporalExpression extends Expression<java.time.temporal.Temporal> {
+  protected final Operator<NumericExpression> operator;
   protected final Serializable a;
   protected final Serializable b;
 
-  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final Temporal<?> b) {
+  protected TemporalExpression(final Operator<NumericExpression> operator, final Temporal<?> a, final Temporal<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
-  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final Interval b) {
+  protected TemporalExpression(final Operator<NumericExpression> operator, final Temporal<?> a, final Interval b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
-  protected TemporalExpression(final Operator<NumericExpression<?>> operator, final Temporal<?> a, final java.time.temporal.Temporal b) {
+  protected TemporalExpression(final Operator<NumericExpression> operator, final Temporal<?> a, final java.time.temporal.Temporal b) {
     this.operator = operator;
     this.a = a;
-    this.b = DataType.wrap(b);
+    this.b = type.DataType.wrap(b);
   }
 
   @Override

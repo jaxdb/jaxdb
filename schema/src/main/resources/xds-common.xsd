@@ -316,7 +316,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="time">
-    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
     <xs:attribute name="default" type="dt:localTime"/>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
@@ -335,7 +335,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="dateTime">
-    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="0"/>
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
     <xs:attribute name="default" type="dt:localDateTime"/>
   </xs:attributeGroup>
 

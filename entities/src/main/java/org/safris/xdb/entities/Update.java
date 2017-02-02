@@ -28,8 +28,8 @@ import org.safris.xdb.entities.model.update;
 import org.safris.xdb.schema.DBVendor;
 
 final class Update extends SQLStatement {
-  private static abstract class Execute extends Keyword<DataType<?>> implements update.UPDATE {
-    protected Execute(final Keyword<DataType<?>> parent) {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements update.UPDATE {
+    protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -73,23 +73,23 @@ final class Update extends SQLStatement {
   }
 
   private abstract static class UPDATE_SET extends Execute implements update.UPDATE_SET {
-    protected UPDATE_SET(final Keyword<DataType<?>> parent) {
+    protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
     @Override
-    public final <T>SET SET(final DataType<T> set, final expression.CASE<T> to) {
+    public final <T>SET SET(final type.DataType<T> set, final expression.CASE<T> to) {
       return new SET(this, set, to);
     }
 
     @Override
-    public final <T>SET SET(final DataType<T> set, final DataType<T> to) {
+    public final <T>SET SET(final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
       return new SET(this, set, to);
     }
 
     @Override
-    public final <T>SET SET(final DataType<T> set, final T to) {
-      final DataType<T> wrap = DataType.wrap(to);
+    public final <T>SET SET(final type.DataType<T> set, final T to) {
+      final type.DataType<T> wrap = type.DataType.wrap(to);
       return new SET(this, set, wrap);
     }
 
@@ -117,17 +117,17 @@ final class Update extends SQLStatement {
   }
 
   protected static final class SET extends UPDATE_SET implements update.SET {
-    protected final DataType<?> set;
+    protected final type.DataType<?> set;
     protected final Serializable to;
 
     @SuppressWarnings("unchecked")
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final expression.CASE<T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final expression.CASE<? extends T> to) {
       super(parent);
       this.set = set;
-      this.to = (Provision<DataType<T>>)to;
+      this.to = (Provision<type.DataType<T>>)to;
     }
 
-    protected <T>SET(final Keyword<DataType<?>> parent, final DataType<T> set, final DataType<T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
       super(parent);
       this.set = set;
       this.to = to;
@@ -144,7 +144,7 @@ final class Update extends SQLStatement {
       return new WHERE(this, condition);
     }
 
-    protected Entity getSetColumns(final Set<DataType<?>> columns) {
+    protected Entity getSetColumns(final Set<type.DataType<?>> columns) {
       columns.add(set);
       if (parent() instanceof Update.SET)
         return ((Update.SET)parent()).getSetColumns(columns);
@@ -166,7 +166,7 @@ final class Update extends SQLStatement {
   protected static final class WHERE extends Execute implements update.UPDATE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }

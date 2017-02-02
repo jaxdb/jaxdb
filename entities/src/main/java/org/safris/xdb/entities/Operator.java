@@ -29,15 +29,15 @@ final class Operator<T extends Serializable> {
   public static final Operator<ComparisonPredicate<?>> IS = new Operator<ComparisonPredicate<?>>("IS");
   public static final Operator<ComparisonPredicate<?>> NOT = new Operator<ComparisonPredicate<?>>("IS NOT");
 
-  public static final Operator<NumericExpression<?>> PLUS = new Operator<NumericExpression<?>>("+");
-  public static final Operator<NumericExpression<?>> MINUS = new Operator<NumericExpression<?>>("-");
-  public static final Operator<NumericExpression<?>> MULTIPLY = new Operator<NumericExpression<?>>("*");
-  public static final Operator<NumericExpression<?>> DIVIDE = new Operator<NumericExpression<?>>("/");
+  public static final Operator<NumericExpression> PLUS = new Operator<NumericExpression>("+");
+  public static final Operator<NumericExpression> MINUS = new Operator<NumericExpression>("-");
+  public static final Operator<NumericExpression> MULTIPLY = new Operator<NumericExpression>("*");
+  public static final Operator<NumericExpression> DIVIDE = new Operator<NumericExpression>("/");
 
   public static final Operator<StringExpression> CONCAT = new Operator<StringExpression>("||");
 
-  public static final Operator<OrderingSpec<?>> ASC = new Operator<OrderingSpec<?>>("ASC");
-  public static final Operator<OrderingSpec<?>> DESC = new Operator<OrderingSpec<?>>("DESC");
+  public static final Operator<OrderingSpec> ASC = new Operator<OrderingSpec>("ASC");
+  public static final Operator<OrderingSpec> DESC = new Operator<OrderingSpec>("DESC");
 
   private final String symbol;
 

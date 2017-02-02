@@ -25,8 +25,8 @@ import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.schema.DBVendor;
 
 final class Delete extends SQLStatement {
-  private static abstract class Execute extends Keyword<DataType<?>> implements delete.DELETE {
-    protected Execute(final Keyword<DataType<?>> parent) {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements delete.DELETE {
+    protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -66,7 +66,7 @@ final class Delete extends SQLStatement {
   protected static final class WHERE extends Execute implements delete.DELETE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }

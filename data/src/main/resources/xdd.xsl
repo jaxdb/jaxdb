@@ -283,7 +283,7 @@
                 <xsl:value-of select="@length"/>
               </xsl:attribute>
             </xs:maxLength>
-            <xsl:if test="not(@varying='true')">
+            <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
               <xs:minLength>
                 <xsl:attribute name="value">
                   <xsl:value-of select="@length"/>
@@ -298,12 +298,12 @@
           <xs:restriction base="xdd:decimal">
             <xs:fractionDigits>
               <xsl:attribute name="value">
-                <xsl:value-of select="@decimal"/>
+                <xsl:value-of select="@scale"/>
               </xsl:attribute>
             </xs:fractionDigits>
             <xs:maxInclusive>
               <xsl:attribute name="value">
-                <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
+                <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
               </xsl:attribute>
             </xs:maxInclusive>
             <xs:minInclusive>
@@ -311,7 +311,7 @@
                 <xsl:choose>
                   <xsl:when test="not(@unsigned='true')">
                     <xsl:text>-</xsl:text>
-                    <xsl:value-of select="function:precision-scale(@precision - @decimal)"/>
+                    <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
                   </xsl:when>
                   <xsl:otherwise>
                     <xsl:value-of select="0"/>

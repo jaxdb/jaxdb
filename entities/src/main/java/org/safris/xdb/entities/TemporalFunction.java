@@ -17,8 +17,9 @@
 package org.safris.xdb.entities;
 
 import java.io.IOException;
+import java.time.temporal.Temporal;
 
-final class TemporalFunction<T extends java.time.temporal.Temporal> extends Expression<T> {
+final class TemporalFunction extends Expression<Temporal> {
   protected final String function;
 
   protected TemporalFunction(final String function) {

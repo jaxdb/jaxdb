@@ -18,23 +18,17 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.entities.DML.SetQualifier;
-
-final class SetFunction<T> extends Expression<T> {
+final class SetFunction extends Expression<Object> {
   protected final String function;
-  protected final DML.SetQualifier qualifier;
+  protected final boolean distinct;
   protected final Subject<?> a;
-  protected final DataType<?> b;
+  protected final type.DataType<?> b;
 
-  protected SetFunction(final String function, final SetQualifier qualifier, final Subject<?> subject) {
+  protected SetFunction(final String function, final Subject<?> subject, final boolean distinct) {
     this.function = function;
-    this.qualifier = qualifier;
     this.a = subject;
     this.b = null;
-  }
-
-  protected SetFunction(final String function, final Subject<?> subject) {
-    this(function, (DML.SetQualifier)null, subject);
+    this.distinct = distinct;
   }
 
   @Override

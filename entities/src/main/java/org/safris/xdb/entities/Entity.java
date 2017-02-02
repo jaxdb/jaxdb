@@ -21,7 +21,7 @@ import java.io.IOException;
 public abstract class Entity extends Subject<Entity> {
   private final boolean wasSelected;
 
-  protected Entity(final boolean wasSelected, final DataType<?>[] column, final DataType<?>[] primary) {
+  protected Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
     this.wasSelected = wasSelected;
   }
 
@@ -48,7 +48,7 @@ public abstract class Entity extends Subject<Entity> {
   }
 
   protected abstract String name();
-  protected abstract DataType<?>[] column();
-  protected abstract DataType<?>[] primary();
+  protected abstract type.DataType<?>[] column();
+  protected abstract type.DataType<?>[] primary();
   protected abstract Entity newInstance();
 }

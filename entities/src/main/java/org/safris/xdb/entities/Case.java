@@ -32,13 +32,13 @@ final class Case extends SQLStatement {
     }
 
     @Override
-    public <T>THEN THEN(final DataType<T> dataType) {
+    public <T>THEN THEN(final type.DataType<T> dataType) {
       return new THEN(this, dataType);
     }
 
     @Override
     public <T>THEN THEN(final T value) {
-      return new THEN(this, DataType.wrap(value));
+      return new THEN(this, type.DataType.wrap(value));
     }
 
     @Override
@@ -50,9 +50,9 @@ final class Case extends SQLStatement {
   }
 
   protected static final class THEN extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.expression.THEN {
-    private final DataType<?> value;
+    private final type.DataType<?> value;
 
-    protected THEN(final Keyword<Subject<?>> parent, final DataType<?> value) {
+    protected THEN(final Keyword<Subject<?>> parent, final type.DataType<?> value) {
       super(parent);
       this.value = value;
     }
@@ -64,13 +64,13 @@ final class Case extends SQLStatement {
     }
 
     @Override
-    public <T>ELSE<T> ELSE(final DataType<T> dataType) {
+    public <T>ELSE<T> ELSE(final type.DataType<T> dataType) {
       return new ELSE<T>(this, dataType);
     }
 
     @Override
     public <T>ELSE<T> ELSE(final T value) {
-      return new ELSE<T>(this, DataType.wrap(value));
+      return new ELSE<T>(this, type.DataType.wrap(value));
     }
 
     @Override
@@ -82,9 +82,9 @@ final class Case extends SQLStatement {
   }
 
   protected static final class ELSE<T> extends CASE<T> implements org.safris.xdb.entities.model.expression.ELSE<T> {
-    private final DataType<T> value;
+    private final type.DataType<T> value;
 
-    protected ELSE(final Keyword<?> parent, final DataType<T> value) {
+    protected ELSE(final Keyword<?> parent, final type.DataType<T> value) {
       this.value = value;
     }
 

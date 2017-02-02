@@ -31,7 +31,7 @@ import org.safris.xdb.schema.DBVendor;
 
 final class Serialization {
   private final StringBuilder builder = new StringBuilder();
-  private final List<DataType<?>> parameters = new ArrayList<DataType<?>>();
+  private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
 
   protected final Command command;
@@ -65,7 +65,7 @@ final class Serialization {
     return builder.append(seq);
   }
 
-  protected void addParameter(final DataType<?> dataType) throws IOException {
+  protected void addParameter(final type.DataType<?> dataType) throws IOException {
     if (prepared) {
       builder.append(Serializer.getSerializer(vendor).getPreparedStatementMark(dataType));
       parameters.add(dataType);
