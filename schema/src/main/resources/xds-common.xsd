@@ -203,7 +203,7 @@
       <xs:simpleType>
         <xs:restriction base="xs:positiveInteger">
           <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="20"/>
+          <xs:maxInclusive value="19"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -282,9 +282,10 @@
 
   <xs:attributeGroup name="decimal">
     <xs:attributeGroup ref="xds:numeric"/>
-    <xs:attribute name="decimal" use="required">
+    <xs:attribute name="scale" use="required">
       <xs:simpleType>
-        <xs:restriction base="xs:positiveInteger">
+        <xs:restriction base="xs:short">
+          <xs:minInclusive value="1"/>
           <xs:maxInclusive value="65"/>
         </xs:restriction>
       </xs:simpleType>
