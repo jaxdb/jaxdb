@@ -728,6 +728,18 @@ public class Cast {
         cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
+
+      public type.TIME TIME(final int precision) {
+        final type.TIME cast = new type.TIME((short)precision);
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.TIME TIME() {
+        final type.TIME cast = new type.TIME();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
     }
 
     public final AS AS = new AS();
@@ -762,6 +774,18 @@ public class Cast {
 
       public type.TIME TIME() {
         final type.TIME cast = new type.TIME();
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.DATETIME DATETIME(final int precision) {
+        final type.DATETIME cast = new type.DATETIME((short)precision);
+        cast.wrapper(new Cast.AS(value, cast));
+        return cast;
+      }
+
+      public type.DATETIME DATETIME() {
+        final type.DATETIME cast = new type.DATETIME();
         cast.wrapper(new Cast.AS(value, cast));
         return cast;
       }
