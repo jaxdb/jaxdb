@@ -409,19 +409,19 @@ Specification                                                                   
 
 **<samp><a name="numeric_types">Numeric Types</a></samp>**
 
-              | <br>Bytes | Min<br>Signed/Unsigned | Max<br>Signed/Unsigned | Precision<br>Signed/Unsigned | Java<br>Type |
--------------:|:---|:-------------------------|:------------------------|:---|:-----------|
-**TINYINT**   | 1  | -128                     | 127                     | 3  | short      |
-              |    | 0                        | 255                     | 3  |            |
-**MEDIUMINT** | 3  | -8388608                 | 8388607                 | 7  | int        |
-              |    | 0                        | 16777215                | 8  |            |
-**INT**       | 4  | -2147483648              | 2147483647              | 10 | long       |
-              |    | 0                        | 4294967295              | 10 |            |
-**BIGINT**    | 8  | -9223372036854775808     | 9223372036854775807     | 19 | BigInteger |
-              |    | 0                        | 18446744073709551615    | 20 |            |
-**FLOAT**     | 4  | -3.4028235E+38           | 3.4028235E+38           | 6  | float      |
-**DOUBLE**    | 8  | -1.7976931348623157E+308 | 1.7976931348623157E+308 | 15 | double     |
-**DECIMAL**   | \* | \*                       | \*                      | \* | BigDecimal |
+ <br>Type                  | <br>Bytes       | Min<br>Signed/Unsigned                | Max<br>Signed/Unsigned               | Precision<br>Signed/Unsigned | Java<br>Type |
+--------------------------:|:----------------|:--------------------------------------|:-------------------------------------|:----------------|:------------------------|
+**<samp>TINYINT</samp>**   | <samp>1</samp>  | -<samp>128</samp>                     | <samp>127</samp>                     | <samp>3</samp>  | <samp>short</samp>      |
+                           |                 | <samp>0</samp>                        | <samp>255</samp>                     | <samp>3</samp>  |                         |
+**<samp>MEDIUMINT</samp>** | <samp>3</samp>  | -<samp>8388608</samp>                 | <samp>8388607</samp>                 | <samp>7</samp>  | <samp>int</samp>        |
+                           |                 | <samp>0</samp>                        | <samp>16777215</samp>                | <samp>8</samp>  |                         |
+**<samp>INT</samp>**       | <samp>4</samp>  | -<samp>2147483648</samp>              | <samp>2147483647</samp>              | <samp>10</samp> | <samp>long</samp>       |
+                           |                 | <samp>0</samp>                        | <samp>4294967295</samp>              | <samp>10</samp> |                         |
+**<samp>BIGINT</samp>**    | <samp>8</samp>  | -<samp>9223372036854775808</samp>     | <samp>9223372036854775807</samp>     | <samp>19</samp> | <samp>BigInteger</samp> |
+                           |                 | <samp>0</samp>                        | <samp>18446744073709551615</samp>    | <samp>20</samp> |                         |
+**<samp>FLOAT</samp>**     | <samp>4</samp>  | -<samp>3.4028235E+38</samp>           | <samp>3.4028235E+38</samp>           | <samp>6</samp>  | <samp>float</samp>      |
+**<samp>DOUBLE</samp>**    | <samp>8</samp>  | -<samp>1.7976931348623157E+308</samp> | <samp>1.7976931348623157E+308</samp> | <samp>15</samp> | <samp>double</samp>     |
+**<samp>DECIMAL</samp>**   | <samp>\*</samp> | <samp>\*</samp>                       | <samp>\*</samp>                      | <samp>\*</samp> | <samp>BigDecimal</samp> |
 
 **<samp><a name="cast">CAST</a>([&lt;value expression&gt;](#value_expression) AS &lt;DataType&gt;)</samp>**
 
