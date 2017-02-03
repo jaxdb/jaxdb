@@ -138,7 +138,7 @@ public class Generator {
         if (!type.xde_generateOnInsert$().isNull() && $xds_char.xde_generateOnInsert$.UUID.text().equals(type.xde_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.UUID;
 
-        return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type._varying$().text(), type._length$().text());
+        return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
       }
 
       if (column instanceof $xds_clob) {
@@ -148,7 +148,7 @@ public class Generator {
 
       if (column instanceof $xds_binary) {
         final $xds_binary type = ($xds_binary)column;
-        return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type._varying$().text(), type._length$().text());
+        return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
       }
 
       if (column instanceof $xds_blob) {
@@ -164,14 +164,20 @@ public class Generator {
             generateOnUpdate = GenerateOn.INCREMENT;
 
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
-        if (noBytes <= 2)
+        if (noBytes <= 2) {
+          params[2] = params[2] == null ? null : new Short(((Number)params[2]).shortValue());
           return new Type(column, type.TINYINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
+        }
 
-        if (noBytes <= 4)
-          return new Type(column, type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        if (noBytes <= 4) {
+          params[2] = params[2] == null ? null : new Integer(((Number)params[2]).intValue());
+          return new Type(column, type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Integer(type._min$().text().intValue()), type._max$().isNull() ? null : new Integer(type._max$().text().intValue()));
+        }
 
-        if (noBytes <= 8)
-          return new Type(column, org.safris.xdb.entities.type.INTEGER.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        if (noBytes <= 8) {
+          params[2] = params[2] == null ? null : new Long(((Number)params[2]).longValue());
+          return new Type(column, org.safris.xdb.entities.type.INTEGER.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Long(type._min$().text().longValue()), type._max$().isNull() ? null : new Long(type._max$().text().longValue()));
+        }
 
         return new Type(column, type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
@@ -197,7 +203,7 @@ public class Generator {
 
       if (column instanceof $xds_decimal) {
         final $xds_decimal type = ($xds_decimal)column;
-        return new Type(column, type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._scale$().text(), type._unsigned$().text(), type._min$().text() != null ? type._min$().text().doubleValue() : null, type._max$().text() != null ? type._max$().text().doubleValue() : null);
+        return new Type(column, type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._scale$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xds_date) {

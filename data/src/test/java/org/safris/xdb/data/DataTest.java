@@ -89,6 +89,7 @@ public class DataTest extends LoggableTest {
       Files.copy(new File(resource.getURL().getPath()), db);
     }
 
+    new File(db, "tmp").mkdir();
     return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
   }
 
@@ -118,27 +119,58 @@ public class DataTest extends LoggableTest {
   }
 
   private static void createTypeData(final OutputStream out) throws IOException {
+    final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<Types xmlns=\"xdd.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"xdd.types types.xsd\">\n".getBytes());
     for (int i = 0; i < 1000; i++) {
-      final String bigInt = Random.numeric(18);
+      final String bigInt = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
       final String binary = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
       final String blob = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
       final String bool = String.valueOf(Math.random() < .5);
-      final String ch = Strings.getRandomAlphaNumericString(255);
-      final String clob = Strings.getRandomAlphaNumericString(255);
+      final String clob = Strings.getRandomAlphaNumericString((int)(Math.random() * 255));
       final String date = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
       final String dateTime = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-      final double decimal = Math.random() * 255 - 128;
-      final float flt = (float)(Math.random() * 255 - 128);
-      final double dbl = Math.random() * 255 - 128;
-      final String lng = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
-      final String mediumInt = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
-      final String tinyInt = String.valueOf((int)(Math.random() * Math.pow(2, 8) - Math.pow(2, 8) / 2));
       final String time = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
-      final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
+      final String typeChar = Math.random() < .2 ? Strings.getRandomAlphaString((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? dateTime : Math.random() < .2 ? date : time;
+      final String decimal = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
+      final String flt = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
+      final String dbl = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
+      final String lng = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 10))));
+      final String mediumInt = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 5))));
+      final String tinyInt = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 3))));
       final String enm = values[(int)(Math.random() * values.length)];
 
-      out.write(("  <Type\n    typeBigint=\"" + bigInt + "\"\n    typeBinary=\"" + binary + "\"\n    typeBlob=\"" + blob + "\"\n    typeBoolean=\"" + bool + "\"\n    typeChar=\"" + ch + "\"\n    typeClob=\"" + clob + "\"\n    typeDate=\"" + date + "\"\n    typeDatetime=\"" + dateTime + "\"\n    typeDecimal=\"" + decimal + "\"\n    typeDouble=\"" + dbl + "\"\n    typeEnum=\"" + enm + "\"\n    typeFloat=\"" + flt + "\"\n    typeLong=\"" + lng + "\"\n    typeMediumint=\"" + mediumInt + "\"\n    typeSmallint=\"" + tinyInt + "\"\n    typeTime=\"" + time + "\"/>\n").getBytes());
+      out.write("  <Type\n".getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeBigint=\"" + bigInt + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeBinary=\"" + binary + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeBlob=\"" + blob + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeBoolean=\"" + bool + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeChar=\"" + typeChar + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeClob=\"" + clob + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeDate=\"" + date + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeDatetime=\"" + dateTime + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeDouble=\"" + dbl + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeEnum=\"" + enm + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeFloat=\"" + flt + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeLong=\"" + lng + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeMediumint=\"" + mediumInt + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeSmallint=\"" + tinyInt + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    typeTime=\"" + time + "\"").getBytes());
+      out.write(("/>\n").getBytes());
     }
 
     out.write("</Types>".getBytes());

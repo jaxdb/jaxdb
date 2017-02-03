@@ -25,13 +25,6 @@ public class Cast {
     protected final Integer length;
     protected final Integer scale;
 
-    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length, final boolean varying) {
-      this.dataType = dataType;
-      this.castAs = castAs;
-      this.length = length;
-      this.scale = null;
-    }
-
     protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
       this.dataType = dataType;
       this.castAs = castAs;
@@ -61,28 +54,17 @@ public class Cast {
 
   public static final class BOOLEAN {
     public final class AS {
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, true);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
         assert(length > 0);
         final type.CLOB cast = new type.CLOB((short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -150,24 +132,6 @@ public class Cast {
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
-
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
-      public type.CHAR CHAR(final int length) {
-        assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
-        return cast;
-      }
     }
 
     public final AS AS = new AS();
@@ -231,24 +195,6 @@ public class Cast {
 
         final type.BIGINT cast = new type.BIGINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
-        return cast;
-      }
-
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
-      public type.CHAR CHAR(final int length) {
-        assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
         return cast;
       }
     }
@@ -323,21 +269,10 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -412,21 +347,10 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -501,21 +425,10 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -590,21 +503,10 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -679,21 +581,10 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -709,18 +600,6 @@ public class Cast {
 
   public static final class CHAR {
     public final class AS {
-      public type.FLOAT FLOAT(final boolean unsigned) {
-        final type.FLOAT cast = new type.FLOAT(unsigned);
-        cast.wrapper(new Cast.AS(value, cast));
-        return cast;
-      }
-
-      public type.DOUBLE DOUBLE(final boolean unsigned) {
-        final type.DOUBLE cast = new type.DOUBLE(unsigned);
-        cast.wrapper(new Cast.AS(value, cast));
-        return cast;
-      }
-
       public type.DECIMAL DECIMAL(final int precision, final int scale, final boolean unsigned) {
         assert((short)precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL((short)precision, (short)scale, unsigned);
@@ -768,28 +647,17 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
         assert(length > 0);
         final type.CLOB cast = new type.CLOB((short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
@@ -835,21 +703,10 @@ public class Cast {
 
   public static final class DATE {
     public final class AS {
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -865,21 +722,10 @@ public class Cast {
 
   public static final class TIME {
     public final class AS {
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -895,21 +741,10 @@ public class Cast {
 
   public static final class DATETIME {
     public final class AS {
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
@@ -943,28 +778,17 @@ public class Cast {
 
   public static final class CLOB {
     public final class AS {
-      public final class VARYING {
-        public type.CHAR CHAR(final int length) {
-          assert(length > 0);
-          final type.CHAR cast = new type.CHAR(true, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
       public type.CHAR CHAR(final int length) {
         assert(length > 0);
-        final type.CHAR cast = new type.CHAR(false, (short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        final type.CHAR cast = new type.CHAR((short)length, false);
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
         assert(length > 0);
         final type.CLOB cast = new type.CLOB((short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length, false));
+        cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
     }
@@ -983,24 +807,6 @@ public class Cast {
       public type.BLOB BLOB(final int length) {
         assert(length > 0);
         final type.BLOB cast = new type.BLOB((short)length);
-        cast.wrapper(new Cast.AS(value, cast, (short)length));
-        return cast;
-      }
-
-      public final class VARYING {
-        public type.BINARY BINARY(final boolean varying, final int length) {
-          assert(length > 0);
-          final type.BINARY cast = new type.BINARY(varying, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
-      public type.BINARY BINARY(final boolean varying, final int length) {
-        assert(length > 0);
-        final type.BINARY cast = new type.BINARY(varying, (short)length);
         cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }
@@ -1024,20 +830,9 @@ public class Cast {
         return cast;
       }
 
-      public final class VARYING {
-        public type.BINARY BINARY(final boolean varying, final int length) {
-          assert(length > 0);
-          final type.BINARY cast = new type.BINARY(varying, (short)length);
-          cast.wrapper(new Cast.AS(value, cast, (short)length, true));
-          return cast;
-        }
-      }
-
-      public final VARYING VARYING = new VARYING();
-
-      public type.BINARY BINARY(final boolean varying, final int length) {
+      public type.BINARY BINARY(final int length) {
         assert(length > 0);
-        final type.BINARY cast = new type.BINARY(varying, (short)length);
+        final type.BINARY cast = new type.BINARY((short)length, false);
         cast.wrapper(new Cast.AS(value, cast, (short)length));
         return cast;
       }

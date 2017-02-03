@@ -37,8 +37,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.safris.commons.io.Readers;
+import org.safris.commons.io.Streams;
 import org.safris.commons.lang.Classes;
-import org.safris.commons.util.DateUtil;
+import org.safris.commons.lang.Numbers;
 import org.safris.commons.util.Formats;
 import org.safris.xdb.schema.DBVendor;
 
@@ -62,7 +64,7 @@ public final class type {
   public static final class ARRAY<T> extends DataType<T[]> {
     protected final DataType<T> dataType;
 
-    private ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
+    protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
       try {
         this.dataType = type.newInstance();
@@ -73,16 +75,21 @@ public final class type {
     }
 
     @SuppressWarnings("unchecked")
-    public ARRAY(final ARRAY<T> copy) {
+    protected ARRAY(final ARRAY<T> copy) {
       this(copy.owner, copy.name, copy.value, copy.unique, copy.primary, copy.nullable, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
     }
 
-    protected ARRAY(final Class<? extends DataType<T>> type) {
+    public ARRAY(final Class<? extends DataType<T>> type) {
       this(null, null, null, false, false, true, null, null, type);
     }
 
+    @SuppressWarnings("unchecked")
+    public ARRAY(final T[] value) {
+      this(null, null, value, false, false, true, null, null, (Class<? extends DataType<T>>)value.getClass().getComponentType());
+    }
+
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       // FIXME
       throw new UnsupportedOperationException();
     }
@@ -142,16 +149,25 @@ public final class type {
       this.max = null;
     }
 
-    public BigInteger min() {
+    public BIGINT(final int precision) {
+      this(precision, false);
+    }
+
+    public BIGINT(final BigInteger value) {
+      this(Numbers.precision(value), value.signum() >= 0);
+      set(value);
+    }
+
+    public final BigInteger min() {
       return min;
     }
 
-    public BigInteger max() {
+    public final BigInteger max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareInt64(precision(), unsigned());
     }
 
@@ -196,7 +212,7 @@ public final class type {
     private final boolean varying;
     private final short length;
 
-    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean varying, final int length) {
+    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final int length, final boolean varying) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
       this.varying = varying;
       this.length = (short)length;
@@ -208,22 +224,31 @@ public final class type {
       this.length = copy.length;
     }
 
-    public BINARY(final boolean varying, final int length) {
+    public BINARY(final int length, final boolean varying) {
       super();
       this.varying = varying;
       this.length = (short)length;
+    }
+
+    public BINARY(final int length) {
+      this(length, true);
+    }
+
+    public BINARY(final byte[] value) {
+      this(value.length, false);
+      set(value);
     }
 
     public boolean varying() {
       return varying;
     }
 
-    public short length() {
+    public final short length() {
       return length;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareBinary(varying, length);
     }
 
@@ -263,7 +288,7 @@ public final class type {
   }
 
   public static final class BLOB extends LargeObject<InputStream> {
-    private final short length;
+    private final int length;
 
     protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
@@ -280,12 +305,22 @@ public final class type {
       this.length = (short)length;
     }
 
-    public short length() {
+    // NOTE: This implies that the InputStream must support mark() and reset().
+    // NOTE: If not, then an IOException will be thrown.
+    public BLOB(final InputStream value) throws IOException {
+      super();
+      value.mark(Integer.MAX_VALUE);
+      this.length = (short)Streams.getBytes(value).length;
+      value.reset();
+      set(value);
+    }
+
+    public final int length() {
       return length;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareBlob(length);
     }
 
@@ -331,8 +366,13 @@ public final class type {
       super();
     }
 
+    public BOOLEAN(final Boolean value) {
+      super();
+      set(value);
+    }
+
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareBoolean();
     }
 
@@ -368,7 +408,7 @@ public final class type {
   public static final class CHAR extends Textual<String> {
     private final boolean varying;
 
-    protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean varying, final int length) {
+    protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final int length, final boolean varying) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
     }
@@ -378,9 +418,18 @@ public final class type {
       this.varying = copy.varying;
     }
 
-    public CHAR(final boolean varying, final int length) {
+    public CHAR(final int length, final boolean varying) {
       super((short)length);
       this.varying = varying;
+    }
+
+    public CHAR(final int length) {
+      this(length, true);
+    }
+
+    public CHAR(final String value) {
+      this(value.length(), false);
+      set(value);
     }
 
     public boolean varying() {
@@ -388,7 +437,7 @@ public final class type {
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareChar(varying, length());
     }
 
@@ -422,7 +471,7 @@ public final class type {
   }
 
   public static final class CLOB extends LargeObject<Reader> {
-    private final short length;
+    private final int length;
 
     protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
@@ -439,12 +488,22 @@ public final class type {
       this.length = (short)length;
     }
 
-    public short length() {
+    // NOTE: This implies that the Reader must support mark() and reset().
+    // NOTE: If not, then an IOException will be thrown.
+    public CLOB(final Reader value) throws IOException {
+      super();
+      value.mark(Integer.MAX_VALUE);
+      this.length = Readers.readFully(value).length();
+      value.reset();
+      set(value);
+    }
+
+    public final int length() {
       return length;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareClob(length);
     }
 
@@ -454,7 +513,7 @@ public final class type {
     }
 
     @Override
-    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
         statement.setClob(parameterIndex, value);
       else
@@ -462,18 +521,18 @@ public final class type {
     }
 
     @Override
-    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Clob value = resultSet.getClob(columnIndex);
       this.value = value == null ? null : value.getCharacterStream();
     }
 
     @Override
-    protected String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
     @Override
-    public CLOB clone() {
+    public final CLOB clone() {
       return new CLOB(this);
     }
   }
@@ -493,8 +552,13 @@ public final class type {
       super();
     }
 
+    public DATE(final LocalDate value) {
+      super();
+      set(value);
+    }
+
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareDate();
     }
 
@@ -505,7 +569,7 @@ public final class type {
 
     @Override
     @SuppressWarnings("deprecation")
-    protected void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
         statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
       else
@@ -514,18 +578,18 @@ public final class type {
 
     @Override
     @SuppressWarnings("deprecation")
-    protected void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Date value = resultSet.getDate(columnIndex);
       this.value = value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
     }
 
     @Override
-    protected String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
     @Override
-    public DATE clone() {
+    public final DATE clone() {
       return new DATE(this);
     }
   }
@@ -543,10 +607,12 @@ public final class type {
     protected static <T,V extends DataType<T>>V wrap(final T value) {
       try {
         final V dataType;
-        if (value.getClass().isEnum())
+        if (value.getClass().isEnum()) {
           dataType = (V)new ENUM(value.getClass());
-        else
-          dataType = (V)org.safris.xdb.entities.type.typeToClass.get(value.getClass()).newInstance();
+        }
+        else {
+          dataType = (V)org.safris.xdb.entities.type.typeToClass.get(value.getClass()).getConstructor(value.getClass()).newInstance(value);
+        }
 
         dataType.set(value);
         return dataType;
@@ -605,16 +671,16 @@ public final class type {
     protected T value;
     protected boolean wasSet;
 
-    public void set(final T value) {
+    public final void set(final T value) {
       this.wasSet = true;
       this.value = value;
     }
 
-    public T get() {
+    public final T get() {
       return value;
     }
 
-    public boolean wasSet() {
+    public final boolean wasSet() {
       return wasSet;
     }
 
@@ -680,16 +746,20 @@ public final class type {
     }
 
     public DATETIME() {
-      super();
-      this.precision = DEFAULT_PRECISION;
+      this(DEFAULT_PRECISION);
     }
 
-    public short precision() {
+    public DATETIME(final LocalDateTime value) {
+      this(Numbers.precision(value.getNano() / (int)Math.pow(10, Numbers.trailingZeroes(value.getNano()))) + DEFAULT_PRECISION);
+      set(value);
+    }
+
+    public final short precision() {
       return precision;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareDateTime(precision);
     }
 
@@ -750,20 +820,29 @@ public final class type {
       this.max = null;
     }
 
+    public DECIMAL(final int precision, final int scale) {
+      this(precision, scale, false);
+    }
+
+    public DECIMAL(final BigDecimal value) {
+      this(value.precision(), value.scale(), value.signum() >= 0);
+      set(value);
+    }
+
     public short scale() {
       return scale;
     }
 
-    public BigDecimal min() {
+    public final BigDecimal min() {
       return min;
     }
 
-    public BigDecimal max() {
+    public final BigDecimal max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareDecimal(precision(), scale(), unsigned());
     }
 
@@ -791,7 +870,7 @@ public final class type {
     }
 
     @Override
-    public DECIMAL clone() {
+    public final DECIMAL clone() {
       return new DECIMAL(this);
     }
   }
@@ -816,6 +895,15 @@ public final class type {
       super(unsigned);
       this.min = null;
       this.max = null;
+    }
+
+    public DOUBLE(final Double value) {
+      this(value >= 0);
+      set(value);
+    }
+
+    public DOUBLE() {
+      this(false);
     }
 
     public final Double min() {
@@ -886,8 +974,14 @@ public final class type {
       this.enumType = enumType;
     }
 
+    @SuppressWarnings("unchecked")
+    public ENUM(final T value) {
+      this((Class<T>)value.getClass());
+      set(value);
+    }
+
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       throw new UnsupportedOperationException();
     }
 
@@ -942,7 +1036,7 @@ public final class type {
     private final Float min;
     private final Float max;
 
-    public FLOAT(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean unsigned, final Float min, final Float max) {
+    protected FLOAT(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean unsigned, final Float min, final Float max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
       this.min = min;
       this.max = max;
@@ -960,16 +1054,25 @@ public final class type {
       this.max = null;
     }
 
-    public Float min() {
+    public FLOAT() {
+      this(false);
+    }
+
+    public FLOAT(final Float value) {
+      this();
+      set(value);
+    }
+
+    public final Float min() {
       return min;
     }
 
-    public Float max() {
+    public final Float max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareFloat(false, unsigned());
     }
 
@@ -1038,16 +1141,25 @@ public final class type {
       this.max = null;
     }
 
-    public Long min() {
+    public INTEGER(final int precision) {
+      this(precision, false);
+    }
+
+    public INTEGER(final Long value) {
+      this(Numbers.precision(value));
+      set(value);
+    }
+
+    public final Long min() {
       return min;
     }
 
-    public Long max() {
+    public final Long max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareInt32(precision(), unsigned());
     }
 
@@ -1102,16 +1214,25 @@ public final class type {
       this.max = null;
     }
 
-    public Integer min() {
+    public MEDIUMINT(final int precision) {
+      this(precision, false);
+    }
+
+    public MEDIUMINT(final Integer value) {
+      this(Numbers.precision(value));
+      set(value);
+    }
+
+    public final Integer min() {
       return min;
     }
 
-    public Integer max() {
+    public final Integer max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareInt24(precision(), unsigned());
     }
 
@@ -1187,6 +1308,8 @@ public final class type {
     protected PreciseNumeric(final boolean unsigned, final int precision) {
       super(unsigned);
       this.precision = (short)precision;
+      if (precision <= 0)
+        throw new IllegalArgumentException("precision must be >= 1");
     }
 
     public short precision() {
@@ -1240,7 +1363,7 @@ public final class type {
       this.length = (short)length;
     }
 
-    public short length() {
+    public final short length() {
       return length;
     }
   }
@@ -1268,12 +1391,16 @@ public final class type {
     }
 
     public TIME() {
-      super();
-      this.precision = DEFAULT_PRECISION;
+      this(DEFAULT_PRECISION);
+    }
+
+    public TIME(final LocalTime value) {
+      this(Numbers.precision(value.getNano() / (int)Math.pow(10, Numbers.trailingZeroes(value.getNano()))) + DEFAULT_PRECISION);
+      set(value);
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareTime(precision);
     }
 
@@ -1293,7 +1420,7 @@ public final class type {
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
       final java.sql.Time time = resultSet.getTime(columnIndex);
-      this.value = time == null ? null : LocalTime.ofNanoOfDay(time.getTime() * DateUtil.NANOSECONDS_IN_MILLISECONDS);
+      this.value = time == null ? null : time.toLocalTime();
     }
 
     @Override
@@ -1329,16 +1456,25 @@ public final class type {
       this.max = null;
     }
 
-    public Short min() {
+    public TINYINT(final int precision) {
+      this(precision, false);
+    }
+
+    public TINYINT(final Short value) {
+      this(Numbers.precision(value));
+      set(value);
+    }
+
+    public final Short min() {
       return min;
     }
 
-    public Short max() {
+    public final Short max() {
       return max;
     }
 
     @Override
-    protected String declare(final DBVendor vendor) {
+    protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareInt8(precision(), unsigned());
     }
 

@@ -109,6 +109,10 @@ final class DerbySerializer extends Serializer {
       statement.execute("CREATE FUNCTION TIMESTAMP_ADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
       statement.execute("CREATE FUNCTION TIMESTAMP_SUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
     }
+    catch (final SQLException e) {
+      if (!"X0Y68".equals(e.getSQLState()))
+        throw e;
+    }
   }
 
   @Override
@@ -159,15 +163,6 @@ final class DerbySerializer extends Serializer {
     serialization.append(", ");
     function.b.serialize(serialization);
     serialization.append(")");
-  }
-
-  @Override
-  protected void serialize(final Select.GROUP_BY<?> groupBy, final Serialization serialization) throws IOException {
-    if (groupBy != null) {
-      final SelectCommand command = (SelectCommand)serialization.command;
-      groupBy.subjects.addAll(command.select().getEntitiesWithOwners());
-      super.serialize(groupBy, serialization);
-    }
   }
 
   @Override

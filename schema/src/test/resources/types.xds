@@ -19,21 +19,21 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://xdb.safris.org/xds.xsd http://xdb.safris.org/xds.xsd">
   <table name="type">
-    <column name="type_bigint" xsi:type="integer" precision="19" null="false"/>
-    <column name="type_binary" xsi:type="binary" varying="true" length="255" null="false"/>
-    <column name="type_blob" xsi:type="blob" length="255" null="false"/>
-    <column name="type_boolean" xsi:type="boolean" null="false"/>
-    <column name="type_char" xsi:type="char" varying="true" length="255" null="false"/>
-    <column name="type_clob" xsi:type="clob" length="255" null="false"/>
-    <column name="type_date" xsi:type="date" null="false"/>
-    <column name="type_datetime" xsi:type="dateTime" null="false"/>
-    <column name="type_decimal" xsi:type="decimal" precision="10" scale="3" null="false"/>
-    <column name="type_double" xsi:type="float" double="true" null="false"/>
-    <column name="type_enum" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE" null="false"/>
-    <column name="type_float" xsi:type="float" null="false"/>
-    <column name="type_long" xsi:type="integer" precision="10" null="false"/>
-    <column name="type_mediumint" xsi:type="integer" precision="5" null="false"/>
-    <column name="type_smallint" xsi:type="integer" precision="3" null="false"/>
-    <column name="type_time" xsi:type="time" null="false"/>
+    <column name="type_bigint" xsi:type="integer" precision="19"/>
+    <column name="type_binary" xsi:type="binary" varying="true" length="255"/>
+    <column name="type_blob" xsi:type="blob" length="255"/>
+    <column name="type_boolean" xsi:type="boolean"/>
+    <column name="type_char" xsi:type="char" varying="true" length="255"/>
+    <column name="type_clob" xsi:type="clob" length="255"/>
+    <column name="type_date" xsi:type="date"/>
+    <column name="type_datetime" xsi:type="dateTime"/>
+    <column name="type_decimal" xsi:type="decimal" precision="10" scale="3"/>
+    <column name="type_double" xsi:type="float" double="true"/>
+    <column name="type_enum" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
+    <column name="type_float" xsi:type="float"/>
+    <column name="type_long" xsi:type="integer" precision="10"/>
+    <column name="type_mediumint" xsi:type="integer" precision="5"/>
+    <column name="type_smallint" xsi:type="integer" precision="3"/>
+    <column name="type_time" xsi:type="time"/>
   </table>
 </schema>

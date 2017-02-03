@@ -148,28 +148,30 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Select.JOIN<?> join, final Select.ON<?> on, final Serialization serialization) throws IOException {
-    // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
-    // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-    serialization.registerAlias(join.table);
-    if (join.cross)
-      serialization.append(" CROSS");
+    if (join != null) {
+      // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
+      // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
+      serialization.registerAlias(join.table);
+      if (join.cross)
+        serialization.append(" CROSS");
 
-    if (join.natural)
-      serialization.append(" NATURAL");
+      if (join.natural)
+        serialization.append(" NATURAL");
 
-    if (join.left && join.right)
-      serialization.append(" FULL OUTER");
-    else if (join.left)
-      serialization.append(" LEFT OUTER");
-    else if (join.right)
-      serialization.append(" LEFT OUTER");
+      if (join.left && join.right)
+        serialization.append(" FULL OUTER");
+      else if (join.left)
+        serialization.append(" LEFT OUTER");
+      else if (join.right)
+        serialization.append(" RIGHT OUTER");
 
-    serialization.append(" JOIN ").append(tableName(join.table, serialization)).append(" ");
-    serialization.registerAlias(join.table).serialize(serialization);
-    if (on != null) {
-      serialization.append(" ON (");
-      on.condition.serialize(serialization);
-      serialization.append(")");
+      serialization.append(" JOIN ").append(tableName(join.table, serialization)).append(" ");
+      serialization.registerAlias(join.table).serialize(serialization);
+      if (on != null) {
+        serialization.append(" ON (");
+        on.condition.serialize(serialization);
+        serialization.append(")");
+      }
     }
   }
 
@@ -181,13 +183,17 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Select.GROUP_BY<?> groupBy, final Serialization serialization) throws IOException {
-    serialization.append(" GROUP BY ");
-    serializeEntities(groupBy.subjects, serialization);
+    if (groupBy != null) {
+      serialization.append(" GROUP BY ");
+      serializeEntities(groupBy.subjects, serialization);
+    }
   }
 
   protected void serialize(final Select.HAVING<?> having, final Serialization serialization) throws IOException {
-    serialization.append(" HAVING ");
-    having.condition.serialize(serialization);
+    if (having != null) {
+      serialization.append(" HAVING ");
+      having.condition.serialize(serialization);
+    }
   }
 
   protected void serialize(final Select.ORDER_BY<?> orderBy, final Serialization serialization) throws IOException {
@@ -216,7 +222,9 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Serialization serialization) {
-    serialization.append(" LIMIT " + limit.rows);
+    if (limit != null) {
+      serialization.append(" LIMIT " + limit.rows);
+    }
   }
 
   protected void serialize(final Select.UNION<?> union, final Serialization serialization) throws IOException {

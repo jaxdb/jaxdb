@@ -23,35 +23,28 @@ import java.sql.SQLException;
 import org.safris.xdb.schema.DBVendor;
 
 abstract class ConditionWrapper<T> extends Condition<T> {
-  private final type.DataType<T> dataType;
-
-  protected ConditionWrapper(final ConditionWrapper<T> copy) {
-    super(copy);
-    this.dataType = copy;
-  }
-
   @Override
   protected final String declare(final DBVendor vendor) {
-    return dataType.declare(vendor);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   protected final int sqlType() {
-    return dataType.sqlType();
+    throw new UnsupportedOperationException();
   }
 
   @Override
   protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    dataType.get(statement, parameterIndex);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-    dataType.set(resultSet, columnIndex);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public final type.DataType<T> clone() {
-    return dataType.clone();
+    throw new UnsupportedOperationException();
   }
 }

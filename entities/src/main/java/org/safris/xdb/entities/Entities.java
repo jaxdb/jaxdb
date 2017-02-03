@@ -19,6 +19,7 @@ package org.safris.xdb.entities;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,7 +31,6 @@ import java.util.List;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.binding.Base64Binary;
 import org.safris.commons.xml.binding.DateTime;
-import org.safris.commons.xml.binding.Decimal;
 import org.safris.xdb.xdd.xe.$xdd_binary;
 import org.safris.xdb.xdd.xe.$xdd_blob;
 import org.safris.xdb.xdd.xe.$xdd_clob;
@@ -84,7 +84,7 @@ public final class Entities {
             dataType.set(((BigInteger)value).shortValue());
         }
         else if (attribute instanceof $xdd_decimal)
-          dataType.set(((Decimal)value).doubleValue());
+          dataType.set(((BigDecimal)value).doubleValue());
         else if (attribute instanceof $xdd_date)
           dataType.set(LocalDate.parse((String)value));
         else if (attribute instanceof $xdd_time)

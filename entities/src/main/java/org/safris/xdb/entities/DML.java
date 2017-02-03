@@ -769,16 +769,15 @@ public final class DML {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Subject<?>>SELECT_SET<T> SELECT(final T ... entities) {
-    return new SELECT_SET<T>(false, entities);
+  public static <T extends Subject<?>>select._SELECT<T> SELECT(final T ... entities) {
+    return new Select.SELECT<T>(false, entities);
   }
 
-  public static class SELECT_SET<T extends Subject<?>> extends Select.SELECT<T> {
-    public SELECT_SET(final boolean distinct, final T[] entities) {
-      super(distinct, entities);
+  public static final class SELECT {
+    @SafeVarargs
+    public static final <T extends Subject<?>>select._SELECT<T> DISTINCT(final T ... entities) {
+      return new Select.SELECT<T>(true, entities);
     }
-
-    public final Select.SELECT<T> DISTINCT = new Select.SELECT<T>(true, entities);
   }
 
   /** CASE **/
@@ -859,49 +858,49 @@ public final class DML {
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final type.ENUM<?> c) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final CharSequence b, final type.ENUM<?> c) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final type.ENUM<?> b, final CharSequence c) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final CharSequence c, final type.ENUM<?> d) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final CharSequence b, final type.ENUM<?> c, final CharSequence d) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final type.ENUM<?> c, final CharSequence d) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final CharSequence c, final type.ENUM<?> d, final CharSequence e) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
@@ -955,49 +954,49 @@ public final class DML {
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final type.CHAR c) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final CharSequence b, final type.CHAR c) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final type.CHAR b, final CharSequence c) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final CharSequence c, final type.CHAR d) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final CharSequence b, final type.CHAR c, final CharSequence d) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final type.CHAR c, final CharSequence d) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final CharSequence c, final type.CHAR d, final CharSequence e) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c, d, e));
     return wrapper;
   }
@@ -1021,19 +1020,19 @@ public final class DML {
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final type.ENUM<?> a, final CharSequence b) {
-    final type.CHAR wrapper = new type.CHAR(false, a.length());
+    final type.CHAR wrapper = new type.CHAR(a.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b));
     return wrapper;
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final type.ENUM<?> b, final CharSequence c) {
-    final type.CHAR wrapper = new type.CHAR(false, b.length());
+    final type.CHAR wrapper = new type.CHAR(b.length(), false);
     wrapper.wrapper(new StringExpression(Operator.CONCAT, a, b, c));
     return wrapper;
   }

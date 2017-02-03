@@ -17,6 +17,8 @@
 package org.safris.xdb.entities.generator;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 import org.safris.commons.lang.Numbers;
 import org.safris.xdb.entities.GenerateOn;
@@ -48,6 +50,12 @@ public final class Serializer {
 
     if (object instanceof Double && Numbers.isInteger((double)object))
       return object + "d";
+
+    if (object instanceof BigInteger)
+      return "new " + BigInteger.class.getName() + "(\"" + object + "\")";
+
+    if (object instanceof BigDecimal)
+      return "new " + BigDecimal.class.getName() + "(\"" + object + "\")";
 
     if (object instanceof Long)
       return object + "l";
