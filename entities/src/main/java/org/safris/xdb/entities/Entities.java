@@ -76,7 +76,7 @@ public final class Entities {
           // FIXME: Are we bounded by the size of long for BigInt here?
           if (dataType instanceof type.BIGINT)
             dataType.set(value);
-          else if (dataType instanceof type.INTEGER)
+          else if (dataType instanceof type.INT)
             dataType.set(((BigInteger)value).longValue());
           else if (dataType instanceof type.MEDIUMINT)
             dataType.set(((BigInteger)value).intValue());

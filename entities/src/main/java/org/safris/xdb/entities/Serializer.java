@@ -808,7 +808,7 @@ public abstract class Serializer {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
-  protected String serialize(final type.INTEGER serializable) {
+  protected String serialize(final type.INT serializable) {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 

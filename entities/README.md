@@ -407,6 +407,22 @@ Specification                                                                   
 &ensp;&ensp;<samp>[ OFFSET :row_count ]</samp>                                                                                          | [:white_check_mark:][LimitExpressionTest]               | [:white_check_mark:][LimitExpressionTest]               | [:white_check_mark:][LimitExpressionTest]               |
 &ensp;                                                                                                                                  |                                                         |                                                         |                                                         |
 
+**<samp><a name="numeric_types">Numeric Types</a></samp>**
+
+              | <br>Bytes | Min<br>Signed/Unsigned | Max<br>Signed/Unsigned | Precision<br>Signed/Unsigned | Java<br>Type |
+-------------:|:---|:-------------------------|:------------------------|:---|:-----------|
+**TINYINT**   | 1  | -128                     | 127                     | 3  | short      |
+              |    | 0                        | 255                     | 3  |            |
+**MEDIUMINT** | 3  | -8388608                 | 8388607                 | 7  | int        |
+              |    | 0                        | 16777215                | 8  |            |
+**INT**       | 4  | -2147483648              | 2147483647              | 10 | long       |
+              |    | 0                        | 4294967295              | 10 |            |
+**BIGINT**    | 8  | -9223372036854775808     | 9223372036854775807     | 19 | BigInteger |
+              |    | 0                        | 18446744073709551615    | 20 |            |
+**FLOAT**     | 4  | -3.4028235E+38           | 3.4028235E+38           | 6  | float      |
+**DOUBLE**    | 8  | -1.7976931348623157E+308 | 1.7976931348623157E+308 | 15 | double     |
+**DECIMAL**   | \* | \*                       | \*                      | \* | BigDecimal |
+
 **<samp><a name="cast">CAST</a>([&lt;value expression&gt;](#value_expression) AS &lt;DataType&gt;)</samp>**
 
    &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>t</samp><br><samp>o</samp><br>**<samp>from</samp>**&ensp;&ensp; | &ensp;<br>&ensp;<br><samp>B</samp><br><samp>O</samp><br><samp>O</samp><br><samp>L</samp><br><samp>E</samp><br><samp>A</samp><br><samp>N</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>F</samp><br><samp>L</samp><br><samp>O</samp><br><samp>A</samp><br><samp>T</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>D</samp><br><samp>O</samp><br><samp>U</samp><br><samp>B</samp><br><samp>L</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br><samp>D</samp><br><samp>E</samp><br><samp>C</samp><br><samp>I</samp><br><samp>M</samp><br><samp>A</samp><br><samp>L</samp> | &ensp;<br><samp>S</samp><br><samp>M</samp><br><samp>A</samp><br><samp>L</samp><br><samp>L</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | <samp>M</samp><br><samp>E</samp><br><samp>D</samp><br><samp>I</samp><br><samp>U</samp><br><samp>M</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>L</samp><br><samp>O</samp><br><samp>N</samp><br><samp>G</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>I</samp><br><samp>G</samp><br><samp>I</samp><br><samp>N</samp><br><samp>T</samp> | <samp>C</samp><br><samp>H</samp><br><samp>A</samp><br><samp>R</samp><br><samp>/</samp><br><samp>E</samp><br><samp>N</samp><br><samp>U</samp><br><samp>M</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>D</samp><br><samp>A</samp><br><samp>T</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>T</samp><br><samp>I</samp><br><samp>M</samp><br><samp>E</samp> | &ensp;<br><samp>D</samp><br><samp>A</samp><br><samp>T</samp><br><samp>E</samp><br><samp>T</samp><br><samp>I</samp><br><samp>M</samp><br><samp>E</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>C</samp><br><samp>L</samp><br><samp>O</samp><br><samp>B</samp> | &ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>L</samp><br><samp>O</samp><br><samp>B</samp> | &ensp;<br>&ensp;<br>&ensp;<br><samp>B</samp><br><samp>I</samp><br><samp>N</samp><br><samp>A</samp><br><samp>R</samp><br><samp>Y</samp> |
@@ -426,6 +442,7 @@ Specification                                                                   
      **<samp>CLOB</samp>** |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: |                          |                          |                          | :heavy_multiplication_x: |                          |                          |
      **<samp>BLOB</samp>** |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: |                          |
    **<samp>BINARY</samp>** |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: |
+
 
 ### License
  

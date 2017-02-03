@@ -96,7 +96,7 @@ public final class DML {
     return new Cast.FLOAT(a);
   }
 
-  public static Cast.INTEGER CAST(final type.INTEGER a) {
+  public static Cast.INTEGER CAST(final type.INT a) {
     return new Cast.INTEGER(a);
   }
 
@@ -1099,7 +1099,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT MOD(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT MOD(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -1222,7 +1222,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT ATAN2(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT ATAN2(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -1276,7 +1276,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT LOG(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT LOG(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -1390,7 +1390,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE MOD(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -1513,7 +1513,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE ATAN2(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -1567,7 +1567,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE LOG(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -1681,7 +1681,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL MOD(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL MOD(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -1804,7 +1804,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL ATAN2(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL ATAN2(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -1858,7 +1858,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL LOG(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL LOG(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -1972,7 +1972,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT MOD(final type.TINYINT a, final type.INTEGER b) {
+  public static type.FLOAT MOD(final type.TINYINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -2095,7 +2095,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT ATAN2(final type.TINYINT a, final type.INTEGER b) {
+  public static type.FLOAT ATAN2(final type.TINYINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned());
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -2149,7 +2149,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT LOG(final type.TINYINT a, final type.INTEGER b) {
+  public static type.FLOAT LOG(final type.TINYINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -2263,7 +2263,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT MOD(final type.MEDIUMINT a, final type.INTEGER b) {
+  public static type.FLOAT MOD(final type.MEDIUMINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -2386,7 +2386,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT ATAN2(final type.MEDIUMINT a, final type.INTEGER b) {
+  public static type.FLOAT ATAN2(final type.MEDIUMINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -2440,7 +2440,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT LOG(final type.MEDIUMINT a, final type.INTEGER b) {
+  public static type.FLOAT LOG(final type.MEDIUMINT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -2494,109 +2494,109 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE ABS(final type.INTEGER a) {
+  public static type.DOUBLE ABS(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Abs(a));
     return wrapper;
   }
 
-  public static type.TINYINT SIGN(final type.INTEGER a) {
+  public static type.TINYINT SIGN(final type.INT a) {
     final type.TINYINT wrapper = new type.TINYINT((short)1, false);
     wrapper.wrapper(new function.numeric.Sign(a));
     return wrapper;
   }
 
-  public static type.DOUBLE FLOOR(final type.INTEGER a) {
+  public static type.DOUBLE FLOOR(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Floor(a));
     return wrapper;
   }
 
-  public static type.DOUBLE CEIL(final type.INTEGER a) {
+  public static type.DOUBLE CEIL(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Ceil(a));
     return wrapper;
   }
 
-  public static type.DOUBLE POW(final type.INTEGER x, final double y) {
+  public static type.DOUBLE POW(final type.INT x, final double y) {
     final type.DOUBLE wrapper = new type.DOUBLE(x.unsigned());
     wrapper.wrapper(new function.numeric.Pow(x, y));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.DECIMAL b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.TINYINT b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.TINYINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.MEDIUMINT b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.MEDIUMINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.INTEGER b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final type.BIGINT b) {
+  public static type.DOUBLE MOD(final type.INT a, final type.BIGINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final float b) {
+  public static type.DOUBLE MOD(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final double b) {
+  public static type.DOUBLE MOD(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final short b) {
+  public static type.DOUBLE MOD(final type.INT a, final short b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final int b) {
+  public static type.DOUBLE MOD(final type.INT a, final int b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.INTEGER a, final long b) {
+  public static type.DOUBLE MOD(final type.INT a, final long b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ROUND(final type.INTEGER a, final int decimal) {
+  public static type.DOUBLE ROUND(final type.INT a, final int decimal) {
     if (decimal < 0)
       throw new IllegalArgumentException("decimal < 0");
 
@@ -2605,181 +2605,181 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE SQRT(final type.INTEGER a) {
+  public static type.DOUBLE SQRT(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Sqrt(a));
     return wrapper;
   }
 
-  public static type.DOUBLE SIN(final type.INTEGER a) {
+  public static type.DOUBLE SIN(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Sin(a));
     return wrapper;
   }
 
-  public static type.DOUBLE ASIN(final type.INTEGER a) {
+  public static type.DOUBLE ASIN(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Asin(a));
     return wrapper;
   }
 
-  public static type.DOUBLE COS(final type.INTEGER a) {
+  public static type.DOUBLE COS(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Cos(a));
     return wrapper;
   }
 
-  public static type.DOUBLE ACOS(final type.INTEGER a) {
+  public static type.DOUBLE ACOS(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Acos(a));
     return wrapper;
   }
 
-  public static type.DOUBLE TAN(final type.INTEGER a) {
+  public static type.DOUBLE TAN(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Tan(a));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN(final type.INTEGER a) {
+  public static type.DOUBLE ATAN(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Atan(a));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.DECIMAL b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.TINYINT b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.TINYINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.MEDIUMINT b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.MEDIUMINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.INTEGER b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.INTEGER a, final type.BIGINT b) {
+  public static type.DOUBLE ATAN2(final type.INT a, final type.BIGINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(false);
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE EXP(final type.INTEGER a) {
+  public static type.DOUBLE EXP(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Exp(a));
     return wrapper;
   }
 
-  public static type.DOUBLE LN(final type.INTEGER a) {
+  public static type.DOUBLE LN(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Ln(a));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.DECIMAL b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.TINYINT b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.TINYINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.MEDIUMINT b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.MEDIUMINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.INTEGER b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final type.BIGINT b) {
+  public static type.DOUBLE LOG(final type.INT a, final type.BIGINT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final float b) {
+  public static type.DOUBLE LOG(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final double b) {
+  public static type.DOUBLE LOG(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final short b) {
+  public static type.DOUBLE LOG(final type.INT a, final short b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final int b) {
+  public static type.DOUBLE LOG(final type.INT a, final int b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.INTEGER a, final long b) {
+  public static type.DOUBLE LOG(final type.INT a, final long b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG2(final type.INTEGER a) {
+  public static type.DOUBLE LOG2(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log2(a));
     return wrapper;
   }
 
-  public static type.DOUBLE LOG10(final type.INTEGER a) {
+  public static type.DOUBLE LOG10(final type.INT a) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log10(a));
     return wrapper;
@@ -2845,7 +2845,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE MOD(final type.BIGINT a, final type.INTEGER b) {
+  public static type.DOUBLE MOD(final type.BIGINT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Mod(a, b));
     return wrapper;
@@ -2968,7 +2968,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE ATAN2(final type.BIGINT a, final type.INTEGER b) {
+  public static type.DOUBLE ATAN2(final type.BIGINT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Atan2(a, b));
     return wrapper;
@@ -3022,7 +3022,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE LOG(final type.BIGINT a, final type.INTEGER b) {
+  public static type.DOUBLE LOG(final type.BIGINT a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned());
     wrapper.wrapper(new function.numeric.Log(a, b));
     return wrapper;
@@ -3078,21 +3078,21 @@ public final class DML {
 
   /** Aggregate **/
 
-  public static type.INTEGER COUNT() {
-    final type.INTEGER wrapper = new type.INTEGER((short)10, true);
+  public static type.INT COUNT() {
+    final type.INT wrapper = new type.INT((short)10, true);
     wrapper.wrapper(CountFunction.STAR);
     return wrapper;
   }
 
-  public static type.INTEGER COUNT(final type.DataType<?> dataType) {
-    final type.INTEGER wrapper = new type.INTEGER((short)10, true);
+  public static type.INT COUNT(final type.DataType<?> dataType) {
+    final type.INT wrapper = new type.INT((short)10, true);
     wrapper.wrapper(new CountFunction(dataType, false));
     return wrapper;
   }
 
   public final static class COUNT {
-    public static type.INTEGER DISTINCT(final type.DataType<?> dataType) {
-      final type.INTEGER wrapper = new type.INTEGER((short)10, true);
+    public static type.INT DISTINCT(final type.DataType<?> dataType) {
+      final type.INT wrapper = new type.INT((short)10, true);
       wrapper.wrapper(new CountFunction(dataType, true));
       return wrapper;
     }
@@ -3216,7 +3216,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT ADD(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT ADD(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
@@ -3342,7 +3342,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE ADD(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
@@ -3468,7 +3468,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL ADD(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL ADD(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
@@ -3594,8 +3594,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.TINYINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT ADD(final type.TINYINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3624,8 +3624,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.TINYINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT ADD(final type.TINYINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3666,8 +3666,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final long a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT ADD(final long a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3720,8 +3720,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.MEDIUMINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT ADD(final type.MEDIUMINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3756,8 +3756,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.MEDIUMINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT ADD(final type.MEDIUMINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3798,8 +3798,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final long a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT ADD(final long a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
@@ -3816,127 +3816,127 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE ADD(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE ADD(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = b.clone();
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL ADD(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL ADD(final type.INT a, final type.DECIMAL b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), b.scale(), b.unsigned() && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT ADD(final type.INT a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT ADD(final type.INT a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT ADD(final type.INT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT ADD(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT ADD(final type.INT a, final type.BIGINT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final short b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT ADD(final type.INT a, final short b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final type.INTEGER a, final float b) {
+  public static type.DOUBLE ADD(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final type.INTEGER a, final double b) {
+  public static type.DOUBLE ADD(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final int b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT ADD(final type.INT a, final int b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final type.INTEGER a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT ADD(final type.INT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT ADD(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT ADD(final type.INT a, final BigInteger b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.abs().toString().length()), a.unsigned() && b.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL ADD(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL ADD(final type.INT a, final BigDecimal b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)b.precision(), (short)b.scale(), b.signum() >= 0 && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final short a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT ADD(final short a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final float a, final type.INTEGER b) {
+  public static type.DOUBLE ADD(final float a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE ADD(final double a, final type.INTEGER b) {
+  public static type.DOUBLE ADD(final double a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final int a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT ADD(final int a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER ADD(final long a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT ADD(final long a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT ADD(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT ADD(final BigInteger a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(Numbers.precision(a), b.precision()), a.signum() >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL ADD(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL ADD(final BigDecimal a, final type.INT b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), (short)a.scale(), b.unsigned() && a.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
@@ -3972,7 +3972,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.BIGINT ADD(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT ADD(final type.BIGINT a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
@@ -4098,7 +4098,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT SUB(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT SUB(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
@@ -4224,7 +4224,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE SUB(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
@@ -4350,7 +4350,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL SUB(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL SUB(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
@@ -4476,8 +4476,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.TINYINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT SUB(final type.TINYINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4506,8 +4506,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.TINYINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT SUB(final type.TINYINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4548,8 +4548,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final long a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT SUB(final long a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4602,8 +4602,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.MEDIUMINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT SUB(final type.MEDIUMINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4638,8 +4638,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.MEDIUMINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT SUB(final type.MEDIUMINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4680,8 +4680,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final long a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT SUB(final long a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
@@ -4698,127 +4698,127 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE SUB(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE SUB(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL SUB(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL SUB(final type.INT a, final type.DECIMAL b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), b.scale(), b.unsigned() && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT SUB(final type.INT a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT SUB(final type.INT a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT SUB(final type.INT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT SUB(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT SUB(final type.INT a, final type.BIGINT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final short b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT SUB(final type.INT a, final short b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final type.INTEGER a, final float b) {
+  public static type.DOUBLE SUB(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final type.INTEGER a, final double b) {
+  public static type.DOUBLE SUB(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final int b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT SUB(final type.INT a, final int b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final type.INTEGER a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT SUB(final type.INT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT SUB(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT SUB(final type.INT a, final BigInteger b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.abs().toString().length()), a.unsigned() && b.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL SUB(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL SUB(final type.INT a, final BigDecimal b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)b.precision(), (short)b.scale(), b.signum() >= 0 && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final short a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT SUB(final short a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final float a, final type.INTEGER b) {
+  public static type.DOUBLE SUB(final float a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE SUB(final double a, final type.INTEGER b) {
+  public static type.DOUBLE SUB(final double a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final int a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT SUB(final int a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER SUB(final long a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT SUB(final long a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT SUB(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT SUB(final BigInteger a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(Numbers.precision(a), b.precision()), a.signum() >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL SUB(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL SUB(final BigDecimal a, final type.INT b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), (short)a.scale(), b.unsigned() && a.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
@@ -4854,7 +4854,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.BIGINT SUB(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT SUB(final type.BIGINT a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MINUS, a, b));
     return wrapper;
@@ -4980,7 +4980,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT MUL(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT MUL(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
@@ -5106,7 +5106,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE MUL(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
@@ -5232,7 +5232,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL MUL(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL MUL(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
@@ -5358,8 +5358,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.TINYINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT MUL(final type.TINYINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5388,8 +5388,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.TINYINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT MUL(final type.TINYINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5430,8 +5430,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final long a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT MUL(final long a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5484,8 +5484,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.MEDIUMINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT MUL(final type.MEDIUMINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5520,8 +5520,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.MEDIUMINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT MUL(final type.MEDIUMINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5562,8 +5562,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final long a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT MUL(final long a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
@@ -5580,127 +5580,127 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE MUL(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE MUL(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL MUL(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL MUL(final type.INT a, final type.DECIMAL b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), b.scale(), b.unsigned() && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT MUL(final type.INT a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT MUL(final type.INT a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT MUL(final type.INT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT MUL(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT MUL(final type.INT a, final type.BIGINT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final short b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT MUL(final type.INT a, final short b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final type.INTEGER a, final float b) {
+  public static type.DOUBLE MUL(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final type.INTEGER a, final double b) {
+  public static type.DOUBLE MUL(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final int b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT MUL(final type.INT a, final int b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final type.INTEGER a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT MUL(final type.INT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT MUL(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT MUL(final type.INT a, final BigInteger b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.abs().toString().length()), a.unsigned() && b.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL MUL(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL MUL(final type.INT a, final BigDecimal b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)b.precision(), (short)b.scale(), b.signum() >= 0 && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final short a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT MUL(final short a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final float a, final type.INTEGER b) {
+  public static type.DOUBLE MUL(final float a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE MUL(final double a, final type.INTEGER b) {
+  public static type.DOUBLE MUL(final double a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final int a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT MUL(final int a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER MUL(final long a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT MUL(final long a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT MUL(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT MUL(final BigInteger a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(Numbers.precision(a), b.precision()), a.signum() >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL MUL(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL MUL(final BigDecimal a, final type.INT b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), (short)a.scale(), b.unsigned() && a.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
@@ -5736,7 +5736,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.BIGINT MUL(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT MUL(final type.BIGINT a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
     return wrapper;
@@ -5862,7 +5862,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.FLOAT DIV(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT DIV(final type.FLOAT a, final type.INT b) {
     final type.FLOAT wrapper = new type.FLOAT(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
@@ -5988,7 +5988,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE DIV(final type.DOUBLE a, final type.INT b) {
     final type.DOUBLE wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
@@ -6114,7 +6114,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DECIMAL DIV(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL DIV(final type.DECIMAL a, final type.INT b) {
     final type.DECIMAL wrapper = a.clone();
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
@@ -6240,8 +6240,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.TINYINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT DIV(final type.TINYINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6270,8 +6270,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.TINYINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT DIV(final type.TINYINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6312,8 +6312,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final long a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT DIV(final long a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6366,8 +6366,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.MEDIUMINT a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT DIV(final type.MEDIUMINT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6402,8 +6402,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.MEDIUMINT a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT DIV(final type.MEDIUMINT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6444,8 +6444,8 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final long a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT DIV(final long a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
@@ -6462,127 +6462,127 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE DIV(final type.INT a, final type.FLOAT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE DIV(final type.INT a, final type.DOUBLE b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL DIV(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL DIV(final type.INT a, final type.DECIMAL b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), b.scale(), b.unsigned() && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.PLUS, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final type.TINYINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT DIV(final type.INT a, final type.TINYINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final type.MEDIUMINT b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT DIV(final type.INT a, final type.MEDIUMINT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
+  public static type.INT DIV(final type.INT a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT DIV(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT DIV(final type.INT a, final type.BIGINT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final short b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT DIV(final type.INT a, final short b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final type.INTEGER a, final float b) {
+  public static type.DOUBLE DIV(final type.INT a, final float b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final type.INTEGER a, final double b) {
+  public static type.DOUBLE DIV(final type.INT a, final double b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final int b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT DIV(final type.INT a, final int b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final type.INTEGER a, final long b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
+  public static type.INT DIV(final type.INT a, final long b) {
+    final type.INT wrapper = new type.INT((short)Math.max(a.precision(), Numbers.precision(b)), a.unsigned() && b >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT DIV(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT DIV(final type.INT a, final BigInteger b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.abs().toString().length()), a.unsigned() && b.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL DIV(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL DIV(final type.INT a, final BigDecimal b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)b.precision(), (short)b.scale(), b.signum() >= 0 && a.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final short a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT DIV(final short a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final float a, final type.INTEGER b) {
+  public static type.DOUBLE DIV(final float a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DOUBLE DIV(final double a, final type.INTEGER b) {
+  public static type.DOUBLE DIV(final double a, final type.INT b) {
     final type.DOUBLE wrapper = new type.DOUBLE(a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final int a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT DIV(final int a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.INTEGER DIV(final long a, final type.INTEGER b) {
-    final type.INTEGER wrapper = new type.INTEGER((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
+  public static type.INT DIV(final long a, final type.INT b) {
+    final type.INT wrapper = new type.INT((short)Math.max(Numbers.precision(a), b.precision()), a >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.BIGINT DIV(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT DIV(final BigInteger a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(Numbers.precision(a), b.precision()), a.signum() >= 0 && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
   }
 
-  public static type.DECIMAL DIV(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL DIV(final BigDecimal a, final type.INT b) {
     final type.DECIMAL wrapper = new type.DECIMAL((short)Math.max(a.precision(), b.precision()), (short)a.scale(), b.unsigned() && a.signum() >= 0);
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
@@ -6618,7 +6618,7 @@ public final class DML {
     return wrapper;
   }
 
-  public static type.BIGINT DIV(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT DIV(final type.BIGINT a, final type.INT b) {
     final type.BIGINT wrapper = new type.BIGINT((short)Math.max(a.precision(), b.precision()), a.unsigned() && b.unsigned());
     wrapper.wrapper(new NumericExpression(Operator.DIVIDE, a, b));
     return wrapper;
@@ -6734,7 +6734,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.FLOAT PLUS(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT PLUS(final type.FLOAT a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -6818,7 +6818,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE PLUS(final type.DOUBLE a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -6902,7 +6902,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.DECIMAL PLUS(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL PLUS(final type.DECIMAL a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -6986,7 +6986,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.TINYINT a, final type.INTEGER b) {
+  public static type.INT PLUS(final type.TINYINT a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -7006,7 +7006,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.TINYINT a, final long b) {
+  public static type.INT PLUS(final type.TINYINT a, final long b) {
     return ADD(a, b);
   }
 
@@ -7034,7 +7034,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final long a, final type.TINYINT b) {
+  public static type.INT PLUS(final long a, final type.TINYINT b) {
     return ADD(a, b);
   }
 
@@ -7070,7 +7070,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.MEDIUMINT a, final type.INTEGER b) {
+  public static type.INT PLUS(final type.MEDIUMINT a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -7094,7 +7094,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.MEDIUMINT a, final long b) {
+  public static type.INT PLUS(final type.MEDIUMINT a, final long b) {
     return ADD(a, b);
   }
 
@@ -7122,7 +7122,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final long a, final type.MEDIUMINT b) {
+  public static type.INT PLUS(final long a, final type.MEDIUMINT b) {
     return ADD(a, b);
   }
 
@@ -7134,87 +7134,87 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE PLUS(final type.INT a, final type.FLOAT b) {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE PLUS(final type.INT a, final type.DOUBLE b) {
     return ADD(a, b);
   }
 
-  public static type.DECIMAL PLUS(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL PLUS(final type.INT a, final type.DECIMAL b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final type.TINYINT b) {
+  public static type.INT PLUS(final type.INT a, final type.TINYINT b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final type.MEDIUMINT b) {
+  public static type.INT PLUS(final type.INT a, final type.MEDIUMINT b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final type.INTEGER b) {
+  public static type.INT PLUS(final type.INT a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.BIGINT PLUS(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT PLUS(final type.INT a, final type.BIGINT b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final short b) {
+  public static type.INT PLUS(final type.INT a, final short b) {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final type.INTEGER a, final float b) {
+  public static type.DOUBLE PLUS(final type.INT a, final float b) {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final type.INTEGER a, final double b) {
+  public static type.DOUBLE PLUS(final type.INT a, final double b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final int b) {
+  public static type.INT PLUS(final type.INT a, final int b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final type.INTEGER a, final long b) {
+  public static type.INT PLUS(final type.INT a, final long b) {
     return ADD(a, b);
   }
 
-  public static type.BIGINT PLUS(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT PLUS(final type.INT a, final BigInteger b) {
     return ADD(a, b);
   }
 
-  public static type.DECIMAL PLUS(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL PLUS(final type.INT a, final BigDecimal b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final short a, final type.INTEGER b) {
+  public static type.INT PLUS(final short a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final float a, final type.INTEGER b) {
+  public static type.DOUBLE PLUS(final float a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.DOUBLE PLUS(final double a, final type.INTEGER b) {
+  public static type.DOUBLE PLUS(final double a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final int a, final type.INTEGER b) {
+  public static type.INT PLUS(final int a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.INTEGER PLUS(final long a, final type.INTEGER b) {
+  public static type.INT PLUS(final long a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.BIGINT PLUS(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT PLUS(final BigInteger a, final type.INT b) {
     return ADD(a, b);
   }
 
-  public static type.DECIMAL PLUS(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL PLUS(final BigDecimal a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -7238,7 +7238,7 @@ public final class DML {
     return ADD(a, b);
   }
 
-  public static type.BIGINT PLUS(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT PLUS(final type.BIGINT a, final type.INT b) {
     return ADD(a, b);
   }
 
@@ -7322,7 +7322,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.FLOAT MINUS(final type.FLOAT a, final type.INTEGER b) {
+  public static type.FLOAT MINUS(final type.FLOAT a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7406,7 +7406,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final type.DOUBLE a, final type.INTEGER b) {
+  public static type.DOUBLE MINUS(final type.DOUBLE a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7490,7 +7490,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.DECIMAL MINUS(final type.DECIMAL a, final type.INTEGER b) {
+  public static type.DECIMAL MINUS(final type.DECIMAL a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7574,7 +7574,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.TINYINT a, final type.INTEGER b) {
+  public static type.INT MINUS(final type.TINYINT a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7594,7 +7594,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.TINYINT a, final long b) {
+  public static type.INT MINUS(final type.TINYINT a, final long b) {
     return SUB(a, b);
   }
 
@@ -7622,7 +7622,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final long a, final type.TINYINT b) {
+  public static type.INT MINUS(final long a, final type.TINYINT b) {
     return SUB(a, b);
   }
 
@@ -7658,7 +7658,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.MEDIUMINT a, final type.INTEGER b) {
+  public static type.INT MINUS(final type.MEDIUMINT a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7682,7 +7682,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.MEDIUMINT a, final long b) {
+  public static type.INT MINUS(final type.MEDIUMINT a, final long b) {
     return SUB(a, b);
   }
 
@@ -7710,7 +7710,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final long a, final type.MEDIUMINT b) {
+  public static type.INT MINUS(final long a, final type.MEDIUMINT b) {
     return SUB(a, b);
   }
 
@@ -7722,87 +7722,87 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final type.INTEGER a, final type.FLOAT b) {
+  public static type.DOUBLE MINUS(final type.INT a, final type.FLOAT b) {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final type.INTEGER a, final type.DOUBLE b) {
+  public static type.DOUBLE MINUS(final type.INT a, final type.DOUBLE b) {
     return SUB(a, b);
   }
 
-  public static type.DECIMAL MINUS(final type.INTEGER a, final type.DECIMAL b) {
+  public static type.DECIMAL MINUS(final type.INT a, final type.DECIMAL b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final type.TINYINT b) {
+  public static type.INT MINUS(final type.INT a, final type.TINYINT b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final type.MEDIUMINT b) {
+  public static type.INT MINUS(final type.INT a, final type.MEDIUMINT b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final type.INTEGER b) {
+  public static type.INT MINUS(final type.INT a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.BIGINT MINUS(final type.INTEGER a, final type.BIGINT b) {
+  public static type.BIGINT MINUS(final type.INT a, final type.BIGINT b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final short b) {
+  public static type.INT MINUS(final type.INT a, final short b) {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final type.INTEGER a, final float b) {
+  public static type.DOUBLE MINUS(final type.INT a, final float b) {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final type.INTEGER a, final double b) {
+  public static type.DOUBLE MINUS(final type.INT a, final double b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final int b) {
+  public static type.INT MINUS(final type.INT a, final int b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final type.INTEGER a, final long b) {
+  public static type.INT MINUS(final type.INT a, final long b) {
     return SUB(a, b);
   }
 
-  public static type.BIGINT MINUS(final type.INTEGER a, final BigInteger b) {
+  public static type.BIGINT MINUS(final type.INT a, final BigInteger b) {
     return SUB(a, b);
   }
 
-  public static type.DECIMAL MINUS(final type.INTEGER a, final BigDecimal b) {
+  public static type.DECIMAL MINUS(final type.INT a, final BigDecimal b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final short a, final type.INTEGER b) {
+  public static type.INT MINUS(final short a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final float a, final type.INTEGER b) {
+  public static type.DOUBLE MINUS(final float a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.DOUBLE MINUS(final double a, final type.INTEGER b) {
+  public static type.DOUBLE MINUS(final double a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final int a, final type.INTEGER b) {
+  public static type.INT MINUS(final int a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.INTEGER MINUS(final long a, final type.INTEGER b) {
+  public static type.INT MINUS(final long a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.BIGINT MINUS(final BigInteger a, final type.INTEGER b) {
+  public static type.BIGINT MINUS(final BigInteger a, final type.INT b) {
     return SUB(a, b);
   }
 
-  public static type.DECIMAL MINUS(final BigDecimal a, final type.INTEGER b) {
+  public static type.DECIMAL MINUS(final BigDecimal a, final type.INT b) {
     return SUB(a, b);
   }
 
@@ -7826,7 +7826,7 @@ public final class DML {
     return SUB(a, b);
   }
 
-  public static type.BIGINT MINUS(final type.BIGINT a, final type.INTEGER b) {
+  public static type.BIGINT MINUS(final type.BIGINT a, final type.INT b) {
     return SUB(a, b);
   }
 

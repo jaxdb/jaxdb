@@ -113,12 +113,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -178,12 +178,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -249,12 +249,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -327,12 +327,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -405,12 +405,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -483,12 +483,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -513,9 +513,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.INTEGER value;
+    private final type.INT value;
 
-    public INTEGER(final type.INTEGER value) {
+    public INTEGER(final type.INT value) {
       this.value = value;
     }
   }
@@ -561,12 +561,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -627,12 +627,12 @@ public class Cast {
         return cast;
       }
 
-      public type.INTEGER INTEGER(final int precision, final boolean unsigned) {
+      public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
           throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
 
-        final type.INTEGER cast = new type.INTEGER((short)precision, unsigned);
+        final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }

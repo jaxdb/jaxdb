@@ -176,7 +176,7 @@ public class Generator {
 
         if (noBytes <= 8) {
           params[2] = params[2] == null ? null : new Long(((Number)params[2]).longValue());
-          return new Type(column, org.safris.xdb.entities.type.INTEGER.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Long(type._min$().text().longValue()), type._max$().isNull() ? null : new Long(type._max$().text().longValue()));
+          return new Type(column, org.safris.xdb.entities.type.INT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Long(type._min$().text().longValue()), type._max$().isNull() ? null : new Long(type._max$().text().longValue()));
         }
 
         return new Type(column, type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());

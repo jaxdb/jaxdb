@@ -127,6 +127,10 @@ public final class type {
   }
 
   public static final class BIGINT extends PreciseNumeric<BigInteger> {
+    private static final BigInteger MIN = new BigInteger("9223372036854775808");
+    private static final BigInteger MAX_SIGNED = new BigInteger("9223372036854775807");
+    private static final BigInteger MAX_UNSIGNED = new BigInteger("18446744073709551615");
+
     private final BigInteger min;
     private final BigInteger max;
 
@@ -164,6 +168,22 @@ public final class type {
 
     public final BigInteger max() {
       return max;
+    }
+
+    @Override
+    public final void set(final BigInteger value) {
+      if (value != null) {
+        if (unsigned() && value.compareTo(MAX_UNSIGNED) > 0)
+          throw new IllegalArgumentException("value is out of range for UNSIGNED TINYINT: " + value);
+
+        if (value.compareTo(MAX_SIGNED) > 0)
+          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+
+        if (value.compareTo(min) < 0)
+          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+      }
+
+      super.set(value);
     }
 
     @Override
@@ -671,7 +691,7 @@ public final class type {
     protected T value;
     protected boolean wasSet;
 
-    public final void set(final T value) {
+    public void set(final T value) {
       this.wasSet = true;
       this.value = value;
     }
@@ -1119,33 +1139,33 @@ public final class type {
     }
   }
 
-  public static final class INTEGER extends PreciseNumeric<Long> {
+  public static final class INT extends PreciseNumeric<Long> {
     private final Long min;
     private final Long max;
 
-    protected INTEGER(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final int precision, final boolean unsigned, final Long min, final Long max) {
+    protected INT(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final int precision, final boolean unsigned, final Long min, final Long max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
       this.min = min;
       this.max = max;
     }
 
-    protected INTEGER(final INTEGER copy) {
+    protected INT(final INT copy) {
       super(copy, copy.unsigned(), copy.precision());
       this.min = null;
       this.max = null;
     }
 
-    public INTEGER(final int precision, final boolean unsigned) {
+    public INT(final int precision, final boolean unsigned) {
       super(unsigned, (short)precision);
       this.min = null;
       this.max = null;
     }
 
-    public INTEGER(final int precision) {
+    public INT(final int precision) {
       this(precision, false);
     }
 
-    public INTEGER(final Long value) {
+    public INT(final Long value) {
       this(Numbers.precision(value));
       set(value);
     }
@@ -1156,6 +1176,22 @@ public final class type {
 
     public final Long max() {
       return max;
+    }
+
+    @Override
+    public final void set(final Long value) {
+      if (value != null) {
+        if (unsigned() && value > 2147483647)
+          throw new IllegalArgumentException("value is out of range for UNSIGNED INT: " + value);
+
+        if (value > 4294967295l)
+          throw new IllegalArgumentException("value is out of range for INT: " + value);
+
+        if (value < -2147483648)
+          throw new IllegalArgumentException("value is out of range for INT: " + value);
+      }
+
+      super.set(value);
     }
 
     @Override
@@ -1187,8 +1223,8 @@ public final class type {
     }
 
     @Override
-    public final INTEGER clone() {
-      return new INTEGER(this);
+    public final INT clone() {
+      return new INT(this);
     }
   }
 
@@ -1229,6 +1265,22 @@ public final class type {
 
     public final Integer max() {
       return max;
+    }
+
+    @Override
+    public final void set(final Integer value) {
+      if (value != null) {
+        if (unsigned() && value > 8388607)
+          throw new IllegalArgumentException("value is out of range for UNSIGNED MEDIUMINT: " + value);
+
+        if (value > 16777215)
+          throw new IllegalArgumentException("value is out of range for MEDIUMINT: " + value);
+
+        if (value < -8388608)
+          throw new IllegalArgumentException("value is out of range for MEDIUMINT: " + value);
+      }
+
+      super.set(value);
     }
 
     @Override
@@ -1285,8 +1337,16 @@ public final class type {
       this.unsigned = unsigned;
     }
 
-    public boolean unsigned() {
+    public final boolean unsigned() {
       return unsigned;
+    }
+
+    @Override
+    public void set(final T value) {
+      if (value != null && value.doubleValue() < 0 && unsigned)
+        throw new IllegalArgumentException("Attempt to set negative value for unsigned type: " + value);
+
+      super.set(value);
     }
   }
 
@@ -1312,7 +1372,7 @@ public final class type {
         throw new IllegalArgumentException("precision must be >= 1");
     }
 
-    public short precision() {
+    public final short precision() {
       return precision;
     }
   }
@@ -1471,6 +1531,22 @@ public final class type {
 
     public final Short max() {
       return max;
+    }
+
+    @Override
+    public final void set(final Short value) {
+      if (value != null) {
+        if (unsigned() && value > 127)
+          throw new IllegalArgumentException("value is out of range for UNSIGNED TINYINT: " + value);
+
+        if (value > 255)
+          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+
+        if (value < -128)
+          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+      }
+
+      super.set(value);
     }
 
     @Override
