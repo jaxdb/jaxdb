@@ -80,7 +80,7 @@ public final class Entities {
             dataType.set(((BigInteger)value).longValue());
           else if (dataType instanceof type.MEDIUMINT)
             dataType.set(((BigInteger)value).intValue());
-          else if (dataType instanceof type.TINYINT)
+          else if (dataType instanceof type.SMALLINT)
             dataType.set(((BigInteger)value).shortValue());
         }
         else if (attribute instanceof $xdd_decimal)

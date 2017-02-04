@@ -166,7 +166,7 @@ public class Generator {
         final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
         if (noBytes <= 2) {
           params[2] = params[2] == null ? null : new Short(((Number)params[2]).shortValue());
-          return new Type(column, type.TINYINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
+          return new Type(column, type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
         }
 
         if (noBytes <= 4) {

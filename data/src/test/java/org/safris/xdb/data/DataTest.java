@@ -136,7 +136,7 @@ public class DataTest extends LoggableTest {
       final String dbl = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
       final String lng = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 10))));
       final String mediumInt = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 5))));
-      final String tinyInt = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 3))));
+      final String smallInt = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 3))));
       final String enm = values[(int)(Math.random() * values.length)];
 
       out.write("  <Type\n".getBytes());
@@ -167,7 +167,7 @@ public class DataTest extends LoggableTest {
       if (Math.random() < .9)
         out.write(("    typeMediumint=\"" + mediumInt + "\"\n").getBytes());
       if (Math.random() < .9)
-        out.write(("    typeSmallint=\"" + tinyInt + "\"\n").getBytes());
+        out.write(("    typeSmallint=\"" + smallInt + "\"\n").getBytes());
       if (Math.random() < .9)
         out.write(("    typeTime=\"" + time + "\"").getBytes());
       out.write(("/>\n").getBytes());

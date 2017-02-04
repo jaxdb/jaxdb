@@ -93,12 +93,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -106,7 +106,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -116,7 +116,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -158,12 +158,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -171,7 +171,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -181,7 +181,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -229,12 +229,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -242,7 +242,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -252,7 +252,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -286,7 +286,7 @@ public class Cast {
     }
   }
 
-  public static final class TINYINT {
+  public static final class SMALLINT {
     public final class AS {
       public type.FLOAT FLOAT(final boolean unsigned) {
         final type.FLOAT cast = new type.FLOAT(unsigned);
@@ -307,12 +307,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -320,7 +320,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -330,7 +330,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -357,9 +357,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.TINYINT value;
+    private final type.SMALLINT value;
 
-    public TINYINT(final type.TINYINT value) {
+    public SMALLINT(final type.SMALLINT value) {
       this.value = value;
     }
   }
@@ -385,12 +385,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -398,7 +398,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -408,7 +408,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -463,12 +463,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -476,7 +476,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -486,7 +486,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -541,12 +541,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -554,7 +554,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -564,7 +564,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -607,12 +607,12 @@ public class Cast {
         return cast;
       }
 
-      public type.TINYINT TINYINT(final int precision, final boolean unsigned) {
+      public type.SMALLINT SMALLINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 3)
-          throw new IllegalArgumentException("TINYINT has 2^8 = 256 values ((short)precision 3)");
+          throw new IllegalArgumentException("SMALLINT has 2^8 = 256 values (precision 3)");
 
-        final type.TINYINT cast = new type.TINYINT((short)precision, unsigned);
+        final type.SMALLINT cast = new type.SMALLINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
@@ -620,7 +620,7 @@ public class Cast {
       public type.MEDIUMINT MEDIUMINT(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values ((short)precision 8)");
+          throw new IllegalArgumentException("MEDIUMINT has 2^24 = 16777216 values (precision 8)");
 
         final type.MEDIUMINT cast = new type.MEDIUMINT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));
@@ -630,7 +630,7 @@ public class Cast {
       public type.INT INTEGER(final int precision, final boolean unsigned) {
         assert((short)precision > 0);
         if ((short)precision > 10)
-          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values ((short)precision 10)");
+          throw new IllegalArgumentException("INTEGER has 2^32 = 4294967296 values (precision 10)");
 
         final type.INT cast = new type.INT((short)precision, unsigned);
         cast.wrapper(new Cast.AS(value, cast, precision));

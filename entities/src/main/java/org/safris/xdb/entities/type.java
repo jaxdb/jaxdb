@@ -61,7 +61,21 @@ public final class type {
     }
   }
 
-  public static final class ARRAY<T> extends DataType<T[]> {
+  public static abstract class ApproxNumeric<T extends Number> extends Numeric<T> {
+    protected ApproxNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
+    }
+
+    protected ApproxNumeric(final Numeric<T> copy, final boolean unsigned) {
+      super(copy, unsigned);
+    }
+
+    protected ApproxNumeric(final boolean unsigned) {
+      super(unsigned);
+    }
+  }
+
+  protected static final class ARRAY<T> extends DataType<T[]> {
     protected final DataType<T> dataType;
 
     protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
@@ -127,7 +141,7 @@ public final class type {
   }
 
   public static final class BIGINT extends PreciseNumeric<BigInteger> {
-    private static final BigInteger MIN = new BigInteger("9223372036854775808");
+    private static final BigInteger MIN = new BigInteger("-9223372036854775808");
     private static final BigInteger MAX_SIGNED = new BigInteger("9223372036854775807");
     private static final BigInteger MAX_UNSIGNED = new BigInteger("18446744073709551615");
 
@@ -174,13 +188,13 @@ public final class type {
     public final void set(final BigInteger value) {
       if (value != null) {
         if (unsigned() && value.compareTo(MAX_UNSIGNED) > 0)
-          throw new IllegalArgumentException("value is out of range for UNSIGNED TINYINT: " + value);
+          throw new IllegalArgumentException("value is out of range for UNSIGNED BIGINT: " + value);
 
         if (value.compareTo(MAX_SIGNED) > 0)
-          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+          throw new IllegalArgumentException("value is out of range for BIGINT: " + value);
 
-        if (value.compareTo(min) < 0)
-          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
+        if (value.compareTo(MIN) < 0)
+          throw new IllegalArgumentException("value is out of range for BIGINT: " + value);
       }
 
       super.set(value);
@@ -895,7 +909,7 @@ public final class type {
     }
   }
 
-  public static class DOUBLE extends Numeric<Double> {
+  public static class DOUBLE extends ApproxNumeric<Double> {
     private final Double min;
     private final Double max;
 
@@ -1052,7 +1066,7 @@ public final class type {
     }
   }
 
-  public static final class FLOAT extends Numeric<Float> {
+  public static final class FLOAT extends ApproxNumeric<Float> {
     private final Float min;
     private final Float max;
 
@@ -1391,6 +1405,95 @@ public final class type {
     }
   }
 
+  public static final class SMALLINT extends PreciseNumeric<Short> {
+    private final Short min;
+    private final Short max;
+
+    protected SMALLINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
+      this.min = min;
+      this.max = max;
+    }
+
+    protected SMALLINT(final SMALLINT copy) {
+      super(copy, copy.unsigned(), copy.precision());
+      this.min = null;
+      this.max = null;
+    }
+
+    public SMALLINT(final int precision, final boolean unsigned) {
+      super(unsigned, (short)precision);
+      this.min = null;
+      this.max = null;
+    }
+
+    public SMALLINT(final int precision) {
+      this(precision, false);
+    }
+
+    public SMALLINT(final Short value) {
+      this(Numbers.precision(value));
+      set(value);
+    }
+
+    public final Short min() {
+      return min;
+    }
+
+    public final Short max() {
+      return max;
+    }
+
+    @Override
+    public final void set(final Short value) {
+      if (value != null) {
+        if (unsigned() && value > 127)
+          throw new IllegalArgumentException("value is out of range for UNSIGNED SMALLINT: " + value);
+
+        if (value > 255)
+          throw new IllegalArgumentException("value is out of range for SMALLINT: " + value);
+
+        if (value < -128)
+          throw new IllegalArgumentException("value is out of range for SMALLINT: " + value);
+      }
+
+      super.set(value);
+    }
+
+    @Override
+    protected final String declare(final DBVendor vendor) {
+      return vendor.getSQLSpec().declareInt8(precision(), unsigned());
+    }
+
+    @Override
+    protected final int sqlType() {
+      return Types.SMALLINT;
+    }
+
+    @Override
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
+      if (value != null)
+        statement.setShort(parameterIndex, value);
+      else
+        statement.setNull(parameterIndex, sqlType());
+    }
+
+    @Override
+    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
+      this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
+    }
+
+    @Override
+    protected final String serialize(final DBVendor vendor) throws IOException {
+      return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    public final SMALLINT clone() {
+      return new SMALLINT(this);
+    }
+  }
+
   public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
     protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
@@ -1491,95 +1594,6 @@ public final class type {
     @Override
     public final TIME clone() {
       return new TIME(this);
-    }
-  }
-
-  public static final class TINYINT extends PreciseNumeric<Short> {
-    private final Short min;
-    private final Short max;
-
-    protected TINYINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final boolean unsigned, final Short min, final Short max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned, precision);
-      this.min = min;
-      this.max = max;
-    }
-
-    protected TINYINT(final TINYINT copy) {
-      super(copy, copy.unsigned(), copy.precision());
-      this.min = null;
-      this.max = null;
-    }
-
-    public TINYINT(final int precision, final boolean unsigned) {
-      super(unsigned, (short)precision);
-      this.min = null;
-      this.max = null;
-    }
-
-    public TINYINT(final int precision) {
-      this(precision, false);
-    }
-
-    public TINYINT(final Short value) {
-      this(Numbers.precision(value));
-      set(value);
-    }
-
-    public final Short min() {
-      return min;
-    }
-
-    public final Short max() {
-      return max;
-    }
-
-    @Override
-    public final void set(final Short value) {
-      if (value != null) {
-        if (unsigned() && value > 127)
-          throw new IllegalArgumentException("value is out of range for UNSIGNED TINYINT: " + value);
-
-        if (value > 255)
-          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
-
-        if (value < -128)
-          throw new IllegalArgumentException("value is out of range for TINYINT: " + value);
-      }
-
-      super.set(value);
-    }
-
-    @Override
-    protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt8(precision(), unsigned());
-    }
-
-    @Override
-    protected final int sqlType() {
-      return Types.SMALLINT;
-    }
-
-    @Override
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setShort(parameterIndex, value);
-      else
-        statement.setNull(parameterIndex, sqlType());
-    }
-
-    @Override
-    protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
-    }
-
-    @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
-      return Serializer.getSerializer(vendor).serialize(this);
-    }
-
-    @Override
-    public final TINYINT clone() {
-      return new TINYINT(this);
     }
   }
 }
