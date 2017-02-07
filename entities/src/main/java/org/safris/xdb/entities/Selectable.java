@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,26 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities.model;
+package org.safris.xdb.entities;
 
-import org.safris.xdb.entities.Condition;
-import org.safris.xdb.entities.type;
-
-public interface expression {
-  public interface WHEN {
-    public <T>THEN THEN(final type.DataType<T> dataType);
-    public <T>THEN THEN(final T value);
-  }
-
-  public interface THEN {
-    public <T>THEN WHEN(final Condition<T> condition);
-    public <T>ELSE<T> ELSE(final type.DataType<T> dataType);
-    public <T>ELSE<T> ELSE(final T value);
-  }
-
-  public interface ELSE<T> extends CASE<T> {
-  }
-
-  public interface CASE<T> {
-  }
+public interface Selectable {
 }

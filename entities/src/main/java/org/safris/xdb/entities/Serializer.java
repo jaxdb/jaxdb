@@ -101,19 +101,26 @@ public abstract class Serializer {
     return "?";
   }
 
-  protected void serialize(final Case.CASE_WHEN caseWhen, final CaseCommand command, final Serialization serialization) {
-    // TODO
-    throw new UnsupportedOperationException();
+  public void serialize(final Case.Simple.CASE<?,?> case_, final Serialization serialization) throws IOException {
+    serialization.append("CASE ");
+    case_.variable.serialize(serialization);
   }
 
-  protected void serialize(final Case.THEN then, final CaseCommand command, final Serialization serialization) {
-    // TODO
-    throw new UnsupportedOperationException();
+  public void serialize(final Case.Search.WHEN<?> case_, final Serialization serialization) {
+    serialization.append("CASE");
   }
 
-  protected void serialize(final Case.ELSE<?> els, final CaseCommand command, final Serialization serialization) {
-    // TODO
-    throw new UnsupportedOperationException();
+  public void serialize(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Serialization serialization) throws IOException {
+    serialization.append(" WHEN ");
+    when.condition.serialize(serialization);
+    serialization.append(" THEN ");
+    then.value.serialize(serialization);
+  }
+
+  public void serialize(final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
+    serialization.append(" ELSE ");
+    _else.value.serialize(serialization);
+    serialization.append(" END");
   }
 
   protected void serialize(final Select.SELECT<?> select, final Serialization serialization) throws IOException {

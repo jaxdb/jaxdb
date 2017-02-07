@@ -44,6 +44,11 @@ abstract class ConditionWrapper<T> extends Condition<T> {
   }
 
   @Override
+  protected type.DataType<?> scaleTo(final type.DataType<?> dataType) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public final type.DataType<T> clone() {
     throw new UnsupportedOperationException();
   }

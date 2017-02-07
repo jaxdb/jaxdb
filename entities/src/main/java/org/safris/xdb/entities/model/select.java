@@ -27,11 +27,11 @@ public interface select {
   }
 
   public interface _LIMIT<T extends Subject<?>> {
-    public LIMIT<T> LIMIT(final int limit);
+    public LIMIT<T> LIMIT(final int rows);
   }
 
   public interface LIMIT<T extends Subject<?>> extends SELECT<T> {
-    public OFFSET<T> OFFSET(final int offset);
+    public OFFSET<T> OFFSET(final int rows);
   }
 
   public interface _ORDER_BY<T extends Subject<?>> {

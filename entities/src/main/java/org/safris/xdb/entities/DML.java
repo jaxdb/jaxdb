@@ -25,7 +25,7 @@ import java.util.Collection;
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Numbers;
 import org.safris.xdb.entities.model.delete;
-import org.safris.xdb.entities.model.expression;
+import org.safris.xdb.entities.model.case_;
 import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.entities.model.update;
@@ -782,8 +782,30 @@ public final class DML {
 
   /** CASE **/
 
-  public static <T>expression.WHEN CASE_WHEN(final Condition<T> condition) {
-    return new Case.CASE_WHEN(condition);
+  public static final class CASE {
+    public static <T>case_.search.WHEN<T> WHEN(final Condition<T> condition) {
+      return new Case.Search.WHEN<T>(null, condition);
+    }
+  }
+
+  public static case_.simple.CASE<byte[]> CASE(final type.BINARY binary) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static case_.simple.CASE<Boolean> CASE(final type.BOOLEAN bool) {
+    return new Case.Simple.CASE<Boolean,type.BOOLEAN>(null, bool);
+  }
+
+  public static <T extends Temporal>case_.simple.CASE<T> CASE(final type.Temporal<T> temporal) {
+    throw new UnsupportedOperationException();
+  }
+
+  public static <T>case_.simple.CASE<T> CASE(final type.Textual<T> textual) {
+    return new Case.Simple.CASE<T,type.Textual<T>>(null, textual);
+  }
+
+  public static case_.simple.CASE<Number> CASE(final type.Numeric<?> dataType) {
+    throw new UnsupportedOperationException();
   }
 
   /** DELETE **/

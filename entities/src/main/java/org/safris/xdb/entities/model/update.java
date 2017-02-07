@@ -26,7 +26,6 @@ public interface update {
   }
 
   public interface UPDATE_SET extends UPDATE {
-    public <T>SET SET(final type.DataType<T> set, final expression.CASE<T> to);
     public <T>SET SET(final type.DataType<? extends T> set, final type.DataType<? extends T> to);
     public <T>SET SET(final type.DataType<T> set, final T to);
     public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to);

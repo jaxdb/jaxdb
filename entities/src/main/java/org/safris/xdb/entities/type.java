@@ -134,13 +134,18 @@ public final class type {
     }
 
     @Override
+    protected DataType<?> scaleTo(final DataType<?> dataType) {
+      throw new UnsupportedOperationException();
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public final ARRAY<T> clone() {
       return new ARRAY<T>((Class<? extends DataType<T>>)dataType.getClass());
     }
   }
 
-  public static final class BIGINT extends PreciseNumeric<BigInteger> {
+  public static final class BIGINT extends ExactNumeric<BigInteger> {
     private static final BigInteger MIN = new BigInteger("-9223372036854775808");
     private static final BigInteger MAX_SIGNED = new BigInteger("9223372036854775807");
     private static final BigInteger MAX_UNSIGNED = new BigInteger("18446744073709551615");
@@ -237,6 +242,22 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(Math.max(precision(), decimal.precision() + 1), decimal.scale());
+      }
+
+      if (dataType instanceof type.ApproxNumeric)
+        return new type.DOUBLE();
+
+      if (dataType instanceof type.ExactNumeric)
+        return new type.BIGINT(Math.max(precision(), ((type.ExactNumeric<?>)dataType).precision() + 1));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final BIGINT clone() {
       return new BIGINT(this);
     }
@@ -244,28 +265,24 @@ public final class type {
 
   public static final class BINARY extends Serial<byte[]> {
     private final boolean varying;
-    private final short length;
 
     protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final int length, final boolean varying) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
-      this.length = (short)length;
     }
 
     protected BINARY(final BINARY copy) {
       super(copy);
       this.varying = copy.varying;
-      this.length = copy.length;
     }
 
     public BINARY(final int length, final boolean varying) {
-      super();
+      super(length);
       this.varying = varying;
-      this.length = (short)length;
     }
 
     public BINARY(final int length) {
-      this(length, true);
+      this(length, false);
     }
 
     public BINARY(final byte[] value) {
@@ -277,13 +294,9 @@ public final class type {
       return varying;
     }
 
-    public final short length() {
-      return length;
-    }
-
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareBinary(varying, length);
+      return vendor.getSQLSpec().declareBinary(varying, length());
     }
 
     @Override
@@ -313,6 +326,14 @@ public final class type {
     @Override
     protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.Serial)
+        return new type.BINARY(Math.max(length(), ((type.Serial<?>)dataType).length()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
@@ -382,6 +403,14 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.BLOB)
+        return new type.BLOB(Math.max(length(), ((type.BLOB)dataType).length()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final BLOB clone() {
       return new BLOB(this);
     }
@@ -434,6 +463,14 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.BOOLEAN)
+        return new type.BOOLEAN();
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final BOOLEAN clone() {
       return new BOOLEAN(this);
     }
@@ -458,7 +495,7 @@ public final class type {
     }
 
     public CHAR(final int length) {
-      this(length, true);
+      this(length, false);
     }
 
     public CHAR(final String value) {
@@ -566,6 +603,14 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.CLOB)
+        return new type.CLOB(Math.max(length(), ((type.CLOB)dataType).length()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final CLOB clone() {
       return new CLOB(this);
     }
@@ -620,6 +665,14 @@ public final class type {
     @Override
     protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.DATE)
+        return new type.DATE();
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
@@ -723,6 +776,11 @@ public final class type {
       return dataType;
     }
 
+    public final <E extends Enum<?>>type.ENUM<E> AS(final type.ENUM<E> dataType) {
+      dataType.wrapper(new As<T>(this, dataType));
+      return dataType;
+    }
+
     @Override
     protected void serialize(final Serialization serialization) throws IOException {
       Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
@@ -740,6 +798,7 @@ public final class type {
     protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
     protected abstract String serialize(final DBVendor vendor) throws IOException;
     protected abstract String declare(final DBVendor vendor);
+    protected abstract type.DataType<?> scaleTo(final type.DataType<?> dataType);
 
     @Override
     public abstract DataType<T> clone();
@@ -823,12 +882,20 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.DATETIME)
+        return new type.DATETIME(Math.max(precision(), ((type.DATETIME)dataType).precision()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public DATETIME clone() {
       return new DATETIME(this);
     }
   }
 
-  public static final class DECIMAL extends PreciseNumeric<BigDecimal> {
+  public static final class DECIMAL extends ExactNumeric<BigDecimal> {
     private final short scale;
     private final BigDecimal min;
     private final BigDecimal max;
@@ -901,6 +968,17 @@ public final class type {
     @Override
     protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.ApproxNumeric)
+        return new type.DECIMAL(precision() + 1, scale());
+
+      if (dataType instanceof type.ExactNumeric)
+        return new type.DECIMAL(Math.max(precision(), ((type.ExactNumeric<?>)dataType).precision()) + 1, scale());
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
@@ -977,6 +1055,19 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(decimal.precision() + 1, decimal.scale());
+      }
+
+      if (dataType instanceof type.Numeric)
+        return new type.DOUBLE();
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public DOUBLE clone() {
       return new DOUBLE(this);
     }
@@ -1003,7 +1094,7 @@ public final class type {
       this.enumType = copy.enumType;
     }
 
-    protected ENUM(final Class<T> enumType) {
+    public ENUM(final Class<T> enumType) {
       super(calcEnumLength(enumType));
       this.enumType = enumType;
     }
@@ -1134,6 +1225,22 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.FLOAT || dataType instanceof type.SMALLINT)
+        return new type.FLOAT();
+
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(decimal.precision(), decimal.scale());
+      }
+
+      if (dataType instanceof type.Numeric)
+        return new type.DOUBLE();
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final FLOAT clone() {
       return new FLOAT(this);
     }
@@ -1153,7 +1260,7 @@ public final class type {
     }
   }
 
-  public static final class INT extends PreciseNumeric<Long> {
+  public static final class INT extends ExactNumeric<Long> {
     private final Long min;
     private final Long max;
 
@@ -1237,12 +1344,31 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.ApproxNumeric)
+        return new type.DOUBLE();
+
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof type.BIGINT)
+        return new type.BIGINT(Math.max(precision(), ((type.BIGINT)dataType).precision()));
+
+      if (dataType instanceof type.ExactNumeric)
+        return new type.INT(Math.max(precision(), ((type.ExactNumeric<?>)dataType).precision()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final INT clone() {
       return new INT(this);
     }
   }
 
-  public static final class MEDIUMINT extends PreciseNumeric<Integer> {
+  public static final class MEDIUMINT extends ExactNumeric<Integer> {
     private final Integer min;
     private final Integer max;
 
@@ -1326,6 +1452,28 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.ApproxNumeric)
+        return new type.DOUBLE();
+
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      if (dataType instanceof type.INT)
+        return new type.INT(Math.max(precision(), ((type.INT)dataType).precision()));
+
+      if (dataType instanceof type.BIGINT)
+        return new type.BIGINT(Math.max(precision(), ((type.BIGINT)dataType).precision()));
+
+      if (dataType instanceof type.ExactNumeric)
+        return new type.MEDIUMINT(Math.max(precision(), ((type.ExactNumeric<?>)dataType).precision()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final MEDIUMINT clone() {
       return new MEDIUMINT(this);
     }
@@ -1364,22 +1512,22 @@ public final class type {
     }
   }
 
-  public static abstract class PreciseNumeric<T extends Number> extends Numeric<T> {
+  public static abstract class ExactNumeric<T extends Number> extends Numeric<T> {
     protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
 
     private final short precision;
 
-    protected PreciseNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned, final int precision) {
+    protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned, final int precision) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, unsigned);
       this.precision = (short)precision;
     }
 
-    protected PreciseNumeric(final Numeric<T> copy, final boolean unsigned, final int precision) {
+    protected ExactNumeric(final Numeric<T> copy, final boolean unsigned, final int precision) {
       super(copy, unsigned);
       this.precision = (short)precision;
     }
 
-    protected PreciseNumeric(final boolean unsigned, final int precision) {
+    protected ExactNumeric(final boolean unsigned, final int precision) {
       super(unsigned);
       this.precision = (short)precision;
       if (precision <= 0)
@@ -1392,20 +1540,29 @@ public final class type {
   }
 
   public static abstract class Serial<T> extends DataType<T> {
-    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+    private final short length;
+
+    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      this.length = (short)length;
     }
 
     protected Serial(final Serial<T> copy) {
       super(copy);
+      this.length = copy.length;
     }
 
-    protected Serial() {
+    protected Serial(final int length) {
       super();
+      this.length = (short)length;
+    }
+
+    public final short length() {
+      return length;
     }
   }
 
-  public static final class SMALLINT extends PreciseNumeric<Short> {
+  public static final class SMALLINT extends ExactNumeric<Short> {
     private final Short min;
     private final Short max;
 
@@ -1489,6 +1646,34 @@ public final class type {
     }
 
     @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.FLOAT)
+        return new type.FLOAT();
+
+      if (dataType instanceof type.DOUBLE)
+        return new type.DOUBLE();
+
+      if (dataType instanceof type.SMALLINT)
+        return new type.SMALLINT(Math.max(precision(), ((type.SMALLINT)dataType).precision()));
+
+      if (dataType instanceof type.MEDIUMINT)
+        return new type.MEDIUMINT(Math.max(precision(), ((type.MEDIUMINT)dataType).precision()));
+
+      if (dataType instanceof type.INT)
+        return new type.INT(Math.max(precision(), ((type.INT)dataType).precision()));
+
+      if (dataType instanceof type.BIGINT)
+        return new type.BIGINT(Math.max(precision(), ((type.BIGINT)dataType).precision()));
+
+      if (dataType instanceof type.DECIMAL) {
+        final type.DECIMAL decimal = (type.DECIMAL)dataType;
+        return new type.DECIMAL(Math.max(precision(), decimal.precision()), decimal.scale());
+      }
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
+
+    @Override
     public final SMALLINT clone() {
       return new SMALLINT(this);
     }
@@ -1529,6 +1714,14 @@ public final class type {
     public final short length() {
       return length;
     }
+
+    @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.Textual)
+        return new type.CHAR(Math.max(length(), ((type.Textual<?>)dataType).length()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
+    }
   }
 
   public static final class TIME extends Temporal<LocalTime> {
@@ -1562,6 +1755,10 @@ public final class type {
       set(value);
     }
 
+    public final short precision() {
+      return precision;
+    }
+
     @Override
     protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareTime(precision);
@@ -1589,6 +1786,14 @@ public final class type {
     @Override
     protected final String serialize(final DBVendor vendor) throws IOException {
       return Serializer.getSerializer(vendor).serialize(this);
+    }
+
+    @Override
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
+      if (dataType instanceof type.TIME)
+        return new type.DATETIME(Math.max(precision(), ((type.TIME)dataType).precision()));
+
+      throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override

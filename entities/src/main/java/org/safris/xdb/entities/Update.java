@@ -22,7 +22,7 @@ import java.sql.SQLException;
 import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
-import org.safris.xdb.entities.model.expression;
+import org.safris.xdb.entities.model.case_;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.entities.model.update;
 import org.safris.xdb.schema.DBVendor;
@@ -78,11 +78,6 @@ final class Update extends SQLStatement {
     }
 
     @Override
-    public final <T>SET SET(final type.DataType<T> set, final expression.CASE<T> to) {
-      return new SET(this, set, to);
-    }
-
-    @Override
     public final <T>SET SET(final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
       return new SET(this, set, to);
     }
@@ -121,7 +116,7 @@ final class Update extends SQLStatement {
     protected final Serializable to;
 
     @SuppressWarnings("unchecked")
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final expression.CASE<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final case_.CASE<? extends T> to) {
       super(parent);
       this.set = set;
       this.to = (Provision<type.DataType<T>>)to;

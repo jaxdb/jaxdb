@@ -17,41 +17,62 @@
 package org.safris.xdb.entities;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.safris.xdb.entities.Case.CASE_WHEN;
 import org.safris.xdb.entities.Case.ELSE;
+import org.safris.xdb.entities.Case.Search;
+import org.safris.xdb.entities.Case.Simple;
 import org.safris.xdb.entities.Case.THEN;
 
 final class CaseCommand extends Command {
-  private CASE_WHEN caseWhen;
-  private THEN then;
-  private ELSE<?> els;
+  private final Simple.CASE<?,?> simpleCase;
+  private final Search.WHEN<?> searchCase;
+  private List<THEN<?,?>> then = new ArrayList<THEN<?,?>>();
+  private ELSE<?> _else;
 
-  protected CASE_WHEN caseWhen() {
-    return caseWhen;
+  protected CaseCommand(final Simple.CASE<?,?> simpleCase) {
+    this.simpleCase = simpleCase;
+    this.searchCase = null;
   }
 
-  protected void add(final CASE_WHEN caseWhen) {
-    this.caseWhen = caseWhen;
+  protected CaseCommand(final Search.WHEN<?> searchCase) {
+    this.searchCase = searchCase;
+    this.simpleCase = null;
   }
 
-  protected THEN then() {
+  protected final List<THEN<?,?>> then() {
     return then;
   }
 
-  protected void add(final THEN then) {
-    this.then = then;
+  protected final void add(final THEN<?,?> then) {
+    this.then.add(then);
   }
 
-  protected ELSE<?> els() {
-    return els;
+  protected final ELSE<?> else_() {
+    return _else;
   }
 
-  protected void add(final ELSE<?> els) {
-    this.els = els;
+  protected final void add(final ELSE<?> _else) {
+    this._else = _else;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
+  @SuppressWarnings("rawtypes")
+  protected final void serialize(final Serialization serialization) throws IOException {
+    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+    if (simpleCase != null)
+      serializer.serialize(simpleCase, serialization);
+    else if (searchCase != null)
+      serializer.serialize(searchCase, serialization);
+    else
+      throw new UnsupportedOperationException("Both simple and search CASEs should not be null");
+
+    for (int i = 0; i < then().size(); i++) {
+      final THEN<?,?> then = then().get(i);
+      serializer.serialize((Case.WHEN)then.parent(), then, serialization);
+    }
+
+    serializer.serialize(else_(), serialization);
   }
 }
