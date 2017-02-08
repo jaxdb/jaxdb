@@ -34,7 +34,7 @@
   
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="xde:column">
+      <xs:extension base="xds:column">
         <xs:attribute name="generateOnInsert">
           <xs:simpleType>
             <xs:restriction base="xs:string">
@@ -42,13 +42,16 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <xs:attribute ref="xde:checkOnUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
@@ -56,21 +59,25 @@
   
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
   <!-- numeric data -->
   
-  <xs:complexType name="integer">
+  <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
-      <xs:extension base="xde:column">
+      <xs:extension base="xds:integer">
         <xs:attribute name="generateOnUpdate">
           <xs:simpleType>
             <xs:restriction base="xs:string">
@@ -78,6 +85,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
+        <xs:attribute ref="xde:checkOnUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -86,7 +94,9 @@
   
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
@@ -94,7 +104,9 @@
   
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
@@ -102,7 +114,8 @@
   
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="xde:column">
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="xde:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="xde:timestamp"/>
       </xs:extension>
@@ -111,7 +124,8 @@
   
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="xde:column">
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="xde:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="xde:timestamp"/>
       </xs:extension>
@@ -120,7 +134,8 @@
   
   <xs:complexType name="dateTime">
     <xs:complexContent>
-      <xs:extension base="xde:column">
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="xde:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="xde:timestamp"/>
       </xs:extension>
@@ -131,7 +146,9 @@
   
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
@@ -139,29 +156,25 @@
   
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="xde:column"/>
+      <xs:extension base="xds:column">
+        <xs:attribute ref="xde:checkOnUpdate"/>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
     
   <!-- containers -->
   
-  <xs:complexType name="column">
-    <xs:complexContent>
-      <xs:extension base="xds:column">
-        <xs:attribute name="checkOnUpdate">
-          <xs:simpleType>
-            <xs:list>
-              <xs:simpleType>
-                <xs:restriction base="xs:NCName">
-                  <xs:enumeration value="EQUALS"/>
-                </xs:restriction>
-              </xs:simpleType>
-            </xs:list>
-          </xs:simpleType>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
+  <xs:attribute name="checkOnUpdate">
+    <xs:simpleType>
+      <xs:list>
+        <xs:simpleType>
+          <xs:restriction base="xs:NCName">
+            <xs:enumeration value="EQUALS"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:list>
+    </xs:simpleType>
+  </xs:attribute>
   
   <xs:complexType name="table">
     <xs:complexContent>
