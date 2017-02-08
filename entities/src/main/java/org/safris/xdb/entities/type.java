@@ -19,6 +19,7 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -45,7 +46,7 @@ import org.safris.commons.util.Formats;
 import org.safris.xdb.schema.DBVendor;
 
 public final class type {
-  protected static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
+  private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
 
   static {
     final Class<?>[] classes = type.class.getClasses();
@@ -59,6 +60,12 @@ public final class type {
           System.out.println("XXX");
       }
     }
+  }
+
+  protected static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) throws NoSuchMethodException {
+    Class<?> dataTypeClass;
+    while ((dataTypeClass = typeToClass.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);
+    return dataTypeClass.getConstructor(genericType);
   }
 
   public static abstract class ApproxNumeric<T extends Number> extends Numeric<T> {
@@ -190,15 +197,17 @@ public final class type {
     }
 
     @Override
+    protected final short scale() {
+      return 0;
+    }
+
+    @Override
     public final void set(final BigInteger value) {
       if (value != null) {
-        if (unsigned() && value.compareTo(MAX_UNSIGNED) > 0)
+        if (unsigned() && (value.signum() < 0 || 0 < value.compareTo(MAX_UNSIGNED)))
           throw new IllegalArgumentException("value is out of range for UNSIGNED BIGINT: " + value);
 
-        if (value.compareTo(MAX_SIGNED) > 0)
-          throw new IllegalArgumentException("value is out of range for BIGINT: " + value);
-
-        if (value.compareTo(MIN) < 0)
+        if (!unsigned() && (value.compareTo(MIN) < 0 || 0 < value.compareTo(MAX_SIGNED)))
           throw new IllegalArgumentException("value is out of range for BIGINT: " + value);
       }
 
@@ -232,6 +241,8 @@ public final class type {
         this.value = (BigInteger)value;
       else if (value instanceof Long)
         this.value = BigInteger.valueOf((Long)value);
+      else if (value instanceof Integer)
+        this.value = BigInteger.valueOf((Integer)value);
       else
         throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
     }
@@ -693,16 +704,11 @@ public final class type {
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected static <T,V extends DataType<T>>V wrap(final T value) {
       try {
-        final V dataType;
-        if (value.getClass().isEnum()) {
-          dataType = (V)new ENUM(value.getClass());
-        }
-        else {
-          dataType = (V)org.safris.xdb.entities.type.typeToClass.get(value.getClass()).getConstructor(value.getClass()).newInstance(value);
-        }
+        if (value.getClass().isEnum())
+          return (V)new ENUM((Enum)value);
 
-        dataType.set(value);
-        return dataType;
+        final Object scaledValue = value instanceof Number ? Numeric.upscaleValue((Number)value) : value;
+        return (V)lookupDataTypeConstructor(scaledValue.getClass()).newInstance(scaledValue);
       }
       catch (final Exception e) {
         throw new UnsupportedOperationException(e);
@@ -930,7 +936,8 @@ public final class type {
       set(value);
     }
 
-    public short scale() {
+    @Override
+    public final short scale() {
       return scale;
     }
 
@@ -1016,6 +1023,16 @@ public final class type {
 
     public DOUBLE() {
       this(false);
+    }
+
+    @Override
+    protected final short precision() {
+      return 19;
+    }
+
+    @Override
+    protected final short scale() {
+      return 16;
     }
 
     public final Double min() {
@@ -1197,6 +1214,16 @@ public final class type {
     }
 
     @Override
+    protected final short precision() {
+      return 10;
+    }
+
+    @Override
+    protected final short scale() {
+      return 16;
+    }
+
+    @Override
     protected final String declare(final DBVendor vendor) {
       return vendor.getSQLSpec().declareFloat(false, unsigned());
     }
@@ -1287,7 +1314,7 @@ public final class type {
     }
 
     public INT(final Long value) {
-      this(Numbers.precision(value));
+      this(Numbers.precision(value), value >= 0);
       set(value);
     }
 
@@ -1300,15 +1327,17 @@ public final class type {
     }
 
     @Override
+    protected final short scale() {
+      return 0;
+    }
+
+    @Override
     public final void set(final Long value) {
       if (value != null) {
-        if (unsigned() && value > 2147483647)
+        if (unsigned() && (value < 0 || 4294967295l < value))
           throw new IllegalArgumentException("value is out of range for UNSIGNED INT: " + value);
 
-        if (value > 4294967295l)
-          throw new IllegalArgumentException("value is out of range for INT: " + value);
-
-        if (value < -2147483648)
+        if (!unsigned() && (value < -2147483648 || 2147483647 < value))
           throw new IllegalArgumentException("value is out of range for INT: " + value);
       }
 
@@ -1395,7 +1424,7 @@ public final class type {
     }
 
     public MEDIUMINT(final Integer value) {
-      this(Numbers.precision(value));
+      this(Numbers.precision(value), value >= 0);
       set(value);
     }
 
@@ -1408,15 +1437,17 @@ public final class type {
     }
 
     @Override
+    protected final short scale() {
+      return 0;
+    }
+
+    @Override
     public final void set(final Integer value) {
       if (value != null) {
-        if (unsigned() && value > 8388607)
+        if (unsigned() && (value < 0 || 16777215 < value))
           throw new IllegalArgumentException("value is out of range for UNSIGNED MEDIUMINT: " + value);
 
-        if (value > 16777215)
-          throw new IllegalArgumentException("value is out of range for MEDIUMINT: " + value);
-
-        if (value < -8388608)
+        if (!unsigned() && (value < -8388608 || 8388607 < value))
           throw new IllegalArgumentException("value is out of range for MEDIUMINT: " + value);
       }
 
@@ -1482,6 +1513,23 @@ public final class type {
   public static abstract class Numeric<T extends Number> extends DataType<T> {
     protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
 
+    protected static Number upscaleValue(final Number value) {
+      if (value instanceof BigInteger || value instanceof BigDecimal || value instanceof Float || value instanceof Double)
+        return value;
+
+      final long number = value.longValue();
+      if (number < -2147483648 || 4294967295l < number)
+        return BigInteger.valueOf(number);
+
+      if (number < -8388608 || 16777215 < number)
+        return number;
+
+      if (number < -128 || 255 < number)
+        return Integer.valueOf((int)number);
+
+      return Short.valueOf((short)number);
+    }
+
     private final boolean unsigned;
 
     protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean unsigned) {
@@ -1510,6 +1558,9 @@ public final class type {
 
       super.set(value);
     }
+
+    protected abstract short precision();
+    protected abstract short scale();
   }
 
   public static abstract class ExactNumeric<T extends Number> extends Numeric<T> {
@@ -1534,6 +1585,7 @@ public final class type {
         throw new IllegalArgumentException("precision must be >= 1");
     }
 
+    @Override
     public final short precision() {
       return precision;
     }
@@ -1589,7 +1641,7 @@ public final class type {
     }
 
     public SMALLINT(final Short value) {
-      this(Numbers.precision(value));
+      this(Numbers.precision(value), value >= 0);
       set(value);
     }
 
@@ -1602,15 +1654,17 @@ public final class type {
     }
 
     @Override
+    protected final short scale() {
+      return 0;
+    }
+
+    @Override
     public final void set(final Short value) {
       if (value != null) {
-        if (unsigned() && value > 127)
+        if (unsigned() && (value < 0 || 255 < value))
           throw new IllegalArgumentException("value is out of range for UNSIGNED SMALLINT: " + value);
 
-        if (value > 255)
-          throw new IllegalArgumentException("value is out of range for SMALLINT: " + value);
-
-        if (value < -128)
+        if (!unsigned() && (value < -128 && 127 < value))
           throw new IllegalArgumentException("value is out of range for SMALLINT: " + value);
       }
 

@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-abstract class Keyword<T extends Subject<?>> extends Provision<T> {
+abstract class Keyword<T extends Subject<?>> extends Provision {
   protected static Keyword<?> getParentRoot(Keyword<?> keyword) {
     while (keyword.parent() != null)
       keyword = keyword.parent();

@@ -39,7 +39,7 @@
   </table>
   
   <table name="customer" extends="address">
-    <column name="customer_number" xsi:type="integer" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="company_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
@@ -49,8 +49,8 @@
     <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="phone" xsi:type="integer" precision="19" unsigned="true" null="false"/>
-    <column name="sales_employee_number" xsi:type="integer" precision="11">
+    <column name="phone" xsi:type="bigint" precision="19" unsigned="true" null="false"/>
+    <column name="sales_employee_number" xsi:type="bigint" precision="11">
       <foreignKey references="employee" column="employee_number"/>
     </column>
     <column name="credit_limit" xsi:type="decimal" precision="10" scale="2" unsigned="true"/>
@@ -62,21 +62,21 @@
   </table>
   
   <table name="employee">
-    <column name="employee_number" xsi:type="integer" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="employee_number" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="first_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
     <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="extension" xsi:type="integer" precision="4" unsigned="true" null="false"/>
+    <column name="extension" xsi:type="mediumint" precision="4" unsigned="true" null="false"/>
     <column name="email" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="office_code" xsi:type="integer" precision="11" unsigned="true" null="false">
+    <column name="office_code" xsi:type="bigint" precision="11" unsigned="true" null="false">
       <foreignKey references="office" column="office_code"/>
     </column>
-    <column name="reports_to" xsi:type="integer" precision="11">
+    <column name="reports_to" xsi:type="bigint" precision="11">
       <foreignKey references="employee" column="employee_number"/>
     </column>
     <column name="job_title" xsi:type="char" varying="true" length="64" null="false">
@@ -90,8 +90,8 @@
   </table>
   
   <table name="office" extends="address">
-    <column name="office_code" xsi:type="integer" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="phone" xsi:type="integer" precision="19" unsigned="true" null="false"/>
+    <column name="office_code" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="phone" xsi:type="bigint" precision="19" unsigned="true" null="false"/>
     <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
     <constraints>
       <primaryKey>
@@ -101,15 +101,15 @@
   </table>
   
   <table name="purchase_detail">
-    <column name="purchase_number" xsi:type="integer" precision="8" unsigned="true" null="false">
+    <column name="purchase_number" xsi:type="mediumint" precision="8" unsigned="true" null="false">
       <foreignKey references="purchase" column="purchase_number"/>
     </column>
     <column name="product_code" xsi:type="char" length="8" null="false">
       <foreignKey references="product" column="code"/>
     </column>
-    <column name="quantity" xsi:type="integer" precision="11" unsigned="true" null="false"/>
+    <column name="quantity" xsi:type="bigint" precision="11" unsigned="true" null="false"/>
     <column name="price_each" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
-    <column name="purchase_line_number" xsi:type="integer" precision="6" unsigned="true" null="false"/>
+    <column name="purchase_line_number" xsi:type="mediumint" precision="6" unsigned="true" null="false"/>
     <constraints>
       <primaryKey>
         <column name="purchase_number"/>
@@ -119,7 +119,7 @@
   </table>
   
   <table name="purchase">
-    <column name="purchase_number" xsi:type="integer" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="purchase_number" xsi:type="mediumint" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="purchase_date" xsi:type="date" null="false"/>
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
@@ -127,7 +127,7 @@
     <column name="comments" xsi:type="char" varying="true" length="4000">
       <check operator="ne" condition=""/>
     </column>
-    <column name="customer_number" xsi:type="integer" precision="11" unsigned="true" null="false">
+    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false">
       <foreignKey references="customer" column="customer_number"/>
     </column>
     <constraints>
@@ -138,7 +138,7 @@
   </table>
   
   <table name="payment">
-    <column name="customer_number" xsi:type="integer" precision="11" unsigned="true" null="false">
+    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false">
       <foreignKey references="customer" column="customer_number"/>
     </column>
     <column name="check_number" xsi:type="char" varying="true" length="32" null="false">
@@ -188,7 +188,7 @@
     <column name="description" xsi:type="char" varying="true" length="4096" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="quantity_in_stock" xsi:type="integer" precision="6" unsigned="true" null="false"/>
+    <column name="quantity_in_stock" xsi:type="mediumint" precision="6" unsigned="true" null="false"/>
     <column name="price" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
     <column name="msrp" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
     <constraints>

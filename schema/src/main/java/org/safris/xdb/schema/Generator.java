@@ -33,6 +33,7 @@ import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
 import org.safris.xdb.schema.standard.ReservedWords;
 import org.safris.xdb.schema.standard.SQLStandard;
+import org.safris.xdb.xds.xe.$xds_bigint;
 import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
@@ -49,8 +50,11 @@ import org.safris.xdb.xds.xe.$xds_decimal;
 import org.safris.xdb.xds.xe.$xds_enum;
 import org.safris.xdb.xds.xe.$xds_float;
 import org.safris.xdb.xds.xe.$xds_foreignKey;
+import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_mediumint;
 import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_smallint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 import org.safris.xdb.xds.xe.xds_schema;
@@ -144,9 +148,21 @@ public final class Generator extends BaseGenerator {
       final $xds_blob type = ($xds_blob)column;
       ddl.append(vendor.getSQLSpec().declareBlob(type._length$().text()));
     }
-    else if (column instanceof $xds_integer) {
-      final $xds_integer type = ($xds_integer)column;
-      ddl.append(vendor.getSQLSpec().declareInteger(type._precision$().text().shortValue(), type._unsigned$().text(), type._min$().text(), type._max$().text()));
+    else if (column instanceof $xds_smallint) {
+      final $xds_smallint type = ($xds_smallint)column;
+      ddl.append(vendor.getSQLSpec().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
+    }
+    else if (column instanceof $xds_mediumint) {
+      final $xds_mediumint type = ($xds_mediumint)column;
+      ddl.append(vendor.getSQLSpec().declareInt24(type._precision$().text().shortValue(), type._unsigned$().text()));
+    }
+    else if (column instanceof $xds_int) {
+      final $xds_int type = ($xds_int)column;
+      ddl.append(vendor.getSQLSpec().declareInt32(type._precision$().text().shortValue(), type._unsigned$().text()));
+    }
+    else if (column instanceof $xds_bigint) {
+      final $xds_bigint type = ($xds_bigint)column;
+      ddl.append(vendor.getSQLSpec().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_float) {
       final $xds_float type = ($xds_float)column;
@@ -318,9 +334,29 @@ public final class Generator extends BaseGenerator {
         String minCheck = null;
         String maxCheck = null;
         if (column instanceof $xds_integer) {
-          final $xds_integer type = ($xds_integer)column;
-          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
-          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+          if (column instanceof $xds_smallint) {
+            final $xds_smallint type = ($xds_smallint)column;
+            minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+            maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+          }
+          else if (column instanceof $xds_mediumint) {
+            final $xds_mediumint type = ($xds_mediumint)column;
+            minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+            maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+          }
+          else if (column instanceof $xds_int) {
+            final $xds_int type = ($xds_int)column;
+            minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+            maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+          }
+          else if (column instanceof $xds_bigint) {
+            final $xds_bigint type = ($xds_bigint)column;
+            minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+            maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+          }
+          else {
+            throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
+          }
         }
         else if (column instanceof $xds_float) {
           final $xds_float type = ($xds_float)column;

@@ -19,7 +19,7 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 
 public class Cast {
-  protected static final class AS extends Provision<Subject<?>> {
+  protected static final class AS extends Provision {
     protected final type.DataType<?> castAs;
     protected final type.DataType<?> dataType;
     protected final Integer length;

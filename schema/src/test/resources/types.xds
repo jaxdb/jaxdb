@@ -19,21 +19,21 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://xdb.safris.org/xds.xsd http://xdb.safris.org/xds.xsd">
   <table name="type">
-    <column name="type_bigint" xsi:type="integer" precision="19"/>
-    <column name="type_binary" xsi:type="binary" varying="true" length="255"/>
-    <column name="type_blob" xsi:type="blob" length="255"/>
-    <column name="type_boolean" xsi:type="boolean"/>
-    <column name="type_char" xsi:type="char" varying="true" length="255"/>
-    <column name="type_clob" xsi:type="clob" length="255"/>
-    <column name="type_date" xsi:type="date"/>
-    <column name="type_datetime" xsi:type="dateTime"/>
-    <column name="type_decimal" xsi:type="decimal" precision="10" scale="3"/>
-    <column name="type_double" xsi:type="float" double="true"/>
-    <column name="type_enum" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
-    <column name="type_float" xsi:type="float"/>
-    <column name="type_long" xsi:type="integer" precision="10"/>
-    <column name="type_mediumint" xsi:type="integer" precision="5"/>
-    <column name="type_smallint" xsi:type="integer" precision="3"/>
-    <column name="type_time" xsi:type="time"/>
+    <column name="bigint_type" xsi:type="bigint" precision="19"/>
+    <column name="binary_type" xsi:type="binary" varying="true" length="255"/>
+    <column name="blob_type" xsi:type="blob" length="255"/>
+    <column name="boolean_type" xsi:type="boolean"/>
+    <column name="char_type" xsi:type="char" varying="true" length="255"/>
+    <column name="clob_type" xsi:type="clob" length="255"/>
+    <column name="date_type" xsi:type="date"/>
+    <column name="datetime_type" xsi:type="dateTime"/>
+    <column name="decimal_type" xsi:type="decimal" precision="10" scale="3"/>
+    <column name="double_type" xsi:type="float" double="true"/>
+    <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
+    <column name="float_type" xsi:type="float"/>
+    <column name="int_type" xsi:type="int" precision="10"/>
+    <column name="mediumint_type" xsi:type="mediumint" precision="8"/>
+    <column name="smallint_type" xsi:type="smallint" precision="3"/>
+    <column name="time_type" xsi:type="time"/>
   </table>
 </schema>

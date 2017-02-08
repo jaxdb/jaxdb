@@ -24,8 +24,8 @@ import java.util.Collection;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Numbers;
-import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.entities.model.case_;
+import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.entities.model.update;
@@ -789,23 +789,24 @@ public final class DML {
   }
 
   public static case_.simple.CASE<byte[]> CASE(final type.BINARY binary) {
-    throw new UnsupportedOperationException();
+    return new Case.Simple.CASE<byte[],type.BINARY>(binary);
   }
 
   public static case_.simple.CASE<Boolean> CASE(final type.BOOLEAN bool) {
-    return new Case.Simple.CASE<Boolean,type.BOOLEAN>(null, bool);
+    return new Case.Simple.CASE<Boolean,type.BOOLEAN>(bool);
   }
 
   public static <T extends Temporal>case_.simple.CASE<T> CASE(final type.Temporal<T> temporal) {
-    throw new UnsupportedOperationException();
+    return new Case.Simple.CASE<T,type.Temporal<T>>(temporal);
   }
 
   public static <T>case_.simple.CASE<T> CASE(final type.Textual<T> textual) {
-    return new Case.Simple.CASE<T,type.Textual<T>>(null, textual);
+    return new Case.Simple.CASE<T,type.Textual<T>>(textual);
   }
 
-  public static case_.simple.CASE<Number> CASE(final type.Numeric<?> dataType) {
-    throw new UnsupportedOperationException();
+  @SuppressWarnings("unchecked")
+  public static <T extends Number>case_.simple.CASE<T> CASE(final type.Numeric<?> numeric) {
+    return new Case.Simple.CASE<T,type.Numeric<T>>((type.Numeric<T>)numeric);
   }
 
   /** DELETE **/

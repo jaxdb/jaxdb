@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.safris.xdb.schema.SQLDataTypes;
+import org.safris.xdb.xds.xe.$xds_bigint;
 import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
@@ -32,8 +33,11 @@ import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
 import org.safris.xdb.xds.xe.$xds_enum;
 import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_mediumint;
 import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_smallint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 
@@ -121,13 +125,42 @@ public abstract class SQLSpec {
     }
 
     if (column instanceof $xds_integer) {
-      final $xds_integer type = ($xds_integer)column;
-      if (type._default$().isNull())
+      final BigInteger defalt;
+      final Integer precision;
+      final boolean unsigned;
+      if (column instanceof $xds_smallint) {
+        final $xds_smallint type = ($xds_smallint)column;
+        defalt = type._default$().text();
+        precision = type._precision$().text().intValue();
+        unsigned = type._unsigned$().text();
+      }
+      else if (column instanceof $xds_mediumint) {
+        final $xds_mediumint type = ($xds_mediumint)column;
+        defalt = type._default$().text();
+        precision = type._precision$().text().intValue();
+        unsigned = type._unsigned$().text();
+      }
+      else if (column instanceof $xds_int) {
+        final $xds_int type = ($xds_int)column;
+        defalt = type._default$().text();
+        precision = type._precision$().text().intValue();
+        unsigned = type._unsigned$().text();
+      }
+      else if (column instanceof $xds_bigint) {
+        final $xds_bigint type = ($xds_bigint)column;
+        defalt = type._default$().text();
+        precision = type._precision$().text().intValue();
+        unsigned = type._unsigned$().text();
+      }
+      else {
+        throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
+      }
+
+      if (defalt == null)
         return null;
 
-      final BigInteger defalt = type._default$().text();
-      checkNumericDefault(type, defalt.toString(), defalt.compareTo(BigInteger.ZERO) >= 0, type._precision$().text(), type._unsigned$().text());
-      return String.valueOf(type._default$().text());
+      checkNumericDefault(column, defalt.toString(), defalt.compareTo(BigInteger.ZERO) >= 0, precision, unsigned);
+      return String.valueOf(defalt);
     }
 
     if (column instanceof $xds_float) {
@@ -144,7 +177,7 @@ public abstract class SQLSpec {
       if (type._default$().isNull())
         return null;
 
-      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text(), type._unsigned$().text());
+      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text().intValue(), type._unsigned$().text());
       return type._default$().text().toString();
     }
 
@@ -233,23 +266,6 @@ public abstract class SQLSpec {
   public abstract String declareTime(final short precision);
   public abstract String declareInterval();
   public abstract String declareEnum(final $xds_table table, final $xds_enum type);
-
-  public final String declareInteger(final short precision, final boolean unsigned, final BigInteger min, final BigInteger max) {
-    final int noBytes = SQLDataTypes.getNumericByteCount(precision, false, min, max);
-    if (noBytes == 1) // 2^8 = 256
-      return declareInt8(precision, unsigned);
-
-    if (noBytes == 2) // 2^16 = 65536
-      return declareInt16(precision, unsigned);
-
-    if (noBytes == 3) // 2^24 = 16777216
-      return declareInt24(precision, unsigned);
-
-    if (noBytes == 4) // 2^32 = 4294967296
-      return declareInt32(precision, unsigned);
-
-    return declareInt64(precision, unsigned);
-  }
 
   public abstract String declareInt8(final short precision, final boolean unsigned);
   public abstract String declareInt16(final short precision, final boolean unsigned);

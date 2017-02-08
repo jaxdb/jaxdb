@@ -16,5 +16,5 @@
 
 package org.safris.xdb.entities;
 
-abstract class Provision<T extends Subject<?>> extends Serializable {
+abstract class Provision extends Serializable {
 }

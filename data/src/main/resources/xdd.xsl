@@ -249,9 +249,6 @@
       <xsl:if test="@xsi:type='dateTime'">
         <xsl:attribute name="type">xdd:dateTime</xsl:attribute>
       </xsl:if>
-      <xsl:if test="@xsi:type='float'">
-        <xsl:attribute name="type">xdd:float</xsl:attribute>
-      </xsl:if>
       <xsl:if test="@xsi:type='time'">
         <xsl:attribute name="type">xdd:time</xsl:attribute>
       </xsl:if>
@@ -293,6 +290,31 @@
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
+      <xsl:if test="@xsi:type='float'">
+        <xs:simpleType>
+          <xs:restriction base="xdd:float">
+            <xsl:if test="@max">
+              <xs:maxInclusive>
+                <xsl:attribute name="value">
+                  <xsl:value-of select="@max"/>
+                </xsl:attribute>
+              </xs:maxInclusive>
+            </xsl:if>
+            <xsl:choose>
+              <xsl:when test="@min">
+                <xs:minInclusive>
+                  <xsl:attribute name="value">
+                    <xsl:value-of select="@min"/>
+                  </xsl:attribute>
+                </xs:minInclusive>
+              </xsl:when>
+              <xsl:when test="not(@unsigned = 'true')">
+                <xs:minInclusive value="0"/>
+              </xsl:when>
+            </xsl:choose>
+          </xs:restriction>
+        </xs:simpleType>
+      </xsl:if>
       <xsl:if test="@xsi:type='decimal'">
         <xs:simpleType>
           <xs:restriction base="xdd:decimal">
@@ -303,18 +325,32 @@
             </xs:fractionDigits>
             <xs:maxInclusive>
               <xsl:attribute name="value">
-                <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                <xsl:choose>
+                  <xsl:when test="@max">
+                    <xsl:value-of select="@max"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:attribute>
             </xs:maxInclusive>
             <xs:minInclusive>
               <xsl:attribute name="value">
                 <xsl:choose>
-                  <xsl:when test="not(@unsigned='true')">
-                    <xsl:text>-</xsl:text>
-                    <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                  <xsl:when test="@min">
+                    <xsl:value-of select="@min"/>
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:value-of select="0"/>
+                    <xsl:choose>
+                      <xsl:when test="not(@unsigned='true')">
+                        <xsl:text>-</xsl:text>
+                        <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="0"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:attribute>
@@ -335,23 +371,37 @@
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
-      <xsl:if test="@xsi:type='integer'">
+      <xsl:if test="@xsi:type='smallint' or @xsi:type='mediumint' or @xsi:type='int' or @xsi:type='bigint'">
         <xs:simpleType>
           <xs:restriction base="xdd:integer">
             <xs:maxInclusive>
               <xsl:attribute name="value">
-                <xsl:value-of select="function:precision-scale(@precision)"/>
+                <xsl:choose>
+                  <xsl:when test="@max">
+                    <xsl:value-of select="@max"/>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:value-of select="function:precision-scale(@precision)"/>
+                  </xsl:otherwise>
+                </xsl:choose>
               </xsl:attribute>
             </xs:maxInclusive>
             <xs:minInclusive>
               <xsl:attribute name="value">
                 <xsl:choose>
-                  <xsl:when test="not(@unsigned='true')">
-                    <xsl:text>-</xsl:text>
-                    <xsl:value-of select="function:precision-scale(@precision)"/>
+                  <xsl:when test="@min">
+                    <xsl:value-of select="@min"/>
                   </xsl:when>
                   <xsl:otherwise>
-                    <xsl:value-of select="0"/>
+                    <xsl:choose>
+                      <xsl:when test="not(@unsigned='true')">
+                        <xsl:text>-</xsl:text>
+                        <xsl:value-of select="function:precision-scale(@precision)"/>
+                      </xsl:when>
+                      <xsl:otherwise>
+                        <xsl:value-of select="0"/>
+                      </xsl:otherwise>
+                    </xsl:choose>
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:attribute>

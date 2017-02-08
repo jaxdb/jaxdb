@@ -39,8 +39,9 @@ import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.entities.Schema;
 import org.safris.xdb.entities.type;
-import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.schema.spec.SQLSpec;
+import org.safris.xdb.xde.xe.$xde_integer;
+import org.safris.xdb.xds.xe.$xds_bigint;
 import org.safris.xdb.xds.xe.$xds_binary;
 import org.safris.xdb.xds.xe.$xds_blob;
 import org.safris.xdb.xds.xe.$xds_boolean;
@@ -53,8 +54,11 @@ import org.safris.xdb.xds.xe.$xds_dateTime;
 import org.safris.xdb.xds.xe.$xds_decimal;
 import org.safris.xdb.xds.xe.$xds_enum;
 import org.safris.xdb.xds.xe.$xds_float;
+import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
+import org.safris.xdb.xds.xe.$xds_mediumint;
 import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_smallint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 import org.safris.xdb.xds.xe.xds_schema;
@@ -156,30 +160,34 @@ public class Generator {
         return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
       }
 
-      if (column instanceof $xds_integer) {
-        final $xds_integer type = ($xds_integer)column;
+      if (column instanceof $xde_integer) {
+        final $xde_integer type = ($xde_integer)column;
         // no autogenerator is necessary for xds_integer._generateOnInsert$.AUTO_5FINCREMENT
         if (!type.xde_generateOnUpdate$().isNull())
-          if ($xds_integer.xde_generateOnUpdate$.INCREMENT.text().equals(type.xde_generateOnUpdate$().text()))
+          if ($xde_integer.xde_generateOnUpdate$.INCREMENT.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
-        final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
-        if (noBytes <= 2) {
-          params[2] = params[2] == null ? null : new Short(((Number)params[2]).shortValue());
-          return new Type(column, type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Short(type._min$().text().shortValue()), type._max$().isNull() ? null : new Short(type._max$().text().shortValue()));
+        if (column instanceof $xds_smallint) {
+          final $xds_smallint integer = ($xds_smallint)column;
+          return new Type(column, type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
         }
 
-        if (noBytes <= 4) {
-          params[2] = params[2] == null ? null : new Integer(((Number)params[2]).intValue());
-          return new Type(column, type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Integer(type._min$().text().intValue()), type._max$().isNull() ? null : new Integer(type._max$().text().intValue()));
+        if (column instanceof $xds_mediumint) {
+          final $xds_mediumint integer = ($xds_mediumint)column;
+          return new Type(column, type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
         }
 
-        if (noBytes <= 8) {
-          params[2] = params[2] == null ? null : new Long(((Number)params[2]).longValue());
-          return new Type(column, org.safris.xdb.entities.type.INT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().isNull() ? null : new Long(type._min$().text().longValue()), type._max$().isNull() ? null : new Long(type._max$().text().longValue()));
+        if (column instanceof $xds_int) {
+          final $xds_int integer = ($xds_int)column;
+          return new Type(column, type.INT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
         }
 
-        return new Type(column, type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        if (column instanceof $xds_bigint) {
+          final $xds_bigint integer = ($xds_bigint)column;
+          return new Type(column, type.BIGINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
+        }
+
+        throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
       }
 
       if (column instanceof $xds_float) {
@@ -203,7 +211,7 @@ public class Generator {
 
       if (column instanceof $xds_decimal) {
         final $xds_decimal type = ($xds_decimal)column;
-        return new Type(column, type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text(), type._scale$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text().intValue(), type._scale$().text().intValue(), type._unsigned$().text(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xds_date) {
@@ -312,13 +320,11 @@ public class Generator {
         return Strings.toTitleCase(column._name$().text()) + "." + String.valueOf(value.text());
 
       if (column instanceof $xds_integer) {
-        final $xds_integer type = ($xds_integer)column;
-        final int noBytes = SQLDataTypes.getNumericByteCount(type._precision$().text(), type._unsigned$().text(), type._min$().text(), type._max$().text());
-        if (noBytes <= 2)
+        if (column instanceof $xds_smallint)
           return Short.valueOf(String.valueOf(value.text()));
 
-        if (4 < noBytes && noBytes <= 8)
-          return java.lang.Long.valueOf(String.valueOf(value.text()));
+        if (column instanceof $xds_mediumint || column instanceof $xds_int)
+          return Long.valueOf(String.valueOf(value.text()));
 
         return new BigInteger(String.valueOf(value.text()));
       }

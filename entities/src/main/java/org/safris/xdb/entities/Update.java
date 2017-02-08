@@ -115,11 +115,10 @@ final class Update extends SQLStatement {
     protected final type.DataType<?> set;
     protected final Serializable to;
 
-    @SuppressWarnings("unchecked")
     protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final case_.CASE<? extends T> to) {
       super(parent);
       this.set = set;
-      this.to = (Provision<type.DataType<T>>)to;
+      this.to = (Provision)to;
     }
 
     protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
