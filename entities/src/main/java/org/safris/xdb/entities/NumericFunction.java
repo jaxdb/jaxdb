@@ -32,11 +32,16 @@ abstract class NumericFunction extends Expression<Number> {
     this.b = type.DataType.wrap(b);
   }
 
+  protected NumericFunction(final Number a, final type.DataType<? extends Number> b) {
+    this.a = type.DataType.wrap(a);
+    this.b = b;
+  }
+
   protected NumericFunction(final type.DataType<? extends Number> dataType) {
     this(dataType, (Numeric<?>)null);
   }
 
   protected NumericFunction() {
-    this(null, (Numeric<?>)null);
+    this((Numeric<?>)null, (Numeric<?>)null);
   }
 }

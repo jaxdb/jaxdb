@@ -108,7 +108,7 @@ public final class DerbySQLSpec extends SQLSpec {
 
   @Override
   public String declareInt16(final short precision, final boolean unsigned) {
-    return "SMALLINT";
+    return unsigned ? "INTEGER" : "SMALLINT";
   }
 
   @Override
@@ -118,7 +118,7 @@ public final class DerbySQLSpec extends SQLSpec {
 
   @Override
   public String declareInt32(final short precision, final boolean unsigned) {
-    return "INTEGER";
+    return unsigned ? "BIGINT" : "INTEGER";
   }
 
   @Override

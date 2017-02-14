@@ -771,6 +771,10 @@ public abstract class Serializer {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
+  protected String serialize(final type.BIGINT.UNSIGNED serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+  }
+
   protected String serialize(final type.BINARY serializable) {
     return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(serializable.get()) + "'";
   }
@@ -819,11 +823,23 @@ public abstract class Serializer {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
+  protected String serialize(final type.INT.UNSIGNED serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+  }
+
   protected String serialize(final type.MEDIUMINT serializable) {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 
+  protected String serialize(final type.MEDIUMINT.UNSIGNED serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+  }
+
   protected String serialize(final type.SMALLINT serializable) {
+    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+  }
+
+  protected String serialize(final type.SMALLINT.UNSIGNED serializable) {
     return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
   }
 

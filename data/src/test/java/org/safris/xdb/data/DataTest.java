@@ -131,7 +131,7 @@ public class DataTest extends LoggableTest {
       final String datetimeType = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
       final String timeType = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
       final String charType = Math.random() < .2 ? Strings.getRandomAlphaString((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? datetimeType : Math.random() < .2 ? dateType : timeType;
-      final String decimal = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
+      final String decimalType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
       final String floatType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
       final String doubleType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
       final String intType = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 10))));
@@ -158,6 +158,8 @@ public class DataTest extends LoggableTest {
         out.write(("    datetimeType=\"" + datetimeType + "\"\n").getBytes());
       if (Math.random() < .9)
         out.write(("    doubleType=\"" + doubleType + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    decimalType=\"" + decimalType + "\"\n").getBytes());
       if (Math.random() < .9)
         out.write(("    enumType=\"" + enumType + "\"\n").getBytes());
       if (Math.random() < .9)

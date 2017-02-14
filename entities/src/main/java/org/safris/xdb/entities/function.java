@@ -112,6 +112,9 @@ final class function {
         super(a, b);
       }
 
+      protected Pow(final Number a, final type.Numeric<? extends Number> b) {
+        super(a, b);
+      }
 
       @Override
       protected void serialize(final Serialization serialization) throws IOException {
@@ -125,6 +128,10 @@ final class function {
       }
 
       protected Mod(final type.Numeric<? extends Number> a, final Number b) {
+        super(a, b);
+      }
+
+      protected Mod(final Number a, final type.Numeric<? extends Number> b) {
         super(a, b);
       }
 
@@ -209,6 +216,10 @@ final class function {
         super(a, b);
       }
 
+      protected Atan2(final Number a, final type.Numeric<? extends Number> b) {
+        super(a, b);
+      }
+
       @Override
       protected void serialize(final Serialization serialization) throws IOException {
         Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
@@ -243,6 +254,10 @@ final class function {
       }
 
       protected Log(final type.Numeric<? extends Number> a, final Number b) {
+        super(a, b);
+      }
+
+      protected Log(final Number a, final type.Numeric<? extends Number> b) {
         super(a, b);
       }
 

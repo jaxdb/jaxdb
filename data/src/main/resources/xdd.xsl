@@ -308,7 +308,7 @@
                   </xsl:attribute>
                 </xs:minInclusive>
               </xsl:when>
-              <xsl:when test="not(@unsigned = 'true')">
+              <xsl:when test="@unsigned='true'">
                 <xs:minInclusive value="0"/>
               </xsl:when>
             </xsl:choose>

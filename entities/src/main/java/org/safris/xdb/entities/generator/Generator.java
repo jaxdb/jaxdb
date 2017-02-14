@@ -169,22 +169,22 @@ public class Generator {
 
         if (column instanceof $xds_smallint) {
           final $xds_smallint integer = ($xds_smallint)column;
-          return new Type(column, type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
+          return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
         }
 
         if (column instanceof $xds_mediumint) {
           final $xds_mediumint integer = ($xds_mediumint)column;
-          return new Type(column, type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
+          return new Type(column, integer._unsigned$().text() ? type.MEDIUMINT.UNSIGNED.class : type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
         }
 
         if (column instanceof $xds_int) {
           final $xds_int integer = ($xds_int)column;
-          return new Type(column, type.INT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
+          return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
         }
 
         if (column instanceof $xds_bigint) {
           final $xds_bigint integer = ($xds_bigint)column;
-          return new Type(column, type.BIGINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._unsigned$().text(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
+          return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
         }
 
         throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
@@ -196,22 +196,22 @@ public class Generator {
         final Number min;
         final Number max;
         if (type._double$().text()) {
-          javaType = org.safris.xdb.entities.type.DOUBLE.class;
+          javaType = type._unsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
           min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
           max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
         }
         else {
-          javaType = org.safris.xdb.entities.type.FLOAT.class;
+          javaType = type._unsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
           min = type._min$().text() != null ? type._min$().text().floatValue() : null;
           max = type._max$().text() != null ? type._max$().text().floatValue() : null;
         }
 
-        return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type._unsigned$().text(), min, max);
+        return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, min, max);
       }
 
       if (column instanceof $xds_decimal) {
         final $xds_decimal type = ($xds_decimal)column;
-        return new Type(column, type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text().intValue(), type._scale$().text().intValue(), type._unsigned$().text(), type._min$().text(), type._max$().text());
+        return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text().intValue(), type._scale$().text().intValue(), type._min$().text(), type._max$().text());
       }
 
       if (column instanceof $xds_date) {
@@ -224,7 +224,7 @@ public class Generator {
           if ($xds_date.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
-        return new Type(column, org.safris.xdb.entities.type.DATE.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xds_time) {
@@ -254,11 +254,11 @@ public class Generator {
       }
 
       if (column instanceof $xds_boolean) {
-        return new Type(column, org.safris.xdb.entities.type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate);
       }
 
       if (column instanceof $xds_enum) {
-        return new Type(column, org.safris.xdb.entities.type.ENUM.class, params, generateOnInsert, generateOnUpdate);
+        return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
@@ -297,12 +297,12 @@ public class Generator {
     }
 
     public String getType() {
-      return Classes.getStrictName(type) + (type == org.safris.xdb.entities.type.ENUM.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
+      return Classes.getStrictName(type) + (type == type.ENUM.class ? "<" + Strings.toTitleCase(column._name$().text()) + ">" : "");
     }
 
     @Override
     public String toString() {
-      return "new " + getType() + "(" + serializeParams() + (type == org.safris.xdb.entities.type.ENUM.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
+      return "new " + getType() + "(" + serializeParams() + (type == type.ENUM.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
     }
   }
 

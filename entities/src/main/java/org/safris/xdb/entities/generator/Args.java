@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,17 +14,38 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.entities;
+package org.safris.xdb.entities.generator;
 
-public abstract class Subject<T> extends Serializable {
-  private Serializable wrapper;
+import org.safris.xdb.entities.DMLGenerator;
 
-  protected final Serializable wrapper() {
-    return wrapper;
+public class Args {
+  public final Class<?> a;
+  public final Class<?> b;
+
+  public Args(final Class<?> a, final Class<?> b) {
+    this.a = a;
+    this.b = b;
   }
 
-  protected final Subject<T> wrapper(final Serializable wrapper) {
-    this.wrapper = wrapper;
-    return this;
+  @Override
+  public boolean equals(final Object obj) {
+    if (obj == this)
+      return true;
+
+    if (!(obj instanceof Args))
+      return false;
+
+    final Args that = (Args)obj;
+    return a == that.a && b == that.b;
+  }
+
+  @Override
+  public int hashCode() {
+    return a.hashCode() ^ b.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return "(" + DMLGenerator.getName(a) + ", " + DMLGenerator.getName(b) + ")";
   }
 }
