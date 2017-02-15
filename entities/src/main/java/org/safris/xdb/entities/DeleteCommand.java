@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 import org.safris.xdb.entities.Delete.DELETE;
 import org.safris.xdb.entities.Delete.WHERE;
 
@@ -42,6 +40,6 @@ final class DeleteCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) {
   }
 }

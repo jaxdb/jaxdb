@@ -101,7 +101,7 @@
   </table>
   
   <table name="purchase_detail">
-    <column name="purchase_number" xsi:type="mediumint" precision="8" unsigned="true" null="false">
+    <column name="purchase_number" xsi:type="int" precision="8" unsigned="true" null="false">
       <foreignKey references="purchase" column="purchase_number"/>
     </column>
     <column name="product_code" xsi:type="char" length="8" null="false">
@@ -109,7 +109,7 @@
     </column>
     <column name="quantity" xsi:type="bigint" precision="11" unsigned="true" null="false"/>
     <column name="price_each" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
-    <column name="purchase_line_number" xsi:type="mediumint" precision="6" unsigned="true" null="false"/>
+    <column name="purchase_line_number" xsi:type="int" precision="6" unsigned="true" null="false"/>
     <constraints>
       <primaryKey>
         <column name="purchase_number"/>
@@ -119,7 +119,7 @@
   </table>
   
   <table name="purchase">
-    <column name="purchase_number" xsi:type="mediumint" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="purchase_number" xsi:type="int" precision="8" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="purchase_date" xsi:type="date" null="false"/>
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
@@ -188,7 +188,7 @@
     <column name="description" xsi:type="char" varying="true" length="4096" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="quantity_in_stock" xsi:type="mediumint" precision="6" unsigned="true" null="false"/>
+    <column name="quantity_in_stock" xsi:type="mediumint" precision="5" unsigned="true" null="false"/>
     <column name="price" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
     <column name="msrp" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
     <constraints>

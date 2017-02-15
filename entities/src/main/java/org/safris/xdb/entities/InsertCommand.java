@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 import org.safris.xdb.entities.Insert.INSERT;
 
 final class InsertCommand extends Command {
@@ -32,6 +30,6 @@ final class InsertCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) {
   }
 }

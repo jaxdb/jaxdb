@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 import org.safris.xdb.entities.Update.SET;
 import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.Update.WHERE;
@@ -52,6 +50,6 @@ final class UpdateCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) {
   }
 }

@@ -16,7 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
 import java.time.temporal.ChronoUnit;
 import java.time.temporal.IsoFields;
 import java.time.temporal.TemporalUnit;
@@ -98,7 +97,7 @@ public final class Interval extends Serializable {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
+  protected void serialize(final Serialization serialization) {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

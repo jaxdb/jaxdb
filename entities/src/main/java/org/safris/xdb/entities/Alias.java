@@ -16,8 +16,6 @@
 
 package org.safris.xdb.entities;
 
-import java.io.IOException;
-
 import org.safris.commons.lang.Strings;
 
 public final class Alias extends Serializable {
@@ -28,7 +26,7 @@ public final class Alias extends Serializable {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
+  protected final void serialize(final Serialization serialization) {
     Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
   }
 }

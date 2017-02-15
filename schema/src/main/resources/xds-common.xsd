@@ -218,7 +218,14 @@
   <xs:attributeGroup name="char">
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="xs:string"/>
-    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -229,19 +236,40 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="clob">
-    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:long">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:attributeGroup>
 
   <!-- binary data -->
 
   <xs:attributeGroup name="binary">
-    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="65535"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="xs:base64Binary"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="blob">
-    <xs:attribute name="length" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:long">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:attributeGroup>
 
   <!-- numeric data -->

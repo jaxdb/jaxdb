@@ -19,7 +19,6 @@ package org.safris.xdb.entities;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -84,7 +83,7 @@ public final class Entities {
             dataType.set(((BigInteger)value).shortValue());
         }
         else if (attribute instanceof $xdd_decimal)
-          dataType.set(((BigDecimal)value).doubleValue());
+          dataType.set(value);
         else if (attribute instanceof $xdd_date)
           dataType.set(LocalDate.parse((String)value));
         else if (attribute instanceof $xdd_time)

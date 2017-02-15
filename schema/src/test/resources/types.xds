@@ -32,7 +32,7 @@
     <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
     <column name="float_type" xsi:type="float"/>
     <column name="int_type" xsi:type="int" precision="10"/>
-    <column name="mediumint_type" xsi:type="mediumint" precision="8"/>
+    <column name="mediumint_type" xsi:type="mediumint" precision="5"/>
     <column name="smallint_type" xsi:type="smallint" precision="3"/>
     <column name="time_type" xsi:type="time"/>
   </table>

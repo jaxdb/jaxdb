@@ -35,7 +35,7 @@ final class BooleanTerm extends type.BOOLEAN {
   }
 
   @Override
-  protected final String serialize(final DBVendor vendor) throws IOException {
+  protected final String serialize(final DBVendor vendor) {
     return operator.toString();
   }
 

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -39,8 +38,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.safris.commons.io.Readers;
-import org.safris.commons.io.Streams;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Numbers;
 import org.safris.commons.util.Formats;
@@ -159,8 +156,6 @@ public final class type {
 
   public static final class BIGINT extends ExactNumeric<Long> {
     public static final class UNSIGNED extends ExactNumeric<BigInteger> implements type.UNSIGNED {
-      private static final BigInteger MAX_UNSIGNED = new BigInteger("18446744073709551615");
-
       private final BigInteger min;
       private final BigInteger max;
 
@@ -206,11 +201,18 @@ public final class type {
       }
 
       @Override
-      public final void set(final BigInteger value) {
-        if (value != null && (value.signum() < 0 || 0 < value.compareTo(MAX_UNSIGNED)))
-          throw new IllegalArgumentException("value is out of range for UNSIGNED BIGINT: " + value);
+      protected final BigInteger minValue() {
+        return BigInteger.ZERO;
+      }
 
-        super.set(value);
+      @Override
+      protected final BigInteger maxValue() {
+        return new BigInteger("18446744073709551615");
+      }
+
+      @Override
+      protected final int maxPrecision() {
+        return 20;
       }
 
       @Override
@@ -247,7 +249,7 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) throws IOException {
+      protected final String serialize(final DBVendor vendor) {
         return Serializer.getSerializer(vendor).serialize(this);
       }
 
@@ -272,9 +274,6 @@ public final class type {
         return new UNSIGNED(this);
       }
     }
-
-    private static final Long MIN = -9223372036854775808l;
-    private static final Long MAX_SIGNED = 9223372036854775807l;
 
     private final Long min;
     private final Long max;
@@ -321,11 +320,18 @@ public final class type {
     }
 
     @Override
-    public final void set(final Long value) {
-      if (value != null && (value.compareTo(MIN) < 0 || 0 < value.compareTo(MAX_SIGNED)))
-        throw new IllegalArgumentException("value is out of range for BIGINT: " + value);
+    protected final Long minValue() {
+      return -9223372036854775808l;
+    }
 
-      super.set(value);
+    @Override
+    protected final Long maxValue() {
+      return 9223372036854775807l;
+    }
+
+    @Override
+    protected final int maxPrecision() {
+      return 19;
     }
 
     @Override
@@ -362,7 +368,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -449,7 +455,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -468,10 +474,11 @@ public final class type {
   }
 
   public static final class BLOB extends LargeObject<InputStream> {
-    private final int length;
+    private final long length;
 
-    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final int length) {
+    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      checkLength(length);
       this.length = (short)length;
     }
 
@@ -480,22 +487,24 @@ public final class type {
       this.length = copy.length;
     }
 
-    public BLOB(final int length) {
+    public BLOB(final long length) {
       super();
+      checkLength(length);
       this.length = (short)length;
     }
 
-    // NOTE: This implies that the InputStream must support mark() and reset().
-    // NOTE: If not, then an IOException will be thrown.
-    public BLOB(final InputStream value) throws IOException {
+    public BLOB(final InputStream value) {
       super();
-      value.mark(Integer.MAX_VALUE);
-      this.length = (short)Streams.getBytes(value).length;
-      value.reset();
+      this.length = 4294967296l;
       set(value);
     }
 
-    public final int length() {
+    protected final void checkLength(final long length) {
+      if (length <= 0 || length > 4294967295l)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
+    }
+
+    public final long length() {
       return length;
     }
 
@@ -583,7 +592,7 @@ public final class type {
     }
 
     @Override
-    protected String serialize(final DBVendor vendor) throws IOException {
+    protected String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -607,6 +616,7 @@ public final class type {
     protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final int length, final boolean varying) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
       this.varying = varying;
+      checkLength(length);
     }
 
     protected CHAR(final CHAR copy) {
@@ -615,8 +625,9 @@ public final class type {
     }
 
     public CHAR(final int length, final boolean varying) {
-      super((short)length);
+      super(length);
       this.varying = varying;
+      checkLength(length);
     }
 
     public CHAR(final int length) {
@@ -624,8 +635,13 @@ public final class type {
     }
 
     public CHAR(final String value) {
-      this(value.length(), false);
+      this(65535, true);
       set(value);
+    }
+
+    protected final void checkLength(final int length) {
+      if (length < 0 || (!varying() && length == 0) || length > 65535)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
     }
 
     public boolean varying() {
@@ -656,7 +672,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -667,11 +683,12 @@ public final class type {
   }
 
   public static final class CLOB extends LargeObject<Reader> {
-    private final int length;
+    private final long length;
 
-    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final int length) {
+    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = (short)length;
+      checkLength(length);
+      this.length = length;
     }
 
     protected CLOB(final CLOB copy) {
@@ -679,22 +696,24 @@ public final class type {
       this.length = copy.length;
     }
 
-    public CLOB(final int length) {
+    public CLOB(final long length) {
       super();
-      this.length = (short)length;
+      checkLength(length);
+      this.length = length;
     }
 
-    // NOTE: This implies that the Reader must support mark() and reset().
-    // NOTE: If not, then an IOException will be thrown.
-    public CLOB(final Reader value) throws IOException {
+    public CLOB(final Reader value) {
       super();
-      value.mark(Integer.MAX_VALUE);
-      this.length = Readers.readFully(value).length();
-      value.reset();
+      this.length = 4294967296l;
       set(value);
     }
 
-    public final int length() {
+    protected final void checkLength(final long length) {
+      if (length <= 0 || length > 4294967295l)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
+    }
+
+    public final long length() {
       return length;
     }
 
@@ -788,7 +807,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -829,12 +848,6 @@ public final class type {
         return (V)lookupDataTypeConstructor(value.getClass()).newInstance(value);
       }
       catch (final Exception e) {
-        try {
-          lookupDataTypeConstructor(value.getClass()).newInstance(value);
-        }
-        catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException e1) {
-          e1.printStackTrace();
-        }
         throw new UnsupportedOperationException(e);
       }
     }
@@ -849,6 +862,11 @@ public final class type {
 
       array.set(value);
       return array;
+    }
+
+    protected static final String getShortName(final Class<?> cls) {
+      final String strictName = Classes.getStrictName(cls);
+      return strictName.substring(strictName.indexOf("type.") + 5).replace(".", " ");
     }
 
     protected final Entity owner;
@@ -947,6 +965,7 @@ public final class type {
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> {
+    // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final short DEFAULT_PRECISION = 6;
 
     protected static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
@@ -1007,7 +1026,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1049,6 +1068,16 @@ public final class type {
       }
 
       @Override
+      protected final BigDecimal minValue() {
+        return BigDecimal.ZERO;
+      }
+
+      @Override
+      protected final BigDecimal maxValue() {
+        return new BigDecimal("340282366920938463463374607431768211455");
+      }
+
+      @Override
       public final DECIMAL.UNSIGNED clone() {
         return new DECIMAL.UNSIGNED(this);
       }
@@ -1060,6 +1089,7 @@ public final class type {
 
     protected DECIMAL(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+      checkScale(scale);
       this.scale = (short)scale;
       this.min = min;
       this.max = max;
@@ -1074,6 +1104,7 @@ public final class type {
 
     public DECIMAL(final int precision, final int scale) {
       super((short)precision);
+      checkScale(scale);
       this.scale = (short)scale;
       this.min = null;
       this.max = null;
@@ -1084,6 +1115,11 @@ public final class type {
       set(value);
     }
 
+    private final void checkScale(final int scale) {
+      if (scale > maxScale())
+        throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale() + "] exceeded: " + scale);
+    }
+
     @Override
     public final short scale() {
       return scale;
@@ -1092,6 +1128,25 @@ public final class type {
     @Override
     protected boolean unsigned() {
       return false;
+    }
+
+    @Override
+    protected BigDecimal minValue() {
+      return new BigDecimal("-170141183460469231731687303715884105728");
+    }
+
+    @Override
+    protected BigDecimal maxValue() {
+      return new BigDecimal("170141183460469231731687303715884105727");
+    }
+
+    @Override
+    protected final int maxPrecision() {
+      return 39;
+    }
+
+    protected static final int maxScale() {
+      return 38;
     }
 
     public final BigDecimal min() {
@@ -1126,7 +1181,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1249,7 +1304,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1346,7 +1401,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1458,7 +1513,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1545,11 +1600,18 @@ public final class type {
       }
 
       @Override
-      public final void set(final Long value) {
-        if (value != null && (value < 0 || 4294967295l < value))
-          throw new IllegalArgumentException("value is out of range for UNSIGNED INT: " + value);
+      protected final Long minValue() {
+        return 0l;
+      }
 
-        super.set(value);
+      @Override
+      protected final Long maxValue() {
+        return 4294967295l;
+      }
+
+      @Override
+      protected final int maxPrecision() {
+        return 10;
       }
 
       @Override
@@ -1576,7 +1638,7 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) throws IOException {
+      protected final String serialize(final DBVendor vendor) {
         return Serializer.getSerializer(vendor).serialize(this);
       }
 
@@ -1650,11 +1712,18 @@ public final class type {
     }
 
     @Override
-    public final void set(final Integer value) {
-      if (value != null && (value < -2147483648 || 2147483647 < value))
-        throw new IllegalArgumentException("value is out of range for INT: " + value);
+    protected final Integer minValue() {
+      return -2147483648;
+    }
 
-      super.set(value);
+    @Override
+    protected final Integer maxValue() {
+      return 2147483647;
+    }
+
+    @Override
+    protected final int maxPrecision() {
+      return 10;
     }
 
     @Override
@@ -1681,7 +1750,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1757,11 +1826,18 @@ public final class type {
       }
 
       @Override
-      public final void set(final Integer value) {
-        if (value != null && (value < 0 || 16777215 < value))
-          throw new IllegalArgumentException("value is out of range for UNSIGNED MEDIUMINT: " + value);
+      protected final Integer minValue() {
+        return 0;
+      }
 
-        super.set(value);
+      @Override
+      protected final Integer maxValue() {
+        return 65535;
+      }
+
+      @Override
+      protected final int maxPrecision() {
+        return 5;
       }
 
       @Override
@@ -1788,7 +1864,7 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) throws IOException {
+      protected final String serialize(final DBVendor vendor) {
         return Serializer.getSerializer(vendor).serialize(this);
       }
 
@@ -1865,11 +1941,18 @@ public final class type {
     }
 
     @Override
-    public final void set(final Short value) {
-      if (value != null && (value < -8388608 || 8388607 < value))
-        throw new IllegalArgumentException("value is out of range for MEDIUMINT: " + value);
+    protected final Short minValue() {
+      return -32768;
+    }
 
-      super.set(value);
+    @Override
+    protected final Short maxValue() {
+      return 32767;
+    }
+
+    @Override
+    protected final int maxPrecision() {
+      return 5;
     }
 
     @Override
@@ -1896,7 +1979,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -1955,33 +2038,59 @@ public final class type {
 
     protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int precision) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+      checkPrecision(precision);
+      checkValue(_default);
       this.precision = (short)precision;
     }
 
     protected ExactNumeric(final Numeric<T> copy, final int precision) {
       super(copy);
+      checkPrecision(precision);
       this.precision = (short)precision;
     }
 
     protected ExactNumeric(final int precision) {
       super();
+      checkPrecision(precision);
       this.precision = (short)precision;
       if (precision <= 0)
         throw new IllegalArgumentException("precision must be >= 1");
     }
 
+    @SuppressWarnings("unchecked")
+    private final void checkValue(final T value) {
+      if (value != null && (((Comparable<T>)value).compareTo(minValue()) < 0 || ((Comparable<T>)value).compareTo(maxValue()) > 0))
+        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+    }
+
+    private final void checkPrecision(final int precision) {
+      if (precision > maxPrecision())
+        throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
+    }
+
+    protected abstract T minValue();
+    protected abstract T maxValue();
+    protected abstract int maxPrecision();
+
     @Override
     public final short precision() {
       return precision;
     }
+
+    @Override
+    public final void set(final T value) {
+      checkValue(value);
+      super.set(value);
+    }
   }
 
   public static abstract class Serial<T> extends DataType<T> {
-    private final short length;
+    private final int length;
 
     protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
-      this.length = (short)length;
+      checkLength(length);
+      this.length = length;
     }
 
     protected Serial(final Serial<T> copy) {
@@ -1991,10 +2100,16 @@ public final class type {
 
     protected Serial(final int length) {
       super();
-      this.length = (short)length;
+      checkLength(length);
+      this.length = length;
     }
 
-    public final short length() {
+    protected void checkLength(final int length) {
+      if (length <= 0 || length > 65535)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
+    }
+
+    public final int length() {
       return length;
     }
   }
@@ -2046,11 +2161,18 @@ public final class type {
       }
 
       @Override
-      public final void set(final Short value) {
-        if (value != null && (value < 0 || 255 < value))
-          throw new IllegalArgumentException("value is out of range for UNSIGNED SMALLINT: " + value);
+      protected final Short minValue() {
+        return 0;
+      }
 
-        super.set(value);
+      @Override
+      protected final Short maxValue() {
+        return 255;
+      }
+
+      @Override
+      protected final int maxPrecision() {
+        return 3;
       }
 
       @Override
@@ -2077,7 +2199,7 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) throws IOException {
+      protected final String serialize(final DBVendor vendor) {
         return Serializer.getSerializer(vendor).serialize(this);
       }
 
@@ -2160,11 +2282,18 @@ public final class type {
     }
 
     @Override
-    public final void set(final Byte value) {
-      if (value != null && (value < -128 && 127 < value))
-        throw new IllegalArgumentException("value is out of range for SMALLINT: " + value);
+    protected final Byte minValue() {
+      return -128;
+    }
 
-      super.set(value);
+    @Override
+    protected final Byte maxValue() {
+      return 127;
+    }
+
+    @Override
+    protected final int maxPrecision() {
+      return 3;
     }
 
     @Override
@@ -2191,7 +2320,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 
@@ -2334,7 +2463,7 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
+    protected final String serialize(final DBVendor vendor) {
       return Serializer.getSerializer(vendor).serialize(this);
     }
 

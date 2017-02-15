@@ -256,10 +256,10 @@ public abstract class SQLSpec {
 
   public abstract String declareFloat(final boolean doublePrecision, final boolean unsigned);
   public abstract String declareBoolean();
-  public abstract String declareBinary(final boolean varying, final int length);
-  public abstract String declareChar(final boolean varying, final int length);
-  public abstract String declareClob(final int length);
-  public abstract String declareBlob(final int length);
+  public abstract String declareBinary(final boolean varying, final long length);
+  public abstract String declareChar(final boolean varying, final long length);
+  public abstract String declareClob(final long length);
+  public abstract String declareBlob(final long length);
   public abstract String declareDecimal(final short precision, final short scale, final boolean unsigned);
   public abstract String declareDate();
   public abstract String declareDateTime(final short precision);

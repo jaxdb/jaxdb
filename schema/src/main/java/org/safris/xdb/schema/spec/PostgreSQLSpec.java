@@ -133,22 +133,22 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String declareBinary(final boolean varying, final int length) {
+  public String declareBinary(final boolean varying, final long length) {
     return "BIT" + (varying ? " VARYING" : "") + "(" + length + ")";
   }
 
   @Override
-  public String declareChar(final boolean varying, final int length) {
+  public String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 
   @Override
-  public String declareClob(final int length) {
+  public String declareClob(final long length) {
     return "CLOB(" + length + ")";
   }
 
   @Override
-  public String declareBlob(final int length) {
+  public String declareBlob(final long length) {
     return "BYTEA" + "(" + length + ")";
   }
 

@@ -162,6 +162,9 @@ public final class Generator extends BaseGenerator {
     }
     else if (column instanceof $xds_bigint) {
       final $xds_bigint type = ($xds_bigint)column;
+      if (!type._unsigned$().text() && type._precision$().text().intValue() > 19)
+        throw new IllegalArgumentException("BIGINT maximum precision [0, 19] exceeded: " + type._precision$().text().intValue());
+
       ddl.append(vendor.getSQLSpec().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_float) {

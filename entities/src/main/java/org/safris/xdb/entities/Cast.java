@@ -55,14 +55,12 @@ public class Cast {
   public static final class BOOLEAN {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, true);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
-        assert(length > 0);
         final type.CLOB cast = new type.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -103,7 +101,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -120,10 +117,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -131,10 +124,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -144,10 +133,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -155,10 +140,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -168,10 +149,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -179,10 +156,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -192,10 +165,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -203,10 +172,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -250,7 +215,6 @@ public class Cast {
       public final FLOAT FLOAT = new FLOAT();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -267,10 +231,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -278,10 +238,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -291,10 +247,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -302,10 +254,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -315,10 +263,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -326,10 +270,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -339,10 +279,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -350,10 +286,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -407,7 +339,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -420,10 +351,6 @@ public class Cast {
       }
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -431,10 +358,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -444,10 +367,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -455,10 +374,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -468,10 +383,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -479,10 +390,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -492,10 +399,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -503,10 +406,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -516,7 +415,6 @@ public class Cast {
       public final BIGINT BIGINT = new BIGINT();
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -567,7 +465,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -584,30 +481,18 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
         final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -615,10 +500,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -628,10 +509,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -639,10 +516,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -652,10 +525,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -663,10 +532,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -676,7 +541,6 @@ public class Cast {
       public final BIGINT BIGINT = new BIGINT();
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -727,7 +591,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -744,10 +607,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -755,10 +614,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -768,30 +623,18 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-        assert(precision > 0);
-        if (precision > 8)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
         final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -799,10 +642,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -812,10 +651,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -823,10 +658,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -836,7 +667,6 @@ public class Cast {
       public final BIGINT BIGINT = new BIGINT();
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -887,7 +717,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -904,10 +733,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -915,10 +740,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -928,10 +749,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -939,10 +756,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -952,30 +765,18 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.INT.UNSIGNED UNSIGNED(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
         final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -983,10 +784,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -996,7 +793,6 @@ public class Cast {
       public final BIGINT BIGINT = new BIGINT();
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1047,7 +843,6 @@ public class Cast {
       public final DOUBLE DOUBLE = new DOUBLE();
 
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -1064,10 +859,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1075,10 +866,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1088,10 +875,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1099,10 +882,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1112,10 +891,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1123,10 +898,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1136,27 +907,18 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-        assert(precision > 0);
-        if (precision > 20)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
         final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
       }
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1175,7 +937,6 @@ public class Cast {
   public static final class CHAR {
     public final class AS {
       public type.DECIMAL DECIMAL(final int precision, final int scale) {
-        assert(precision > 0 && scale > 0);
         final type.DECIMAL cast = new type.DECIMAL(precision, scale);
         cast.wrapper(new Cast.AS(value, cast, precision, scale));
         return cast;
@@ -1192,10 +953,6 @@ public class Cast {
       public final DECIMAL DECIMAL = new DECIMAL();
 
       public type.SMALLINT SMALLINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 3)
-          throw new IllegalArgumentException("SMALLINT (" + precision + ") exceeds max precision of 3");
-
         final type.SMALLINT cast = new type.SMALLINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1203,10 +960,6 @@ public class Cast {
 
       public final class SMALLINT {
         public type.SMALLINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 3)
-            throw new IllegalArgumentException("SMALLINT (" + precision + ") UNSIGNED exceeds max precision of 3");
-
           final type.SMALLINT.UNSIGNED cast = new type.SMALLINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1216,10 +969,6 @@ public class Cast {
       public final SMALLINT SMALLINT = new SMALLINT();
 
       public type.MEDIUMINT MEDIUMINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 7)
-          throw new IllegalArgumentException("MEDIUMINT (" + precision + ") exceeds max precision of 7");
-
         final type.MEDIUMINT cast = new type.MEDIUMINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1227,10 +976,6 @@ public class Cast {
 
       public final class MEDIUMINT {
         public type.MEDIUMINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 8)
-            throw new IllegalArgumentException("MEDIUMINT (" + precision + ") UNSIGNED exceeds max precision of 8");
-
           final type.MEDIUMINT.UNSIGNED cast = new type.MEDIUMINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1240,10 +985,6 @@ public class Cast {
       public final MEDIUMINT MEDIUMINT = new MEDIUMINT();
 
       public type.INT INT(final int precision) {
-        assert(precision > 0);
-        if (precision > 10)
-          throw new IllegalArgumentException("INT (" + precision + ") exceeds max precision of 10");
-
         final type.INT cast = new type.INT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1251,10 +992,6 @@ public class Cast {
 
       public final class INT {
         public type.INT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 10)
-            throw new IllegalArgumentException("INT (" + precision + ") UNSIGNED exceeds max precision of 10");
-
           final type.INT.UNSIGNED cast = new type.INT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1264,10 +1001,6 @@ public class Cast {
       public final INT INT = new INT();
 
       public type.BIGINT BIGINT(final int precision) {
-        assert(precision > 0);
-        if (precision > 19)
-          throw new IllegalArgumentException("BIGINT (" + precision + ") exceeds max precision of 19");
-
         final type.BIGINT cast = new type.BIGINT(precision);
         cast.wrapper(new Cast.AS(value, cast, precision));
         return cast;
@@ -1275,10 +1008,6 @@ public class Cast {
 
       public final class BIGINT {
         public type.BIGINT.UNSIGNED UNSIGNED(final int precision) {
-          assert(precision > 0);
-          if (precision > 20)
-            throw new IllegalArgumentException("BIGINT (" + precision + ") UNSIGNED exceeds max precision of 20");
-
           final type.BIGINT.UNSIGNED cast = new type.BIGINT.UNSIGNED(precision);
           cast.wrapper(new Cast.AS(value, cast, precision));
           return cast;
@@ -1288,14 +1017,12 @@ public class Cast {
       public final BIGINT BIGINT = new BIGINT();
 
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
-        assert(length > 0);
         final type.CLOB cast = new type.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1344,7 +1071,6 @@ public class Cast {
   public static final class DATE {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1363,7 +1089,6 @@ public class Cast {
   public static final class TIME {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1394,7 +1119,6 @@ public class Cast {
   public static final class DATETIME {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1443,14 +1167,12 @@ public class Cast {
   public static final class CLOB {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        assert(length > 0);
         final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
       public type.CLOB CLOB(final int length) {
-        assert(length > 0);
         final type.CLOB cast = new type.CLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1469,7 +1191,6 @@ public class Cast {
   public static final class BLOB {
     public final class AS {
       public type.BLOB BLOB(final int length) {
-        assert(length > 0);
         final type.BLOB cast = new type.BLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
@@ -1488,14 +1209,12 @@ public class Cast {
   public static final class BINARY {
     public final class AS {
       public type.BLOB BLOB(final int length) {
-        assert(length > 0);
         final type.BLOB cast = new type.BLOB(length);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }
 
       public type.BINARY BINARY(final int length) {
-        assert(length > 0);
         final type.BINARY cast = new type.BINARY(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
