@@ -32,7 +32,7 @@ final class Delete extends SQLStatement {
 
     @Override
     public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final Keyword<?> delete = getParentRoot(this);
+      final Keyword<?> delete = null; //getParentRoot(this);
       final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
       DBVendor vendor = null;
       try {

@@ -169,7 +169,7 @@ final class DerbySerializer extends Serializer {
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected void serialize(final Select.HAVING<?> having, final Serialization serialization) throws IOException {
     if (having != null) {
-      final SELECT<?> select = (SELECT<?>)Keyword.getParentRoot(having.parent());
+      final SELECT<?> select = ((SelectCommand)serialization.command).select();
       final SelectCommand command = (SelectCommand)serialization.command;
       if (command.groupBy() == null) {
         final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());

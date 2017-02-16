@@ -817,12 +817,16 @@ public final class DML {
   /** INSERT **/
 
   @SafeVarargs
-  public static <E extends Entity>insert.INSERT_SELECT<E> INSERT(final E ... entities) {
-    return new Insert.INSERT<E>(entities);
+  public static insert.INSERT INSERT(final Entity entity, final Entity ... entities) {
+    return new Insert.INSERT(Arrays.splice(entities, 0, 0, entity));
+  }
+
+  public static insert.INSERT INSERT(final select.SELECT<?> select) {
+    return new Insert.INSERT(select);
   }
 
   public static insert.INSERT INSERT(final $xdd_data data) {
-    return new Insert.INSERT<Entity>(Entities.toEntities(data));
+    return new Insert.INSERT(Entities.toEntities(data));
   }
 
   /** String Functions **/

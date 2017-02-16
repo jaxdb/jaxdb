@@ -72,15 +72,18 @@ public final class Entities {
         if (value == null)
           dataType.set(null);
         else if (attribute instanceof $xdd_integer) {
-          // FIXME: Are we bounded by the size of long for BigInt here?
-          if (dataType instanceof type.BIGINT)
+          if (dataType.type() == BigInteger.class)
             dataType.set(value);
-          else if (dataType instanceof type.INT)
+          else if (dataType.type() == Long.class)
             dataType.set(((BigInteger)value).longValue());
-          else if (dataType instanceof type.MEDIUMINT)
+          else if (dataType.type() == Integer.class)
             dataType.set(((BigInteger)value).intValue());
-          else if (dataType instanceof type.SMALLINT)
+          else if (dataType.type() == Short.class)
             dataType.set(((BigInteger)value).shortValue());
+          else if (dataType.type() == Byte.class)
+            dataType.set(((BigInteger)value).byteValue());
+          else
+            throw new UnsupportedOperationException("Unexpected Numeric type: " + dataType.type().getName());
         }
         else if (attribute instanceof $xdd_decimal)
           dataType.set(value);
@@ -92,9 +95,12 @@ public final class Entities {
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum) {
           final String enumValue = ((String)value).toUpperCase().replace(' ', '_');
-          for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants())
-            if (constant.toString().equals(enumValue))
+          for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
+            if (constant.toString().equals(enumValue)) {
               dataType.set(constant);
+              break;
+            }
+          }
         }
         else if (attribute instanceof $xdd_binary)
           dataType.set(((Base64Binary)value).getBytes());

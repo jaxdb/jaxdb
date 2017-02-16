@@ -27,9 +27,22 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.safris.xdb.entities.type.DataType;
 import org.safris.xdb.schema.DBVendor;
 
 final class Serialization {
+  private static final class Batch {
+    protected final String sql;
+    protected final List<type.DataType<?>> parameters;
+
+    public Batch(final String sql, final List<DataType<?>> parameters) {
+      this.sql = sql;
+      this.parameters = parameters;
+    }
+  }
+
+  private List<Batch> batches;
+
   private final StringBuilder builder = new StringBuilder();
   private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
@@ -75,6 +88,15 @@ final class Serialization {
     }
   }
 
+  protected void addBatch() {
+    if (batches == null)
+      batches = new ArrayList<Batch>();
+
+    batches.add(new Batch(builder.toString(), new ArrayList<type.DataType<?>>(parameters)));
+    builder.setLength(0);
+    parameters.clear();
+  }
+
   protected ResultSet executeQuery(final Connection connection) throws SQLException {
     if (prepared) {
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
@@ -86,5 +108,32 @@ final class Serialization {
 
     final Statement statement = connection.createStatement();
     return statement.executeQuery(builder.toString());
+  }
+
+  protected int[] execute(final Connection connection) throws SQLException {
+    if (builder.length() > 0)
+      addBatch();
+
+    final int[] results = new int[batches.size()];
+    if (prepared) {
+      for (int i = 0; i < batches.size(); i++) {
+        final Batch batch = batches.get(i);
+        final PreparedStatement statement = connection.prepareStatement(batch.sql);
+        for (int j = 0; j < batch.parameters.size(); j++)
+          batch.parameters.get(j).get(statement, j + 1);
+
+        results[i] = statement.executeUpdate();
+      }
+
+      return results;
+    }
+
+    for (int i = 0; i < batches.size(); i++) {
+      final Batch batch = batches.get(i);
+      final Statement statement = connection.createStatement();
+      results[i] = statement.executeUpdate(batch.sql.toString());
+    }
+
+    return results;
   }
 }

@@ -16,16 +16,7 @@
 
 package org.safris.xdb.entities.model;
 
-import org.safris.xdb.entities.Subject;
-
 public interface insert {
   public interface INSERT extends ExecuteUpdate {
-  }
-
-  public interface INSERT_SELECT<T extends Subject<?>> extends INSERT {
-    public select._SELECT<T> SELECT(final select.SELECT<T> select);
-
-    @SuppressWarnings("unchecked")
-    public select._SELECT<T> SELECT(final T ... entities);
   }
 }

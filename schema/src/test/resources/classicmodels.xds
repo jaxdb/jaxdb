@@ -39,7 +39,7 @@
   </table>
   
   <table name="customer" extends="address">
-    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="customer_number" xsi:type="mediumint" precision="5" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="company_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
@@ -127,7 +127,7 @@
     <column name="comments" xsi:type="char" varying="true" length="4000">
       <check operator="ne" condition=""/>
     </column>
-    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false">
+    <column name="customer_number" xsi:type="mediumint" precision="5" unsigned="true" null="false">
       <foreignKey references="customer" column="customer_number"/>
     </column>
     <constraints>
@@ -138,7 +138,7 @@
   </table>
   
   <table name="payment">
-    <column name="customer_number" xsi:type="bigint" precision="11" unsigned="true" null="false">
+    <column name="customer_number" xsi:type="mediumint" precision="5" unsigned="true" null="false">
       <foreignKey references="customer" column="customer_number"/>
     </column>
     <column name="check_number" xsi:type="char" varying="true" length="32" null="false">

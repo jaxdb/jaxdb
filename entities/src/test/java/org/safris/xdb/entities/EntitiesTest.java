@@ -48,6 +48,7 @@ public class EntitiesTest extends LoggableTest {
 
   @SuppressWarnings("unchecked")
   public static Connection createConnection(final String name) throws ClassNotFoundException, IOException, SQLException {
+    DataTest.initDB();
     final Connection connection = DataTest.createConnection();
     EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), PreparedStatement.class, new EntityDataSource() {
       @Override

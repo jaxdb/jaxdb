@@ -16,6 +16,7 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -24,36 +25,51 @@ import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
 final class Insert extends SQLStatement {
-  protected static final class INSERT<T extends Entity> extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.insert.INSERT_SELECT<T> {
-    protected final T[] entities;
+  protected static final class INSERT extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.insert.INSERT {
+    protected final Entity[] entities;
+    protected final select.SELECT<?> select;
 
     @SafeVarargs
-    protected INSERT(final T ... entities) {
+    protected INSERT(final Entity ... entities) {
       super(null);
       this.entities = entities;
+      this.select = null;
+    }
+
+    protected INSERT(final select.SELECT<?> select) {
+      super(null);
+      this.entities = null;
+      this.select = select;
     }
 
     @Override
     protected final Command normalize() {
-      final InsertCommand command = (InsertCommand)parent().normalize();
-      command.add(this);
-      return command;
+      return new InsertCommand(this);
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    public int[] execute(final Transaction transaction) throws SQLException {
-      final Keyword<?> insert = getParentRoot(this);
-      final Class<? extends Schema> schema = (((INSERT)insert).entities[0]).schema();
-      DBVendor vendor = null;
+    public int[] execute(final Transaction transaction) throws IOException, SQLException {
+      final InsertCommand command = (InsertCommand)normalize();
+
+      final Class<? extends Schema> schema;
+      if (command.insert().entities != null) {
+        schema = command.insert().entities[0].schema();
+      }
+      else if (command.insert().select != null) {
+        final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)command.insert().select).normalize();
+        schema = selectCommand.from().tables.iterator().next().schema();
+      }
+      else {
+        throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
+      }
+
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = null;
-//        final Serialization serialization = new Serialization(Insert.class, vendor, EntityRegistry.getStatementType(schema));
-//        serialize(serialization);
-        final int[] count = null;//serialization.executeUpdate(connection);
+        final DBVendor vendor = Schema.getDBVendor(connection);
 
+        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        command.serialize(serialization);
+        final int[] count = serialization.execute(connection);
         if (transaction == null)
           connection.close();
 
@@ -65,29 +81,8 @@ final class Insert extends SQLStatement {
     }
 
     @Override
-    public int[] execute() throws SQLException {
+    public int[] execute() throws IOException, SQLException {
       return execute(null);
-    }
-
-    @Override
-    public select._SELECT<T> SELECT(final select.SELECT<T> select) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @SafeVarargs
-    public final SELECT_SET SELECT(final T ... entities) {
-      // TODO:
-      throw new UnsupportedOperationException();
-    }
-
-    public class SELECT_SET extends Select.SELECT<T> {
-      public SELECT_SET(final boolean distinct, final T[] entities) {
-        super(distinct, entities);
-      }
-
-      public final Select.SELECT<T> DISTINCT = new Select.SELECT<T>(true, entities);
     }
   }
 }

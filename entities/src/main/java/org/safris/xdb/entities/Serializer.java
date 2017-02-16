@@ -244,63 +244,58 @@ public abstract class Serializer {
     }
   }
 
-  protected void serialize(final Insert.INSERT<?> insert, final Serialization serialization) {
-    if (insert.entities.length == 0)
-      throw new IllegalArgumentException("entities.length == 0");
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  protected void serialize(final Insert.INSERT insert, final Serialization serialization) throws IOException {
+    if (insert.entities != null) {
+      for (int i = 0; i < insert.entities.length; i++) {
+        final StringBuilder columns = new StringBuilder();
+        final Entity entity = insert.entities[i];
+        serialization.append("INSERT INTO ");
+        entity.serialize(serialization);
+        for (int j = 0; j < entity.column().length; j++) {
+          final type.DataType dataType = entity.column()[j];
+          if (!dataType.wasSet()) {
+            if (dataType.generateOnInsert == null)
+              continue;
 
-    final StringBuilder columns = new StringBuilder();
-    final StringBuilder values = new StringBuilder();
-//    if (serialization.statementType == PreparedStatement.class) {
-//      for (int i = 0; i < serializable.entities.length; i++) {
-//        final Entity entity = serializable.entities[i];
-//        serialization.append("INSERT INTO ");
-//        entity.serialize(serialization);
-//        for (final type.DataType dataType : entity.column()) {
-//          if (!dataType.wasSet()) {
-//            if (dataType.generateOnInsert == null)
-//              continue;
-//
-//            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-//          }
-//
-//          columns.append(", ").append(dataType.name);
-//          values.append(", ").append(getPreparedStatementMark(dataType));
-//          serialization.addParameter(dataType);
-//        }
-//
-//        serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
-//        if (i < serializable.entities.length - 1) {
-//          serialization.addBatch();
-//          columns.setLength(0);
-//          values.setLength(0);
-//        }
-//      }
-//    }
-//    else {
-//      for (int i = 0; i < serializable.entities.length; i++) {
-//        final Entity entity = serializable.entities[i];
-//        serialization.append("INSERT INTO ");
-//        entity.serialize(serialization);
-//        for (final type.DataType dataType : entity.column()) {
-//          if (!dataType.wasSet()) {
-//            if (dataType.generateOnInsert == null)
-//              continue;
-//
-//            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-//          }
-//
-//          columns.append(", ").append(dataType.name);
-//          values.append(", ").append(VariableWrapper.toString(dataType.get()));
-//        }
-//
-//        serialization.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
-//        if (i < serializable.entities.length - 1) {
-//          serialization.addBatch();
-//          columns.setLength(0);
-//          values.setLength(0);
-//        }
-//      }
-//    }
+            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
+          }
+
+          if (j > 0)
+            columns.append(", ");
+
+          columns.append(dataType.name);
+        }
+
+        serialization.append(" (").append(columns).append(") VALUES (");
+
+        for (int j = 0; j < entity.column().length; j++) {
+          final type.DataType dataType = entity.column()[j];
+          if (!dataType.wasSet() && dataType.generateOnInsert == null)
+            continue;
+
+          if (j > 0)
+            serialization.append(", ");
+
+          serialization.addParameter(dataType);
+        }
+
+        serialization.append(")");
+        serialization.addBatch();
+      }
+    }
+    else if (insert.select != null) {
+      final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)insert.select).normalize();
+      final Entity table = selectCommand.from().tables.iterator().next();
+
+      serialization.append("INSERT INTO ");
+      table.serialize(serialization);
+      serialization.append(" ");
+      selectCommand.serialize(serialization);
+    }
+    else {
+      throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
+    }
   }
 
   protected void serialize(final Update.UPDATE update, final Serialization serialization) throws IOException {

@@ -70,8 +70,13 @@ public class DataTest extends LoggableTest {
   private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
   private static Connection connection;
 
-  public static Connection createConnection() throws ClassNotFoundException, IOException, SQLException {
-    final File db = new File("target/generated-test-resources/derby/test-db");
+  private static final File db = new File("target/generated-test-resources/derby/test-db");
+
+  public static Connection createConnection() throws SQLException {
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
+  }
+
+  public static void initDB() throws ClassNotFoundException, IOException, SQLException {
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
@@ -90,11 +95,11 @@ public class DataTest extends LoggableTest {
     }
 
     new File(db, "tmp").mkdir();
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
   }
 
   @BeforeClass
   public static void create() throws ClassNotFoundException, IOException, SQLException {
+    initDB();
     connection = createConnection();
   }
 

@@ -41,7 +41,7 @@ final class Update extends SQLStatement {
      */
     @Override
     public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final Keyword<?> update = getParentRoot(this);
+      final Keyword<?> update = null; //getParentRoot(this);
       final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
       DBVendor vendor = null;
       try {
