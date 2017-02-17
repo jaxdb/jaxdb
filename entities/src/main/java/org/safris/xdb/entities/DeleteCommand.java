@@ -16,19 +16,21 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+
 import org.safris.xdb.entities.Delete.DELETE;
 import org.safris.xdb.entities.Delete.WHERE;
 
 final class DeleteCommand extends Command {
-  private DELETE delete;
+  private final DELETE delete;
   private WHERE where;
+
+  public DeleteCommand(final DELETE delete) {
+    this.delete = delete;
+  }
 
   public DELETE delete() {
     return delete;
-  }
-
-  public void add(final DELETE delete) {
-    this.delete = delete;
   }
 
   public WHERE where() {
@@ -40,6 +42,11 @@ final class DeleteCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
+  protected void serialize(final Serialization serialization) throws IOException {
+    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+    if (where() != null)
+      serializer.serialize(delete(), where(), serialization);
+    else
+      serializer.serialize(delete(), serialization);
   }
 }

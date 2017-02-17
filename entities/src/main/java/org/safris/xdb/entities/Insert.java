@@ -37,15 +37,12 @@ final class Insert extends SQLStatement {
       final InsertCommand command = (InsertCommand)normalize();
 
       final Class<? extends Schema> schema;
-      if (command.insert().entities != null) {
+      if (command.insert().entities != null)
         schema = command.insert().entities[0].schema();
-      }
-      else if (command.insert().columns != null) {
+      else if (command.insert().columns != null)
         schema = command.insert().columns[0].owner.schema();
-      }
-      else {
+      else
         throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
-      }
 
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);

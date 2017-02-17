@@ -32,21 +32,16 @@ final class Delete extends SQLStatement {
 
     @Override
     public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final Keyword<?> delete = null; //getParentRoot(this);
-      final Class<? extends Schema> schema = (((DELETE)delete).entity).schema();
-      DBVendor vendor = null;
+      final DeleteCommand command = (DeleteCommand)normalize();
+
+      final Class<? extends Schema> schema = command.delete().entities[0].schema();
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = null;
-        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-        final DeleteCommand command = (DeleteCommand)normalize();
-        serializer.serialize(command.delete(), serialization);
-        serializer.serialize(command.where(), serialization);
+        final DBVendor vendor = Schema.getDBVendor(connection);
 
-//        final Serialization serialization = new Serialization(Delete.class, vendor, EntityRegistry.getStatementType(schema));
-//        serialize(serialization);
-        final int[] count = null;//serialization.executeUpdate(connection);
+        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        command.serialize(serialization);
+        final int[] count = serialization.execute(connection);
         if (transaction == null)
           connection.close();
 
@@ -80,11 +75,11 @@ final class Delete extends SQLStatement {
   }
 
   protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
-    protected final Entity entity;
+    protected final Entity[] entities;
 
-    protected DELETE(final Entity entity) {
+    protected DELETE(final Entity ... entities) {
       super(null);
-      this.entity = entity;
+      this.entities = entities;
     }
 
     @Override
@@ -94,9 +89,7 @@ final class Delete extends SQLStatement {
 
     @Override
     protected final Command normalize() {
-      final DeleteCommand command = (DeleteCommand)parent().normalize();
-      command.add(this);
-      return command;
+      return new DeleteCommand(this);
     }
   }
 }

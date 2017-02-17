@@ -814,6 +814,10 @@ public final class DML {
     return new Delete.DELETE(entity);
   }
 
+  public static delete.DELETE DELETE(final Entity entity, final Entity ... entities) {
+    return new Delete.DELETE(Arrays.splice(entities, 0, 0, entity));
+  }
+
   /** INSERT **/
 
   public static <E extends Entity>insert.INSERT_VALUES<E> INSERT(final E entity) {

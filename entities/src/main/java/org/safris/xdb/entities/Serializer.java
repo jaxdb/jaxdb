@@ -21,7 +21,6 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -261,7 +260,7 @@ public abstract class Serializer {
         column.value = column.generateOnInsert.generateStatic(column);
       }
 
-      if (j > 0)
+      if (builder.length() > 0)
         builder.append(", ");
 
       builder.append(column.name);
@@ -269,15 +268,16 @@ public abstract class Serializer {
 
     serialization.append(" (").append(builder).append(") VALUES (");
 
+    boolean paramAdded = false;
     for (int j = 0; j < entity.column().length; j++) {
       final type.DataType dataType = entity.column()[j];
-      if (!dataType.wasSet() && dataType.generateOnInsert == null)
-        continue;
+      if (dataType.wasSet() || dataType.generateOnInsert != null) {
+        if (paramAdded)
+          serialization.append(", ");
 
-      if (j > 0)
-        serialization.append(", ");
-
-      serialization.addParameter(dataType);
+        serialization.addParameter(dataType);
+        paramAdded = true;
+      }
     }
 
     serialization.append(")");
@@ -397,24 +397,37 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Delete.DELETE delete, final Serialization serialization) throws IOException {
-    if (delete.entity.primary().length == 0)
-      throw new UnsupportedOperationException("Entity '" + delete.entity.name() + "' does not have a primary key");
+    for (int i = 0; i < delete.entities.length; i++) {
+      serialization.append("DELETE FROM ");
+      delete.entities[i].serialize(serialization);
+      boolean paramAdded = false;
+      for (int j = 0; j < delete.entities[i].column().length; j++) {
+        final type.DataType<?> column = delete.entities[i].column()[j];
+        if (column.wasSet()) {
+          if (paramAdded)
+            serialization.append(" AND ");
+          else
+            serialization.append(" WHERE ");
 
-//    if (serialization.getCaller().peek() == serializable && !serializable.entity.wasSelected())
-//      throw new UnsupportedOperationException("Entity '" + serializable.entity.name() + "' did not come from a SELECT");
+          serialization.append(column.name).append(" = ");
+          serialization.addParameter(column);
+          paramAdded = true;
+        }
+      }
+
+      serialization.addBatch();
+    }
+  }
+
+  protected void serialize(final Delete.DELETE delete, final Delete.WHERE where, final Serialization serialization) throws IOException {
+    if (delete.entities.length > 1)
+      throw new UnsupportedOperationException("This is not supported, and should not be!");
 
     serialization.append("DELETE FROM ");
-    delete.entity.serialize(serialization);
+    delete.entities[0].serialize(serialization);
+    serialization.append(" WHERE ");
 
-//    if (serialization.getCaller().peek() == serializable) {
-//      final StringBuilder whereClause = new StringBuilder();
-//      for (final type.DataType<?> dataType : serializable.entity.primary()) {
-//        serialization.addParameter(dataType);
-//        whereClause.append(" AND ").append(dataType.name).append(" = ?");
-//      }
-//
-//      serialization.append(" WHERE ").append(whereClause.substring(5));
-//    }
+    where.condition.serialize(serialization);
   }
 
   protected void serialize(final Delete.WHERE where, final Serialization serialization) throws IOException {

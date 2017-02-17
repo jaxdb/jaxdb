@@ -1423,7 +1423,7 @@
     quantityInStock="414"
     price="33.30"
     msrp="54.60"/>
-<Customer
+  <Customer
     customerNumber="103"
     companyName="Atelier graphique"
     lastName="Schmitt"
