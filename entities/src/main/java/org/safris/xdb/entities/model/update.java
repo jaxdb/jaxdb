@@ -17,20 +17,18 @@
 package org.safris.xdb.entities.model;
 
 import org.safris.xdb.entities.Condition;
-import org.safris.xdb.entities.Subject;
 import org.safris.xdb.entities.type;
 
 public interface update {
-  public interface SET extends UPDATE_SET {
-    public UPDATE WHERE(final Condition<?> condition);
+  public interface UPDATE extends ExecuteUpdate {
   }
 
   public interface UPDATE_SET extends UPDATE {
-    public <T>SET SET(final type.DataType<? extends T> set, final type.DataType<? extends T> to);
-    public <T>SET SET(final type.DataType<T> set, final T to);
-    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to);
+    public <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to);
+    public <T>SET SET(final type.DataType<T> column, final T to);
   }
 
-  public interface UPDATE extends ExecuteUpdate {
+  public interface SET extends UPDATE_SET {
+    public UPDATE WHERE(final Condition<?> condition);
   }
 }

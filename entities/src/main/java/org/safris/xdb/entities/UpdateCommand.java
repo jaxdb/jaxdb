@@ -16,40 +16,52 @@
 
 package org.safris.xdb.entities;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.safris.xdb.entities.Update.SET;
 import org.safris.xdb.entities.Update.UPDATE;
 import org.safris.xdb.entities.Update.WHERE;
 
 final class UpdateCommand extends Command {
-  private UPDATE update;
-  private SET set;
+  private final UPDATE update;
+  private List<SET> set;
   private WHERE where;
 
-  public UPDATE update() {
-    return update;
-  }
-
-  public void add(final UPDATE update) {
+  protected UpdateCommand(final UPDATE update) {
     this.update = update;
   }
 
-  public SET set() {
+  protected UPDATE update() {
+    return update;
+  }
+
+  protected List<SET> set() {
     return set;
   }
 
-  public void add(final SET set) {
-    this.set = set;
+  protected void add(final SET set) {
+    if (this.set == null)
+      this.set = new ArrayList<SET>();
+
+    this.set.add(set);
   }
 
-  public WHERE where() {
+  protected WHERE where() {
     return where;
   }
 
-  public void add(final WHERE where) {
+  protected void add(final WHERE where) {
     this.where = where;
   }
 
   @Override
-  protected void serialize(final Serialization serialization) {
+  protected void serialize(final Serialization serialization) throws IOException {
+    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+    if (set() != null)
+      serializer.serialize(update(), set(), where(), serialization);
+    else
+      serializer.serialize(update(), serialization);
   }
 }

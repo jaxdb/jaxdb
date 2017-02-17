@@ -21,8 +21,8 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.safris.commons.io.Readers;
@@ -334,60 +334,64 @@ public abstract class Serializer {
     selectCommand.serialize(serialization);
   }
 
+  @SuppressWarnings({"rawtypes", "unchecked"})
   protected void serialize(final Update.UPDATE update, final Serialization serialization) throws IOException {
-    final UpdateCommand command = (UpdateCommand)serialization.command;
-    if (command.set() == null && update.entity.primary().length == 0)
-      throw new UnsupportedOperationException("Entity '" + update.entity.name() + "' does not have a primary key, nor was WHERE clause specified");
+    for (int i = 0; i < update.entities.length; i++) {
+      serialization.append("UPDATE ");
+      update.entities[i].serialize(serialization);
+      serialization.append(" SET ");
+      boolean paramAdded = false;
+      for (final type.DataType column : update.entities[i].column()) {
+        if (!column.primary && (column.wasSet() || column.generateOnUpdate != null)) {
+          if (column.generateOnUpdate != null)
+            column.value = column.generateOnUpdate.generateStatic(column);
 
-    serialization.append("UPDATE ");
-    update.entity.serialize(serialization);
-    if (command.set() == null) {
-      final StringBuilder setClause = new StringBuilder();
-      for (final type.DataType dataType : update.entity.column()) {
-        if (!dataType.primary && (dataType.wasSet() || dataType.generateOnUpdate != null)) {
-          if (dataType.generateOnUpdate != null)
-            dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
+          if (paramAdded)
+            serialization.append(", ");
 
-          serialization.addParameter(dataType);
-          setClause.append(", ").append(dataType.name).append(" = ").append(getPreparedStatementMark(dataType));
+          serialization.append(column.name).append(" = ");
+          serialization.addParameter(column);
+          paramAdded = true;
         }
       }
 
-      serialization.append(" SET ").append(setClause.substring(2));
-      final StringBuilder whereClause = new StringBuilder();
-      for (final type.DataType dataType : update.entity.column()) {
-        if (dataType.primary) {
-          if (dataType.generateOnUpdate != null)
-            dataType.value = dataType.generateOnUpdate.generateStatic(dataType);
+      paramAdded = false;
+      for (final type.DataType column : update.entities[i].column()) {
+        if (column.primary) {
+          if (paramAdded)
+            serialization.append(" AND ");
+          else
+            serialization.append(" WHERE ");
 
-          serialization.addParameter(dataType);
-          whereClause.append(" AND ").append(dataType.name).append(" = ").append(getPreparedStatementMark(dataType));
+          serialization.append(column.name).append(" = ");
+          serialization.addParameter(column);
+          paramAdded = true;
         }
       }
 
-      serialization.append(" WHERE ").append(whereClause.substring(5));
+      serialization.addBatch();
     }
   }
 
-  protected void serialize(final Update.SET set, final Serialization serialization) throws IOException {
-    if (set.parent() instanceof Update.UPDATE)
-      serialization.append(" SET ");
+  protected void serialize(final Update.UPDATE update, final List<Update.SET> sets, final Update.WHERE where, final Serialization serialization) throws IOException {
+    if (update.entities.length > 1)
+      throw new UnsupportedOperationException("This is not supported, and should not be!");
 
-    set.set.serialize(serialization);
-    serialization.append(" = ");
-    set.to.serialize(serialization);
-    if (set.parent() instanceof Update.SET) {
-      serialization.append(", ");
+    serialization.append("UPDATE ");
+    update.entities[0].serialize(serialization);
+    serialization.append(" SET ");
+    for (int i = 0; i < sets.size(); i++) {
+      final Update.SET set = sets.get(i);
+      if (i > 0)
+        serialization.append(", ");
+
+      serialization.append(set.column.name).append(" = ");
+      set.to.serialize(serialization);
     }
-    else {
-      final Set<type.DataType<?>> setColumns = new HashSet<type.DataType<?>>();
-      final Entity entity = set.getSetColumns(setColumns);
-      final StringBuilder setClause = new StringBuilder();
-      for (final type.DataType column : entity.column())
-        if (!setColumns.contains(column) && column.generateOnUpdate != null)
-          setClause.append(", ").append(column.name).append(" = ").append(column.generateOnUpdate.generateDynamic(serialization, column));
 
-      serialization.append(setClause);
+    if (where != null) {
+      serialization.append(" WHERE ");
+      where.condition.serialize(serialization);
     }
   }
 

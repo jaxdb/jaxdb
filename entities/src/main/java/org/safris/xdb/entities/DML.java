@@ -810,6 +810,10 @@ public final class DML {
     return new Update.UPDATE(entity);
   }
 
+  public static update.UPDATE UPDATE(final Entity entity, final Entity ... entities) {
+    return new Update.UPDATE(Arrays.splice(entities, 0, 0, entity));
+  }
+
   public static delete.DELETE_WHERE DELETE(final Entity entity) {
     return new Delete.DELETE(entity);
   }

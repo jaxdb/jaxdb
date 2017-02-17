@@ -50,7 +50,7 @@
       <check operator="ne" condition=""/>
     </column>
     <column name="phone" xsi:type="bigint" precision="19" unsigned="true" null="false"/>
-    <column name="sales_employee_number" xsi:type="bigint" precision="11">
+    <column name="sales_employee_number" xsi:type="int" precision="10" unsigned="true">
       <foreignKey references="employee" column="employee_number"/>
     </column>
     <column name="credit_limit" xsi:type="decimal" precision="10" scale="2" unsigned="true"/>
@@ -62,7 +62,7 @@
   </table>
   
   <table name="employee">
-    <column name="employee_number" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="employee_number" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="first_name" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
@@ -73,10 +73,10 @@
     <column name="email" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="office_code" xsi:type="bigint" precision="11" unsigned="true" null="false">
+    <column name="office_code" xsi:type="int" precision="10" unsigned="true" null="false">
       <foreignKey references="office" column="office_code"/>
     </column>
-    <column name="reports_to" xsi:type="bigint" precision="11">
+    <column name="reports_to" xsi:type="int" precision="10" unsigned="true">
       <foreignKey references="employee" column="employee_number"/>
     </column>
     <column name="job_title" xsi:type="char" varying="true" length="64" null="false">
@@ -90,7 +90,7 @@
   </table>
   
   <table name="office" extends="address">
-    <column name="office_code" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="office_code" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="phone" xsi:type="bigint" precision="19" unsigned="true" null="false"/>
     <column name="territory" xsi:type="char" varying="true" length="32" null="false"/>
     <constraints>
@@ -107,7 +107,7 @@
     <column name="product_code" xsi:type="char" length="8" null="false">
       <foreignKey references="product" column="code"/>
     </column>
-    <column name="quantity" xsi:type="bigint" precision="11" unsigned="true" null="false"/>
+    <column name="quantity" xsi:type="int" precision="10" unsigned="true" null="false"/>
     <column name="price_each" xsi:type="decimal" precision="10" scale="2" unsigned="true" null="false"/>
     <column name="purchase_line_number" xsi:type="int" precision="6" unsigned="true" null="false"/>
     <constraints>

@@ -134,8 +134,6 @@ public final class Select extends SQLStatement {
       @Override
       public void close() throws SQLException {
         try {
-          resultSet.close();
-          resultSet.getStatement().close();
           connection.close();
         }
         catch (final SQLException e) {

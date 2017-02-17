@@ -19,11 +19,9 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Set;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.case_;
-import org.safris.xdb.entities.model.select;
 import org.safris.xdb.entities.model.update;
 import org.safris.xdb.schema.DBVendor;
 
@@ -41,21 +39,16 @@ final class Update extends SQLStatement {
      */
     @Override
     public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final Keyword<?> update = null; //getParentRoot(this);
-      final Class<? extends Schema> schema = (((UPDATE)update).entity).schema();
-      DBVendor vendor = null;
+      final UpdateCommand command = (UpdateCommand)normalize();
+
+      final Class<? extends Schema> schema = command.update().entities[0].schema();
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        vendor = Schema.getDBVendor(connection);
-        final Serialization serialization = null;
-        final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-        final UpdateCommand command = (UpdateCommand)normalize();
-        serializer.serialize(command.update(), serialization);
-        serializer.serialize(command.set(), serialization);
-        serializer.serialize(command.where(), serialization);
-//        final Serialization serialization = new Serialization(Update.class, vendor, EntityRegistry.getStatementType(schema));
-//        serialize(serialization);
-        final int[] count = null;//serialization.executeUpdate(connection);
+        final DBVendor vendor = Schema.getDBVendor(connection);
+
+        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        command.serialize(serialization);
+        final int[] count = serialization.execute(connection);
         if (transaction == null)
           connection.close();
 
@@ -78,75 +71,50 @@ final class Update extends SQLStatement {
     }
 
     @Override
-    public final <T>SET SET(final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
-      return new SET(this, set, to);
+    public final <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+      return new SET(this, column, to);
     }
 
     @Override
-    public final <T>SET SET(final type.DataType<T> set, final T to) {
+    public final <T>SET SET(final type.DataType<T> column, final T to) {
       final type.DataType<T> wrap = type.DataType.wrap(to);
-      return new SET(this, set, wrap);
-    }
-
-    @Override
-    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to) {
-      // TODO:
-      throw new UnsupportedOperationException();
+      return new SET(this, column, wrap);
     }
   }
 
   protected static final class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
-    protected final Entity entity;
+    protected final Entity[] entities;
 
-    protected UPDATE(final Entity entity) {
+    protected UPDATE(final Entity ... entities) {
       super(null);
-      this.entity = entity;
+      this.entities = entities;
     }
 
     @Override
     protected final Command normalize() {
-      final UpdateCommand command = (UpdateCommand)parent().normalize();
-      command.add(this);
-      return command;
+      return new UpdateCommand(this);
     }
   }
 
   protected static final class SET extends UPDATE_SET implements update.SET {
-    protected final type.DataType<?> set;
+    protected final type.DataType<?> column;
     protected final Serializable to;
 
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final case_.CASE<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final case_.CASE<? extends T> to) {
       super(parent);
-      this.set = set;
+      this.column = column;
       this.to = (Provision)to;
     }
 
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> set, final type.DataType<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       super(parent);
-      this.set = set;
+      this.column = column;
       this.to = to;
-    }
-
-    @Override
-    public <T extends Subject<?>>SET SET(final T set, final select.SELECT<T> to) {
-      // TODO:
-      throw new UnsupportedOperationException();
     }
 
     @Override
     public WHERE WHERE(final Condition<?> condition) {
       return new WHERE(this, condition);
-    }
-
-    protected Entity getSetColumns(final Set<type.DataType<?>> columns) {
-      columns.add(set);
-      if (parent() instanceof Update.SET)
-        return ((Update.SET)parent()).getSetColumns(columns);
-
-      if (parent() instanceof Update.UPDATE)
-        return ((Update.UPDATE)parent()).entity;
-
-      throw new Error("This should not happen, as UPDATE is always followed by SET.");
     }
 
     @Override
