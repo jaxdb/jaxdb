@@ -23,7 +23,7 @@ import java.time.LocalTime;
 
 import org.safris.xdb.entities.model.case_;
 
-final class Case extends SQLStatement implements case_ {
+final class Case implements case_ {
   protected static abstract class ChainedKeyword extends Keyword<Subject<?>> {
     protected ChainedKeyword(final ChainedKeyword parent) {
       super(parent);

@@ -26,7 +26,7 @@ import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-final class Insert extends SQLStatement {
+final class Insert {
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
     protected Execute(final Keyword<T> parent) {
       super(parent);

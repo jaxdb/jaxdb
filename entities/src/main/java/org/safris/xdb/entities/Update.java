@@ -25,7 +25,7 @@ import org.safris.xdb.entities.model.case_;
 import org.safris.xdb.entities.model.update;
 import org.safris.xdb.schema.DBVendor;
 
-final class Update extends SQLStatement {
+final class Update {
   private static abstract class Execute extends Keyword<type.DataType<?>> implements update.UPDATE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);

@@ -24,7 +24,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.schema.DBVendor;
 
-final class Delete extends SQLStatement {
+final class Delete {
   private static abstract class Execute extends Keyword<type.DataType<?>> implements delete.DELETE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);

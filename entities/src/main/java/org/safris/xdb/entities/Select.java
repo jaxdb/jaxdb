@@ -35,7 +35,7 @@ import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
-public final class Select extends SQLStatement {
+public final class Select {
   private static void serialize(final List<Pair<type.DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
