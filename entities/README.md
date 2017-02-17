@@ -1,20 +1,20 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## xdb-entities<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## XDE (xdb-entities)<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
 > eXtensible Data Binding Entities
 
 ### Introduction
 
-**xdb-entities** is an extension to [**xdb-schema**][xdb-schema], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. Based on the CohesionFirst™ approach, the **xdb-entities** framework is designed to provide a highly cohesive and strongly-typed binding between the Java language and RDBMS servers. XDE uses a SQL schema defined in a [XDS file][hospital.xds] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**XDE (xdb-entities)** is an extension to [**xdb-schema**][xdb-schema], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **XDE** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. XDE uses a SQL schema defined in a [XDS file][hospital.xds] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
-### Why **xdb-entities**?
+### Why **XDE**?
 
 #### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, **xdb-entities** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **xdb-entities** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **xdb-entities** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
+Developed with the CohesionFirst™ approach, **XDE** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **XDE** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **XDE** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
 
 #### Strongly Typed DML Semantics
 
-In addition to generating Java classes that bind to a DDL, the **xdb-entities** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
+In addition to generating Java classes that bind to a DDL, the **XDE** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
 
 ```java
 public static basis.Account findAccount(final String email) throws SQLException {
@@ -29,17 +29,17 @@ public static basis.Account findAccount(final String email) throws SQLException 
 }
 ```
 
-**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **xdb-entities** provides a strongly typed approach for the construction of SQL DML.
+**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **XDE** provides a strongly typed approach for the construction of SQL DML.
 
 Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
 
 #### Fast and Memory Efficient
 
-**xdb-entities** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
+**XDE** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
 
 #### Cohesive and Fail-Fast
 
-**xdb-entities** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
+**XDE** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
 
 ### Getting Started
 
@@ -50,9 +50,9 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Example
 
-1. As **xdb-entities** framework requires a XDS-based SQL Schema, start with a [`xdb-schema` Example][schema-example].
+1. As **XDE** framework requires a XDS-based SQL Schema, start with a [`xdb-schema` Example][schema-example].
 
-2. Next, add the `org.safris.xdb:xdb-entities` dependency into the POM.
+2. Next, add the `org.safris.xdb:XDE` dependency into the POM.
 
   ```xml
   <dependency>
@@ -120,7 +120,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **xdb-entities** to your database. **xdb-entities** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **XDE** to your database. **XDE** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
@@ -178,7 +178,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the **xdb-entities** `EntityRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **XDE** `EntityRegistry`.
 
   ```java
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
@@ -195,7 +195,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Known Issues
 
-* To model the strong-typed relation amongst the DataType(s), the **xdb-entities** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the DataType(s), the **XDE** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ### Dev Status
 
@@ -495,6 +495,8 @@ Specification                                                                   
    **<samp>BINARY</samp>** |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          |                          | :heavy_multiplication_x: | :heavy_multiplication_x: |
 
 *__NOTE:__ UNSIGNED types follow the same type cast behavior. The UNSIGNED quality of a type is preserved for two UNSIGNED types, and is lost for a mixed pair.*
+
+<br>
 
 ### Simplified Class Diagram
 
