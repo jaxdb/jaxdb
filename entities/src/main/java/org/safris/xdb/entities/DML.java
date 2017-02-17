@@ -816,17 +816,24 @@ public final class DML {
 
   /** INSERT **/
 
+  public static <E extends Entity>insert.INSERT_VALUES<E> INSERT(final E entity) {
+    return new Insert.INSERT<E>(entity);
+  }
+
   @SafeVarargs
-  public static insert.INSERT INSERT(final Entity entity, final Entity ... entities) {
-    return new Insert.INSERT(Arrays.splice(entities, 0, 0, entity));
+  @SuppressWarnings("unchecked")
+  public static <E extends Entity>insert.INSERT<E> INSERT(final E entity, final E ... entities) {
+    return new Insert.INSERT<E>(Arrays.splice(entities, 0, 0, entity));
   }
 
-  public static insert.INSERT INSERT(final select.SELECT<?> select) {
-    return new Insert.INSERT(select);
+  @SafeVarargs
+  @SuppressWarnings("unchecked")
+  public static <DataType extends type.DataType<?>>insert.INSERT_VALUES<DataType> INSERT(final DataType column, final DataType ... columns) {
+    return new Insert.INSERT<DataType>(Arrays.splice(columns, 0, 0, column));
   }
 
-  public static insert.INSERT INSERT(final $xdd_data data) {
-    return new Insert.INSERT(Entities.toEntities(data));
+  public static insert.INSERT<?> INSERT(final $xdd_data data) {
+    return new Insert.INSERT<Subject<?>>(Entities.toEntities(data));
   }
 
   /** String Functions **/

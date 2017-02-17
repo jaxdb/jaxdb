@@ -21,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -30,6 +31,7 @@ import org.safris.commons.io.Streams;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
+import org.safris.xdb.entities.Insert.VALUES;
 import org.safris.xdb.entities.Interval.Unit;
 import org.safris.xdb.schema.DBVendor;
 
@@ -77,8 +79,8 @@ public abstract class Serializer {
         }
       }
       else if (subject instanceof type.DataType<?>) {
-        serialization.registerAlias(((type.DataType<?>)subject).owner);
         final type.DataType<?> dataType = (type.DataType<?>)subject;
+        serialization.registerAlias(dataType.owner);
         dataType.serialize(serialization);
       }
 
@@ -245,57 +247,91 @@ public abstract class Serializer {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
+  private static void serializeInsert(final type.DataType<?>[] columns, final Serialization serialization) throws IOException {
+    final StringBuilder builder = new StringBuilder();
+    serialization.append("INSERT INTO ");
+    final Entity entity = columns[0].owner;
+    entity.serialize(serialization);
+    for (int j = 0; j < columns.length; j++) {
+      final type.DataType column = columns[j];
+      if (!column.wasSet()) {
+        if (column.generateOnInsert == null)
+          continue;
+
+        column.value = column.generateOnInsert.generateStatic(column);
+      }
+
+      if (j > 0)
+        builder.append(", ");
+
+      builder.append(column.name);
+    }
+
+    serialization.append(" (").append(builder).append(") VALUES (");
+
+    for (int j = 0; j < entity.column().length; j++) {
+      final type.DataType dataType = entity.column()[j];
+      if (!dataType.wasSet() && dataType.generateOnInsert == null)
+        continue;
+
+      if (j > 0)
+        serialization.append(", ");
+
+      serialization.addParameter(dataType);
+    }
+
+    serialization.append(")");
+  }
+
+  @SuppressWarnings("rawtypes")
   protected void serialize(final Insert.INSERT insert, final Serialization serialization) throws IOException {
-    if (insert.entities != null) {
+    if (insert.entities != null && insert.entities.length > 1) {
       for (int i = 0; i < insert.entities.length; i++) {
-        final StringBuilder columns = new StringBuilder();
-        final Entity entity = insert.entities[i];
-        serialization.append("INSERT INTO ");
-        entity.serialize(serialization);
-        for (int j = 0; j < entity.column().length; j++) {
-          final type.DataType dataType = entity.column()[j];
-          if (!dataType.wasSet()) {
-            if (dataType.generateOnInsert == null)
-              continue;
-
-            dataType.value = dataType.generateOnInsert.generateStatic(dataType);
-          }
-
-          if (j > 0)
-            columns.append(", ");
-
-          columns.append(dataType.name);
-        }
-
-        serialization.append(" (").append(columns).append(") VALUES (");
-
-        for (int j = 0; j < entity.column().length; j++) {
-          final type.DataType dataType = entity.column()[j];
-          if (!dataType.wasSet() && dataType.generateOnInsert == null)
-            continue;
-
-          if (j > 0)
-            serialization.append(", ");
-
-          serialization.addParameter(dataType);
-        }
-
-        serialization.append(")");
+        serializeInsert(insert.entities[i].column(), serialization);
         serialization.addBatch();
       }
     }
-    else if (insert.select != null) {
-      final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)insert.select).normalize();
-      final Entity table = selectCommand.from().tables.iterator().next();
+    else {
+      serializeInsert(insert.entities != null ? insert.entities[0].column() : insert.columns, serialization);
+    }
+  }
+
+  @SuppressWarnings("rawtypes")
+  protected void serialize(final Insert.INSERT insert, final VALUES<?> values, final Serialization serialization) throws IOException {
+    final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
+    if (insert.entities != null) {
+      if (insert.entities.length > 1)
+        throw new UnsupportedOperationException("This is not supported, and should not be!");
 
       serialization.append("INSERT INTO ");
-      table.serialize(serialization);
-      serialization.append(" ");
-      selectCommand.serialize(serialization);
+      final Entity entity = insert.entities[0];
+      entity.serialize(serialization);
+      serialization.append(" (");
+      for (int i = 0; i < entity.column().length; i++) {
+        if (i > 0)
+          serialization.append(", ");
+
+        entity.column()[i].serialize(serialization);
+      }
+
+      serialization.append(") ");
     }
-    else {
-      throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
+    else if (insert.columns != null) {
+      serialization.append("INSERT INTO ");
+      final Entity entity = insert.columns[0].owner;
+      entity.serialize(serialization);
+      serialization.append(" (");
+      for (int i = 0; i < insert.columns.length; i++) {
+        if (i > 0)
+          serialization.append(", ");
+
+        insert.columns[i].serialize(serialization);
+      }
+
+      serialization.append(") ");
     }
+
+    selectCommand.serialize(serialization);
   }
 
   protected void serialize(final Update.UPDATE update, final Serialization serialization) throws IOException {

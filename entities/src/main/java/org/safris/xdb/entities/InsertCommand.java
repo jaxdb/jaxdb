@@ -19,21 +19,34 @@ package org.safris.xdb.entities;
 import java.io.IOException;
 
 import org.safris.xdb.entities.Insert.INSERT;
+import org.safris.xdb.entities.Insert.VALUES;
 
 final class InsertCommand extends Command {
-  private final INSERT insert;
+  private final INSERT<?> insert;
+  private VALUES<?> values;
 
-  public InsertCommand(final INSERT insert) {
+  public InsertCommand(final INSERT<?> insert) {
     this.insert = insert;
   }
 
-  public INSERT insert() {
+  public INSERT<?> insert() {
     return insert;
+  }
+
+  public void add(final VALUES<?> values) {
+    this.values = values;
+  }
+
+  public VALUES<?> values() {
+    return values;
   }
 
   @Override
   protected void serialize(final Serialization serialization) throws IOException {
     final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-    serializer.serialize(insert(), serialization);
+    if (values() != null)
+      serializer.serialize(insert(), values(), serialization);
+    else
+      serializer.serialize(insert(), serialization);
   }
 }

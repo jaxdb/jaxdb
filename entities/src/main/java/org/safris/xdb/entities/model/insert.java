@@ -16,7 +16,16 @@
 
 package org.safris.xdb.entities.model;
 
+import org.safris.xdb.entities.Subject;
+
 public interface insert {
-  public interface INSERT extends ExecuteUpdate {
+  public interface VALUES<T extends Subject<?>> extends ExecuteUpdate {
+  }
+
+  public interface INSERT<T extends Subject<?>> extends ExecuteUpdate {
+  }
+
+  public interface INSERT_VALUES<T extends Subject<?>> extends INSERT<T> {
+    public VALUES<T> VALUES(final select.SELECT<T> select);
   }
 }

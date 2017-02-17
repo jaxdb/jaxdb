@@ -21,43 +21,27 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
+import org.safris.xdb.entities.model.ExecuteUpdate;
+import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.schema.DBVendor;
 
 final class Insert extends SQLStatement {
-  protected static final class INSERT extends Keyword<Subject<?>> implements org.safris.xdb.entities.model.insert.INSERT {
-    protected final Entity[] entities;
-    protected final select.SELECT<?> select;
-
-    @SafeVarargs
-    protected INSERT(final Entity ... entities) {
-      super(null);
-      this.entities = entities;
-      this.select = null;
-    }
-
-    protected INSERT(final select.SELECT<?> select) {
-      super(null);
-      this.entities = null;
-      this.select = select;
+  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
+    protected Execute(final Keyword<T> parent) {
+      super(parent);
     }
 
     @Override
-    protected final Command normalize() {
-      return new InsertCommand(this);
-    }
-
-    @Override
-    public int[] execute(final Transaction transaction) throws IOException, SQLException {
+    public final int[] execute(final Transaction transaction) throws IOException, SQLException {
       final InsertCommand command = (InsertCommand)normalize();
 
       final Class<? extends Schema> schema;
       if (command.insert().entities != null) {
         schema = command.insert().entities[0].schema();
       }
-      else if (command.insert().select != null) {
-        final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)command.insert().select).normalize();
-        schema = selectCommand.from().tables.iterator().next().schema();
+      else if (command.insert().columns != null) {
+        schema = command.insert().columns[0].owner.schema();
       }
       else {
         throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
@@ -81,8 +65,60 @@ final class Insert extends SQLStatement {
     }
 
     @Override
-    public int[] execute() throws IOException, SQLException {
+    public final int[] execute() throws IOException, SQLException {
       return execute(null);
+    }
+  }
+
+  protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements insert.VALUES<T> {
+    protected final select.SELECT<?> select;
+
+    protected VALUES(final Keyword<T> parent, final select.SELECT<?> select) {
+      super(parent);
+      this.select = select;
+    }
+
+    @Override
+    protected Command normalize() {
+      final InsertCommand command = (InsertCommand)parent().normalize();
+      command.add(this);
+      return command;
+    }
+  }
+
+  protected static final class INSERT<T extends Subject<?>> extends Execute<T> implements insert.INSERT_VALUES<T> {
+    protected final Entity[] entities;
+    protected final type.DataType<?>[] columns;
+
+    @SafeVarargs
+    protected INSERT(final Entity ... entities) {
+      super(null);
+      this.entities = entities;
+      this.columns = null;
+    }
+
+    @SafeVarargs
+    protected INSERT(final type.DataType<?> ... columns) {
+      super(null);
+      this.entities = null;
+      this.columns = columns;
+      Entity entity = columns[0].owner;
+      if (entity == null)
+        throw new IllegalArgumentException("DataType must belong to an Entity");
+
+      for (int i = 1; i < columns.length; i++)
+        if (!columns[i].owner.equals(entity))
+          throw new IllegalArgumentException("All columns must belong to the same Entity");
+    }
+
+    @Override
+    protected final Command normalize() {
+      return new InsertCommand(this);
+    }
+
+    @Override
+    public insert.VALUES<T> VALUES(final select.SELECT<T> select) {
+      return new VALUES<T>(this, select);
     }
   }
 }
