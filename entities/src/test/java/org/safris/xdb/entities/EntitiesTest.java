@@ -23,43 +23,30 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.logging.Logging;
 import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.XMLException;
-import org.safris.xdb.data.DataTest;
 import org.safris.xdb.entities.generator.Generator;
+import org.safris.xdb.schema.VendorClassRunner;
+import org.safris.xdb.schema.VendorIntegration;
+import org.safris.xdb.schema.VendorTest;
+import org.safris.xdb.schema.vendor.Derby;
+import org.safris.xdb.schema.vendor.MySQL;
+import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
+@RunWith(VendorClassRunner.class)
+@VendorTest(Derby.class)
+@VendorIntegration({MySQL.class, PostgreSQL.class})
 public class EntitiesTest extends LoggableTest {
-  static {
-    Logging.setLevel(Level.FINE);
-  }
-
-  @SuppressWarnings("unchecked")
-  public static Connection createConnection(final String name) throws ClassNotFoundException, IOException, SQLException {
-    DataTest.initDB();
-    final Connection connection = DataTest.createConnection();
-    EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), PreparedStatement.class, new EntityDataSource() {
-      @Override
-      public Connection getConnection() throws SQLException {
-        return connection;
-      }
-    });
-
-    return connection;
-  }
-
   private static void createEntities(final String name) throws IOException, XMLException {
     final URL xds = Resources.getResource(name + ".xds").getURL();
     final File destDir = new File("target/generated-test-sources/xdb");
@@ -67,15 +54,22 @@ public class EntitiesTest extends LoggableTest {
   }
 
   @BeforeClass
-  public static void create() throws ClassNotFoundException, IOException, SQLException, XMLException {
+  public static void create() throws IOException, XMLException {
     createEntities("classicmodels");
     createEntities("world");
     createEntities("types");
-    createConnection("world");
   }
 
   @Test
-  public void testEntities() throws IOException, SQLException, XMLException {
+  @SuppressWarnings("unchecked")
+  public void testEntities(final Connection connection) throws ClassNotFoundException, IOException, SQLException, XMLException {
+    EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + ".world"), PreparedStatement.class, new EntityDataSource() {
+      @Override
+      public Connection getConnection() throws SQLException {
+        return connection;
+      }
+    });
+
     final URL xdd = Resources.getResource("world.xdd").getURL();
     final $xdd_data data;
     try (final InputStream in = xdd.openStream()) {
@@ -83,17 +77,5 @@ public class EntitiesTest extends LoggableTest {
     }
 
     INSERT(data).execute();
-  }
-
-  @AfterClass
-  public static void destroy() throws SQLException {
-    new File("derby.log").deleteOnExit();
-    try {
-      DriverManager.getConnection("jdbc:derby:;shutdown=true");
-    }
-    catch (final SQLException e) {
-      if (!"XJ015".equals(e.getSQLState()))
-        throw e;
-    }
   }
 }

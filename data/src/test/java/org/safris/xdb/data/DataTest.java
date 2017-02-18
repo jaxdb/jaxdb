@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,28 +30,27 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.jar.JarFile;
 import java.util.logging.Level;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.safris.commons.io.Files;
-import org.safris.commons.io.JarFiles;
-import org.safris.commons.lang.Resource;
+import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.logging.Logging;
-import org.safris.commons.net.URLs;
-import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.test.LoggableTest;
 import org.safris.commons.util.Collections;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.schema.VendorClassRunner;
+import org.safris.xdb.schema.VendorIntegration;
+import org.safris.xdb.schema.VendorTest;
+import org.safris.xdb.schema.vendor.Derby;
+import org.safris.xdb.schema.vendor.MySQL;
+import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;
@@ -60,7 +58,9 @@ import org.safris.xsb.generator.Generator;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-@SuppressWarnings("unused")
+@RunWith(VendorClassRunner.class)
+@VendorTest(Derby.class)
+@VendorIntegration({MySQL.class, PostgreSQL.class})
 public class DataTest extends LoggableTest {
   static {
     Logging.setLevel(Level.FINE);
@@ -68,42 +68,8 @@ public class DataTest extends LoggableTest {
 
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
   private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
-  private static Connection connection;
 
-  private static final File db = new File("target/generated-test-resources/derby/test-db");
-
-  public static Connection createConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
-  }
-
-  public static void initDB() throws ClassNotFoundException, IOException, SQLException {
-    if (db.exists() && !Files.deleteAll(db.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
-
-    final File testClasses = new File("target/test-classes/test-db");
-    if (testClasses.exists() && !Files.deleteAll(testClasses.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
-
-    final Resource resource = Resources.getResource("test-db");
-    if (URLs.isJar(resource.getURL())) {
-      final JarFile jarFile = new JarFile(URLs.getParentJar(resource.getURL()).getPath());
-      final String path = URLs.getPathInJar(resource.getURL());
-      JarFiles.extract(jarFile, path, db.getParentFile());
-    }
-    else {
-      Files.copy(new File(resource.getURL().getPath()), db);
-    }
-
-    new File(db, "tmp").mkdir();
-  }
-
-  @BeforeClass
-  public static void create() throws ClassNotFoundException, IOException, SQLException {
-    initDB();
-    connection = createConnection();
-  }
-
-  private static void testData(final String name, final boolean loadData) throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+  private static void testData(final Connection connection, final String name, final boolean loadData) throws IOException, SQLException, TransformerException, XMLException {
     final URL xds = Resources.getResource(name + ".xds").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(xds, destFile);
@@ -184,34 +150,22 @@ public class DataTest extends LoggableTest {
   }
 
   @Test
-  public void testClassicModels() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("classicmodels", true);
+  public void testClassicModels(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
+    testData(connection, "classicmodels", true);
   }
 
   @Test
-  public void testWorld() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
-    testData("world", false);
+  public void testWorld(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
+    testData(connection, "world", false);
   }
 
   @Test
-  public void testTypes() throws IOException, ReflectiveOperationException, SQLException, TransformerException, XMLException {
+  public void testTypes(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
     resourcesDestDir.mkdirs();
     try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.xdd"))) {
       createTypeData(out);
     }
 
-    testData("types", true);
-  }
-
-  @AfterClass
-  public static void destroy() throws SQLException {
-    new File("derby.log").deleteOnExit();
-    try {
-      DriverManager.getConnection("jdbc:derby:;shutdown=true");
-    }
-    catch (final SQLException e) {
-      if (!"XJ015".equals(e.getSQLState()))
-        throw e;
-    }
+    testData(connection, "types", true);
   }
 }

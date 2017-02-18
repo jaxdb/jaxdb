@@ -46,7 +46,7 @@ public final class PostgreSQLSpec extends SQLSpec {
         else if (column instanceof $xds_integer) {
           final $xds_integer type = ($xds_integer)column;
           if (!type._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
-            statements.add("DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type));
+            statements.add("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type));
         }
       }
     }
@@ -134,7 +134,7 @@ public final class PostgreSQLSpec extends SQLSpec {
 
   @Override
   public String declareBinary(final boolean varying, final long length) {
-    return "BIT" + (varying ? " VARYING" : "") + "(" + length + ")";
+    return "BYTEA";
   }
 
   @Override
@@ -144,12 +144,12 @@ public final class PostgreSQLSpec extends SQLSpec {
 
   @Override
   public String declareClob(final long length) {
-    return "CLOB(" + length + ")";
+    return "TEXT";
   }
 
   @Override
   public String declareBlob(final long length) {
-    return "BYTEA" + "(" + length + ")";
+    return "BYTEA";
   }
 
   @Override
@@ -180,27 +180,22 @@ public final class PostgreSQLSpec extends SQLSpec {
 
   @Override
   public String declareInt8(final short precision, final boolean unsigned) {
-    return "SMALLINT(" + precision + ")";
+    return "SMALLINT";
   }
 
   @Override
   public String declareInt16(final short precision, final boolean unsigned) {
-    return "SMALLINT(" + precision + ")";
-  }
-
-  @Override
-  public String declareInt24(final short precision, final boolean unsigned) {
-    return "INTEGER(" + precision + ")";
+    return "SMALLINT";
   }
 
   @Override
   public String declareInt32(final short precision, final boolean unsigned) {
-    return "INTEGER(" + precision + ")";
+    return "INT";
   }
 
   @Override
   public String declareInt64(final short precision, final boolean unsigned) {
-    return "BIGINT(" + precision + ")";
+    return "BIGINT";
   }
 
   @Override

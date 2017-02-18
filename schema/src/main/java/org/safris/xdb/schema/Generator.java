@@ -150,11 +150,11 @@ public final class Generator extends BaseGenerator {
     }
     else if (column instanceof $xds_smallint) {
       final $xds_smallint type = ($xds_smallint)column;
-      ddl.append(vendor.getSQLSpec().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(vendor.getSQLSpec().declareInt8(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_mediumint) {
       final $xds_mediumint type = ($xds_mediumint)column;
-      ddl.append(vendor.getSQLSpec().declareInt24(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(vendor.getSQLSpec().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_int) {
       final $xds_int type = ($xds_int)column;

@@ -269,7 +269,6 @@ public abstract class SQLSpec {
 
   public abstract String declareInt8(final short precision, final boolean unsigned);
   public abstract String declareInt16(final short precision, final boolean unsigned);
-  public abstract String declareInt24(final short precision, final boolean unsigned);
   public abstract String declareInt32(final short precision, final boolean unsigned);
   public abstract String declareInt64(final short precision, final boolean unsigned);
 }

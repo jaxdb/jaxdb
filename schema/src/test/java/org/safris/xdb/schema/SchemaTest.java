@@ -16,49 +16,30 @@
 
 package org.safris.xdb.schema;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
 
-import org.apache.derby.jdbc.EmbeddedDriver;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.safris.commons.io.Files;
+import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.logging.Logging;
-import org.safris.commons.sql.ConnectionProxy;
 import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.validate.ValidationException;
+import org.safris.xdb.schema.vendor.Derby;
+import org.safris.xdb.schema.vendor.MySQL;
+import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
-@SuppressWarnings("unused")
+@RunWith(VendorClassRunner.class)
+@VendorTest(Derby.class)
+@VendorIntegration({MySQL.class, PostgreSQL.class})
 public class SchemaTest extends LoggableTest {
-  static {
-    Logging.setLevel(Level.FINE);
-    new EmbeddedDriver();
-  }
-
-  private static Connection connection;
-
-  @BeforeClass
-  public static void create() throws IOException, SQLException {
-    final File db = new File("target/generated-test-resources/derby/test-db");
-    if (db.exists() && !Files.deleteAll(db.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
-
-    connection = new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
-  }
-
   @Test
-  public void testClassicModels() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final xds_schema schema;
     try (final InputStream in = Resources.getResource("classicmodels.xds").getURL().openStream()) {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
@@ -68,7 +49,7 @@ public class SchemaTest extends LoggableTest {
   }
 
   @Test
-  public void testWorld() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public void testWorld(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final xds_schema schema;
     try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
@@ -78,24 +59,12 @@ public class SchemaTest extends LoggableTest {
   }
 
   @Test
-  public void testTypes() throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final xds_schema schema;
     try (final InputStream in = Resources.getResource("types.xds").getURL().openStream()) {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.create(schema, connection);
-  }
-
-  @AfterClass
-  public static void destroy() throws SQLException {
-    new File("derby.log").deleteOnExit();
-    try {
-      DriverManager.getConnection("jdbc:derby:;shutdown=true");
-    }
-    catch (final SQLException e) {
-      if (!"XJ015".equals(e.getSQLState()))
-        throw e;
-    }
   }
 }

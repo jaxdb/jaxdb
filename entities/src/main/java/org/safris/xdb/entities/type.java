@@ -1842,7 +1842,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getSQLSpec().declareInt24(precision(), unsigned());
+        return vendor.getSQLSpec().declareInt32(precision(), unsigned());
       }
 
       @Override
@@ -1957,7 +1957,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt24(precision(), unsigned());
+      return vendor.getSQLSpec().declareInt32(precision(), unsigned());
     }
 
     @Override

@@ -101,7 +101,7 @@ public final class MySQLSpec extends SQLSpec {
 
   @Override
   public String declareBinary(final boolean varying, final long length) {
-    return "BIT" + (varying ? " VARYING" : "") + "(" + length + ")";
+    return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
   }
 
   @Override
@@ -111,12 +111,12 @@ public final class MySQLSpec extends SQLSpec {
 
   @Override
   public String declareClob(final long length) {
-    return "CLOB(" + length + ")";
+    return "TEXT(" + length + ")";
   }
 
   @Override
   public String declareBlob(final long length) {
-    return "BLOB" + "(" + length + ")";
+    return "BLOB(" + length + ")";
   }
 
   @Override
@@ -156,12 +156,13 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String declareInt24(final short precision, final boolean unsigned) {
-    return "MEDIUMINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
-  }
-
-  @Override
   public String declareInt32(final short precision, final boolean unsigned) {
+    if (unsigned && precision < 9)
+      return "MEDIUMINT(" + precision + ") UNSIGNED";
+
+    if (!unsigned && precision < 8)
+      return "MEDIUMINT(" + precision + ")";
+
     return "INTEGER(" + precision + (unsigned ? ") UNSIGNED" : ")");
   }
 
@@ -176,10 +177,10 @@ public final class MySQLSpec extends SQLSpec {
       return "ENUM()";
 
     final List<String> enums = parseEnum(type._values$().text());
-    final StringBuilder builder = new StringBuilder("ENUM(");
+    final StringBuilder builder = new StringBuilder();
     for (final String value : enums)
       builder.append(", '").append(value).append("'");
 
-    return builder.append(")").substring(2);
+    return "ENUM(" + builder.append(")").substring(2);
   }
 }
