@@ -251,6 +251,8 @@ public abstract class SQLSpec {
     return enums;
   }
 
+  public abstract String truncate(final String tableName);
+
   public abstract String $null(final $xds_table table, final $xds_column column);
   public abstract String $autoIncrement(final $xds_table table, final $xds_integer column);
 

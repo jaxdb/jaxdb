@@ -45,7 +45,6 @@ import org.safris.xdb.xdd.xe.$xdd_integer;
 import org.safris.xdb.xdd.xe.$xdd_row;
 import org.safris.xdb.xdd.xe.$xdd_time;
 import org.safris.xsb.runtime.Binding;
-import org.safris.xsb.runtime.Element;
 import org.safris.xsb.runtime.QName;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
@@ -104,12 +103,9 @@ public final class Datas {
   }
 
   private static String getTableName(final DBVendor vendor, final $xdd_row row) {
-    final Element element = (Element)row;
-    final QName schemaName = getName(element.owner().getClass().getSuperclass());
+//    final Element element = (Element)row;
+//    final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName tableName = getName(row.getClass().getSuperclass());
-    if (vendor == DBVendor.MY_SQL)
-      return schemaName.localPart() + "." + tableName.localPart();
-
     return tableName.localPart();
   }
 

@@ -28,7 +28,6 @@ import java.util.Set;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Numbers;
-import org.safris.commons.util.TopologicalSort;
 import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
 import org.safris.xdb.schema.standard.ReservedWords;
@@ -78,8 +77,8 @@ public final class Generator extends BaseGenerator {
   }
 
   public static String[] createDDL(final xds_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
-    final Generator creator = new Generator(schema);
-    final Statement[] ddls = creator.parse(vendor);
+    final Generator generator = new Generator(schema);
+    final Statement[] ddls = generator.parse(vendor);
     final StringBuilder sql = new StringBuilder();
     for (int i = ddls.length - 1; i >= 0; --i)
       if (ddls[i].drop != null)
@@ -94,13 +93,8 @@ public final class Generator extends BaseGenerator {
         sql.append(create).append(";\n\n");
 
     final String out = vendor == DBVendor.DERBY ? "CREATE SCHEMA " + schema._name$().text() + ";\n\n" + sql : sql.toString();
-    writeOutput(out, outDir != null ? new File(outDir, creator.merged._name$().text() + ".sql") : null);
+    writeOutput(out, outDir != null ? new File(outDir, generator.merged._name$().text() + ".sql") : null);
     return out.split("\\s*;\\s*");
-  }
-
-  public static Generator transformDDL(final URL url) throws IOException, XMLException {
-    final xds_schema schema = parseArguments(url, null);
-    return new Generator(schema);
   }
 
   private static String checkNameViolation(String string, final boolean strict) {
@@ -121,6 +115,7 @@ public final class Generator extends BaseGenerator {
 
   private Generator(final xds_schema schema) {
     super(schema);
+    sortedTableOrder = Schemas.tables(merged);
   }
 
   private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
@@ -242,7 +237,7 @@ public final class Generator extends BaseGenerator {
     return clause;
   }
 
-  private String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) throws GeneratorExecutionException {
+  private static String parseConstraints(final DBVendor vendor, final String tableName, final Map<String,$xds_column> columnNameToColumn, final $xds_table table) throws GeneratorExecutionException {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $xds_constraints constraints = table._constraints(0);
@@ -305,7 +300,6 @@ public final class Generator extends BaseGenerator {
 
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
-          insertDependency(tableName, foreignKey._references$().text());
           contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
           if (!foreignKey._onDelete$().isNull())
             contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
@@ -322,7 +316,6 @@ public final class Generator extends BaseGenerator {
           final $xds_foreignKey foreignKey = column._foreignKey(0);
           contraintsBuffer.append(",\n  FOREIGN KEY (").append(column._name$().text());
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
-          insertDependency(tableName, foreignKey._references$().text());
           contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
           if (!foreignKey._onDelete$().isNull())
             contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
@@ -478,7 +471,6 @@ public final class Generator extends BaseGenerator {
   }
 
   private String[] parseTable(final DBVendor vendor, final $xds_table table, final Set<String> tableNames) throws GeneratorExecutionException {
-    insertDependency(table._name$().text(), null);
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$xds_column> columnNameToColumn = new HashMap<String,$xds_column>();
     registerColumns(tableNames, columnNameToColumn, table, merged);
@@ -500,21 +492,7 @@ public final class Generator extends BaseGenerator {
     return statements.toArray(new String[statements.size()]);
   }
 
-  private final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
-  private List<String> sortedTableOrder;
-
-  public List<String> getSortedTableOrder() {
-    return sortedTableOrder;
-  }
-
-  private void insertDependency(final String target, final String source) {
-    Set<String> dependants = dependencyGraph.get(target);
-    if (dependants == null)
-      dependencyGraph.put(target, dependants = new HashSet<String>());
-
-    if (source != null)
-      dependants.add(source);
-  }
+  private final List<$xds_table> sortedTableOrder;
 
   public Statement[] parse(final DBVendor vendor) throws GeneratorExecutionException {
     final boolean createDropStatements = vendor != DBVendor.DERBY;
@@ -538,11 +516,12 @@ public final class Generator extends BaseGenerator {
       if (!table._abstract$().text())
         createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
-    sortedTableOrder = TopologicalSort.sort(dependencyGraph);
     final List<Statement> ddls = new ArrayList<Statement>();
-    for (final String tableName : sortedTableOrder)
+    for (final $xds_table table : sortedTableOrder) {
+      final String tableName = table._name$().text();
       if (!skipTables.contains(tableName))
         ddls.add(new Statement(tableName, dropStatements.get(tableName), createTableStatements.get(tableName)));
+    }
 
     return ddls.toArray(new Statement[ddls.size()]);
   }

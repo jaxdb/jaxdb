@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.validate.ValidationException;
 import org.safris.xdb.schema.vendor.Derby;
 import org.safris.xdb.schema.vendor.MySQL;
@@ -37,7 +36,7 @@ import org.xml.sax.InputSource;
 @RunWith(VendorClassRunner.class)
 @VendorTest(Derby.class)
 @VendorIntegration({MySQL.class, PostgreSQL.class})
-public class SchemaTest extends LoggableTest {
+public class SchemaTest {
   @Test
   public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final xds_schema schema;
@@ -45,7 +44,7 @@ public class SchemaTest extends LoggableTest {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(schema, connection);
+    Schemas.create(connection, schema);
   }
 
   @Test
@@ -55,7 +54,7 @@ public class SchemaTest extends LoggableTest {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(schema, connection);
+    Schemas.create(connection, schema);
   }
 
   @Test
@@ -65,6 +64,6 @@ public class SchemaTest extends LoggableTest {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(schema, connection);
+    Schemas.create(connection, schema);
   }
 }

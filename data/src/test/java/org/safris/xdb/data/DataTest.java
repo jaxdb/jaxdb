@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
@@ -39,12 +40,12 @@ import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.logging.Logging;
-import org.safris.commons.test.LoggableTest;
 import org.safris.commons.util.Collections;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
+import org.safris.xdb.schema.Schemas;
 import org.safris.xdb.schema.VendorClassRunner;
 import org.safris.xdb.schema.VendorIntegration;
 import org.safris.xdb.schema.VendorTest;
@@ -52,6 +53,8 @@ import org.safris.xdb.schema.vendor.Derby;
 import org.safris.xdb.schema.vendor.MySQL;
 import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xdd.xe.$xdd_data;
+import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;
 import org.safris.xsb.generator.Generator;
@@ -61,7 +64,7 @@ import org.xml.sax.InputSource;
 @RunWith(VendorClassRunner.class)
 @VendorTest(Derby.class)
 @VendorIntegration({MySQL.class, PostgreSQL.class})
-public class DataTest extends LoggableTest {
+public class DataTest {
   static {
     Logging.setLevel(Level.FINE);
   }
@@ -69,16 +72,29 @@ public class DataTest extends LoggableTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
   private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
 
-  private static void testData(final Connection connection, final String name, final boolean loadData) throws IOException, SQLException, TransformerException, XMLException {
-    final URL xds = Resources.getResource(name + ".xds").getURL();
-    final File destFile = new File(resourcesDestDir, name + ".xsd");
-    Datas.createXSD(xds, destFile);
+  private static final Set<String> compiledDBs = new HashSet<String>();
 
-    final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd"));
-    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
-    new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
+  private static void testData(final Connection connection, final String name, final boolean loadData) throws IOException, SQLException, TransformerException, XMLException {
+    if (!compiledDBs.contains(name)) {
+      final URL xds = Resources.getResource(name + ".xds").getURL();
+      final File destFile = new File(resourcesDestDir, name + ".xsd");
+      Datas.createXSD(xds, destFile);
+
+      final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://xdb.safris.org/xdd.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd"));
+      final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
+      new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
+      compiledDBs.add(name);
+    }
 
     if (loadData) {
+      final xds_schema schema;
+      try (final InputStream in = Resources.getResource(name + ".xds").getURL().openStream()) {
+        schema = (xds_schema)Bindings.parse(new InputSource(in));
+      }
+      final List<$xds_table> tables = Schemas.tables(schema);
+      java.util.Collections.reverse(tables);
+      Schemas.truncate(connection, tables);
+
       final URL xdd = Resources.getResource(name + ".xdd").getURL();
       final $xdd_data data;
       try (final InputStream in = xdd.openStream()) {

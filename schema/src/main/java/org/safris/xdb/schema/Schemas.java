@@ -18,18 +18,98 @@ package org.safris.xdb.schema;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import org.safris.commons.util.TopologicalSort;
+import org.safris.xdb.xds.xe.$xds_column;
+import org.safris.xdb.xds.xe.$xds_constraints;
+import org.safris.xdb.xds.xe.$xds_foreignKey;
+import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.xds_schema;
 
 public final class Schemas {
-  public static void create(final xds_schema schema, final Connection connection) throws GeneratorExecutionException, SQLException {
+  public static int[] create(final Connection connection, final xds_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return create(connection, Arrays.asList(schemas));
+  }
+
+  public static int[] create(final Connection connection, final Collection<xds_schema> schemas) throws GeneratorExecutionException, SQLException {
     final DBVendor vendor = DBVendor.parse(connection.getMetaData());
     final java.sql.Statement statement = connection.createStatement();
-    final String[] sqls = Generator.createDDL(schema, vendor, null);
-    for (final String sql : sqls)
-      statement.addBatch(sql);
+    final int[] counts = new int[schemas.size()];
+    int i = 0;
+    for (final xds_schema schema : schemas) {
+      final String[] sqls = Generator.createDDL(schema, vendor, null);
+      for (final String sql : sqls)
+        statement.addBatch(sql);
 
-    statement.executeBatch();
+      int count = 0;
+      final int[] results = statement.executeBatch();
+      for (final int result : results)
+        count += result;
+
+      counts[i++] = count;
+    }
+
+    return counts;
+  }
+
+  public static List<$xds_table> tables(final xds_schema schema) {
+    final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
+    final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
+    for (final $xds_table table : schema._table()) {
+      if (table._abstract$().text() || table._skip$().text())
+        continue;
+
+      final String tableName = table._name$().text();
+      tableNameToTable.put(tableName, table);
+      Set<String> dependants = dependencyGraph.get(tableName);
+      if (dependants == null)
+        dependencyGraph.put(tableName, dependants = new HashSet<String>());
+
+      if (table._constraints() != null) {
+        final $xds_constraints constraints = table._constraints(0);
+        final List<$xds_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
+        if (foreignKeys != null)
+          for (final $xds_table._constraints._foreignKey foreignKey : foreignKeys)
+            dependants.add(foreignKey._references$().text());
+      }
+
+      if (table._column() != null) {
+        for (final $xds_column column : table._column()) {
+          if (column._foreignKey() != null) {
+            final $xds_foreignKey foreignKey = column._foreignKey(0);
+            dependants.add(foreignKey._references$().text());
+          }
+        }
+      }
+    }
+
+    final List<String> sortedNames = TopologicalSort.sort(dependencyGraph);
+    final List<$xds_table> tables = new ArrayList<$xds_table>(sortedNames.size());
+    for (final String tableName : sortedNames)
+      tables.add(tableNameToTable.get(tableName));
+
+    return tables;
+  }
+
+  public static int[] truncate(final Connection connection, final $xds_table ... tables) throws SQLException {
+    return truncate(connection, Arrays.asList(tables));
+  }
+
+  public static int[] truncate(final Connection connection, final Collection<$xds_table> tables) throws SQLException {
+    final DBVendor vendor = DBVendor.parse(connection.getMetaData());
+    final java.sql.Statement statement = connection.createStatement();
+    for (final $xds_table table : tables)
+      statement.addBatch(vendor.getSQLSpec().truncate(table._name$().text()));
+
+    return statement.executeBatch();
   }
 
   private Schemas() {

@@ -38,7 +38,9 @@ public class VendorClassRunner extends BlockJUnit4ClassRunner {
     while ((next = next.getNextException()) != null)
       builder.append("\n").append(next.getMessage());
 
-    return new SQLException(e.getMessage() + builder);
+    final SQLException exception = new SQLException(e.getMessage() + builder);
+    exception.setStackTrace(e.getStackTrace());
+    return exception;
   }
 
   private final boolean integrationTest;

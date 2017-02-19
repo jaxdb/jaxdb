@@ -80,6 +80,11 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
+  public String truncate(final String tableName) {
+    return "DELETE FROM " + tableName;
+  }
+
+  @Override
   protected String dropIndexOnClause(final $xds_table table) {
     return " ON " + table._name$().text();
   }

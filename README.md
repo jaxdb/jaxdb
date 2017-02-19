@@ -4,7 +4,7 @@
 
 ### Introduction
 
-**XDB** is a Java framework for binging to RDBMS data models. Based on the CohesionFirst™ approach, the **XDB** framework provides a strongly-typed and cohesive approach to connect the DB tier to the business tier.
+**XDB** is a Java framework for binding to RDBMS data models. Based on the CohesionFirst™ approach, the **XDB** framework provides a strongly-typed and cohesive approach to connect the DB tier to the business tier.
 
 ### Why **XDB**?
 
