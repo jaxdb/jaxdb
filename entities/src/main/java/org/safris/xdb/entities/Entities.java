@@ -94,9 +94,8 @@ public final class Entities {
         else if (attribute instanceof $xdd_dateTime)
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $xdd_enum) {
-          final String enumValue = ((String)value).toUpperCase().replace(' ', '_');
           for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
-            if (constant.toString().equals(enumValue)) {
+            if (constant.toString().equals(value)) {
               dataType.set(constant);
               break;
             }

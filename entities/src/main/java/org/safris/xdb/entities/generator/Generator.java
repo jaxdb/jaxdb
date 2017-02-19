@@ -568,9 +568,10 @@ public class Generator {
       final StringBuilder enums = new StringBuilder();
       final List<String> values = SQLSpec.parseEnum((($xds_enum)column)._values$().text());
       for (final String value : values)
-        enums.append(", ").append(value.toUpperCase().replace(' ', '_'));
+        enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
-      builder.append(enums.substring(2)).append("}");
+      builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
+      builder.append("      private final String value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
     return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();

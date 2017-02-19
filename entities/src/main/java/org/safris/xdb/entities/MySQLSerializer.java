@@ -23,9 +23,4 @@ final class MySQLSerializer extends Serializer {
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
-
-  @Override
-  protected String tableName(final Entity entity, final Serialization serialization) {
-    return entity.getClass().getEnclosingClass().getSimpleName() + "." + entity.name();
-  }
 }

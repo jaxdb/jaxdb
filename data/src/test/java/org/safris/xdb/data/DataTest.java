@@ -91,9 +91,7 @@ public class DataTest {
       try (final InputStream in = Resources.getResource(name + ".xds").getURL().openStream()) {
         schema = (xds_schema)Bindings.parse(new InputSource(in));
       }
-      final List<$xds_table> tables = Schemas.tables(schema);
-      java.util.Collections.reverse(tables);
-      Schemas.truncate(connection, tables);
+      Schemas.truncate(connection, Schemas.tables(schema));
 
       final URL xdd = Resources.getResource(name + ".xdd").getURL();
       final $xdd_data data;

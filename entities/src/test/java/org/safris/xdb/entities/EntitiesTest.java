@@ -30,9 +30,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.test.LoggableTest;
 import org.safris.commons.xml.XMLException;
 import org.safris.xdb.entities.generator.Generator;
+import org.safris.xdb.schema.Schemas;
 import org.safris.xdb.schema.VendorClassRunner;
 import org.safris.xdb.schema.VendorIntegration;
 import org.safris.xdb.schema.VendorTest;
@@ -40,13 +40,14 @@ import org.safris.xdb.schema.vendor.Derby;
 import org.safris.xdb.schema.vendor.MySQL;
 import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xdd.xe.$xdd_data;
+import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorClassRunner.class)
 @VendorTest(Derby.class)
 @VendorIntegration({MySQL.class, PostgreSQL.class})
-public class EntitiesTest extends LoggableTest {
+public class EntitiesTest {
   private static void createEntities(final String name) throws IOException, XMLException {
     final URL xds = Resources.getResource(name + ".xds").getURL();
     final File destDir = new File("target/generated-test-sources/xdb");
@@ -76,6 +77,11 @@ public class EntitiesTest extends LoggableTest {
       data = ($xdd_data)Bindings.parse(new InputSource(in));
     }
 
+    final xds_schema schema;
+    try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
+      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    }
+    Schemas.truncate(connection, Schemas.tables(schema));
     INSERT(data).execute();
   }
 }
