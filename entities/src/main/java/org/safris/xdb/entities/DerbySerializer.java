@@ -39,7 +39,7 @@ final class DerbySerializer extends Serializer {
       return a % b;
     }
 
-    public static double log(final double a, final double b) {
+    public static double log(final double b, final double a) {
       return Math.log(a) / Math.log(b);
     }
 
@@ -96,7 +96,7 @@ final class DerbySerializer extends Serializer {
   @Override
   protected void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
-      statement.execute("CREATE FUNCTION LOG(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
+      statement.execute("CREATE FUNCTION LOG(b DOUBLE, n DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
       statement.execute("CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log2'");
       statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Math.class.getName() + ".pow'");
       statement.execute("CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Classes.getStrictName(Functions.class) + ".round'");

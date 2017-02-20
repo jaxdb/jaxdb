@@ -62,7 +62,7 @@ final class CaseCommand extends Command {
   protected final void serialize(final Serialization serialization) throws IOException {
     final Serializer serializer = Serializer.getSerializer(serialization.vendor);
     if (simpleCase != null)
-      serializer.serialize(simpleCase, serialization);
+      serializer.serialize(simpleCase, else_(), serialization);
     else if (searchCase != null)
       serializer.serialize(searchCase, serialization);
     else
@@ -70,7 +70,7 @@ final class CaseCommand extends Command {
 
     for (int i = 0; i < then().size(); i++) {
       final THEN<?,?> then = then().get(i);
-      serializer.serialize((Case.WHEN)then.parent(), then, serialization);
+      serializer.serialize((Case.WHEN)then.parent(), then, else_(), serialization);
     }
 
     serializer.serialize(else_(), serialization);

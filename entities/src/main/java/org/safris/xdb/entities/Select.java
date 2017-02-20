@@ -572,12 +572,12 @@ public final class Select {
     }
 
     @Override
-    public RowIterator<T> execute() throws SQLException {
+    public RowIterator<T> execute() throws IOException, SQLException {
       return execute(null);
     }
 
     @Override
-    public RowIterator<T> execute(final Transaction transaction) throws SQLException {
+    public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
       if (entities.size() == 1) {
         final Subject<?> subject = entities.iterator().next();
         if (subject instanceof Entity) {

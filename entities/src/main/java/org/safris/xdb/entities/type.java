@@ -33,7 +33,6 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
@@ -124,10 +123,10 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value == null)
-        statement.setNull(parameterIndex, Types.ARRAY);
-      else
+      if (value != null)
         statement.setArray(parameterIndex, new SQLArray<T>(this));
+      else
+        statement.setNull(parameterIndex, sqlType());
     }
 
     @Override
@@ -240,6 +239,8 @@ public final class type {
           this.value = null;
         else if (value instanceof BigInteger)
           this.value = (BigInteger)value;
+        else if (value instanceof BigDecimal)
+          this.value = ((BigDecimal)value).toBigInteger();
         else if (value instanceof Long)
           this.value = BigInteger.valueOf((Long)value);
         else if (value instanceof Integer)
@@ -519,11 +520,8 @@ public final class type {
     }
 
     @Override
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setBlob(parameterIndex, value);
-      else
-        statement.setNull(parameterIndex, Types.BLOB);
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+      Serializer.getSerializer(DBVendor.parse(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
@@ -728,17 +726,13 @@ public final class type {
     }
 
     @Override
-    protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setClob(parameterIndex, value);
-      else
-        statement.setNull(parameterIndex, sqlType());
+    protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+      Serializer.getSerializer(DBVendor.parse(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final java.sql.Clob value = resultSet.getClob(columnIndex);
-      this.value = value == null ? null : value.getCharacterStream();
+      this.value = Serializer.getSerializer(DBVendor.parse(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
@@ -842,7 +836,7 @@ public final class type {
 
         if (value instanceof org.safris.xdb.entities.UNSIGNED.UnsignedNumber) {
           final org.safris.xdb.entities.UNSIGNED.UnsignedNumber unsignedNumber = (org.safris.xdb.entities.UNSIGNED.UnsignedNumber)value;
-          return (V)unsignedNumber.getTypeClass().getConstructor(value.getClass()).newInstance(unsignedNumber.value());
+          return (V)unsignedNumber.getTypeClass().getConstructor(unsignedNumber.value().getClass()).newInstance(unsignedNumber.value());
         }
 
         return (V)lookupDataTypeConstructor(value.getClass()).newInstance(value);
@@ -924,7 +918,7 @@ public final class type {
       return dataType;
     }
 
-    public final <E extends Enum<?>>ENUM<E> AS(final ENUM<E> dataType) {
+    public final <E extends Enum<?> & EntityEnum>ENUM<E> AS(final ENUM<E> dataType) {
       dataType.wrapper(new As<T>(this, dataType));
       return dataType;
     }
@@ -942,7 +936,7 @@ public final class type {
     }
 
     protected abstract int sqlType();
-    protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws SQLException;
+    protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException;
     protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
     protected abstract String serialize(final DBVendor vendor) throws IOException;
     protected abstract String declare(final DBVendor vendor);
@@ -1013,7 +1007,7 @@ public final class type {
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
-        statement.setTimestamp(parameterIndex, new Timestamp(value.toEpochSecond(ZoneOffset.UTC)));
+        statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(dateTimeFormat)));
       else
         statement.setNull(parameterIndex, sqlType());
     }
@@ -1327,7 +1321,7 @@ public final class type {
     }
   }
 
-  public static final class ENUM<T extends Enum<?>> extends Textual<T> {
+  public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> {
     private final Class<T> enumType;
 
     private static short calcEnumLength(final Class<?> enumType) {
@@ -2012,7 +2006,7 @@ public final class type {
   }
 
   public static abstract class Numeric<T extends Number> extends DataType<T> {
-    protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
+    protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("################.################;-################.################");
 
     protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
@@ -2032,8 +2026,6 @@ public final class type {
   }
 
   public static abstract class ExactNumeric<T extends Number> extends Numeric<T> {
-    protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("###############.###############;-###############.###############");
-
     private final short precision;
 
     protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int precision) {
@@ -2451,7 +2443,7 @@ public final class type {
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
-        statement.setTime(parameterIndex, java.sql.Time.valueOf(value));
+        statement.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf("1970-01-01 " + value.format(timeFormat)));
       else
         statement.setNull(parameterIndex, sqlType());
     }

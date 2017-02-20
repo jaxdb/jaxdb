@@ -17,9 +17,13 @@
 package org.safris.xdb.entities;
 
 import java.io.IOException;
+import java.io.Reader;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +35,6 @@ import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.xdb.entities.Insert.VALUES;
-import org.safris.xdb.entities.Interval.Unit;
 import org.safris.xdb.schema.DBVendor;
 
 public abstract class Serializer {
@@ -52,7 +55,7 @@ public abstract class Serializer {
     }
   }
 
-  public static Serializer getSerializer(final DBVendor vendor) {
+  protected static Serializer getSerializer(final DBVendor vendor) {
     final Serializer serializer = serializers[vendor.ordinal()];
     if (serializer == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -102,23 +105,23 @@ public abstract class Serializer {
     return "?";
   }
 
-  public void serialize(final Case.Simple.CASE<?,?> case_, final Serialization serialization) throws IOException {
+  protected void serialize(final Case.Simple.CASE<?,?> case_, final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
     serialization.append("CASE ");
     case_.variable.serialize(serialization);
   }
 
-  public void serialize(final Case.Search.WHEN<?> case_, final Serialization serialization) {
+  protected void serialize(final Case.Search.WHEN<?> case_, final Serialization serialization) {
     serialization.append("CASE");
   }
 
-  public void serialize(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Serialization serialization) throws IOException {
+  protected void serialize(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
     serialization.append(" WHEN ");
     when.condition.serialize(serialization);
     serialization.append(" THEN ");
     then.value.serialize(serialization);
   }
 
-  public void serialize(final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
+  protected void serialize(final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
     serialization.append(" ELSE ");
     _else.value.serialize(serialization);
     serialization.append(" END");
@@ -232,6 +235,8 @@ public abstract class Serializer {
   protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Serialization serialization) {
     if (limit != null) {
       serialization.append(" LIMIT " + limit.rows);
+      if (offset != null)
+        serialization.append(" OFFSET " + offset.rows);
     }
   }
 
@@ -337,11 +342,12 @@ public abstract class Serializer {
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected void serialize(final Update.UPDATE update, final Serialization serialization) throws IOException {
     for (int i = 0; i < update.entities.length; i++) {
+      final Entity entity = update.entities[i];
       serialization.append("UPDATE ");
       update.entities[i].serialize(serialization);
       serialization.append(" SET ");
       boolean paramAdded = false;
-      for (final type.DataType column : update.entities[i].column()) {
+      for (final type.DataType column : entity.column()) {
         if (!column.primary && (column.wasSet() || column.generateOnUpdate != null)) {
           if (column.generateOnUpdate != null)
             column.value = column.generateOnUpdate.generateStatic(column);
@@ -356,15 +362,14 @@ public abstract class Serializer {
       }
 
       paramAdded = false;
-      for (final type.DataType column : update.entities[i].column()) {
+      for (final type.DataType column : entity.column()) {
         if (column.primary) {
           if (paramAdded)
             serialization.append(" AND ");
           else
             serialization.append(" WHERE ");
 
-          serialization.append(column.name).append(" = ");
-          serialization.addParameter(column);
+          serialization.addCondition(column);
           paramAdded = true;
         }
       }
@@ -395,11 +400,6 @@ public abstract class Serializer {
     }
   }
 
-  protected void serialize(final Update.WHERE where, final Serialization serialization) throws IOException {
-    serialization.append(" WHERE ");
-    where.condition.serialize(serialization);
-  }
-
   protected void serialize(final Delete.DELETE delete, final Serialization serialization) throws IOException {
     for (int i = 0; i < delete.entities.length; i++) {
       serialization.append("DELETE FROM ");
@@ -413,8 +413,7 @@ public abstract class Serializer {
           else
             serialization.append(" WHERE ");
 
-          serialization.append(column.name).append(" = ");
-          serialization.addParameter(column);
+          serialization.addCondition(column);
           paramAdded = true;
         }
       }
@@ -431,11 +430,6 @@ public abstract class Serializer {
     delete.entities[0].serialize(serialization);
     serialization.append(" WHERE ");
 
-    where.condition.serialize(serialization);
-  }
-
-  protected void serialize(final Delete.WHERE where, final Serialization serialization) throws IOException {
-    serialization.append(" WHERE ");
     where.condition.serialize(serialization);
   }
 
@@ -466,9 +460,9 @@ public abstract class Serializer {
   }
 
   protected void serialize(final Interval interval, final Serialization serialization) {
-    final Set<Unit> units = interval.getUnits();
+    final Set<Interval.Unit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
-    for (final Unit unit : units)
+    for (final Interval.Unit unit : units)
       clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
 
     serialization.append("INTERVAL '").append(clause.substring(1)).append("'");
@@ -556,8 +550,7 @@ public abstract class Serializer {
     }
   }
 
-  @SuppressWarnings("static-method")
-  protected final void serialize(final ComparisonPredicate<?> predicate, final Serialization serialization) throws IOException {
+  protected void serialize(final ComparisonPredicate<?> predicate, final Serialization serialization) throws IOException {
     predicate.a.serialize(serialization);
     serialization.append(" ").append(predicate.operator).append(" ");
     predicate.b.serialize(serialization);
@@ -798,7 +791,7 @@ public abstract class Serializer {
     serialization.append(function.function).append("()");
   }
 
-  public <T>String serialize(final type.ARRAY<T> serializable, final type.DataType<T> dataType) throws IOException {
+  protected <T>String serialize(final type.ARRAY<T> serializable, final type.DataType<T> dataType) throws IOException {
     final StringBuilder builder = new StringBuilder();
     final type.DataType<T> clone = dataType.clone();
     for (final T item : serializable.get()) {
@@ -809,7 +802,7 @@ public abstract class Serializer {
     return "(" + builder.substring(2) + ")";
   }
 
-  public void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
+  protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
     serialization.append("CAST(");
     as.dataType.serialize(serialization);
     serialization.append(" AS ").append(as.castAs.declare(serialization.vendor)).append(")");
@@ -895,9 +888,30 @@ public abstract class Serializer {
     return serializable.get() == null ? "NULL" : type.TIME.timeFormat.format(serializable.get());
   }
 
-  public void assignAliases(final Select.FROM<?> from, final Serialization serialization) {
+  protected void assignAliases(final Select.FROM<?> from, final Serialization serialization) {
     if (from != null)
       for (final Entity table : from.tables)
         serialization.registerAlias(table);
+  }
+
+  @SuppressWarnings("unused")
+  protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    if (dataType.get() != null)
+      statement.setClob(parameterIndex, dataType.get());
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  @SuppressWarnings("unused")
+  protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    if (dataType.get() != null)
+      statement.setBlob(parameterIndex, dataType.get());
+    else
+      statement.setNull(parameterIndex, Types.BLOB);
+  }
+
+  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Clob value = resultSet.getClob(columnIndex);
+    return value == null ? null : value.getCharacterStream();
   }
 }

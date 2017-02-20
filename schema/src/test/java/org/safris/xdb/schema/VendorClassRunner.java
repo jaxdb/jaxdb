@@ -23,15 +23,25 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
+import org.junit.runner.Description;
+import org.junit.runner.Result;
+import org.junit.runner.notification.RunListener;
+import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.safris.commons.logging.Logging;
 import org.safris.maven.common.Log;
 import org.safris.xdb.schema.vendor.Vendor;
 
 public class VendorClassRunner extends BlockJUnit4ClassRunner {
+  static {
+    Logging.setLevel(Level.FINE);
+  }
+
   private static Exception flatten(final SQLException e) {
     final StringBuilder builder = new StringBuilder();
     SQLException next = e;
@@ -52,14 +62,18 @@ public class VendorClassRunner extends BlockJUnit4ClassRunner {
 
   private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<Class<? extends Vendor>,Vendor>();
 
-  protected final Connection getConnection(final Class<? extends Vendor> vendorClass) throws IOException, ReflectiveOperationException, SQLException {
+  private Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IOException, ReflectiveOperationException, SQLException {
     Vendor vendor = vendors.get(vendorClass);
     if (vendor == null) {
       vendors.put(vendorClass, vendor = vendorClass.newInstance());
       vendor.init();
     }
 
-    return vendor.getConnection();
+    return vendor;
+  }
+
+  protected final Connection getConnection(final Class<? extends Vendor> vendorClass) throws IOException, ReflectiveOperationException, SQLException {
+    return getVendor(vendorClass).getConnection();
   }
 
   @Override
@@ -117,5 +131,35 @@ public class VendorClassRunner extends BlockJUnit4ClassRunner {
         }
       }
     };
+  }
+
+  @Override
+  public void run(final RunNotifier notifier) {
+    notifier.addListener(new RunListener() {
+      private Class<?> testClass;
+
+      @Override
+      public void testFinished(final Description description) throws Exception {
+        testClass = description.getTestClass();
+      }
+
+      @Override
+      public void testRunFinished(final Result result) throws Exception {
+        final Class<? extends Vendor>[] vendorClasses;
+        if (integrationTest) {
+          final VendorIntegration vendorIntegration = testClass.getAnnotation(VendorIntegration.class);
+          vendorClasses = vendorIntegration != null ? vendorIntegration.value() : null;
+        }
+        else {
+          final VendorTest vendorTest = testClass.getAnnotation(VendorTest.class);
+          vendorClasses = vendorTest != null ? vendorTest.value() : null;
+        }
+
+        if (vendorClasses != null)
+          for (final Class<? extends Vendor> vendorClass : vendorClasses)
+            getVendor(vendorClass).destroy();
+      }
+    });
+    super.run(notifier);
   }
 }

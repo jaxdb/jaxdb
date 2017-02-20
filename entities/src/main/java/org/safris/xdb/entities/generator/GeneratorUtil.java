@@ -23,7 +23,7 @@ import java.math.BigInteger;
 import org.safris.commons.lang.Numbers;
 import org.safris.xdb.entities.GenerateOn;
 
-public final class Serializer {
+public final class GeneratorUtil {
   public static String serialize(final Object[] object) {
     if (object == null)
       return "null";
@@ -77,6 +77,6 @@ public final class Serializer {
     return String.valueOf(object);
   }
 
-  private Serializer() {
+  private GeneratorUtil() {
   }
 }

@@ -78,6 +78,17 @@ final class Serialization {
     return builder.append(seq);
   }
 
+  protected void addCondition(final type.DataType<?> dataType) throws IOException {
+    append(dataType.name);
+    if (dataType.get() == null) {
+      append(" IS NULL");
+    }
+    else {
+      append(" = ");
+      addParameter(dataType);
+    }
+  }
+
   protected void addParameter(final type.DataType<?> dataType) throws IOException {
     if (prepared) {
       builder.append(Serializer.getSerializer(vendor).getPreparedStatementMark(dataType));
@@ -97,7 +108,7 @@ final class Serialization {
     parameters.clear();
   }
 
-  protected ResultSet executeQuery(final Connection connection) throws SQLException {
+  protected ResultSet executeQuery(final Connection connection) throws IOException, SQLException {
     if (prepared) {
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
       for (int i = 0; i < parameters.size(); i++)
@@ -110,7 +121,7 @@ final class Serialization {
     return statement.executeQuery(builder.toString());
   }
 
-  protected int[] execute(final Connection connection) throws SQLException {
+  protected int[] execute(final Connection connection) throws IOException, SQLException {
     if (builder.length() > 0)
       addBatch();
 

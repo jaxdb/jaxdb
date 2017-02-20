@@ -24,6 +24,7 @@ final class ExistsPredicate<T> extends Predicate<T> {
   protected final Serializable subQuery;
 
   protected ExistsPredicate(final select.SELECT<?> query) {
+    super(null);
     this.subQuery = (Serializable)query;
   }
 

@@ -175,28 +175,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.EQ, a, b);
   }
 
-  public static <Textual>type.BOOLEAN EQ(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  public static type.BOOLEAN EQ(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
   }
 
-  public static <Textual>type.BOOLEAN EQ(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  public static type.BOOLEAN EQ(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
   }
 
-  public static <Textual>type.BOOLEAN EQ(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  public static type.BOOLEAN EQ(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
   }
 
-  public static <Textual>type.BOOLEAN EQ(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.EQ, a, b);
   }
 
-  public static type.BOOLEAN EQ(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.EQ, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.EQ, a, b);
   }
 
-  public static type.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.EQ, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.EQ, a, b);
   }
 
   public static <Textual>type.BOOLEAN EQ(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -217,6 +241,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN EQ(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN EQ(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.EQ, a, b);
+  }
+
+  public static type.BOOLEAN EQ(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.EQ, a, b);
+  }
+
+  public static type.BOOLEAN EQ(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.EQ, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN NE(final type.Numeric<? extends Number> a, final type.Numeric<? extends Number> b) {
@@ -283,28 +319,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.NE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN NE(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  public static type.BOOLEAN NE(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN NE(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  public static type.BOOLEAN NE(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN NE(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  public static type.BOOLEAN NE(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN NE(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.NE, a, b);
   }
 
-  public static type.BOOLEAN NE(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.NE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.NE, a, b);
   }
 
-  public static type.BOOLEAN NE(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.NE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.NE, a, b);
   }
 
   public static <Textual>type.BOOLEAN NE(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -325,6 +385,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN NE(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN NE(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.NE, a, b);
+  }
+
+  public static type.BOOLEAN NE(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.NE, a, b);
+  }
+
+  public static type.BOOLEAN NE(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.NE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LT(final type.Numeric<? extends Number> a, final type.Numeric<? extends Number> b) {
@@ -391,28 +463,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.LT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LT(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  public static type.BOOLEAN LT(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LT(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  public static type.BOOLEAN LT(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LT(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  public static type.BOOLEAN LT(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LT(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.LT, a, b);
   }
 
-  public static type.BOOLEAN LT(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.LT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.LT, a, b);
   }
 
-  public static type.BOOLEAN LT(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.LT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LT, a, b);
   }
 
   public static <Textual>type.BOOLEAN LT(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -433,6 +529,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN LT(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN LT(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.LT, a, b);
+  }
+
+  public static type.BOOLEAN LT(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.LT, a, b);
+  }
+
+  public static type.BOOLEAN LT(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.LT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GT(final type.Numeric<? extends Number> a, final type.Numeric<? extends Number> b) {
@@ -499,28 +607,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.GT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GT(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  public static type.BOOLEAN GT(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GT(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  public static type.BOOLEAN GT(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GT(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  public static type.BOOLEAN GT(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GT(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.GT, a, b);
   }
 
-  public static type.BOOLEAN GT(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.GT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.GT, a, b);
   }
 
-  public static type.BOOLEAN GT(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.GT, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GT, a, b);
   }
 
   public static <Textual>type.BOOLEAN GT(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -541,6 +673,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN GT(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN GT(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.GT, a, b);
+  }
+
+  public static type.BOOLEAN GT(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.GT, a, b);
+  }
+
+  public static type.BOOLEAN GT(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.GT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LTE(final type.Numeric<? extends Number> a, final type.Numeric<? extends Number> b) {
@@ -607,28 +751,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.LTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LTE(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  public static type.BOOLEAN LTE(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LTE(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  public static type.BOOLEAN LTE(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LTE(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  public static type.BOOLEAN LTE(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN LTE(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.LTE, a, b);
   }
 
-  public static type.BOOLEAN LTE(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.LTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.LTE, a, b);
   }
 
-  public static type.BOOLEAN LTE(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.LTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.LTE, a, b);
   }
 
   public static <Textual>type.BOOLEAN LTE(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -649,6 +817,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN LTE(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN LTE(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.LTE, a, b);
+  }
+
+  public static type.BOOLEAN LTE(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.LTE, a, b);
+  }
+
+  public static type.BOOLEAN LTE(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.LTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GTE(final type.Numeric<? extends Number> a, final type.Numeric<? extends Number> b) {
@@ -715,28 +895,52 @@ public final class DML {
     return new ComparisonPredicate<Temporal>(Operator.GTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GTE(final type.Textual<? extends Textual> a, final type.Textual<? extends Textual> b) {
-    return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  public static type.BOOLEAN GTE(final type.CHAR a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GTE(final type.Textual<?> a, final Textual b) {
-    return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  public static type.BOOLEAN GTE(final type.CHAR a, final String b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GTE(final Textual a, final type.Textual<?> b) {
-    return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  public static type.BOOLEAN GTE(final String a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
   }
 
-  public static <Textual>type.BOOLEAN GTE(final type.BOOLEAN a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.CHAR a, final E b) {
+    return new ComparisonPredicate<E>(Operator.GTE, a, b);
   }
 
-  public static type.BOOLEAN GTE(final type.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(Operator.GTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final E a, final type.CHAR b) {
+    return new ComparisonPredicate<E>(Operator.GTE, a, b);
   }
 
-  public static type.BOOLEAN GTE(final boolean a, final type.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(Operator.GTE, a, b);
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.ENUM<E> a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.ENUM<E> a, final E b) {
+    return new ComparisonPredicate<E>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final E a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<E>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.ENUM<E> a, final type.CHAR b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.CHAR a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final type.ENUM<E> a, final String b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
+  }
+
+  public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final String a, final type.ENUM<E> b) {
+    return new ComparisonPredicate<String>(Operator.GTE, a, b);
   }
 
   public static <Textual>type.BOOLEAN GTE(final type.Textual<? super Textual> a, final select.SELECT<? extends type.Textual<? super Textual>> b) {
@@ -757,6 +961,18 @@ public final class DML {
 
   public static <Textual>type.BOOLEAN GTE(final type.Textual<? super Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
     return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  }
+
+  public static <Textual>type.BOOLEAN GTE(final type.BOOLEAN a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Textual>(Operator.GTE, a, b);
+  }
+
+  public static type.BOOLEAN GTE(final type.BOOLEAN a, final boolean b) {
+    return new ComparisonPredicate<Boolean>(Operator.GTE, a, b);
+  }
+
+  public static type.BOOLEAN GTE(final boolean a, final type.BOOLEAN b) {
+    return new ComparisonPredicate<Boolean>(Operator.GTE, a, b);
   }
 
   /** END ComparisonPredicate **/
@@ -11953,84 +12169,84 @@ public final class DML {
   }
 
   public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final type.Numeric<? extends T> a, final type.Numeric<? extends T> b) {
-    return new BetweenPredicate<T>(true, dataType, a, b);
+    return new BetweenPredicate<T>(dataType, true, a, b);
   }
 
   public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final type.Textual<? super T> a, final type.Textual<? super T> b) {
-    return new BetweenPredicate<T>(true, dataType, a, b);
+    return new BetweenPredicate<T>(dataType, true, a, b);
   }
 
   public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
-    return new BetweenPredicate<T>(true, dataType, a, b);
+    return new BetweenPredicate<T>(dataType, true, a, b);
   }
 
   public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final type.TIME a, final type.TIME b) {
-    return new BetweenPredicate<LocalTime>(true, dataType, a, b);
+    return new BetweenPredicate<LocalTime>(dataType, true, a, b);
   }
 
   public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final type.Numeric<? extends T> a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, a, type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, a, type.DataType.wrap(b));
   }
 
   public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final type.Textual<? super T> a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, a, type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, a, type.DataType.wrap(b));
   }
 
   public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final type.Temporal<? extends T> a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, a, type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, a, type.DataType.wrap(b));
   }
 
   public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final type.TIME a, final LocalTime b) {
-    return new BetweenPredicate<LocalTime>(true, dataType, a, type.DataType.wrap(b));
+    return new BetweenPredicate<LocalTime>(dataType, true, a, type.DataType.wrap(b));
   }
 
   public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final T a, final type.Numeric<? extends T> b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), b);
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), b);
   }
 
   public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final T a, final type.Textual<? super T> b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), b);
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), b);
   }
 
   public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final T a, final type.Temporal<? extends T> b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), b);
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), b);
   }
 
   public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final LocalTime a, final type.TIME b) {
-    return new BetweenPredicate<LocalTime>(true, dataType, type.DataType.wrap(a), b);
+    return new BetweenPredicate<LocalTime>(dataType, true, type.DataType.wrap(a), b);
   }
 
   public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final T a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), type.DataType.wrap(b));
   }
 
   public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final T a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), type.DataType.wrap(b));
   }
 
   public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final T a, final T b) {
-    return new BetweenPredicate<T>(true, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+    return new BetweenPredicate<T>(dataType, true, type.DataType.wrap(a), type.DataType.wrap(b));
   }
 
   public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final LocalTime a, final LocalTime b) {
-    return new BetweenPredicate<LocalTime>(true, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+    return new BetweenPredicate<LocalTime>(dataType, true, type.DataType.wrap(a), type.DataType.wrap(b));
   }
 
   public static Predicate<String> LIKE(final type.CHAR a, final CharSequence b) {
-    return new LikePredicate(true, a, b);
+    return new LikePredicate(a, true, b);
   }
 
   public static <T>Predicate<T> IN(final type.DataType<T> a, final Collection<T> b) {
-    return new InPredicate<T>(true, a, b);
+    return new InPredicate<T>(a, true, b);
   }
 
   @SafeVarargs
   public static <T>Predicate<T> IN(final type.DataType<T> a, final T ... b) {
-    return new InPredicate<T>(true, a, b);
+    return new InPredicate<T>(a, true, b);
   }
 
   public static <T>Predicate<T> IN(final type.DataType<T> a, final select.SELECT<? extends type.DataType<T>> b) {
-    return new InPredicate<T>(true, a, b);
+    return new InPredicate<T>(a, true, b);
   }
 
   public static <T>Predicate<T> EXISTS(final select.SELECT<?> subQuery) {
@@ -12039,96 +12255,96 @@ public final class DML {
 
   public static final class NOT {
     public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final type.Numeric<? extends T> a, final type.Numeric<? extends T> b) {
-      return new BetweenPredicate<T>(false, dataType, a, b);
+      return new BetweenPredicate<T>(dataType, false, a, b);
     }
 
     public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final type.Textual<? super T> a, final type.Textual<? super T> b) {
-      return new BetweenPredicate<T>(false, dataType, a, b);
+      return new BetweenPredicate<T>(dataType, false, a, b);
     }
 
     public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final type.Temporal<? extends T> a, final type.Temporal<? extends T> b) {
-      return new BetweenPredicate<T>(false, dataType, a, b);
+      return new BetweenPredicate<T>(dataType, false, a, b);
     }
 
     public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final type.TIME a, final type.TIME b) {
-      return new BetweenPredicate<LocalTime>(false, dataType, a, b);
+      return new BetweenPredicate<LocalTime>(dataType, false, a, b);
     }
 
     public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final type.Numeric<? extends T> a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, a, type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, a, type.DataType.wrap(b));
     }
 
     public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final type.Textual<? super T> a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, a, type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, a, type.DataType.wrap(b));
     }
 
     public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final type.Temporal<? extends T> a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, a, type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, a, type.DataType.wrap(b));
     }
 
     public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final type.TIME a, final LocalTime b) {
-      return new BetweenPredicate<LocalTime>(false, dataType, a, type.DataType.wrap(b));
+      return new BetweenPredicate<LocalTime>(dataType, false, a, type.DataType.wrap(b));
     }
 
     public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final T a, final type.Numeric<? extends T> b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), b);
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), b);
     }
 
     public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final T a, final type.Textual<? super T> b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), b);
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), b);
     }
 
     public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final T a, final type.Temporal<? extends T> b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), b);
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), b);
     }
 
     public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final LocalTime a, final type.TIME b) {
-      return new BetweenPredicate<LocalTime>(false, dataType, type.DataType.wrap(a), b);
+      return new BetweenPredicate<LocalTime>(dataType, false, type.DataType.wrap(a), b);
     }
 
     public static <T extends Number>Predicate<T> BETWEEN(final type.Numeric<? extends T> dataType, final T a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), type.DataType.wrap(b));
     }
 
     public static <T>Predicate<T> BETWEEN(final type.Textual<? super T> dataType, final T a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), type.DataType.wrap(b));
     }
 
     public static <T extends Temporal>Predicate<T> BETWEEN(final type.Temporal<? extends T> dataType, final T a, final T b) {
-      return new BetweenPredicate<T>(false, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+      return new BetweenPredicate<T>(dataType, false, type.DataType.wrap(a), type.DataType.wrap(b));
     }
 
     public static Predicate<LocalTime> BETWEEN(final type.TIME dataType, final LocalTime a, final LocalTime b) {
-      return new BetweenPredicate<LocalTime>(false, dataType, type.DataType.wrap(a), type.DataType.wrap(b));
+      return new BetweenPredicate<LocalTime>(dataType, false, type.DataType.wrap(a), type.DataType.wrap(b));
     }
 
     public static Predicate<String> LIKE(final type.CHAR a, final String b) {
-      return new LikePredicate(false, a, b);
+      return new LikePredicate(a, false, b);
     }
 
     public static <T>Predicate<T> IN(final type.DataType<T> a, final Collection<T> b) {
-      return new InPredicate<T>(true, a, b);
+      return new InPredicate<T>(a, false, b);
     }
 
     @SafeVarargs
     public static <T>Predicate<T> IN(final type.DataType<T> a, final T ... b) {
-      return new InPredicate<T>(false, a, b);
+      return new InPredicate<T>(a, false, b);
     }
 
     public static <T>Predicate<T> IN(final type.DataType<T> a, final select.SELECT<? extends type.DataType<T>> b) {
-      return new InPredicate<T>(false, a, b);
+      return new InPredicate<T>(a, false, b);
     }
   }
 
   public static final class IS {
     public static final class NOT {
       public static <T>Predicate<T> NULL(final type.DataType<T> dataType) {
-        return new NullPredicate<T>(false, dataType);
+        return new NullPredicate<T>(dataType, false);
       }
     }
 
     public static <T>Predicate<T> NULL(final type.DataType<T> dataType) {
-      return new NullPredicate<T>(true, dataType);
+      return new NullPredicate<T>(dataType, true);
     }
   }
 

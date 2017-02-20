@@ -16,9 +16,16 @@
 
 package org.safris.xdb.entities;
 
+import org.safris.xdb.entities.type.DataType;
 import org.safris.xdb.schema.DBVendor;
 
 abstract class Predicate<T> extends ConditionWrapper<T> {
+  protected final type.DataType<?> dataType;
+
+  protected Predicate(final DataType<?> dataType) {
+    this.dataType = dataType;
+  }
+
   @Override
   protected final String serialize(final DBVendor vendor) {
     throw new UnsupportedOperationException();

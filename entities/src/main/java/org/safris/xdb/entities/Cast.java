@@ -55,7 +55,7 @@ public class Cast {
   public static final class BOOLEAN {
     public final class AS {
       public type.CHAR CHAR(final int length) {
-        final type.CHAR cast = new type.CHAR(length, true);
+        final type.CHAR cast = new type.CHAR(length, false);
         cast.wrapper(new Cast.AS(value, cast, length));
         return cast;
       }

@@ -29,9 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import javax.xml.transform.TransformerException;
 
@@ -39,7 +37,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.lang.Strings;
-import org.safris.commons.logging.Logging;
 import org.safris.commons.util.Collections;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.commons.util.Random;
@@ -53,7 +50,6 @@ import org.safris.xdb.schema.vendor.Derby;
 import org.safris.xdb.schema.vendor.MySQL;
 import org.safris.xdb.schema.vendor.PostgreSQL;
 import org.safris.xdb.xdd.xe.$xdd_data;
-import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;
@@ -65,10 +61,6 @@ import org.xml.sax.InputSource;
 @VendorTest(Derby.class)
 @VendorIntegration({MySQL.class, PostgreSQL.class})
 public class DataTest {
-  static {
-    Logging.setLevel(Level.FINE);
-  }
-
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
   private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
 

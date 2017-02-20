@@ -22,6 +22,6 @@ import java.sql.SQLException;
 
 public interface Vendor {
   public void init() throws IOException, SQLException;
-  public Connection getConnection() throws SQLException;
+  public Connection getConnection() throws IOException, SQLException;
   public void destroy() throws IOException, SQLException;
 }

@@ -20,12 +20,11 @@ import java.io.IOException;
 
 final class LikePredicate extends Predicate<String> {
   protected final boolean positive;
-  protected final type.DataType<String> dataType;
   protected final CharSequence pattern;
 
-  protected LikePredicate(final boolean positive, final type.DataType<String> dataType, final CharSequence pattern) {
+  protected LikePredicate(final type.DataType<String> dataType, final boolean positive, final CharSequence pattern) {
+    super(dataType);
     this.positive = positive;
-    this.dataType = dataType;
     this.pattern = pattern;
   }
 

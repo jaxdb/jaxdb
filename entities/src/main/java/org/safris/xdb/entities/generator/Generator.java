@@ -36,6 +36,7 @@ import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.XMLException;
 import org.safris.maven.common.Log;
 import org.safris.xdb.entities.Entity;
+import org.safris.xdb.entities.EntityEnum;
 import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.entities.Schema;
 import org.safris.xdb.entities.type;
@@ -285,13 +286,13 @@ public class Generator {
     private String serializeParams() {
       String out = "";
       for (final Object param : commonParams)
-        out += ", " + (param == THIS ? "this" : Serializer.serialize(param));
+        out += ", " + (param == THIS ? "this" : GeneratorUtil.serialize(param));
 
-      out += ", " + Serializer.serialize(generateOnInsert);
-      out += ", " + Serializer.serialize(generateOnUpdate);
+      out += ", " + GeneratorUtil.serialize(generateOnInsert);
+      out += ", " + GeneratorUtil.serialize(generateOnUpdate);
       if (customParams != null)
         for (final Object param : customParams)
-          out += ", " + (param == THIS ? "this" : Serializer.serialize(param));
+          out += ", " + (param == THIS ? "this" : GeneratorUtil.serialize(param));
 
       return out.substring(2);
     }
@@ -564,14 +565,14 @@ public class Generator {
     final StringBuilder builder = new StringBuilder();
     final Type type = Type.getType(table, column);
     if (column instanceof $xds_enum) {
-      builder.append("\n    public static enum ").append(typeName).append(" {");
+      builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
       final List<String> values = SQLSpec.parseEnum((($xds_enum)column)._values$().text());
       for (final String value : values)
         enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
-      builder.append("      private final String value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
+      builder.append("      private final " + String.class.getName() + " table = \"" + table._name$().text() + "\";\n      private final " + String.class.getName() + " column = \"" + column._name$().text() + "\";\n      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " table() {\n        return table;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " column() {\n        return column;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
     return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();

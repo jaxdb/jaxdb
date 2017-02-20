@@ -36,7 +36,7 @@ public class Derby implements Vendor {
   private static final File db = new File("target/generated-test-resources/derby/test-db");
 
   @Override
-  public synchronized void init() throws IOException {
+  public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
     if (db.exists() && !Files.deleteAll(db.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
@@ -44,8 +44,6 @@ public class Derby implements Vendor {
     final File testClasses = new File("target/test-classes/test-db");
     if (testClasses.exists() && !Files.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
-
-    new File(db, "tmp").mkdir();
 
     final Resource resource = Resources.getResource("test-db");
     if (resource != null) {
@@ -58,11 +56,28 @@ public class Derby implements Vendor {
         Files.copy(new File(resource.getURL().getPath()), db);
       }
     }
+    else {
+      new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
+    }
+
+    new File(db, "tmp").mkdir();
   }
 
   @Override
-  public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
+  public Connection getConnection() throws IOException, SQLException {
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath())) {
+      @Override
+      public void setAutoCommit(final boolean autoCommit) throws SQLException {
+      }
+
+      @Override
+      public void commit() throws SQLException {
+      }
+
+      @Override
+      public void rollback() throws SQLException {
+      }
+    };
   }
 
   @Override
@@ -73,7 +88,7 @@ public class Derby implements Vendor {
       DriverManager.getConnection("jdbc:derby:;shutdown=true");
     }
     catch (final SQLException e) {
-      if (!"XJ015".equals(e.getSQLState()))
+      if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))
         throw e;
     }
   }

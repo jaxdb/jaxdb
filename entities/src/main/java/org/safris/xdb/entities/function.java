@@ -249,16 +249,16 @@ final class function {
     }
 
     static final class Log extends NumericFunction {
-      protected Log(final type.Numeric<? extends Number> a, final Numeric<?> b) {
-        super(a, b);
+      protected Log(final type.Numeric<? extends Number> b, final Numeric<?> n) {
+        super(b, n);
       }
 
-      protected Log(final type.Numeric<? extends Number> a, final Number b) {
-        super(a, b);
+      protected Log(final type.Numeric<? extends Number> b, final Number n) {
+        super(b, n);
       }
 
-      protected Log(final Number a, final type.Numeric<? extends Number> b) {
-        super(a, b);
+      protected Log(final Number b, final type.Numeric<? extends Number> n) {
+        super(b, n);
       }
 
       @Override
