@@ -76,7 +76,7 @@
 
   <!-- numeric data -->
   
-  <xs:complexType name="smallint">
+  <xs:complexType name="tinyint">
     <xs:complexContent>
       <xs:extension base="xds:integer">
         <xs:attribute name="precision" use="required">
@@ -115,7 +115,7 @@
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="mediumint">
+  <xs:complexType name="smallint">
     <xs:complexContent>
       <xs:extension base="xds:integer">
         <xs:attribute name="precision" use="required">
