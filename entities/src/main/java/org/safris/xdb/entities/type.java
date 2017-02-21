@@ -1513,7 +1513,7 @@ public final class type {
 
     @Override
     protected final DataType<?> scaleTo(final DataType<?> dataType) {
-      if (dataType instanceof FLOAT || dataType instanceof SMALLINT)
+      if (dataType instanceof FLOAT || dataType instanceof TINYINT)
         return unsigned() && ((Numeric<?>)dataType).unsigned() ? new FLOAT.UNSIGNED() : new FLOAT();
 
       if (dataType instanceof DECIMAL) {
@@ -1773,7 +1773,7 @@ public final class type {
     }
   }
 
-  public static final class MEDIUMINT extends ExactNumeric<Short> {
+  public static final class SMALLINT extends ExactNumeric<Short> {
     public static final class UNSIGNED extends ExactNumeric<Integer> implements type.UNSIGNED {
       private final Integer min;
       private final Integer max;
@@ -1784,7 +1784,7 @@ public final class type {
         this.max = max;
       }
 
-      protected UNSIGNED(final MEDIUMINT.UNSIGNED copy) {
+      protected UNSIGNED(final SMALLINT.UNSIGNED copy) {
         super(copy, copy.precision());
         this.min = null;
         this.max = null;
@@ -1841,7 +1841,7 @@ public final class type {
 
       @Override
       protected final int sqlType() {
-        return Types.INTEGER;
+        return Types.SMALLINT;
       }
 
       @Override
@@ -1879,7 +1879,7 @@ public final class type {
           return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
 
         if (dataType instanceof ExactNumeric)
-          return new MEDIUMINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+          return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
@@ -1893,25 +1893,25 @@ public final class type {
     private final Short min;
     private final Short max;
 
-    protected MEDIUMINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final Short min, final Short max) {
+    protected SMALLINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final Short min, final Short max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
       this.min = min;
       this.max = max;
     }
 
-    protected MEDIUMINT(final MEDIUMINT copy) {
+    protected SMALLINT(final SMALLINT copy) {
       super(copy, copy.precision());
       this.min = null;
       this.max = null;
     }
 
-    public MEDIUMINT(final int precision) {
+    public SMALLINT(final int precision) {
       super((short)precision);
       this.min = null;
       this.max = null;
     }
 
-    public MEDIUMINT(final Short value) {
+    public SMALLINT(final Short value) {
       this(Numbers.precision(value));
       set(value);
     }
@@ -1956,7 +1956,7 @@ public final class type {
 
     @Override
     protected final int sqlType() {
-      return Types.INTEGER;
+      return Types.SMALLINT;
     }
 
     @Override
@@ -1994,14 +1994,14 @@ public final class type {
         return new BIGINT(Math.max(precision(), ((BIGINT)dataType).precision()));
 
       if (dataType instanceof ExactNumeric)
-        return new MEDIUMINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
+        return new SMALLINT(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
     @Override
-    public final MEDIUMINT clone() {
-      return new MEDIUMINT(this);
+    public final SMALLINT clone() {
+      return new SMALLINT(this);
     }
   }
 
@@ -2106,7 +2106,7 @@ public final class type {
     }
   }
 
-  public static final class SMALLINT extends ExactNumeric<Byte> {
+  public static final class TINYINT extends ExactNumeric<Byte> {
     public static final class UNSIGNED extends ExactNumeric<Short> implements type.UNSIGNED {
       private final Short min;
       private final Short max;
@@ -2117,7 +2117,7 @@ public final class type {
         this.max = max;
       }
 
-      protected UNSIGNED(final SMALLINT.UNSIGNED copy) {
+      protected UNSIGNED(final TINYINT.UNSIGNED copy) {
         super(copy, copy.precision());
         this.min = null;
         this.max = null;
@@ -2174,7 +2174,7 @@ public final class type {
 
       @Override
       protected final int sqlType() {
-        return Types.SMALLINT;
+        return Types.TINYINT;
       }
 
       @Override
@@ -2203,11 +2203,11 @@ public final class type {
         if (dataType instanceof DOUBLE)
           return new DOUBLE();
 
+        if (dataType instanceof TINYINT)
+          return new TINYINT(Math.max(precision(), ((TINYINT)dataType).precision()));
+
         if (dataType instanceof SMALLINT)
           return new SMALLINT(Math.max(precision(), ((SMALLINT)dataType).precision()));
-
-        if (dataType instanceof MEDIUMINT)
-          return new MEDIUMINT(Math.max(precision(), ((MEDIUMINT)dataType).precision()));
 
         if (dataType instanceof INT)
           return new INT(Math.max(precision(), ((INT)dataType).precision()));
@@ -2232,25 +2232,25 @@ public final class type {
     private final Byte min;
     private final Byte max;
 
-    protected SMALLINT(final Entity owner, final String name, final Byte _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final int precision, final Byte min, final Byte max) {
+    protected TINYINT(final Entity owner, final String name, final Byte _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final int precision, final Byte min, final Byte max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
       this.min = min;
       this.max = max;
     }
 
-    protected SMALLINT(final SMALLINT copy) {
+    protected TINYINT(final TINYINT copy) {
       super(copy, copy.precision());
       this.min = null;
       this.max = null;
     }
 
-    public SMALLINT(final int precision) {
+    public TINYINT(final int precision) {
       super((short)precision);
       this.min = null;
       this.max = null;
     }
 
-    public SMALLINT(final Byte value) {
+    public TINYINT(final Byte value) {
       this(Numbers.precision(value));
       set(value);
     }
@@ -2324,11 +2324,11 @@ public final class type {
       if (dataType instanceof DOUBLE)
         return new DOUBLE();
 
+      if (dataType instanceof TINYINT)
+        return new TINYINT(Math.max(precision(), ((TINYINT)dataType).precision()));
+
       if (dataType instanceof SMALLINT)
         return new SMALLINT(Math.max(precision(), ((SMALLINT)dataType).precision()));
-
-      if (dataType instanceof MEDIUMINT)
-        return new MEDIUMINT(Math.max(precision(), ((MEDIUMINT)dataType).precision()));
 
       if (dataType instanceof INT)
         return new INT(Math.max(precision(), ((INT)dataType).precision()));
@@ -2345,8 +2345,8 @@ public final class type {
     }
 
     @Override
-    public final SMALLINT clone() {
-      return new SMALLINT(this);
+    public final TINYINT clone() {
+      return new TINYINT(this);
     }
   }
 

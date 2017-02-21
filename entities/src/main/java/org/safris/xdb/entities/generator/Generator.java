@@ -57,11 +57,11 @@ import org.safris.xdb.xds.xe.$xds_enum;
 import org.safris.xdb.xds.xe.$xds_float;
 import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_mediumint;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_smallint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
+import org.safris.xdb.xds.xe.$xds_tinyint;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
@@ -168,14 +168,14 @@ public class Generator {
           if ($xde_integer.xde_generateOnUpdate$.INCREMENT.text().equals(type.xde_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
-        if (column instanceof $xds_smallint) {
-          final $xds_smallint integer = ($xds_smallint)column;
-          return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
+        if (column instanceof $xds_tinyint) {
+          final $xds_tinyint integer = ($xds_tinyint)column;
+          return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
         }
 
-        if (column instanceof $xds_mediumint) {
-          final $xds_mediumint integer = ($xds_mediumint)column;
-          return new Type(column, integer._unsigned$().text() ? type.MEDIUMINT.UNSIGNED.class : type.MEDIUMINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
+        if (column instanceof $xds_smallint) {
+          final $xds_smallint integer = ($xds_smallint)column;
+          return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
         }
 
         if (column instanceof $xds_int) {
@@ -321,10 +321,10 @@ public class Generator {
         return Strings.toTitleCase(column._name$().text()) + "." + String.valueOf(value.text());
 
       if (column instanceof $xds_integer) {
-        if (column instanceof $xds_smallint)
+        if (column instanceof $xds_tinyint)
           return Short.valueOf(String.valueOf(value.text()));
 
-        if (column instanceof $xds_mediumint || column instanceof $xds_int)
+        if (column instanceof $xds_smallint || column instanceof $xds_int)
           return Long.valueOf(String.valueOf(value.text()));
 
         return new BigInteger(String.valueOf(value.text()));

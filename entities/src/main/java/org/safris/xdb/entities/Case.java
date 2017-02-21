@@ -170,6 +170,16 @@ final class Case implements case_ {
       }
 
       @Override
+      public final case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+        return new TINYINT.Simple.THEN<T>(this, numeric);
+      }
+
+      @Override
+      public final case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+        return new TINYINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+      }
+
+      @Override
       public final case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
         return new SMALLINT.Simple.THEN<T>(this, numeric);
       }
@@ -177,16 +187,6 @@ final class Case implements case_ {
       @Override
       public final case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
         return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-      }
-
-      @Override
-      public final case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-        return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-      }
-
-      @Override
-      public final case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-        return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, numeric);
       }
 
       @Override
@@ -245,23 +245,23 @@ final class Case implements case_ {
       }
 
       @Override
-      public final case_.SMALLINT.simple.THEN<T> THEN(final byte numeric) {
+      public final case_.TINYINT.simple.THEN<T> THEN(final byte numeric) {
+        return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+      }
+
+      @Override
+      public final case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+        return new TINYINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+      }
+
+      @Override
+      public final case_.SMALLINT.simple.THEN<T> THEN(final short numeric) {
         return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
-      public final case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+      public final case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
         return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-      }
-
-      @Override
-      public final case_.MEDIUMINT.simple.THEN<T> THEN(final short numeric) {
-        return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-      }
-
-      @Override
-      public final case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-        return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
@@ -396,6 +396,16 @@ final class Case implements case_ {
       }
 
       @Override
+      public final case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+        return new TINYINT.Search.THEN<T>(this, numeric);
+      }
+
+      @Override
+      public final case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+        return new TINYINT.UNSIGNED.Search.THEN<T>(this, numeric);
+      }
+
+      @Override
       public final case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
         return new SMALLINT.Search.THEN<T>(this, numeric);
       }
@@ -403,16 +413,6 @@ final class Case implements case_ {
       @Override
       public final case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
         return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
-      }
-
-      @Override
-      public final case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-        return new MEDIUMINT.Search.THEN<T>(this, numeric);
-      }
-
-      @Override
-      public final case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-        return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, numeric);
       }
 
       @Override
@@ -471,23 +471,23 @@ final class Case implements case_ {
       }
 
       @Override
-      public final case_.SMALLINT.search.THEN<T> THEN(final byte numeric) {
+      public final case_.TINYINT.search.THEN<T> THEN(final byte numeric) {
+        return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+      }
+
+      @Override
+      public final case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+        return new TINYINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+      }
+
+      @Override
+      public final case_.SMALLINT.search.THEN<T> THEN(final short numeric) {
         return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
-      public final case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+      public final case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
         return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-      }
-
-      @Override
-      public final case_.MEDIUMINT.search.THEN<T> THEN(final short numeric) {
-        return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-      }
-
-      @Override
-      public final case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-        return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
@@ -713,22 +713,22 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.FLOAT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+          public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric) {
             return new FLOAT.Simple.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
             return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
+          public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DOUBLE.Simple.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
+          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
@@ -859,22 +859,22 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.FLOAT.ELSE ELSE(final type.SMALLINT numeric) {
+          public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
             return new FLOAT.ELSE(this, numeric);
           }
 
           @Override
-          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
             return new FLOAT.UNSIGNED.ELSE(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
+          public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
             return new DOUBLE.ELSE(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -1012,22 +1012,22 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.FLOAT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+          public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric) {
             return new FLOAT.Search.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
             return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
+          public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DOUBLE.Search.THEN<T>(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
+          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
@@ -1158,22 +1158,22 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.FLOAT.ELSE ELSE(final type.SMALLINT numeric) {
+          public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
             return new FLOAT.ELSE(this, numeric);
           }
 
           @Override
-          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
             return new FLOAT.UNSIGNED.ELSE(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
+          public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
             return new DOUBLE.ELSE(this, numeric);
           }
 
           @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -1310,22 +1310,22 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.FLOAT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+        public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric) {
           return new FLOAT.Simple.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.FLOAT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+        public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
           return new FLOAT.Simple.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
+        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DOUBLE.Simple.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
+        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
           return new DOUBLE.Simple.THEN<T>(this, numeric);
         }
 
@@ -1406,22 +1406,22 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.FLOAT.ELSE ELSE(final type.SMALLINT numeric) {
+        public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public case_.FLOAT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+        public case_.FLOAT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
+        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
+        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
@@ -1509,22 +1509,22 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.FLOAT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+        public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric) {
           return new FLOAT.Search.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.FLOAT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+        public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
           return new FLOAT.Search.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
+        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DOUBLE.Search.THEN<T>(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
+        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
           return new DOUBLE.Search.THEN<T>(this, numeric);
         }
 
@@ -1605,22 +1605,22 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.FLOAT.ELSE ELSE(final type.SMALLINT numeric) {
+        public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public case_.FLOAT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+        public case_.FLOAT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
           return new FLOAT.ELSE(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
+        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
+        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
@@ -1739,22 +1739,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new DOUBLE.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DOUBLE.Simple.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
@@ -1885,22 +1885,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+            return new DOUBLE.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
             return new DOUBLE.ELSE(this, numeric);
           }
 
           @Override
           public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new DOUBLE.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -2038,22 +2038,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new DOUBLE.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DOUBLE.Search.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
@@ -2184,22 +2184,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+            return new DOUBLE.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
             return new DOUBLE.ELSE(this, numeric);
           }
 
           @Override
           public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new DOUBLE.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DOUBLE.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -2336,22 +2336,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new DOUBLE.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new DOUBLE.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DOUBLE.Simple.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DOUBLE.Simple.THEN<T>(this, numeric);
         }
 
@@ -2432,22 +2432,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
@@ -2535,22 +2535,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new DOUBLE.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new DOUBLE.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DOUBLE.Search.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DOUBLE.Search.THEN<T>(this, numeric);
         }
 
@@ -2631,22 +2631,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
         @Override
         public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DOUBLE.ELSE(this, numeric);
         }
 
@@ -2726,6 +2726,1032 @@ final class Case implements case_ {
     }
   }
 
+  protected static final class TINYINT {
+    protected static final class UNSIGNED {
+      protected static final class Simple implements case_.TINYINT.UNSIGNED.simple {
+        protected static final class WHEN<T> extends Case.WHEN<T> implements case_.TINYINT.UNSIGNED.simple.WHEN<T> {
+          protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
+            super(parent, condition);
+          }
+
+          @Override
+          public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+            return new FLOAT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+            return new DOUBLE.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+            return new DECIMAL.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new TINYINT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new TINYINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+            return new SMALLINT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.simple.THEN<T> THEN(final type.INT numeric) {
+            return new INT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+            return new BIGINT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.simple.THEN<T> THEN(final float numeric) {
+            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
+            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric) {
+            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
+            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
+            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
+            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.simple.THEN<T> THEN(final byte numeric) {
+            return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+            return new TINYINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.simple.THEN<T> THEN(final short numeric) {
+            return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.simple.THEN<T> THEN(final int numeric) {
+            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
+            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.simple.THEN<T> THEN(final long numeric) {
+            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
+            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+        }
+
+        protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.TINYINT.UNSIGNED.simple.THEN<T> {
+          protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
+            super(parent, value);
+          }
+
+          @Override
+          public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+            return new FLOAT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+            return new FLOAT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+            return new DOUBLE.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+            return new DECIMAL.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new TINYINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new TINYINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+            return new SMALLINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.ELSE ELSE(final type.INT numeric) {
+            return new INT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+            return new BIGINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.ELSE ELSE(final float numeric) {
+            return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
+            return new FLOAT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.ELSE ELSE(final double numeric) {
+            return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
+            return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.ELSE ELSE(final byte numeric) {
+            return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+            return new TINYINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.ELSE ELSE(final short numeric) {
+            return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.ELSE ELSE(final int numeric) {
+            return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
+            return new INT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.ELSE ELSE(final long numeric) {
+            return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public final case_.TINYINT.simple.WHEN<T> WHEN(final T condition) {
+            return new TINYINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          }
+        }
+      }
+
+      protected static final class Search implements case_.TINYINT.UNSIGNED.search {
+        protected static final class WHEN<T> extends Case.WHEN<T> implements case_.TINYINT.UNSIGNED.search.WHEN<T> {
+          protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
+            super(parent, condition);
+          }
+
+          @Override
+          public final case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+            return new FLOAT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public final case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
+            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+            return new DOUBLE.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+            return new DECIMAL.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new TINYINT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new TINYINT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+            return new SMALLINT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.search.THEN<T> THEN(final type.INT numeric) {
+            return new INT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+            return new BIGINT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.search.THEN<T> THEN(final float numeric) {
+            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
+            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.search.THEN<T> THEN(final double numeric) {
+            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
+            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
+            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
+            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.search.THEN<T> THEN(final byte numeric) {
+            return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+            return new TINYINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.search.THEN<T> THEN(final short numeric) {
+            return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.search.THEN<T> THEN(final int numeric) {
+            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
+            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.search.THEN<T> THEN(final long numeric) {
+            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
+            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+        }
+
+        protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.TINYINT.UNSIGNED.search.THEN<T> {
+          protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
+            super(parent, value);
+          }
+
+          @Override
+          public final case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+            return new FLOAT.ELSE(this, numeric);
+          }
+
+          @Override
+          public final case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
+            return new FLOAT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+            return new DOUBLE.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+            return new DECIMAL.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new TINYINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new TINYINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+            return new SMALLINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.ELSE ELSE(final type.INT numeric) {
+            return new INT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+            return new BIGINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.FLOAT.ELSE ELSE(final float numeric) {
+            return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
+            return new FLOAT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.ELSE ELSE(final double numeric) {
+            return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
+            return new DOUBLE.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
+            return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.ELSE ELSE(final byte numeric) {
+            return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.TINYINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
+            return new TINYINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.ELSE ELSE(final short numeric) {
+            return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.ELSE ELSE(final int numeric) {
+            return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
+            return new INT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.ELSE ELSE(final long numeric) {
+            return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          }
+
+          @Override
+          public final case_.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition) {
+            return new TINYINT.Search.WHEN<T>(this, condition);
+          }
+        }
+      }
+
+      protected static final class ELSE extends Case.ELSE<type.Numeric<?>> implements case_.TINYINT.UNSIGNED.ELSE {
+        protected ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+          super(parent, value);
+        }
+
+        @Override
+        public final type.TINYINT.UNSIGNED END() {
+          final type.TINYINT.UNSIGNED dataType = (type.TINYINT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+          dataType.wrapper(this);
+          return dataType;
+        }
+      }
+    }
+
+    protected static final class Simple implements case_.TINYINT.simple {
+      protected static final class WHEN<T> extends Case.WHEN<T> implements case_.TINYINT.simple.WHEN<T> {
+        protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
+          return new FLOAT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
+          return new DOUBLE.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new TINYINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new TINYINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.simple.THEN<T> THEN(final type.INT numeric) {
+          return new INT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
+          return new INT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
+          return new BIGINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
+          return new BIGINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.FLOAT.simple.THEN<T> THEN(final float numeric) {
+          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric) {
+          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
+          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.TINYINT.simple.THEN<T> THEN(final byte numeric) {
+          return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.SMALLINT.simple.THEN<T> THEN(final short numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.INT.simple.THEN<T> THEN(final int numeric) {
+          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.BIGINT.simple.THEN<T> THEN(final long numeric) {
+          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+      }
+
+      protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.TINYINT.simple.THEN<T> {
+        protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
+          super(parent, value);
+        }
+
+        @Override
+        public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new TINYINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new TINYINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.INT numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.FLOAT.ELSE ELSE(final float numeric) {
+          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final double numeric) {
+          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
+          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final byte numeric) {
+          return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final short numeric) {
+          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final int numeric) {
+          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final long numeric) {
+          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public final case_.TINYINT.simple.WHEN<T> WHEN(final T condition) {
+          return new TINYINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+        }
+      }
+    }
+
+    protected static final class Search implements case_.TINYINT.search {
+      protected static final class WHEN<T> extends Case.WHEN<T> implements case_.TINYINT.search.WHEN<T> {
+        protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
+          super(parent, condition);
+        }
+
+        @Override
+        public final case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
+          return new FLOAT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
+          return new DOUBLE.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
+          return new DECIMAL.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new TINYINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new TINYINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
+          return new SMALLINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
+          return new SMALLINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.search.THEN<T> THEN(final type.INT numeric) {
+          return new INT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
+          return new INT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
+          return new BIGINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
+          return new BIGINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.FLOAT.search.THEN<T> THEN(final float numeric) {
+          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DOUBLE.search.THEN<T> THEN(final double numeric) {
+          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
+          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.TINYINT.search.THEN<T> THEN(final byte numeric) {
+          return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.SMALLINT.search.THEN<T> THEN(final short numeric) {
+          return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.INT.search.THEN<T> THEN(final int numeric) {
+          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.BIGINT.search.THEN<T> THEN(final long numeric) {
+          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+      }
+
+      protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.TINYINT.search.THEN<T> {
+        protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
+          super(parent, value);
+        }
+
+        @Override
+        public final case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
+          return new FLOAT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
+          return new DOUBLE.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new TINYINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new TINYINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.INT numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.FLOAT.ELSE ELSE(final float numeric) {
+          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DOUBLE.ELSE ELSE(final double numeric) {
+          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
+          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.TINYINT.ELSE ELSE(final byte numeric) {
+          return new TINYINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final short numeric) {
+          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final int numeric) {
+          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final long numeric) {
+          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        }
+
+        @Override
+        public final case_.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition) {
+          return new TINYINT.Search.WHEN<T>(this, condition);
+        }
+      }
+    }
+
+    protected static final class ELSE extends Case.ELSE<type.Numeric<?>> implements case_.TINYINT.ELSE {
+      protected ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
+        super(parent, value);
+      }
+
+      @Override
+      public final type.TINYINT END() {
+        final type.TINYINT dataType = (type.TINYINT)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
+        dataType.wrapper(this);
+        return dataType;
+      }
+    }
+  }
+
   protected static final class SMALLINT {
     protected static final class UNSIGNED {
       protected static final class Simple implements case_.SMALLINT.UNSIGNED.simple {
@@ -2765,6 +3791,16 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new SMALLINT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new SMALLINT.Simple.THEN<T>(this, numeric);
           }
@@ -2772,16 +3808,6 @@ final class Case implements case_ {
           @Override
           public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
             return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
           @Override
@@ -2845,13 +3871,13 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final short numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.simple.THEN<T> THEN(final short numeric) {
+            return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
@@ -2911,6 +3937,16 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new SMALLINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
             return new SMALLINT.ELSE(this, numeric);
           }
@@ -2918,16 +3954,6 @@ final class Case implements case_ {
           @Override
           public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
             return new SMALLINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
           }
 
           @Override
@@ -2991,13 +4017,13 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.ELSE ELSE(final short numeric) {
+            return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
@@ -3064,6 +4090,16 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new SMALLINT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new SMALLINT.Search.THEN<T>(this, numeric);
           }
@@ -3071,16 +4107,6 @@ final class Case implements case_ {
           @Override
           public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
             return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
           @Override
@@ -3144,13 +4170,13 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final short numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.search.THEN<T> THEN(final short numeric) {
+            return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
@@ -3210,6 +4236,16 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new SMALLINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
             return new SMALLINT.ELSE(this, numeric);
           }
@@ -3217,16 +4253,6 @@ final class Case implements case_ {
           @Override
           public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
             return new SMALLINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
           }
 
           @Override
@@ -3290,13 +4316,13 @@ final class Case implements case_ {
           }
 
           @Override
-          public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.ELSE ELSE(final short numeric) {
+            return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
+            return new SMALLINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
@@ -3362,6 +4388,16 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new SMALLINT.Simple.THEN<T>(this, numeric);
         }
@@ -3369,16 +4405,6 @@ final class Case implements case_ {
         @Override
         public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
           return new SMALLINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
         }
 
         @Override
@@ -3422,8 +4448,8 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final short numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        public case_.SMALLINT.simple.THEN<T> THEN(final short numeric) {
+          return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
@@ -3458,6 +4484,16 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
@@ -3465,16 +4501,6 @@ final class Case implements case_ {
         @Override
         public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
           return new SMALLINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
         }
 
         @Override
@@ -3518,8 +4544,8 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        public case_.SMALLINT.ELSE ELSE(final short numeric) {
+          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
@@ -3561,6 +4587,16 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new SMALLINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new SMALLINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new SMALLINT.Search.THEN<T>(this, numeric);
         }
@@ -3568,16 +4604,6 @@ final class Case implements case_ {
         @Override
         public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
           return new SMALLINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
         }
 
         @Override
@@ -3621,8 +4647,8 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final short numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        public case_.SMALLINT.search.THEN<T> THEN(final short numeric) {
+          return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
@@ -3657,6 +4683,16 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.SMALLINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new SMALLINT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric) {
           return new SMALLINT.ELSE(this, numeric);
         }
@@ -3664,16 +4700,6 @@ final class Case implements case_ {
         @Override
         public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
           return new SMALLINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
         }
 
         @Override
@@ -3717,8 +4743,8 @@ final class Case implements case_ {
         }
 
         @Override
-        public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        public case_.SMALLINT.ELSE ELSE(final short numeric) {
+          return new SMALLINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
@@ -3745,1034 +4771,8 @@ final class Case implements case_ {
 
       @Override
       public final type.SMALLINT END() {
-        final type.SMALLINT dataType = (type.SMALLINT)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        dataType.wrapper(this);
-        return dataType;
-      }
-    }
-  }
-
-  protected static final class MEDIUMINT {
-    protected static final class UNSIGNED {
-      protected static final class Simple implements case_.MEDIUMINT.UNSIGNED.simple {
-        protected static final class WHEN<T> extends Case.WHEN<T> implements case_.MEDIUMINT.UNSIGNED.simple.WHEN<T> {
-          protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
-          }
-
-          @Override
-          public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.simple.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.simple.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final byte numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.simple.THEN<T> THEN(final short numeric) {
-            return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.simple.THEN<T> THEN(final int numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.simple.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-        }
-
-        protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.MEDIUMINT.UNSIGNED.simple.THEN<T> {
-          protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
-          }
-
-          @Override
-          public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
-            return new FLOAT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
-            return new DOUBLE.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
-            return new DECIMAL.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final type.INT numeric) {
-            return new INT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
-            return new BIGINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.ELSE ELSE(final float numeric) {
-            return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final double numeric) {
-            return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-            return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final byte numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final int numeric) {
-            return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final long numeric) {
-            return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public final case_.MEDIUMINT.simple.WHEN<T> WHEN(final T condition) {
-            return new MEDIUMINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
-          }
-        }
-      }
-
-      protected static final class Search implements case_.MEDIUMINT.UNSIGNED.search {
-        protected static final class WHEN<T> extends Case.WHEN<T> implements case_.MEDIUMINT.UNSIGNED.search.WHEN<T> {
-          protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
-            super(parent, condition);
-          }
-
-          @Override
-          public final case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public final case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.search.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.search.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final byte numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.search.THEN<T> THEN(final short numeric) {
-            return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.search.THEN<T> THEN(final int numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.search.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-        }
-
-        protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.MEDIUMINT.UNSIGNED.search.THEN<T> {
-          protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
-            super(parent, value);
-          }
-
-          @Override
-          public final case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
-            return new FLOAT.ELSE(this, numeric);
-          }
-
-          @Override
-          public final case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
-            return new DOUBLE.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
-            return new DECIMAL.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new MEDIUMINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final type.INT numeric) {
-            return new INT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
-            return new BIGINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.FLOAT.ELSE ELSE(final float numeric) {
-            return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.ELSE ELSE(final double numeric) {
-            return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-            return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final byte numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Byte numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-            return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.MEDIUMINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Short numeric) {
-            return new MEDIUMINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final int numeric) {
-            return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final long numeric) {
-            return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.safris.xdb.entities.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-          }
-
-          @Override
-          public final case_.MEDIUMINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new MEDIUMINT.Search.WHEN<T>(this, condition);
-          }
-        }
-      }
-
-      protected static final class ELSE extends Case.ELSE<type.Numeric<?>> implements case_.MEDIUMINT.UNSIGNED.ELSE {
-        protected ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-          super(parent, value);
-        }
-
-        @Override
-        public final type.MEDIUMINT.UNSIGNED END() {
-          final type.MEDIUMINT.UNSIGNED dataType = (type.MEDIUMINT.UNSIGNED)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-          dataType.wrapper(this);
-          return dataType;
-        }
-      }
-    }
-
-    protected static final class Simple implements case_.MEDIUMINT.simple {
-      protected static final class WHEN<T> extends Case.WHEN<T> implements case_.MEDIUMINT.simple.WHEN<T> {
-        protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.simple.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final byte numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.simple.THEN<T> THEN(final short numeric) {
-          return new MEDIUMINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-      }
-
-      protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.MEDIUMINT.simple.THEN<T> {
-        protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
-        }
-
-        @Override
-        public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
-          return new FLOAT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.INT numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final byte numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public final case_.MEDIUMINT.simple.WHEN<T> WHEN(final T condition) {
-          return new MEDIUMINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
-        }
-      }
-    }
-
-    protected static final class Search implements case_.MEDIUMINT.search {
-      protected static final class WHEN<T> extends Case.WHEN<T> implements case_.MEDIUMINT.search.WHEN<T> {
-        protected WHEN(final Case.CASE_THEN parent, final type.DataType<T> condition) {
-          super(parent, condition);
-        }
-
-        @Override
-        public final case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.search.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final byte numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.search.THEN<T> THEN(final short numeric) {
-          return new MEDIUMINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-      }
-
-      protected static final class THEN<T> extends Case.THEN<T,type.Numeric<?>> implements case_.MEDIUMINT.search.THEN<T> {
-        protected THEN(final Case.WHEN<T> parent, final type.Numeric<?> value) {
-          super(parent, value);
-        }
-
-        @Override
-        public final case_.FLOAT.ELSE ELSE(final type.FLOAT numeric) {
-          return new FLOAT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric) {
-          return new DOUBLE.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
-          return new MEDIUMINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.INT numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.FLOAT.ELSE ELSE(final float numeric) {
-          return new FLOAT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DOUBLE.ELSE ELSE(final double numeric) {
-          return new DOUBLE.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric) {
-          return new DECIMAL.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final byte numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.MEDIUMINT.ELSE ELSE(final short numeric) {
-          return new MEDIUMINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final int numeric) {
-          return new INT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final long numeric) {
-          return new BIGINT.ELSE(this, (type.Numeric<?>)type.DataType.wrap(numeric));
-        }
-
-        @Override
-        public final case_.MEDIUMINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new MEDIUMINT.Search.WHEN<T>(this, condition);
-        }
-      }
-    }
-
-    protected static final class ELSE extends Case.ELSE<type.Numeric<?>> implements case_.MEDIUMINT.ELSE {
-      protected ELSE(final THEN_ELSE<?> parent, final type.Numeric<?> value) {
-        super(parent, value);
-      }
-
-      @Override
-      public final type.MEDIUMINT END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.MEDIUMINT dataType = numeric instanceof type.MEDIUMINT ? (type.MEDIUMINT)numeric.clone() : new type.MEDIUMINT(numeric.precision());
+        final type.SMALLINT dataType = numeric instanceof type.SMALLINT ? (type.SMALLINT)numeric.clone() : new type.SMALLINT(numeric.precision());
         dataType.wrapper(this);
         return dataType;
       }
@@ -4818,22 +4818,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.INT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new INT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.INT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new INT.Simple.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
@@ -4964,22 +4964,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.INT.ELSE ELSE(final type.TINYINT numeric) {
+            return new INT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.INT.ELSE ELSE(final type.SMALLINT numeric) {
             return new INT.ELSE(this, numeric);
           }
 
           @Override
           public case_.INT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new INT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new INT.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -5117,22 +5117,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.INT.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new INT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.INT.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new INT.Search.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
@@ -5263,22 +5263,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.INT.ELSE ELSE(final type.TINYINT numeric) {
+            return new INT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.INT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new INT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.INT.ELSE ELSE(final type.SMALLINT numeric) {
             return new INT.ELSE(this, numeric);
           }
 
           @Override
           public case_.INT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new INT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.INT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new INT.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -5415,22 +5415,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.INT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new INT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new INT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.INT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new INT.Simple.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.INT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new INT.Simple.THEN<T>(this, numeric);
         }
 
@@ -5511,22 +5511,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.INT.ELSE ELSE(final type.TINYINT numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.INT.ELSE ELSE(final type.SMALLINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
         public case_.INT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new INT.ELSE(this, numeric);
         }
 
@@ -5614,22 +5614,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.INT.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new INT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.INT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new INT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.INT.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new INT.Search.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.INT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.INT.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new INT.Search.THEN<T>(this, numeric);
         }
 
@@ -5710,22 +5710,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.INT.ELSE ELSE(final type.TINYINT numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.INT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new INT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.INT.ELSE ELSE(final type.SMALLINT numeric) {
           return new INT.ELSE(this, numeric);
         }
 
         @Override
         public case_.INT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new INT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.INT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new INT.ELSE(this, numeric);
         }
 
@@ -5845,22 +5845,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new BIGINT.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new BIGINT.Simple.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
@@ -5991,22 +5991,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new BIGINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
             return new BIGINT.ELSE(this, numeric);
           }
 
           @Override
           public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new BIGINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new BIGINT.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -6144,22 +6144,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new BIGINT.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new BIGINT.Search.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
@@ -6290,22 +6290,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+            return new BIGINT.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new BIGINT.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
             return new BIGINT.ELSE(this, numeric);
           }
 
           @Override
           public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new BIGINT.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new BIGINT.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -6442,22 +6442,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new BIGINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new BIGINT.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new BIGINT.Simple.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new BIGINT.Simple.THEN<T>(this, numeric);
         }
 
@@ -6538,22 +6538,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public case_.BIGINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
@@ -6641,22 +6641,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new BIGINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new BIGINT.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new BIGINT.Search.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new BIGINT.Search.THEN<T>(this, numeric);
         }
 
@@ -6737,22 +6737,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.BIGINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new BIGINT.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
         @Override
         public case_.BIGINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new BIGINT.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.BIGINT.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new BIGINT.ELSE(this, numeric);
         }
 
@@ -6872,22 +6872,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric) {
+            return new DECIMAL.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DECIMAL.Simple.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
           }
 
@@ -7018,22 +7018,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+            return new DECIMAL.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
             return new DECIMAL.ELSE(this, numeric);
           }
 
           @Override
           public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new DECIMAL.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DECIMAL.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -7171,22 +7171,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric) {
+            return new DECIMAL.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+          }
+
+          @Override
           public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric) {
             return new DECIMAL.Search.THEN<T>(this, numeric);
           }
 
           @Override
           public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
           }
 
@@ -7317,22 +7317,22 @@ final class Case implements case_ {
           }
 
           @Override
+          public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+            return new DECIMAL.ELSE(this, numeric);
+          }
+
+          @Override
+          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
+          }
+
+          @Override
           public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
             return new DECIMAL.ELSE(this, numeric);
           }
 
           @Override
           public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT numeric) {
-            return new DECIMAL.ELSE(this, numeric);
-          }
-
-          @Override
-          public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
             return new DECIMAL.UNSIGNED.ELSE(this, numeric);
           }
 
@@ -7470,22 +7470,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric) {
+          return new DECIMAL.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new DECIMAL.Simple.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DECIMAL.Simple.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DECIMAL.Simple.THEN<T>(this, numeric);
         }
 
@@ -7566,22 +7566,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
         public case_.DECIMAL.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
@@ -7669,22 +7669,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric) {
+          return new DECIMAL.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
+          return new DECIMAL.Search.THEN<T>(this, numeric);
+        }
+
+        @Override
         public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric) {
           return new DECIMAL.Search.THEN<T>(this, numeric);
         }
 
         @Override
         public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.search.THEN<T> THEN(final type.MEDIUMINT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.search.THEN<T> THEN(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DECIMAL.Search.THEN<T>(this, numeric);
         }
 
@@ -7765,22 +7765,22 @@ final class Case implements case_ {
         }
 
         @Override
+        public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
+        public case_.DECIMAL.ELSE ELSE(final type.TINYINT.UNSIGNED numeric) {
+          return new DECIMAL.ELSE(this, numeric);
+        }
+
+        @Override
         public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 
         @Override
         public case_.DECIMAL.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT numeric) {
-          return new DECIMAL.ELSE(this, numeric);
-        }
-
-        @Override
-        public case_.DECIMAL.ELSE ELSE(final type.MEDIUMINT.UNSIGNED numeric) {
           return new DECIMAL.ELSE(this, numeric);
         }
 

@@ -163,7 +163,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.SMALLINT.UNSIGNED.class;
+      return type.TINYINT.UNSIGNED.class;
     }
 
     @Override
@@ -203,7 +203,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.MEDIUMINT.UNSIGNED.class;
+      return type.SMALLINT.UNSIGNED.class;
     }
 
     @Override

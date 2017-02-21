@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -108,12 +109,12 @@ public class DataTest {
       final String datetimeType = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
       final String timeType = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
       final String charType = Math.random() < .2 ? Strings.getRandomAlphaString((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? datetimeType : Math.random() < .2 ? dateType : timeType;
-      final String decimalType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
-      final String floatType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
-      final String doubleType = String.valueOf((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 8)));
-      final String intType = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 10))));
-      final String mediumintType = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 5))));
-      final String smallintType = String.valueOf((int)((Math.random() - .5) * Math.pow(10, (int)(Math.random() * 3))));
+      final String decimalType = BigDecimal.valueOf(((Math.random() - .5) * Math.pow(2, (int)(Math.random() * 64) - 1))).setScale(10, BigDecimal.ROUND_DOWN).toString();
+      final String floatType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 16) - 1)));
+      final String doubleType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 32) - 1)));
+      final String intType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 32) - 1))));
+      final String smallintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 16) - 1))));
+      final String tinyintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 8) - 1))));
       final String enumType = values[(int)(Math.random() * values.length)];
 
       out.write("  <Type\n".getBytes());
@@ -144,9 +145,9 @@ public class DataTest {
       if (Math.random() < .9)
         out.write(("    intType=\"" + intType + "\"\n").getBytes());
       if (Math.random() < .9)
-        out.write(("    mediumintType=\"" + mediumintType + "\"\n").getBytes());
-      if (Math.random() < .9)
         out.write(("    smallintType=\"" + smallintType + "\"\n").getBytes());
+      if (Math.random() < .9)
+        out.write(("    tinyintType=\"" + tinyintType + "\"\n").getBytes());
       if (Math.random() < .9)
         out.write(("    timeType=\"" + timeType + "\"").getBytes());
       out.write(("/>\n").getBytes());

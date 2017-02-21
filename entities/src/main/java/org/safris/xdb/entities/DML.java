@@ -95,12 +95,12 @@ public final class DML {
     return new Cast.INT(a);
   }
 
-  public static Cast.MEDIUMINT CAST(final type.MEDIUMINT a) {
-    return new Cast.MEDIUMINT(a);
-  }
-
   public static Cast.SMALLINT CAST(final type.SMALLINT a) {
     return new Cast.SMALLINT(a);
+  }
+
+  public static Cast.TINYINT CAST(final type.TINYINT a) {
+    return new Cast.TINYINT(a);
   }
 
   public static Cast.TIME CAST(final type.TIME a) {
@@ -1248,8 +1248,8 @@ public final class DML {
 
   /** Start Math Functions (1 parameter) **/
 
-  public static type.SMALLINT SIGN(final type.Numeric<?> a) {
-    return (type.SMALLINT)new type.SMALLINT(1).wrapper(new function.numeric.Sign(a));
+  public static type.TINYINT SIGN(final type.Numeric<?> a) {
+    return (type.TINYINT)new type.TINYINT(1).wrapper(new function.numeric.Sign(a));
   }
 
   public static final type.FLOAT ROUND(final type.FLOAT a) {
@@ -1268,19 +1268,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Round(a, 0));
   }
 
+  public static final type.FLOAT ROUND(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, 0));
+  }
+
+  public static final type.FLOAT.UNSIGNED ROUND(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, 0));
+  }
+
   public static final type.FLOAT ROUND(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, 0));
   }
 
   public static final type.FLOAT.UNSIGNED ROUND(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, 0));
-  }
-
-  public static final type.FLOAT ROUND(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, 0));
-  }
-
-  public static final type.FLOAT.UNSIGNED ROUND(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, 0));
   }
 
@@ -1324,19 +1324,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Round(a, scale));
   }
 
+  public static final type.FLOAT ROUND(final type.TINYINT a, final int scale) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, scale));
+  }
+
+  public static final type.FLOAT.UNSIGNED ROUND(final type.TINYINT.UNSIGNED a, final int scale) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, scale));
+  }
+
   public static final type.FLOAT ROUND(final type.SMALLINT a, final int scale) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, scale));
   }
 
   public static final type.FLOAT.UNSIGNED ROUND(final type.SMALLINT.UNSIGNED a, final int scale) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, scale));
-  }
-
-  public static final type.FLOAT ROUND(final type.MEDIUMINT a, final int scale) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Round(a, scale));
-  }
-
-  public static final type.FLOAT.UNSIGNED ROUND(final type.MEDIUMINT.UNSIGNED a, final int scale) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Round(a, scale));
   }
 
@@ -1380,19 +1380,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Abs(a));
   }
 
+  public static final type.FLOAT ABS(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Abs(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED ABS(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Abs(a));
+  }
+
   public static final type.FLOAT ABS(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Abs(a));
   }
 
   public static final type.FLOAT.UNSIGNED ABS(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Abs(a));
-  }
-
-  public static final type.FLOAT ABS(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Abs(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED ABS(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Abs(a));
   }
 
@@ -1436,19 +1436,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Floor(a));
   }
 
+  public static final type.FLOAT FLOOR(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Floor(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED FLOOR(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Floor(a));
+  }
+
   public static final type.FLOAT FLOOR(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Floor(a));
   }
 
   public static final type.FLOAT.UNSIGNED FLOOR(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Floor(a));
-  }
-
-  public static final type.FLOAT FLOOR(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Floor(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED FLOOR(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Floor(a));
   }
 
@@ -1492,19 +1492,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Ceil(a));
   }
 
+  public static final type.FLOAT CEIL(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ceil(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED CEIL(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ceil(a));
+  }
+
   public static final type.FLOAT CEIL(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ceil(a));
   }
 
   public static final type.FLOAT.UNSIGNED CEIL(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ceil(a));
-  }
-
-  public static final type.FLOAT CEIL(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ceil(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED CEIL(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ceil(a));
   }
 
@@ -1548,19 +1548,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Sqrt(a));
   }
 
+  public static final type.FLOAT SQRT(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sqrt(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED SQRT(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sqrt(a));
+  }
+
   public static final type.FLOAT SQRT(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sqrt(a));
   }
 
   public static final type.FLOAT.UNSIGNED SQRT(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sqrt(a));
-  }
-
-  public static final type.FLOAT SQRT(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sqrt(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED SQRT(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sqrt(a));
   }
 
@@ -1604,19 +1604,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Exp(a));
   }
 
+  public static final type.FLOAT EXP(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Exp(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED EXP(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Exp(a));
+  }
+
   public static final type.FLOAT EXP(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Exp(a));
   }
 
   public static final type.FLOAT.UNSIGNED EXP(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Exp(a));
-  }
-
-  public static final type.FLOAT EXP(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Exp(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED EXP(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Exp(a));
   }
 
@@ -1660,19 +1660,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Ln(a));
   }
 
+  public static final type.FLOAT LN(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ln(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED LN(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ln(a));
+  }
+
   public static final type.FLOAT LN(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ln(a));
   }
 
   public static final type.FLOAT.UNSIGNED LN(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ln(a));
-  }
-
-  public static final type.FLOAT LN(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Ln(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED LN(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Ln(a));
   }
 
@@ -1716,19 +1716,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log2(a));
   }
 
+  public static final type.FLOAT LOG2(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log2(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED LOG2(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log2(a));
+  }
+
   public static final type.FLOAT LOG2(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log2(a));
   }
 
   public static final type.FLOAT.UNSIGNED LOG2(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log2(a));
-  }
-
-  public static final type.FLOAT LOG2(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log2(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED LOG2(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log2(a));
   }
 
@@ -1772,19 +1772,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log10(a));
   }
 
+  public static final type.FLOAT LOG10(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log10(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED LOG10(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log10(a));
+  }
+
   public static final type.FLOAT LOG10(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log10(a));
   }
 
   public static final type.FLOAT.UNSIGNED LOG10(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log10(a));
-  }
-
-  public static final type.FLOAT LOG10(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log10(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED LOG10(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log10(a));
   }
 
@@ -1828,19 +1828,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Sin(a));
   }
 
+  public static final type.FLOAT SIN(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sin(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED SIN(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sin(a));
+  }
+
   public static final type.FLOAT SIN(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sin(a));
   }
 
   public static final type.FLOAT.UNSIGNED SIN(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sin(a));
-  }
-
-  public static final type.FLOAT SIN(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Sin(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED SIN(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Sin(a));
   }
 
@@ -1884,19 +1884,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Asin(a));
   }
 
+  public static final type.FLOAT ASIN(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Asin(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED ASIN(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Asin(a));
+  }
+
   public static final type.FLOAT ASIN(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Asin(a));
   }
 
   public static final type.FLOAT.UNSIGNED ASIN(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Asin(a));
-  }
-
-  public static final type.FLOAT ASIN(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Asin(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED ASIN(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Asin(a));
   }
 
@@ -1940,19 +1940,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Cos(a));
   }
 
+  public static final type.FLOAT COS(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Cos(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED COS(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Cos(a));
+  }
+
   public static final type.FLOAT COS(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Cos(a));
   }
 
   public static final type.FLOAT.UNSIGNED COS(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Cos(a));
-  }
-
-  public static final type.FLOAT COS(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Cos(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED COS(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Cos(a));
   }
 
@@ -1996,19 +1996,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Acos(a));
   }
 
+  public static final type.FLOAT ACOS(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Acos(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED ACOS(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Acos(a));
+  }
+
   public static final type.FLOAT ACOS(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Acos(a));
   }
 
   public static final type.FLOAT.UNSIGNED ACOS(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Acos(a));
-  }
-
-  public static final type.FLOAT ACOS(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Acos(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED ACOS(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Acos(a));
   }
 
@@ -2052,19 +2052,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Tan(a));
   }
 
+  public static final type.FLOAT TAN(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Tan(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED TAN(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Tan(a));
+  }
+
   public static final type.FLOAT TAN(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Tan(a));
   }
 
   public static final type.FLOAT.UNSIGNED TAN(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Tan(a));
-  }
-
-  public static final type.FLOAT TAN(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Tan(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED TAN(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Tan(a));
   }
 
@@ -2108,19 +2108,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan(a));
   }
 
+  public static final type.FLOAT ATAN(final type.TINYINT a) {
+    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan(a));
+  }
+
+  public static final type.FLOAT.UNSIGNED ATAN(final type.TINYINT.UNSIGNED a) {
+    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan(a));
+  }
+
   public static final type.FLOAT ATAN(final type.SMALLINT a) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan(a));
   }
 
   public static final type.FLOAT.UNSIGNED ATAN(final type.SMALLINT.UNSIGNED a) {
-    return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan(a));
-  }
-
-  public static final type.FLOAT ATAN(final type.MEDIUMINT a) {
-    return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan(a));
-  }
-
-  public static final type.FLOAT.UNSIGNED ATAN(final type.MEDIUMINT.UNSIGNED a) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan(a));
   }
 
@@ -2180,11 +2180,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2196,11 +2196,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2208,19 +2208,19 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2240,11 +2240,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2256,19 +2256,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE POW(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2288,11 +2288,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE POW(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2304,35 +2304,35 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL POW(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL POW(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final long b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final long a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final long a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2360,11 +2360,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2376,19 +2376,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2400,11 +2400,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2432,11 +2432,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2448,11 +2448,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2464,11 +2464,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL POW(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL POW(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2504,11 +2504,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2528,19 +2528,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2576,19 +2576,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final long b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final long a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final long a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2608,19 +2608,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2656,7 +2656,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2664,7 +2664,7 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2672,35 +2672,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL POW(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL POW(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2712,19 +2712,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL POW(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL POW(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2760,35 +2760,35 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2816,27 +2816,27 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final int b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final int a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final int a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL POW(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL POW(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2848,11 +2848,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2868,7 +2868,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2876,7 +2876,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2896,11 +2896,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2912,11 +2912,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE POW(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2936,19 +2936,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.INT b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.INT a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.INT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2968,19 +2968,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL POW(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL POW(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -2992,11 +2992,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final type.BIGINT a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3008,11 +3008,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3024,11 +3024,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3048,11 +3048,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3064,11 +3064,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3096,11 +3096,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE POW(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3116,11 +3116,11 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final int b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3128,11 +3128,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final int a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final int a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3160,15 +3160,15 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL POW(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3176,7 +3176,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL POW(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3184,11 +3184,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.INT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3200,51 +3200,51 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE POW(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED POW(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED POW(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED POW(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3256,11 +3256,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED POW(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3280,19 +3280,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.DOUBLE POW(final type.TINYINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.DOUBLE POW(final type.BIGINT a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT POW(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT POW(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3300,7 +3300,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3308,11 +3308,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE POW(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3320,7 +3320,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DOUBLE POW(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE POW(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3328,19 +3328,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT POW(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.FLOAT POW(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT POW(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL POW(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
-  public static final type.DECIMAL POW(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL POW(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Pow(a, b));
   }
 
@@ -3372,11 +3372,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3388,11 +3388,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3400,19 +3400,19 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3432,11 +3432,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3448,19 +3448,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE MOD(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3480,11 +3480,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE MOD(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3496,35 +3496,35 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL MOD(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL MOD(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final long b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final long a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final long a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3552,11 +3552,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3568,19 +3568,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3592,11 +3592,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3624,11 +3624,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3640,11 +3640,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3656,11 +3656,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL MOD(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3696,11 +3696,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3720,19 +3720,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3768,19 +3768,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final long b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final long a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final long a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3800,19 +3800,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3848,7 +3848,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3856,7 +3856,7 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3864,35 +3864,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL MOD(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3904,19 +3904,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL MOD(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -3952,35 +3952,35 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4008,27 +4008,27 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final int b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final int a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final int a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL MOD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL MOD(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4040,11 +4040,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4060,7 +4060,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4068,7 +4068,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4088,11 +4088,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4104,11 +4104,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE MOD(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4128,19 +4128,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.INT b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.INT a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.INT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4160,19 +4160,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL MOD(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL MOD(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4184,11 +4184,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final type.BIGINT a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4200,11 +4200,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4216,11 +4216,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4240,11 +4240,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4256,11 +4256,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4288,11 +4288,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE MOD(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4308,11 +4308,11 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final int b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4320,11 +4320,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final int a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final int a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4352,15 +4352,15 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL MOD(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4368,7 +4368,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL MOD(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4376,11 +4376,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.INT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4392,51 +4392,51 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MOD(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MOD(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MOD(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MOD(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4448,11 +4448,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MOD(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MOD(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4472,19 +4472,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.DOUBLE MOD(final type.TINYINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.DOUBLE MOD(final type.BIGINT a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT MOD(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MOD(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4492,7 +4492,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4500,11 +4500,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE MOD(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4512,7 +4512,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DOUBLE MOD(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MOD(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4520,19 +4520,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT MOD(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.FLOAT MOD(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT MOD(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL MOD(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
-  public static final type.DECIMAL MOD(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL MOD(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Mod(a, b));
   }
 
@@ -4564,11 +4564,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4580,11 +4580,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4592,19 +4592,19 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4624,11 +4624,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4640,19 +4640,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE LOG(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4672,11 +4672,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE LOG(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4688,35 +4688,35 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL LOG(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL LOG(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final long b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final long a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final long a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4744,11 +4744,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4760,19 +4760,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4784,11 +4784,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4816,11 +4816,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4832,11 +4832,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4848,11 +4848,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL LOG(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4888,11 +4888,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4912,19 +4912,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4960,19 +4960,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final long b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final long a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final long a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -4992,19 +4992,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5040,7 +5040,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5048,7 +5048,7 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5056,35 +5056,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL LOG(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5096,19 +5096,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL LOG(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5144,35 +5144,35 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5200,27 +5200,27 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final int b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final int a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final int a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL LOG(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL LOG(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5232,11 +5232,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5252,7 +5252,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5260,7 +5260,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5280,11 +5280,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5296,11 +5296,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE LOG(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5320,19 +5320,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.INT b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.INT a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.INT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5352,19 +5352,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL LOG(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL LOG(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5376,11 +5376,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final type.BIGINT a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5392,11 +5392,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5408,11 +5408,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5432,11 +5432,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5448,11 +5448,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5480,11 +5480,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE LOG(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5500,11 +5500,11 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final int b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5512,11 +5512,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final int a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final int a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5544,15 +5544,15 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL LOG(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5560,7 +5560,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL LOG(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5568,11 +5568,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.INT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5584,51 +5584,51 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE LOG(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED LOG(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED LOG(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED LOG(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5640,11 +5640,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED LOG(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED LOG(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5664,19 +5664,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.DOUBLE LOG(final type.TINYINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.DOUBLE LOG(final type.BIGINT a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT LOG(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT LOG(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5684,7 +5684,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5692,11 +5692,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE LOG(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5704,7 +5704,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DOUBLE LOG(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE LOG(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5712,19 +5712,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT LOG(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.FLOAT LOG(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT LOG(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL LOG(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
-  public static final type.DECIMAL LOG(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL LOG(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Log(a, b));
   }
 
@@ -5756,11 +5756,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5772,11 +5772,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5784,19 +5784,19 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5816,11 +5816,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5832,19 +5832,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5864,11 +5864,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5880,35 +5880,35 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL ATAN2(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final long b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final long a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final long a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5936,11 +5936,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5952,19 +5952,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -5976,11 +5976,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6008,11 +6008,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6024,11 +6024,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6040,11 +6040,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL ATAN2(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6080,11 +6080,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6104,19 +6104,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6152,19 +6152,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final long b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final long a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final long a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6184,19 +6184,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6232,7 +6232,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6240,7 +6240,7 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6248,35 +6248,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL ATAN2(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6288,19 +6288,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL ATAN2(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6336,35 +6336,35 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6392,27 +6392,27 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final int b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final int a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final int a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL ATAN2(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL ATAN2(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6424,11 +6424,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6444,7 +6444,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6452,7 +6452,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6472,11 +6472,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6488,11 +6488,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6512,19 +6512,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.INT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.INT a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.INT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6544,19 +6544,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL ATAN2(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6568,11 +6568,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6584,11 +6584,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6600,11 +6600,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6624,11 +6624,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6640,11 +6640,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6672,11 +6672,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6692,11 +6692,11 @@ public final class DML {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final int b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6704,11 +6704,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final int a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final int a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6736,15 +6736,15 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL ATAN2(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6752,7 +6752,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6760,11 +6760,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.INT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6776,51 +6776,51 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ATAN2(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ATAN2(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ATAN2(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ATAN2(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6832,11 +6832,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ATAN2(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ATAN2(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6856,19 +6856,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.DOUBLE ATAN2(final type.TINYINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.DOUBLE ATAN2(final type.BIGINT a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ATAN2(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6876,7 +6876,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6884,11 +6884,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE ATAN2(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6896,7 +6896,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DOUBLE ATAN2(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ATAN2(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6904,19 +6904,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT ATAN2(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.FLOAT ATAN2(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT ATAN2(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL ATAN2(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
-  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL ATAN2(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new function.numeric.Atan2(a, b));
   }
 
@@ -6966,24 +6966,24 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
+  public static final type.TINYINT ADD(final type.TINYINT a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  }
+
+  public static final type.TINYINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  }
+
   public static final type.SMALLINT ADD(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
-  }
-
-  public static final type.SMALLINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
-  }
-
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.BIGINT ADD(final type.BIGINT a, final type.BIGINT b) {
@@ -6998,19 +6998,19 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7030,11 +7030,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7046,19 +7046,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT ADD(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT ADD(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT ADD(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7078,11 +7078,11 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE ADD(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ADD(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7094,44 +7094,44 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL ADD(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL ADD(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE ADD(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ADD(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.MEDIUMINT a, final long b) {
+  public static final type.BIGINT ADD(final type.SMALLINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final long a, final type.MEDIUMINT b) {
+  public static final type.BIGINT ADD(final long a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final type.SMALLINT.UNSIGNED a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final type.TINYINT.UNSIGNED a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DECIMAL ADD(final type.INT.UNSIGNED a, final BigDecimal b) {
@@ -7158,12 +7158,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DOUBLE ADD(final type.DOUBLE a, final type.INT.UNSIGNED b) {
@@ -7174,19 +7174,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT ADD(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT ADD(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE ADD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7198,11 +7198,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7226,16 +7226,16 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DECIMAL.UNSIGNED ADD(final UNSIGNED.BigDecimal a, final type.DOUBLE.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.INT ADD(final type.INT.UNSIGNED a, final int b) {
@@ -7246,11 +7246,11 @@ public final class DML {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7262,11 +7262,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.INT ADD(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT ADD(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7278,19 +7278,19 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL ADD(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final UNSIGNED.Integer a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7318,12 +7318,12 @@ public final class DML {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final type.SMALLINT a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final type.TINYINT a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final byte a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final byte a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DECIMAL ADD(final type.BIGINT a, final BigDecimal b) {
@@ -7334,12 +7334,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.SMALLINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.TINYINT a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DECIMAL ADD(final type.FLOAT a, final BigDecimal b) {
@@ -7358,19 +7358,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT ADD(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT ADD(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7406,19 +7406,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.SMALLINT a, final long b) {
+  public static final type.BIGINT ADD(final type.TINYINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final long a, final type.SMALLINT b) {
+  public static final type.BIGINT ADD(final long a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT ADD(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7438,19 +7438,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE ADD(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE ADD(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ADD(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT ADD(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7486,7 +7486,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT ADD(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7494,7 +7494,7 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ADD(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7502,35 +7502,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL ADD(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7542,19 +7542,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT ADD(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ADD(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL ADD(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7590,35 +7590,35 @@ public final class DML {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE ADD(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT ADD(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT ADD(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7646,36 +7646,36 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.SMALLINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.TINYINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final short a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final short a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.SMALLINT a, final int b) {
+  public static final type.INT ADD(final type.TINYINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final int a, final type.SMALLINT b) {
+  public static final type.INT ADD(final int a, final type.TINYINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL ADD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL ADD(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DECIMAL ADD(final type.INT.UNSIGNED a, final type.DECIMAL b) {
@@ -7686,11 +7686,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7706,16 +7706,16 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED ADD(final UNSIGNED.Double a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DOUBLE ADD(final type.FLOAT a, final double b) {
@@ -7734,11 +7734,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT ADD(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.INT ADD(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7750,11 +7750,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT ADD(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7774,19 +7774,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.SMALLINT a, final type.INT b) {
+  public static final type.INT ADD(final type.TINYINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT a, final type.SMALLINT b) {
+  public static final type.INT ADD(final type.INT a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT ADD(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT ADD(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7806,19 +7806,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT ADD(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT ADD(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL ADD(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL ADD(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7830,11 +7830,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.BIGINT ADD(final type.SMALLINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.BIGINT ADD(final type.BIGINT a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7846,11 +7846,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.BIGINT ADD(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7862,20 +7862,20 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.SMALLINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.TINYINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED ADD(final type.DOUBLE.UNSIGNED a, final UNSIGNED.Double b) {
@@ -7894,11 +7894,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.INT ADD(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT ADD(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7910,11 +7910,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE ADD(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7942,11 +7942,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final UNSIGNED.Integer a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7958,24 +7958,24 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE ADD(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE ADD(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Byte b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.Byte b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED ADD(final type.BIGINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED ADD(final UNSIGNED.Byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.TINYINT.UNSIGNED ADD(final UNSIGNED.Byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED ADD(final UNSIGNED.Long a, final type.BIGINT.UNSIGNED b) {
@@ -7986,11 +7986,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.MEDIUMINT a, final int b) {
+  public static final type.INT ADD(final type.SMALLINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -7998,11 +7998,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final int a, final type.MEDIUMINT b) {
+  public static final type.INT ADD(final int a, final type.SMALLINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8030,23 +8030,23 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final short a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final short a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL ADD(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8054,7 +8054,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL ADD(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8062,11 +8062,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.INT ADD(final type.SMALLINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.INT ADD(final type.INT a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8078,52 +8078,52 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT ADD(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.INT ADD(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT ADD(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT ADD(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED ADD(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED ADD(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED ADD(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED ADD(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.BIGINT ADD(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED ADD(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
+  public static final type.SMALLINT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
   public static final type.BIGINT ADD(final type.INT a, final long b) {
@@ -8134,11 +8134,11 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED ADD(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED ADD(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8158,19 +8158,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.BIGINT ADD(final type.TINYINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.BIGINT ADD(final type.BIGINT a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT ADD(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.INT ADD(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT ADD(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8178,7 +8178,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT ADD(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8186,11 +8186,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.BIGINT ADD(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT ADD(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE ADD(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8198,7 +8198,7 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DOUBLE ADD(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE ADD(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8206,19 +8206,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT ADD(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.FLOAT ADD(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT ADD(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL ADD(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
-  public static final type.DECIMAL ADD(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL ADD(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.PLUS, a, b));
   }
 
@@ -8246,24 +8246,24 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
+  public static final type.TINYINT SUB(final type.TINYINT a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  }
+
+  public static final type.TINYINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  }
+
   public static final type.SMALLINT SUB(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
-  }
-
-  public static final type.SMALLINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
-  }
-
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.BIGINT SUB(final type.BIGINT a, final type.BIGINT b) {
@@ -8278,19 +8278,19 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8310,11 +8310,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8326,19 +8326,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT SUB(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT SUB(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT SUB(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8358,11 +8358,11 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE SUB(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE SUB(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8374,44 +8374,44 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL SUB(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL SUB(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE SUB(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE SUB(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.MEDIUMINT a, final long b) {
+  public static final type.BIGINT SUB(final type.SMALLINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final long a, final type.MEDIUMINT b) {
+  public static final type.BIGINT SUB(final long a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final type.SMALLINT.UNSIGNED a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final type.TINYINT.UNSIGNED a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DECIMAL SUB(final type.INT.UNSIGNED a, final BigDecimal b) {
@@ -8438,12 +8438,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DOUBLE SUB(final type.DOUBLE a, final type.INT.UNSIGNED b) {
@@ -8454,19 +8454,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT SUB(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT SUB(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE SUB(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8478,11 +8478,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8506,16 +8506,16 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DECIMAL.UNSIGNED SUB(final UNSIGNED.BigDecimal a, final type.DOUBLE.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.INT SUB(final type.INT.UNSIGNED a, final int b) {
@@ -8526,11 +8526,11 @@ public final class DML {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8542,11 +8542,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.INT SUB(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT SUB(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8558,19 +8558,19 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL SUB(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final UNSIGNED.Integer a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8598,12 +8598,12 @@ public final class DML {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final type.SMALLINT a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final type.TINYINT a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final byte a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final byte a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DECIMAL SUB(final type.BIGINT a, final BigDecimal b) {
@@ -8614,12 +8614,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.SMALLINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.TINYINT a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DECIMAL SUB(final type.FLOAT a, final BigDecimal b) {
@@ -8638,19 +8638,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT SUB(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT SUB(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8686,19 +8686,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.SMALLINT a, final long b) {
+  public static final type.BIGINT SUB(final type.TINYINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final long a, final type.SMALLINT b) {
+  public static final type.BIGINT SUB(final long a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT SUB(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8718,19 +8718,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE SUB(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE SUB(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT SUB(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT SUB(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8766,7 +8766,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT SUB(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8774,7 +8774,7 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT SUB(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8782,35 +8782,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL SUB(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8822,19 +8822,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT SUB(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT SUB(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL SUB(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8870,35 +8870,35 @@ public final class DML {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE SUB(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT SUB(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT SUB(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8926,36 +8926,36 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.SMALLINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.TINYINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final short a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final short a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.SMALLINT a, final int b) {
+  public static final type.INT SUB(final type.TINYINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final int a, final type.SMALLINT b) {
+  public static final type.INT SUB(final int a, final type.TINYINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL SUB(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL SUB(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DECIMAL SUB(final type.INT.UNSIGNED a, final type.DECIMAL b) {
@@ -8966,11 +8966,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -8986,16 +8986,16 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED SUB(final UNSIGNED.Double a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DOUBLE SUB(final type.FLOAT a, final double b) {
@@ -9014,11 +9014,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT SUB(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.INT SUB(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9030,11 +9030,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT SUB(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9054,19 +9054,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.SMALLINT a, final type.INT b) {
+  public static final type.INT SUB(final type.TINYINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT a, final type.SMALLINT b) {
+  public static final type.INT SUB(final type.INT a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT SUB(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT SUB(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9086,19 +9086,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT SUB(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT SUB(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL SUB(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL SUB(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9110,11 +9110,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.BIGINT SUB(final type.SMALLINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.BIGINT SUB(final type.BIGINT a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9126,11 +9126,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.BIGINT SUB(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9142,20 +9142,20 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.SMALLINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.TINYINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED SUB(final type.DOUBLE.UNSIGNED a, final UNSIGNED.Double b) {
@@ -9174,11 +9174,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.INT SUB(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT SUB(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9190,11 +9190,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE SUB(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9222,11 +9222,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final UNSIGNED.Integer a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9238,24 +9238,24 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE SUB(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE SUB(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Byte b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.Byte b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED SUB(final type.BIGINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED SUB(final UNSIGNED.Byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.TINYINT.UNSIGNED SUB(final UNSIGNED.Byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED SUB(final UNSIGNED.Long a, final type.BIGINT.UNSIGNED b) {
@@ -9266,11 +9266,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.MEDIUMINT a, final int b) {
+  public static final type.INT SUB(final type.SMALLINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9278,11 +9278,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final int a, final type.MEDIUMINT b) {
+  public static final type.INT SUB(final int a, final type.SMALLINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9310,23 +9310,23 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final short a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final short a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL SUB(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9334,7 +9334,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL SUB(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9342,11 +9342,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.INT SUB(final type.SMALLINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.INT SUB(final type.INT a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9358,52 +9358,52 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT SUB(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.INT SUB(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT SUB(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT SUB(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED SUB(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED SUB(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED SUB(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED SUB(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.BIGINT SUB(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED SUB(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
+  public static final type.SMALLINT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
   public static final type.BIGINT SUB(final type.INT a, final long b) {
@@ -9414,11 +9414,11 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT.UNSIGNED SUB(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED SUB(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9438,19 +9438,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.BIGINT SUB(final type.TINYINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.BIGINT SUB(final type.BIGINT a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT SUB(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.INT SUB(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT SUB(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9458,7 +9458,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT SUB(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9466,11 +9466,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.BIGINT SUB(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT SUB(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE SUB(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9478,7 +9478,7 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DOUBLE SUB(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE SUB(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9486,19 +9486,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT SUB(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.FLOAT SUB(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT SUB(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL SUB(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
-  public static final type.DECIMAL SUB(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL SUB(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MINUS, a, b));
   }
 
@@ -9526,24 +9526,24 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
+  public static final type.TINYINT MUL(final type.TINYINT a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  }
+
+  public static final type.TINYINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  }
+
   public static final type.SMALLINT MUL(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
-  }
-
-  public static final type.SMALLINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
-  }
-
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.BIGINT MUL(final type.BIGINT a, final type.BIGINT b) {
@@ -9558,19 +9558,19 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9590,11 +9590,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9606,19 +9606,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT MUL(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT MUL(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT MUL(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9638,11 +9638,11 @@ public final class DML {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE MUL(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MUL(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9654,44 +9654,44 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL MUL(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL MUL(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE MUL(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MUL(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.MEDIUMINT a, final long b) {
+  public static final type.BIGINT MUL(final type.SMALLINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final long a, final type.MEDIUMINT b) {
+  public static final type.BIGINT MUL(final long a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final type.SMALLINT.UNSIGNED a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final type.TINYINT.UNSIGNED a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DECIMAL MUL(final type.INT.UNSIGNED a, final BigDecimal b) {
@@ -9718,12 +9718,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DOUBLE MUL(final type.DOUBLE a, final type.INT.UNSIGNED b) {
@@ -9734,19 +9734,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT MUL(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT MUL(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE MUL(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9758,11 +9758,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9786,16 +9786,16 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DECIMAL.UNSIGNED MUL(final UNSIGNED.BigDecimal a, final type.DOUBLE.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.INT MUL(final type.INT.UNSIGNED a, final int b) {
@@ -9806,11 +9806,11 @@ public final class DML {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9822,11 +9822,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.INT MUL(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT MUL(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9838,19 +9838,19 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL MUL(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final UNSIGNED.Integer a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9878,12 +9878,12 @@ public final class DML {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final type.SMALLINT a, final byte b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final type.TINYINT a, final byte b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final byte a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final byte a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DECIMAL MUL(final type.BIGINT a, final BigDecimal b) {
@@ -9894,12 +9894,12 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.SMALLINT a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.TINYINT a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DECIMAL MUL(final type.FLOAT a, final BigDecimal b) {
@@ -9918,19 +9918,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT MUL(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT MUL(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT)new type.TINYINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9966,19 +9966,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.SMALLINT a, final long b) {
+  public static final type.BIGINT MUL(final type.TINYINT a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final long a, final type.SMALLINT b) {
+  public static final type.BIGINT MUL(final long a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT MUL(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -9998,19 +9998,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE MUL(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE MUL(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MUL(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT MUL(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10046,7 +10046,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT MUL(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10054,7 +10054,7 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MUL(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10062,35 +10062,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL MUL(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10102,19 +10102,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT MUL(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MUL(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL MUL(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10150,35 +10150,35 @@ public final class DML {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE MUL(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT MUL(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT MUL(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10206,36 +10206,36 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.SMALLINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.TINYINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final short a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final short a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.SMALLINT a, final int b) {
+  public static final type.INT MUL(final type.TINYINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final int a, final type.SMALLINT b) {
+  public static final type.INT MUL(final int a, final type.TINYINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL MUL(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL MUL(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DECIMAL MUL(final type.INT.UNSIGNED a, final type.DECIMAL b) {
@@ -10246,11 +10246,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10266,16 +10266,16 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED MUL(final UNSIGNED.Double a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DOUBLE MUL(final type.FLOAT a, final double b) {
@@ -10294,11 +10294,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT MUL(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.INT MUL(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10310,11 +10310,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.BIGINT MUL(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10334,19 +10334,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.SMALLINT a, final type.INT b) {
+  public static final type.INT MUL(final type.TINYINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT a, final type.SMALLINT b) {
+  public static final type.INT MUL(final type.INT a, final type.TINYINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT MUL(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT MUL(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10366,19 +10366,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT MUL(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT MUL(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL MUL(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL MUL(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10390,11 +10390,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.BIGINT MUL(final type.SMALLINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.BIGINT MUL(final type.BIGINT a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10406,11 +10406,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.BIGINT MUL(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10422,20 +10422,20 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.SMALLINT.UNSIGNED a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.TINYINT.UNSIGNED a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final short a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final short a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED MUL(final type.DOUBLE.UNSIGNED a, final UNSIGNED.Double b) {
@@ -10454,11 +10454,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.INT MUL(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT MUL(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10470,11 +10470,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE MUL(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10502,11 +10502,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Integer b) {
+  public static final type.INT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Integer b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final UNSIGNED.Integer a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final UNSIGNED.Integer a, final type.SMALLINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10518,24 +10518,24 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE MUL(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE MUL(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Byte b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.Byte b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED MUL(final type.BIGINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.BIGINT.UNSIGNED)new type.BIGINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.SMALLINT.UNSIGNED MUL(final UNSIGNED.Byte a, final type.SMALLINT.UNSIGNED b) {
-    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.TINYINT.UNSIGNED MUL(final UNSIGNED.Byte a, final type.TINYINT.UNSIGNED b) {
+    return (type.TINYINT.UNSIGNED)new type.TINYINT.UNSIGNED(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.BIGINT.UNSIGNED MUL(final UNSIGNED.Long a, final type.BIGINT.UNSIGNED b) {
@@ -10546,11 +10546,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.MEDIUMINT a, final int b) {
+  public static final type.INT MUL(final type.SMALLINT a, final int b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10558,11 +10558,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final int a, final type.MEDIUMINT b) {
+  public static final type.INT MUL(final int a, final type.SMALLINT b) {
     return (type.INT)new type.INT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10590,23 +10590,23 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT a, final short b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT a, final short b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final short a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final short a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL MUL(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10614,7 +10614,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL MUL(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10622,11 +10622,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.INT MUL(final type.SMALLINT a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.INT MUL(final type.INT a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10638,52 +10638,52 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.INT MUL(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.INT MUL(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT MUL(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT)new type.MEDIUMINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT MUL(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT)new type.SMALLINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED MUL(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED MUL(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED MUL(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED MUL(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.BIGINT MUL(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.MEDIUMINT.UNSIGNED MUL(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
-    return (type.MEDIUMINT.UNSIGNED)new type.MEDIUMINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
+  public static final type.SMALLINT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
+    return (type.SMALLINT.UNSIGNED)new type.SMALLINT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
   public static final type.BIGINT MUL(final type.INT a, final long b) {
@@ -10694,11 +10694,11 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT.UNSIGNED MUL(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT.UNSIGNED MUL(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.INT.UNSIGNED)new type.INT.UNSIGNED(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10718,19 +10718,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.BIGINT MUL(final type.TINYINT a, final type.BIGINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.BIGINT MUL(final type.BIGINT a, final type.TINYINT b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.INT MUL(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.INT MUL(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.INT MUL(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.INT)new type.INT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10738,7 +10738,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.BIGINT MUL(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10746,11 +10746,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.BIGINT MUL(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.BIGINT MUL(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE MUL(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10758,7 +10758,7 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(a.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DOUBLE MUL(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE MUL(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10766,19 +10766,19 @@ public final class DML {
     return (type.BIGINT)new type.BIGINT(b.precision()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT MUL(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.FLOAT MUL(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT MUL(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL MUL(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
-  public static final type.DECIMAL MUL(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL MUL(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.MULTIPLY, a, b));
   }
 
@@ -10810,11 +10810,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10826,11 +10826,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10838,19 +10838,19 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final UNSIGNED.BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10870,11 +10870,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.INT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10886,19 +10886,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.INT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.INT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE DIV(final type.TINYINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10918,11 +10918,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE DIV(final type.TINYINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final double a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final double a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10934,35 +10934,35 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.MEDIUMINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL DIV(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final BigDecimal a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL DIV(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final double b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final double a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final double a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.DECIMAL.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final long b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final long a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final long a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -10990,11 +10990,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11006,19 +11006,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final float b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final float a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final float a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11030,11 +11030,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.FLOAT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11062,11 +11062,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.DOUBLE.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11078,11 +11078,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final int a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final int a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11094,11 +11094,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.SMALLINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL DIV(final type.TINYINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.SMALLINT b) {
+  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11134,11 +11134,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11158,19 +11158,19 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11206,19 +11206,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final long b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final long b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final long a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final long a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11238,19 +11238,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final double b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final double b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final double a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final double a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.FLOAT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11286,7 +11286,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final float b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final float b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11294,7 +11294,7 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final float a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final float a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11302,35 +11302,35 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL DIV(final type.TINYINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Short a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Long a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11342,19 +11342,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final float a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final float a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.MEDIUMINT a, final type.DECIMAL b) {
+  public static final type.DECIMAL DIV(final type.SMALLINT a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11390,35 +11390,35 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Float b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Float b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Long b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Long b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final float b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final float b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final float a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final float a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11446,27 +11446,27 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final int b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final int a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final int a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL b) {
+  public static final type.DECIMAL DIV(final type.SMALLINT.UNSIGNED a, final type.DECIMAL b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL DIV(final type.DECIMAL a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Short b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final UNSIGNED.Short b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Short a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final UNSIGNED.Short a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11478,11 +11478,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.BIGINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.BIGINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11498,7 +11498,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11506,7 +11506,7 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11526,11 +11526,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.INT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final type.INT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11542,11 +11542,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final type.BIGINT b) {
+  public static final type.DOUBLE DIV(final type.TINYINT.UNSIGNED a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.BIGINT a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11566,19 +11566,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.INT b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.INT a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.INT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.FLOAT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.FLOAT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)(a.unsigned() ? new type.FLOAT.UNSIGNED() : new type.FLOAT()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.FLOAT b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11598,19 +11598,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.FLOAT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.FLOAT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.FLOAT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.SMALLINT a, final BigDecimal b) {
+  public static final type.DECIMAL DIV(final type.TINYINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final BigDecimal a, final type.SMALLINT b) {
+  public static final type.DECIMAL DIV(final BigDecimal a, final type.TINYINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11622,11 +11622,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final type.BIGINT b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final type.BIGINT a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11638,11 +11638,11 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11654,11 +11654,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.DOUBLE.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.DOUBLE.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.DOUBLE.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11678,11 +11678,11 @@ public final class DML {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final int b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final int b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final int a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final int a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11694,11 +11694,11 @@ public final class DML {
     return (type.DECIMAL)(a.unsigned() && b.unsigned() ? new type.DECIMAL.UNSIGNED(a.precision(), a.scale()) : new type.DECIMAL(a.precision(), a.scale())).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final type.DOUBLE b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11726,11 +11726,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.DOUBLE a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE)(a.unsigned() ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final type.DOUBLE b) {
+  public static final type.DOUBLE DIV(final type.TINYINT.UNSIGNED a, final type.DOUBLE b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11746,11 +11746,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.FLOAT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.FLOAT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final int b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final int b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11758,11 +11758,11 @@ public final class DML {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.FLOAT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final int a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final int a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11790,15 +11790,15 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.DECIMAL.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.DECIMAL.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.DECIMAL.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.SMALLINT.UNSIGNED a, final BigDecimal b) {
+  public static final type.DECIMAL DIV(final type.TINYINT.UNSIGNED a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11806,7 +11806,7 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL DIV(final BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11814,11 +11814,11 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.INT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.INT a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.INT a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11830,51 +11830,51 @@ public final class DML {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.INT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.DOUBLE DIV(final type.INT.UNSIGNED a, final type.SMALLINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT.UNSIGNED a, final type.MEDIUMINT b) {
+  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.SMALLINT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.MEDIUMINT a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.SMALLINT a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final UNSIGNED.BigDecimal b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL.UNSIGNED DIV(final UNSIGNED.BigDecimal a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DECIMAL.UNSIGNED DIV(final UNSIGNED.BigDecimal a, final type.TINYINT.UNSIGNED b) {
     return (type.DECIMAL.UNSIGNED)new type.DECIMAL.UNSIGNED(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final UNSIGNED.Double b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final UNSIGNED.Double b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.BIGINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final type.BIGINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final UNSIGNED.Double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT.UNSIGNED a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final type.BIGINT.UNSIGNED a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT.UNSIGNED DIV(final type.MEDIUMINT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT.UNSIGNED)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11886,11 +11886,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.SMALLINT.UNSIGNED a, final type.INT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.TINYINT.UNSIGNED a, final type.INT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED DIV(final type.INT.UNSIGNED a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.DOUBLE.UNSIGNED DIV(final type.INT.UNSIGNED a, final type.TINYINT.UNSIGNED b) {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11910,19 +11910,19 @@ public final class DML {
     return (type.DOUBLE.UNSIGNED)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.SMALLINT a, final type.BIGINT b) {
+  public static final type.DOUBLE DIV(final type.TINYINT a, final type.BIGINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.BIGINT a, final type.SMALLINT b) {
+  public static final type.DOUBLE DIV(final type.BIGINT a, final type.TINYINT b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT.UNSIGNED a, final type.INT b) {
+  public static final type.FLOAT DIV(final type.TINYINT.UNSIGNED a, final type.INT b) {
     return (type.FLOAT)new type.FLOAT.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.INT a, final type.SMALLINT.UNSIGNED b) {
+  public static final type.FLOAT DIV(final type.INT a, final type.TINYINT.UNSIGNED b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11930,7 +11930,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT.UNSIGNED a, final long b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final long b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11938,11 +11938,11 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final long a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final long a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final type.MEDIUMINT.UNSIGNED a, final double b) {
+  public static final type.DOUBLE DIV(final type.SMALLINT.UNSIGNED a, final double b) {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11950,7 +11950,7 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE.UNSIGNED().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DOUBLE DIV(final double a, final type.MEDIUMINT.UNSIGNED b) {
+  public static final type.DOUBLE DIV(final double a, final type.SMALLINT.UNSIGNED b) {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
@@ -11958,19 +11958,19 @@ public final class DML {
     return (type.DOUBLE)new type.DOUBLE().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.FLOAT a, final type.SMALLINT b) {
+  public static final type.FLOAT DIV(final type.FLOAT a, final type.TINYINT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.FLOAT DIV(final type.SMALLINT a, final type.FLOAT b) {
+  public static final type.FLOAT DIV(final type.TINYINT a, final type.FLOAT b) {
     return (type.FLOAT)new type.FLOAT().wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final type.MEDIUMINT a, final BigDecimal b) {
+  public static final type.DECIMAL DIV(final type.SMALLINT a, final BigDecimal b) {
     return (type.DECIMAL)new type.DECIMAL(a.precision(), a.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 
-  public static final type.DECIMAL DIV(final BigDecimal a, final type.MEDIUMINT b) {
+  public static final type.DECIMAL DIV(final BigDecimal a, final type.SMALLINT b) {
     return (type.DECIMAL)new type.DECIMAL(b.precision(), b.scale()).wrapper(new NumericExpression(Operator.DIVIDE, a, b));
   }
 

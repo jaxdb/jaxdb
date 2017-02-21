@@ -51,9 +51,9 @@ import org.safris.xdb.xds.xe.$xds_float;
 import org.safris.xdb.xds.xe.$xds_foreignKey;
 import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_mediumint;
-import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_smallint;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_tinyint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 import org.safris.xdb.xds.xe.xds_schema;
@@ -143,12 +143,12 @@ public final class Generator extends BaseGenerator {
       final $xds_blob type = ($xds_blob)column;
       ddl.append(vendor.getSQLSpec().declareBlob(type._length$().text()));
     }
-    else if (column instanceof $xds_smallint) {
-      final $xds_smallint type = ($xds_smallint)column;
+    else if (column instanceof $xds_tinyint) {
+      final $xds_tinyint type = ($xds_tinyint)column;
       ddl.append(vendor.getSQLSpec().declareInt8(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
-    else if (column instanceof $xds_mediumint) {
-      final $xds_mediumint type = ($xds_mediumint)column;
+    else if (column instanceof $xds_smallint) {
+      final $xds_smallint type = ($xds_smallint)column;
       ddl.append(vendor.getSQLSpec().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $xds_int) {
@@ -330,13 +330,13 @@ public final class Generator extends BaseGenerator {
         String minCheck = null;
         String maxCheck = null;
         if (column instanceof $xds_integer) {
-          if (column instanceof $xds_smallint) {
-            final $xds_smallint type = ($xds_smallint)column;
+          if (column instanceof $xds_tinyint) {
+            final $xds_tinyint type = ($xds_tinyint)column;
             minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
             maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
           }
-          else if (column instanceof $xds_mediumint) {
-            final $xds_mediumint type = ($xds_mediumint)column;
+          else if (column instanceof $xds_smallint) {
+            final $xds_smallint type = ($xds_smallint)column;
             minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
             maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
           }

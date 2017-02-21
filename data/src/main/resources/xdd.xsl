@@ -371,7 +371,7 @@
           </xs:restriction>
         </xs:simpleType>
       </xsl:if>
-      <xsl:if test="@xsi:type='smallint' or @xsi:type='mediumint' or @xsi:type='int' or @xsi:type='bigint'">
+      <xsl:if test="@xsi:type='tinyint' or @xsi:type='smallint' or @xsi:type='int' or @xsi:type='bigint'">
         <xs:simpleType>
           <xs:restriction base="xdd:integer">
             <xs:maxInclusive>

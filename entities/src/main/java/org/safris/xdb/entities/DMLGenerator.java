@@ -16,8 +16,8 @@ public class DMLGenerator {
   private static final Class<?>[] types = new Class<?>[] {
     type.FLOAT.class,
     type.DOUBLE.class,
+    type.TINYINT.class,
     type.SMALLINT.class,
-    type.MEDIUMINT.class,
     type.INT.class,
     type.BIGINT.class,
     type.DECIMAL.class
@@ -96,10 +96,10 @@ public class DMLGenerator {
       }
     }
 
+    singleMap.put(type.TINYINT.class, type.FLOAT.class);
+    singleMap.put(type.TINYINT.UNSIGNED.class, type.FLOAT.UNSIGNED.class);
     singleMap.put(type.SMALLINT.class, type.FLOAT.class);
     singleMap.put(type.SMALLINT.UNSIGNED.class, type.FLOAT.UNSIGNED.class);
-    singleMap.put(type.MEDIUMINT.class, type.FLOAT.class);
-    singleMap.put(type.MEDIUMINT.UNSIGNED.class, type.FLOAT.UNSIGNED.class);
     singleMap.put(type.INT.class, type.FLOAT.class);
     singleMap.put(type.INT.UNSIGNED.class, type.DOUBLE.UNSIGNED.class);
     singleMap.put(type.BIGINT.class, type.DOUBLE.class);
@@ -110,32 +110,32 @@ public class DMLGenerator {
 
     putApproxs(type.FLOAT.class, type.FLOAT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.DOUBLE.class, type.DOUBLE.class);
+    putApproxs(type.FLOAT.class, type.TINYINT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.SMALLINT.class, type.FLOAT.class);
-    putApproxs(type.FLOAT.class, type.MEDIUMINT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.INT.class, type.FLOAT.class);
     putApproxs(type.FLOAT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.FLOAT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.FLOAT.class, type.DECIMAL.class, type.DECIMAL.class);
 
     putApproxs(type.DOUBLE.class, type.DOUBLE.class, type.DOUBLE.class);
+    putApproxs(type.DOUBLE.class, type.TINYINT.class, type.DOUBLE.class);
     putApproxs(type.DOUBLE.class, type.SMALLINT.class, type.DOUBLE.class);
-    putApproxs(type.DOUBLE.class, type.MEDIUMINT.class, type.DOUBLE.class);
     putApproxs(type.DOUBLE.class, type.INT.class, type.DOUBLE.class);
     putApproxs(type.DOUBLE.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.DOUBLE.class, type.DECIMAL.class, type.DECIMAL.class);
 
+    putApproxs(type.TINYINT.class, type.TINYINT.class, type.FLOAT.class);
+    putApproxs(type.TINYINT.class, type.SMALLINT.class, type.FLOAT.class);
+    putApproxs(type.TINYINT.class, type.INT.class, type.FLOAT.class);
+    putApproxs(type.TINYINT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
+    putApproxs(type.TINYINT.class, type.BIGINT.class, type.DOUBLE.class);
+    putApproxs(type.TINYINT.class, type.DECIMAL.class, type.DECIMAL.class);
+
     putApproxs(type.SMALLINT.class, type.SMALLINT.class, type.FLOAT.class);
-    putApproxs(type.SMALLINT.class, type.MEDIUMINT.class, type.FLOAT.class);
     putApproxs(type.SMALLINT.class, type.INT.class, type.FLOAT.class);
     putApproxs(type.SMALLINT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
     putApproxs(type.SMALLINT.class, type.BIGINT.class, type.DOUBLE.class);
     putApproxs(type.SMALLINT.class, type.DECIMAL.class, type.DECIMAL.class);
-
-    putApproxs(type.MEDIUMINT.class, type.MEDIUMINT.class, type.FLOAT.class);
-    putApproxs(type.MEDIUMINT.class, type.INT.class, type.FLOAT.class);
-    putApproxs(type.MEDIUMINT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
-    putApproxs(type.MEDIUMINT.class, type.BIGINT.class, type.DOUBLE.class);
-    putApproxs(type.MEDIUMINT.class, type.DECIMAL.class, type.DECIMAL.class);
 
     putApproxs(type.INT.class, type.INT.class, type.FLOAT.class);
     putApproxs(type.INT.class, type.INT.UNSIGNED.class, type.DOUBLE.class);
@@ -147,14 +147,14 @@ public class DMLGenerator {
 
     putApproxs(type.DECIMAL.class, type.DECIMAL.class, type.DECIMAL.class);
 
+    putDirect(type.TINYINT.class, type.TINYINT.class, type.TINYINT.class);
+    putDirect(type.TINYINT.class, type.SMALLINT.class, type.SMALLINT.class);
+    putDirect(type.TINYINT.class, type.INT.class, type.INT.class);
+    putDirect(type.TINYINT.class, type.BIGINT.class, type.BIGINT.class);
+
     putDirect(type.SMALLINT.class, type.SMALLINT.class, type.SMALLINT.class);
-    putDirect(type.SMALLINT.class, type.MEDIUMINT.class, type.MEDIUMINT.class);
     putDirect(type.SMALLINT.class, type.INT.class, type.INT.class);
     putDirect(type.SMALLINT.class, type.BIGINT.class, type.BIGINT.class);
-
-    putDirect(type.MEDIUMINT.class, type.MEDIUMINT.class, type.MEDIUMINT.class);
-    putDirect(type.MEDIUMINT.class, type.INT.class, type.INT.class);
-    putDirect(type.MEDIUMINT.class, type.BIGINT.class, type.BIGINT.class);
 
     putDirect(type.INT.class, type.INT.class, type.INT.class);
     putDirect(type.INT.class, type.BIGINT.class, type.BIGINT.class);

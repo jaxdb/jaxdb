@@ -35,9 +35,9 @@ import org.safris.xdb.xds.xe.$xds_enum;
 import org.safris.xdb.xds.xe.$xds_float;
 import org.safris.xdb.xds.xe.$xds_int;
 import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_mediumint;
-import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_smallint;
+import org.safris.xdb.xds.xe.$xds_named;
+import org.safris.xdb.xds.xe.$xds_tinyint;
 import org.safris.xdb.xds.xe.$xds_table;
 import org.safris.xdb.xds.xe.$xds_time;
 
@@ -128,14 +128,14 @@ public abstract class SQLSpec {
       final BigInteger defalt;
       final Integer precision;
       final boolean unsigned;
-      if (column instanceof $xds_smallint) {
-        final $xds_smallint type = ($xds_smallint)column;
+      if (column instanceof $xds_tinyint) {
+        final $xds_tinyint type = ($xds_tinyint)column;
         defalt = type._default$().text();
         precision = type._precision$().text().intValue();
         unsigned = type._unsigned$().text();
       }
-      else if (column instanceof $xds_mediumint) {
-        final $xds_mediumint type = ($xds_mediumint)column;
+      else if (column instanceof $xds_smallint) {
+        final $xds_smallint type = ($xds_smallint)column;
         defalt = type._default$().text();
         precision = type._precision$().text().intValue();
         unsigned = type._unsigned$().text();

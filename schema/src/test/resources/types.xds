@@ -27,13 +27,13 @@
     <column name="clob_type" xsi:type="clob" length="255"/>
     <column name="date_type" xsi:type="date"/>
     <column name="datetime_type" xsi:type="dateTime"/>
-    <column name="decimal_type" xsi:type="decimal" precision="10" scale="3"/>
+    <column name="decimal_type" xsi:type="decimal" precision="31" scale="10"/>
     <column name="double_type" xsi:type="float" double="true"/>
     <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
     <column name="float_type" xsi:type="float"/>
     <column name="int_type" xsi:type="int" precision="10"/>
-    <column name="mediumint_type" xsi:type="mediumint" precision="5"/>
-    <column name="smallint_type" xsi:type="smallint" precision="3"/>
+    <column name="smallint_type" xsi:type="smallint" precision="5"/>
+    <column name="tinyint_type" xsi:type="tinyint" precision="3"/>
     <column name="time_type" xsi:type="time"/>
   </table>
 </schema>
