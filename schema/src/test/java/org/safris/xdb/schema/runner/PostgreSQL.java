@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.vendor;
+package org.safris.xdb.schema.runner;
 
 import java.io.IOException;
 import java.sql.Connection;

@@ -17,39 +17,26 @@
 package org.safris.xdb.data;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.lang.Strings;
 import org.safris.commons.util.Collections;
-import org.safris.commons.util.Hexadecimal;
-import org.safris.commons.util.Random;
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
 import org.safris.xdb.schema.Schemas;
-import org.safris.xdb.schema.VendorClassRunner;
-import org.safris.xdb.schema.VendorIntegration;
-import org.safris.xdb.schema.VendorTest;
-import org.safris.xdb.schema.vendor.Derby;
-import org.safris.xdb.schema.vendor.MySQL;
-import org.safris.xdb.schema.vendor.PostgreSQL;
+import org.safris.xdb.schema.runner.Derby;
+import org.safris.xdb.schema.runner.MySQL;
+import org.safris.xdb.schema.runner.PostgreSQL;
+import org.safris.xdb.schema.runner.VendorRunner;
 import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.compiler.processor.GeneratorContext;
@@ -58,16 +45,16 @@ import org.safris.xsb.generator.Generator;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-@RunWith(VendorClassRunner.class)
-@VendorTest(Derby.class)
-@VendorIntegration({MySQL.class, PostgreSQL.class})
-public class DataTest {
+@RunWith(VendorRunner.class)
+@VendorRunner.Test(Derby.class)
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class})
+public abstract class DataTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
-  private static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
+  protected static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
 
   private static final Set<String> compiledDBs = new HashSet<String>();
 
-  private static void testData(final Connection connection, final String name, final boolean loadData) throws IOException, SQLException, TransformerException, XMLException {
+  protected static void createSchemas(final String name) throws IOException, TransformerException {
     if (!compiledDBs.contains(name)) {
       final URL xds = Resources.getResource(name + ".xds").getURL();
       final File destFile = new File(resourcesDestDir, name + ".xsd");
@@ -78,101 +65,21 @@ public class DataTest {
       new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
       compiledDBs.add(name);
     }
-
-    if (loadData) {
-      final xds_schema schema;
-      try (final InputStream in = Resources.getResource(name + ".xds").getURL().openStream()) {
-        schema = (xds_schema)Bindings.parse(new InputSource(in));
-      }
-      Schemas.truncate(connection, Schemas.tables(schema));
-
-      final URL xdd = Resources.getResource(name + ".xdd").getURL();
-      final $xdd_data data;
-      try (final InputStream in = xdd.openStream()) {
-        data = ($xdd_data)Bindings.parse(new InputSource(in));
-      }
-
-      Datas.loadData(connection, data);
-    }
   }
 
-  private static void createTypeData(final OutputStream out) throws IOException {
-    final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
-    out.write("<Types xmlns=\"xdd.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"xdd.types types.xsd\">\n".getBytes());
-    for (int i = 0; i < 1000; i++) {
-      final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
-      final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
-      final String blobType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
-      final String booleanType = String.valueOf(Math.random() < .5);
-      final String clobType = Strings.getRandomAlphaNumericString((int)(Math.random() * 255));
-      final String dateType = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
-      final String datetimeType = LocalDateTime.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
-      final String timeType = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
-      final String charType = Math.random() < .2 ? Strings.getRandomAlphaString((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? datetimeType : Math.random() < .2 ? dateType : timeType;
-      final String decimalType = BigDecimal.valueOf(((Math.random() - .5) * Math.pow(2, (int)(Math.random() * 64) - 1))).setScale(10, BigDecimal.ROUND_DOWN).toString();
-      final String floatType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 16) - 1)));
-      final String doubleType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 32) - 1)));
-      final String intType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 32) - 1))));
-      final String smallintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 16) - 1))));
-      final String tinyintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 8) - 1))));
-      final String enumType = values[(int)(Math.random() * values.length)];
+  protected static void testData(final Connection connection, final String name) throws IOException, SQLException, XMLException {
+    final xds_schema schema;
+    try (final InputStream in = Resources.getResource(name + ".xds").getURL().openStream()) {
+      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    }
+    Schemas.truncate(connection, Schemas.tables(schema));
 
-      out.write("  <Type\n".getBytes());
-      if (Math.random() < .9)
-        out.write(("    bigintType=\"" + bigintType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    binaryType=\"" + binaryType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    blobType=\"" + blobType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    booleanType=\"" + booleanType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    charType=\"" + charType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    clobType=\"" + clobType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    dateType=\"" + dateType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    datetimeType=\"" + datetimeType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    doubleType=\"" + doubleType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    decimalType=\"" + decimalType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    enumType=\"" + enumType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    floatType=\"" + floatType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    intType=\"" + intType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    smallintType=\"" + smallintType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    tinyintType=\"" + tinyintType + "\"\n").getBytes());
-      if (Math.random() < .9)
-        out.write(("    timeType=\"" + timeType + "\"").getBytes());
-      out.write(("/>\n").getBytes());
+    final URL xdd = Resources.getResource(name + ".xdd").getURL();
+    final $xdd_data data;
+    try (final InputStream in = xdd.openStream()) {
+      data = ($xdd_data)Bindings.parse(new InputSource(in));
     }
 
-    out.write("</Types>".getBytes());
-  }
-
-  @Test
-  public void testClassicModels(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
-    testData(connection, "classicmodels", true);
-  }
-
-  @Test
-  public void testWorld(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
-    testData(connection, "world", false);
-  }
-
-  @Test
-  public void testTypes(final Connection connection) throws IOException, SQLException, TransformerException, XMLException {
-    resourcesDestDir.mkdirs();
-    try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.xdd"))) {
-      createTypeData(out);
-    }
-
-    testData(connection, "types", true);
+    Datas.loadData(connection, data);
   }
 }

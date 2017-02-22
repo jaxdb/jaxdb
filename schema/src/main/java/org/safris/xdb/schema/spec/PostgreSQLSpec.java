@@ -16,10 +16,12 @@
 
 package org.safris.xdb.schema.spec;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
+import org.safris.maven.common.Log;
 import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_enum;
@@ -29,7 +31,9 @@ import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 
 public final class PostgreSQLSpec extends SQLSpec {
-  private static final Logger logger = Logger.getLogger(PostgreSQLSpec.class.getName());
+  @Override
+  public void init(final Connection connection) throws SQLException {
+  }
 
   public static String getTypeName(final String tableName, final String columnName) {
     return "ty_" + tableName + "_" + columnName;
@@ -110,12 +114,12 @@ public final class PostgreSQLSpec extends SQLSpec {
     final String uniqueClause;
     if ($xds_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
-        logger.warning("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+        Log.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return "";
       }
 
       if (unique) {
-        logger.warning("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
+        Log.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
       }
 
       uniqueClause = "";

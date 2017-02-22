@@ -14,13 +14,14 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.vendor;
+package org.safris.xdb.schema.runner;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Enumeration;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
@@ -38,12 +39,12 @@ public class Derby implements Vendor {
   @Override
   public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
-    if (db.exists() && !Files.deleteAll(db.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
-
     final File testClasses = new File("target/test-classes/test-db");
     if (testClasses.exists() && !Files.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
+
+    if (db.exists())
+      return;
 
     final Resource resource = Resources.getResource("test-db");
     if (resource != null) {
@@ -57,6 +58,7 @@ public class Derby implements Vendor {
       }
     }
     else {
+      System.err.println("NEW");
       new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
     }
 
@@ -82,7 +84,6 @@ public class Derby implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
-    new File("derby.log").deleteOnExit();
     try {
       new EmbeddedDriver();
       DriverManager.getConnection("jdbc:derby:;shutdown=true");
@@ -91,5 +92,7 @@ public class Derby implements Vendor {
       if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))
         throw e;
     }
+
+    new File("derby.log").deleteOnExit();
   }
 }

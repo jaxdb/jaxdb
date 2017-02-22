@@ -16,18 +16,19 @@
 
 package org.safris.xdb.entities;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
-import org.safris.commons.lang.Resources;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.safris.commons.xml.XMLException;
-import org.safris.xdb.entities.generator.Generator;
+import org.safris.xdb.schema.runner.Derby;
+import org.safris.xdb.schema.runner.VendorRunner;
 
-public abstract class EntitiesTest {
-  protected static void createEntities(final String name) throws IOException, XMLException {
-    final URL xds = Resources.getResource(name + ".xds").getURL();
-    final File destDir = new File("target/generated-test-sources/xdb");
-    Generator.generate(xds, destDir, true);
+@RunWith(VendorRunner.class)
+@VendorRunner.Test(Derby.class)
+public class TypesTest extends EntitiesTest {
+  @Test
+  public void create() throws IOException, XMLException {
+    createEntities("types");
   }
 }

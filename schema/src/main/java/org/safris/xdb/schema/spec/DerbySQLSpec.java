@@ -16,16 +16,98 @@
 
 package org.safris.xdb.schema.spec;
 
+import java.io.IOException;
+import java.sql.Clob;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 
+import org.safris.commons.io.Readers;
+import org.safris.xdb.schema.GeneratorExecutionException;
 import org.safris.xdb.schema.SQLDataTypes;
 import org.safris.xdb.xds.xe.$xds_column;
 import org.safris.xdb.xds.xe.$xds_enum;
+import org.safris.xdb.xds.xe.$xds_foreignKey;
 import org.safris.xdb.xds.xe.$xds_integer;
 import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.xdb.xds.xe.xds_schema;
 
 public final class DerbySQLSpec extends SQLSpec {
+  public static void createSchemaIfNotExists(final String schemaName) throws SQLException {
+    try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE schemaname = '" + schemaName.toUpperCase() + "'");
+      if (!resultSet.next() || resultSet.getInt(1) < 1)
+        statement.execute("CREATE SCHEMA " + schemaName);
+    }
+  }
+
+  public static void createTableIfNotExists(final String tableName, final Clob createClause) throws IOException, SQLException {
+    try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName.toUpperCase() + "'");
+      if (!resultSet.next() || resultSet.getInt(1) < 1)
+        statement.execute(Readers.readFully(createClause.getCharacterStream()));
+    }
+  }
+
+  public static void dropSchemaIfExists(final String schemaName) throws SQLException {
+    try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE sysschemas = '" + schemaName.toUpperCase() + "'");
+      if (resultSet.next() && resultSet.getInt(1) > 0)
+        statement.execute("DROP SCHEMA " + schemaName);
+    }
+  }
+
+  public static void dropTableIfExists(final String tableName) throws SQLException {
+    try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
+      final Statement statement = connection.createStatement();
+      final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName.toUpperCase() + "'");
+      if (resultSet.next() && resultSet.getInt(1) > 0)
+        statement.execute("DROP TABLE " + tableName);
+    }
+  }
+
+  @Override
+  public void init(final Connection connection) throws SQLException {
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute("CREATE PROCEDURE CREATE_SCHEMA_IF_NOT_EXISTS(IN schemaName VARCHAR(128)) PARAMETER STYLE JAVA LANGUAGE JAVA EXTERNAL NAME '" + DerbySQLSpec.class.getName() + ".createSchemaIfNotExists'");
+      statement.execute("CREATE PROCEDURE CREATE_TABLE_IF_NOT_EXISTS(IN tableName VARCHAR(128), IN createClause CLOB) PARAMETER STYLE JAVA LANGUAGE JAVA EXTERNAL NAME '" + DerbySQLSpec.class.getName() + ".createTableIfNotExists'");
+      statement.execute("CREATE PROCEDURE DROP_SCHEMA_IF_EXISTS(IN schemaName VARCHAR(128)) PARAMETER STYLE JAVA LANGUAGE JAVA EXTERNAL NAME '" + DerbySQLSpec.class.getName() + ".dropSchemaIfExists'");
+      statement.execute("CREATE PROCEDURE DROP_TABLE_IF_EXISTS(IN tableName VARCHAR(128)) PARAMETER STYLE JAVA LANGUAGE JAVA EXTERNAL NAME '" + DerbySQLSpec.class.getName() + ".dropTableIfExists'");
+    }
+    catch (final SQLException e) {
+      if (!"X0Y68".equals(e.getSQLState()))
+        throw e;
+    }
+  }
+
+  @Override
+  public String createSchemaIfNotExists(final xds_schema schema) {
+    return "CALL CREATE_SCHEMA_IF_NOT_EXISTS('" + schema._name$().text() + "')";
+  }
+
+  @Override
+  public String createTableIfNotExists(final $xds_table table, final Map<String,$xds_column> columnNameToColumn) throws GeneratorExecutionException {
+    return "CALL CREATE_TABLE_IF_NOT_EXISTS('" + table._name$().text() + "', '" + super.createTableIfNotExists(table, columnNameToColumn).replace("'", "''") + "')";
+  }
+
+  @Override
+  public String dropTableIfExists(final $xds_table table) {
+    return "CALL DROP_TABLE_IF_EXISTS('" + table._name$().text() + "')";
+  }
+
+  @Override
+  protected String onUpdate(final $xds_foreignKey._onUpdate$ onUpdate) {
+    return null;
+  }
+
   @Override
   public String $null(final $xds_table table, final $xds_column column) {
     return !column._null$().isNull() && !column._null$().text() ? "NOT NULL" : "";

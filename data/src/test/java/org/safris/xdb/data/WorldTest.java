@@ -14,33 +14,22 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.vendor;
+package org.safris.xdb.data;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
-import org.safris.commons.sql.ConnectionProxy;
+import javax.xml.transform.TransformerException;
 
-import com.mysql.cj.jdbc.Driver;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.safris.xdb.schema.runner.Derby;
+import org.safris.xdb.schema.runner.VendorRunner;
 
-@SuppressWarnings("unused")
-public class MySQL implements Vendor {
-  @Override
-  public synchronized void init() throws IOException, SQLException {
-//  CREATE USER mycompany;
-//  CREATE DATABASE mycompany;
-//  GRANT ALL ON mycompany.* TO 'mycompany'@'localhost' IDENTIFIED BY 'mycompany';
-    new Driver();
-  }
-
-  @Override
-  public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://localhost/xdb?user=xdb&password=xdb&useSSL=false"));
-  }
-
-  @Override
-  public void destroy() throws SQLException {
+@RunWith(VendorRunner.class)
+@VendorRunner.Test(Derby.class)
+public class WorldTest extends DataTest {
+  @Test
+  public void testWorld() throws IOException, TransformerException {
+    createSchemas("world");
   }
 }

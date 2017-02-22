@@ -41,6 +41,7 @@ public final class Schemas {
 
   public static int[] create(final Connection connection, final Collection<xds_schema> schemas) throws GeneratorExecutionException, SQLException {
     final DBVendor vendor = DBVendor.parse(connection.getMetaData());
+    vendor.getSQLSpec().init(connection);
     final java.sql.Statement statement = connection.createStatement();
     final int[] counts = new int[schemas.size()];
     int i = 0;

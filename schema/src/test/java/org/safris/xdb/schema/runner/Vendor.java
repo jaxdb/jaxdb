@@ -14,17 +14,14 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.xdb.schema.runner;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-import org.safris.xdb.schema.vendor.Vendor;
-
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface VendorTest {
-  Class<? extends Vendor>[] value();
+public interface Vendor {
+  public void init() throws IOException, SQLException;
+  public Connection getConnection() throws IOException, SQLException;
+  public void destroy() throws IOException, SQLException;
 }

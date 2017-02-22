@@ -14,57 +14,63 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.xdb.entities;
+
+import static org.safris.xdb.entities.DML.*;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.xml.validate.ValidationException;
+import org.safris.commons.xml.XMLException;
+import org.safris.xdb.schema.Schemas;
 import org.safris.xdb.schema.runner.Derby;
 import org.safris.xdb.schema.runner.MySQL;
 import org.safris.xdb.schema.runner.PostgreSQL;
 import org.safris.xdb.schema.runner.VendorRunner;
+import org.safris.xdb.xdd.xe.$xdd_data;
 import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
-import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class SchemaTest {
-  @Test
-  public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("classicmodels.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
-    }
-
-    Schemas.create(connection, schema);
+public class WorldTest extends EntitiesTest {
+  @BeforeClass
+  @VendorRunner.RunIn(VendorRunner.Test.class)
+  public static void create() throws IOException, XMLException {
+    createEntities("world");
   }
 
   @Test
-  public void testWorld(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  @SuppressWarnings("unchecked")
+  public void testEntities(final Connection connection) throws ClassNotFoundException, IOException, SQLException, XMLException {
+    EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + ".world"), PreparedStatement.class, new EntityDataSource() {
+      @Override
+      public Connection getConnection() throws SQLException {
+        return connection;
+      }
+    });
+
+    final URL xdd = Resources.getResource("world.xdd").getURL();
+    final $xdd_data data;
+    try (final InputStream in = xdd.openStream()) {
+      data = ($xdd_data)Bindings.parse(new InputSource(in));
+    }
+
     final xds_schema schema;
     try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
       schema = (xds_schema)Bindings.parse(new InputSource(in));
     }
-
-    Schemas.create(connection, schema);
-  }
-
-  @Test
-  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("types.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
-    }
-
-    Schemas.create(connection, schema);
+    Schemas.truncate(connection, Schemas.tables(schema));
+    INSERT(data).execute();
   }
 }

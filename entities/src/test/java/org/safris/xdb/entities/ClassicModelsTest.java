@@ -14,17 +14,21 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.xdb.entities;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.io.IOException;
 
-import org.safris.xdb.schema.vendor.Vendor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.safris.commons.xml.XMLException;
+import org.safris.xdb.schema.runner.Derby;
+import org.safris.xdb.schema.runner.VendorRunner;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface VendorIntegration {
-  Class<? extends Vendor>[] value();
+@RunWith(VendorRunner.class)
+@VendorRunner.Test(Derby.class)
+public class ClassicModelsTest extends EntitiesTest {
+  @Test
+  public void create() throws IOException, XMLException {
+    createEntities("classicmodels");
+  }
 }

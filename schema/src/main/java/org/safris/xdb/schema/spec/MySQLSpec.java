@@ -16,6 +16,8 @@
 
 package org.safris.xdb.schema.spec;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +29,10 @@ import org.safris.xdb.xds.xe.$xds_named;
 import org.safris.xdb.xds.xe.$xds_table;
 
 public final class MySQLSpec extends SQLSpec {
+  @Override
+  public void init(final Connection connection) throws SQLException {
+  }
+
   @Override
   public List<String> triggers(final $xds_table table) {
     if (table._triggers() == null)
