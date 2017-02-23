@@ -1,0 +1,365 @@
+<!--
+  Copyright (c) 2006 Seva Safris
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  elementFormDefault="qualified"
+  targetNamespace="http://dbx.safris.org/ddlx.xsd"
+  xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:include schemaLocation="ddlx-common.xsd"/>
+  
+  <!-- text data -->
+  
+  <xs:complexType name="char">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+              <xs:attribute name="condition" type="xs:string" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:char"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="clob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+              <xs:attribute name="condition" type="xs:string" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:clob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- binary data -->
+  
+  <xs:complexType name="binary">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:binary"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="blob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:blob"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- numeric data -->
+  
+  <xs:complexType name="tinyint">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:attribute name="precision" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="3"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="default">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-128"/>
+              <xs:maxInclusive value="255"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-128"/>
+              <xs:maxInclusive value="255"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="max">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-128"/>
+              <xs:maxInclusive value="255"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="smallint">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:attribute name="precision" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="5"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="default">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-8388608"/>
+              <xs:maxInclusive value="16777215"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-8388608"/>
+              <xs:maxInclusive value="16777215"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="max">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-8388608"/>
+              <xs:maxInclusive value="16777215"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="int">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:attribute name="precision" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="10"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="default">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-2147483648"/>
+              <xs:maxInclusive value="4294967295"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-2147483648"/>
+              <xs:maxInclusive value="4294967295"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="max">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-2147483648"/>
+              <xs:maxInclusive value="4294967295"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="bigint">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:attribute name="precision" use="required">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="1"/>
+              <xs:maxInclusive value="20"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="default">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-9223372036854775808"/>
+              <xs:maxInclusive value="18446744073709551615"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="min">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-9223372036854775808"/>
+              <xs:maxInclusive value="18446744073709551615"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="max">
+          <xs:simpleType>
+            <xs:restriction base="xs:integer">
+              <xs:minInclusive value="-9223372036854775808"/>
+              <xs:maxInclusive value="18446744073709551615"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- REAL is synonym for FLOAT(24) -->
+  
+  <xs:complexType name="float">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+              <xs:attribute name="condition" type="xs:decimal" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- NUMERIC is synonym for DECIMAL -->
+  
+  <xs:complexType name="decimal">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+              <xs:attribute name="condition" type="xs:decimal" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attributeGroup ref="ddlx:decimal"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- time data -->
+
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:date"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="time">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:time"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="dateTime">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:dateTime"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- boolean -->
+  
+  <xs:complexType name="boolean">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:boolean"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- enum -->
+  
+  <xs:complexType name="enum">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="ddlx:enum"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- containers -->
+  
+  <xs:complexType name="schema">
+    <xs:complexContent>
+      <xs:extension base="ddlx:compliant">
+        <xs:sequence>
+          <xs:element name="table" type="ddlx:table" minOccurs="0" maxOccurs="unbounded">
+            <!--<xs:unique name="primaryKey">
+              <xs:selector xpath="*"/>
+              <xs:field xpath="@primary"/>
+            </xs:unique>-->
+            <xs:key name="keyColumnName">
+              <xs:selector xpath="./ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:key>
+            <xs:keyref name="keyrefColumnName1" refer="ddlx:keyColumnName">
+              <xs:selector xpath="./ddlx:constraints/ddlx:autoIncrement | ./ddlx:constraints/ddlx:unique/ddlx:column"/>
+              <xs:field xpath="@column | @name"/>
+            </xs:keyref>
+            <xs:keyref name="keyrefColumnName2" refer="ddlx:keyColumnName">
+              <xs:selector xpath="./ddlx:constraints/ddlx:primaryKey/ddlx:column | ./ddlx:constraints/ddlx:foreignKey/ddlx:column | ./ddlx:indexes/ddlx:index/ddlx:column"/>
+              <xs:field xpath="@name"/>
+            </xs:keyref>
+            <xs:keyref name="keyrefColumnName3" refer="ddlx:keyColumnName">
+              <xs:selector xpath="./ddlx:constraints/ddlx:check | ./ddlx:constraints/ddlx:check/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or| ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or"/>
+              <xs:field xpath="ddlx:column"/>
+            </xs:keyref>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="schema" type="ddlx:schema">
+    <xs:key name="keyTableName">
+      <xs:selector xpath="./ddlx:table"/>
+      <xs:field xpath="@name"/>
+    </xs:key>
+    <xs:keyref name="keyrefTableName" refer="ddlx:keyTableName">
+      <xs:selector xpath="./ddlx:table/ddlx:column/ddlx:foreignKey | ./ddlx:table/ddlx:constraints/ddlx:foreignKey"/>
+      <xs:field xpath="@references"/>
+    </xs:keyref>
+    <xs:keyref name="keyrefExtendsTableName" refer="ddlx:keyTableName">
+      <xs:selector xpath="./ddlx:table"/>
+      <xs:field xpath="@extends"/>
+    </xs:keyref>
+  </xs:element>
+
+</xs:schema>

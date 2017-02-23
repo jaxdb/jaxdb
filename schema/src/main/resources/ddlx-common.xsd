@@ -1,0 +1,432 @@
+<!--
+  Copyright (c) 2006 Seva Safris
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  elementFormDefault="qualified"
+  targetNamespace="http://dbx.safris.org/ddlx.xsd"
+  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
+  xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
+
+  <xs:simpleType name="name">
+    <xs:restriction base="xs:NCName">
+      <xs:maxLength value="64"/> <!-- http://dev.mysql.com/doc/refman/5.7/en/identifiers.html -->
+      <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="named">
+    <xs:attribute name="name" type="ddlx:name" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="foreignKey">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="references" type="ddlx:name" use="required"/>
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
+    <xs:attribute name="onDelete" type="ddlx:changeAction" default="CASCADE"/>
+    <xs:attribute name="onUpdate" type="ddlx:changeAction" default="CASCADE"/>
+  </xs:complexType>
+
+  <xs:simpleType name="changeAction">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="CASCADE"/>
+      <xs:enumeration value="SET NULL"/>
+      <xs:enumeration value="SET DEFAULT"/>
+      <xs:enumeration value="NO ACTION"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="index">
+    <xs:attribute name="unique" type="xs:boolean" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <xs:enumeration value="BTREE"/>
+          <xs:enumeration value="HASH"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="check">
+    <xs:sequence>
+      <xs:element name="column" type="ddlx:name"/>
+      <xs:element name="operator" type="ddlx:rangeOperator"/>
+      <xs:choice>
+        <xs:element name="column" type="ddlx:name"/>
+        <xs:element name="value" type="xs:string"/>
+      </xs:choice>
+      <xs:choice minOccurs="0">
+        <xs:element name="and" type="ddlx:check"/>
+        <xs:element name="or" type="ddlx:check"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="equalityOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="rangeOperator">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="eq"/>
+      <xs:enumeration value="ne"/>
+      <xs:enumeration value="gt"/>
+      <xs:enumeration value="gte"/>
+      <xs:enumeration value="lt"/>
+      <xs:enumeration value="lte"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="integerType">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="-9223372036854775808"/>
+      <xs:maxInclusive value="18446744073709551615"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="columns">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="column" type="ddlx:named"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="constraints">
+    <xs:sequence>
+      <xs:element name="primaryKey" type="ddlx:columns" minOccurs="0">
+        <xs:unique name="primaryKeyColumn">
+          <xs:selector xpath="./ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+      <xs:element name="foreignKey" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:foreignKey">
+              <xs:sequence>
+                <xs:element name="column" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:complexContent>
+                      <xs:extension base="ddlx:named">
+                        <xs:attribute name="column" type="ddlx:name" use="required"/>
+                      </xs:extension>
+                    </xs:complexContent>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+      </xs:element>
+      <xs:sequence maxOccurs="unbounded">
+        <xs:element name="unique" type="ddlx:columns" minOccurs="0">
+          <xs:unique name="uniqueColumnName1">
+            <xs:selector xpath="./ddlx:column"/>
+            <xs:field xpath="@name"/>
+          </xs:unique>
+        </xs:element>
+        <xs:element name="check" minOccurs="0" type="ddlx:check"/>
+      </xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="triggers">
+    <xs:sequence minOccurs="1" maxOccurs="unbounded">
+      <xs:element name="trigger">
+        <xs:complexType mixed="true">
+          <xs:attribute name="time" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:token">
+                <xs:enumeration value="BEFORE"/>
+                <xs:enumeration value="AFTER"/>
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="actions" use="required">
+            <xs:simpleType>
+              <xs:list>
+                <xs:simpleType>
+                  <xs:restriction base="xs:token">
+                    <xs:enumeration value="INSERT"/>
+                    <xs:enumeration value="UPDATE"/>
+                    <xs:enumeration value="DELETE"/>
+                  </xs:restriction>
+                </xs:simpleType>
+              </xs:list>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="indexes">
+    <xs:sequence>
+      <xs:element name="index">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ddlx:index">
+              <xs:sequence minOccurs="2" maxOccurs="unbounded">
+                <xs:element name="column" type="ddlx:named"/>
+              </xs:sequence>
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+        <xs:unique name="indexColumn">
+          <xs:selector xpath="./ddlx:column"/>
+          <xs:field xpath="@name"/>
+        </xs:unique>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="compliant">
+    <xs:complexContent>
+      <xs:extension base="ddlx:named">
+        <xs:attribute name="compliance" default="strict">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="lax"/>
+              <xs:enumeration value="strict"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- text data -->
+
+  <xs:attributeGroup name="char">
+    <xs:attribute name="varying" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:string"/>
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="UUID"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="clob">
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:long">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- binary data -->
+
+  <xs:attributeGroup name="binary">
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:positiveInteger">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="65535"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="varying" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:base64Binary"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="blob">
+    <xs:attribute name="length" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:long">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="4294967295"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <!-- numeric data -->
+
+  <xs:attributeGroup name="float">
+    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+    <xs:attribute name="double" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="xs:double"/>
+    <xs:attribute name="min" type="xs:double"/>
+    <xs:attribute name="max" type="xs:double"/>
+  </xs:attributeGroup>
+  
+  <xs:complexType name="integer" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:sequence minOccurs="0">
+          <xs:element name="check">
+            <xs:complexType>
+              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+              <xs:attribute name="condition" type="ddlx:integerType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:NCName">
+              <xs:enumeration value="AUTO_INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:attributeGroup name="decimal">
+    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+    <xs:attribute name="precision" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:integer">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="65"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="scale" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:short">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="65"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="xs:decimal"/>
+    <xs:attribute name="min" type="xs:decimal"/>
+    <xs:attribute name="max" type="xs:decimal"/>
+  </xs:attributeGroup>
+
+  <!-- time data -->
+
+  <xs:attributeGroup name="date">
+    <xs:attribute name="default" type="dt:localDate"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="generateOnUpdate">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="time">
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
+    <xs:attribute name="default" type="dt:localTime"/>
+    <xs:attribute name="generateOnInsert">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="generateOnUpdate">
+      <xs:simpleType>
+        <xs:restriction base="xs:NCName">
+          <xs:enumeration value="TIMESTAMP"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="dateTime">
+    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
+    <xs:attribute name="default" type="dt:localDateTime"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="boolean">
+    <xs:attribute name="default" type="xs:boolean"/>
+  </xs:attributeGroup>
+
+  <xs:attributeGroup name="enum">
+    <xs:attribute name="values" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="(\S+(\\ )? )*\S+"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="xs:string"/>
+  </xs:attributeGroup>
+
+  <xs:complexType name="column" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:named">
+        <xs:sequence minOccurs="0">
+          <xs:element name="documentation" type="xs:string" minOccurs="0"/>
+          <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKey">
+            <xs:annotation>
+              <xs:documentation>
+                There is a great potential to be able to have schema validation on the content entered into this element.
+                However, the XPath implementation supported by the XMLSchema standard does not allow for the necessary complex XPath
+                queries. Therefore, this element is completely unchecked by schema validation for the validity of its content.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="index" minOccurs="0" type="ddlx:index"/>
+        </xs:sequence>
+        <xs:attribute name="null" type="xs:boolean" default="true"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="table">
+    <xs:complexContent>
+      <xs:extension base="ddlx:named">
+        <xs:sequence>
+          <xs:element name="column" type="ddlx:column" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="constraints" type="ddlx:constraints" minOccurs="0">
+            <xs:unique name="uniqueUniqueColumn">
+              <xs:selector xpath="./ddlx:unique"/>
+              <xs:field xpath="@column"/>
+            </xs:unique>
+          </xs:element>
+          <xs:element name="triggers" type="ddlx:triggers" minOccurs="0"/>
+          <xs:element name="indexes" type="ddlx:indexes" minOccurs="0"/>
+        </xs:sequence>
+        <xs:attribute name="abstract" type="xs:boolean" default="false"/>
+        <xs:attribute name="extends" type="ddlx:name"/>
+        <xs:attribute name="skip" type="xs:boolean" default="false"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

@@ -1,0 +1,39 @@
+<!--
+  Copyright (c) 2017 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<schema name="types"
+  xmlns="http://dbx.safris.org/ddlx.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://dbx.safris.org/ddlx.xsd http://dbx.safris.org/ddlx.xsd">
+  <table name="type">
+    <column name="bigint_type" xsi:type="bigint" precision="19"/>
+    <column name="binary_type" xsi:type="binary" varying="true" length="255"/>
+    <column name="blob_type" xsi:type="blob" length="255"/>
+    <column name="boolean_type" xsi:type="boolean"/>
+    <column name="char_type" xsi:type="char" varying="true" length="255"/>
+    <column name="clob_type" xsi:type="clob" length="255"/>
+    <column name="date_type" xsi:type="date"/>
+    <column name="datetime_type" xsi:type="dateTime"/>
+    <column name="decimal_type" xsi:type="decimal" precision="31" scale="10"/>
+    <column name="double_type" xsi:type="float" double="true"/>
+    <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>
+    <column name="float_type" xsi:type="float"/>
+    <column name="int_type" xsi:type="int" precision="10"/>
+    <column name="smallint_type" xsi:type="smallint" precision="5"/>
+    <column name="tinyint_type" xsi:type="tinyint" precision="3"/>
+    <column name="time_type" xsi:type="time"/>
+  </table>
+</schema>

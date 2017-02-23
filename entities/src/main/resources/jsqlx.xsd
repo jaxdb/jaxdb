@@ -1,0 +1,187 @@
+<!--
+  Copyright (c) 2016 Seva Safris
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  elementFormDefault="qualified"
+  attributeFormDefault="qualified"
+  targetNamespace="http://dbx.safris.org/jsqlx.xsd"
+  xmlns:jsqlx="http://dbx.safris.org/jsqlx.xsd"
+  xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:import namespace="http://dbx.safris.org/ddlx.xsd" schemaLocation="jsqlx-ddlx.xsd"/>
+  
+  <xs:simpleType name="timestamp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TIMESTAMP"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <!-- text data -->
+  
+  <xs:complexType name="char">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute name="generateOnInsert">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="UUID"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="clob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- binary data -->
+  
+  <xs:complexType name="binary">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="blob">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- numeric data -->
+  
+  <xs:complexType name="integer" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="ddlx:integer">
+        <xs:attribute name="generateOnUpdate">
+          <xs:simpleType>
+            <xs:restriction base="xs:string">
+              <xs:enumeration value="INCREMENT"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- REAL is synonym for FLOAT(24) -->
+  
+  <xs:complexType name="float">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- NUMERIC is synonym for DECIMAL -->
+  
+  <xs:complexType name="decimal">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- time data -->
+  
+  <xs:complexType name="date">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+        <xs:attribute name="generateOnInsert" type="jsqlx:timestamp"/>
+        <xs:attribute name="generateOnUpdate" type="jsqlx:timestamp"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="time">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+        <xs:attribute name="generateOnInsert" type="jsqlx:timestamp"/>
+        <xs:attribute name="generateOnUpdate" type="jsqlx:timestamp"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="dateTime">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+        <xs:attribute name="generateOnInsert" type="jsqlx:timestamp"/>
+        <xs:attribute name="generateOnUpdate" type="jsqlx:timestamp"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- boolean -->
+  
+  <xs:complexType name="boolean">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <!-- enum -->
+  
+  <xs:complexType name="enum">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attribute ref="jsqlx:checkOnUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+    
+  <!-- containers -->
+  
+  <xs:attribute name="checkOnUpdate">
+    <xs:simpleType>
+      <xs:list>
+        <xs:simpleType>
+          <xs:restriction base="xs:NCName">
+            <xs:enumeration value="EQUALS"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:list>
+    </xs:simpleType>
+  </xs:attribute>
+  
+  <xs:complexType name="table">
+    <xs:complexContent>
+      <xs:extension base="ddlx:table">
+        <xs:attribute name="versionColumn" type="ddlx:name"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+</xs:schema>

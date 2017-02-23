@@ -1,0 +1,77 @@
+<!--
+  Copyright (c) 2017 Seva Safris
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema elementFormDefault="qualified"
+  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
+  xmlns:dmlx="http://dbx.safris.org/dmlx.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  targetNamespace="http://dbx.safris.org/dmlx.xsd">
+
+  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
+
+  <xs:simpleType name="boolean">
+    <xs:restriction base="xs:boolean"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="binary">
+    <xs:restriction base="dt:hexadecimal"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="blob">
+    <xs:restriction base="dt:hexadecimal"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="char">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="clob">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="date">
+    <xs:restriction base="dt:localDate"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="dateTime">
+    <xs:restriction base="dt:localDateTime"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="decimal">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="enum">
+    <xs:restriction base="xs:string"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="float">
+    <xs:restriction base="xs:double"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="integer">
+    <xs:restriction base="xs:integer"/>
+  </xs:simpleType>
+
+  <xs:simpleType name="time">
+    <xs:restriction base="dt:localTime"/>
+  </xs:simpleType>
+
+  <xs:complexType name="row" abstract="true"/>
+
+  <xs:complexType name="data"/>
+
+</xs:schema>
