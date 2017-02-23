@@ -23,7 +23,7 @@
   
   <xs:import namespace="http://dbx.safris.org/jsqlx.xsd" schemaLocation="jsqlx.xsd"/>
   
-  <xs:include schemaLocation="file:/Users/seva/Work/SevaSafris/java/xdb/schema/src/main/resources/ddlx-common.xsd"/>
+  <xs:include schemaLocation="http://dbx.safris.org/ddlx-common.xsd"/>
   
   <!-- text data -->
   
