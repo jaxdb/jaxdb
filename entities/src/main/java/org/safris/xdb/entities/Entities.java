@@ -30,17 +30,17 @@ import java.util.List;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.binding.Base64Binary;
 import org.safris.commons.xml.binding.DateTime;
-import org.safris.xdb.xdd.xe.$xdd_binary;
-import org.safris.xdb.xdd.xe.$xdd_blob;
-import org.safris.xdb.xdd.xe.$xdd_clob;
-import org.safris.xdb.xdd.xe.$xdd_data;
-import org.safris.xdb.xdd.xe.$xdd_date;
-import org.safris.xdb.xdd.xe.$xdd_dateTime;
-import org.safris.xdb.xdd.xe.$xdd_decimal;
-import org.safris.xdb.xdd.xe.$xdd_enum;
-import org.safris.xdb.xdd.xe.$xdd_integer;
-import org.safris.xdb.xdd.xe.$xdd_row;
-import org.safris.xdb.xdd.xe.$xdd_time;
+import org.safris.dbx.dmlx.xe.$dmlx_binary;
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
+import org.safris.dbx.dmlx.xe.$dmlx_clob;
+import org.safris.dbx.dmlx.xe.$dmlx_data;
+import org.safris.dbx.dmlx.xe.$dmlx_date;
+import org.safris.dbx.dmlx.xe.$dmlx_dateTime;
+import org.safris.dbx.dmlx.xe.$dmlx_decimal;
+import org.safris.dbx.dmlx.xe.$dmlx_enum;
+import org.safris.dbx.dmlx.xe.$dmlx_integer;
+import org.safris.dbx.dmlx.xe.$dmlx_row;
+import org.safris.dbx.dmlx.xe.$dmlx_time;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.Element;
 import org.safris.xsb.runtime.QName;
@@ -52,7 +52,7 @@ public final class Entities {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static Entity toEntity(final $xdd_row row) {
+  private static Entity toEntity(final $dmlx_row row) {
     final Element element = (Element)row;
     final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName entityName = getName(row.getClass().getSuperclass());
@@ -71,7 +71,7 @@ public final class Entities {
         final Object value = attribute.text();
         if (value == null)
           dataType.set(null);
-        else if (attribute instanceof $xdd_integer) {
+        else if (attribute instanceof $dmlx_integer) {
           if (dataType.type() == BigInteger.class)
             dataType.set(value);
           else if (dataType.type() == Long.class)
@@ -85,15 +85,15 @@ public final class Entities {
           else
             throw new UnsupportedOperationException("Unexpected Numeric type: " + dataType.type().getName());
         }
-        else if (attribute instanceof $xdd_decimal)
+        else if (attribute instanceof $dmlx_decimal)
           dataType.set(value);
-        else if (attribute instanceof $xdd_date)
+        else if (attribute instanceof $dmlx_date)
           dataType.set(LocalDate.parse((String)value));
-        else if (attribute instanceof $xdd_time)
+        else if (attribute instanceof $dmlx_time)
           dataType.set(LocalTime.parse((String)value));
-        else if (attribute instanceof $xdd_dateTime)
+        else if (attribute instanceof $dmlx_dateTime)
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
-        else if (attribute instanceof $xdd_enum) {
+        else if (attribute instanceof $dmlx_enum) {
           for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
               dataType.set(constant);
@@ -101,11 +101,11 @@ public final class Entities {
             }
           }
         }
-        else if (attribute instanceof $xdd_binary)
+        else if (attribute instanceof $dmlx_binary)
           dataType.set(((Base64Binary)value).getBytes());
-        else if (attribute instanceof $xdd_blob)
+        else if (attribute instanceof $dmlx_blob)
           dataType.set(new ByteArrayInputStream(((Base64Binary)value).getBytes()));
-        else if (attribute instanceof $xdd_clob)
+        else if (attribute instanceof $dmlx_clob)
           dataType.set(new StringReader((String)value));
         else
           dataType.set(value);
@@ -119,11 +119,11 @@ public final class Entities {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Entity>T[] toEntities(final $xdd_data data) {
+  public static <T extends Entity>T[] toEntities(final $dmlx_data data) {
     final Iterator<Binding> iterator = data.elementIterator();
     final List<Entity> entities = new ArrayList<Entity>();
     while (iterator.hasNext())
-      entities.add(toEntity(($xdd_row)iterator.next()));
+      entities.add(toEntity(($dmlx_row)iterator.next()));
 
     return (T[])entities.toArray(new Entity[entities.size()]);
   }

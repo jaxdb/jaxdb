@@ -58,7 +58,7 @@
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
             <destdir>${project.build.directory}/generated-sources/xsb</destdir>
             <resources>
-              <resource>src/main/resources/xde.xsd</resource>
+              <resource>src/main/resources/jsqlx.xsd</resource>
             </resources>
           </manifest>
         </configuration>

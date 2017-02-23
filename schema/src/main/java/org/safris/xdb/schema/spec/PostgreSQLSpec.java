@@ -21,14 +21,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.dbx.ddlx.xe.$ddlx_column;
+import org.safris.dbx.ddlx.xe.$ddlx_enum;
+import org.safris.dbx.ddlx.xe.$ddlx_index;
+import org.safris.dbx.ddlx.xe.$ddlx_integer;
+import org.safris.dbx.ddlx.xe.$ddlx_named;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.maven.common.Log;
 import org.safris.xdb.schema.SQLDataTypes;
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_enum;
-import org.safris.xdb.xds.xe.$xds_index;
-import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_named;
-import org.safris.xdb.xds.xe.$xds_table;
 
 public final class PostgreSQLSpec extends SQLSpec {
   @Override
@@ -40,16 +40,16 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public List<String> drops(final $xds_table table) {
+  public List<String> drops(final $ddlx_table table) {
     final List<String> statements = super.drops(table);
     if (table._column() != null) {
-      for (final $xds_column column : table._column()) {
-        if (column instanceof $xds_enum) {
-          statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($xds_enum)column)._name$().text()));
+      for (final $ddlx_column column : table._column()) {
+        if (column instanceof $ddlx_enum) {
+          statements.add("DROP TYPE IF EXISTS " + getTypeName(table._name$().text(), (($ddlx_enum)column)._name$().text()));
         }
-        else if (column instanceof $xds_integer) {
-          final $xds_integer type = ($xds_integer)column;
-          if (!type._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+        else if (column instanceof $ddlx_integer) {
+          final $ddlx_integer type = ($ddlx_integer)column;
+          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
             statements.add("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type));
         }
       }
@@ -59,12 +59,12 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public List<String> types(final $xds_table table) {
+  public List<String> types(final $ddlx_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._column() != null) {
-      for (final $xds_column column : table._column()) {
-        if (column instanceof $xds_enum) {
-          final $xds_enum type = ($xds_enum)column;
+      for (final $ddlx_column column : table._column()) {
+        if (column instanceof $ddlx_enum) {
+          final $ddlx_enum type = ($ddlx_enum)column;
           final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(getTypeName(table._name$().text(), type._name$().text())).append(" AS ENUM (");
           if (!type._values$().isNull()) {
             final List<String> enums = parseEnum(type._values$().text());
@@ -77,9 +77,9 @@ public final class PostgreSQLSpec extends SQLSpec {
 
           statements.add(0, sql.append(")").toString());
         }
-        else if (column instanceof $xds_integer) {
-          final $xds_integer type = ($xds_integer)column;
-          if (!type._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+        else if (column instanceof $ddlx_integer) {
+          final $ddlx_integer type = ($ddlx_integer)column;
+          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
             statements.add(0, "CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type));
         }
       }
@@ -90,13 +90,13 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xds_table table, final $xds_column column) {
+  public String $null(final $ddlx_table table, final $ddlx_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $xds_table table, final $xds_integer column) {
-    return !column._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
+  public String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
   @Override
@@ -105,14 +105,14 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  protected String dropIndexOnClause(final $xds_table table) {
+  protected String dropIndexOnClause(final $ddlx_table table) {
     return "";
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns) {
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
     final String uniqueClause;
-    if ($xds_index._type$.HASH.text().equals(type)) {
+    if ($ddlx_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
         Log.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return "";
@@ -208,7 +208,7 @@ public final class PostgreSQLSpec extends SQLSpec {
   }
 
   @Override
-  public String declareEnum(final $xds_table table, final $xds_enum type) {
+  public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
     return getTypeName(table._name$().text(), type._name$().text());
   }
 }

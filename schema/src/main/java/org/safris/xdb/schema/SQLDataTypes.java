@@ -19,48 +19,48 @@ package org.safris.xdb.schema;
 import java.math.BigInteger;
 
 import org.safris.commons.lang.Arrays;
-import org.safris.xdb.xds.xe.$xds_index;
-import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_named;
-import org.safris.xdb.xds.xe.$xds_table;
+import org.safris.dbx.ddlx.xe.$ddlx_index;
+import org.safris.dbx.ddlx.xe.$ddlx_integer;
+import org.safris.dbx.ddlx.xe.$ddlx_named;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.xsb.runtime.BindingList;
 
 public final class SQLDataTypes {
-  public static String csvNames(final BindingList<$xds_named> names) {
-    return names.size() == 0 ? "" : csvNames(names.toArray(new $xds_named[names.size()]));
+  public static String csvNames(final BindingList<$ddlx_named> names) {
+    return names.size() == 0 ? "" : csvNames(names.toArray(new $ddlx_named[names.size()]));
   }
 
-  public static String csvNames(final $xds_named ... names) {
+  public static String csvNames(final $ddlx_named ... names) {
     if (names.length == 0)
       return "";
 
     String csv = "";
-    for (final $xds_named name : names)
+    for (final $ddlx_named name : names)
       csv += ", " + name._name$().text();
 
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
-  public static String getSequenceName(final $xds_table table, final $xds_integer column) {
+  public static String getSequenceName(final $ddlx_table table, final $ddlx_integer column) {
     return "seq_" + table._name$().text() + "_" + column._name$().text();
   }
 
-  public static String getIndexName(final $xds_table table, final $xds_index index, final $xds_named ... column) {
+  public static String getIndexName(final $ddlx_table table, final $ddlx_index index, final $ddlx_named ... column) {
     if (index == null || column.length == 0)
       return null;
 
     String name = "";
-    for (final $xds_named c : column)
+    for (final $ddlx_named c : column)
       name += "_" + c._name$().text();
 
     return "idx_" + table._name$().text() + name;
   }
 
-  public static String getIndexName(final $xds_table table, final $xds_table._indexes._index index) {
-    return getIndexName(table, index, index._column().toArray(new $xds_named[index._column().size()]));
+  public static String getIndexName(final $ddlx_table table, final $ddlx_table._indexes._index index) {
+    return getIndexName(table, index, index._column().toArray(new $ddlx_named[index._column().size()]));
   }
 
-  public static String getTriggerName(final String tableName, final $xds_table._triggers._trigger trigger, final String action) {
+  public static String getTriggerName(final String tableName, final $ddlx_table._triggers._trigger trigger, final String action) {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 

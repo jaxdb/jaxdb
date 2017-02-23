@@ -25,11 +25,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.validate.ValidationException;
+import org.safris.dbx.ddlx.xe.ddlx_schema;
 import org.safris.xdb.schema.runner.Derby;
 import org.safris.xdb.schema.runner.MySQL;
 import org.safris.xdb.schema.runner.PostgreSQL;
 import org.safris.xdb.schema.runner.VendorRunner;
-import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
@@ -40,9 +40,9 @@ import org.xml.sax.InputSource;
 public class SchemaTest {
   @Test
   public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("classicmodels.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    final ddlx_schema schema;
+    try (final InputStream in = Resources.getResource("classicmodels.ddlx").getURL().openStream()) {
+      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.create(connection, schema);
@@ -50,9 +50,9 @@ public class SchemaTest {
 
   @Test
   public void testWorld(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    final ddlx_schema schema;
+    try (final InputStream in = Resources.getResource("world.ddlx").getURL().openStream()) {
+      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.create(connection, schema);
@@ -60,9 +60,9 @@ public class SchemaTest {
 
   @Test
   public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("types.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    final ddlx_schema schema;
+    try (final InputStream in = Resources.getResource("types.ddlx").getURL().openStream()) {
+      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.create(connection, schema);

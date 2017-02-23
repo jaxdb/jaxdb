@@ -28,13 +28,13 @@ import java.util.Set;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.xml.XMLException;
+import org.safris.dbx.ddlx.xe.$ddlx_column;
+import org.safris.dbx.ddlx.xe.$ddlx_compliant;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
+import org.safris.dbx.ddlx.xe.ddlx_schema;
 import org.safris.maven.common.Log;
 import org.safris.xdb.schema.standard.ReservedWords;
 import org.safris.xdb.schema.standard.SQLStandard;
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_compliant;
-import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.xdb.xds.xe.xds_schema;
 
 public final class Generator extends BaseGenerator {
   public static void main(final String[] args) throws Exception {
@@ -54,7 +54,7 @@ public final class Generator extends BaseGenerator {
     return Generator.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static String[] createDDL(final xds_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+  public static String[] createDDL(final ddlx_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
     final Generator generator = new Generator(schema);
     final Statement[] ddls = generator.parse(vendor);
     final StringBuilder builder = new StringBuilder();
@@ -95,7 +95,7 @@ public final class Generator extends BaseGenerator {
     return message.toString();
   }
 
-  private Generator(final xds_schema schema) {
+  private Generator(final ddlx_schema schema) {
     super(schema);
     sortedTableOrder = Schemas.tables(merged);
   }
@@ -106,8 +106,8 @@ public final class Generator extends BaseGenerator {
     return columnCount;
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$xds_column> columnNameToColumn, final $xds_table table, final xds_schema schema) throws GeneratorExecutionException {
-    final boolean strict = $xds_compliant._compliance$.strict.text().equals(schema._compliance$().text());
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table, final ddlx_schema schema) throws GeneratorExecutionException {
+    final boolean strict = $ddlx_compliant._compliance$.strict.text().equals(schema._compliance$().text());
     final String tableName = table._name$().text();
     final List<String> violations = new ArrayList<String>();
     String violation = checkNameViolation(tableName, strict);
@@ -119,13 +119,13 @@ public final class Generator extends BaseGenerator {
 
     tableNames.add(tableName);
     if (table._column() != null) {
-      for (final $xds_column column : table._column()) {
+      for (final $ddlx_column column : table._column()) {
         final String columnName = column._name$().text();
         violation = checkNameViolation(columnName, strict);
         if (violation != null)
           violations.add(violation);
 
-        final $xds_column existing = columnNameToColumn.get(columnName);
+        final $ddlx_column existing = columnNameToColumn.get(columnName);
         if (existing != null)
           throw new GeneratorExecutionException("Duplicate column definition: " + schema._name$().text() + "." + tableName + "." + columnName);
 
@@ -147,9 +147,9 @@ public final class Generator extends BaseGenerator {
     }
   }
 
-  private String[] parseTable(final DBVendor vendor, final $xds_table table, final Set<String> tableNames) throws GeneratorExecutionException {
+  private String[] parseTable(final DBVendor vendor, final $ddlx_table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,$xds_column> columnNameToColumn = new HashMap<String,$xds_column>();
+    final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
     registerColumns(tableNames, columnNameToColumn, table, merged);
 
     final List<String> statements = new ArrayList<String>();
@@ -165,14 +165,14 @@ public final class Generator extends BaseGenerator {
     return statements.toArray(new String[statements.size()]);
   }
 
-  private final List<$xds_table> sortedTableOrder;
+  private final List<$ddlx_table> sortedTableOrder;
 
   public Statement[] parse(final DBVendor vendor) throws GeneratorExecutionException {
     final Map<String,String[]> dropStatements = new HashMap<String,String[]>();
     final Map<String,String[]> createTableStatements = new HashMap<String,String[]>();
 
     final Set<String> skipTables = new HashSet<String>();
-    for (final $xds_table table : merged._table()) {
+    for (final $ddlx_table table : merged._table()) {
       if (table._skip$().text()) {
         skipTables.add(table._name$().text());
       }
@@ -183,12 +183,12 @@ public final class Generator extends BaseGenerator {
     }
 
     final Set<String> tableNames = new HashSet<String>();
-    for (final $xds_table table : merged._table())
+    for (final $ddlx_table table : merged._table())
       if (!table._abstract$().text())
         createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
     final List<Statement> ddls = new ArrayList<Statement>();
-    for (final $xds_table table : sortedTableOrder) {
+    for (final $ddlx_table table : sortedTableOrder) {
       final String tableName = table._name$().text();
       if (!skipTables.contains(tableName))
         ddls.add(new Statement(tableName, dropStatements.get(tableName), createTableStatements.get(tableName)));

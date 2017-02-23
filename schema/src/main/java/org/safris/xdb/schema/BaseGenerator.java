@@ -31,26 +31,26 @@ import java.util.Set;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.xml.XMLException;
+import org.safris.dbx.ddlx.xe.$ddlx_column;
+import org.safris.dbx.ddlx.xe.$ddlx_columns;
+import org.safris.dbx.ddlx.xe.$ddlx_constraints;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
+import org.safris.dbx.ddlx.xe.ddlx_schema;
 import org.safris.maven.common.Log;
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_columns;
-import org.safris.xdb.xds.xe.$xds_constraints;
-import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class BaseGenerator {
   static {
     try {
-      PackageLoader.getSystemPackageLoader().loadPackage(xds_schema.class.getPackage().getName());
+      PackageLoader.getSystemPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
     }
     catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
 
-  protected static xds_schema parseArguments(final URL url, final File outDir) throws IOException, XMLException {
+  protected static ddlx_schema parseArguments(final URL url, final File outDir) throws IOException, XMLException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 
@@ -58,7 +58,7 @@ public abstract class BaseGenerator {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try (final InputStream in = url.openStream()) {
-      return (xds_schema)Bindings.parse(new InputSource(in));
+      return (ddlx_schema)Bindings.parse(new InputSource(in));
     }
   }
 
@@ -84,31 +84,31 @@ public abstract class BaseGenerator {
   }
 
   // FIXME: This should not be public! But it's been set this way to be usable by xde package.
-  public static xds_schema merge(final xds_schema schema) {
-    final xds_schema merged;
+  public static ddlx_schema merge(final ddlx_schema schema) {
+    final ddlx_schema merged;
     try {
-      merged = (xds_schema)Bindings.clone(schema);
+      merged = (ddlx_schema)Bindings.clone(schema);
     }
     catch (final Exception e) {
       throw new Error(e);
     }
 
-    final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
+    final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
     // First, register the table names to be referencable by the @extends attribute
-    for (final $xds_table table : merged._table())
+    for (final $ddlx_table table : merged._table())
       tableNameToTable.put(table._name$().text(), table);
 
     final Set<String> mergedTables = new HashSet<String>();
-    for (final $xds_table table : merged._table())
+    for (final $ddlx_table table : merged._table())
       mergeTable(table, tableNameToTable, mergedTables);
 
     return merged;
   }
 
-  protected final xds_schema unmerged;
-  protected final xds_schema merged;
+  protected final ddlx_schema unmerged;
+  protected final ddlx_schema merged;
 
-  public BaseGenerator(final xds_schema schema) {
+  public BaseGenerator(final ddlx_schema schema) {
     this.unmerged = schema;
     this.merged = merge(schema);
 
@@ -123,14 +123,14 @@ public abstract class BaseGenerator {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for (final $xds_table table : merged._table())
+    for (final $ddlx_table table : merged._table())
       if (!table._abstract$().text() && (table._constraints(0) == null || table._constraints(0)._primaryKey() == null || table._constraints(0)._primaryKey(0)._column() == null))
         errors.add("Table " + table._name$().text() + " does not have a primary key.");
 
     return errors;
   }
 
-  private static void mergeTable(final $xds_table table, final Map<String,$xds_table> tableNameToTable, final Set<String> mergedTables) {
+  private static void mergeTable(final $ddlx_table table, final Map<String,$ddlx_table> tableNameToTable, final Set<String> mergedTables) {
     if (mergedTables.contains(table._name$().text()))
       return;
 
@@ -138,7 +138,7 @@ public abstract class BaseGenerator {
     if (table._extends$().isNull())
       return;
 
-    final $xds_table superTable = tableNameToTable.get(table._extends$().text());
+    final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
       Log.error("Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
       System.exit(1);
@@ -150,31 +150,31 @@ public abstract class BaseGenerator {
         table._column().addAll(0, superTable._column());
       }
       else {
-        for (final $xds_column column : superTable._column())
+        for (final $ddlx_column column : superTable._column())
           table._column(column);
       }
     }
 
     if (superTable._constraints() != null) {
-      final $xds_constraints parentConstraints = superTable._constraints(0);
+      final $ddlx_constraints parentConstraints = superTable._constraints(0);
       if (table._constraints() == null) {
         table._constraints(parentConstraints);
       }
       else {
         if (parentConstraints._primaryKey() != null) {
-          for (final $xds_columns columns : parentConstraints._primaryKey()) {
+          for (final $ddlx_columns columns : parentConstraints._primaryKey()) {
             table._constraints(0)._primaryKey(columns);
           }
         }
 
         if (parentConstraints._foreignKey() != null) {
-          for (final $xds_table._constraints._foreignKey entry : parentConstraints._foreignKey()) {
+          for (final $ddlx_table._constraints._foreignKey entry : parentConstraints._foreignKey()) {
             table._constraints(0)._foreignKey(entry);
           }
         }
 
         if (parentConstraints._unique() != null) {
-          for (final $xds_columns columns : parentConstraints._unique()) {
+          for (final $ddlx_columns columns : parentConstraints._unique()) {
             table._constraints(0)._unique(columns);
           }
         }
@@ -186,7 +186,7 @@ public abstract class BaseGenerator {
         table._indexes(superTable._indexes(0));
       }
       else {
-        for (final $xds_table._indexes._index index : superTable._indexes(0)._index()) {
+        for (final $ddlx_table._indexes._index index : superTable._indexes(0)._index()) {
           table._indexes(0)._index(index);
         }
       }

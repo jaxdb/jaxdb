@@ -18,9 +18,9 @@ package org.safris.xdb.data;
 
 import org.safris.commons.lang.Bytes;
 import org.safris.commons.util.Hexadecimal;
+import org.safris.dbx.dmlx.xe.$dmlx_binary;
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
 import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.xdd.xe.$xdd_binary;
-import org.safris.xdb.xdd.xe.$xdd_blob;
 
 public final class PostgreSQLSerializer extends Serializer {
   @Override
@@ -38,12 +38,12 @@ public final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
-  protected String serialize(final $xdd_blob attribute) {
+  protected String serialize(final $dmlx_blob attribute) {
     return toOctalString(new Hexadecimal(attribute.text()));
   }
 
   @Override
-  protected String serialize(final $xdd_binary attribute) {
+  protected String serialize(final $dmlx_binary attribute) {
     return toOctalString(new Hexadecimal(attribute.text()));
   }
 }

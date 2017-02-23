@@ -21,19 +21,19 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
+import org.safris.dbx.dmlx.xe.$dmlx_binary;
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
+import org.safris.dbx.dmlx.xe.$dmlx_boolean;
+import org.safris.dbx.dmlx.xe.$dmlx_char;
+import org.safris.dbx.dmlx.xe.$dmlx_clob;
+import org.safris.dbx.dmlx.xe.$dmlx_date;
+import org.safris.dbx.dmlx.xe.$dmlx_dateTime;
+import org.safris.dbx.dmlx.xe.$dmlx_decimal;
+import org.safris.dbx.dmlx.xe.$dmlx_enum;
+import org.safris.dbx.dmlx.xe.$dmlx_float;
+import org.safris.dbx.dmlx.xe.$dmlx_integer;
+import org.safris.dbx.dmlx.xe.$dmlx_time;
 import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.xdd.xe.$xdd_binary;
-import org.safris.xdb.xdd.xe.$xdd_blob;
-import org.safris.xdb.xdd.xe.$xdd_boolean;
-import org.safris.xdb.xdd.xe.$xdd_char;
-import org.safris.xdb.xdd.xe.$xdd_clob;
-import org.safris.xdb.xdd.xe.$xdd_date;
-import org.safris.xdb.xdd.xe.$xdd_dateTime;
-import org.safris.xdb.xdd.xe.$xdd_decimal;
-import org.safris.xdb.xdd.xe.$xdd_enum;
-import org.safris.xdb.xdd.xe.$xdd_float;
-import org.safris.xdb.xdd.xe.$xdd_integer;
-import org.safris.xdb.xdd.xe.$xdd_time;
 
 public abstract class Serializer {
   private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
@@ -63,51 +63,51 @@ public abstract class Serializer {
 
   protected abstract DBVendor getVendor();
 
-  protected String serialize(final $xdd_char attribute) {
+  protected String serialize(final $dmlx_char attribute) {
     return "'" + attribute.text().replace("'", "''") + "'";
   }
 
-  protected String serialize(final $xdd_clob attribute) {
+  protected String serialize(final $dmlx_clob attribute) {
     return "'" + attribute.text().replace("'", "''") + "'";
   }
 
-  protected String serialize(final $xdd_binary attribute) {
+  protected String serialize(final $dmlx_binary attribute) {
     return "X'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $xdd_blob attribute) {
+  protected String serialize(final $dmlx_blob attribute) {
     return "X'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $xdd_integer attribute) {
+  protected String serialize(final $dmlx_integer attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $xdd_float attribute) {
+  protected String serialize(final $dmlx_float attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $xdd_decimal attribute) {
+  protected String serialize(final $dmlx_decimal attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $xdd_date attribute) {
+  protected String serialize(final $dmlx_date attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $xdd_time attribute) {
+  protected String serialize(final $dmlx_time attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $xdd_dateTime attribute) {
+  protected String serialize(final $dmlx_dateTime attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $xdd_boolean attribute) {
+  protected String serialize(final $dmlx_boolean attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $xdd_enum attribute) {
+  protected String serialize(final $dmlx_enum attribute) {
     return "'" + attribute.text() + "'";
   }
 }

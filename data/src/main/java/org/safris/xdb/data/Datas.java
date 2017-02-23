@@ -29,21 +29,21 @@ import javax.xml.transform.TransformerException;
 
 import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
+import org.safris.dbx.dmlx.xe.$dmlx_binary;
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
+import org.safris.dbx.dmlx.xe.$dmlx_boolean;
+import org.safris.dbx.dmlx.xe.$dmlx_char;
+import org.safris.dbx.dmlx.xe.$dmlx_clob;
+import org.safris.dbx.dmlx.xe.$dmlx_data;
+import org.safris.dbx.dmlx.xe.$dmlx_date;
+import org.safris.dbx.dmlx.xe.$dmlx_dateTime;
+import org.safris.dbx.dmlx.xe.$dmlx_decimal;
+import org.safris.dbx.dmlx.xe.$dmlx_enum;
+import org.safris.dbx.dmlx.xe.$dmlx_float;
+import org.safris.dbx.dmlx.xe.$dmlx_integer;
+import org.safris.dbx.dmlx.xe.$dmlx_row;
+import org.safris.dbx.dmlx.xe.$dmlx_time;
 import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.xdd.xe.$xdd_binary;
-import org.safris.xdb.xdd.xe.$xdd_blob;
-import org.safris.xdb.xdd.xe.$xdd_boolean;
-import org.safris.xdb.xdd.xe.$xdd_char;
-import org.safris.xdb.xdd.xe.$xdd_clob;
-import org.safris.xdb.xdd.xe.$xdd_data;
-import org.safris.xdb.xdd.xe.$xdd_date;
-import org.safris.xdb.xdd.xe.$xdd_dateTime;
-import org.safris.xdb.xdd.xe.$xdd_decimal;
-import org.safris.xdb.xdd.xe.$xdd_enum;
-import org.safris.xdb.xdd.xe.$xdd_float;
-import org.safris.xdb.xdd.xe.$xdd_integer;
-import org.safris.xdb.xdd.xe.$xdd_row;
-import org.safris.xdb.xdd.xe.$xdd_time;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.QName;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
@@ -63,70 +63,70 @@ public final class Datas {
     if (value == null)
       return "NULL";
 
-    if (attribute instanceof $xdd_char)
-      return serializer.serialize(($xdd_char)attribute);
+    if (attribute instanceof $dmlx_char)
+      return serializer.serialize(($dmlx_char)attribute);
 
-    if (attribute instanceof $xdd_clob)
-      return serializer.serialize(($xdd_clob)attribute);
+    if (attribute instanceof $dmlx_clob)
+      return serializer.serialize(($dmlx_clob)attribute);
 
-    if (attribute instanceof $xdd_binary)
-      return serializer.serialize(($xdd_binary)attribute);
+    if (attribute instanceof $dmlx_binary)
+      return serializer.serialize(($dmlx_binary)attribute);
 
-    if (attribute instanceof $xdd_blob)
-      return serializer.serialize(($xdd_blob)attribute);
+    if (attribute instanceof $dmlx_blob)
+      return serializer.serialize(($dmlx_blob)attribute);
 
-    if (attribute instanceof $xdd_integer)
-      return serializer.serialize(($xdd_integer)attribute);
+    if (attribute instanceof $dmlx_integer)
+      return serializer.serialize(($dmlx_integer)attribute);
 
-    if (attribute instanceof $xdd_float)
-      return serializer.serialize(($xdd_float)attribute);
+    if (attribute instanceof $dmlx_float)
+      return serializer.serialize(($dmlx_float)attribute);
 
-    if (attribute instanceof $xdd_decimal)
-      return serializer.serialize(($xdd_decimal)attribute);
+    if (attribute instanceof $dmlx_decimal)
+      return serializer.serialize(($dmlx_decimal)attribute);
 
-    if (attribute instanceof $xdd_date)
-      return serializer.serialize(($xdd_date)attribute);
+    if (attribute instanceof $dmlx_date)
+      return serializer.serialize(($dmlx_date)attribute);
 
-    if (attribute instanceof $xdd_time)
-      return serializer.serialize(($xdd_time)attribute);
+    if (attribute instanceof $dmlx_time)
+      return serializer.serialize(($dmlx_time)attribute);
 
-    if (attribute instanceof $xdd_dateTime)
-      return serializer.serialize(($xdd_dateTime)attribute);
+    if (attribute instanceof $dmlx_dateTime)
+      return serializer.serialize(($dmlx_dateTime)attribute);
 
-    if (attribute instanceof $xdd_boolean)
-      return serializer.serialize(($xdd_boolean)attribute);
+    if (attribute instanceof $dmlx_boolean)
+      return serializer.serialize(($dmlx_boolean)attribute);
 
-    if (attribute instanceof $xdd_enum)
-      return serializer.serialize(($xdd_enum)attribute);
+    if (attribute instanceof $dmlx_enum)
+      return serializer.serialize(($dmlx_enum)attribute);
 
     throw new UnsupportedOperationException("Unexpected type: " + attribute.getClass());
   }
 
-  private static String getTableName(final DBVendor vendor, final $xdd_row row) {
+  private static String getTableName(final DBVendor vendor, final $dmlx_row row) {
 //    final Element element = (Element)row;
 //    final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName tableName = getName(row.getClass().getSuperclass());
     return tableName.localPart();
   }
 
-  public static int[] loadData(final Connection connection, final $xdd_data data) throws SQLException {
+  public static int[] loadData(final Connection connection, final $dmlx_data data) throws SQLException {
     final DBVendor vendor = DBVendor.parse(connection.getMetaData());
     final Iterator<Binding> iterator = data.elementIterator();
     try (final Statement statement = connection.createStatement()) {
       while (iterator.hasNext())
-        statement.addBatch(loadRow(vendor, ($xdd_row)iterator.next()));
+        statement.addBatch(loadRow(vendor, ($dmlx_row)iterator.next()));
 
       return statement.executeBatch();
     }
   }
 
-  public static int loadRow(final Connection connection, final $xdd_row row) throws SQLException {
+  public static int loadRow(final Connection connection, final $dmlx_row row) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       return statement.executeUpdate(loadRow(DBVendor.parse(connection.getMetaData()), row));
     }
   }
 
-  private static String loadRow(final DBVendor vendor, final $xdd_row row) {
+  private static String loadRow(final DBVendor vendor, final $dmlx_row row) {
     final Iterator<? extends $xs_anySimpleType> iterator = row.attributeIterator();
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
@@ -146,7 +146,7 @@ public final class Datas {
 
   public static void createXSD(final URL xdsFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("xdd.xsl").getURL(), xdsFile, xsdFile);
+    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), xdsFile, xsdFile);
     ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), xsdFile.getParentFile().toURI().toURL());
   }
 

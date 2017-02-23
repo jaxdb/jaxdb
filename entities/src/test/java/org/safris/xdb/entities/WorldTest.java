@@ -30,13 +30,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.XMLException;
+import org.safris.dbx.ddlx.xe.ddlx_schema;
+import org.safris.dbx.dmlx.xe.$dmlx_data;
 import org.safris.xdb.schema.Schemas;
 import org.safris.xdb.schema.runner.Derby;
 import org.safris.xdb.schema.runner.MySQL;
 import org.safris.xdb.schema.runner.PostgreSQL;
 import org.safris.xdb.schema.runner.VendorRunner;
-import org.safris.xdb.xdd.xe.$xdd_data;
-import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
@@ -60,15 +60,15 @@ public class WorldTest extends EntitiesTest {
       }
     });
 
-    final URL xdd = Resources.getResource("world.xdd").getURL();
-    final $xdd_data data;
-    try (final InputStream in = xdd.openStream()) {
-      data = ($xdd_data)Bindings.parse(new InputSource(in));
+    final URL dmlx = Resources.getResource("world.dmlx").getURL();
+    final $dmlx_data data;
+    try (final InputStream in = dmlx.openStream()) {
+      data = ($dmlx_data)Bindings.parse(new InputSource(in));
     }
 
-    final xds_schema schema;
-    try (final InputStream in = Resources.getResource("world.xds").getURL().openStream()) {
-      schema = (xds_schema)Bindings.parse(new InputSource(in));
+    final ddlx_schema schema;
+    try (final InputStream in = Resources.getResource("world.ddlx").getURL().openStream()) {
+      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
     Schemas.truncate(connection, Schemas.tables(schema));
     INSERT(data).execute();

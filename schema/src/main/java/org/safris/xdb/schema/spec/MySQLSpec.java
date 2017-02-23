@@ -21,12 +21,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.dbx.ddlx.xe.$ddlx_column;
+import org.safris.dbx.ddlx.xe.$ddlx_enum;
+import org.safris.dbx.ddlx.xe.$ddlx_integer;
+import org.safris.dbx.ddlx.xe.$ddlx_named;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.xdb.schema.SQLDataTypes;
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_enum;
-import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_named;
-import org.safris.xdb.xds.xe.$xds_table;
 
 public final class MySQLSpec extends SQLSpec {
   @Override
@@ -34,14 +34,14 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public List<String> triggers(final $xds_table table) {
+  public List<String> triggers(final $ddlx_table table) {
     if (table._triggers() == null)
       return super.triggers(table);
 
     final String tableName = table._name$().text();
-    final List<$xds_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
+    final List<$ddlx_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
     final List<String> statements = new ArrayList<String>();
-    for (final $xds_table._triggers._trigger trigger : triggers) {
+    for (final $ddlx_table._triggers._trigger trigger : triggers) {
       String buffer = "";
       for (final String action : trigger._actions$().text()) {
         buffer += "DELIMITER |\n";
@@ -76,13 +76,13 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $xds_table table, final $xds_column column) {
+  public String $null(final $ddlx_table table, final $ddlx_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $xds_table table, final $xds_integer column) {
-    return !column._generateOnInsert$().isNull() && $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $xds_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+  public String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
@@ -91,12 +91,12 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  protected String dropIndexOnClause(final $xds_table table) {
+  protected String dropIndexOnClause(final $ddlx_table table) {
     return " ON " + table._name$().text();
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $xds_named ... columns) {
+  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
     return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
   }
 
@@ -183,7 +183,7 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String declareEnum(final $xds_table table, final $xds_enum type) {
+  public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
     if (type._values$().isNull())
       return "ENUM()";
 

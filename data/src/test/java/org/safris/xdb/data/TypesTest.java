@@ -48,7 +48,7 @@ import org.safris.xdb.schema.runner.VendorRunner;
 public class TypesTest extends DataTest {
   private static void createTypeData(final OutputStream out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
-    out.write("<Types xmlns=\"xdd.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"xdd.types types.xsd\">\n".getBytes());
+    out.write("<Types xmlns=\"dmlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"dmlx.types types.xsd\">\n".getBytes());
     for (int i = 0; i < 1000; i++) {
       final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
       final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
@@ -117,7 +117,7 @@ public class TypesTest extends DataTest {
   @VendorRunner.RunIn(VendorRunner.Test.class)
   public static void createData() throws IOException {
     resourcesDestDir.mkdirs();
-    try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.xdd"))) {
+    try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.dmlx"))) {
       createTypeData(out);
     }
   }

@@ -26,7 +26,7 @@ import org.safris.xdb.entities.generator.Generator;
 
 public abstract class EntitiesTest {
   protected static void createEntities(final String name) throws IOException, XMLException {
-    final URL xds = Resources.getResource(name + ".xds").getURL();
+    final URL xds = Resources.getResource(name + ".ddlx").getURL();
     final File destDir = new File("target/generated-test-sources/xdb");
     Generator.generate(xds, destDir, true);
   }

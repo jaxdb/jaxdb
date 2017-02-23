@@ -34,6 +34,28 @@ import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.XMLException;
+import org.safris.dbx.ddlx.xe.$ddlx_bigint;
+import org.safris.dbx.ddlx.xe.$ddlx_binary;
+import org.safris.dbx.ddlx.xe.$ddlx_blob;
+import org.safris.dbx.ddlx.xe.$ddlx_boolean;
+import org.safris.dbx.ddlx.xe.$ddlx_char;
+import org.safris.dbx.ddlx.xe.$ddlx_clob;
+import org.safris.dbx.ddlx.xe.$ddlx_column;
+import org.safris.dbx.ddlx.xe.$ddlx_columns;
+import org.safris.dbx.ddlx.xe.$ddlx_date;
+import org.safris.dbx.ddlx.xe.$ddlx_dateTime;
+import org.safris.dbx.ddlx.xe.$ddlx_decimal;
+import org.safris.dbx.ddlx.xe.$ddlx_enum;
+import org.safris.dbx.ddlx.xe.$ddlx_float;
+import org.safris.dbx.ddlx.xe.$ddlx_int;
+import org.safris.dbx.ddlx.xe.$ddlx_integer;
+import org.safris.dbx.ddlx.xe.$ddlx_named;
+import org.safris.dbx.ddlx.xe.$ddlx_smallint;
+import org.safris.dbx.ddlx.xe.$ddlx_table;
+import org.safris.dbx.ddlx.xe.$ddlx_time;
+import org.safris.dbx.ddlx.xe.$ddlx_tinyint;
+import org.safris.dbx.ddlx.xe.ddlx_schema;
+import org.safris.dbx.jsqlx.xe.$jsqlx_integer;
 import org.safris.maven.common.Log;
 import org.safris.xdb.entities.Entity;
 import org.safris.xdb.entities.EntityEnum;
@@ -41,39 +63,17 @@ import org.safris.xdb.entities.GenerateOn;
 import org.safris.xdb.entities.Schema;
 import org.safris.xdb.entities.type;
 import org.safris.xdb.schema.spec.SQLSpec;
-import org.safris.xdb.xde.xe.$xde_integer;
-import org.safris.xdb.xds.xe.$xds_bigint;
-import org.safris.xdb.xds.xe.$xds_binary;
-import org.safris.xdb.xds.xe.$xds_blob;
-import org.safris.xdb.xds.xe.$xds_boolean;
-import org.safris.xdb.xds.xe.$xds_char;
-import org.safris.xdb.xds.xe.$xds_clob;
-import org.safris.xdb.xds.xe.$xds_column;
-import org.safris.xdb.xds.xe.$xds_columns;
-import org.safris.xdb.xds.xe.$xds_date;
-import org.safris.xdb.xds.xe.$xds_dateTime;
-import org.safris.xdb.xds.xe.$xds_decimal;
-import org.safris.xdb.xds.xe.$xds_enum;
-import org.safris.xdb.xds.xe.$xds_float;
-import org.safris.xdb.xds.xe.$xds_int;
-import org.safris.xdb.xds.xe.$xds_integer;
-import org.safris.xdb.xds.xe.$xds_named;
-import org.safris.xdb.xds.xe.$xds_smallint;
-import org.safris.xdb.xds.xe.$xds_table;
-import org.safris.xdb.xds.xe.$xds_time;
-import org.safris.xdb.xds.xe.$xds_tinyint;
-import org.safris.xdb.xds.xe.xds_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 import org.xml.sax.InputSource;
 
 public class Generator {
-  private static final Map<String,$xds_table> tableNameToTable = new HashMap<String,$xds_table>();
+  private static final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
 
   public static void generate(final URL url, final File destDir, final boolean compile) throws IOException, XMLException {
-    final xds_schema schema = (xds_schema)Bindings.parse(new InputSource(url.openStream()));
+    final ddlx_schema schema = (ddlx_schema)Bindings.parse(new InputSource(url.openStream()));
     Log.info("Generating database entities: " + schema._name$().text());
-    for (final $xds_table table : schema._table())
+    for (final $ddlx_table table : schema._table())
       tableNameToTable.put(table._name$().text(), table);
 
     final String pkg = type.class.getPackage().getName();
@@ -90,12 +90,12 @@ public class Generator {
 
     String tables = "";
     // First create the abstract entities
-    for (final $xds_table table : schema._table())
+    for (final $ddlx_table table : schema._table())
       if (table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
     // Then, in proper inheritance order, the real entities
-    for (final $xds_table table : schema._table())
+    for (final $ddlx_table table : schema._table())
       if (!table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
@@ -132,67 +132,67 @@ public class Generator {
   private static final Object THIS = new Object();
 
   private static class Type {
-    private static Type getType(final $xds_table table, final $xds_column column) {
+    private static Type getType(final $ddlx_table table, final $ddlx_column column) {
       final Class<?> cls = column.getClass().getSuperclass();
       final Object _default = getDefault(column);
       GenerateOn<?> generateOnInsert = null;
       GenerateOn<?> generateOnUpdate = null;
       final Object[] params = new Object[] {THIS, column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
-      if (column instanceof $xds_char) {
-        final $xds_char type = ($xds_char)column;
-        if (!type.xde_generateOnInsert$().isNull() && $xds_char.xde_generateOnInsert$.UUID.text().equals(type.xde_generateOnInsert$().text()))
+      if (column instanceof $ddlx_char) {
+        final $ddlx_char type = ($ddlx_char)column;
+        if (!type.jsqlx_generateOnInsert$().isNull() && $ddlx_char.jsqlx_generateOnInsert$.UUID.text().equals(type.jsqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.UUID;
 
         return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
       }
 
-      if (column instanceof $xds_clob) {
-        final $xds_clob type = ($xds_clob)column;
+      if (column instanceof $ddlx_clob) {
+        final $ddlx_clob type = ($ddlx_clob)column;
         return new Type(column, type.CLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
       }
 
-      if (column instanceof $xds_binary) {
-        final $xds_binary type = ($xds_binary)column;
+      if (column instanceof $ddlx_binary) {
+        final $ddlx_binary type = ($ddlx_binary)column;
         return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
       }
 
-      if (column instanceof $xds_blob) {
-        final $xds_blob type = ($xds_blob)column;
+      if (column instanceof $ddlx_blob) {
+        final $ddlx_blob type = ($ddlx_blob)column;
         return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
       }
 
-      if (column instanceof $xde_integer) {
-        final $xde_integer type = ($xde_integer)column;
-        // no autogenerator is necessary for xds_integer._generateOnInsert$.AUTO_5FINCREMENT
-        if (!type.xde_generateOnUpdate$().isNull())
-          if ($xde_integer.xde_generateOnUpdate$.INCREMENT.text().equals(type.xde_generateOnUpdate$().text()))
+      if (column instanceof $jsqlx_integer) {
+        final $jsqlx_integer type = ($jsqlx_integer)column;
+        // no autogenerator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
+        if (!type.jsqlx_generateOnUpdate$().isNull())
+          if ($jsqlx_integer.jsqlx_generateOnUpdate$.INCREMENT.text().equals(type.jsqlx_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
-        if (column instanceof $xds_tinyint) {
-          final $xds_tinyint integer = ($xds_tinyint)column;
+        if (column instanceof $ddlx_tinyint) {
+          final $ddlx_tinyint integer = ($ddlx_tinyint)column;
           return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
         }
 
-        if (column instanceof $xds_smallint) {
-          final $xds_smallint integer = ($xds_smallint)column;
+        if (column instanceof $ddlx_smallint) {
+          final $ddlx_smallint integer = ($ddlx_smallint)column;
           return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
         }
 
-        if (column instanceof $xds_int) {
-          final $xds_int integer = ($xds_int)column;
+        if (column instanceof $ddlx_int) {
+          final $ddlx_int integer = ($ddlx_int)column;
           return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
         }
 
-        if (column instanceof $xds_bigint) {
-          final $xds_bigint integer = ($xds_bigint)column;
+        if (column instanceof $ddlx_bigint) {
+          final $ddlx_bigint integer = ($ddlx_bigint)column;
           return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
         }
 
         throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
       }
 
-      if (column instanceof $xds_float) {
-        final $xds_float type = ($xds_float)column;
+      if (column instanceof $ddlx_float) {
+        final $ddlx_float type = ($ddlx_float)column;
         final Class<? extends type.DataType<?>> javaType;
         final Number min;
         final Number max;
@@ -210,62 +210,62 @@ public class Generator {
         return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, min, max);
       }
 
-      if (column instanceof $xds_decimal) {
-        final $xds_decimal type = ($xds_decimal)column;
+      if (column instanceof $ddlx_decimal) {
+        final $ddlx_decimal type = ($ddlx_decimal)column;
         return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text().intValue(), type._scale$().text().intValue(), type._min$().text(), type._max$().text());
       }
 
-      if (column instanceof $xds_date) {
-        final $xds_date type = ($xds_date)column;
-        if (!type.xde_generateOnInsert$().isNull())
-          if ($xds_date.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
+      if (column instanceof $ddlx_date) {
+        final $ddlx_date type = ($ddlx_date)column;
+        if (!type.jsqlx_generateOnInsert$().isNull())
+          if ($ddlx_date.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.xde_generateOnUpdate$().isNull())
-          if ($xds_date.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
+        if (!type.jsqlx_generateOnUpdate$().isNull())
+          if ($ddlx_date.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xds_time) {
-        final $xds_time type = ($xds_time)column;
-        if (!type.xde_generateOnInsert$().isNull())
-          if ($xds_time.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
+      if (column instanceof $ddlx_time) {
+        final $ddlx_time type = ($ddlx_time)column;
+        if (!type.jsqlx_generateOnInsert$().isNull())
+          if ($ddlx_time.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.xde_generateOnUpdate$().isNull())
-          if ($xds_time.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
+        if (!type.jsqlx_generateOnUpdate$().isNull())
+          if ($ddlx_time.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
       }
 
-      if (column instanceof $xds_dateTime) {
-        final $xds_dateTime type = ($xds_dateTime)column;
-        if (!type.xde_generateOnInsert$().isNull())
-          if ($xds_dateTime.xde_generateOnInsert$.TIMESTAMP.text().equals(type.xde_generateOnInsert$().text()))
+      if (column instanceof $ddlx_dateTime) {
+        final $ddlx_dateTime type = ($ddlx_dateTime)column;
+        if (!type.jsqlx_generateOnInsert$().isNull())
+          if ($ddlx_dateTime.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.xde_generateOnUpdate$().isNull())
-          if ($xds_dateTime.xde_generateOnUpdate$.TIMESTAMP.text().equals(type.xde_generateOnUpdate$().text()))
+        if (!type.jsqlx_generateOnUpdate$().isNull())
+          if ($ddlx_dateTime.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
       }
 
-      if (column instanceof $xds_boolean) {
+      if (column instanceof $ddlx_boolean) {
         return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate);
       }
 
-      if (column instanceof $xds_enum) {
+      if (column instanceof $ddlx_enum) {
         return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate);
       }
 
       throw new IllegalArgumentException("Unknown type: " + cls);
     }
 
-    private final $xds_column column;
+    private final $ddlx_column column;
     @SuppressWarnings("rawtypes")
     public final Class<? extends type.DataType> type;
     private final Object[] commonParams;
@@ -274,7 +274,7 @@ public class Generator {
     private final Object[] customParams;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $xds_column column, final Class<? extends type.DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    private Type(final $ddlx_column column, final Class<? extends type.DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
@@ -307,7 +307,7 @@ public class Generator {
     }
   }
 
-  public static Object getDefault(final $xds_column column) {
+  public static Object getDefault(final $ddlx_column column) {
     try {
       final Method method = Classes.getDeclaredMethodDeep(column.getClass(), "_default$");
       if (method == null)
@@ -317,14 +317,14 @@ public class Generator {
       if (value.isNull() || "null".equals(value.text()))
         return null;
 
-      if (column instanceof $xds_enum)
+      if (column instanceof $ddlx_enum)
         return Strings.toTitleCase(column._name$().text()) + "." + String.valueOf(value.text());
 
-      if (column instanceof $xds_integer) {
-        if (column instanceof $xds_tinyint)
+      if (column instanceof $ddlx_integer) {
+        if (column instanceof $ddlx_tinyint)
           return Short.valueOf(String.valueOf(value.text()));
 
-        if (column instanceof $xds_smallint || column instanceof $xds_int)
+        if (column instanceof $ddlx_smallint || column instanceof $ddlx_int)
           return Long.valueOf(String.valueOf(value.text()));
 
         return new BigInteger(String.valueOf(value.text()));
@@ -337,7 +337,7 @@ public class Generator {
     }
   }
 
-  private static int getColumnCount($xds_table table, final boolean deep) {
+  private static int getColumnCount($ddlx_table table, final boolean deep) {
     int count = 0;
     do {
       count += table._column() != null ? table._column().size() : 0;
@@ -346,7 +346,7 @@ public class Generator {
     return count;
   }
 
-  private static int getPrimaryColumnCount($xds_table table, final boolean deep) {
+  private static int getPrimaryColumnCount($ddlx_table table, final boolean deep) {
     int count = 0;
     do {
       if (!table._constraints(0)._primaryKey(0).isNull())
@@ -356,7 +356,7 @@ public class Generator {
     return count;
   }
 
-  public static String makeTable(final $xds_table table) {
+  public static String makeTable(final $ddlx_table table) {
     final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(Entity.class);
     String out = "";
     String abs = "";
@@ -399,11 +399,11 @@ public class Generator {
       String set = "";
       if (table._column() != null && totalPrimaryCount > 0) {
         out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
-        $xds_table t = table;
+        $ddlx_table t = table;
         String params = "";
         do {
           for (int i = 0; i < t._column().size(); i++) {
-            final $xds_column column = t._column().get(i);
+            final $ddlx_column column = t._column().get(i);
             if (isPrimary(table, column)) {
               params += ", " + makeParam(t, column);
               final String columnName = Strings.toCamelCase(column._name$().text());
@@ -423,7 +423,7 @@ public class Generator {
       set = "";
       if (table._column() != null) {
         for (int i = 0; i < table._column().size(); i++) {
-          final $xds_column column = table._column().get(i);
+          final $ddlx_column column = table._column().get(i);
           final String columnName = Strings.toCamelCase(column._name$().text());
           set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
         }
@@ -446,7 +446,7 @@ public class Generator {
     int primaryIndex = 0;
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xds_column column = table._column().get(i);
+        final $ddlx_column column = table._column().get(i);
         final String columnName = Strings.toCamelCase(column._name$().text());
         defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
       }
@@ -458,7 +458,7 @@ public class Generator {
 
     if (table._column() != null) {
       for (int i = 0; i < table._column().size(); i++) {
-        final $xds_column column = table._column().get(i);
+        final $ddlx_column column = table._column().get(i);
         out += makeColumn(table, column, i == table._column().size());
       }
 
@@ -472,16 +472,16 @@ public class Generator {
     out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
-    final List<$xds_column> primaryColumns = new ArrayList<$xds_column>();
-    final List<$xds_column> equalsColumns;
+    final List<$ddlx_column> primaryColumns = new ArrayList<$ddlx_column>();
+    final List<$ddlx_column> equalsColumns;
     if (table._column() != null) {
-      for (final $xds_column column : table._column())
+      for (final $ddlx_column column : table._column())
         if (isPrimary(table, column))
           primaryColumns.add(column);
 
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table._column();
       out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
-      for (final $xds_column column : equalsColumns)
+      for (final $ddlx_column column : equalsColumns)
         eq += " && (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().equals(that." + Strings.toInstanceCase(column._name$().text()) + ".get()) : that." + Strings.toInstanceCase(column._name$().text()) + ".get() == null)";
 
       out += "      return " + eq.substring(4) + ";";
@@ -497,7 +497,7 @@ public class Generator {
       out += "\n\n";
       out += "    @" + Classes.getStrictName(Override.class) + "\n";
       out += "    public int hashCode() {\n";
-      for (final $xds_column column : equalsColumns)
+      for (final $ddlx_column column : equalsColumns)
         eq += " + (this." + Strings.toInstanceCase(column._name$().text()) + ".get() != null ? this." + Strings.toInstanceCase(column._name$().text()) + ".get().hashCode() : -1)";
       out += "      return " + eq.substring(3) + ";";
       out += "\n    }";
@@ -512,7 +512,7 @@ public class Generator {
     out += "      else\n";
     out += "        builder.append(\" {\\n\");\n\n";
     if (table._column() != null)
-      for (final $xds_column column : table._column())
+      for (final $ddlx_column column : table._column())
         out += "      builder.append(\"  " + Strings.toInstanceCase(column._name$().text()) + ": \").append(" + Strings.toInstanceCase(column._name$().text()) + ").append(\"\\n\");\n";
     out += "      return builder.append('}').toString();";
     out += "\n    }";
@@ -522,11 +522,11 @@ public class Generator {
     return out;
   }
 
-  private static boolean isPrimary($xds_table table, final $xds_column column) {
+  private static boolean isPrimary($ddlx_table table, final $ddlx_column column) {
     do {
-      final $xds_columns constraint = table._constraints(0)._primaryKey(0);
+      final $ddlx_columns constraint = table._constraints(0)._primaryKey(0);
       if (!constraint.isNull())
-        for (final $xds_named col : constraint._column())
+        for (final $ddlx_named col : constraint._column())
           if (column._name$().text().equals(col._name$().text()))
             return true;
     }
@@ -535,23 +535,23 @@ public class Generator {
     return false;
   }
 
-  private static boolean isUnique(final $xds_table table, final $xds_column column) {
-    final $xds_columns constraint = table._constraints(0)._unique(0);
+  private static boolean isUnique(final $ddlx_table table, final $ddlx_column column) {
+    final $ddlx_columns constraint = table._constraints(0)._unique(0);
     if (constraint.isNull())
       return false;
 
-    for (final $xds_named col : constraint._column())
+    for (final $ddlx_named col : constraint._column())
       if (column._name$().text().equals(col._name$().text()))
         return true;
 
     return false;
   }
 
-  public static String makeParam(final $xds_table table, final $xds_column column) {
+  public static String makeParam(final $ddlx_table table, final $ddlx_column column) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final Type type = Type.getType(table, column);
     final String rawType;
-    if (column instanceof $xds_enum)
+    if (column instanceof $ddlx_enum)
       rawType = Strings.toTitleCase(column._name$().text());
     else
       rawType = Classes.getStrictName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
@@ -559,15 +559,15 @@ public class Generator {
     return "final " + rawType + " " + columnName;
   }
 
-  public static String makeColumn(final $xds_table table, final $xds_column column, final boolean isLast) {
+  public static String makeColumn(final $ddlx_table table, final $ddlx_column column, final boolean isLast) {
     final String columnName = Strings.toCamelCase(column._name$().text());
     final String typeName = Strings.toTitleCase(column._name$().text());
     final StringBuilder builder = new StringBuilder();
     final Type type = Type.getType(table, column);
-    if (column instanceof $xds_enum) {
+    if (column instanceof $ddlx_enum) {
       builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
-      final List<String> values = SQLSpec.parseEnum((($xds_enum)column)._values$().text());
+      final List<String> values = SQLSpec.parseEnum((($ddlx_enum)column)._values$().text());
       for (final String value : values)
         enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 

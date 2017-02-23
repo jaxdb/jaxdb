@@ -23,12 +23,12 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 
 import org.safris.commons.lang.Arrays;
+import org.safris.dbx.dmlx.xe.$dmlx_data;
 import org.safris.xdb.entities.model.case_;
 import org.safris.xdb.entities.model.delete;
 import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
 import org.safris.xdb.entities.model.update;
-import org.safris.xdb.xdd.xe.$xdd_data;
 
 @SuppressWarnings("hiding")
 public final class DML {
@@ -1056,7 +1056,7 @@ public final class DML {
     return new Insert.INSERT<DataType>(Arrays.splice(columns, 0, 0, column));
   }
 
-  public static insert.INSERT<?> INSERT(final $xdd_data data) {
+  public static insert.INSERT<?> INSERT(final $dmlx_data data) {
     return new Insert.INSERT<Subject<?>>(Entities.toEntities(data));
   }
 

@@ -14,9 +14,9 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<Classicmodels xmlns="xdd.classicmodels"
+<Classicmodels xmlns="dmlx.classicmodels"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="xdd.classicmodels ../../../target/generated-test-resources/xdb/classicmodels.xsd">
+  xsi:schemaLocation="dmlx.classicmodels ../../../target/generated-test-resources/xdb/classicmodels.xsd">
   <Office
     officeCode="1"
     city="San Francisco"

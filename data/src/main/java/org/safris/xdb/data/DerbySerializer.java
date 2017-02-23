@@ -16,8 +16,8 @@
 
 package org.safris.xdb.data;
 
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
 import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.xdd.xe.$xdd_blob;
 
 public final class DerbySerializer extends Serializer {
   @Override
@@ -26,7 +26,7 @@ public final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected final String serialize(final $xdd_blob attribute) {
+  protected final String serialize(final $dmlx_blob attribute) {
     return "CAST(X'" + attribute.text() + "' AS BLOB)";
   }
 }

@@ -14,9 +14,9 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<World xmlns="xdd.world"
+<World xmlns="dmlx.world"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="xdd.world ../../../target/generated-test-resources/xdb/world.xsd">
+  xsi:schemaLocation="dmlx.world ../../../target/generated-test-resources/xdb/world.xsd">
   <Country
     code="ABW"
     code2="AW"
