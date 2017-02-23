@@ -17,6 +17,8 @@
 package org.safris.xdb.entities;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Set;
 
 import org.safris.xdb.schema.DBVendor;
@@ -25,6 +27,10 @@ final class MySQLSerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;
+  }
+
+  @Override
+  protected void onRegister(final Connection connection) throws SQLException {
   }
 
   @Override

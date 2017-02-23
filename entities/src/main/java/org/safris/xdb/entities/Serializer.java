@@ -93,9 +93,7 @@ public abstract class Serializer {
 
   protected abstract DBVendor getVendor();
 
-  @SuppressWarnings("unused")
-  protected void onRegister(final Connection connection) throws SQLException {
-  }
+  protected abstract void onRegister(final Connection connection) throws SQLException;
 
   protected String tableName(final Entity entity, final Serialization serialization) {
     return entity.name();

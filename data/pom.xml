@@ -89,7 +89,7 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <destdir>target/generated-test-resources/xdb</destdir>
+              <destdir>target/generated-test-resources/dbx</destdir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/dmlx.xsl</stylesheet>
               <includes>

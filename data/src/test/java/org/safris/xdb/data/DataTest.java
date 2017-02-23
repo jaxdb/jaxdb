@@ -50,7 +50,7 @@ import org.xml.sax.InputSource;
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
 public abstract class DataTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
-  protected static final File resourcesDestDir = new File("target/generated-test-resources/xdb");
+  protected static final File resourcesDestDir = new File("target/generated-test-resources/dbx");
 
   protected static void createSchemas(final String name) throws IOException, TransformerException {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();

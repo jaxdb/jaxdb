@@ -28,15 +28,15 @@ import org.safris.commons.sql.ConnectionProxy;
 public class PostgreSQL implements Vendor {
   @Override
   public synchronized void init() throws IOException, SQLException {
-//    CREATE USER mycompany WITH PASSWORD 'mycompany';
-//    CREATE DATABASE mycompany;
-//    GRANT ALL PRIVILEGES ON DATABASE mycompany TO mycompany;
+//  CREATE USER dbx WITH PASSWORD 'dbx';
+//  CREATE DATABASE dbx;
+//  GRANT ALL PRIVILEGES ON DATABASE dbx TO dbx;
     new Driver();
   }
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:postgresql://localhost/xdb?user=xdb&password=xdb"));
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:postgresql://localhost/dbx?user=dbx&password=dbx"));
   }
 
   @Override

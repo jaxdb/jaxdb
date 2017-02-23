@@ -1,26 +1,26 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## xdb-schema<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## dbx-schema<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
 > eXtensible Data Binding Schema
 
 ### Introduction
 
-**xdb-schema** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [XDS Schema][xds.xsd] utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
+**dbx-schema** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [DDLx Schema][ddlx.xsd] utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
 
-### Why **xdb-schema**?
+### Why **dbx-schema**?
 
-**xdb-schema** can also be used with [**xdb-entities**][xdb-entities], an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
+**dbx-schema** can also be used with [**dbx-entities**][dbx-entities], an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
 
 #### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, **xdb-schema** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **xdb-schema** is a complete solution for the creation and management of a SQL Schema. The **xdb-schema** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
+Developed with the CohesionFirst™ approach, **dbx-schema** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **dbx-schema** is a complete solution for the creation and management of a SQL Schema. The **dbx-schema** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
 #### Vendor-Agnostic
 
-How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **xdb-schema** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
+How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **dbx-schema** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
 
 #### Validating and Fail-Fast
 
-**xdb-schema** is a standard that abstracts the DDL with a vendor-agnostic model, and provides cohesive semantics for the definition of most (close to all) of the SQL-92 and SQL-99 DDL structures. Utilizing the full power of XML Schema Validation, **xdb-schema** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL Schemas.
+**dbx-schema** is a standard that abstracts the DDL with a vendor-agnostic model, and provides cohesive semantics for the definition of most (close to all) of the SQL-92 and SQL-99 DDL structures. Utilizing the full power of XML Schema Validation, **dbx-schema** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL Schemas.
 
 ### Getting Started
 
@@ -54,13 +54,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </pluginRepositories>
   ```
 
-3. Create a `basis.xds` **xdb-schema** Schema and put it in `src/main/resources/`.
+3. Create a `basis.ddlx` **dbx-schema** Schema and put it in `src/main/resources/`.
 
   ```xml
   <database name="basis"
-    xmlns="http://xdb.safris.org/xds.xsd"
+    xmlns="http://dbx.safris.org/ddlx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://xdb.safris.org/xds.xsd http://xdb.safris.org/xds.xsd">
+    xsi:schemaLocation="http://dbx.safris.org/ddlx.xsd http://dbx.safris.org/ddlx.xsd">
 
     <table name="id" abstract="true">
       <column name="id" xsi:type="char" length="36" null="false" generateOnInsert="UUID"/>
@@ -99,12 +99,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </database>
   ```
 
-4. Add the [`org.safris.maven.plugin:xdb-maven-plugin`][xdb-maven-plugin] to the POM.
+4. Add the [`org.safris.maven.plugin:dbx-maven-plugin`][dbx-maven-plugin] to the POM.
 
   ```xml
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>xdb-maven-plugin</artifactId>
+    <artifactId>dbx-maven-plugin</artifactId>
     <version>1.3.2</version>
     <executions>
       <execution>
@@ -116,9 +116,9 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         <configuration>
           <vendor>PostgreSQL</vendor>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-resources/xdb</destdir>
+            <destdir>${project.build.directory}/generated-resources/dbx</destdir>
             <schemas>
-              <schema>${basedir}/src/main/resources/basis.xds</schema>
+              <schema>src/main/resources/basis.ddlx</schema>
             </schemas>
           </manifest>
         </configuration>
@@ -127,12 +127,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `xdb-maven-plugin`, an `example.sql` will be created in `generated-resources/xdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
+5. Run `mvn generate-resources`, and upon successful execution of the `dbx-maven-plugin`, an `example.sql` will be created in `generated-resources/dbx` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
 6. Import the DDL into your database. The 
 
   ```tcsh
-  psql -d example < generated-resources/xdb/basis.sql
+  psql -d example < generated-resources/dbx/basis.sql
   ```
   
   Subsequent imports of `schema.sql` into the database will `DROP` and re-`CREATE` the data model.
@@ -145,6 +145,6 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
-[xdb-entities]: https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd
-[xdb-maven-plugin]: https://github.com/SevaSafris/xdb-maven-plugin
-[xds.xsd]: https://github.com/SevaSafris/xdb/blob/master/schema/src/main/resources/xds.xsd
+[dbx-entities]: https://github.com/SevaSafris/dbx/blob/master/schema/src/main/resources/ddlx.xsd
+[dbx-maven-plugin]: https://github.com/SevaSafris/dbx-maven-plugin
+[ddlx.xsd]: https://github.com/SevaSafris/dbx/blob/master/schema/src/main/resources/ddlx.xsd

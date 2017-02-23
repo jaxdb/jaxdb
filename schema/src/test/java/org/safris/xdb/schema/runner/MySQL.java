@@ -29,15 +29,15 @@ import com.mysql.cj.jdbc.Driver;
 public class MySQL implements Vendor {
   @Override
   public synchronized void init() throws IOException, SQLException {
-//  CREATE USER mycompany;
-//  CREATE DATABASE mycompany;
-//  GRANT ALL ON mycompany.* TO 'mycompany'@'localhost' IDENTIFIED BY 'mycompany';
+//  CREATE USER dbx;
+//  CREATE DATABASE dbx;
+//  GRANT ALL ON dbx.* TO 'dbx'@'localhost' IDENTIFIED BY 'dbx';
     new Driver();
   }
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://localhost/xdb?user=xdb&password=xdb&useSSL=false"));
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://localhost/dbx?user=dbx&password=dbx&useSSL=false"));
   }
 
   @Override

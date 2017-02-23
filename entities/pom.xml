@@ -31,7 +31,7 @@
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-sources/xdb</directory>
+        <directory>target/generated-test-sources/dbx</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
