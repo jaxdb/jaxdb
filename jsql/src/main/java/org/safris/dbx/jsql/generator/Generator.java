@@ -34,7 +34,6 @@ import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Strings;
 import org.safris.commons.xml.XMLException;
-import org.safris.dbx.ddlx.spec.SQLSpec;
 import org.safris.dbx.ddlx.xe.$ddlx_bigint;
 import org.safris.dbx.ddlx.xe.$ddlx_binary;
 import org.safris.dbx.ddlx.xe.$ddlx_blob;
@@ -56,12 +55,13 @@ import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.dbx.ddlx.xe.$ddlx_time;
 import org.safris.dbx.ddlx.xe.$ddlx_tinyint;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
+import org.safris.dbx.ddlx.spec.SQLSpec;
 import org.safris.dbx.jsql.Entity;
 import org.safris.dbx.jsql.EntityEnum;
 import org.safris.dbx.jsql.GenerateOn;
 import org.safris.dbx.jsql.Schema;
 import org.safris.dbx.jsql.type;
-import org.safris.dbx.jsqlx.xe.$jsqlx_integer;
+import org.safris.dbx.jsql.xe.$jsql_integer;
 import org.safris.maven.common.Log;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
@@ -140,7 +140,7 @@ public class Generator {
       final Object[] params = new Object[] {THIS, column._name$().text(), _default, isUnique(table, column), isPrimary(table, column), column._null$().text()};
       if (column instanceof $ddlx_char) {
         final $ddlx_char type = ($ddlx_char)column;
-        if (!type.jsqlx_generateOnInsert$().isNull() && $ddlx_char.jsqlx_generateOnInsert$.UUID.text().equals(type.jsqlx_generateOnInsert$().text()))
+        if (!type.jsql_generateOnInsert$().isNull() && $ddlx_char.jsql_generateOnInsert$.UUID.text().equals(type.jsql_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.UUID;
 
         return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
@@ -161,11 +161,11 @@ public class Generator {
         return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
       }
 
-      if (column instanceof $jsqlx_integer) {
-        final $jsqlx_integer type = ($jsqlx_integer)column;
+      if (column instanceof $jsql_integer) {
+        final $jsql_integer type = ($jsql_integer)column;
         // no autogenerator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
-        if (!type.jsqlx_generateOnUpdate$().isNull())
-          if ($jsqlx_integer.jsqlx_generateOnUpdate$.INCREMENT.text().equals(type.jsqlx_generateOnUpdate$().text()))
+        if (!type.jsql_generateOnUpdate$().isNull())
+          if ($jsql_integer.jsql_generateOnUpdate$.INCREMENT.text().equals(type.jsql_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.INCREMENT;
 
         if (column instanceof $ddlx_tinyint) {
@@ -217,12 +217,12 @@ public class Generator {
 
       if (column instanceof $ddlx_date) {
         final $ddlx_date type = ($ddlx_date)column;
-        if (!type.jsqlx_generateOnInsert$().isNull())
-          if ($ddlx_date.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
+        if (!type.jsql_generateOnInsert$().isNull())
+          if ($ddlx_date.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.jsqlx_generateOnUpdate$().isNull())
-          if ($ddlx_date.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
+        if (!type.jsql_generateOnUpdate$().isNull())
+          if ($ddlx_date.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate);
@@ -230,12 +230,12 @@ public class Generator {
 
       if (column instanceof $ddlx_time) {
         final $ddlx_time type = ($ddlx_time)column;
-        if (!type.jsqlx_generateOnInsert$().isNull())
-          if ($ddlx_time.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
+        if (!type.jsql_generateOnInsert$().isNull())
+          if ($ddlx_time.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.jsqlx_generateOnUpdate$().isNull())
-          if ($ddlx_time.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
+        if (!type.jsql_generateOnUpdate$().isNull())
+          if ($ddlx_time.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
@@ -243,12 +243,12 @@ public class Generator {
 
       if (column instanceof $ddlx_dateTime) {
         final $ddlx_dateTime type = ($ddlx_dateTime)column;
-        if (!type.jsqlx_generateOnInsert$().isNull())
-          if ($ddlx_dateTime.jsqlx_generateOnInsert$.TIMESTAMP.text().equals(type.jsqlx_generateOnInsert$().text()))
+        if (!type.jsql_generateOnInsert$().isNull())
+          if ($ddlx_dateTime.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
             generateOnInsert = GenerateOn.TIMESTAMP;
 
-        if (!type.jsqlx_generateOnUpdate$().isNull())
-          if ($ddlx_dateTime.jsqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.jsqlx_generateOnUpdate$().text()))
+        if (!type.jsql_generateOnUpdate$().isNull())
+          if ($ddlx_dateTime.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
             generateOnUpdate = GenerateOn.TIMESTAMP;
 
         return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
