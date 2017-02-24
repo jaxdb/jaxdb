@@ -37,10 +37,10 @@ import org.safris.commons.lang.Strings;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.commons.util.Random;
 import org.safris.commons.xml.XMLException;
-import org.safris.xdb.schema.runner.Derby;
-import org.safris.xdb.schema.runner.MySQL;
-import org.safris.xdb.schema.runner.PostgreSQL;
-import org.safris.xdb.schema.runner.VendorRunner;
+import org.safris.dbx.ddlx.runner.Derby;
+import org.safris.dbx.ddlx.runner.MySQL;
+import org.safris.dbx.ddlx.runner.PostgreSQL;
+import org.safris.dbx.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)

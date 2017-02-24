@@ -26,10 +26,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.xml.XMLException;
-import org.safris.xdb.schema.runner.Derby;
-import org.safris.xdb.schema.runner.MySQL;
-import org.safris.xdb.schema.runner.PostgreSQL;
-import org.safris.xdb.schema.runner.VendorRunner;
+import org.safris.dbx.ddlx.runner.Derby;
+import org.safris.dbx.ddlx.runner.MySQL;
+import org.safris.dbx.ddlx.runner.PostgreSQL;
+import org.safris.dbx.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)

@@ -31,12 +31,12 @@ import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.XMLException;
 import org.safris.dbx.ddlx.Schemas;
+import org.safris.dbx.ddlx.runner.Derby;
+import org.safris.dbx.ddlx.runner.MySQL;
+import org.safris.dbx.ddlx.runner.PostgreSQL;
+import org.safris.dbx.ddlx.runner.VendorRunner;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
 import org.safris.dbx.dmlx.xe.$dmlx_data;
-import org.safris.xdb.schema.runner.Derby;
-import org.safris.xdb.schema.runner.MySQL;
-import org.safris.xdb.schema.runner.PostgreSQL;
-import org.safris.xdb.schema.runner.VendorRunner;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 

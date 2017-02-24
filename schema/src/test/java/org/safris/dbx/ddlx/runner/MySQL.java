@@ -14,29 +14,30 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.runner;
+package org.safris.dbx.ddlx.runner;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.postgresql.Driver;
 import org.safris.commons.sql.ConnectionProxy;
 
+import com.mysql.cj.jdbc.Driver;
+
 @SuppressWarnings("unused")
-public class PostgreSQL implements Vendor {
+public class MySQL implements Vendor {
   @Override
   public synchronized void init() throws IOException, SQLException {
-//  CREATE USER dbx WITH PASSWORD 'dbx';
+//  CREATE USER dbx;
 //  CREATE DATABASE dbx;
-//  GRANT ALL PRIVILEGES ON DATABASE dbx TO dbx;
+//  GRANT ALL ON dbx.* TO 'dbx'@'localhost' IDENTIFIED BY 'dbx';
     new Driver();
   }
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:postgresql://localhost/dbx?user=dbx&password=dbx"));
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://localhost/dbx?user=dbx&password=dbx&useSSL=false"));
   }
 
   @Override

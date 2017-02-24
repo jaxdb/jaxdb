@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,11 +27,11 @@ import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.validate.ValidationException;
 import org.safris.dbx.ddlx.GeneratorExecutionException;
 import org.safris.dbx.ddlx.Schemas;
+import org.safris.dbx.ddlx.runner.Derby;
+import org.safris.dbx.ddlx.runner.MySQL;
+import org.safris.dbx.ddlx.runner.PostgreSQL;
+import org.safris.dbx.ddlx.runner.VendorRunner;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
-import org.safris.xdb.schema.runner.Derby;
-import org.safris.xdb.schema.runner.MySQL;
-import org.safris.xdb.schema.runner.PostgreSQL;
-import org.safris.xdb.schema.runner.VendorRunner;
 import org.safris.xsb.runtime.Bindings;
 import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;

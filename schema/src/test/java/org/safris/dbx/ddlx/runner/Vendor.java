@@ -1,4 +1,4 @@
-/* Copyright (c) 2015 Seva Safris
+/* Copyright (c) 2017 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,18 +14,14 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx.runner;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.safris.commons.test.LoggableTest;
-import org.safris.dbx.ddlx.SQLDataTypes;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
-public class SQLDataTypesTest extends LoggableTest {
-  @Test
-  public void testGetNumericByteCount() {
-    final int[] byteCounts = {1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9};
-    for (int i = 0; i < byteCounts.length; i++)
-      Assert.assertEquals(byteCounts[i], SQLDataTypes.getNumericByteCount(i + 1, true, null, null));
-  }
+public interface Vendor {
+  public void init() throws IOException, SQLException;
+  public Connection getConnection() throws IOException, SQLException;
+  public void destroy() throws IOException, SQLException;
 }

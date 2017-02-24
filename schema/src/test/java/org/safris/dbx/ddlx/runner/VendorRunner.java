@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.runner;
+package org.safris.dbx.ddlx.runner;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;

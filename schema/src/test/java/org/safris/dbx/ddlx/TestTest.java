@@ -1,4 +1,4 @@
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -9,10 +9,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.dbx.ddlx.DBVendor;
-import org.safris.xdb.schema.runner.Derby;
-import org.safris.xdb.schema.runner.MySQL;
-import org.safris.xdb.schema.runner.PostgreSQL;
-import org.safris.xdb.schema.runner.VendorRunner;
+import org.safris.dbx.ddlx.runner.Derby;
+import org.safris.dbx.ddlx.runner.MySQL;
+import org.safris.dbx.ddlx.runner.PostgreSQL;
+import org.safris.dbx.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, MySQL.class, PostgreSQL.class})
