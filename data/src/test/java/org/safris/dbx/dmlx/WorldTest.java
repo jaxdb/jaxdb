@@ -14,35 +14,22 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.data;
+package org.safris.dbx.dmlx;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.safris.commons.xml.XMLException;
 import org.safris.dbx.ddlx.runner.Derby;
-import org.safris.dbx.ddlx.runner.MySQL;
-import org.safris.dbx.ddlx.runner.PostgreSQL;
 import org.safris.dbx.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class ClassicModelsTest extends DataTest {
-  @BeforeClass
-  @VendorRunner.RunIn(VendorRunner.Test.class)
-  public static void createSchema() throws IOException, TransformerException {
-    createSchemas("classicmodels");
-  }
-
+public class WorldTest extends DataTest {
   @Test
-  public void testClassicModels(final Connection connection) throws IOException, SQLException, XMLException {
-    testData(connection, "classicmodels");
+  public void testWorld() throws IOException, TransformerException {
+    createSchemas("world");
   }
 }

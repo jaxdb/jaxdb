@@ -14,22 +14,19 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.data;
+package org.safris.dbx.dmlx;
 
-import java.io.IOException;
+import org.safris.dbx.ddlx.DBVendor;
+import org.safris.dbx.dmlx.xe.$dmlx_blob;
 
-import javax.xml.transform.TransformerException;
+public final class DerbySerializer extends Serializer {
+  @Override
+  protected DBVendor getVendor() {
+    return DBVendor.DERBY;
+  }
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.safris.dbx.ddlx.runner.Derby;
-import org.safris.dbx.ddlx.runner.VendorRunner;
-
-@RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
-public class WorldTest extends DataTest {
-  @Test
-  public void testWorld() throws IOException, TransformerException {
-    createSchemas("world");
+  @Override
+  protected final String serialize(final $dmlx_blob attribute) {
+    return "CAST(X'" + attribute.text() + "' AS BLOB)";
   }
 }

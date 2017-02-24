@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.data;
+package org.safris.dbx.dmlx;
 
 import java.io.File;
 import java.io.IOException;
