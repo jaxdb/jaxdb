@@ -144,9 +144,9 @@ public final class Datas {
     return builder.toString();
   }
 
-  public static void createXSD(final URL xdsFile, final File xsdFile) throws IOException, TransformerException {
+  public static void createXSD(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), xdsFile, xsdFile);
+    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), ddlxFile, xsdFile);
     ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), xsdFile.getParentFile().toURI().toURL());
   }
 

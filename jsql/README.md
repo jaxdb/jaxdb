@@ -1,20 +1,20 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## XDE (xdb-entities)<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## jSQL<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
 > eXtensible Data Binding Entities
 
 ### Introduction
 
-**XDE (xdb-entities)** is an extension to [**xdb-schema**][xdb-schema], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **XDE** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. XDE uses a SQL schema defined in a [XDS file][hospital.xds] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**jSQL** is an extension to [**dbx-ddlx**][dbx-ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. jsql uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
-### Why **XDE**?
+### Why **jSQL**?
 
 #### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, **XDE** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **XDE** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **XDE** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
+Developed with the CohesionFirst™ approach, **jSQL** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **jSQL** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **jSQL** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
 
 #### Strongly Typed DML Semantics
 
-In addition to generating Java classes that bind to a DDL, the **XDE** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
+In addition to generating Java classes that bind to a DDL, the **jSQL** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
 
 ```java
 public static basis.Account findAccount(final String email) throws SQLException {
@@ -29,17 +29,17 @@ public static basis.Account findAccount(final String email) throws SQLException 
 }
 ```
 
-**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **XDE** provides a strongly typed approach for the construction of SQL DML.
+**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **jSQL** provides a strongly typed approach for the construction of SQL DML.
 
 Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
 
 #### Fast and Memory Efficient
 
-**XDE** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
+**jSQL** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
 
 #### Cohesive and Fail-Fast
 
-**XDE** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
+**jSQL** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
 
 ### Getting Started
 
@@ -50,34 +50,34 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Example
 
-1. As **XDE** framework requires a XDS-based SQL Schema, start with a [`xdb-schema` Example][schema-example].
+1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`dbx-ddlx` Example][ddlx-example].
 
-2. Next, add the `org.safris.xdb:XDE` dependency into the POM.
+2. Next, add the `org.safris.dbx:dbx-jsql` dependency into the POM.
 
   ```xml
   <dependency>
-    <groupId>org.safris.xdb</groupId>
-    <artifactId>xdb-entities</artifactId>
-    <version>1.3.3</version>
+    <groupId>org.safris.dbx</groupId>
+    <artifactId>dbx-jsql</artifactId>
+    <version>0.9.5</version>
   </dependency>
   ```
 
-3. Include a `xde` goal in your `xdb-maven-plugin` in the POM.
+3. Include a `jsql` goal in your `dbx-maven-plugin` in the POM.
 
   ```xml
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>xdb-maven-plugin</artifactId>
-    <version>1.3.2</version>
+    <artifactId>dbx-maven-plugin</artifactId>
+    <version>0.9.1</version>
     <executions>
       <!-- [...] the xdl <execution> is here -->
       <execution>
-        <id>xde</id>
+        <id>jsql</id>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-sources/xde</destdir>
+            <destdir>${project.build.directory}/generated-sources/dbx</destdir>
             <resources>
-              <resource>src/main/resources/schema.xdl</resource>
+              <resource>src/main/resources/schema.ddlx</resource>
             </resources>
           </manifest>
         </configuration>
@@ -86,7 +86,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </plugin>
   ```
 
-4. Run `mvn install`, and upon successful execution of the `xdb-maven-plugin`, classes will be generated in `target/generated-sources/xdb`. Add this path to your Build Paths in your IDE to integrate into your project.
+4. Run `mvn install`, and upon successful execution of the `dbx-maven-plugin`, classes will be generated in `target/generated-sources/dbx`. Add this path to your Build Paths in your IDE to integrate into your project.
 
 5. In `App.java`, include:
 
@@ -120,7 +120,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **XDE** to your database. **XDE** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
@@ -178,7 +178,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the **XDE** `EntityRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `EntityRegistry`.
 
   ```java
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
@@ -195,7 +195,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Known Issues
 
-* To model the strong-typed relation amongst the DataType(s), the **XDE** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the DataType(s), the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ### Dev Status
 
@@ -510,36 +510,36 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 
 [commons-dbcp]: https://github.com/SevaSafris/commons-dbcp
 [dbcp.xsd]: https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd
-[hospital.xds]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/resources/hospital.xds
+[dbx-ddlx]: https://github.com/SevaSafris/dbx/tree/master/ddlx/
+[ddlx-example]: https://github.com/SevaSafris/dbx/tree/master/ddlx#example
+[hospital.ddlx]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven]: https://maven.apache.org/
-[schema-example]: https://github.com/SevaSafris/xdb/tree/master/schema#example
-[xdb-schema]: https://github.com/SevaSafris/xdb/tree/master/schema/
 
-[BetweenPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/BetweenPredicateTest.java
-[BooleanValueExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/BooleanValueExpressionTest.java
-[CastTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/CastTest.java
-[ComparisonPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/ComparisonPredicateTest.java
-[CorrelatedSubQueryTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/CorrelatedSubQueryTest.java
-[CountFunctionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/CountFunctionTest.java
-[DateTimeValueExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/DateTimeValueExpressionTest.java
-[DeleteTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/DeleteTest.java
-[ExistsPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/ExistsPredicateTest.java
-[GroupClauseTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/GroupClauseTest.java
-[HavingClauseTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/HavingClauseTest.java
-[InPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/InPredicateTest.java
-[InsertTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/InsertTest.java
-[JoinedTableTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/JoinedTableTest.java
-[LikePredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/LikePredicateTest.java
-[LimitExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/LimitExpressionTest.java
-[NullPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/NullPredicateTest.java
-[NumericFunctionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/NumericFunctionTest.java
-[NumericValueExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/NumericValueExpressionTest.java
-[OrderExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/OrderExpressionTest.java
-[QuantifiedComparisonPredicateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/QueryExpressionTest.java
-[SetFunctionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/SetFunctionTest.java
-[StringValueExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/StringValueExpressionTest.java
-[UnionExpressionTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/UnionExpressionTest.java
-[UpdateTest]: https://github.com/SevaSafris/xdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/xdb/xde/UpdateTest.java
+[BetweenPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/BetweenPredicateTest.java
+[BooleanValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/BooleanValueExpressionTest.java
+[CastTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CastTest.java
+[ComparisonPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/ComparisonPredicateTest.java
+[CorrelatedSubQueryTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CorrelatedSubQueryTest.java
+[CountFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CountFunctionTest.java
+[DateTimeValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/DateTimeValueExpressionTest.java
+[DeleteTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/DeleteTest.java
+[ExistsPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/ExistsPredicateTest.java
+[GroupClauseTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/GroupClauseTest.java
+[HavingClauseTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/HavingClauseTest.java
+[InPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/InPredicateTest.java
+[InsertTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/InsertTest.java
+[JoinedTableTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/JoinedTableTest.java
+[LikePredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/LikePredicateTest.java
+[LimitExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/LimitExpressionTest.java
+[NullPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NullPredicateTest.java
+[NumericFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NumericFunctionTest.java
+[NumericValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NumericValueExpressionTest.java
+[OrderExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/OrderExpressionTest.java
+[QuantifiedComparisonPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/QuantifiedComparisonPredicateTest.java
+[QueryExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/QueryExpressionTest.java
+[SetFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/SetFunctionTest.java
+[StringValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/StringValueExpressionTest.java
+[UnionExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/UnionExpressionTest.java
+[UpdateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/UpdateTest.java
