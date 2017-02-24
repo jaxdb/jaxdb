@@ -25,8 +25,8 @@
     <version>1.7.1</version>
   </parent>
   <groupId>org.safris</groupId>
-  <artifactId>xdb</artifactId>
-  <version>1.1.5</version>
+  <artifactId>dbx</artifactId>
+  <version>0.9.1</version>
   <packaging>pom</packaging>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -34,13 +34,10 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
   <name>${project.groupId}:${project.artifactId}</name>
-  <description>
-    eXtended Data Binding
-  </description>
   <modules>
-    <module>data</module>
-    <module>entities</module>
-    <module>schema</module>
+    <module>ddlx</module>
+    <module>dmlx</module>
+    <module>jsql</module>
   </modules>
   <build>
     <plugins>
