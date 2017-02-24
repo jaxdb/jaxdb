@@ -18,8 +18,8 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.xdb.entities.model.select;
-import org.safris.xdb.schema.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
   protected final Operator<ComparisonPredicate<?>> operator;

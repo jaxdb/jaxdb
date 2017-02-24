@@ -18,7 +18,7 @@ package org.safris.xdb.entities;
 
 import java.io.IOException;
 
-import org.safris.xdb.schema.DBVendor;
+import org.safris.dbx.ddlx.DBVendor;
 
 final class BooleanTerm extends type.BOOLEAN {
   protected final Operator<BooleanTerm> operator;

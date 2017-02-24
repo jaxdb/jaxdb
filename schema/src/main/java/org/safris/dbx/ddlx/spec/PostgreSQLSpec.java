@@ -14,13 +14,14 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.spec;
+package org.safris.dbx.ddlx.spec;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.dbx.ddlx.SQLDataTypes;
 import org.safris.dbx.ddlx.xe.$ddlx_column;
 import org.safris.dbx.ddlx.xe.$ddlx_enum;
 import org.safris.dbx.ddlx.xe.$ddlx_index;
@@ -28,7 +29,6 @@ import org.safris.dbx.ddlx.xe.$ddlx_integer;
 import org.safris.dbx.ddlx.xe.$ddlx_named;
 import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.maven.common.Log;
-import org.safris.xdb.schema.SQLDataTypes;
 
 public final class PostgreSQLSpec extends SQLSpec {
   @Override

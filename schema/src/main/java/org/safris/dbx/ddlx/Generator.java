@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,13 +28,13 @@ import java.util.Set;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.xml.XMLException;
+import org.safris.dbx.ddlx.standard.ReservedWords;
+import org.safris.dbx.ddlx.standard.SQLStandard;
 import org.safris.dbx.ddlx.xe.$ddlx_column;
 import org.safris.dbx.ddlx.xe.$ddlx_compliant;
 import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
 import org.safris.maven.common.Log;
-import org.safris.xdb.schema.standard.ReservedWords;
-import org.safris.xdb.schema.standard.SQLStandard;
 
 public final class Generator extends BaseGenerator {
   public static void main(final String[] args) throws Exception {

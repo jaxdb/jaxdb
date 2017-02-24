@@ -16,8 +16,8 @@
 
 package org.safris.xdb.data;
 
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.dbx.dmlx.xe.$dmlx_blob;
-import org.safris.xdb.schema.DBVendor;
 
 public final class DerbySerializer extends Serializer {
   @Override

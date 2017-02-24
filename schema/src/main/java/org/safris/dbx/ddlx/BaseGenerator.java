@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
 import java.io.File;
 import java.io.FileOutputStream;

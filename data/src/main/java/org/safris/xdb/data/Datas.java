@@ -29,6 +29,7 @@ import javax.xml.transform.TransformerException;
 
 import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.dbx.dmlx.xe.$dmlx_binary;
 import org.safris.dbx.dmlx.xe.$dmlx_blob;
 import org.safris.dbx.dmlx.xe.$dmlx_boolean;
@@ -43,7 +44,6 @@ import org.safris.dbx.dmlx.xe.$dmlx_float;
 import org.safris.dbx.dmlx.xe.$dmlx_integer;
 import org.safris.dbx.dmlx.xe.$dmlx_row;
 import org.safris.dbx.dmlx.xe.$dmlx_time;
-import org.safris.xdb.schema.DBVendor;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.QName;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;

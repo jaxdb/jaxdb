@@ -40,7 +40,7 @@ import java.util.Map;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Numbers;
 import org.safris.commons.util.Formats;
-import org.safris.xdb.schema.DBVendor;
+import org.safris.dbx.ddlx.DBVendor;
 
 public final class type {
   public static interface UNSIGNED {

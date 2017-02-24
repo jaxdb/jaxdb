@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.ExecuteUpdate;
 import org.safris.xdb.entities.model.insert;
 import org.safris.xdb.entities.model.select;
-import org.safris.xdb.schema.DBVendor;
 
 final class Insert {
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {

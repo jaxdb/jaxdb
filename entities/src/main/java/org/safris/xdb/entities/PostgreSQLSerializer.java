@@ -28,10 +28,10 @@ import java.sql.Statement;
 
 import org.safris.commons.io.Readers;
 import org.safris.commons.io.Streams;
+import org.safris.dbx.ddlx.DBVendor;
+import org.safris.dbx.ddlx.spec.PostgreSQLSpec;
 import org.safris.xdb.entities.type.BLOB;
 import org.safris.xdb.entities.type.ENUM;
-import org.safris.xdb.schema.DBVendor;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
 
 final class PostgreSQLSerializer extends Serializer {
   @Override

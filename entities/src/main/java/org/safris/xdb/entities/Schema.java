@@ -21,9 +21,9 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.exception.SQLInvalidSchemaNameException;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Schema {
   private static final Set<Class<? extends Schema>> inited = new HashSet<Class<? extends Schema>>();

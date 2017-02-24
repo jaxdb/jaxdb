@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.xdb.entities.exception.SQLExceptionCatalog;
 import org.safris.xdb.entities.model.delete;
-import org.safris.xdb.schema.DBVendor;
 
 final class Delete {
   private static abstract class Execute extends Keyword<type.DataType<?>> implements delete.DELETE {

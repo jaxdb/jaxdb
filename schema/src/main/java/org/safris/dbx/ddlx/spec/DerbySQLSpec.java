@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.spec;
+package org.safris.dbx.ddlx.spec;
 
 import java.io.IOException;
 import java.sql.Clob;
@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.safris.commons.io.Readers;
+import org.safris.dbx.ddlx.GeneratorExecutionException;
+import org.safris.dbx.ddlx.SQLDataTypes;
 import org.safris.dbx.ddlx.xe.$ddlx_column;
 import org.safris.dbx.ddlx.xe.$ddlx_enum;
 import org.safris.dbx.ddlx.xe.$ddlx_foreignKey;
@@ -34,8 +36,6 @@ import org.safris.dbx.ddlx.xe.$ddlx_integer;
 import org.safris.dbx.ddlx.xe.$ddlx_named;
 import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
-import org.safris.xdb.schema.GeneratorExecutionException;
-import org.safris.xdb.schema.SQLDataTypes;
 
 public final class DerbySQLSpec extends SQLSpec {
   public static void createSchemaIfNotExists(final String schemaName) throws SQLException {

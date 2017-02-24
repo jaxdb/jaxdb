@@ -14,15 +14,15 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
-import org.safris.xdb.schema.spec.DerbySQLSpec;
-import org.safris.xdb.schema.spec.MySQLSpec;
-import org.safris.xdb.schema.spec.PostgreSQLSpec;
-import org.safris.xdb.schema.spec.SQLSpec;
+import org.safris.dbx.ddlx.spec.DerbySQLSpec;
+import org.safris.dbx.ddlx.spec.MySQLSpec;
+import org.safris.dbx.ddlx.spec.PostgreSQLSpec;
+import org.safris.dbx.ddlx.spec.SQLSpec;
 
 public enum DBVendor {
   DERBY("Derby", new DerbySQLSpec()),

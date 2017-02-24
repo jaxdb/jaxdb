@@ -16,7 +16,7 @@
 
 package org.safris.xdb.data;
 
-import org.safris.xdb.schema.DBVendor;
+import org.safris.dbx.ddlx.DBVendor;
 
 public final class MySQLSerializer extends Serializer {
   @Override

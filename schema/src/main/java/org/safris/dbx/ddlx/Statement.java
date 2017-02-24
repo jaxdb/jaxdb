@@ -1,4 +1,4 @@
-/* Copyright (c) 2016 Seva Safris
+/* Copyright (c) 2015 Seva Safris
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,24 +14,25 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema;
+package org.safris.dbx.ddlx;
 
-public class GeneratorExecutionException extends Exception {
-  private static final long serialVersionUID = -4006676149774657634L;
-
-  public GeneratorExecutionException() {
-    super();
+public class Statement {
+  public static enum Type {
+    CREATE,
+    DROP
   }
 
-  public GeneratorExecutionException(final String message) {
-    super(message);
+  public final String name;
+  public final String[] drop;
+  public final String[] create;
+
+  public Statement(final String name, final String[] drop, final String[] create) {
+    this.name = name;
+    this.drop = drop;
+    this.create = create;
   }
 
-  public GeneratorExecutionException(final Throwable cause) {
-    super(cause);
-  }
-
-  public GeneratorExecutionException(final String message, final Throwable cause) {
-    super(message, cause);
+  public String[] get(final Type type) {
+    return type == Type.CREATE ? create : type == Type.DROP ? drop : null;
   }
 }

@@ -34,8 +34,8 @@ import org.safris.commons.io.Streams;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.xdb.entities.Insert.VALUES;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Serializer {
   private static final Serializer[] serializers = new Serializer[DBVendor.values().length];

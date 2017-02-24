@@ -18,9 +18,9 @@ package org.safris.xdb.data;
 
 import org.safris.commons.lang.Bytes;
 import org.safris.commons.util.Hexadecimal;
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.dbx.dmlx.xe.$dmlx_binary;
 import org.safris.dbx.dmlx.xe.$dmlx_blob;
-import org.safris.xdb.schema.DBVendor;
 
 public final class PostgreSQLSerializer extends Serializer {
   @Override

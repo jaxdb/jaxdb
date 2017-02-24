@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.standard;
+package org.safris.dbx.ddlx.standard;
 
 import java.util.HashMap;
 import java.util.Map;

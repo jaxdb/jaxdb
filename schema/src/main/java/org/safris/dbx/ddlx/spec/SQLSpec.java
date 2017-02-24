@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.xdb.schema.spec;
+package org.safris.dbx.ddlx.spec;
 
 import java.math.BigInteger;
 import java.sql.Connection;
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.safris.commons.lang.Numbers;
+import org.safris.dbx.ddlx.GeneratorExecutionException;
+import org.safris.dbx.ddlx.SQLDataTypes;
 import org.safris.dbx.ddlx.xe.$ddlx_bigint;
 import org.safris.dbx.ddlx.xe.$ddlx_binary;
 import org.safris.dbx.ddlx.xe.$ddlx_blob;
@@ -48,8 +50,6 @@ import org.safris.dbx.ddlx.xe.$ddlx_table;
 import org.safris.dbx.ddlx.xe.$ddlx_time;
 import org.safris.dbx.ddlx.xe.$ddlx_tinyint;
 import org.safris.dbx.ddlx.xe.ddlx_schema;
-import org.safris.xdb.schema.GeneratorExecutionException;
-import org.safris.xdb.schema.SQLDataTypes;
 
 public abstract class SQLSpec {
   protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns);

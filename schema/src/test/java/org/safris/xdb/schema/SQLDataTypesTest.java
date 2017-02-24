@@ -19,7 +19,7 @@ package org.safris.xdb.schema;
 import org.junit.Assert;
 import org.junit.Test;
 import org.safris.commons.test.LoggableTest;
-import org.safris.xdb.schema.SQLDataTypes;
+import org.safris.dbx.ddlx.SQLDataTypes;
 
 public class SQLDataTypesTest extends LoggableTest {
   @Test

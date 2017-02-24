@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Set;
 
-import org.safris.xdb.schema.DBVendor;
+import org.safris.dbx.ddlx.DBVendor;
 
 final class MySQLSerializer extends Serializer {
   @Override

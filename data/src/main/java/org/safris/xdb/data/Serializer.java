@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
+import org.safris.dbx.ddlx.DBVendor;
 import org.safris.dbx.dmlx.xe.$dmlx_binary;
 import org.safris.dbx.dmlx.xe.$dmlx_blob;
 import org.safris.dbx.dmlx.xe.$dmlx_boolean;
@@ -33,7 +34,6 @@ import org.safris.dbx.dmlx.xe.$dmlx_enum;
 import org.safris.dbx.dmlx.xe.$dmlx_float;
 import org.safris.dbx.dmlx.xe.$dmlx_integer;
 import org.safris.dbx.dmlx.xe.$dmlx_time;
-import org.safris.xdb.schema.DBVendor;
 
 public abstract class Serializer {
   private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
