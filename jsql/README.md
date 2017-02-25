@@ -1,10 +1,10 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## jSQL<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
-> eXtensible Data Binding Entities
+## dbb-jsql<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+> Database Binding jSQL
 
 ### Introduction
 
-**jSQL** is an extension to [**dbx-ddlx**][dbx-ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. jsql uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. jsql uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
 ### Why **jSQL**?
 
@@ -50,24 +50,24 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Example
 
-1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`dbx-ddlx` Example][ddlx-example].
+1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
-2. Next, add the `org.safris.dbx:dbx-jsql` dependency into the POM.
+2. Next, add the `org.safris.dbb:dbb-jsql` dependency into the POM.
 
   ```xml
   <dependency>
-    <groupId>org.safris.dbx</groupId>
-    <artifactId>dbx-jsql</artifactId>
+    <groupId>org.safris.dbb</groupId>
+    <artifactId>dbb-jsql</artifactId>
     <version>0.9.5</version>
   </dependency>
   ```
 
-3. Include a `jsql` goal in your `dbx-maven-plugin` in the POM.
+3. Include a `jsql` goal in your `dbb-maven-plugin` in the POM.
 
   ```xml
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>dbx-maven-plugin</artifactId>
+    <artifactId>dbb-maven-plugin</artifactId>
     <version>0.9.1</version>
     <executions>
       <!-- [...] the xdl <execution> is here -->
@@ -75,7 +75,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
         <id>jsql</id>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-sources/dbx</destdir>
+            <destdir>${project.build.directory}/generated-sources/dbb</destdir>
             <resources>
               <resource>src/main/resources/schema.ddlx</resource>
             </resources>
@@ -86,7 +86,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </plugin>
   ```
 
-4. Run `mvn install`, and upon successful execution of the `dbx-maven-plugin`, classes will be generated in `target/generated-sources/dbx`. Add this path to your Build Paths in your IDE to integrate into your project.
+4. Run `mvn install`, and upon successful execution of the `dbb-maven-plugin`, classes will be generated in `target/generated-sources/dbb`. Add this path to your Build Paths in your IDE to integrate into your project.
 
 5. In `App.java`, include:
 
@@ -509,37 +509,37 @@ Specification                                                                   
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details. 
 
 [commons-dbcp]: https://github.com/SevaSafris/commons-dbcp
+[ddlx]: https://github.com/SevaSafris/dbb/tree/master/ddlx/
 [dbcp.xsd]: https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd
-[dbx-ddlx]: https://github.com/SevaSafris/dbx/tree/master/ddlx/
-[ddlx-example]: https://github.com/SevaSafris/dbx/tree/master/ddlx#example
-[hospital.ddlx]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/resources/hospital.ddlx
+[ddlx-example]: https://github.com/SevaSafris/dbb/tree/master/ddlx#example
+[hospital.ddlx]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven]: https://maven.apache.org/
 
-[BetweenPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/BetweenPredicateTest.java
-[BooleanValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/BooleanValueExpressionTest.java
-[CastTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CastTest.java
-[ComparisonPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/ComparisonPredicateTest.java
-[CorrelatedSubQueryTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CorrelatedSubQueryTest.java
-[CountFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/CountFunctionTest.java
-[DateTimeValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/DateTimeValueExpressionTest.java
-[DeleteTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/DeleteTest.java
-[ExistsPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/ExistsPredicateTest.java
-[GroupClauseTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/GroupClauseTest.java
-[HavingClauseTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/HavingClauseTest.java
-[InPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/InPredicateTest.java
-[InsertTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/InsertTest.java
-[JoinedTableTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/JoinedTableTest.java
-[LikePredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/LikePredicateTest.java
-[LimitExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/LimitExpressionTest.java
-[NullPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NullPredicateTest.java
-[NumericFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NumericFunctionTest.java
-[NumericValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/NumericValueExpressionTest.java
-[OrderExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/OrderExpressionTest.java
-[QuantifiedComparisonPredicateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/QueryExpressionTest.java
-[SetFunctionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/SetFunctionTest.java
-[StringValueExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/StringValueExpressionTest.java
-[UnionExpressionTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/UnionExpressionTest.java
-[UpdateTest]: https://github.com/SevaSafris/dbx-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbx/jsql/UpdateTest.java
+[BetweenPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/BetweenPredicateTest.java
+[BooleanValueExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/BooleanValueExpressionTest.java
+[CastTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/CastTest.java
+[ComparisonPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/ComparisonPredicateTest.java
+[CorrelatedSubQueryTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/CorrelatedSubQueryTest.java
+[CountFunctionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/CountFunctionTest.java
+[DateTimeValueExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/DateTimeValueExpressionTest.java
+[DeleteTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/DeleteTest.java
+[ExistsPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/ExistsPredicateTest.java
+[GroupClauseTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/GroupClauseTest.java
+[HavingClauseTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/HavingClauseTest.java
+[InPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/InPredicateTest.java
+[InsertTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/InsertTest.java
+[JoinedTableTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/JoinedTableTest.java
+[LikePredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/LikePredicateTest.java
+[LimitExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/LimitExpressionTest.java
+[NullPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/NullPredicateTest.java
+[NumericFunctionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/NumericFunctionTest.java
+[NumericValueExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/NumericValueExpressionTest.java
+[OrderExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/OrderExpressionTest.java
+[QuantifiedComparisonPredicateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/QuantifiedComparisonPredicateTest.java
+[QueryExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/QueryExpressionTest.java
+[SetFunctionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/SetFunctionTest.java
+[StringValueExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/StringValueExpressionTest.java
+[UnionExpressionTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/UnionExpressionTest.java
+[UpdateTest]: https://github.com/SevaSafris/dbb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/dbb/jsql/UpdateTest.java

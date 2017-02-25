@@ -16,7 +16,7 @@
 -->
 <World xmlns="dmlx.world"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="dmlx.world ../../../target/generated-test-resources/dbx/world.xsd">
+  xsi:schemaLocation="dmlx.world ../../../target/generated-test-resources/dbb/world.xsd">
   <Country
     code="ABW"
     code2="AW"

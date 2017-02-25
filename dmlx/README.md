@@ -1,26 +1,26 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right" />
-## dbx-data<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
-> eXtensible Data Binding Data
+## dbb-dmlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+> Database Binding DMLx
 
 ### Introduction
 
-**dbx-data** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. Based on the CohesionFirst™ approach, the **dbx-data** framework utilizes a strongly-typed [DDLx][ddlx.xsd] file to generate a XML Schema document that translates DDLx constructs into the XSD language. With the [DMLx XSLT transform][dmlx.xsl], the **dbx-data** tool leverages the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL data (that conforms to your SQL schema, defined in a XSD file).
+**DMLx** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. Based on the CohesionFirst™ approach, the **DMLx** framework utilizes a strongly-typed [DDLx][ddlx.xsd] file to generate a XML Schema document that translates DDLx constructs into the XSD language. With the [DMLx XSLT transform][dmlx.xsl], the **DMLx** tool leverages the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL data (that conforms to your SQL schema, defined in a XSD file).
 
-### Why **dbx-data**?
+### Why **DMLx**?
 
-**dbx-data** is a natural extension of [**dbx-schema**][dbx-schema], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**dbx-entities**][dbx-entities], ***dbx-data*** is the last missing gap in dbx's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
+**DMLx** is a natural extension of [**DDLx**][ddlx], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**jSQL**][jsql], ***DMLx*** is the last missing gap in dbb's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
 
 #### CohesionFirst™
 
-Developed with the CohesionFirst™ approach, **dbx-data** is the cohesive alternative to the creation of RDBMS static data that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **dbx-data** is a complete solution for the creation and management of SQL static data. The **dbx-data** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
+Developed with the CohesionFirst™ approach, **DMLx** is the cohesive alternative to the creation of RDBMS static data that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **DMLx** is a complete solution for the creation and management of SQL static data. The **DMLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
 #### Vendor-Agnostic
 
-How can one create a SQL static data files that are not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **dbx-data** as the primary descriptor of one's SQL static data definition files, one can maintain a single SQL static data standard uncoupled to a RDBMS vendor.
+How can one create a SQL static data files that are not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **DMLx** as the primary descriptor of one's SQL static data definition files, one can maintain a single SQL static data standard uncoupled to a RDBMS vendor.
 
 #### Validating and Fail-Fast
 
-**dbx-data** is a standard that abstracts the static data loading DML with a vendor-agnostic model. Utilizing the full power of XML Schema Validation, **dbx-data** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL static data.
+**DMLx** is a standard that abstracts the static data loading DML with a vendor-agnostic model. Utilizing the full power of XML Schema Validation, **DMLx** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL static data.
 
 ### Getting Started
 
@@ -31,25 +31,25 @@ How can one create a SQL static data files that are not vendor specific? Often, 
 
 #### Example
 
-1. As the **dbx-data** tool extends the functionality of **dbx-schema**, please begin this example by first completing [the **dbx-schema** example][dbx-schema-example].
+1. As the **DMLx** tool extends the functionality of **DDLx**, please begin this example by first completing [the **DDLx** example][ddlx-example].
 
-4. After having created the basis.ddlx file, include an extra execution tag into the configuration of the dbx-maven-plugin.
+4. After having created the basis.ddlx file, include an extra execution tag into the configuration of the dbb-maven-plugin.
 
   ```xml
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>dbx-maven-plugin</artifactId>
+    <artifactId>dbb-maven-plugin</artifactId>
     <version>1.0.1</version>
     <executions>
       <execution>
-        <id>default-data</id>
+        <id>default-dml</id>
         <phase>generate-resources</phase>
         <goals>
-          <goal>data</goal>
+          <goal>dml</goal>
         </goals>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-resources/dbx</destdir>
+            <destdir>${project.build.directory}/generated-resources/dbb</destdir>
             <schemas>
               <schema>src/main/resources/basis.ddlx</schema>
             </schemas>
@@ -60,7 +60,7 @@ How can one create a SQL static data files that are not vendor specific? Often, 
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `dbx-maven-plugin`, an `basis.xsd` will be created in `generated-resources/dbx`.
+5. Run `mvn generate-resources`, and upon successful execution of the `dbb-maven-plugin`, an `basis.xsd` will be created in `generated-resources/dbb`.
 
 6. Create a `data.dmlx` file in the `src/main/resources` directory.
 
@@ -86,13 +86,13 @@ How can one create a SQL static data files that are not vendor specific? Often, 
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[dmlx.xsl]: https://github.com/SevaSafris/dbx/blob/master/data/src/main/resources/dmlx.xsl
+[ddlx-example]: https://github.com/SevaSafris/dbb/tree/master/ddlx#example
+[ddlx]: https://github.com/SevaSafris/dbb/blob/master/ddlx
+[dbb-maven-plugin]: https://github.com/SevaSafris/dbb-maven-plugin
+[ddlx.xsd]: https://github.com/SevaSafris/dbb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[dmlx.xsl]: https://github.com/SevaSafris/dbb/blob/master/data/src/main/resources/dmlx.xsl
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[jsql]: https://github.com/SevaSafris/dbb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
-[dbx-entities]: https://github.com/SevaSafris/dbx/blob/master/entities
-[dbx-maven-plugin]: https://github.com/SevaSafris/dbx-maven-plugin
-[dbx-schema-example]: https://github.com/SevaSafris/dbx/tree/master/schema#example
-[dbx-schema]: https://github.com/SevaSafris/dbx/blob/master/schema
-[ddlx.xsd]: https://github.com/SevaSafris/dbx/blob/master/schema/src/main/resources/ddlx.xsd

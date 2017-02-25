@@ -18,9 +18,9 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
-  xmlns:dmlx="http://dbx.safris.org/dmlx.xsd"
-  xmlns:function="http://dbx.safris.org/dmlx.xsl"
+  xmlns:ddlx="http://dbb.safris.org/ddlx.xsd"
+  xmlns:dmlx="http://dbb.safris.org/dmlx.xsd"
+  xmlns:function="http://dbb.safris.org/dmlx.xsl"
   xmlns:ext="http://exslt.org/common" 
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
   xmlns:saxon="http://saxon.sf.net/"
@@ -83,7 +83,7 @@
   <xsl:template match="/ddlx:schema">
     <xs:schema
       elementFormDefault="qualified"
-      xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
+      xmlns:ddlx="http://dbb.safris.org/ddlx.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
       
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
@@ -92,7 +92,7 @@
         <xsl:value-of select="$namespace"/>
       </xsl:attribute>
       
-      <xs:import namespace="http://dbx.safris.org/dmlx.xsd" schemaLocation="http://dbx.safris.org/dmlx.xsd"/>
+      <xs:import namespace="http://dbb.safris.org/dmlx.xsd" schemaLocation="http://dbb.safris.org/dmlx.xsd"/>
       
       <xsl:for-each select="ddlx:table">
         <xs:complexType>

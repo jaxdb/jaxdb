@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema name="classicmodels"
-  xmlns="http://dbx.safris.org/ddlx.xsd"
+  xmlns="http://dbb.safris.org/ddlx.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://dbx.safris.org/ddlx.xsd http://dbx.safris.org/ddlx.xsd">
+  xsi:schemaLocation="http://dbb.safris.org/ddlx.xsd http://dbb.safris.org/ddlx.xsd">
 
   <table name="address" abstract="true">
     <column name="address1" xsi:type="char" varying="true" length="255" null="false">

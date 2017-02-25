@@ -16,7 +16,7 @@
 -->
 <Classicmodels xmlns="dmlx.classicmodels"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="dmlx.classicmodels ../../../target/generated-test-resources/dbx/classicmodels.xsd">
+  xsi:schemaLocation="dmlx.classicmodels ../../../target/generated-test-resources/dbb/classicmodels.xsd">
   <Office
     officeCode="1"
     city="San Francisco"
