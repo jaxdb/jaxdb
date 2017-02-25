@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.safris</groupId>
     <artifactId>dbb</artifactId>
-    <version>0.9.5</version>
+    <version>0.9.7</version>
   </parent>
   <groupId>org.safris.dbb</groupId>
   <artifactId>dbb-dmlx</artifactId>
-  <version>0.9.2</version>
+  <version>0.9.7</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>

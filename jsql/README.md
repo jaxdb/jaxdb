@@ -58,7 +58,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <dependency>
     <groupId>org.safris.dbb</groupId>
     <artifactId>dbb-jsql</artifactId>
-    <version>0.9.5</version>
+    <version>0.9.7</version>
   </dependency>
   ```
 
@@ -68,7 +68,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
     <artifactId>dbb-maven-plugin</artifactId>
-    <version>0.9.1</version>
+    <version>0.9.7</version>
     <executions>
       <!-- [...] the xdl <execution> is here -->
       <execution>

@@ -39,7 +39,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
     <artifactId>dbb-maven-plugin</artifactId>
-    <version>0.9.5</version>
+    <version>0.9.7</version>
     <executions>
       <execution>
         <id>default-dml</id>
