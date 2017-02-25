@@ -18,7 +18,7 @@ package org.safris.dbb.jsql;
 
 import java.io.IOException;
 
-import org.safris.dbb.ddlx.DBVendor;
+import org.safris.dbb.vendor.DBVendor;
 
 final class BooleanTerm extends type.BOOLEAN {
   protected final Operator<BooleanTerm> operator;

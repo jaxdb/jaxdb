@@ -28,10 +28,10 @@ import java.sql.Statement;
 
 import org.safris.commons.io.Readers;
 import org.safris.commons.io.Streams;
-import org.safris.dbb.ddlx.DBVendor;
-import org.safris.dbb.ddlx.spec.PostgreSQLSpec;
 import org.safris.dbb.jsql.type.BLOB;
 import org.safris.dbb.jsql.type.ENUM;
+import org.safris.dbb.vendor.DBVendor;
+import org.safris.dbb.vendor.Dialect;
 
 final class PostgreSQLSerializer extends Serializer {
   @Override
@@ -142,7 +142,7 @@ final class PostgreSQLSerializer extends Serializer {
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
     if (dataType instanceof ENUM) {
       final EntityEnum entityEnum = (EntityEnum)dataType.get();
-      return "?::" + PostgreSQLSpec.getTypeName(entityEnum.table(), entityEnum.column());
+      return "?::" + Dialect.getTypeName(entityEnum.table(), entityEnum.column());
     }
 
     return "?";

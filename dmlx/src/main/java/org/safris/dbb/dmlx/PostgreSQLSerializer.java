@@ -18,11 +18,11 @@ package org.safris.dbb.dmlx;
 
 import org.safris.commons.lang.Bytes;
 import org.safris.commons.util.Hexadecimal;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.dmlx.xe.$dmlx_binary;
 import org.safris.dbb.dmlx.xe.$dmlx_blob;
+import org.safris.dbb.vendor.DBVendor;
 
-public final class PostgreSQLSerializer extends Serializer {
+final class PostgreSQLSerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;

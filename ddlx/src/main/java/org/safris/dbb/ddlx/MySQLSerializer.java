@@ -14,27 +14,31 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.ddlx.spec;
+package org.safris.dbb.ddlx;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.safris.dbb.ddlx.SQLDataTypes;
 import org.safris.dbb.ddlx.xe.$ddlx_column;
-import org.safris.dbb.ddlx.xe.$ddlx_enum;
 import org.safris.dbb.ddlx.xe.$ddlx_integer;
 import org.safris.dbb.ddlx.xe.$ddlx_named;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
+import org.safris.dbb.vendor.DBVendor;
 
-public final class MySQLSpec extends SQLSpec {
+public final class MySQLSerializer extends Serializer {
   @Override
-  public void init(final Connection connection) throws SQLException {
+  protected DBVendor getVendor() {
+    return DBVendor.MY_SQL;
   }
 
   @Override
-  public List<String> triggers(final $ddlx_table table) {
+  protected void init(final Connection connection) throws SQLException {
+  }
+
+  @Override
+  protected List<String> triggers(final $ddlx_table table) {
     if (table._triggers() == null)
       return super.triggers(table);
 
@@ -76,17 +80,17 @@ public final class MySQLSpec extends SQLSpec {
   }
 
   @Override
-  public String $null(final $ddlx_table table, final $ddlx_column column) {
+  protected String $null(final $ddlx_table table, final $ddlx_column column) {
     return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  public String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
     return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
-  public String truncate(final String tableName) {
+  protected String truncate(final String tableName) {
     return "DELETE FROM " + tableName;
   }
 
@@ -98,100 +102,5 @@ public final class MySQLSpec extends SQLSpec {
   @Override
   protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
     return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
-  }
-
-  @Override
-  public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return doublePrecision ? "DOUBLE" : "FLOAT" + (unsigned ? " UNSIGNED" : "");
-  }
-
-  @Override
-  public String declareBoolean() {
-    return "BOOLEAN";
-  }
-
-  @Override
-  public String declareBinary(final boolean varying, final long length) {
-    return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
-  }
-
-  @Override
-  public String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
-  }
-
-  @Override
-  public String declareClob(final long length) {
-    return "TEXT(" + length + ")";
-  }
-
-  @Override
-  public String declareBlob(final long length) {
-    return "BLOB(" + length + ")";
-  }
-
-  @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
-    SQLDataTypes.checkValidNumber(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")" + (unsigned ? " UNSIGNED" : "");
-  }
-
-  @Override
-  public String declareDate() {
-    return "DATE";
-  }
-
-  @Override
-  public String declareDateTime(final short precision) {
-    return "DATETIME(" + Math.max(0, precision - 6) + ")";
-  }
-
-  @Override
-  public String declareTime(final short precision) {
-    return "TIME(" + Math.max(0, precision - 6) + ")";
-  }
-
-  @Override
-  public String declareInterval() {
-    return "INTERVAL";
-  }
-
-  @Override
-  public String declareInt8(final short precision, final boolean unsigned) {
-    return "TINYINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
-  }
-
-  @Override
-  public String declareInt16(final short precision, final boolean unsigned) {
-    return "SMALLINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
-  }
-
-  @Override
-  public String declareInt32(final short precision, final boolean unsigned) {
-    if (unsigned && precision < 9)
-      return "MEDIUMINT(" + precision + ") UNSIGNED";
-
-    if (!unsigned && precision < 8)
-      return "MEDIUMINT(" + precision + ")";
-
-    return "INTEGER(" + precision + (unsigned ? ") UNSIGNED" : ")");
-  }
-
-  @Override
-  public String declareInt64(final short precision, final boolean unsigned) {
-    return "BIGINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
-  }
-
-  @Override
-  public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
-    if (type._values$().isNull())
-      return "ENUM()";
-
-    final List<String> enums = parseEnum(type._values$().text());
-    final StringBuilder builder = new StringBuilder();
-    for (final String value : enums)
-      builder.append(", '").append(value).append("'");
-
-    return "ENUM(" + builder.append(")").substring(2);
   }
 }

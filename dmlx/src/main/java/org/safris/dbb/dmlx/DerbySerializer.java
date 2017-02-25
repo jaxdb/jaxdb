@@ -16,10 +16,10 @@
 
 package org.safris.dbb.dmlx;
 
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.dmlx.xe.$dmlx_blob;
+import org.safris.dbb.vendor.DBVendor;
 
-public final class DerbySerializer extends Serializer {
+final class DerbySerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.DERBY;

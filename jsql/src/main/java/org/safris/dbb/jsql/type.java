@@ -40,7 +40,7 @@ import java.util.Map;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Numbers;
 import org.safris.commons.util.Formats;
-import org.safris.dbb.ddlx.DBVendor;
+import org.safris.dbb.vendor.DBVendor;
 
 public final class type {
   public static interface UNSIGNED {
@@ -216,7 +216,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getSQLSpec().declareInt64(precision(), unsigned());
+        return vendor.getDialect().declareInt64(precision(), unsigned());
       }
 
       @Override
@@ -337,7 +337,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt64(precision(), unsigned());
+      return vendor.getDialect().declareInt64(precision(), unsigned());
     }
 
     @Override
@@ -428,7 +428,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareBinary(varying, length());
+      return vendor.getDialect().declareBinary(varying, length());
     }
 
     @Override
@@ -511,7 +511,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareBlob(length);
+      return vendor.getDialect().declareBlob(length);
     }
 
     @Override
@@ -521,7 +521,7 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      Serializer.getSerializer(DBVendor.parse(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
@@ -568,7 +568,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareBoolean();
+      return vendor.getDialect().declareBoolean();
     }
 
     @Override
@@ -648,7 +648,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareChar(varying, length());
+      return vendor.getDialect().declareChar(varying, length());
     }
 
     @Override
@@ -717,7 +717,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareClob(length);
+      return vendor.getDialect().declareClob(length);
     }
 
     @Override
@@ -727,12 +727,12 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      Serializer.getSerializer(DBVendor.parse(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.parse(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
@@ -776,7 +776,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareDate();
+      return vendor.getDialect().declareDate();
     }
 
     @Override
@@ -996,7 +996,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareDateTime(precision);
+      return vendor.getDialect().declareDateTime(precision);
     }
 
     @Override
@@ -1153,7 +1153,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareDecimal(precision(), scale(), unsigned());
+      return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
     }
 
     @Override
@@ -1276,7 +1276,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareFloat(true, unsigned());
+      return vendor.getDialect().declareFloat(true, unsigned());
     }
 
     @Override
@@ -1485,7 +1485,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareFloat(false, unsigned());
+      return vendor.getDialect().declareFloat(false, unsigned());
     }
 
     @Override
@@ -1610,7 +1610,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getSQLSpec().declareInt32(precision(), unsigned());
+        return vendor.getDialect().declareInt32(precision(), unsigned());
       }
 
       @Override
@@ -1722,7 +1722,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt32(precision(), unsigned());
+      return vendor.getDialect().declareInt32(precision(), unsigned());
     }
 
     @Override
@@ -1836,7 +1836,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getSQLSpec().declareInt32(precision(), unsigned());
+        return vendor.getDialect().declareInt32(precision(), unsigned());
       }
 
       @Override
@@ -1951,7 +1951,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt32(precision(), unsigned());
+      return vendor.getDialect().declareInt32(precision(), unsigned());
     }
 
     @Override
@@ -2169,7 +2169,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getSQLSpec().declareInt8(precision(), unsigned());
+        return vendor.getDialect().declareInt8(precision(), unsigned());
       }
 
       @Override
@@ -2290,7 +2290,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareInt8(precision(), unsigned());
+      return vendor.getDialect().declareInt8(precision(), unsigned());
     }
 
     @Override
@@ -2432,7 +2432,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getSQLSpec().declareTime(precision);
+      return vendor.getDialect().declareTime(precision);
     }
 
     @Override

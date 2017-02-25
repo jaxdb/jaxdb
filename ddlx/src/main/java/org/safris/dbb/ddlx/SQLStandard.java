@@ -14,16 +14,16 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.ddlx.standard;
+package org.safris.dbb.ddlx;
 
 import org.safris.commons.util.MaskedEnum;
 
-public class SQLStandard extends MaskedEnum {
-  public static final SQLStandard SQL92 = new SQLStandard(0, "SQL-92");
-  public static final SQLStandard SQL99 = new SQLStandard(1, "SQL-99");
-  public static final SQLStandard SQL2003 = new SQLStandard(2, "SQL-2003");
+class SQLStandard extends MaskedEnum {
+  protected static final SQLStandard SQL92 = new SQLStandard(0, "SQL-92");
+  protected static final SQLStandard SQL99 = new SQLStandard(1, "SQL-99");
+  protected static final SQLStandard SQL2003 = new SQLStandard(2, "SQL-2003");
 
-  public static SQLStandard[] toArray(final int mask) {
+  protected static SQLStandard[] toArray(final int mask) {
     return MaskedEnum.<SQLStandard>toArray(SQLStandard.class, mask);
   }
 

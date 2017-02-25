@@ -20,7 +20,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.safris.dbb.ddlx.DBVendor;
+import org.safris.dbb.vendor.DBVendor;
 
 abstract class ConditionWrapper<T> extends Condition<T> {
   @Override

@@ -18,8 +18,8 @@ package org.safris.dbb.jsql;
 
 import java.io.IOException;
 
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.jsql.model.select;
+import org.safris.dbb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
   protected final Operator<ComparisonPredicate<?>> operator;

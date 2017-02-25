@@ -8,11 +8,11 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
 import org.safris.dbb.ddlx.runner.VendorRunner;
+import org.safris.dbb.vendor.DBVendor;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, MySQL.class, PostgreSQL.class})
@@ -37,7 +37,7 @@ public class TestTest {
 
   @Before
   public void before(final Connection connection) throws SQLException {
-    System.out.println("before: " + DBVendor.parse(connection.getMetaData()));
+    System.out.println("before: " + DBVendor.valueOf(connection.getMetaData()));
   }
 
   @Test
@@ -47,6 +47,6 @@ public class TestTest {
 
   @Test
   public void test2(final Connection connection) throws SQLException {
-    System.out.println("test2: " + DBVendor.parse(connection.getMetaData()));
+    System.out.println("test2: " + DBVendor.valueOf(connection.getMetaData()));
   }
 }

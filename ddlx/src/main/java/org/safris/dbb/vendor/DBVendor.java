@@ -14,22 +14,27 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.ddlx;
+package org.safris.dbb.vendor;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.safris.dbb.ddlx.spec.DerbySQLSpec;
-import org.safris.dbb.ddlx.spec.MySQLSpec;
-import org.safris.dbb.ddlx.spec.PostgreSQLSpec;
-import org.safris.dbb.ddlx.spec.SQLSpec;
+public final class DBVendor {
+  private static int index = 0;
+  private static final DBVendor[] instances = new DBVendor[3];
+  private static final Map<String,DBVendor> map = new HashMap<String,DBVendor>();
 
-public enum DBVendor {
-  DERBY("Derby", new DerbySQLSpec()),
-  MY_SQL("MySQL", new MySQLSpec()),
-  POSTGRE_SQL("PostgreSQL", new PostgreSQLSpec());
+  public static final DBVendor DERBY = new DBVendor("Derby", new DerbyDialect());
+  public static final DBVendor MY_SQL = new DBVendor("MySQL", new MySQLDialect());
+  public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", new PostgreSQLDialect());
 
-  public static DBVendor parse(final DatabaseMetaData metaData) throws SQLException {
+  public static DBVendor[] values() {
+    return instances;
+  }
+
+  public static DBVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
     final String vendorName = metaData.getDatabaseProductName().toLowerCase();
     for (final DBVendor vendor : DBVendor.values())
       if (vendorName.contains(vendor.name.toLowerCase()))
@@ -38,24 +43,27 @@ public enum DBVendor {
     return null;
   }
 
-  public static DBVendor parse(final String value) {
-    for (final DBVendor vendor : DBVendor.values())
-      if (vendor.name.equals(value))
-        return vendor;
-
-    return null;
+  public static DBVendor valueOf(final String string) {
+    return map.get(string);
   }
 
   private final String name;
-  private final SQLSpec sqlSpec;
+  private final Dialect dialect;
+  private final int ordinal;
 
-  private DBVendor(final String name, final SQLSpec sqlSpec) {
+  private DBVendor(final String name, final Dialect dialect) {
+    instances[this.ordinal = index++] = this;
+    map.put(name, this);
     this.name = name;
-    this.sqlSpec = sqlSpec;
+    this.dialect = dialect;
   }
 
-  public SQLSpec getSQLSpec() {
-    return sqlSpec;
+  public int ordinal() {
+    return ordinal;
+  }
+
+  public Dialect getDialect() {
+    return dialect;
   }
 
   @Override

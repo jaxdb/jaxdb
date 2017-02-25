@@ -14,12 +14,12 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.ddlx.standard;
+package org.safris.dbb.ddlx;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReservedWords {
+class ReservedWords {
   private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();
 
   static {
@@ -363,7 +363,7 @@ public class ReservedWords {
     reservedWords.put("ZONE", 0b110);
   }
 
-  public static SQLStandard[] get(final String word) {
+  protected static SQLStandard[] get(final String word) {
     final Integer mask = reservedWords.get(word);
     return mask == null ? null : SQLStandard.toArray(mask);
   }

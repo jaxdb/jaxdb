@@ -28,12 +28,11 @@ import java.util.Set;
 
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.xml.XMLException;
-import org.safris.dbb.ddlx.standard.ReservedWords;
-import org.safris.dbb.ddlx.standard.SQLStandard;
 import org.safris.dbb.ddlx.xe.$ddlx_column;
 import org.safris.dbb.ddlx.xe.$ddlx_compliant;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
+import org.safris.dbb.vendor.DBVendor;
 import org.safris.maven.common.Log;
 
 public final class Generator extends BaseGenerator {
@@ -43,7 +42,7 @@ public final class Generator extends BaseGenerator {
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 
-    createDDL(new File(args[1]).toURI().toURL(), DBVendor.parse(args[0]), null);
+    createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]), null);
   }
 
   public static String[] createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, XMLException {
@@ -58,7 +57,7 @@ public final class Generator extends BaseGenerator {
     final Generator generator = new Generator(schema);
     final Statement[] ddls = generator.parse(vendor);
     final StringBuilder builder = new StringBuilder();
-    final String createSchema = vendor.getSQLSpec().createSchemaIfNotExists(schema);
+    final String createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(schema);
     if (createSchema != null)
       builder.append(createSchema).append(";\n\n");
 
@@ -152,16 +151,17 @@ public final class Generator extends BaseGenerator {
     final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
     registerColumns(tableNames, columnNameToColumn, table, merged);
 
+    final Serializer serializer = Serializer.getSerializer(vendor);
     final List<String> statements = new ArrayList<String>();
-    statements.addAll(vendor.getSQLSpec().types(table));
+    statements.addAll(serializer.types(table));
 
     columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
-    final String createTable = vendor.getSQLSpec().createTableIfNotExists(table, columnNameToColumn);
+    final String createTable = serializer.createTableIfNotExists(table, columnNameToColumn);
 
     statements.add(createTable);
 
-    statements.addAll(vendor.getSQLSpec().triggers(table));
-    statements.addAll(vendor.getSQLSpec().indexes(table));
+    statements.addAll(serializer.triggers(table));
+    statements.addAll(serializer.indexes(table));
     return statements.toArray(new String[statements.size()]);
   }
 
@@ -177,7 +177,7 @@ public final class Generator extends BaseGenerator {
         skipTables.add(table._name$().text());
       }
       else if (!table._abstract$().text()) {
-        final List<String> drops = vendor.getSQLSpec().drops(table);
+        final List<String> drops = Serializer.getSerializer(vendor).drops(table);
         dropStatements.put(table._name$().text(), drops.toArray(new String[drops.size()]));
       }
     }

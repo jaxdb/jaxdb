@@ -27,8 +27,8 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.jsql.type.DataType;
+import org.safris.dbb.vendor.DBVendor;
 
 final class Serialization {
   private static final class Batch {

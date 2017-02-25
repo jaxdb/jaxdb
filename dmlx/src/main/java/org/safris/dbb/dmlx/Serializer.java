@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.dmlx.xe.$dmlx_binary;
 import org.safris.dbb.dmlx.xe.$dmlx_blob;
 import org.safris.dbb.dmlx.xe.$dmlx_boolean;
@@ -34,8 +33,9 @@ import org.safris.dbb.dmlx.xe.$dmlx_enum;
 import org.safris.dbb.dmlx.xe.$dmlx_float;
 import org.safris.dbb.dmlx.xe.$dmlx_integer;
 import org.safris.dbb.dmlx.xe.$dmlx_time;
+import org.safris.dbb.vendor.DBVendor;
 
-public abstract class Serializer {
+abstract class Serializer {
   private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
 
   static {
@@ -53,7 +53,7 @@ public abstract class Serializer {
     }
   }
 
-  public static Serializer getSerializer(final DBVendor vendor) {
+  protected static Serializer getSerializer(final DBVendor vendor) {
     final Serializer serializer = serializers[vendor.ordinal()];
     if (serializer == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");

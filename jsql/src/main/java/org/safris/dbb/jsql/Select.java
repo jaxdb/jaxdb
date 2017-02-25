@@ -31,9 +31,9 @@ import java.util.function.Predicate;
 
 import org.safris.commons.lang.Pair;
 import org.safris.commons.util.Collections;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.jsql.exception.SQLExceptionCatalog;
 import org.safris.dbb.jsql.model.select;
+import org.safris.dbb.vendor.DBVendor;
 
 public final class Select {
   private static void serialize(final List<Pair<type.DataType<?>,Integer>> dataTypes, final Subject<?> subject) {

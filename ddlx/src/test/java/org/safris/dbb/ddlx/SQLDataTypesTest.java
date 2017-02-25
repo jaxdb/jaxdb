@@ -19,7 +19,6 @@ package org.safris.dbb.ddlx;
 import org.junit.Assert;
 import org.junit.Test;
 import org.safris.commons.test.LoggableTest;
-import org.safris.dbb.ddlx.SQLDataTypes;
 
 public class SQLDataTypesTest extends LoggableTest {
   @Test

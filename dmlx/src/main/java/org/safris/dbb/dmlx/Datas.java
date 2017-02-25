@@ -29,7 +29,6 @@ import javax.xml.transform.TransformerException;
 
 import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Resources;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.dmlx.xe.$dmlx_binary;
 import org.safris.dbb.dmlx.xe.$dmlx_blob;
 import org.safris.dbb.dmlx.xe.$dmlx_boolean;
@@ -44,6 +43,7 @@ import org.safris.dbb.dmlx.xe.$dmlx_float;
 import org.safris.dbb.dmlx.xe.$dmlx_integer;
 import org.safris.dbb.dmlx.xe.$dmlx_row;
 import org.safris.dbb.dmlx.xe.$dmlx_time;
+import org.safris.dbb.vendor.DBVendor;
 import org.safris.xsb.runtime.Binding;
 import org.safris.xsb.runtime.QName;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
@@ -110,7 +110,7 @@ public final class Datas {
   }
 
   public static int[] loadData(final Connection connection, final $dmlx_data data) throws SQLException {
-    final DBVendor vendor = DBVendor.parse(connection.getMetaData());
+    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Iterator<Binding> iterator = data.elementIterator();
     try (final Statement statement = connection.createStatement()) {
       while (iterator.hasNext())
@@ -122,7 +122,7 @@ public final class Datas {
 
   public static int loadRow(final Connection connection, final $dmlx_row row) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
-      return statement.executeUpdate(loadRow(DBVendor.parse(connection.getMetaData()), row));
+      return statement.executeUpdate(loadRow(DBVendor.valueOf(connection.getMetaData()), row));
     }
   }
 

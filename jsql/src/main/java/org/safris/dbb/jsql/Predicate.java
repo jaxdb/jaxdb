@@ -16,8 +16,8 @@
 
 package org.safris.dbb.jsql;
 
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.jsql.type.DataType;
+import org.safris.dbb.vendor.DBVendor;
 
 abstract class Predicate<T> extends ConditionWrapper<T> {
   protected final type.DataType<?> dataType;

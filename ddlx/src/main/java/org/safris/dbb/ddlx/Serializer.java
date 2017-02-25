@@ -14,18 +14,20 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.ddlx.spec;
+package org.safris.dbb.ddlx;
 
+import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.safris.commons.lang.Numbers;
-import org.safris.dbb.ddlx.GeneratorExecutionException;
-import org.safris.dbb.ddlx.SQLDataTypes;
+import org.safris.commons.lang.PackageLoader;
+import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.dbb.ddlx.xe.$ddlx_bigint;
 import org.safris.dbb.ddlx.xe.$ddlx_binary;
 import org.safris.dbb.ddlx.xe.$ddlx_blob;
@@ -50,17 +52,45 @@ import org.safris.dbb.ddlx.xe.$ddlx_table;
 import org.safris.dbb.ddlx.xe.$ddlx_time;
 import org.safris.dbb.ddlx.xe.$ddlx_tinyint;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
+import org.safris.dbb.vendor.DBVendor;
 
-public abstract class SQLSpec {
+abstract class Serializer {
+  private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
+
+  static {
+    try {
+      final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(Serializer.class.getPackage());
+      for (final Class<?> cls : classes) {
+        if (Serializer.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
+          final Serializer serializer = (Serializer)cls.newInstance();
+          serializers[serializer.getVendor().ordinal()] = serializer;
+        }
+      }
+    }
+    catch (final PackageNotFoundException | ReflectiveOperationException e) {
+      throw new ExceptionInInitializerError(e);
+    }
+  }
+
+  protected static Serializer getSerializer(final DBVendor vendor) {
+    final Serializer serializer = serializers[vendor.ordinal()];
+    if (serializer == null)
+      throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
+
+    return serializer;
+  }
+
+  protected abstract DBVendor getVendor();
+
   protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns);
 
-  public abstract void init(final Connection connection) throws SQLException;
+  protected abstract void init(final Connection connection) throws SQLException;
 
-  public String createSchemaIfNotExists(final ddlx_schema schema) {
+  protected String createSchemaIfNotExists(final ddlx_schema schema) {
     return null;
   }
 
-  public String createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+  protected String createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table._name$().text();
     builder.append("CREATE TABLE ").append(tableName).append(" (\n");
@@ -86,64 +116,64 @@ public abstract class SQLSpec {
     ddl.append(column._name$().text()).append(" ");
     if (column instanceof $ddlx_char) {
       final $ddlx_char type = ($ddlx_char)column;
-      ddl.append(declareChar(type._varying$().text(), type._length$().text()));
+      ddl.append(getVendor().getDialect().declareChar(type._varying$().text(), type._length$().text()));
     }
     else if (column instanceof $ddlx_clob) {
       final $ddlx_clob type = ($ddlx_clob)column;
-      ddl.append(declareClob(type._length$().text()));
+      ddl.append(getVendor().getDialect().declareClob(type._length$().text()));
     }
     else if (column instanceof $ddlx_binary) {
       final $ddlx_binary type = ($ddlx_binary)column;
-      ddl.append(declareBinary(type._varying$().text(), type._length$().text()));
+      ddl.append(getVendor().getDialect().declareBinary(type._varying$().text(), type._length$().text()));
     }
     else if (column instanceof $ddlx_blob) {
       final $ddlx_blob type = ($ddlx_blob)column;
-      ddl.append(declareBlob(type._length$().text()));
+      ddl.append(getVendor().getDialect().declareBlob(type._length$().text()));
     }
     else if (column instanceof $ddlx_tinyint) {
       final $ddlx_tinyint type = ($ddlx_tinyint)column;
-      ddl.append(declareInt8(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareInt8(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_smallint) {
       final $ddlx_smallint type = ($ddlx_smallint)column;
-      ddl.append(declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_int) {
       final $ddlx_int type = ($ddlx_int)column;
-      ddl.append(declareInt32(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareInt32(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_bigint) {
       final $ddlx_bigint type = ($ddlx_bigint)column;
       if (!type._unsigned$().text() && type._precision$().text().intValue() > 19)
         throw new IllegalArgumentException("BIGINT maximum precision [0, 19] exceeded: " + type._precision$().text().intValue());
 
-      ddl.append(declareInt64(type._precision$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
-      ddl.append(declareFloat(type._double$().text(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareFloat(type._double$().text(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_decimal) {
       final $ddlx_decimal type = ($ddlx_decimal)column;
-      ddl.append(declareDecimal(type._precision$().text().shortValue(), type._scale$().text().shortValue(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareDecimal(type._precision$().text().shortValue(), type._scale$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_date) {
-      ddl.append(declareDate());
+      ddl.append(getVendor().getDialect().declareDate());
     }
     else if (column instanceof $ddlx_time) {
       final $ddlx_time type = ($ddlx_time)column;
-      ddl.append(declareTime(type._precision$().text().shortValue()));
+      ddl.append(getVendor().getDialect().declareTime(type._precision$().text().shortValue()));
     }
     else if (column instanceof $ddlx_dateTime) {
       final $ddlx_dateTime type = ($ddlx_dateTime)column;
-      ddl.append(declareDateTime(type._precision$().text().shortValue()));
+      ddl.append(getVendor().getDialect().declareDateTime(type._precision$().text().shortValue()));
     }
     else if (column instanceof $ddlx_boolean) {
-      ddl.append(declareBoolean());
+      ddl.append(getVendor().getDialect().declareBoolean());
     }
     else if (column instanceof $ddlx_enum) {
       final $ddlx_enum type = ($ddlx_enum)column;
-      ddl.append(declareEnum(table, type));
+      ddl.append(getVendor().getDialect().declareEnum(table, type));
     }
 
     final String defaultFragement = $default(table, column);
@@ -384,11 +414,11 @@ public abstract class SQLSpec {
     return clause;
   }
 
-  public List<String> triggers(final $ddlx_table table) {
+  protected List<String> triggers(final $ddlx_table table) {
     return new ArrayList<String>();
   }
 
-  public List<String> indexes(final $ddlx_table table) {
+  protected List<String> indexes(final $ddlx_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._indexes() != null) {
       for (final $ddlx_table._indexes._index index : table._indexes(0)._index()) {
@@ -407,13 +437,13 @@ public abstract class SQLSpec {
     return statements;
   }
 
-  public List<String> types(final $ddlx_table table) {
+  protected List<String> types(final $ddlx_table table) {
     return new ArrayList<String>();
   }
 
   protected abstract String dropIndexOnClause(final $ddlx_table table);
 
-  public List<String> drops(final $ddlx_table table) {
+  protected List<String> drops(final $ddlx_table table) {
     final List<String> statements = new ArrayList<String>();
     if (table._indexes() != null)
       for (final $ddlx_table._indexes._index index : table._indexes(0)._index())
@@ -436,7 +466,7 @@ public abstract class SQLSpec {
     return statements;
   }
 
-  public String dropTableIfExists(final $ddlx_table table) {
+  protected String dropTableIfExists(final $ddlx_table table) {
     return "DROP TABLE IF EXISTS " + table._name$().text();
   }
 
@@ -448,7 +478,7 @@ public abstract class SQLSpec {
       throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is longer than declared PRECISION " + precision + ")");
   }
 
-  public String $default(final $ddlx_table table, final $ddlx_column column) {
+  protected String $default(final $ddlx_table table, final $ddlx_column column) {
     if (column instanceof $ddlx_char) {
       final $ddlx_char type = ($ddlx_char)column;
       if (type._default$().isNull())
@@ -574,50 +604,8 @@ public abstract class SQLSpec {
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
-  public static List<String> parseEnum(final String value) {
-    final List<String> enums = new ArrayList<String>();
-    final char[] chars = value.replace("\\\\", "\\").toCharArray();
-    final StringBuilder builder = new StringBuilder();
-    boolean escaped = false;
-    for (int i = 0; i < chars.length; i++) {
-      char ch = chars[i];
-      if (ch == '\\') {
-        escaped = true;
-      }
-      else if (ch != ' ' || escaped) {
-        escaped = false;
-        builder.append(ch);
-      }
-      else if (builder.length() > 0) {
-        enums.add(builder.toString());
-        builder.setLength(0);
-      }
-    }
+  protected abstract String truncate(final String tableName);
 
-    enums.add(builder.toString());
-    return enums;
-  }
-
-  public abstract String truncate(final String tableName);
-
-  public abstract String $null(final $ddlx_table table, final $ddlx_column column);
-  public abstract String $autoIncrement(final $ddlx_table table, final $ddlx_integer column);
-
-  public abstract String declareFloat(final boolean doublePrecision, final boolean unsigned);
-  public abstract String declareBoolean();
-  public abstract String declareBinary(final boolean varying, final long length);
-  public abstract String declareChar(final boolean varying, final long length);
-  public abstract String declareClob(final long length);
-  public abstract String declareBlob(final long length);
-  public abstract String declareDecimal(final short precision, final short scale, final boolean unsigned);
-  public abstract String declareDate();
-  public abstract String declareDateTime(final short precision);
-  public abstract String declareTime(final short precision);
-  public abstract String declareInterval();
-  public abstract String declareEnum(final $ddlx_table table, final $ddlx_enum type);
-
-  public abstract String declareInt8(final short precision, final boolean unsigned);
-  public abstract String declareInt16(final short precision, final boolean unsigned);
-  public abstract String declareInt32(final short precision, final boolean unsigned);
-  public abstract String declareInt64(final short precision, final boolean unsigned);
+  protected abstract String $null(final $ddlx_table table, final $ddlx_column column);
+  protected abstract String $autoIncrement(final $ddlx_table table, final $ddlx_integer column);
 }

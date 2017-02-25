@@ -16,9 +16,9 @@
 
 package org.safris.dbb.dmlx;
 
-import org.safris.dbb.ddlx.DBVendor;
+import org.safris.dbb.vendor.DBVendor;
 
-public final class MySQLSerializer extends Serializer {
+final class MySQLSerializer extends Serializer {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;

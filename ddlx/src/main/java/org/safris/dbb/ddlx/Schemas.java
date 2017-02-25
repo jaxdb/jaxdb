@@ -33,6 +33,7 @@ import org.safris.dbb.ddlx.xe.$ddlx_constraints;
 import org.safris.dbb.ddlx.xe.$ddlx_foreignKey;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
+import org.safris.dbb.vendor.DBVendor;
 
 public final class Schemas {
   public static int[] create(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
@@ -40,8 +41,8 @@ public final class Schemas {
   }
 
   public static int[] create(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
-    final DBVendor vendor = DBVendor.parse(connection.getMetaData());
-    vendor.getSQLSpec().init(connection);
+    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    Serializer.getSerializer(vendor).init(connection);
     final java.sql.Statement statement = connection.createStatement();
     final int[] counts = new int[schemas.size()];
     int i = 0;
@@ -105,10 +106,11 @@ public final class Schemas {
   }
 
   public static int[] truncate(final Connection connection, final Collection<$ddlx_table> tables) throws SQLException {
-    final DBVendor vendor = DBVendor.parse(connection.getMetaData());
+    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final Serializer serializer = Serializer.getSerializer(vendor);
     final java.sql.Statement statement = connection.createStatement();
     for (final $ddlx_table table : tables)
-      statement.addBatch(vendor.getSQLSpec().truncate(table._name$().text()));
+      statement.addBatch(serializer.truncate(table._name$().text()));
 
     return statement.executeBatch();
   }

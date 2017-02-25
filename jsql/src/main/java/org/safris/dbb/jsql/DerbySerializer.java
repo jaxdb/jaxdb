@@ -28,10 +28,10 @@ import java.util.Set;
 
 import org.safris.commons.lang.Classes;
 import org.safris.commons.math.Functions;
-import org.safris.dbb.ddlx.DBVendor;
 import org.safris.dbb.jsql.Interval.Unit;
 import org.safris.dbb.jsql.Select.GROUP_BY;
 import org.safris.dbb.jsql.Select.SELECT;
+import org.safris.dbb.vendor.DBVendor;
 
 final class DerbySerializer extends Serializer {
   public static final class Function {

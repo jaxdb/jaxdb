@@ -55,13 +55,13 @@ import org.safris.dbb.ddlx.xe.$ddlx_table;
 import org.safris.dbb.ddlx.xe.$ddlx_time;
 import org.safris.dbb.ddlx.xe.$ddlx_tinyint;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
-import org.safris.dbb.ddlx.spec.SQLSpec;
 import org.safris.dbb.jsql.Entity;
 import org.safris.dbb.jsql.EntityEnum;
 import org.safris.dbb.jsql.GenerateOn;
 import org.safris.dbb.jsql.Schema;
 import org.safris.dbb.jsql.type;
 import org.safris.dbb.jsql.xe.$jsql_integer;
+import org.safris.dbb.vendor.Dialect;
 import org.safris.maven.common.Log;
 import org.safris.xsb.runtime.Bindings;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
@@ -567,7 +567,7 @@ public class Generator {
     if (column instanceof $ddlx_enum) {
       builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
-      final List<String> values = SQLSpec.parseEnum((($ddlx_enum)column)._values$().text());
+      final List<String> values = Dialect.parseEnum((($ddlx_enum)column)._values$().text());
       for (final String value : values)
         enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 

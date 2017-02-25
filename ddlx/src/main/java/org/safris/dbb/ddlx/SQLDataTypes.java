@@ -25,12 +25,12 @@ import org.safris.dbb.ddlx.xe.$ddlx_named;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 import org.safris.xsb.runtime.BindingList;
 
-public final class SQLDataTypes {
-  public static String csvNames(final BindingList<$ddlx_named> names) {
+final class SQLDataTypes {
+  protected static String csvNames(final BindingList<$ddlx_named> names) {
     return names.size() == 0 ? "" : csvNames(names.toArray(new $ddlx_named[names.size()]));
   }
 
-  public static String csvNames(final $ddlx_named ... names) {
+  protected static String csvNames(final $ddlx_named ... names) {
     if (names.length == 0)
       return "";
 
@@ -41,11 +41,11 @@ public final class SQLDataTypes {
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
-  public static String getSequenceName(final $ddlx_table table, final $ddlx_integer column) {
+  protected static String getSequenceName(final $ddlx_table table, final $ddlx_integer column) {
     return "seq_" + table._name$().text() + "_" + column._name$().text();
   }
 
-  public static String getIndexName(final $ddlx_table table, final $ddlx_index index, final $ddlx_named ... column) {
+  protected static String getIndexName(final $ddlx_table table, final $ddlx_index index, final $ddlx_named ... column) {
     if (index == null || column.length == 0)
       return null;
 
@@ -56,20 +56,15 @@ public final class SQLDataTypes {
     return "idx_" + table._name$().text() + name;
   }
 
-  public static String getIndexName(final $ddlx_table table, final $ddlx_table._indexes._index index) {
+  protected static String getIndexName(final $ddlx_table table, final $ddlx_table._indexes._index index) {
     return getIndexName(table, index, index._column().toArray(new $ddlx_named[index._column().size()]));
   }
 
-  public static String getTriggerName(final String tableName, final $ddlx_table._triggers._trigger trigger, final String action) {
+  protected static String getTriggerName(final String tableName, final $ddlx_table._triggers._trigger trigger, final String action) {
     return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
-  public static void checkValidNumber(final short precision, final short scale) {
-    if (precision < scale)
-      throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,S), M must be >= S.");
-  }
-
-  public static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
+  protected static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
     final BigInteger maxForPrecision = new BigInteger(String.valueOf(Arrays.createRepeat('9', precision)));
     if (max == null)
       max = maxForPrecision;

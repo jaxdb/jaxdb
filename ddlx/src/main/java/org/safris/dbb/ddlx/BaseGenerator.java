@@ -40,7 +40,7 @@ import org.safris.maven.common.Log;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-public abstract class BaseGenerator {
+abstract class BaseGenerator {
   static {
     try {
       PackageLoader.getSystemPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
@@ -84,7 +84,7 @@ public abstract class BaseGenerator {
   }
 
   // FIXME: This should not be public! But it's been set this way to be usable by xde package.
-  public static ddlx_schema merge(final ddlx_schema schema) {
+  protected static ddlx_schema merge(final ddlx_schema schema) {
     final ddlx_schema merged;
     try {
       merged = (ddlx_schema)Bindings.clone(schema);
@@ -108,7 +108,7 @@ public abstract class BaseGenerator {
   protected final ddlx_schema unmerged;
   protected final ddlx_schema merged;
 
-  public BaseGenerator(final ddlx_schema schema) {
+  protected BaseGenerator(final ddlx_schema schema) {
     this.unmerged = schema;
     this.merged = merge(schema);
 
