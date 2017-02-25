@@ -63,7 +63,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
     xsi:schemaLocation="http://dbb.safris.org/ddlx.xsd http://dbb.safris.org/ddlx.xsd">
 
     <table name="id" abstract="true">
-      <column name="id" xsi:type="char" length="36" null="false" generateOnInsert="UUID"/>
+      <column name="id" xsi:type="char" length="36" null="false"/>
       <constraints>
         <primaryKey>
           <column name="id"/>
@@ -71,13 +71,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
       </constraints>
     </table>
 
-    <table name="timestamp_id" abstract="true" extends="id">
-      <column name="created_on" xsi:type="dateTime" null="false" generateOnInsert="TIMESTAMP"/>
-      <column name="modified_on" xsi:type="dateTime" null="false" generateOnInsert="TIMESTAMP" generateOnUpdate="TIMESTAMP"/>
-      <column name="version" xsi:type="integer" precision="9" unsigned="true" default="0" null="false" checkOnUpdate="EQUALS" generateOnUpdate="INCREMENT"/>
-    </table>
-
-    <table name="account" extends="timestamp_id">
+    <table name="account" extends="id">
       <column name="email" xsi:type="char" varying="true" length="255" null="false">
         <index unique="true" type="HASH"/>
         <check operator="ne" condition=""/>
