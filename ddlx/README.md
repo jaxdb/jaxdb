@@ -16,7 +16,7 @@ Developed with the CohesionFirst™ approach, **DDLx** is the cohesive alternati
 
 #### Vendor-Agnostic
 
-How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **DDLx** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
+How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor differs in SQL dialect. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **DDLx** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
 
 #### Validating and Fail-Fast
 
@@ -78,15 +78,15 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
     </table>
 
     <table name="account" extends="timestamp_id">
-      <column name="email" xsi:type="char" variant="true" length="255" null="false">
+      <column name="email" xsi:type="char" varying="true" length="255" null="false">
         <index unique="true" type="HASH"/>
         <check operator="ne" condition=""/>
       </column>
       <column name="password" xsi:type="char" length="64" null="false">
         <check operator="ne" condition=""/>
       </column>
-      <column name="first_name" xsi:type="char" variant="true" length="64" null="false"/>
-      <column name="last_name" xsi:type="char" variant="true" length="64" null="false"/>
+      <column name="first_name" xsi:type="char" varying="true" length="64" null="false"/>
+      <column name="last_name" xsi:type="char" varying="true" length="64" null="false"/>
       <column name="forgot_token" xsi:type="char" length="6" null="true"/>
       <column name="forgot_token_on" xsi:type="dateTime" null="true"/>
       <constraints>
