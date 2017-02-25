@@ -4,11 +4,11 @@
 
 ### Introduction
 
-**DDLx** is a vendor-agnostic, SQL-92 and SQL-99 compliant, XSD used to create SQL Schemas in XML. Based on the CohesionFirst™ approach, the [DDLx Schema][ddlx.xsd] utilizes the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL Schemas.
+**DDLx** is a XML definition of the DDL specification. It is a vendor-agnostic, SQL compliant XSD used to create SQL Schemas in XML. The [DDLx Schema][ddlx.xsd] utilizes the power of XML Schema Validation to provides a cohesive structured model for the creation of SQL Schemas.
 
 ### Why **DDLx**?
 
-**DDLx** can also be used with [**jSQL**][jsql], an advanced, cohesive and lightweight ORM layer that sits on top of JDBC.
+**DDLx** can also be used with [**jSQL**][jsql], an advanced, cohesive and lightweight ORM approach.
 
 #### CohesionFirst™
 
@@ -135,7 +135,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   psql -d example < generated-resources/dbb/basis.sql
   ```
   
-  Subsequent imports of `schema.sql` into the database will `DROP` and re-`CREATE` the data model.
+  Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
 
 ### License
 
