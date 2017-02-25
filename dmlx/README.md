@@ -4,7 +4,7 @@
 
 ### Introduction
 
-**DMLx** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. Based on the CohesionFirst™ approach, the **DMLx** framework utilizes a strongly-typed [DDLx][ddlx.xsd] file to generate a XML Schema document that translates DDLx constructs into the XSD language. With the [DMLx XSLT transform][dmlx.xsl], the **DMLx** tool leverages the full power of XML Schema Validation and provides a cohesive structured model for the creation of SQL data (that conforms to your SQL schema, defined in a XSD file).
+**DMLx** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. The **DMLx** framework utilizes a strongly-typed [DDLx][ddlx.xsd] file to generate a XML Schema document that translates DDLx constructs into the XSD language. With the [DMLx XSLT][dmlx.xsl], the **DMLx** tool leverages the power of XML Schema Validation and provides a cohesive structured model to define SQL data (that conforms to your SQL schema, defined in a **DDLx** file).
 
 ### Why **DMLx**?
 
@@ -16,7 +16,7 @@ Developed with the CohesionFirst™ approach, **DMLx** is the cohesive alternati
 
 #### Vendor-Agnostic
 
-How can one create a SQL static data files that are not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor has many proprietary semantics, keywords, and more. Despite the fact that all RDBMS database servers are supposed to conform to the SQL-92 and SQL-99 standards, many do not, and many offer proprietary extensions to the DDL specification of more advanced (and popular) definition constructs (for instance, index type semantics, enum semantics, function name differences, etc). Vendors implement proprietary extensions to their DDL and DML semantics, because SQL-92 and SQL-99 do not offer descriptors for many of the modern-day RDBMS features we use today. Using **DMLx** as the primary descriptor of one's SQL static data definition files, one can maintain a single SQL static data standard uncoupled to a RDBMS vendor.
+How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor differs in SQL dialect. Though the SQL standards (SQL-89, SQL-92, SQL-99, SQL-2003) set a significant amount of requirements to the RDBMS vendors, there is still significant room for variation. These variations are what define the differences of the vendor-specific dialects. As example of such variation, proprietary extensions to the DDL specification of more advanced definition semantics (for instance, index type semantics, enum semantics, function name differences, etc). Because the SQL standards do not specify the full scope of SQL, vendors implement proprietary extensions to DDL and DML semantics of the modern-day RDBMS features we use today.
 
 #### Validating and Fail-Fast
 
@@ -39,7 +39,7 @@ How can one create a SQL static data files that are not vendor specific? Often, 
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
     <artifactId>dbb-maven-plugin</artifactId>
-    <version>1.0.1</version>
+    <version>0.9.5</version>
     <executions>
       <execution>
         <id>default-dml</id>
@@ -86,11 +86,11 @@ How can one create a SQL static data files that are not vendor specific? Often, 
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[ddlx-example]: https://github.com/SevaSafris/dbb/tree/master/ddlx#example
-[ddlx]: https://github.com/SevaSafris/dbb/blob/master/ddlx
 [dbb-maven-plugin]: https://github.com/SevaSafris/dbb-maven-plugin
+[ddlx-example]: https://github.com/SevaSafris/dbb/tree/master/ddlx#example
 [ddlx.xsd]: https://github.com/SevaSafris/dbb/blob/master/ddlx/src/main/resources/ddlx.xsd
-[dmlx.xsl]: https://github.com/SevaSafris/dbb/blob/master/data/src/main/resources/dmlx.xsl
+[ddlx]: https://github.com/SevaSafris/dbb/blob/master/ddlx
+[dmlx.xsl]: https://github.com/SevaSafris/dbb/blob/master/dmlx/src/main/resources/dmlx.xsl
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [jsql]: https://github.com/SevaSafris/dbb/blob/master/jsql
