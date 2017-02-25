@@ -17,12 +17,12 @@
 <xs:schema
   elementFormDefault="qualified"
   attributeFormDefault="qualified"
-  targetNamespace="http://dbx.safris.org/jsql.xsd"
-  xmlns:jsql="http://dbx.safris.org/jsql.xsd"
-  xmlns:ddlx="http://dbx.safris.org/ddlx.xsd"
+  targetNamespace="http://dbb.safris.org/jsql.xsd"
+  xmlns:jsql="http://dbb.safris.org/jsql.xsd"
+  xmlns:ddlx="http://dbb.safris.org/ddlx.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://dbx.safris.org/ddlx.xsd" schemaLocation="jsql-ddlx.xsd"/>
+  <xs:import namespace="http://dbb.safris.org/ddlx.xsd" schemaLocation="jsql-ddlx.xsd"/>
   
   <xs:simpleType name="timestamp">
     <xs:restriction base="xs:string">

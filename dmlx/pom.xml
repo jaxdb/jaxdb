@@ -21,11 +21,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.safris</groupId>
-    <artifactId>dbx</artifactId>
+    <artifactId>dbb</artifactId>
     <version>0.9.5</version>
   </parent>
-  <groupId>org.safris.dbx</groupId>
-  <artifactId>dbx-dmlx</artifactId>
+  <groupId>org.safris.dbb</groupId>
+  <artifactId>dbb-dmlx</artifactId>
   <version>0.9.2</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
@@ -89,7 +89,7 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <destdir>target/generated-test-resources/dbx</destdir>
+              <destdir>target/generated-test-resources/dbb</destdir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/dmlx.xsl</stylesheet>
               <includes>
@@ -113,12 +113,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.safris.dbx</groupId>
-      <artifactId>dbx-ddlx</artifactId>
+      <groupId>org.safris.dbb</groupId>
+      <artifactId>dbb-ddlx</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.dbx</groupId>
-      <artifactId>dbx-ddlx</artifactId>
+      <groupId>org.safris.dbb</groupId>
+      <artifactId>dbb-ddlx</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

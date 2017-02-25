@@ -25,7 +25,7 @@
     <version>1.7.1</version>
   </parent>
   <groupId>org.safris</groupId>
-  <artifactId>dbx</artifactId>
+  <artifactId>dbb</artifactId>
   <version>0.9.5</version>
   <packaging>pom</packaging>
   <properties>

@@ -16,9 +16,9 @@
 -->
 <xs:schema elementFormDefault="qualified"
   xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
-  xmlns:dmlx="http://dbx.safris.org/dmlx.xsd"
+  xmlns:dmlx="http://dbb.safris.org/dmlx.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://dbx.safris.org/dmlx.xsd">
+  targetNamespace="http://dbb.safris.org/dmlx.xsd">
 
   <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
 

@@ -21,11 +21,11 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.safris</groupId>
-    <artifactId>dbx</artifactId>
+    <artifactId>dbb</artifactId>
     <version>0.9.5</version>
   </parent>
-  <groupId>org.safris.dbx</groupId>
-  <artifactId>dbx-ddlx</artifactId>
+  <groupId>org.safris.dbb</groupId>
+  <artifactId>dbb-ddlx</artifactId>
   <version>0.9.7</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
