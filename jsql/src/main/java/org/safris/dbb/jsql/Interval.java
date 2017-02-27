@@ -26,7 +26,7 @@ import java.util.Set;
 
 public final class Interval extends Serializable {
   public static enum Unit {
-    MICROS(ChronoUnit.MICROS, Calendar.MILLISECOND, 1),
+    MICROS(ChronoUnit.MICROS, -1, 1),
     MILLIS(ChronoUnit.MILLIS, Calendar.MILLISECOND, 1),
     SECONDS(ChronoUnit.SECONDS, Calendar.SECOND, 1),
     MINUTES(ChronoUnit.MINUTES, Calendar.MINUTE, 1),

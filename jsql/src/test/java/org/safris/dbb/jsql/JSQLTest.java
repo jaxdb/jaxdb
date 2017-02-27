@@ -16,19 +16,18 @@
 
 package org.safris.dbb.jsql;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.XMLException;
-import org.safris.dbb.ddlx.runner.Derby;
-import org.safris.dbb.ddlx.runner.VendorRunner;
+import org.safris.dbb.jsql.generator.Generator;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
-public class TypesTest extends JSQLTest {
-  @Test
-  public void create() throws IOException, XMLException {
-    createEntities("types");
+public abstract class JSQLTest {
+  protected static void createEntities(final String name) throws IOException, XMLException {
+    final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
+    final File destDir = new File("target/generated-test-sources/dbb");
+    Generator.generate(ddlx, destDir, true);
   }
 }

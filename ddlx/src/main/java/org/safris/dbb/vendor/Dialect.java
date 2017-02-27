@@ -16,9 +16,14 @@
 
 package org.safris.dbb.vendor;
 
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.safris.commons.util.Formats;
 import org.safris.dbb.ddlx.xe.$ddlx_enum;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 
@@ -55,6 +60,11 @@ public abstract class Dialect {
     enums.add(builder.toString());
     return enums;
   }
+
+  public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
+  public static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ISO_LOCAL_TIME;
+  public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
+  public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = Formats.createDecimalFormat("################.################;-################.################");
 
   public abstract String declareBoolean();
 

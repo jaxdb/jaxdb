@@ -26,7 +26,7 @@ import org.safris.dbb.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)
-public class ClassicModelsTest extends EntitiesTest {
+public class ClassicModelsTest extends JSQLTest {
   @Test
   public void create() throws IOException, XMLException {
     createEntities("classicmodels");

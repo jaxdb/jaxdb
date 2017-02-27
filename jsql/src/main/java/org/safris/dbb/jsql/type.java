@@ -27,19 +27,15 @@ import java.math.BigInteger;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.sql.Types;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Numbers;
-import org.safris.commons.util.Formats;
 import org.safris.dbb.vendor.DBVendor;
 
 public final class type {
@@ -56,9 +52,6 @@ public final class type {
         final Type type = Classes.getGenericSuperclasses(cls)[0];
         if (type instanceof Class<?>)
           typeToClass.put((Class<?>)type, cls);
-        else
-          System.out.println("XXX");
-        // FIXME:
       }
     }
   }
@@ -245,6 +238,8 @@ public final class type {
           this.value = BigInteger.valueOf((Long)value);
         else if (value instanceof Integer)
           this.value = BigInteger.valueOf((Integer)value);
+        else if (value instanceof Double)
+          this.value = BigInteger.valueOf(((Double)value).longValue());
         else
           throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
       }
@@ -526,7 +521,7 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.getBinaryStream(columnIndex);
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
@@ -586,7 +581,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getBoolean(columnIndex);
+      final boolean value = resultSet.getBoolean(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -755,8 +751,6 @@ public final class type {
   }
 
   public static final class DATE extends Temporal<LocalDate> {
-    protected static final DateTimeFormatter dateFormat = DateTimeFormatter.ISO_LOCAL_DATE;
-
     protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
@@ -785,19 +779,13 @@ public final class type {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
-      else
-        statement.setNull(parameterIndex, sqlType());
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final java.sql.Date value = resultSet.getDate(columnIndex);
-      this.value = value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
@@ -962,8 +950,6 @@ public final class type {
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final short DEFAULT_PRECISION = 6;
 
-    protected static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-
     private final short precision;
 
     protected DATETIME(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final int precision) {
@@ -1006,17 +992,12 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(dateTimeFormat)));
-      else
-        statement.setNull(parameterIndex, sqlType());
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final java.sql.Timestamp value = resultSet.getTimestamp(columnIndex);
-      this.value = value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
@@ -1171,7 +1152,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getBigDecimal(columnIndex);
+      final BigDecimal value = resultSet.getBigDecimal(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -1294,7 +1276,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getDouble(columnIndex);
+      final double value = resultSet.getDouble(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -1503,7 +1486,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getFloat(columnIndex);
+      final float value = resultSet.getFloat(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -1628,7 +1612,8 @@ public final class type {
 
       @Override
       protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        this.value = resultSet.wasNull() ? null : resultSet.getLong(columnIndex);
+        final long value = resultSet.getLong(columnIndex);
+        this.value = resultSet.wasNull() ? null : value;
       }
 
       @Override
@@ -1740,7 +1725,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getInt(columnIndex);
+      final int value = resultSet.getInt(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -1854,7 +1840,8 @@ public final class type {
 
       @Override
       protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        this.value = resultSet.wasNull() ? null : resultSet.getInt(columnIndex);
+        final int value = resultSet.getInt(columnIndex);
+        this.value = resultSet.wasNull() ? null : value;
       }
 
       @Override
@@ -1969,7 +1956,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
+      final short value = resultSet.getShort(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -2006,8 +1994,6 @@ public final class type {
   }
 
   public static abstract class Numeric<T extends Number> extends DataType<T> {
-    protected static final ThreadLocal<DecimalFormat> numberFormat = Formats.createDecimalFormat("################.################;-################.################");
-
     protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
     }
@@ -2187,7 +2173,8 @@ public final class type {
 
       @Override
       protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-        this.value = resultSet.wasNull() ? null : resultSet.getShort(columnIndex);
+        final short value = resultSet.getShort(columnIndex);
+        this.value = resultSet.wasNull() ? null : value;
       }
 
       @Override
@@ -2308,7 +2295,8 @@ public final class type {
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.wasNull() ? null : resultSet.getByte(columnIndex);
+      final byte value = resultSet.getByte(columnIndex);
+      this.value = resultSet.wasNull() ? null : value;
     }
 
     @Override
@@ -2398,8 +2386,6 @@ public final class type {
   public static final class TIME extends Temporal<LocalTime> {
     private static final short DEFAULT_PRECISION = 6;
 
-    protected static final DateTimeFormatter timeFormat = DateTimeFormatter.ISO_LOCAL_TIME;
-
     private final short precision;
 
     protected TIME(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final int precision) {
@@ -2442,16 +2428,12 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf("1970-01-01 " + value.format(timeFormat)));
-      else
-        statement.setNull(parameterIndex, sqlType());
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      final java.sql.Time time = resultSet.getTime(columnIndex);
-      this.value = time == null ? null : time.toLocalTime();
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override

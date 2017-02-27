@@ -63,6 +63,18 @@ public final class Datas {
     if (value == null)
       return "NULL";
 
+    if (attribute instanceof $dmlx_boolean)
+      return serializer.serialize(($dmlx_boolean)attribute);
+
+    if (attribute instanceof $dmlx_float)
+      return serializer.serialize(($dmlx_float)attribute);
+
+    if (attribute instanceof $dmlx_decimal)
+      return serializer.serialize(($dmlx_decimal)attribute);
+
+    if (attribute instanceof $dmlx_integer)
+      return serializer.serialize(($dmlx_integer)attribute);
+
     if (attribute instanceof $dmlx_char)
       return serializer.serialize(($dmlx_char)attribute);
 
@@ -75,15 +87,6 @@ public final class Datas {
     if (attribute instanceof $dmlx_blob)
       return serializer.serialize(($dmlx_blob)attribute);
 
-    if (attribute instanceof $dmlx_integer)
-      return serializer.serialize(($dmlx_integer)attribute);
-
-    if (attribute instanceof $dmlx_float)
-      return serializer.serialize(($dmlx_float)attribute);
-
-    if (attribute instanceof $dmlx_decimal)
-      return serializer.serialize(($dmlx_decimal)attribute);
-
     if (attribute instanceof $dmlx_date)
       return serializer.serialize(($dmlx_date)attribute);
 
@@ -92,9 +95,6 @@ public final class Datas {
 
     if (attribute instanceof $dmlx_dateTime)
       return serializer.serialize(($dmlx_dateTime)attribute);
-
-    if (attribute instanceof $dmlx_boolean)
-      return serializer.serialize(($dmlx_boolean)attribute);
 
     if (attribute instanceof $dmlx_enum)
       return serializer.serialize(($dmlx_enum)attribute);
@@ -111,12 +111,21 @@ public final class Datas {
 
   public static int[] loadData(final Connection connection, final $dmlx_data data) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final Iterator<Binding> iterator = data.elementIterator();
+    int index = 0;
+    Iterator<Binding> iterator = data.elementIterator();
+    while (iterator.hasNext()) {
+      iterator.next();
+      index++;
+    }
+
+    final int[] counts = new int[index];
+    index = 0;
+    iterator = data.elementIterator();
     try (final Statement statement = connection.createStatement()) {
       while (iterator.hasNext())
-        statement.addBatch(loadRow(vendor, ($dmlx_row)iterator.next()));
+        counts[index++] = statement.executeUpdate(loadRow(vendor, ($dmlx_row)iterator.next()));
 
-      return statement.executeBatch();
+      return counts;
     }
   }
 

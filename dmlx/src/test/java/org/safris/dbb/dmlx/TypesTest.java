@@ -40,12 +40,13 @@ import org.safris.commons.xml.XMLException;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
+import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class TypesTest extends DataTest {
+public class TypesTest extends DMLxTest {
   private static void createTypeData(final OutputStream out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<Types xmlns=\"dmlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"dmlx.types types.xsd\">\n".getBytes());

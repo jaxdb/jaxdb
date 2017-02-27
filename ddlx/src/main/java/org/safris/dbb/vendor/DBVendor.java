@@ -23,12 +23,13 @@ import java.util.Map;
 
 public final class DBVendor {
   private static int index = 0;
-  private static final DBVendor[] instances = new DBVendor[3];
+  private static final DBVendor[] instances = new DBVendor[4];
   private static final Map<String,DBVendor> map = new HashMap<String,DBVendor>();
 
   public static final DBVendor DERBY = new DBVendor("Derby", new DerbyDialect());
   public static final DBVendor MY_SQL = new DBVendor("MySQL", new MySQLDialect());
   public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", new PostgreSQLDialect());
+  public static final DBVendor SQLITE = new DBVendor("SQLite", new SQLiteDialect());
 
   public static DBVendor[] values() {
     return instances;

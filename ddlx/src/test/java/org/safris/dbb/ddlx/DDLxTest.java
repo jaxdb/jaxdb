@@ -25,21 +25,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.xml.validate.ValidationException;
-import org.safris.dbb.ddlx.GeneratorExecutionException;
-import org.safris.dbb.ddlx.Schemas;
+import org.safris.dbb.ddlx.xe.ddlx_schema;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
+import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
-import org.safris.dbb.ddlx.xe.ddlx_schema;
 import org.safris.xsb.runtime.Bindings;
 import org.safris.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class SchemaTest {
+public class DDLxTest {
   @Test
   public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final ddlx_schema schema;

@@ -29,7 +29,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.junit.Before;
 import org.junit.internal.runners.statements.RunBefores;
@@ -42,7 +41,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.safris.commons.lang.Arrays;
-import org.safris.commons.logging.Logging;
+import org.safris.commons.lang.Throwables;
 import org.safris.maven.common.Log;
 
 public class VendorRunner extends BlockJUnit4ClassRunner {
@@ -64,8 +63,10 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     Class<? extends Vendor>[] value();
   }
 
-  static {
-    Logging.setLevel(Level.FINE);
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.RUNTIME)
+  public static @interface Unsupported {
+    Class<? extends Vendor>[] value();
   }
 
   private static Exception flatten(final SQLException e) {
@@ -153,8 +154,22 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
         try {
           run(vendorClass, method, test);
         }
-        catch (final SQLException e) {
-          throw flatten(e);
+        catch (final Throwable e) {
+          final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
+          if (unsupported != null) {
+            for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
+              if (unsupportedVendor == vendorClass) {
+                Log.warn(vendorClass.getSimpleName() + " does not support " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName() + "()");
+                return;
+              }
+            }
+          }
+
+          Throwables.set(e, "[" + vendorClass.getSimpleName() + "] " + e.getMessage());
+          if (e instanceof SQLException)
+            throw flatten((SQLException)e);
+
+          throw e;
         }
       }
     };

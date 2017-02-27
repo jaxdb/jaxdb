@@ -27,7 +27,7 @@ import org.safris.dbb.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)
-public class WorldTest extends DataTest {
+public class WorldTest extends DMLxTest {
   @Test
   public void testWorld() throws IOException, TransformerException {
     createSchemas("world");

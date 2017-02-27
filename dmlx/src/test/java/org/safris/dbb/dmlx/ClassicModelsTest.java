@@ -29,12 +29,13 @@ import org.safris.commons.xml.XMLException;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
+import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class ClassicModelsTest extends DataTest {
+public class ClassicModelsTest extends DMLxTest {
   @BeforeClass
   @VendorRunner.RunIn(VendorRunner.Test.class)
   public static void createSchema() throws IOException, TransformerException {

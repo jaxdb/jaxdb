@@ -17,13 +17,20 @@
 package org.safris.dbb.jsql;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -36,6 +43,7 @@ import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;
 import org.safris.dbb.jsql.Insert.VALUES;
 import org.safris.dbb.vendor.DBVendor;
+import org.safris.dbb.vendor.Dialect;
 
 public abstract class Serializer {
   private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
@@ -803,15 +811,19 @@ public abstract class Serializer {
   protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
     serialization.append("CAST(");
     as.dataType.serialize(serialization);
-    serialization.append(" AS ").append(as.castAs.declare(serialization.vendor)).append(")");
+    serialization.append(" AS ").append(as.cast.declare(serialization.vendor)).append(")");
+  }
+
+  protected String cast(final type.DataType<?> dataType, final Serialization serialization) {
+    return dataType.declare(serialization.vendor);
   }
 
   protected String serialize(final type.BIGINT serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.BIGINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.BINARY serializable) {
@@ -835,19 +847,19 @@ public abstract class Serializer {
   }
 
   protected String serialize(final type.DATE serializable) {
-    return serializable.get() == null ? "NULL" : type.DATE.dateFormat.format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.DATE_FORMAT.format(serializable.get());
   }
 
   protected String serialize(final type.DATETIME serializable) {
-    return serializable.get() == null ? "NULL" : type.DATETIME.dateTimeFormat.format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.DATETIME_FORMAT.format(serializable.get());
   }
 
   protected String serialize(final type.DECIMAL serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.DOUBLE serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.ENUM<?> serializable) {
@@ -855,35 +867,35 @@ public abstract class Serializer {
   }
 
   protected String serialize(final type.FLOAT serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.INT serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.INT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.SMALLINT serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.SMALLINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.TINYINT serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.TINYINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : type.Numeric.numberFormat.get().format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
   }
 
   protected String serialize(final type.TIME serializable) {
-    return serializable.get() == null ? "NULL" : type.TIME.timeFormat.format(serializable.get());
+    return serializable.get() == null ? "NULL" : Dialect.TIME_FORMAT.format(serializable.get());
   }
 
   protected void assignAliases(final Select.FROM<?> from, final Serialization serialization) {
@@ -900,6 +912,11 @@ public abstract class Serializer {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  protected Reader getParameter(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Clob value = resultSet.getClob(columnIndex);
+    return value == null ? null : value.getCharacterStream();
+  }
+
   @SuppressWarnings("unused")
   protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
@@ -908,8 +925,49 @@ public abstract class Serializer {
       statement.setNull(parameterIndex, Types.BLOB);
   }
 
-  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Clob value = resultSet.getClob(columnIndex);
-    return value == null ? null : value.getCharacterStream();
+  protected InputStream getParameter(final type.BLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    return resultSet.getBinaryStream(columnIndex);
+  }
+
+  @SuppressWarnings("deprecation")
+  protected void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDate value = dataType.get();
+    if (value != null)
+      statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  @SuppressWarnings("deprecation")
+  protected LocalDate getParameter(final type.DATE dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Date value = resultSet.getDate(columnIndex);
+    return resultSet.wasNull() || value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
+  }
+
+  protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalTime value = dataType.get();
+    if (value != null)
+      statement.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Time value = resultSet.getTime(columnIndex);
+    return resultSet.wasNull() || value == null ? null : value.toLocalTime();
+  }
+
+  protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    final LocalDateTime value = dataType.get();
+    if (value != null)
+      statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(Dialect.DATETIME_FORMAT)));
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  @SuppressWarnings("deprecation")
+  protected LocalDateTime getParameter(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final java.sql.Timestamp value = resultSet.getTimestamp(columnIndex);
+    return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
 }

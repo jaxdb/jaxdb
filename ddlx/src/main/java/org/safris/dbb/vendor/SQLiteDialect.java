@@ -21,7 +21,7 @@ import java.util.List;
 import org.safris.dbb.ddlx.xe.$ddlx_enum;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 
-public class MySQLDialect extends Dialect {
+public class SQLiteDialect extends Dialect {
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -29,39 +29,33 @@ public class MySQLDialect extends Dialect {
 
   @Override
   public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return (doublePrecision ? "DOUBLE" : "FLOAT") + (unsigned ? " UNSIGNED" : "");
+    return doublePrecision ? "DOUBLE" : "FLOAT";
   }
 
   @Override
   public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")" + (unsigned ? " UNSIGNED" : "");
+    return "DECIMAL(" + precision + ", " + scale + ")";
   }
 
   @Override
   public String declareInt8(final short precision, final boolean unsigned) {
-    return "TINYINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+    return "TINYINT";
   }
 
   @Override
   public String declareInt16(final short precision, final boolean unsigned) {
-    return "SMALLINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+    return "SMALLINT";
   }
 
   @Override
   public String declareInt32(final short precision, final boolean unsigned) {
-    if (unsigned && precision < 9)
-      return "MEDIUMINT(" + precision + ") UNSIGNED";
-
-    if (!unsigned && precision < 8)
-      return "MEDIUMINT(" + precision + ")";
-
-    return "INT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+    return precision < 8 ? "MEDIUMINT" : "INT";
   }
 
   @Override
   public String declareInt64(final short precision, final boolean unsigned) {
-    return "BIGINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
+    return "BIGINT" + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override
@@ -71,12 +65,12 @@ public class MySQLDialect extends Dialect {
 
   @Override
   public String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+    return (varying ? "VARCHAR" : "CHARACTER") + "(" + length + ")";
   }
 
   @Override
   public String declareClob(final long length) {
-    return "TEXT(" + length + ")";
+    return "TEXT";
   }
 
   @Override
@@ -91,12 +85,12 @@ public class MySQLDialect extends Dialect {
 
   @Override
   public String declareDateTime(final short precision) {
-    return "DATETIME(" + precision + ")";
+    return "DATETIME";
   }
 
   @Override
   public String declareTime(final short precision) {
-    return "TIME(" + precision + ")";
+    return "TIME";
   }
 
   @Override
@@ -107,13 +101,13 @@ public class MySQLDialect extends Dialect {
   @Override
   public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
     if (type._values$().isNull())
-      return "ENUM()";
+      return "VARCHAR(0)";
 
     final List<String> enums = Dialect.parseEnum(type._values$().text());
-    final StringBuilder builder = new StringBuilder();
+    int maxLength = 0;
     for (final String value : enums)
-      builder.append(", '").append(value).append("'");
+      maxLength = Math.max(maxLength, value.length());
 
-    return "ENUM(" + builder.append(")").substring(2);
+    return "VARCHAR(" + maxLength + ")";
   }
 }

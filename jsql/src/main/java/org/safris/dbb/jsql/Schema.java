@@ -34,6 +34,9 @@ public abstract class Schema {
 
     try {
       final String url = connection.getMetaData().getURL();
+      if (url.contains("jdbc:sqlite"))
+        return DBVendor.SQLITE;
+
       if (url.contains("jdbc:derby"))
         return DBVendor.DERBY;
 

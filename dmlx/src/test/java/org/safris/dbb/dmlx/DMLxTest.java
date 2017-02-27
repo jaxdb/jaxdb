@@ -27,17 +27,12 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.util.Collections;
 import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
 import org.safris.dbb.ddlx.Schemas;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
-import org.safris.dbb.ddlx.runner.Derby;
-import org.safris.dbb.ddlx.runner.MySQL;
-import org.safris.dbb.ddlx.runner.PostgreSQL;
-import org.safris.dbb.ddlx.runner.VendorRunner;
 import org.safris.dbb.dmlx.xe.$dmlx_data;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;
@@ -45,10 +40,7 @@ import org.safris.xsb.generator.Generator;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public abstract class DataTest {
+public abstract class DMLxTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/dbb");
 

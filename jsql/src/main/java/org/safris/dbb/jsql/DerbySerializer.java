@@ -33,7 +33,7 @@ import org.safris.dbb.jsql.Select.GROUP_BY;
 import org.safris.dbb.jsql.Select.SELECT;
 import org.safris.dbb.vendor.DBVendor;
 
-final class DerbySerializer extends Serializer {
+public final class DerbySerializer extends Serializer {
   public static final class Function {
     public static double mod(final double a, final double b) {
       return a % b;
@@ -52,36 +52,60 @@ final class DerbySerializer extends Serializer {
     }
 
     public static Date add(final Date date, final String string) {
-      return add(date, Interval.valueOf(string), 1);
-    }
-
-    public static Date add(final Time time, final String string) {
-      return add(time, Interval.valueOf(string), 1);
-    }
-
-    public static Date add(final Timestamp timestamp, final String string) {
-      return add(timestamp, Interval.valueOf(string), 1);
+      return new Date(add(date, Interval.valueOf(string), 1));
     }
 
     public static Date sub(final Date date, final String string) {
-      return add(date, Interval.valueOf(string), -1);
+      return new Date(add(date, Interval.valueOf(string), -1));
     }
 
-    public static Date sub(final Time time, final String string) {
-      return add(time, Interval.valueOf(string), -1);
+    public static Time add(final Time time, final String string) {
+      return new Time(add(time, Interval.valueOf(string), 1));
     }
 
-    public static Date sub(final Timestamp timestamp, final String string) {
+    public static Time sub(final Time time, final String string) {
+      return new Time(add(time, Interval.valueOf(string), -1));
+    }
+
+    public static Timestamp add(final Timestamp timestamp, final String string) {
+      return add(timestamp, Interval.valueOf(string), 1);
+    }
+
+    public static Timestamp sub(final Timestamp timestamp, final String string) {
       return add(timestamp, Interval.valueOf(string), -1);
     }
 
-    private static Date add(final java.util.Date date, final Interval interval, final int sign) {
+    private static long add(final java.util.Date date, final Interval interval, final int sign) {
       final Calendar calendar = Calendar.getInstance();
       calendar.setTime(date);
       for (final Unit unit : interval.getUnits())
-        calendar.add(unit.getCalendarField(), sign * unit.getFieldScale() * interval.getComponent(unit));
+        if (unit != Unit.MICROS)
+          calendar.add(unit.getCalendarField(), sign * unit.getFieldScale() * interval.getComponent(unit));
 
-      return new Date(calendar.getTimeInMillis());
+      return calendar.getTimeInMillis();
+    }
+
+    private static Timestamp add(final Timestamp timestamp, final Interval interval, final int sign) {
+      long millis = add((java.util.Date)timestamp, interval, sign);
+      for (final Unit unit : interval.getUnits()) {
+        if (unit == Unit.MICROS) {
+          int nanos = timestamp.getNanos();
+          nanos += sign * interval.getComponent(unit) * 1000;
+          final int m = nanos / 1000000;
+          millis += m;
+          nanos -= m * 1000000;
+          if (nanos < 0) {
+            nanos += 1000000000;
+            millis -= 1000;
+          }
+
+          final Timestamp result = new Timestamp(millis);
+          result.setNanos(nanos);
+          return result;
+        }
+      }
+
+      return new Timestamp(millis);
     }
 
     private Function() {
@@ -93,25 +117,33 @@ final class DerbySerializer extends Serializer {
     return DBVendor.DERBY;
   }
 
-  @Override
-  protected void onRegister(final Connection connection) throws SQLException {
-    try (final Statement statement = connection.createStatement()) {
-      statement.execute("CREATE FUNCTION LOG(b DOUBLE, n DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
-      statement.execute("CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log2'");
-      statement.execute("CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Math.class.getName() + ".pow'");
-      statement.execute("CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Classes.getStrictName(Functions.class) + ".round'");
-      statement.execute("CREATE FUNCTION DMOD(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".mod'");
-      statement.execute("CREATE FUNCTION NOW() RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".now'");
-      statement.execute("CREATE FUNCTION DATE_ADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
-      statement.execute("CREATE FUNCTION DATE_SUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
-      statement.execute("CREATE FUNCTION TIME_ADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
-      statement.execute("CREATE FUNCTION TIME_SUB(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
-      statement.execute("CREATE FUNCTION TIMESTAMP_ADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
-      statement.execute("CREATE FUNCTION TIMESTAMP_SUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+  private static void createFunction(final Statement statement, final String function) throws SQLException {
+    try {
+//      final String name = function.substring(16, function.indexOf("("));
+//      statement.execute("DROP FUNCTION " + name);
+      statement.execute(function);
     }
     catch (final SQLException e) {
       if (!"X0Y68".equals(e.getSQLState()))
         throw e;
+    }
+  }
+
+  @Override
+  protected void onRegister(final Connection connection) throws SQLException {
+    try (final Statement statement = connection.createStatement()) {
+      createFunction(statement, "CREATE FUNCTION LOG(b DOUBLE, n DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
+      createFunction(statement, "CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log2'");
+      createFunction(statement, "CREATE FUNCTION POWER(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Math.class.getName() + ".pow'");
+      createFunction(statement, "CREATE FUNCTION ROUND(a DOUBLE, b INT) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Classes.getStrictName(Functions.class) + ".round'");
+      createFunction(statement, "CREATE FUNCTION DMOD(a DOUBLE, b DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".mod'");
+      createFunction(statement, "CREATE FUNCTION NOW() RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".now'");
+      createFunction(statement, "CREATE FUNCTION DATE_ADD(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      createFunction(statement, "CREATE FUNCTION DATE_SUB(a DATE, b VARCHAR(255)) RETURNS DATE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+      createFunction(statement, "CREATE FUNCTION TIME_ADD(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      createFunction(statement, "CREATE FUNCTION TIME_SUB(a TIME, b VARCHAR(255)) RETURNS TIME PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
+      createFunction(statement, "CREATE FUNCTION TIMESTAMP_ADD(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".add'");
+      createFunction(statement, "CREATE FUNCTION TIMESTAMP_SUB(a TIMESTAMP, b VARCHAR(255)) RETURNS TIMESTAMP PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".sub'");
     }
   }
 

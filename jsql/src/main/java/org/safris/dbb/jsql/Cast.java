@@ -20,28 +20,28 @@ import java.io.IOException;
 
 public class Cast {
   protected static final class AS extends Provision {
-    protected final type.DataType<?> castAs;
+    protected final type.DataType<?> cast;
     protected final type.DataType<?> dataType;
     protected final Integer length;
     protected final Integer scale;
 
     protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
       this.dataType = dataType;
-      this.castAs = castAs;
+      this.cast = castAs;
       this.length = length;
       this.scale = null;
     }
 
     protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs) {
       this.dataType = dataType;
-      this.castAs = castAs;
+      this.cast = castAs;
       this.length = null;
       this.scale = null;
     }
 
     protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
       this.dataType = dataType;
-      this.castAs = castAs;
+      this.cast = castAs;
       this.length = length;
       this.scale = scale;
     }

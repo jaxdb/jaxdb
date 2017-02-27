@@ -14,20 +14,19 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.safris.dbb.jsql;
+package org.safris.dbb.dmlx;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
+import org.safris.dbb.dmlx.xe.$dmlx_boolean;
+import org.safris.dbb.vendor.DBVendor;
 
-import org.safris.commons.lang.Resources;
-import org.safris.commons.xml.XMLException;
-import org.safris.dbb.jsql.generator.Generator;
+final class SQLiteSerializer extends Serializer {
+  @Override
+  protected DBVendor getVendor() {
+    return DBVendor.SQLITE;
+  }
 
-public abstract class EntitiesTest {
-  protected static void createEntities(final String name) throws IOException, XMLException {
-    final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
-    final File destDir = new File("target/generated-test-sources/dbb");
-    Generator.generate(ddlx, destDir, true);
+  @Override
+  protected String serialize(final $dmlx_boolean attribute) {
+    return attribute.text() ? "1" : "0";
   }
 }

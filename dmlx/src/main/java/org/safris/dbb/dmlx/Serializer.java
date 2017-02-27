@@ -63,6 +63,22 @@ abstract class Serializer {
 
   protected abstract DBVendor getVendor();
 
+  protected String serialize(final $dmlx_boolean attribute) {
+    return String.valueOf(attribute.text());
+  }
+
+  protected String serialize(final $dmlx_float attribute) {
+    return String.valueOf(attribute.text());
+  }
+
+  protected String serialize(final $dmlx_decimal attribute) {
+    return String.valueOf(attribute.text());
+  }
+
+  protected String serialize(final $dmlx_integer attribute) {
+    return String.valueOf(attribute.text());
+  }
+
   protected String serialize(final $dmlx_char attribute) {
     return "'" + attribute.text().replace("'", "''") + "'";
   }
@@ -79,18 +95,6 @@ abstract class Serializer {
     return "X'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_integer attribute) {
-    return String.valueOf(attribute.text());
-  }
-
-  protected String serialize(final $dmlx_float attribute) {
-    return String.valueOf(attribute.text());
-  }
-
-  protected String serialize(final $dmlx_decimal attribute) {
-    return String.valueOf(attribute.text());
-  }
-
   protected String serialize(final $dmlx_date attribute) {
     return "'" + attribute.text() + "'";
   }
@@ -101,10 +105,6 @@ abstract class Serializer {
 
   protected String serialize(final $dmlx_dateTime attribute) {
     return "'" + attribute.text() + "'";
-  }
-
-  protected String serialize(final $dmlx_boolean attribute) {
-    return String.valueOf(attribute.text());
   }
 
   protected String serialize(final $dmlx_enum attribute) {

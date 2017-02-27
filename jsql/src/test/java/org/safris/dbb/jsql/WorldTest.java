@@ -35,19 +35,16 @@ import org.safris.dbb.ddlx.xe.ddlx_schema;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
+import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
 import org.safris.dbb.dmlx.xe.$dmlx_data;
-import org.safris.dbb.jsql.Entities;
-import org.safris.dbb.jsql.EntityDataSource;
-import org.safris.dbb.jsql.EntityRegistry;
-import org.safris.dbb.jsql.Schema;
 import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class})
-public class WorldTest extends EntitiesTest {
+public class WorldTest extends JSQLTest {
   @BeforeClass
   @VendorRunner.RunIn(VendorRunner.Test.class)
   public static void create() throws IOException, XMLException {

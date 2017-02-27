@@ -25,6 +25,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Set;
 
 import org.safris.commons.io.Readers;
 import org.safris.commons.io.Streams;
@@ -139,6 +140,44 @@ final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
+  protected void serialize(final Interval interval, final Serialization serialization) {
+    final Set<Interval.Unit> units = interval.getUnits();
+    final StringBuilder clause = new StringBuilder();
+    for (final Interval.Unit unit : units) {
+      final Integer component;
+      final String unitString;
+      if (unit == Interval.Unit.MICROS) {
+        component = interval.getComponent(unit);
+        unitString = "MICROSECOND";
+      }
+      else if (unit == Interval.Unit.MILLIS) {
+        component = interval.getComponent(unit);
+        unitString = "MILLISECOND";
+      }
+      else if (unit == Interval.Unit.QUARTERS) {
+        component = interval.getComponent(unit) * 3;
+        unitString = "MONTH";
+      }
+      else if (unit == Interval.Unit.CENTURIES) {
+        component = interval.getComponent(unit) * 100;
+        unitString = "YEARS";
+      }
+      else if (unit == Interval.Unit.MILLENNIA) {
+        component = interval.getComponent(unit) * 1000;
+        unitString = "YEARS";
+      }
+      else {
+        component = interval.getComponent(unit);
+        unitString = unit.name().substring(0, unit.name().length() - 1);
+      }
+
+      clause.append(" ").append(component).append(" " + unitString);
+    }
+
+    serialization.append("INTERVAL '").append(clause.substring(1)).append("'");
+  }
+
+  @Override
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
     if (dataType instanceof ENUM) {
       final EntityEnum entityEnum = (EntityEnum)dataType.get();
@@ -200,16 +239,16 @@ final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
+  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final String value = resultSet.getString(columnIndex);
+    return value == null ? null : new StringReader(value);
+  }
+
+  @Override
   protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setBytes(parameterIndex, Streams.getBytes(dataType.get()));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
-  }
-
-  @Override
-  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final String value = resultSet.getString(columnIndex);
-    return value == null ? null : new StringReader(value);
   }
 }

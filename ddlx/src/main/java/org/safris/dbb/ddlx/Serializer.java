@@ -95,7 +95,10 @@ abstract class Serializer {
     final String tableName = table._name$().text();
     builder.append("CREATE TABLE ").append(tableName).append(" (\n");
     builder.append(createColumns(table));
-    builder.append(createConstraints(tableName, columnNameToColumn, table));
+    final String constraints = createConstraints(columnNameToColumn, table);
+    if (constraints != null)
+      builder.append(constraints);
+
     builder.append("\n)");
     return builder.toString();
   }
@@ -193,7 +196,7 @@ abstract class Serializer {
     return ddl.toString();
   }
 
-  private String createConstraints(final String tableName, final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
+  private String createConstraints(final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $ddlx_constraints constraints = table._constraints(0);
@@ -228,20 +231,9 @@ abstract class Serializer {
       }
 
       // primary key constraint
-      final $ddlx_columns primaryKey = constraints._primaryKey(0);
-      if (!primaryKey.isNull()) {
-        final StringBuffer primaryKeyBuffer = new StringBuffer();
-        for (final $ddlx_named primaryColumn : primaryKey._column()) {
-          final String primaryKeyColumn = primaryColumn._name$().text();
-          final $ddlx_column column = columnNameToColumn.get(primaryKeyColumn);
-          if (column._null$().text())
-            throw new GeneratorExecutionException("Column " + tableName + "." + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
-
-          primaryKeyBuffer.append(", ").append(primaryKeyColumn);
-        }
-
-        contraintsBuffer.append(",\n  PRIMARY KEY (").append(primaryKeyBuffer.substring(2)).append(")");
-      }
+      final String primaryKeyConstraint = blockPrimaryKey(constraints, columnNameToColumn);
+      if (primaryKeyConstraint != null)
+        contraintsBuffer.append(primaryKeyConstraint);
 
       // foreign key constraint
       final List<$ddlx_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
@@ -389,6 +381,24 @@ abstract class Serializer {
     }
 
     return contraintsBuffer.toString();
+  }
+
+  protected String blockPrimaryKey(final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+    final $ddlx_columns primaryKey = constraints._primaryKey(0);
+    if (primaryKey.isNull())
+      return "";
+
+    final StringBuffer primaryKeyBuffer = new StringBuffer();
+    for (final $ddlx_named primaryColumn : primaryKey._column()) {
+      final String primaryKeyColumn = primaryColumn._name$().text();
+      final $ddlx_column column = columnNameToColumn.get(primaryKeyColumn);
+      if (column._null$().text())
+        throw new GeneratorExecutionException("Column " + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
+
+      primaryKeyBuffer.append(", ").append(primaryKeyColumn);
+    }
+
+    return ",\n  PRIMARY KEY (" + primaryKeyBuffer.substring(2) + ")";
   }
 
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
@@ -604,7 +614,9 @@ abstract class Serializer {
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
-  protected abstract String truncate(final String tableName);
+  protected String truncate(final String tableName) {
+    return "DELETE FROM " + tableName;
+  }
 
   protected abstract String $null(final $ddlx_table table, final $ddlx_column column);
   protected abstract String $autoIncrement(final $ddlx_table table, final $ddlx_integer column);

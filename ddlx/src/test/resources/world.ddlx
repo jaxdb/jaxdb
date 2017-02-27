@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://dbb.safris.org/ddlx.xsd http://dbb.safris.org/ddlx.xsd">
   <table name="city">
-    <column name="id" xsi:type="bigint" precision="11" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
     <column name="country_code" xsi:type="char" length="3" null="false">
       <foreignKey references="country" column="code"/>

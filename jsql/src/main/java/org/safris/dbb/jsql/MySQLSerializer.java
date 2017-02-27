@@ -34,21 +34,6 @@ final class MySQLSerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
-    if (expression.operator == Operator.PLUS)
-      serialization.append("DATE_ADD(");
-    else if (expression.operator == Operator.MINUS)
-      serialization.append("DATE_SUB(");
-    else
-      throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
-
-    expression.a.serialize(serialization);
-    serialization.append(", ");
-    expression.b.serialize(serialization);
-    serialization.append(")");
-  }
-
-  @Override
   protected void serialize(final StringExpression serializable, final Serialization serialization) throws IOException {
     if (serializable.operator != Operator.CONCAT)
       throw new UnsupportedOperationException("The only supported operator for StringExpression is: ||");
@@ -65,13 +50,32 @@ final class MySQLSerializer extends Serializer {
   }
 
   @Override
+  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
+    if (expression.operator == Operator.PLUS)
+      serialization.append("DATE_ADD(");
+    else if (expression.operator == Operator.MINUS)
+      serialization.append("DATE_SUB(");
+    else
+      throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
+
+    expression.a.serialize(serialization);
+    serialization.append(", ");
+    expression.b.serialize(serialization);
+    serialization.append(")");
+  }
+
+  @Override
   protected void serialize(final Interval interval, final Serialization serialization) {
     final Set<Interval.Unit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final Interval.Unit unit : units) {
       final Integer component;
       final String unitString;
-      if (unit == Interval.Unit.MILLIS) {
+      if (unit == Interval.Unit.MICROS) {
+        component = interval.getComponent(unit);
+        unitString = "MICROSECOND";
+      }
+      else if (unit == Interval.Unit.MILLIS) {
         component = interval.getComponent(unit) * 1000;
         unitString = "MICROSECOND";
       }
@@ -103,19 +107,19 @@ final class MySQLSerializer extends Serializer {
 
   @Override
   protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
-    if (as.castAs instanceof type.Temporal || as.castAs instanceof type.Textual || as.castAs instanceof type.BINARY) {
+    if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.serialize(as, serialization);
     }
-    else if (as.castAs instanceof type.DECIMAL) {
+    else if (as.cast instanceof type.DECIMAL) {
       serialization.append("CAST(");
       as.dataType.serialize(serialization);
-      final String declaration = as.castAs.declare(serialization.vendor);
-      serialization.append(" AS ").append(as.castAs instanceof type.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
+      final String declaration = as.cast.declare(serialization.vendor);
+      serialization.append(" AS ").append(as.cast instanceof type.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
     }
-    else if (as.castAs instanceof type.ExactNumeric) {
+    else if (as.cast instanceof type.ExactNumeric) {
       serialization.append("CAST(");
       as.dataType.serialize(serialization);
-      serialization.append(" AS ").append(as.castAs instanceof type.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
+      serialization.append(" AS ").append(as.cast instanceof type.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
       as.dataType.serialize(serialization);
