@@ -178,12 +178,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `EntityRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `SchemaRegistry`.
 
   ```java
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
   final DataSource dataSource = DataSources.createDataSource(dbcp);
-  EntityRegistry.register(basis.class, PreparedStatement.class, new EntityDataSource() {
+  SchemaRegistry.registerPreparedBatching(basis.class, new SchemaDataSource() {
     @Override
     public Connection getConnection() throws SQLException {
       return new ConnectionProxy(dataSource.getConnection());

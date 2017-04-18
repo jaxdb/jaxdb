@@ -111,9 +111,9 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
           <vendor>PostgreSQL</vendor>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
             <destdir>${project.build.directory}/generated-resources/dbb</destdir>
-            <schemas>
-              <schema>src/main/resources/basis.ddlx</schema>
-            </schemas>
+            <resources>
+              <resource>src/main/resources/basis.ddlx</resource>
+            </resources>
           </manifest>
         </configuration>
       </execution>
