@@ -4,7 +4,7 @@
 
 ### Introduction
 
-**jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. jsql uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+**jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. **jSQL** uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
 ### Why **jSQL**?
 
@@ -178,12 +178,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `SchemaRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `DBRegistry`.
 
   ```java
   final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
   final DataSource dataSource = DataSources.createDataSource(dbcp);
-  SchemaRegistry.registerPreparedBatching(basis.class, new SchemaDataSource() {
+  DBRegistry.registerPreparedBatching(basis.class, new DBConnector() {
     @Override
     public Connection getConnection() throws SQLException {
       return new ConnectionProxy(dataSource.getConnection());
@@ -195,7 +195,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Known Issues
 
-* To model the strong-typed relation amongst the DataType(s), the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the `DataType`s, the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ### Dev Status
 
