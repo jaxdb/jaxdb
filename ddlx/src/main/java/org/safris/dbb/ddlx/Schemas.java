@@ -48,8 +48,10 @@ public final class Schemas {
     int i = 0;
     for (final ddlx_schema schema : schemas) {
       final String[] sqls = Generator.createDDL(schema, vendor, null);
-      for (final String sql : sqls)
+      for (final String sql : sqls) {
+        System.out.println(sql);
         statement.addBatch(sql);
+      }
 
       int count = 0;
       final int[] results = statement.executeBatch();

@@ -100,6 +100,9 @@ public final class Entities {
               break;
             }
           }
+
+          if (!dataType.wasSet())
+            throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
         }
         else if (attribute instanceof $dmlx_binary)
           dataType.set(((Base64Binary)value).getBytes());

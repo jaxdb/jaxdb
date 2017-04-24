@@ -16,23 +16,25 @@
 
 package org.safris.dbb.vendor;
 
+import java.util.List;
+
 import org.safris.dbb.ddlx.xe.$ddlx_enum;
 import org.safris.dbb.ddlx.xe.$ddlx_table;
 
-public class PostgreSQLDialect extends Dialect {
+public class OracleDialect extends Dialect {
   @Override
   protected DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
+    return DBVendor.ORACLE;
   }
 
   @Override
   public String declareBoolean() {
-    return "BOOLEAN";
+    return "NUMBER(1)";
   }
 
   @Override
   public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return doublePrecision ? "DOUBLE PRECISION" : "REAL";
+    return doublePrecision ? "DOUBLE PRECISION" : "FLOAT";
   }
 
   @Override
@@ -43,42 +45,42 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String declareInt8(final short precision, final boolean unsigned) {
-    return "SMALLINT";
+    return "NUMBER(" + precision + ")";
   }
 
   @Override
   public String declareInt16(final short precision, final boolean unsigned) {
-    return "SMALLINT";
+    return "NUMBER(" + precision + ")";
   }
 
   @Override
   public String declareInt32(final short precision, final boolean unsigned) {
-    return "INT";
+    return "NUMBER(" + precision + ")";
   }
 
   @Override
   public String declareInt64(final short precision, final boolean unsigned) {
-    return "BIGINT";
+    return "NUMBER(" + precision + ")";
   }
 
   @Override
   public String declareBinary(final boolean varying, final long length) {
-    return "BYTEA";
+    return (length > 2000 ? "LONG RAW" : "RAW") + "(" + length + ")";
   }
 
   @Override
   public String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+    return (varying ? "VARCHAR2" : "CHAR") + "(" + (length == 1 ? 2 : length) + " CHAR)";
   }
 
   @Override
   public String declareClob(final long length) {
-    return "TEXT";
+    return "CLOB";
   }
 
   @Override
   public String declareBlob(final long length) {
-    return "BYTEA";
+    return "BLOB";
   }
 
   @Override
@@ -93,7 +95,7 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String declareTime(final short precision) {
-    return "TIME";
+    return "INTERVAL DAY(0) TO SECOND(" + precision + ")";
   }
 
   @Override
@@ -103,6 +105,14 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
-    return Dialect.getTypeName(table._name$().text(), type._name$().text());
+    if (type._values$().isNull())
+      return "VARCHAR2(0)";
+
+    final List<String> enums = Dialect.parseEnum(type._values$().text());
+    int maxLength = 0;
+    for (final String value : enums)
+      maxLength = Math.max(maxLength, value.length());
+
+    return "VARCHAR2(" + maxLength + ")";
   }
 }

@@ -78,7 +78,7 @@ final class SQLiteSerializer extends Serializer {
   }
 
   @Override
-  protected String blockPrimaryKey(final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+  protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
     final $ddlx_columns primaryKey = constraints._primaryKey(0);
     if (!primaryKey.isNull() && primaryKey._column().size() == 1) {
       final $ddlx_named primaryColumn = primaryKey._column().get(0);
@@ -90,7 +90,7 @@ final class SQLiteSerializer extends Serializer {
       }
     }
 
-    return super.blockPrimaryKey(constraints, columnNameToColumn);
+    return super.blockPrimaryKey(table, constraints, columnNameToColumn);
   }
 
   @Override

@@ -121,9 +121,11 @@ public final class Datas {
     final int[] counts = new int[index];
     index = 0;
     iterator = data.elementIterator();
+    // TODO: implement batch
     try (final Statement statement = connection.createStatement()) {
-      while (iterator.hasNext())
+      while (iterator.hasNext()) {
         counts[index++] = statement.executeUpdate(loadRow(vendor, ($dmlx_row)iterator.next()));
+      }
 
       return counts;
     }

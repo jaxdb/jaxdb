@@ -353,8 +353,8 @@ public final class type {
       final Object value = resultSet.getObject(columnIndex);
       if (value == null)
         this.value = null;
-      else if (value instanceof BigInteger)
-        this.value = ((BigInteger)value).longValue();
+      else if (value instanceof BigInteger || value instanceof BigDecimal)
+        this.value = ((Number)value).longValue();
       else if (value instanceof Long)
         this.value = Long.valueOf((Long)value);
       else if (value instanceof Integer)
@@ -654,15 +654,12 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      if (value != null)
-        statement.setString(parameterIndex, value);
-      else
-        statement.setNull(parameterIndex, sqlType());
+      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = resultSet.getString(columnIndex);
+      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override

@@ -39,7 +39,7 @@ final class Delete {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
         command.serialize(serialization);
         final int[] count = serialization.execute(connection);
         if (transaction == null)

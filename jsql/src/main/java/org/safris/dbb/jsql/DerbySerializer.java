@@ -28,12 +28,11 @@ import java.util.Set;
 
 import org.safris.commons.lang.Classes;
 import org.safris.commons.math.Functions;
-import org.safris.dbb.jsql.Interval.Unit;
 import org.safris.dbb.jsql.Select.GROUP_BY;
 import org.safris.dbb.jsql.Select.SELECT;
 import org.safris.dbb.vendor.DBVendor;
 
-public final class DerbySerializer extends Serializer {
+final class DerbySerializer extends Serializer {
   public static final class Function {
     public static double mod(final double a, final double b) {
       return a % b;
@@ -78,8 +77,8 @@ public final class DerbySerializer extends Serializer {
     private static long add(final java.util.Date date, final Interval interval, final int sign) {
       final Calendar calendar = Calendar.getInstance();
       calendar.setTime(date);
-      for (final Unit unit : interval.getUnits())
-        if (unit != Unit.MICROS)
+      for (final Interval.Unit unit : interval.getUnits())
+        if (unit != Interval.Unit.MICROS)
           calendar.add(unit.getCalendarField(), sign * unit.getFieldScale() * interval.getComponent(unit));
 
       return calendar.getTimeInMillis();
@@ -87,8 +86,8 @@ public final class DerbySerializer extends Serializer {
 
     private static Timestamp add(final Timestamp timestamp, final Interval interval, final int sign) {
       long millis = add((java.util.Date)timestamp, interval, sign);
-      for (final Unit unit : interval.getUnits()) {
-        if (unit == Unit.MICROS) {
+      for (final Interval.Unit unit : interval.getUnits()) {
+        if (unit == Interval.Unit.MICROS) {
           int nanos = timestamp.getNanos();
           nanos += sign * interval.getComponent(unit) * 1000;
           final int m = nanos / 1000000;
@@ -149,13 +148,13 @@ public final class DerbySerializer extends Serializer {
 
   @Override
   protected void serialize(final Interval interval, final Serialization serialization) {
-    final Set<Unit> units = interval.getUnits();
+    final Set<Interval.Unit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     // FIXME:...
     if (units.size() > 1)
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
-    for (final Unit unit : units)
+    for (final Interval.Unit unit : units)
       clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
 
     serialization.append("'").append(clause.substring(1)).append("'");

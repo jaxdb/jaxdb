@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2006 Seva Safris
+  Copyright (c) 2012 Seva Safris
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -56,6 +56,11 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ojdbc7</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

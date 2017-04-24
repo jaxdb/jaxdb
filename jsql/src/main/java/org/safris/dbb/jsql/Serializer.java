@@ -31,6 +31,9 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -71,31 +74,38 @@ public abstract class Serializer {
     return serializer;
   }
 
-  protected static void serializeEntities(final Collection<? extends Subject<?>> entities, final Serialization serialization) throws IOException {
+  protected void serializeEntities(final Collection<? extends Subject<?>> entities, final Keyword<?> source, final Serialization serialization) throws IOException {
     final Iterator<? extends Subject<?>> iterator = entities.iterator();
+    int index = 0;
     while (iterator.hasNext()) {
       final Subject<?> subject = iterator.next();
-      if (subject instanceof Entity) {
-        final Entity entity = (Entity)subject;
-        final Alias alias = serialization.registerAlias(entity);
-        final type.DataType<?>[] dataTypes = entity.column();
-        for (int j = 0; j < dataTypes.length; j++) {
-          final type.DataType<?> dataType = dataTypes[j];
-          if (j > 0)
-            serialization.append(", ");
-
-          alias.serialize(serialization);
-          serialization.append(".").append(dataType.name);
-        }
-      }
-      else if (subject instanceof type.DataType<?>) {
-        final type.DataType<?> dataType = (type.DataType<?>)subject;
-        serialization.registerAlias(dataType.owner);
-        dataType.serialize(serialization);
-      }
-
+      serializeNextSubject(subject, index++, source, serialization);
       if (iterator.hasNext())
         serialization.append(", ");
+    }
+  }
+
+  protected void serializeNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Serialization serialization) throws IOException {
+    if (subject instanceof Entity) {
+      final Entity entity = (Entity)subject;
+      final Alias alias = serialization.registerAlias(entity);
+      final type.DataType<?>[] columns = entity.column();
+      for (int j = 0; j < columns.length; j++) {
+        final type.DataType<?> column = columns[j];
+        if (j > 0)
+          serialization.append(", ");
+
+        alias.serialize(serialization);
+        serialization.append(".").append(column.name);
+      }
+    }
+    else if (subject instanceof type.DataType) {
+      final type.DataType<?> column = (type.DataType<?>)subject;
+      serialization.registerAlias(column.owner);
+      column.serialize(serialization);
+    }
+    else {
+      throw new UnsupportedOperationException("Unexpected subject type: " + subject.getClass().getName());
     }
   }
 
@@ -133,12 +143,12 @@ public abstract class Serializer {
     serialization.append(" END");
   }
 
-  protected void serialize(final Select.SELECT<?> select, final Serialization serialization) throws IOException {
+  protected void serialize(final SelectCommand command, final Select.SELECT<?> select, final Serialization serialization) throws IOException {
     serialization.append("SELECT ");
     if (select.distinct)
       serialization.append("DISTINCT ");
 
-    serializeEntities(select.entities, serialization);
+    serializeEntities(select.entities, select, serialization);
   }
 
   protected void serialize(final Select.FROM<?> from, final Serialization serialization) throws IOException {
@@ -202,7 +212,7 @@ public abstract class Serializer {
   protected void serialize(final Select.GROUP_BY<?> groupBy, final Serialization serialization) throws IOException {
     if (groupBy != null) {
       serialization.append(" GROUP BY ");
-      serializeEntities(groupBy.subjects, serialization);
+      serializeEntities(groupBy.subjects, groupBy, serialization);
     }
   }
 
@@ -519,12 +529,20 @@ public abstract class Serializer {
     serialization.append(alias.name);
   }
 
-  protected <T>void serialize(final As<T> as, final Serialization serialization) throws IOException {
+  protected String serialize(final As<?> as) {
+    return "AS";
+  }
+
+  protected void serialize(final As<?> as, final Serialization serialization) throws IOException {
     final Alias alias = serialization.registerAlias(as.getVariable());
     serialization.append("(");
     as.parent().serialize(serialization);
     serialization.append(")");
-    serialization.append(" AS ");
+    final String s = serialize(as);
+    serialization.append(" ");
+    if (s != null && s.length() != 0)
+      serialization.append(s).append(" ");
+
     alias.serialize(serialization);
     as.getVariable().wrapper(as.parent());
   }
@@ -839,7 +857,7 @@ public abstract class Serializer {
   }
 
   protected String serialize(final type.CHAR serializable) {
-    return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
+    return serializable.get() == null ? "NULL" : "'" + serializable.get().replace("'", "''") + "'";
   }
 
   protected String serialize(final type.CLOB serializable) throws IOException {
@@ -904,6 +922,17 @@ public abstract class Serializer {
         serialization.registerAlias(table);
   }
 
+  protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+    if (dataType.get() != null)
+      statement.setString(parameterIndex, dataType.get());
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
+  }
+
+  protected String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    return resultSet.getString(columnIndex);
+  }
+
   @SuppressWarnings("unused")
   protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
@@ -957,10 +986,12 @@ public abstract class Serializer {
     return resultSet.wasNull() || value == null ? null : value.toLocalTime();
   }
 
+  private static final DateTimeFormatter TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
+
   protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
-      statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(Dialect.DATETIME_FORMAT)));
+      statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(TIMESTAMP_FORMATTER)));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }

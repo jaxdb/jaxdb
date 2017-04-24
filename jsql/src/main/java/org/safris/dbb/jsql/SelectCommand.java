@@ -147,7 +147,7 @@ final class SelectCommand extends Command {
   protected void serialize(final Serialization serialization) throws IOException {
     final Serializer serializer = Serializer.getSerializer(serialization.vendor);
     serializer.assignAliases(from(), serialization);
-    serializer.serialize(select(), serialization);
+    serializer.serialize(this, select(), serialization);
     serializer.serialize(from(), serialization);
     if (join() != null)
       for (int i = 0; i < join().size(); i++)

@@ -19,6 +19,6 @@ package org.safris.dbb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface EntityDataSource {
+public interface DBConnector {
   public Connection getConnection() throws SQLException;
 }

@@ -28,6 +28,7 @@ import org.safris.commons.xml.validate.ValidationException;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
+import org.safris.dbb.ddlx.runner.Oracle;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
 import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
@@ -37,7 +38,7 @@ import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class})
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 public class DDLxTest {
   @Test
   public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {

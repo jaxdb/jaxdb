@@ -37,7 +37,8 @@ public class MySQL implements Vendor {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://localhost/dbb?user=dbb&password=dbb&useSSL=false"));
+    // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
+    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://127.0.0.1/dbb?user=dbb&password=dbb&useSSL=false&serverTimezone=UTC"));
   }
 
   @Override

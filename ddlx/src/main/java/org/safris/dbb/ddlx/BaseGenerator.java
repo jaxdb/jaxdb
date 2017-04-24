@@ -62,9 +62,13 @@ abstract class BaseGenerator {
     }
   }
 
-  protected static void writeOutput(final String output, final File file) {
+  protected static void writeOutput(final List<String> statements, final File file) {
     if (file == null)
       return;
+
+    final StringBuilder builder = new StringBuilder();
+    for (final String statement : statements)
+      builder.append("\n\n").append(statement).append(";");
 
     try {
       if (file.getParentFile().isFile())
@@ -75,7 +79,7 @@ abstract class BaseGenerator {
           throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
       try (final FileOutputStream out = new FileOutputStream(file)) {
-        out.write(output.trim().getBytes());
+        out.write(builder.substring(2).getBytes());
       }
     }
     catch (final IOException e) {

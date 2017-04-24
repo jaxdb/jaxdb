@@ -45,6 +45,10 @@ final class SQLDataTypes {
     return "seq_" + table._name$().text() + "_" + column._name$().text();
   }
 
+  protected static String getTriggerName(final $ddlx_table table, final $ddlx_integer column) {
+    return "trg_" + table._name$().text() + "_" + column._name$().text();
+  }
+
   protected static String getIndexName(final $ddlx_table table, final $ddlx_index index, final $ddlx_named ... column) {
     if (index == null || column.length == 0)
       return null;

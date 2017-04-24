@@ -231,7 +231,7 @@ abstract class Serializer {
       }
 
       // primary key constraint
-      final String primaryKeyConstraint = blockPrimaryKey(constraints, columnNameToColumn);
+      final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
         contraintsBuffer.append(primaryKeyConstraint);
 
@@ -246,7 +246,7 @@ abstract class Serializer {
             referencedColumns += ", " + column._column$().text();
           }
 
-          contraintsBuffer.append(",\n  FOREIGN KEY (").append(columns.substring(2));
+          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(columns.substring(2));
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
           if (!foreignKey._onDelete$().isNull())
@@ -265,7 +265,7 @@ abstract class Serializer {
       for (final $ddlx_column column : table._column()) {
         if (column._foreignKey() != null) {
           final $ddlx_foreignKey foreignKey = column._foreignKey(0);
-          contraintsBuffer.append(",\n  FOREIGN KEY (").append(column._name$().text());
+          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(column._name$().text());
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
           if (!foreignKey._onDelete$().isNull())
@@ -327,12 +327,12 @@ abstract class Serializer {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            contraintsBuffer.append(",\n  CHECK (" + minCheck + " AND " + maxCheck + ")");
+            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + minCheck + " AND " + maxCheck + ")");
           else
-            contraintsBuffer.append(",\n  CHECK (" + minCheck + ")");
+            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + minCheck + ")");
         }
         else if (maxCheck != null) {
-          contraintsBuffer.append(",\n  CHECK (" + maxCheck + ")");
+          contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + maxCheck + ")");
         }
       }
 
@@ -371,7 +371,7 @@ abstract class Serializer {
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuffer.append(",\n  CHECK (" + column._name$().text() + " " + operator + " " + condition + ")");
+            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + column._name$().text() + " " + operator + " " + condition + ")");
           else
             throw new UnsupportedOperationException("Unexpected 'null' condition encountered on column '" + column._name$().text());
         }
@@ -383,7 +383,11 @@ abstract class Serializer {
     return contraintsBuffer.toString();
   }
 
-  protected String blockPrimaryKey(final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+  protected String check(final $ddlx_table table) {
+    return "CHECK";
+  }
+
+  protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
     final $ddlx_columns primaryKey = constraints._primaryKey(0);
     if (primaryKey.isNull())
       return "";
@@ -398,11 +402,19 @@ abstract class Serializer {
       primaryKeyBuffer.append(", ").append(primaryKeyColumn);
     }
 
-    return ",\n  PRIMARY KEY (" + primaryKeyBuffer.substring(2) + ")";
+    return ",\n  " + primaryKey(table) + " (" + primaryKeyBuffer.substring(2) + ")";
+  }
+
+  protected String foreignKey(final $ddlx_table table) {
+    return "FOREIGN KEY";
+  }
+
+  protected String primaryKey(final $ddlx_table table) {
+    return "PRIMARY KEY";
   }
 
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
-    return " ON UPDATE " + onUpdate.text();
+    return "ON UPDATE " + onUpdate.text();
   }
 
   private static String recurseCheckRule(final $ddlx_check check) {

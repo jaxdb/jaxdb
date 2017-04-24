@@ -42,7 +42,7 @@ public final class Select {
       for (int i = 0; i < entity.column().length; i++)
         dataTypes.add(new Pair<type.DataType<?>,Integer>(entity.column()[i], i));
     }
-    else if (subject instanceof type.DataType<?>) {
+    else if (subject instanceof type.DataType) {
       final type.DataType<?> dataType = (type.DataType<?>)subject;
       dataTypes.add(new Pair<type.DataType<?>,Integer>(dataType, -1));
     }
@@ -51,12 +51,13 @@ public final class Select {
     }
   }
 
-  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final SELECT<?> select) throws SQLException {
+  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
     final List<Pair<type.DataType<?>,Integer>> dataTypes = new ArrayList<Pair<type.DataType<?>,Integer>>();
     for (final Subject<?> entity : select.entities)
       Select.serialize(dataTypes, entity);
 
-    final int noColumns = resultSet.getMetaData().getColumnCount();
+    final int columnOffset = skipFirstColumn ? 2 : 1;
+    final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
     return new RowIterator<B>() {
       private final Map<Class<? extends Entity>,Entity> prototypes = new HashMap<Class<? extends Entity>,Entity>();
       private final Map<Entity,Entity> cache = new HashMap<Entity,Entity>();
@@ -111,7 +112,7 @@ public final class Select {
               dataType = entity.column()[dataTypePrototype.b];
             }
 
-            dataType.set(resultSet, i + 1);
+            dataType.set(resultSet, i + columnOffset);
           }
         }
         catch (final SQLException e) {
@@ -192,11 +193,11 @@ public final class Select {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(command, vendor, EntityRegistry.getStatementType(schema));
+        final Serialization serialization = new Serialization(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
         command.serialize(serialization);
 
         final ResultSet resultSet = serialization.executeQuery(connection);
-        return parseResultSet(vendor, connection, resultSet, command.select());
+        return parseResultSet(vendor, connection, resultSet, command.select(), serialization.skipFirstColumn());
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -635,7 +636,6 @@ public final class Select {
                 @Override
                 public void close() throws SQLException {
                   try {
-                    resultSet.close();
                     statement.close();
                     connection.close();
                   }

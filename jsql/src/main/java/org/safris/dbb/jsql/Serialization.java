@@ -27,6 +27,7 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.safris.commons.lang.IntArrayList;
 import org.safris.dbb.jsql.type.DataType;
 import org.safris.dbb.vendor.DBVendor;
 
@@ -46,18 +47,28 @@ final class Serialization {
   private final StringBuilder builder = new StringBuilder();
   private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
+  private final boolean batching;
 
   protected final Command command;
   protected final DBVendor vendor;
   protected final Serializer serializer;
 
-  protected Serialization(final Command command, final DBVendor vendor, final Class<? extends Statement> statementType) {
+  private boolean skipFirstColumn = false;
+
+  protected Serialization(final Command command, final DBVendor vendor, final boolean prepared, final boolean batching) {
     this.command = command;
     this.vendor = vendor;
-    if (!(this.prepared = statementType == PreparedStatement.class) && statementType != Statement.class)
-      throw new UnsupportedOperationException("Unsupported statement type: " + statementType.getName());
-
+    this.prepared = prepared;
+    this.batching = batching;
     this.serializer = Serializer.getSerializer(vendor);
+  }
+
+  protected boolean skipFirstColumn() {
+    return skipFirstColumn;
+  }
+
+  protected void skipFirstColumn(final boolean skipFirstColumn) {
+    this.skipFirstColumn = skipFirstColumn;
   }
 
   private final Map<Subject<?>,Alias> aliases = new IdentityHashMap<Subject<?>,Alias>();
@@ -125,8 +136,33 @@ final class Serialization {
     if (builder.length() > 0)
       addBatch();
 
-    final int[] results = new int[batches.size()];
     if (prepared) {
+      if (batching) {
+        final IntArrayList results = new IntArrayList(batches.size());
+        PreparedStatement statement = null;
+        String last = null;
+        for (int i = 0; i < batches.size(); i++) {
+          final Batch batch = batches.get(i);
+          if (!batch.sql.equals(last)) {
+            if (statement != null)
+              results.addAll(statement.executeBatch());
+
+            statement = connection.prepareStatement(batch.sql);
+          }
+
+          for (int j = 0; j < batch.parameters.size(); j++)
+            batch.parameters.get(j).get(statement, j + 1);
+
+          statement.addBatch();
+        }
+
+        if (statement != null)
+          results.addAll(statement.executeBatch());
+
+        return results.toArray();
+      }
+
+      final int[] results = new int[batches.size()];
       for (int i = 0; i < batches.size(); i++) {
         final Batch batch = batches.get(i);
         final PreparedStatement statement = connection.prepareStatement(batch.sql);
@@ -139,6 +175,17 @@ final class Serialization {
       return results;
     }
 
+    if (batching) {
+      final Statement statement = connection.createStatement();
+      for (int i = 0; i < batches.size(); i++) {
+        final Batch batch = batches.get(i);
+        statement.addBatch(batch.sql.toString());
+      }
+
+      return statement.executeBatch();
+    }
+
+    final int[] results = new int[batches.size()];
     for (int i = 0; i < batches.size(); i++) {
       final Batch batch = batches.get(i);
       final Statement statement = connection.createStatement();

@@ -23,6 +23,11 @@ import org.safris.dbb.ddlx.xe.$ddlx_table;
 
 public class MySQLDialect extends Dialect {
   @Override
+  protected DBVendor getVendor() {
+    return DBVendor.MY_SQL;
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

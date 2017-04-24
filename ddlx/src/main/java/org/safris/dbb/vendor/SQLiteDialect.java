@@ -23,6 +23,11 @@ import org.safris.dbb.ddlx.xe.$ddlx_table;
 
 public class SQLiteDialect extends Dialect {
   @Override
+  protected DBVendor getVendor() {
+    return DBVendor.SQLITE;
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

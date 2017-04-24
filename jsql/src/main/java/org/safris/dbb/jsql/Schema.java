@@ -43,6 +43,9 @@ public abstract class Schema {
       if (url.contains("jdbc:mysql"))
         return DBVendor.MY_SQL;
 
+      if (url.contains("jdbc:oracle"))
+        return DBVendor.ORACLE;
+
       if (url.contains("jdbc:postgresql"))
         return DBVendor.POSTGRE_SQL;
     }
@@ -54,9 +57,9 @@ public abstract class Schema {
   }
 
   protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
-    final EntityDataSource dataSource = EntityRegistry.getDataSource(schema);
+    final DBConnector dataSource = DBRegistry.getDataSource(schema);
     if (dataSource == null)
-      throw new SQLInvalidSchemaNameException("No " + EntityDataSource.class.getSimpleName() + " has been registered for " + schema.getName());
+      throw new SQLInvalidSchemaNameException("No " + DBConnector.class.getSimpleName() + " has been registered for " + schema.getName());
 
     try {
       final Connection connection = dataSource.getConnection();

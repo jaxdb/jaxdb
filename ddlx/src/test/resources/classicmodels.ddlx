@@ -124,7 +124,7 @@
     <column name="required_date" xsi:type="date" null="false"/>
     <column name="shipped_date" xsi:type="date"/>
     <column name="status" xsi:type="enum" values="IN_PROCESS SHIPPED DISPUTED RESOLVED ON_HOLD CANCELLED"  null="false"/>
-    <column name="comments" xsi:type="char" varying="true" length="4000">
+    <column name="comments" xsi:type="char" varying="true" length="2048">
       <check operator="ne" condition=""/>
     </column>
     <column name="customer_number" xsi:type="smallint" precision="5" unsigned="true" null="false">
@@ -158,7 +158,7 @@
     <column name="product_line" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="description" xsi:type="clob" length="4000" null="false">
+    <column name="description" xsi:type="clob" length="2048" null="false">
       <check operator="ne" condition=""/>
     </column>
     <column name="image" xsi:type="blob" length="65536"/>
@@ -185,7 +185,7 @@
     <column name="vendor" xsi:type="char" varying="true" length="64" null="false">
       <check operator="ne" condition=""/>
     </column>
-    <column name="description" xsi:type="char" varying="true" length="4096" null="false">
+    <column name="description" xsi:type="char" varying="true" length="2048" null="false">
       <check operator="ne" condition=""/>
     </column>
     <column name="quantity_in_stock" xsi:type="smallint" precision="5" unsigned="true" null="false"/>

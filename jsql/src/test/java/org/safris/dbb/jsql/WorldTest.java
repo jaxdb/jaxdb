@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 import org.junit.BeforeClass;
@@ -34,6 +33,7 @@ import org.safris.dbb.ddlx.Schemas;
 import org.safris.dbb.ddlx.xe.ddlx_schema;
 import org.safris.dbb.ddlx.runner.Derby;
 import org.safris.dbb.ddlx.runner.MySQL;
+import org.safris.dbb.ddlx.runner.Oracle;
 import org.safris.dbb.ddlx.runner.PostgreSQL;
 import org.safris.dbb.ddlx.runner.SQLite;
 import org.safris.dbb.ddlx.runner.VendorRunner;
@@ -43,7 +43,7 @@ import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class})
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 public class WorldTest extends JSQLTest {
   @BeforeClass
   @VendorRunner.RunIn(VendorRunner.Test.class)
@@ -54,7 +54,7 @@ public class WorldTest extends JSQLTest {
   @Test
   @SuppressWarnings("unchecked")
   public void testEntities(final Connection connection) throws ClassNotFoundException, IOException, SQLException, XMLException {
-    EntityRegistry.register((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + ".world"), PreparedStatement.class, new EntityDataSource() {
+    DBRegistry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + ".world"), new DBConnector() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;

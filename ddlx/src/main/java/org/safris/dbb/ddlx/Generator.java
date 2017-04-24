@@ -56,26 +56,22 @@ public final class Generator extends BaseGenerator {
   public static String[] createDDL(final ddlx_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
     final Generator generator = new Generator(schema);
     final Statement[] ddls = generator.parse(vendor);
-    final StringBuilder builder = new StringBuilder();
+    final List<String> statements = new ArrayList<String>();
     final String createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(schema);
     if (createSchema != null)
-      builder.append(createSchema).append(";\n\n");
+      statements.add(createSchema);
 
     for (int i = ddls.length - 1; i >= 0; --i)
       if (ddls[i].drop != null)
         for (final String drop : ddls[i].drop)
-          builder.append(drop).append(";\n");
-
-    if (builder.length() > 0)
-      builder.append("\n");
+          statements.add(drop);
 
     for (final Statement ddl : ddls)
       for (final String create : ddl.create)
-        builder.append(create).append(";\n\n");
+        statements.add(create);
 
-    final String out = builder.toString();
-    writeOutput(out, outDir != null ? new File(outDir, generator.merged._name$().text() + ".sql") : null);
-    return out.split("\\s*;\\s*");
+    writeOutput(statements, outDir != null ? new File(outDir, generator.merged._name$().text() + ".sql") : null);
+    return statements.toArray(new String[statements.size()]);
   }
 
   private static String checkNameViolation(String string, final boolean strict) {
