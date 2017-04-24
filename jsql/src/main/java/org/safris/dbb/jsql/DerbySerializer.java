@@ -90,12 +90,14 @@ final class DerbySerializer extends Serializer {
         if (unit == Interval.Unit.MICROS) {
           int nanos = timestamp.getNanos();
           nanos += sign * interval.getComponent(unit) * 1000;
-          final int m = nanos / 1000000;
-          millis += m;
-          nanos -= m * 1000000;
-          if (nanos < 0) {
+          while (nanos < 0) {
             nanos += 1000000000;
             millis -= 1000;
+          }
+
+          while (1000000000 < nanos) {
+            nanos -= 1000000000;
+            millis += 1000;
           }
 
           final Timestamp result = new Timestamp(millis);
