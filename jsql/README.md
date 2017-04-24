@@ -199,6 +199,8 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Dev Status
 
+**Current vendor versions tested**: Derby 10.13.1.1, SQLite 3.16.0, MySQL 5.7.17, PostgreSQL 9.6.2, Oracle 11g
+
 *Key: :white_check_mark: Completed :large_blue_circle: Limmited support by vendor :red_circle: Not supported by vendor :white_circle: Not supported by jSQL*<br>
 *Note: Most icons are clickable links to referred tests*
 
