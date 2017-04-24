@@ -6,6 +6,10 @@
 
 **jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. **jSQL** uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
+### Current Release and Support
+
+**0.9.7**: Derby, SQLite, MySQL, PostgreSQL, Oracle
+
 ### Why **jSQL**?
 
 #### CohesionFirst™
@@ -196,6 +200,13 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 ### Known Issues
 
 * To model the strong-typed relation amongst the `DataType`s, the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+
+### Releases (Supported Vendors)
+
+1. **0.8.1** [Oct 18th, 2016]: **Derby**
+2. **0.9.5** [Feb 25th, 2017]: Derby, **MySQL**, **PostgreSQL**
+3. **0.9.6** [Mar 5th, 2017]: Derby, **SQLite**, MySQL, PostgreSQL
+4. **0.9.7** [Apr 23rd, 2017]: Derby, SQLite, MySQL, PostgreSQL, **Oracle**
 
 ### Dev Status
 
