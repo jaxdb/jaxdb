@@ -16,14 +16,14 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://dbb.safris.org/ddlx.xsd"
-  xmlns:ddlx="http://dbb.safris.org/ddlx.xsd"
-  xmlns:jsql="http://dbb.safris.org/jsql.xsd"
+  targetNamespace="http://rdb.safris.org/ddlx.xsd"
+  xmlns:ddlx="http://rdb.safris.org/ddlx.xsd"
+  xmlns:jsql="http://rdb.safris.org/jsql.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://dbb.safris.org/jsql.xsd" schemaLocation="jsql.xsd"/>
+  <xs:import namespace="http://rdb.safris.org/jsql.xsd" schemaLocation="jsql.xsd"/>
   
-  <xs:include schemaLocation="http://dbb.safris.org/ddlx-common.xsd"/>
+  <xs:include schemaLocation="http://rdb.safris.org/ddlx-common.xsd"/>
   
   <!-- text data -->
   

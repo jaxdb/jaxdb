@@ -21,17 +21,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.safris</groupId>
-    <artifactId>dbb</artifactId>
+    <artifactId>rdb</artifactId>
     <version>0.9.7</version>
   </parent>
-  <groupId>org.safris.dbb</groupId>
-  <artifactId>dbb-ddlx</artifactId>
+  <groupId>org.safris.rdb</groupId>
+  <artifactId>rdb-ddlx</artifactId>
   <version>0.9.7</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-resources/dbb</directory>
+        <directory>target/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>

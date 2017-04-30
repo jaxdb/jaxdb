@@ -25,7 +25,7 @@
     <version>1.7.1</version>
   </parent>
   <groupId>org.safris</groupId>
-  <artifactId>dbb</artifactId>
+  <artifactId>rdb</artifactId>
   <version>0.9.7</version>
   <packaging>pom</packaging>
   <properties>
@@ -39,14 +39,6 @@
     <module>dmlx</module>
     <module>jsql</module>
   </modules>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
   <dependencies>
     <dependency>
       <groupId>org.apache.derby</groupId>

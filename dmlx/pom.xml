@@ -21,17 +21,17 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.safris</groupId>
-    <artifactId>dbb</artifactId>
+    <artifactId>rdb</artifactId>
     <version>0.9.7</version>
   </parent>
-  <groupId>org.safris.dbb</groupId>
-  <artifactId>dbb-dmlx</artifactId>
+  <groupId>org.safris.rdb</groupId>
+  <artifactId>rdb-dmlx</artifactId>
   <version>0.9.7</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-resources/dbb</directory>
+        <directory>target/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
         <directory>target/generated-test-sources/xsb</directory>
@@ -89,7 +89,7 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <destdir>target/generated-test-resources/dbb</destdir>
+              <destdir>target/generated-test-resources/rdb</destdir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/dmlx.xsl</stylesheet>
               <includes>
@@ -111,12 +111,12 @@
       <artifactId>commons-xml</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.dbb</groupId>
-      <artifactId>dbb-ddlx</artifactId>
+      <groupId>org.safris.rdb</groupId>
+      <artifactId>rdb-ddlx</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.dbb</groupId>
-      <artifactId>dbb-ddlx</artifactId>
+      <groupId>org.safris.rdb</groupId>
+      <artifactId>rdb-ddlx</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

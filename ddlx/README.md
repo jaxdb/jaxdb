@@ -1,6 +1,6 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right">
 
-## dbb-ddlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## rdb-ddlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
 > Database Binding DDLx
 
 ### Introduction
@@ -59,9 +59,9 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
   ```xml
   <database name="basis"
-    xmlns="http://dbb.safris.org/ddlx.xsd"
+    xmlns="http://rdb.safris.org/ddlx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://dbb.safris.org/ddlx.xsd http://dbb.safris.org/ddlx.xsd">
+    xsi:schemaLocation="http://rdb.safris.org/ddlx.xsd http://rdb.safris.org/ddlx.xsd">
 
     <table name="id" abstract="true">
       <column name="id" xsi:type="char" length="36" null="false"/>
@@ -94,12 +94,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </database>
   ```
 
-4. Add the [`org.safris.maven.plugin:dbb-maven-plugin`][dbb-maven-plugin] to the POM.
+4. Add the [`org.safris.maven.plugin:rdb-maven-plugin`][rdb-maven-plugin] to the POM.
 
   ```xml
   <plugin>
     <groupId>org.safris.maven.plugin</groupId>
-    <artifactId>dbb-maven-plugin</artifactId>
+    <artifactId>rdb-maven-plugin</artifactId>
     <version>1.3.2</version>
     <executions>
       <execution>
@@ -111,7 +111,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         <configuration>
           <vendor>PostgreSQL</vendor>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-resources/dbb</destdir>
+            <destdir>${project.build.directory}/generated-resources/rdb</destdir>
             <resources>
               <resource>src/main/resources/basis.ddlx</resource>
             </resources>
@@ -122,12 +122,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `dbb-maven-plugin`, an `example.sql` will be created in `generated-resources/dbb` that complies to the `PostgreSQL` vendor as is specified in the POM.
+5. Run `mvn generate-resources`, and upon successful execution of the `rdb-maven-plugin`, an `example.sql` will be created in `generated-resources/rdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
 6. Import the DDL into your database. The 
 
   ```tcsh
-  psql -d example < generated-resources/dbb/basis.sql
+  psql -d example < generated-resources/rdb/basis.sql
   ```
   
   Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
@@ -136,10 +136,10 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[dbb-maven-plugin]: https://github.com/SevaSafris/dbb-maven-plugin
-[ddlx.xsd]: https://github.com/SevaSafris/dbb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
+[ddlx.xsd]: https://github.com/SevaSafris/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: https://github.com/SevaSafris/dbb/blob/master/jsql
+[jsql]: https://github.com/SevaSafris/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
