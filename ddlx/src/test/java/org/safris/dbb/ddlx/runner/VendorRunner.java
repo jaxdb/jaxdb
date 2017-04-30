@@ -84,7 +84,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   public VendorRunner(final Class<?> klass) throws InitializationError {
     super(klass);
-    this.integrationTest = "true".equals(System.getProperty("integrationTest"));
+    this.integrationTest = Boolean.parseBoolean(System.getProperty("integrationTest"));
   }
 
   private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<Class<? extends Vendor>,Vendor>();
@@ -182,16 +182,16 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       @Override
       public void evaluate() throws Throwable {
         final Class<?> testClass = getTestClass().getJavaClass();
-        final Test vendorTest = testClass.getAnnotation(Test.class);
-        final Integration vendorIntegration = testClass.getAnnotation(Integration.class);
-        if (vendorTest == null && vendorIntegration == null)
+        final Test test = testClass.getAnnotation(Test.class);
+        final Integration integration = testClass.getAnnotation(Integration.class);
+        if (test == null && integration == null)
           throw new Exception("@" + Test.class.getSimpleName() + " or @" + Integration.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
 
-        if (!integrationTest && vendorTest != null)
-          evaluateVendors(vendorTest.value(), befores, target, statement);
+        if (!integrationTest && test != null)
+          evaluateVendors(test.value(), befores, target, statement);
 
-        if (integrationTest && vendorIntegration != null)
-          evaluateVendors(vendorIntegration.value(), befores, target, statement);
+        if (integrationTest && integration != null)
+          evaluateVendors(integration.value(), befores, target, statement);
       }
     };
 

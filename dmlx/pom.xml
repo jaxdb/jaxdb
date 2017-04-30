@@ -103,14 +103,12 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
+      <groupId>org.safris.xsb</groupId>
+      <artifactId>xsb-generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.safris.commons</groupId>
-      <artifactId>commons-sql</artifactId>
-      <scope>test</scope>
+      <artifactId>commons-xml</artifactId>
     </dependency>
     <dependency>
       <groupId>org.safris.dbb</groupId>
@@ -123,12 +121,14 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.safris.xsb</groupId>
-      <artifactId>xsb-generator</artifactId>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.safris.commons</groupId>
-      <artifactId>commons-xml</artifactId>
+      <artifactId>commons-sql</artifactId>
+      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
