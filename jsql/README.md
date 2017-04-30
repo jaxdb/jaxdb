@@ -204,10 +204,10 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ### Releases (Supported Vendors)
 
-<samp>04/23/2017</samp> **0.9.7** Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**<br>
-<samp>03/05/2017</samp> **0.9.6** Derby, **SQLite**, PostgreSQL, MySQL, MariaDB<br>
-<samp>02/25/2017</samp> **0.9.5** Derby, **PostgreSQL**, **MySQL**, **MariaDB**<br>
-<samp>10/18/2016</samp> **0.8.1** **Derby**<br>
+<samp>04/23/2017</samp> **0.9.7** (Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**)<br>
+<samp>03/05/2017</samp> **0.9.6** (Derby, **SQLite**, PostgreSQL, MySQL, MariaDB)<br>
+<samp>02/25/2017</samp> **0.9.5** (Derby, **PostgreSQL**, **MySQL**, **MariaDB**)<br>
+<samp>10/18/2016</samp> **0.8.1** (**Derby**)<br>
 
 ### Dev Status
 
