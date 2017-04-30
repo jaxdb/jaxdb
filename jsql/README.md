@@ -9,7 +9,7 @@
 
 ### Current Release and Support
 
-**0.9.7**: Derby, SQLite, MySQL, PostgreSQL, Oracle
+**0.9.7**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
 
 ### Why **jSQL**?
 
@@ -205,18 +205,18 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 ### Releases (Supported Vendors)
 
 1. **0.8.1** [Oct 18th, 2016]: **Derby**
-2. **0.9.5** [Feb 25th, 2017]: Derby, **MySQL**, **PostgreSQL**
-3. **0.9.6** [Mar 5th, 2017]: Derby, **SQLite**, MySQL, PostgreSQL
-4. **0.9.7** [Apr 23rd, 2017]: Derby, SQLite, MySQL, PostgreSQL, **Oracle**
+2. **0.9.5** [Feb 25th, 2017]: Derby, **PostgreSQL**, **MySQL**, **MariaDB**
+3. **0.9.6** [Mar 5th, 2017]: Derby, **SQLite**, PostgreSQL, MySQL, MariaDB
+4. **0.9.7** [Apr 23rd, 2017]: Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**
 
 ### Dev Status
 
-**Current vendor versions tested**: Derby 10.13.1.1, SQLite 3.16.0, MySQL 5.7.17, PostgreSQL 9.6.2, Oracle 11g
+**Current vendor versions tested**: Derby 10.13.1.1, SQLite 3.16.0, PostgreSQL 9.6.2, MySQL 5.7.17, MariaDB 10.0.29, Oracle 11g
 
 *Key: :white_check_mark: Completed :large_blue_circle: Limmited support by vendor :red_circle: Not supported by vendor :white_circle: Not supported by jSQL*<br>
 *Note: Most icons are clickable links to referred tests*
 
-Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                          MySQL                          |                       PostgreSQL                        |                         Oracle                          |
+Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                     MySQL<br>MariaDB                    |                       PostgreSQL                        |                         Oracle                          |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<samp><a name="query_expression">&lt;query expression&gt;</a>** ::=</samp>                                                                                       | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               |
 &ensp;&ensp;<samp>SELECT</samp>                                                                                                                                    | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               | [:white_check_mark:][QueryExpressionTest]               |
@@ -458,7 +458,7 @@ Specification                                                                   
 
 <br>
 
-Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                          MySQL                          |                       PostgreSQL                        |                         Oracle                          |
+Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                     MySQL<br>MariaDB                    |                       PostgreSQL                        |                         Oracle                          |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<a name="data_types">&lt;data type&gt;</a>** ::=&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;</samp>  | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          |
 
@@ -467,7 +467,7 @@ Specification                                                                   
 
 <br>
 
-Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                          MySQL                          |                       PostgreSQL                        |                         Oracle                          |
+Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                     MySQL<br>MariaDB                    |                       PostgreSQL                        |                         Oracle                          |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<a name="numeric_types">&lt;numeric type&gt;</a>** ::=&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;</samp>  | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          |
 
@@ -483,7 +483,7 @@ Specification                                                                   
 
 <br>
 
-Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                          MySQL                          |                       PostgreSQL                        |                         Oracle                          |
+Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                     MySQL<br>MariaDB                    |                       PostgreSQL                        |                         Oracle                          |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<samp><a name="numeric_combination_cast">&lt;numeric combination cast&gt;</a>** ::=&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;</samp> | [:white_check_mark:][NumericValueExpressionTest]        | [:white_check_mark:][NumericValueExpressionTest]        | [:white_check_mark:][NumericValueExpressionTest]        | [:white_check_mark:][NumericValueExpressionTest]        | [:white_check_mark:][NumericValueExpressionTest]        |
 
@@ -501,7 +501,7 @@ Specification                                                                   
 
 <br>
 
-Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                          MySQL                          |                       PostgreSQL                        |                         Oracle                          |
+Specification                                                                                                                                                      |                          Derby                          |                          SQLite                         |                     MySQL<br>MariaDB                    |                       PostgreSQL                        |                         Oracle                          |
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<samp><a name="cast">CAST ([&lt;value expression&gt;](#value_expression) AS [&lt;data type&gt;](#data_type))</a></samp>** ::=&ensp;</samp> | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          |
 
