@@ -58,7 +58,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 3. Create a `basis.ddlx` **DDLx** Schema and put it in `src/main/resources/`.
 
   ```xml
-  <database name="basis"
+  <schema name="basis"
     xmlns="http://rdb.safris.org/ddlx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://rdb.safris.org/ddlx.xsd http://rdb.safris.org/ddlx.xsd">
@@ -91,7 +91,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
       </constraints>
     </table>
 
-  </database>
+  </schema>
   ```
 
 4. Add the [`org.safris.maven.plugin:rdb-maven-plugin`][rdb-maven-plugin] to the POM.
@@ -106,7 +106,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         <id>default-schema</id>
         <phase>generate-resources</phase>
         <goals>
-          <goal>schema</goal>
+          <goal>ddl</goal>
         </goals>
         <configuration>
           <vendor>PostgreSQL</vendor>
