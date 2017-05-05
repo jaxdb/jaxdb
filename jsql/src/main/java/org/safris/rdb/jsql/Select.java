@@ -522,7 +522,7 @@ public final class Select {
     @SafeVarargs
     public SELECT(final boolean distinct, final T entity, T ... entities) {
       this(distinct, Collections.asCollection(ArrayList.class, entity));
-      Collections.addAll(this.entities, entities);
+      java.util.Collections.addAll(this.entities, entities);
     }
 
     public SELECT(final boolean distinct, final T[] entities) {
@@ -566,8 +566,8 @@ public final class Select {
       return new SelectCommand(this);
     }
 
-    protected ArrayList<T> getEntitiesWithOwners() {
-      final ArrayList<T> clone = Collections.clone(entities);
+    protected Collection<T> getEntitiesWithOwners() {
+      final Collection<T> clone = Collections.clone(entities);
       clone.removeIf(entitiesWithOwnerPredicate);
       return clone;
     }
