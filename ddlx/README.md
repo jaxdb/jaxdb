@@ -1,7 +1,7 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right">
 
 ## rdb-ddlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
-> Database Binding DDLx
+> Relational Data Binding DDLx
 
 ### Introduction
 
@@ -122,7 +122,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `rdb-maven-plugin`, an `example.sql` will be created in `generated-resources/rdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
+5. Run `mvn generate-resources`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], an `example.sql` will be created in `generated-resources/rdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
 6. Import the DDL into your database. The 
 
@@ -136,10 +136,10 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
 [ddlx.xsd]: https://github.com/SevaSafris/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [jsql]: https://github.com/SevaSafris/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
+[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin

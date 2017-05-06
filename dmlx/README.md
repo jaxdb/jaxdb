@@ -1,7 +1,7 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right">
 
 ## rdb-dmlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
-> Database Binding DMLx
+> Relational Data Binding DMLx
 
 ### Introduction
 
@@ -34,7 +34,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 1. As the **DMLx** tool extends the functionality of **DDLx**, please begin this example by first completing [the **DDLx** example][ddlx-example].
 
-2. After having created the basis.ddlx file, include an extra execution tag into the configuration of the rdb-maven-plugin.
+2. After having created the basis.ddlx file, include an extra execution tag into the configuration of the [`rdb-maven-plugin`][rdb-maven-plugin].
 
   ```xml
   <plugin>
@@ -61,7 +61,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-3. Run `mvn generate-resources`, and upon successful execution of the `rdb-maven-plugin`, an `basis.xsd` will be created in `generated-resources/rdb`.
+3. Run `mvn generate-resources`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], an `basis.xsd` will be created in `generated-resources/rdb`.
 
 4. Create a `data.dmlx` file in the `src/main/resources` directory.
 
@@ -87,7 +87,6 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
 [ddlx-example]: https://github.com/SevaSafris/rdb/tree/master/ddlx#example
 [ddlx.xsd]: https://github.com/SevaSafris/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [ddlx]: https://github.com/SevaSafris/rdb/blob/master/ddlx
@@ -97,3 +96,4 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [jsql]: https://github.com/SevaSafris/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
+[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin

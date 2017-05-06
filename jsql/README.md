@@ -1,7 +1,7 @@
 <img src="https://www.cohesionfirst.org/logo.png" align="right">
 
 ## rdb-jsql<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
-> Database Binding jSQL
+> Relational Data Binding jSQL
 
 ### Introduction
 
@@ -67,7 +67,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
 
-3. Include a `jsql` goal in your `rdb-maven-plugin` in the POM.
+3. Include a `jsql` goal in your [`rdb-maven-plugin`][rdb-maven-plugin] in the POM.
 
   ```xml
   <plugin>
@@ -75,7 +75,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.7</version>
     <executions>
-      <!-- [...] the xdl <execution> is here -->
+      <!-- [...] the ddlx <execution> is here -->
       <execution>
         <id>jsql</id>
         <configuration>
@@ -91,7 +91,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </plugin>
   ```
 
-4. Run `mvn install`, and upon successful execution of the `rdb-maven-plugin`, classes will be generated in `target/generated-sources/rdb`. Add this path to your Build Paths in your IDE to integrate into your project.
+4. Run `mvn install`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], classes will be generated in `target/generated-sources/rdb`. Add this path to your Build Paths in your IDE to integrate into your project.
 
 5. In `App.java`, include:
 
@@ -544,6 +544,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven]: https://maven.apache.org/
+[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
 
 [BetweenPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/BetweenPredicateTest.java
 [BooleanValueExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
