@@ -34,7 +34,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 1. As the **DMLx** tool extends the functionality of **DDLx**, please begin this example by first completing [the **DDLx** example][ddlx-example].
 
-4. After having created the basis.ddlx file, include an extra execution tag into the configuration of the rdb-maven-plugin.
+2. After having created the basis.ddlx file, include an extra execution tag into the configuration of the rdb-maven-plugin.
 
   ```xml
   <plugin>
@@ -61,15 +61,15 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the `rdb-maven-plugin`, an `basis.xsd` will be created in `generated-resources/rdb`.
+3. Run `mvn generate-resources`, and upon successful execution of the `rdb-maven-plugin`, an `basis.xsd` will be created in `generated-resources/rdb`.
 
-6. Create a `data.dmlx` file in the `src/main/resources` directory.
+4. Create a `data.dmlx` file in the `src/main/resources` directory.
 
   ```xml
-  <data
+  <Basis
     xmlns="dmlx.basis"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="dmlx.basis ../../../target/generated-resources/basis.xsd">
+    xsi:schemaLocation="dmlx.basis ../../../target/generated-resources/rdb/basis.xsd">
     <Account
       email="scott@tiger.com"
       password="f15c16b99f82d8201767d3a841ff40849c8a1b812ffbfd2e393d2b6aa6682a6e"
@@ -78,10 +78,10 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
       createdOn="2016-12-26T09:00:00"
       modifiedOn="2016-12-26T09:00:00"
       id="a9de46a9-c096-4b4e-98fc-274ec2f22e67"/>
-  </data>
+  </Basis>
   ```
 
-7. The `data.dmlx` file is strictly compliant to the `basis.ddlx` file that specifies the data model. You can now create static data that complies to the data model, having the power of XML to foster confidence in the validity of the data far before you load it in the DB.
+5. The `data.dmlx` file is strictly compliant to the `basis.ddlx` file that specifies the data model. You can now create static data that complies to the data model, having the power of XML to foster confidence in the validity of the data far before you load it in the DB.
 
 ### License
 
