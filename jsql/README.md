@@ -80,7 +80,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
         <id>jsql</id>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-sources/rdb</destdir>
+            <destdir>generated-sources/rdb</destdir>
             <resources>
               <resource>src/main/resources/schema.ddlx</resource>
             </resources>

@@ -50,7 +50,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         </goals>
         <configuration>
           <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
-            <destdir>${project.build.directory}/generated-resources/rdb</destdir>
+            <destdir>generated-resources/rdb</destdir>
             <resources>
               <resource>src/main/resources/basis.ddlx</resource>
             </resources>
