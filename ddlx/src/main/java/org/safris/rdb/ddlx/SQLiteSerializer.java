@@ -28,9 +28,12 @@ import org.safris.rdb.ddlx.xe.$ddlx_integer;
 import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.vendor.DBVendor;
-import org.safris.maven.common.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class SQLiteSerializer extends Serializer {
+  private static final Logger logger = LoggerFactory.getLogger(SQLiteSerializer.class);
+
   @Override
   protected DBVendor getVendor() {
     return DBVendor.SQLITE;
@@ -53,19 +56,19 @@ final class SQLiteSerializer extends Serializer {
     final $ddlx_constraints constraints = table._constraints(0);
     final $ddlx_columns primaryKey = constraints._primaryKey(0);
     if (primaryKey.isNull()) {
-      Log.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+      logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
 
     if (primaryKey._column().size() > 1) {
-      Log.warn("AUTOINCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTOINCREMENT spec.");
+      logger.warn("AUTOINCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
 
     for (final $ddlx_named primaryColumn : primaryKey._column()) {
       if (primaryColumn._name$().text().equals(column._name$().text())) {
         if (!(column instanceof $ddlx_int)) {
-          Log.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+          logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
           return null;
         }
 
@@ -73,7 +76,7 @@ final class SQLiteSerializer extends Serializer {
       }
     }
 
-    Log.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+    logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
     return null;
   }
 

@@ -33,9 +33,12 @@ import org.safris.rdb.ddlx.xe.$ddlx_compliant;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.safris.rdb.vendor.DBVendor;
-import org.safris.maven.common.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Generator extends BaseGenerator {
+  protected static final Logger logger = LoggerFactory.getLogger(Generator.class);
+
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
       final String vendors = Arrays.toString(DBVendor.values(), "|");
@@ -53,11 +56,11 @@ public final class Generator extends BaseGenerator {
     return Generator.createDDL(parseArguments(url, outDir), vendor, outDir);
   }
 
-  public static String[] createDDL(final ddlx_schema schema, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
-    final Generator generator = new Generator(schema);
+  public static String[] createDDL(final DDLxAudit audit, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+    final Generator generator = new Generator(audit);
     final Statement[] ddls = generator.parse(vendor);
     final List<String> statements = new ArrayList<String>();
-    final String createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(schema);
+    final String createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(audit.schema());
     if (createSchema != null)
       statements.add(createSchema);
 
@@ -90,8 +93,8 @@ public final class Generator extends BaseGenerator {
     return message.toString();
   }
 
-  private Generator(final ddlx_schema schema) {
-    super(schema);
+  private Generator(final DDLxAudit audit) {
+    super(audit);
     sortedTableOrder = Schemas.tables(merged);
   }
 
@@ -138,7 +141,7 @@ public final class Generator extends BaseGenerator {
       }
 
       for (final String v : violations)
-        Log.warn(v);
+        logger.warn(v);
     }
   }
 

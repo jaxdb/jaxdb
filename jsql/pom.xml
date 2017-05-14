@@ -72,11 +72,6 @@
     </dependency>
     <dependency>
       <groupId>org.safris.commons</groupId>
-      <artifactId>commons-logging</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.safris.commons</groupId>
       <artifactId>commons-sql</artifactId>
     </dependency>
     <dependency>

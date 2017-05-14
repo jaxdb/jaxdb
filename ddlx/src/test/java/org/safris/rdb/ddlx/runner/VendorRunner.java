@@ -42,9 +42,12 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.safris.commons.lang.Arrays;
 import org.safris.commons.lang.Throwables;
-import org.safris.maven.common.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VendorRunner extends BlockJUnit4ClassRunner {
+  protected static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
+
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public static @interface RunIn {
@@ -120,13 +123,13 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     if (runIn == null || Arrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
       if (method.getMethod().getParameterTypes().length > 0) {
         try (final Connection connection = getConnection(vendorClass)) {
-          Log.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
           method.invokeExplosively(test, connection);
         }
       }
       else {
         if (test != null) {
-          Log.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
           method.invokeExplosively(test);
           return;
         }
@@ -138,7 +141,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
             return;
 
           beforeClassMethodsRun.add(method);
-          Log.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
           method.invokeExplosively(test);
         }
       }
@@ -159,7 +162,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
           if (unsupported != null) {
             for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
               if (unsupportedVendor == vendorClass) {
-                Log.warn(vendorClass.getSimpleName() + " does not support " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName() + "()");
+                logger.warn(vendorClass.getSimpleName() + " does not support " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName() + "()");
                 return;
               }
             }

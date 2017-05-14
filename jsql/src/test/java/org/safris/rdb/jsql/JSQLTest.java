@@ -26,8 +26,8 @@ import org.safris.rdb.jsql.generator.Generator;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws IOException, XMLException {
-    final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
+    final URL url = Resources.getResource(name + ".ddlx").getURL();
     final File destDir = new File("target/generated-test-sources/rdb");
-    Generator.generate(ddlx, destDir, true);
+    new Generator(url).generate(destDir, true);
   }
 }

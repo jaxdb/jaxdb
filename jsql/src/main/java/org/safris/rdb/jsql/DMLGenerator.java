@@ -184,7 +184,7 @@ public class DMLGenerator {
   private static final String[] doubleParamFunctions = new String[] {
     "$1 POW(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Pow(a, b));\n}",
     "$1 MOD(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Mod(a, b));\n}",
-    "$1 LOG(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Log(a, b));\n}",
+    "$1 logger.info(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Log(a, b));\n}",
     "$1 ATAN2(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Atan2(a, b));\n}"
   };
 

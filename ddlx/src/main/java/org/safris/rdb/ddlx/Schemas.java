@@ -47,8 +47,9 @@ public final class Schemas {
     final int[] counts = new int[schemas.size()];
     int i = 0;
     for (final ddlx_schema schema : schemas) {
-      final String[] sqls = Generator.createDDL(schema, vendor, null);
+      final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
       for (final String sql : sqls) {
+        // FIXME: Remove this println
         System.out.println(sql);
         statement.addBatch(sql);
       }

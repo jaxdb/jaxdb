@@ -849,7 +849,7 @@ public abstract class Serializer {
   }
 
   protected String serialize(final type.BLOB serializable) throws IOException {
-    return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.getBytes(serializable.get())) + "'";
+    return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.readBytes(serializable.get())) + "'";
   }
 
   protected String serialize(final type.BOOLEAN serializable) {

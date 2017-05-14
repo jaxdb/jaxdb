@@ -63,7 +63,7 @@ final class PostgreSQLSerializer extends Serializer {
       log2.append("DECLARE");
       log2.append("  result double precision;");
       log2.append("BEGIN");
-      log2.append("  RETURN LOG(2, num);");
+      log2.append("  RETURN logger.info(2, num);");
       log2.append("END;");
       log2.append("$$ LANGUAGE plpgsql;");
       statement.execute(log2.toString());
@@ -72,7 +72,7 @@ final class PostgreSQLSerializer extends Serializer {
       log10.append("DECLARE");
       log10.append("  result double precision;");
       log10.append("BEGIN");
-      log10.append("  RETURN LOG(10, num);");
+      log10.append("  RETURN logger.info(10, num);");
       log10.append("END;");
       log10.append("$$ LANGUAGE plpgsql;");
       statement.execute(log10.toString());
@@ -192,7 +192,7 @@ final class PostgreSQLSerializer extends Serializer {
     if (dataType.get() == null)
       return "NULL";
 
-    final BigInteger integer = new BigInteger(Streams.getBytes(dataType.get()));
+    final BigInteger integer = new BigInteger(Streams.readBytes(dataType.get()));
     return "E'\\" + integer.toString(8); // FIXME: This is only half done
   }
 
@@ -247,7 +247,7 @@ final class PostgreSQLSerializer extends Serializer {
   @Override
   protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
-      statement.setBytes(parameterIndex, Streams.getBytes(dataType.get()));
+      statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }

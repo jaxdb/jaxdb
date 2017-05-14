@@ -140,14 +140,14 @@ final class SQLiteSerializer extends Serializer {
   protected void serialize(final function.numeric.Ln function, final Serialization serialization) throws IOException {
     serialization.append("LOG(");
     function.a.serialize(serialization);
-    serialization.append(") / LOG(2.7182818284590452354)");
+    serialization.append(") / logger.info(2.7182818284590452354)");
   }
 
   @Override
   protected void serialize(final function.numeric.Log function, final Serialization serialization) throws IOException {
     serialization.append("LOG(");
     function.b.serialize(serialization);
-    serialization.append(") / LOG(");
+    serialization.append(") / logger.info(");
     function.a.serialize(serialization);
     serialization.append(")");
   }
@@ -156,7 +156,7 @@ final class SQLiteSerializer extends Serializer {
   protected void serialize(final function.numeric.Log2 function, final Serialization serialization) throws IOException {
     serialization.append("LOG(");
     function.a.serialize(serialization);
-    serialization.append(") / LOG(2)");
+    serialization.append(") / logger.info(2)");
   }
 
   @Override
@@ -233,7 +233,7 @@ final class SQLiteSerializer extends Serializer {
   @Override
   protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
-      statement.setBytes(parameterIndex, Streams.getBytes(dataType.get()));
+      statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }

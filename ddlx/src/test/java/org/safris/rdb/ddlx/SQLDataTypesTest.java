@@ -18,10 +18,8 @@ package org.safris.rdb.ddlx;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.safris.commons.test.LoggableTest;
-import org.safris.rdb.ddlx.SQLDataTypes;
 
-public class SQLDataTypesTest extends LoggableTest {
+public class SQLDataTypesTest {
   @Test
   public void testGetNumericByteCount() {
     final int[] byteCounts = {1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9};

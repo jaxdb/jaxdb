@@ -33,7 +33,6 @@ import org.safris.commons.xml.NamespaceURI;
 import org.safris.commons.xml.XMLException;
 import org.safris.rdb.ddlx.Schemas;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
-import org.safris.rdb.dmlx.Datas;
 import org.safris.rdb.dmlx.xe.$dmlx_data;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;

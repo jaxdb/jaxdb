@@ -249,8 +249,11 @@ abstract class Serializer {
           contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(columns.substring(2));
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
-          if (!foreignKey._onDelete$().isNull())
-            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
+          if (!foreignKey._onDelete$().isNull()) {
+            final String onDelete = onDelete(foreignKey._onDelete$());
+            if (onDelete != null)
+              contraintsBuffer.append(" ").append(onDelete);
+          }
 
           if (!foreignKey._onUpdate$().isNull()) {
             final String onUpdate = onUpdate(foreignKey._onUpdate$());
@@ -411,6 +414,10 @@ abstract class Serializer {
 
   protected String primaryKey(final $ddlx_table table) {
     return "PRIMARY KEY";
+  }
+
+  protected String onDelete(final $ddlx_foreignKey._onDelete$ onDelete) {
+    return "ON DELETE " + onDelete.text();
   }
 
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {

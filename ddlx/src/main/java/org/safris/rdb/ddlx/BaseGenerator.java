@@ -36,11 +36,13 @@ import org.safris.rdb.ddlx.xe.$ddlx_columns;
 import org.safris.rdb.ddlx.xe.$ddlx_constraints;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
-import org.safris.maven.common.Log;
 import org.safris.xsb.runtime.Bindings;
-import org.xml.sax.InputSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class BaseGenerator {
+  protected static final Logger logger = LoggerFactory.getLogger(BaseGenerator.class);
+
   static {
     try {
       PackageLoader.getSystemPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
@@ -50,7 +52,7 @@ abstract class BaseGenerator {
     }
   }
 
-  protected static ddlx_schema parseArguments(final URL url, final File outDir) throws IOException, XMLException {
+  protected static DDLxAudit parseArguments(final URL url, final File outDir) throws IOException, XMLException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 
@@ -58,7 +60,7 @@ abstract class BaseGenerator {
       throw new IllegalArgumentException("!outDir.exists()");
 
     try (final InputStream in = url.openStream()) {
-      return (ddlx_schema)Bindings.parse(new InputSource(in));
+      return new DDLxAudit(url);
     }
   }
 
@@ -109,17 +111,19 @@ abstract class BaseGenerator {
     return merged;
   }
 
+  protected final DDLxAudit audit;
   protected final ddlx_schema unmerged;
   protected final ddlx_schema merged;
 
-  protected BaseGenerator(final ddlx_schema schema) {
-    this.unmerged = schema;
-    this.merged = merge(schema);
+  protected BaseGenerator(final DDLxAudit audit) {
+    this.audit = audit;
+    this.unmerged = audit.schema();
+    this.merged = merge(audit.schema());
 
     final List<String> errors = getErrors();
     if (errors != null && errors.size() > 0) {
       for (final String error : errors)
-        Log.warn(error);
+        logger.warn(error);
 
       // System.exit(1);
     }
@@ -127,9 +131,19 @@ abstract class BaseGenerator {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for (final $ddlx_table table : merged._table())
-      if (!table._abstract$().text() && (table._constraints(0) == null || table._constraints(0)._primaryKey() == null || table._constraints(0)._primaryKey(0)._column() == null))
-        errors.add("Table " + table._name$().text() + " does not have a primary key.");
+    for (final $ddlx_table table : merged._table()) {
+      if (!table._abstract$().text()) {
+        if (table._constraints(0)._primaryKey(0).isNull()) {
+          errors.add("Table `" + table._name$().text() + "` does not have a primary key.");
+        }
+        else {
+          for (final $ddlx_column column : table._column()) {
+            if (audit.isPrimary(table, column) && column._null$().text())
+              errors.add("Primary key column `" + column._name$().text() + "` on table `" + table._name$().text() + "` is NULL.");
+          }
+        }
+      }
+    }
 
     return errors;
   }
@@ -144,7 +158,7 @@ abstract class BaseGenerator {
 
     final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
     if (!superTable._abstract$().text()) {
-      Log.error("Table " + superTable._name$().text() + " must be abstract to be inherited by " + table._name$().text());
+      logger.error("Table `" + superTable._name$().text() + "` must be abstract to be inherited by " + table._name$().text());
       System.exit(1);
     }
 

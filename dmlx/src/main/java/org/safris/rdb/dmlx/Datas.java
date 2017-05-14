@@ -142,16 +142,23 @@ public final class Datas {
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
     final Serializer serializer = Serializer.getSerializer(vendor);
+    boolean hasValues = false;
     while (iterator.hasNext()) {
       final $xs_anySimpleType attribute = iterator.next();
       if (attribute != null) {
-        columns.append(", ").append(getColumn(attribute));
-        values.append(", ").append(getValue(serializer, attribute));
+        if (hasValues) {
+          columns.append(", ");
+          values.append(", ");
+        }
+
+        columns.append(getColumn(attribute));
+        values.append(getValue(serializer, attribute));
+        hasValues = true;
       }
     }
 
     final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getTableName(vendor, row));
-    builder.append(" (").append(columns.substring(2)).append(") VALUES (").append(values.substring(2)).append(")");
+    builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
     return builder.toString();
   }
 

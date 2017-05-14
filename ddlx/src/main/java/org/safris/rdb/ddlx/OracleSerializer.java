@@ -27,9 +27,12 @@ import org.safris.rdb.ddlx.xe.$ddlx_integer;
 import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.vendor.DBVendor;
-import org.safris.maven.common.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class OracleSerializer extends Serializer {
+  private static final Logger logger = LoggerFactory.getLogger(OracleSerializer.class);
+
   @Override
   protected DBVendor getVendor() {
     return DBVendor.ORACLE;
@@ -64,7 +67,7 @@ public final class OracleSerializer extends Serializer {
 
   @Override
   protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    return null;
+    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
@@ -141,7 +144,7 @@ public final class OracleSerializer extends Serializer {
 
   @Override
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
-    Log.warn("ON UPDATE is not supported");
+    logger.warn("ON UPDATE is not supported");
     return null;
   }
 }

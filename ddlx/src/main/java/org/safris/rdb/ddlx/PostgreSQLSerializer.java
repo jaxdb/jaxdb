@@ -29,9 +29,12 @@ import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.vendor.DBVendor;
 import org.safris.rdb.vendor.Dialect;
-import org.safris.maven.common.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class PostgreSQLSerializer extends Serializer {
+  private static final Logger logger = LoggerFactory.getLogger(PostgreSQLSerializer.class);
+
   @Override
   protected DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
@@ -111,12 +114,12 @@ public final class PostgreSQLSerializer extends Serializer {
     final String uniqueClause;
     if ($ddlx_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
-        Log.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
+        logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return "";
       }
 
       if (unique) {
-        Log.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
+        logger.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
       }
 
       uniqueClause = "";
