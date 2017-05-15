@@ -89,14 +89,13 @@ abstract class BaseGenerator {
     }
   }
 
-  // FIXME: This should not be public! But it's been set this way to be usable by xde package.
   protected static ddlx_schema merge(final ddlx_schema schema) {
     final ddlx_schema merged;
     try {
       merged = (ddlx_schema)Bindings.clone(schema);
     }
-    catch (final Exception e) {
-      throw new Error(e);
+    catch (final XMLException e) {
+      throw new UnsupportedOperationException(e);
     }
 
     final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
