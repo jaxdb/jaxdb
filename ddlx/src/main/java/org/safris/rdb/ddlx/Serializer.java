@@ -32,6 +32,7 @@ import org.safris.rdb.ddlx.xe.$ddlx_bigint;
 import org.safris.rdb.ddlx.xe.$ddlx_binary;
 import org.safris.rdb.ddlx.xe.$ddlx_blob;
 import org.safris.rdb.ddlx.xe.$ddlx_boolean;
+import org.safris.rdb.ddlx.xe.$ddlx_changeAction;
 import org.safris.rdb.ddlx.xe.$ddlx_char;
 import org.safris.rdb.ddlx.xe.$ddlx_check;
 import org.safris.rdb.ddlx.xe.$ddlx_clob;
@@ -271,8 +272,11 @@ abstract class Serializer {
           contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(column._name$().text());
           contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
           contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
-          if (!foreignKey._onDelete$().isNull())
-            contraintsBuffer.append(" ON DELETE ").append(foreignKey._onDelete$().text());
+          if (!foreignKey._onDelete$().isNull()) {
+            final String onDelete = onDelete(foreignKey._onDelete$());
+            if (onDelete != null)
+              contraintsBuffer.append(" ").append(onDelete);
+          }
 
           if (!foreignKey._onUpdate$().isNull()) {
             final String onUpdate = onUpdate(foreignKey._onUpdate$());
@@ -417,11 +421,15 @@ abstract class Serializer {
   }
 
   protected String onDelete(final $ddlx_foreignKey._onDelete$ onDelete) {
-    return "ON DELETE " + onDelete.text();
+    return "ON DELETE " + changeAction(onDelete);
   }
 
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
-    return "ON UPDATE " + onUpdate.text();
+    return "ON UPDATE " + changeAction(onUpdate);
+  }
+
+  protected String changeAction(final $ddlx_changeAction changeAction) {
+    return changeAction.text();
   }
 
   private static String recurseCheckRule(final $ddlx_check check) {

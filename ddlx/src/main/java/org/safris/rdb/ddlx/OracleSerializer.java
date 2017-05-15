@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.safris.rdb.ddlx.xe.$ddlx_column;
 import org.safris.rdb.ddlx.xe.$ddlx_foreignKey;
+import org.safris.rdb.ddlx.xe.$ddlx_foreignKey._onDelete$;
 import org.safris.rdb.ddlx.xe.$ddlx_integer;
 import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
@@ -67,7 +68,8 @@ public final class OracleSerializer extends Serializer {
 
   @Override
   protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+    // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
+    return null;
   }
 
   @Override
@@ -140,6 +142,11 @@ public final class OracleSerializer extends Serializer {
   @Override
   protected String foreignKey(final $ddlx_table table) {
     return "CONSTRAINT " + table._name$().text() + "_fk" + ++foreignKeys + " FOREIGN KEY";
+  }
+
+  @Override
+  protected String onDelete(final _onDelete$ onDelete) {
+    return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);
   }
 
   @Override

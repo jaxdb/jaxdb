@@ -102,7 +102,7 @@
   
   <table name="purchase_detail">
     <column name="purchase_number" xsi:type="int" precision="8" unsigned="true" null="false">
-      <foreignKey references="purchase" column="purchase_number"/>
+      <foreignKey references="purchase" column="purchase_number" onDelete="CASCADE"/>
     </column>
     <column name="product_code" xsi:type="char" length="8" null="false">
       <foreignKey references="product" column="code"/>

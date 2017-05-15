@@ -37,29 +37,45 @@ import org.safris.rdb.vendor.DBVendor;
 
 public final class Schemas {
   public static int[] create(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
-    return create(connection, Arrays.asList(schemas));
+    return create(connection, true, schemas);
+  }
+
+  public static int[] create(final Connection connection, final boolean batched, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return create(connection, batched, Arrays.asList(schemas));
   }
 
   public static int[] create(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return create(connection, false, schemas);
+  }
+
+  public static int[] create(final Connection connection, final boolean batched, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     Serializer.getSerializer(vendor).init(connection);
     final java.sql.Statement statement = connection.createStatement();
     final int[] counts = new int[schemas.size()];
     int i = 0;
-    for (final ddlx_schema schema : schemas) {
-      final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
-      for (final String sql : sqls) {
-        // FIXME: Remove this println
-        System.out.println(sql);
-        statement.addBatch(sql);
+    if (batched) {
+      for (final ddlx_schema schema : schemas) {
+        final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
+        for (final String sql : sqls)
+          statement.addBatch(sql);
+
+        int count = 0;
+        for (final int result : statement.executeBatch())
+          count += result;
+
+        counts[i++] = count;
       }
+    }
+    else {
+      for (final ddlx_schema schema : schemas) {
+        final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
+        int count = 0;
+        for (final String sql : sqls)
+          count += statement.executeUpdate(sql);
 
-      int count = 0;
-      final int[] results = statement.executeBatch();
-      for (final int result : results)
-        count += result;
-
-      counts[i++] = count;
+        counts[i++] = count;
+      }
     }
 
     return counts;
