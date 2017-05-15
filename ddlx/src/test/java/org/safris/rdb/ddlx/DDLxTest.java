@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.test.LoggableTest;
 import org.safris.commons.test.MixedTest;
 import org.safris.commons.xml.validate.ValidationException;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
@@ -43,7 +42,7 @@ import org.xml.sax.InputSource;
 @VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
-public class DDLxTest extends LoggableTest {
+public class DDLxTest {
   @Test
   public void testClassicModels(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final ddlx_schema schema;
