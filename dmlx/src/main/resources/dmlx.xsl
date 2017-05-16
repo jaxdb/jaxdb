@@ -43,7 +43,7 @@
   </xsl:variable>
   
   <!-- This function is used to sort the tables in topological dependency order -->
-  <xsl:function name="function:computeWeight" as="xs:integer*" saxon:memo-function="yes">
+  <xsl:function name="function:computeWeight" as="xs:integer*">
     <xsl:param name="node"/>
     <xsl:param name="i"/>
     <!-- generate a sequence containing the weights of each node I reference -->
@@ -56,7 +56,7 @@
     <!-- make my weight higher than any of the nodes I reference -->
     <xsl:choose>
       <xsl:when test="$noTables > $i">
-        <xsl:value-of select="max($weights)+1"/>
+        <xsl:value-of select="max($weights) + 1"/>
       </xsl:when>
       <xsl:otherwise>
         <xsl:message>ERROR: Loop detected in FOREIGN KEY relationship</xsl:message>
@@ -65,6 +65,21 @@
     </xsl:choose>
   </xsl:function>
 
+  <xsl:function name="function:getPrimaryKey">
+    <xsl:param name="node" as="element()"/>
+    <xsl:variable name="primaryKey" select="$node/ddlx:constraints/ddlx:primaryKey"/>
+    <xsl:choose>
+      <xsl:when test="$primaryKey">
+        <xsl:sequence select="$primaryKey"/>
+      </xsl:when>
+      <xsl:when test="$node/@extends">
+        <xsl:for-each select="$node/@extends">
+          <xsl:sequence select="function:getPrimaryKey(/ddlx:schema/ddlx:table[@name=current()])"/>
+        </xsl:for-each>
+      </xsl:when>
+    </xsl:choose>
+  </xsl:function>
+  
   <xsl:function name="function:camel-case">
     <xsl:param name="string"/>
     <xsl:value-of select="string-join(for $s in tokenize($string, '\W+') return concat(upper-case(substring($s, 1, 1)), substring($s, 2)), '')"/>
@@ -169,8 +184,9 @@
           <xsl:text>ns:</xsl:text>
           <xsl:value-of select="@name"/>
         </xsl:attribute>
-        <xsl:for-each select="ddlx:table">
-          <xsl:if test="ddlx:constraints/ddlx:primaryKey">
+        <xsl:for-each select="ddlx:table[not(@abstract='true')]">
+          <xsl:variable name="primaryKey" select="function:getPrimaryKey(current())"/>
+          <xsl:if test="$primaryKey">
             <xs:key>
               <xsl:attribute name="name">
                 <xsl:value-of select="concat('key', function:camel-case(@name))"/>
@@ -181,7 +197,7 @@
                   <xsl:value-of select="function:camel-case(@name)"/>
                 </xsl:attribute>
               </xs:selector>
-              <xsl:for-each select="ddlx:constraints/ddlx:primaryKey/ddlx:column">
+              <xsl:for-each select="$primaryKey/ddlx:column">
                 <xs:field>
                   <xsl:attribute name="xpath">
                     <xsl:text>@</xsl:text>
