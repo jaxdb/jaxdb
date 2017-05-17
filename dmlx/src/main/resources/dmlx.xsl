@@ -59,8 +59,7 @@
         <xsl:value-of select="max($weights) + 1"/>
       </xsl:when>
       <xsl:otherwise>
-        <xsl:message>ERROR: Loop detected in FOREIGN KEY relationship</xsl:message>
-        <xsl:value-of select="0"/>
+        <xsl:message terminate="yes">ERROR: Loop detected in FOREIGN KEY relationship</xsl:message>
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
