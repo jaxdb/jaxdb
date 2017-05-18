@@ -224,7 +224,7 @@
                 <xs:field>
                   <xsl:attribute name="xpath">
                     <xsl:text>@</xsl:text>
-                    <xsl:value-of select="function:instance-case(ddlx:foreignKey/@column)"/>
+                    <xsl:value-of select="function:instance-case(@name)"/>
                   </xsl:attribute>
                 </xs:field>
               </xs:keyref>
