@@ -41,6 +41,11 @@
   </modules>
   <dependencies>
     <dependency>
+      <groupId>org.safris.commons</groupId>
+      <artifactId>commons-sql</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.derby</groupId>
       <artifactId>derby</artifactId>
       <scope>test</scope>
@@ -77,6 +82,10 @@
     </dependency>
   </dependencies>
   <repositories>
+    <repository>
+      <id>maven.oracle.com</id>
+      <url>https://maven.oracle.com</url>
+    </repository>
     <repository>
       <id>mvn.repo.safris.org</id>
       <url>http://mvn.repo.safris.org/m2</url>
