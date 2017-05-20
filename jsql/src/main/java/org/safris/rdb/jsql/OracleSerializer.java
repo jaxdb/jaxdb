@@ -18,6 +18,7 @@ package org.safris.rdb.jsql;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,14 +30,17 @@ import org.safris.rdb.vendor.DBVendor;
 import org.safris.rdb.vendor.Dialect;
 
 final class OracleSerializer extends Serializer {
-  private static final Constructor<?> INTERVALDS;
+  private static Constructor<?> INTERVALDS;
 
-  static {
+  private static Object newINTERVALDS(final String s) {
     try {
-      INTERVALDS = Class.forName("oracle.sql.INTERVALDS").getConstructor(String.class);
+      return (INTERVALDS == null ? INTERVALDS = Class.forName("oracle.sql.INTERVALDS").getConstructor(String.class) : INTERVALDS).newInstance(s);
     }
-    catch (final ReflectiveOperationException e) {
+    catch (final IllegalAccessException | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
       throw new ExceptionInInitializerError(e);
+    }
+    catch (final InstantiationException | InvocationTargetException e) {
+      throw new IllegalStateException(e);
     }
   }
 
@@ -226,16 +230,11 @@ final class OracleSerializer extends Serializer {
 
   @Override
   protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
-    try {
-      final LocalTime value = dataType.get();
-      if (value != null)
-        statement.setObject(parameterIndex, INTERVALDS.newInstance("+0 " + value.format(Dialect.TIME_FORMAT)));
-      else
-        statement.setNull(parameterIndex, dataType.sqlType());
-    }
-    catch (final ReflectiveOperationException e) {
-      throw new IllegalStateException(e);
-    }
+    final LocalTime value = dataType.get();
+    if (value != null)
+      statement.setObject(parameterIndex, newINTERVALDS("+0 " + value.format(Dialect.TIME_FORMAT)));
+    else
+      statement.setNull(parameterIndex, dataType.sqlType());
   }
 
   @Override
