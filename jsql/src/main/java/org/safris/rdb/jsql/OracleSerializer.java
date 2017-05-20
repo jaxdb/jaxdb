@@ -36,7 +36,7 @@ final class OracleSerializer extends Serializer {
     try {
       return (INTERVALDS == null ? INTERVALDS = Class.forName("oracle.sql.INTERVALDS").getConstructor(String.class) : INTERVALDS).newInstance(s);
     }
-    catch (final IllegalAccessException | NoSuchMethodException | SecurityException | ClassNotFoundException e) {
+    catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException | SecurityException e) {
       throw new ExceptionInInitializerError(e);
     }
     catch (final InstantiationException | InvocationTargetException e) {
