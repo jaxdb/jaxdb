@@ -93,18 +93,18 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected String createSchemaIfNotExists(final ddlx_schema schema) {
-    return "CALL CREATE_SCHEMA_IF_NOT_EXISTS('" + schema._name$().text() + "')";
+  protected CreateStatement createSchemaIfNotExists(final ddlx_schema schema) {
+    return new CreateStatement("CALL CREATE_SCHEMA_IF_NOT_EXISTS('" + schema._name$().text() + "')");
   }
 
   @Override
-  protected String createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
-    return "CALL CREATE_TABLE_IF_NOT_EXISTS('" + table._name$().text() + "', '" + super.createTableIfNotExists(table, columnNameToColumn).replace("'", "''") + "')";
+  protected CreateStatement createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+    return new CreateStatement("CALL CREATE_TABLE_IF_NOT_EXISTS('" + table._name$().text() + "', '" + super.createTableIfNotExists(table, columnNameToColumn).getSql().replace("'", "''") + "')");
   }
 
   @Override
-  protected String dropTableIfExists(final $ddlx_table table) {
-    return "CALL DROP_TABLE_IF_EXISTS('" + table._name$().text() + "')";
+  protected DropStatement dropTableIfExists(final $ddlx_table table) {
+    return new DropStatement("CALL DROP_TABLE_IF_EXISTS('" + table._name$().text() + "')");
   }
 
   @Override
@@ -128,7 +128,7 @@ final class DerbySerializer extends Serializer {
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

@@ -50,7 +50,7 @@ public class DDLxTest {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(connection, schema);
+    Schemas.recreate(connection, schema);
   }
 
   @Test
@@ -60,7 +60,7 @@ public class DDLxTest {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(connection, schema);
+    Schemas.recreate(connection, schema);
   }
 
   @Test
@@ -70,6 +70,6 @@ public class DDLxTest {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.create(connection, schema);
+    Schemas.recreate(connection, schema);
   }
 }

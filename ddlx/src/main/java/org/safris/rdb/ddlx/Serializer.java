@@ -83,39 +83,38 @@ abstract class Serializer {
 
   protected abstract DBVendor getVendor();
 
-  protected abstract String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns);
+  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns);
 
   protected abstract void init(final Connection connection) throws SQLException;
 
-  protected String createSchemaIfNotExists(final ddlx_schema schema) {
+  protected CreateStatement createSchemaIfNotExists(final ddlx_schema schema) {
     return null;
   }
 
-  protected String createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+  protected CreateStatement createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table._name$().text();
     builder.append("CREATE TABLE ").append(tableName).append(" (\n");
-    builder.append(createColumns(table));
-    final String constraints = createConstraints(columnNameToColumn, table);
+    if (table._column() != null)
+      builder.append(createColumns(table));
+
+    final CreateStatement constraints = createConstraints(columnNameToColumn, table);
     if (constraints != null)
       builder.append(constraints);
 
     builder.append("\n)");
-    return builder.toString();
+    return new CreateStatement(builder.toString());
   }
 
   private String createColumns(final $ddlx_table table) {
     final StringBuilder ddl = new StringBuilder();
-    if (table._column() == null)
-      return "";
-
     for (final $ddlx_column column : table._column())
       ddl.append(",\n  ").append(createColumn(table, column));
 
     return ddl.substring(2);
   }
 
-  private String createColumn(final $ddlx_table table, final $ddlx_column column) {
+  private CreateStatement createColumn(final $ddlx_table table, final $ddlx_column column) {
     final StringBuilder ddl = new StringBuilder();
     ddl.append(column._name$().text()).append(" ");
     if (column instanceof $ddlx_char) {
@@ -194,10 +193,10 @@ abstract class Serializer {
         ddl.append(" ").append(autoIncrementFragment);
     }
 
-    return ddl.toString();
+    return new CreateStatement(ddl.toString());
   }
 
-  private String createConstraints(final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
     final StringBuffer contraintsBuffer = new StringBuffer();
     if (table._constraints() != null) {
       final $ddlx_constraints constraints = table._constraints(0);
@@ -387,7 +386,7 @@ abstract class Serializer {
       }
     }
 
-    return contraintsBuffer.toString();
+    return new CreateStatement(contraintsBuffer.toString());
   }
 
   protected String check(final $ddlx_table table) {
@@ -451,22 +450,26 @@ abstract class Serializer {
     return clause;
   }
 
-  protected List<String> triggers(final $ddlx_table table) {
-    return new ArrayList<String>();
+  protected List<CreateStatement> triggers(final $ddlx_table table) {
+    return new ArrayList<CreateStatement>();
   }
 
-  protected List<String> indexes(final $ddlx_table table) {
-    final List<String> statements = new ArrayList<String>();
+  protected List<CreateStatement> indexes(final $ddlx_table table) {
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     if (table._indexes() != null) {
       for (final $ddlx_table._indexes._index index : table._indexes(0)._index()) {
-        statements.add(createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), index._column().toArray(new $ddlx_named[index._column().size()])));
+        final CreateStatement createIndex = createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), index._column().toArray(new $ddlx_named[index._column().size()]));
+        if (createIndex != null)
+          statements.add(createIndex);
       }
     }
 
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column._index() != null) {
-          statements.add(createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column));
+          final CreateStatement createIndex = createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column);
+          if (createIndex != null)
+            statements.add(createIndex);
         }
       }
     }
@@ -474,37 +477,37 @@ abstract class Serializer {
     return statements;
   }
 
-  protected List<String> types(final $ddlx_table table) {
-    return new ArrayList<String>();
+  protected List<CreateStatement> types(final $ddlx_table table) {
+    return new ArrayList<CreateStatement>();
   }
 
   protected abstract String dropIndexOnClause(final $ddlx_table table);
 
-  protected List<String> drops(final $ddlx_table table) {
-    final List<String> statements = new ArrayList<String>();
+  protected List<DropStatement> drops(final $ddlx_table table) {
+    final List<DropStatement> statements = new ArrayList<DropStatement>();
     if (table._indexes() != null)
       for (final $ddlx_table._indexes._index index : table._indexes(0)._index())
-        statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table));
+        statements.add(new DropStatement("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
 
     if (table._column() != null)
       for (final $ddlx_column column : table._column())
         if (column._index() != null)
-          statements.add("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table));
+          statements.add(new DropStatement("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table)));
 
     if (table._triggers() != null)
       for (final $ddlx_table._triggers._trigger trigger : table._triggers().get(0)._trigger())
         for (final String action : trigger._actions$().text())
-          statements.add("DROP TRIGGER IF EXISTS " + SQLDataTypes.getTriggerName(table._name$().text(), trigger, action));
+          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + SQLDataTypes.getTriggerName(table._name$().text(), trigger, action)));
 
-    final String dropTable = dropTableIfExists(table);
+    final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)
       statements.add(dropTable);
 
     return statements;
   }
 
-  protected String dropTableIfExists(final $ddlx_table table) {
-    return "DROP TABLE IF EXISTS " + table._name$().text();
+  protected DropStatement dropTableIfExists(final $ddlx_table table) {
+    return new DropStatement("DROP TABLE IF EXISTS " + table._name$().text());
   }
 
   private static void checkNumericDefault(final $ddlx_column type, final String defalt, final boolean positive, final Integer precision, final boolean unsigned) {

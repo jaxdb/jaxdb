@@ -16,38 +16,8 @@
 
 package org.safris.rdb.ddlx;
 
-public abstract class Statement {
-  private final String sql;
-
-  public Statement(final String sql) {
-    this.sql = sql;
-    if (sql == null)
-      throw new NullPointerException("sql == null");
-  }
-
-  public String getSql() {
-    return this.sql;
-  }
-
-  @Override
-  public boolean equals(final Object obj) {
-    if (this == obj)
-      return true;
-
-    if (!(obj instanceof Statement))
-      return false;
-
-    final Statement that = (Statement)obj;
-    return sql.equals(that.sql);
-  }
-
-  @Override
-  public int hashCode() {
-    return sql.hashCode() ^ 7;
-  }
-
-  @Override
-  public String toString() {
-    return sql;
+public class DropStatement extends Statement {
+  public DropStatement(final String sql) {
+    super(sql);
   }
 }

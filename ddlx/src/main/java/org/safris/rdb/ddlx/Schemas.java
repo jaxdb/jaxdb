@@ -36,32 +36,72 @@ import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.safris.rdb.vendor.DBVendor;
 
 public final class Schemas {
-  public static int[] create(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
-    return create(connection, true, schemas);
+  public static int[] drop(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), true, false, false);
   }
 
-  public static int[] create(final Connection connection, final boolean batched, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
-    return create(connection, batched, Arrays.asList(schemas));
+  public static int[] drop(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, schemas, true, false, false);
+  }
+
+  public static int[] dropBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), true, false, true);
+  }
+
+  public static int[] dropBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, schemas, true, false, true);
+  }
+
+  public static int[] create(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), false, true, false);
   }
 
   public static int[] create(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
-    return create(connection, false, schemas);
+    return exec(connection, schemas, false, true, false);
   }
 
-  public static int[] create(final Connection connection, final boolean batched, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] createBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), false, true, true);
+  }
+
+  public static int[] createBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, schemas, false, true, true);
+  }
+
+  public static int[] recreate(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), true, true, false);
+  }
+
+  public static int[] recreate(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, schemas, true, true, false);
+  }
+
+  public static int[] recreateBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Arrays.asList(schemas), true, true, true);
+  }
+
+  public static int[] recreateBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+    return exec(connection, schemas, true, true, true);
+  }
+
+  private static int[] exec(final Connection connection, final Collection<ddlx_schema> schemas, final boolean drop, final boolean create, final boolean batched) throws GeneratorExecutionException, SQLException {
+    if (!drop && !create)
+      return null;
+
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     Serializer.getSerializer(vendor).init(connection);
-    final java.sql.Statement statement = connection.createStatement();
+    final java.sql.Statement sqlStatement = connection.createStatement();
     final int[] counts = new int[schemas.size()];
     int i = 0;
     if (batched) {
       for (final ddlx_schema schema : schemas) {
-        final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
-        for (final String sql : sqls)
-          statement.addBatch(sql);
+        final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
+        for (final Statement statement : statements)
+          if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
+            sqlStatement.addBatch(statement.getSql());
 
         int count = 0;
-        for (final int result : statement.executeBatch())
+        for (final int result : sqlStatement.executeBatch())
           count += result;
 
         counts[i++] = count;
@@ -69,10 +109,11 @@ public final class Schemas {
     }
     else {
       for (final ddlx_schema schema : schemas) {
-        final String[] sqls = Generator.createDDL(new DDLxAudit(schema), vendor, null);
+        final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
         int count = 0;
-        for (final String sql : sqls)
-          count += statement.executeUpdate(sql);
+        for (final Statement statement : statements)
+          if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
+            count += sqlStatement.executeUpdate(statement.getSql());
 
         counts[i++] = count;
       }

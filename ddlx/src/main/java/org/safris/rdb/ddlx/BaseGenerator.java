@@ -19,8 +19,6 @@ package org.safris.rdb.ddlx;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -52,24 +50,12 @@ abstract class BaseGenerator {
     }
   }
 
-  protected static DDLxAudit parseArguments(final URL url, final File outDir) throws IOException, XMLException {
-    if (url == null)
-      throw new IllegalArgumentException("url == null");
-
-    if (outDir != null && !outDir.exists())
-      throw new IllegalArgumentException("!outDir.exists()");
-
-    try (final InputStream in = url.openStream()) {
-      return new DDLxAudit(url);
-    }
-  }
-
-  protected static void writeOutput(final List<String> statements, final File file) {
+  protected static void writeOutput(final List<Statement> statements, final File file) {
     if (file == null)
       return;
 
     final StringBuilder builder = new StringBuilder();
-    for (final String statement : statements)
+    for (final Statement statement : statements)
       builder.append("\n\n").append(statement).append(";");
 
     try {
@@ -94,7 +80,7 @@ abstract class BaseGenerator {
     try {
       merged = (ddlx_schema)Bindings.clone(schema);
     }
-    catch (final XMLException e) {
+    catch (final IOException | XMLException e) {
       throw new UnsupportedOperationException(e);
     }
 

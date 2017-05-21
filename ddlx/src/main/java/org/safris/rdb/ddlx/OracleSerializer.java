@@ -44,15 +44,15 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> drops(final $ddlx_table table) {
-    final List<String> statements = super.drops(table);
+  protected List<DropStatement> drops(final $ddlx_table table) {
+    final List<DropStatement> statements = super.drops(table);
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
           if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
-            statements.add("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;");
-            statements.add("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + SQLDataTypes.getTriggerName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;");
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + SQLDataTypes.getTriggerName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
         }
       }
@@ -73,15 +73,15 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> types(final $ddlx_table table) {
-    final List<String> statements = new ArrayList<String>();
+  protected List<CreateStatement> types(final $ddlx_table table) {
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
           if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, "CREATE SEQUENCE " + sequenceName + " START WITH 1");
+            statements.add(0, new CreateStatement("CREATE SEQUENCE " + sequenceName + " START WITH 1"));
           }
         }
       }
@@ -92,15 +92,15 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> triggers(final $ddlx_table table) {
-    final List<String> statements = new ArrayList<String>();
+  protected List<CreateStatement> triggers(final $ddlx_table table) {
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
           if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, "CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table._name$().text() + " FOR EACH ROW when (new." + column._name$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column._name$().text() + " FROM dual; END;");
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table._name$().text() + " FOR EACH ROW when (new." + column._name$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column._name$().text() + " FROM dual; END;"));
           }
         }
       }
@@ -111,8 +111,8 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected String dropTableIfExists(final $ddlx_table table) {
-    return "BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + table._name$().text() + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;";
+  protected DropStatement dropTableIfExists(final $ddlx_table table) {
+    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + table._name$().text() + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
   }
 
   @Override
@@ -121,8 +121,8 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 
   private int foreignKeys = 0;

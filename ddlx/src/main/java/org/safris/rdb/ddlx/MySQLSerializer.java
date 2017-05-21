@@ -38,13 +38,13 @@ public final class MySQLSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> triggers(final $ddlx_table table) {
+  protected List<CreateStatement> triggers(final $ddlx_table table) {
     if (table._triggers() == null)
       return super.triggers(table);
 
     final String tableName = table._name$().text();
     final List<$ddlx_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
-    final List<String> statements = new ArrayList<String>();
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     for (final $ddlx_table._triggers._trigger trigger : triggers) {
       String buffer = "";
       for (final String action : trigger._actions$().text()) {
@@ -72,7 +72,7 @@ public final class MySQLSerializer extends Serializer {
         buffer += "DELIMITER";
       }
 
-      statements.add(buffer.toString());
+      statements.add(new CreateStatement(buffer.toString()));
     }
 
     statements.addAll(super.triggers(table));
@@ -95,7 +95,7 @@ public final class MySQLSerializer extends Serializer {
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return "CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")";
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

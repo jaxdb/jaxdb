@@ -45,17 +45,17 @@ public final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> drops(final $ddlx_table table) {
-    final List<String> statements = super.drops(table);
+  protected List<DropStatement> drops(final $ddlx_table table) {
+    final List<DropStatement> statements = super.drops(table);
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_enum) {
-          statements.add("DROP TYPE IF EXISTS " + Dialect.getTypeName(table._name$().text(), (($ddlx_enum)column)._name$().text()));
+          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(table._name$().text(), (($ddlx_enum)column)._name$().text())));
         }
         else if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
           if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
-            statements.add("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type));
+            statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type)));
         }
       }
     }
@@ -64,8 +64,8 @@ public final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
-  protected List<String> types(final $ddlx_table table) {
-    final List<String> statements = new ArrayList<String>();
+  protected List<CreateStatement> types(final $ddlx_table table) {
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_enum) {
@@ -80,12 +80,12 @@ public final class PostgreSQLSerializer extends Serializer {
             sql.append(builder.substring(2));
           }
 
-          statements.add(0, sql.append(")").toString());
+          statements.add(0, new CreateStatement(sql.append(")").toString()));
         }
         else if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
           if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
-            statements.add(0, "CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type));
+            statements.add(0, new CreateStatement("CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type)));
         }
       }
     }
@@ -110,12 +110,12 @@ public final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
-  protected String createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
     final String uniqueClause;
     if ($ddlx_index._type$.HASH.text().equals(type)) {
       if (columns.length > 1) {
         logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
-        return "";
+        return null;
       }
 
       if (unique) {
@@ -128,6 +128,6 @@ public final class PostgreSQLSerializer extends Serializer {
       uniqueClause = unique ? "UNIQUE " : "";
     }
 
-    return "CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + SQLDataTypes.csvNames(columns) + ")";
+    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

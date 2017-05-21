@@ -48,33 +48,15 @@ public final class Generator extends BaseGenerator {
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]), null);
   }
 
-  public static String[] createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, XMLException {
-    return Generator.createDDL(url, vendor, null);
+  public static List<Statement> createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
+    return Generator.createDDL(DDLxAudit.makeAudit(url, outDir), vendor, outDir);
   }
 
-  public static String[] createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
-    return Generator.createDDL(parseArguments(url, outDir), vendor, outDir);
-  }
-
-  public static String[] createDDL(final DDLxAudit audit, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+  private static List<Statement> createDDL(final DDLxAudit audit, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
     final Generator generator = new Generator(audit);
-    final Statement[] ddls = generator.parse(vendor);
-    final List<String> statements = new ArrayList<String>();
-    final String createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(audit.schema());
-    if (createSchema != null)
-      statements.add(createSchema);
-
-    for (int i = ddls.length - 1; i >= 0; --i)
-      if (ddls[i].drop != null)
-        for (final String drop : ddls[i].drop)
-          statements.add(drop);
-
-    for (final Statement ddl : ddls)
-      for (final String create : ddl.create)
-        statements.add(create);
-
+    final List<Statement> statements = generator.parse(vendor);
     writeOutput(statements, outDir != null ? new File(outDir, generator.merged._name$().text() + ".sql") : null);
-    return statements.toArray(new String[statements.size()]);
+    return statements;
   }
 
   private static String checkNameViolation(String string, final boolean strict) {
@@ -93,7 +75,7 @@ public final class Generator extends BaseGenerator {
     return message.toString();
   }
 
-  private Generator(final DDLxAudit audit) {
+  protected Generator(final DDLxAudit audit) {
     super(audit);
     sortedTableOrder = Schemas.tables(merged);
   }
@@ -145,30 +127,30 @@ public final class Generator extends BaseGenerator {
     }
   }
 
-  private String[] parseTable(final DBVendor vendor, final $ddlx_table table, final Set<String> tableNames) throws GeneratorExecutionException {
+  private List<CreateStatement> parseTable(final DBVendor vendor, final $ddlx_table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
     registerColumns(tableNames, columnNameToColumn, table, merged);
 
     final Serializer serializer = Serializer.getSerializer(vendor);
-    final List<String> statements = new ArrayList<String>();
+    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     statements.addAll(serializer.types(table));
 
     columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
-    final String createTable = serializer.createTableIfNotExists(table, columnNameToColumn);
+    final CreateStatement createTable = serializer.createTableIfNotExists(table, columnNameToColumn);
 
     statements.add(createTable);
 
     statements.addAll(serializer.triggers(table));
     statements.addAll(serializer.indexes(table));
-    return statements.toArray(new String[statements.size()]);
+    return statements;
   }
 
   private final List<$ddlx_table> sortedTableOrder;
 
-  public Statement[] parse(final DBVendor vendor) throws GeneratorExecutionException {
-    final Map<String,String[]> dropStatements = new HashMap<String,String[]>();
-    final Map<String,String[]> createTableStatements = new HashMap<String,String[]>();
+  public List<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
+    final Map<String,List<DropStatement>> dropStatements = new HashMap<String,List<DropStatement>>();
+    final Map<String,List<CreateStatement>> createTableStatements = new HashMap<String,List<CreateStatement>>();
 
     final Set<String> skipTables = new HashSet<String>();
     for (final $ddlx_table table : merged._table()) {
@@ -176,8 +158,8 @@ public final class Generator extends BaseGenerator {
         skipTables.add(table._name$().text());
       }
       else if (!table._abstract$().text()) {
-        final List<String> drops = Serializer.getSerializer(vendor).drops(table);
-        dropStatements.put(table._name$().text(), drops.toArray(new String[drops.size()]));
+        final List<DropStatement> drops = Serializer.getSerializer(vendor).drops(table);
+        dropStatements.put(table._name$().text(), drops);
       }
     }
 
@@ -186,13 +168,19 @@ public final class Generator extends BaseGenerator {
       if (!table._abstract$().text())
         createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
-    final List<Statement> ddls = new ArrayList<Statement>();
+    final List<Statement> statements = new ArrayList<Statement>();
+    final CreateStatement createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(audit.schema());
+    if (createSchema != null)
+      statements.add(createSchema);
+
     for (final $ddlx_table table : sortedTableOrder) {
       final String tableName = table._name$().text();
-      if (!skipTables.contains(tableName))
-        ddls.add(new Statement(tableName, dropStatements.get(tableName), createTableStatements.get(tableName)));
+      if (!skipTables.contains(tableName)) {
+        statements.addAll(0, dropStatements.get(tableName));
+        statements.addAll(createTableStatements.get(tableName));
+      }
     }
 
-    return ddls.toArray(new Statement[ddls.size()]);
+    return statements;
   }
 }
