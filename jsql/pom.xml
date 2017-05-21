@@ -67,16 +67,16 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>commons-math</artifactId>
+      <groupId>org.safris</groupId>
+      <artifactId>safris-math</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>commons-jci</artifactId>
+      <groupId>org.safris</groupId>
+      <artifactId>safris-jci</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>commons-sql</artifactId>
+      <groupId>org.safris</groupId>
+      <artifactId>safris-sql</artifactId>
     </dependency>
     <dependency>
       <groupId>org.safris.rdb</groupId>

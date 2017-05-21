@@ -41,8 +41,8 @@
   </modules>
   <dependencies>
     <dependency>
-      <groupId>org.safris.commons</groupId>
-      <artifactId>commons-sql</artifactId>
+      <groupId>org.safris</groupId>
+      <artifactId>safris-sql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
