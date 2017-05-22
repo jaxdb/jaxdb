@@ -38,19 +38,19 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
   ```
 
-2. Add the `mvn.repo.safris.org` Maven repositories to the POM.
+2. Add the `mvn.repo.lib4j.org` Maven repositories to the POM.
 
   ```xml
   <repositories>
     <repository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
+      <id>mvn.repo.lib4j.org</id>
+      <url>http://mvn.repo.lib4j.org/m2</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
+      <id>mvn.repo.lib4j.org</id>
+      <url>http://mvn.repo.lib4j.org/m2</url>
     </pluginRepository>
   </pluginRepositories>
   ```
@@ -59,9 +59,9 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
   ```xml
   <schema name="basis"
-    xmlns="http://rdb.safris.org/ddlx.xsd"
+    xmlns="http://rdb.lib4j.org/ddlx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://rdb.safris.org/ddlx.xsd http://rdb.safris.org/ddlx.xsd">
+    xsi:schemaLocation="http://rdb.lib4jx.org/ddlx.xsd http://rdb.lib4jx.org/ddlx.xsd">
 
     <table name="id" abstract="true">
       <column name="id" xsi:type="char" length="36" null="false"/>
@@ -94,11 +94,11 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </schema>
   ```
 
-4. Add the [`org.safris.maven.plugin:rdb-maven-plugin`][rdb-maven-plugin] to the POM.
+4. Add the [`org.lib4jx.maven.plugin:rdb-maven-plugin`][rdb-maven-plugin] to the POM.
 
   ```xml
   <plugin>
-    <groupId>org.safris.maven.plugin</groupId>
+    <groupId>org.lib4jx.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>1.3.2</version>
     <executions>
@@ -110,7 +110,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         </goals>
         <configuration>
           <vendor>PostgreSQL</vendor>
-          <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+          <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
             <destdir>generated-resources/rdb</destdir>
             <resources>
               <resource>src/main/resources/basis.ddlx</resource>
@@ -136,10 +136,10 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[ddlx.xsd]: https://github.com/SevaSafris/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx.xsd]: https://github.com/lib4jx/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: https://github.com/SevaSafris/rdb/blob/master/jsql
+[jsql]: https://github.com/lib4jx/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
+[rdb-maven-plugin]: https://github.com/lib4jx/rdb-maven-plugin

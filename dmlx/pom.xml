@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 Seva Safris
+  Copyright (c) 2016 lib4j
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd http://maven.safris.org/common/manifest.xsd http://maven.safris.org/common/manifest.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.safris</groupId>
+    <groupId>org.lib4jx</groupId>
     <artifactId>rdb</artifactId>
     <version>0.9.7</version>
   </parent>
-  <groupId>org.safris.rdb</groupId>
+  <groupId>org.lib4jx.rdb</groupId>
   <artifactId>rdb-dmlx</artifactId>
   <version>0.9.7</version>
   <name>${project.groupId}:${project.artifactId}</name>
@@ -55,7 +55,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.safris.maven.plugin</groupId>
+        <groupId>org.lib4jx.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -72,7 +72,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.safris.maven.plugin</groupId>
+        <groupId>org.lib4jx.maven.plugin</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -103,21 +103,21 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.safris</groupId>
-      <artifactId>safris-xml</artifactId>
+      <groupId>org.lib4j</groupId>
+      <artifactId>lib4j-xml</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.rdb</groupId>
+      <groupId>org.lib4jx.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.safris.rdb</groupId>
+      <groupId>org.lib4jx.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.safris.xsb</groupId>
+      <groupId>org.lib4jx.xsb</groupId>
       <artifactId>xsb-generator</artifactId>
       <scope>test</scope>
     </dependency>

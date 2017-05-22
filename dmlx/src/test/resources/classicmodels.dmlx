@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 Seva Safris
+  Copyright (c) 2016 lib4j
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal

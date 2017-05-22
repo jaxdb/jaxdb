@@ -57,11 +57,11 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
-2. Next, add the `org.safris.rdb:rdb-jsql` dependency into the POM.
+2. Next, add the `org.lib4jx.rdb:rdb-jsql` dependency into the POM.
 
   ```xml
   <dependency>
-    <groupId>org.safris.rdb</groupId>
+    <groupId>org.lib4jx.rdb</groupId>
     <artifactId>rdb-jsql</artifactId>
     <version>0.9.7</version>
   </dependency>
@@ -71,7 +71,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <plugin>
-    <groupId>org.safris.maven.plugin</groupId>
+    <groupId>org.lib4jx.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.7</version>
     <executions>
@@ -79,7 +79,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
       <execution>
         <id>jsql</id>
         <configuration>
-          <manifest xmlns="http://maven.safris.org/common/manifest.xsd">
+          <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
             <destdir>generated-sources/rdb</destdir>
             <resources>
               <resource>src/main/resources/schema.ddlx</resource>
@@ -125,13 +125,13 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`commons-dbcp`][commons-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`lib4jx-dbcp`][lib4jx-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://commons.safris.org/dbcp.xsd"
+    xmlns="http://commons.lib4j.org/dbcp.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://commons.safris.org/dbcp.xsd http://commons.safris.org/dbcp.xsd">
+    xsi:schemaLocation="http://lib4jx.org/dbcp.xsd http://lib4jx.org/dbcp.xsd">
     <jdbc>
       <url>jdbc:postgresql://localhost/basis</url>
       <driverClassName>org.postgresql.Driver</driverClassName>
@@ -173,12 +173,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.safris.commons:commons-dbcp`][commons-dbcp] dependency to the POM.
+7. Add [`org.lib4j:lib4jx-dbcp`][lib4jx-dbcp] dependency to the POM.
 
   ```xml
   <dependency>
-    <groupId>org.safris.commons</groupId>
-    <artifactId>commons-dbcp</artifactId>
+    <groupId>org.lib4j</groupId>
+    <artifactId>lib4jx-dbcp</artifactId>
     <version>2.0.2</version>
   </dependency>
   ```
@@ -536,39 +536,39 @@ Specification                                                                   
  
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details. 
 
-[commons-dbcp]: https://github.com/SevaSafris/commons-dbcp
-[dbcp.xsd]: https://github.com/SevaSafris/commons-dbcp/blob/master/src/main/resources/dbcp.xsd
-[ddlx-example]: https://github.com/SevaSafris/rdb/tree/master/ddlx#example
-[ddlx]: https://github.com/SevaSafris/rdb/tree/master/ddlx/
-[hospital.ddlx]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
+[lib4jx-dbcp]: https://github.com/lib4jx/lib4jx-dbcp
+[dbcp.xsd]: https://github.com/lib4jx/lib4jx-dbcp/blob/master/src/main/resources/dbcp.xsd
+[ddlx-example]: https://github.com/lib4jx/rdb/tree/master/ddlx#example
+[ddlx]: https://github.com/lib4jx/rdb/tree/master/ddlx/
+[hospital.ddlx]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/SevaSafris/rdb-maven-plugin
+[rdb-maven-plugin]: https://github.com/lib4jx/rdb-maven-plugin
 
-[BetweenPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/BetweenPredicateTest.java
-[BooleanValueExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
-[CastTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/CastTest.java
-[ComparisonPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/ComparisonPredicateTest.java
-[CorrelatedSubQueryTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/CorrelatedSubQueryTest.java
-[CountFunctionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/CountFunctionTest.java
-[DateTimeValueExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/DateTimeValueExpressionTest.java
-[DeleteTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/DeleteTest.java
-[ExistsPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/ExistsPredicateTest.java
-[GroupClauseTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/GroupClauseTest.java
-[HavingClauseTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/HavingClauseTest.java
-[InPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/InPredicateTest.java
-[InsertTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/InsertTest.java
-[JoinedTableTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/JoinedTableTest.java
-[LikePredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/LikePredicateTest.java
-[LimitExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/LimitExpressionTest.java
-[NullPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/NullPredicateTest.java
-[NumericFunctionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/NumericFunctionTest.java
-[NumericValueExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
-[OrderExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/OrderExpressionTest.java
-[QuantifiedComparisonPredicateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/QueryExpressionTest.java
-[SetFunctionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/SetFunctionTest.java
-[StringValueExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/StringValueExpressionTest.java
-[UnionExpressionTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/UnionExpressionTest.java
-[UpdateTest]: https://github.com/SevaSafris/rdb-maven-plugin/blob/master/src/test/java/org/safris/maven/plugin/rdb/jsql/UpdateTest.java
+[BetweenPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/BetweenPredicateTest.java
+[BooleanValueExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/BooleanValueExpressionTest.java
+[CastTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/CastTest.java
+[ComparisonPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/ComparisonPredicateTest.java
+[CorrelatedSubQueryTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/CorrelatedSubQueryTest.java
+[CountFunctionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/CountFunctionTest.java
+[DateTimeValueExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/DateTimeValueExpressionTest.java
+[DeleteTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/DeleteTest.java
+[ExistsPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/ExistsPredicateTest.java
+[GroupClauseTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/GroupClauseTest.java
+[HavingClauseTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/HavingClauseTest.java
+[InPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/InPredicateTest.java
+[InsertTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/InsertTest.java
+[JoinedTableTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/JoinedTableTest.java
+[LikePredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/LikePredicateTest.java
+[LimitExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/LimitExpressionTest.java
+[NullPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/NullPredicateTest.java
+[NumericFunctionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/NumericFunctionTest.java
+[NumericValueExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/NumericValueExpressionTest.java
+[OrderExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/OrderExpressionTest.java
+[QuantifiedComparisonPredicateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
+[QueryExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/QueryExpressionTest.java
+[SetFunctionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/SetFunctionTest.java
+[StringValueExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/StringValueExpressionTest.java
+[UnionExpressionTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/UnionExpressionTest.java
+[UpdateTest]: https://github.com/lib4jx/rdb-maven-plugin/blob/master/src/test/java/org.lib4jx.maven.plugin/rdb/jsql/UpdateTest.java

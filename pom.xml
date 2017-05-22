@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2012 Seva Safris
+  Copyright (c) 2012 lib4j
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -21,10 +21,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org</groupId>
-    <artifactId>safris</artifactId>
+    <artifactId>lib4j</artifactId>
     <version>1.7.1</version>
   </parent>
-  <groupId>org.safris</groupId>
+  <groupId>org.lib4jx</groupId>
   <artifactId>rdb</artifactId>
   <version>0.9.7</version>
   <packaging>pom</packaging>
@@ -41,8 +41,8 @@
   </modules>
   <dependencies>
     <dependency>
-      <groupId>org.safris</groupId>
-      <artifactId>safris-sql</artifactId>
+      <groupId>org.lib4j</groupId>
+      <artifactId>lib4j-sql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
