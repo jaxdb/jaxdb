@@ -9,7 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.safris.commons.lang.Classes;
+import org.lib4j.lang.Classes;
 import org.safris.rdb.jsql.generator.Args;
 
 public class DMLGenerator {

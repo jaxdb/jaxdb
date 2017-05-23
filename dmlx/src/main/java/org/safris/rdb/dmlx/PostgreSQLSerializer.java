@@ -16,8 +16,8 @@
 
 package org.safris.rdb.dmlx;
 
-import org.safris.commons.lang.Bytes;
-import org.safris.commons.util.Hexadecimal;
+import org.lib4j.lang.Bytes;
+import org.lib4j.util.Hexadecimal;
 import org.safris.rdb.dmlx.xe.$dmlx_binary;
 import org.safris.rdb.dmlx.xe.$dmlx_blob;
 import org.safris.rdb.vendor.DBVendor;

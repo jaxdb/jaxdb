@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.safris.commons.lang.Arrays;
-import org.safris.commons.xml.XMLException;
+import org.lib4j.lang.Arrays;
+import org.lib4j.xml.XMLException;
 import org.safris.rdb.ddlx.xe.$ddlx_column;
 import org.safris.rdb.ddlx.xe.$ddlx_compliant;
 import org.safris.rdb.ddlx.xe.$ddlx_table;

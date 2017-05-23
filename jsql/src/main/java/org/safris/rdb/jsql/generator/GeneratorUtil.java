@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.safris.commons.lang.Numbers;
+import org.lib4j.lang.Numbers;
 import org.safris.rdb.jsql.GenerateOn;
 
 public final class GeneratorUtil {

@@ -16,7 +16,7 @@
 
 package org.safris.rdb.ddlx;
 
-import org.safris.commons.util.MaskedEnum;
+import org.lib4j.util.MaskedEnum;
 
 class SQLStandard extends MaskedEnum {
   protected static final SQLStandard SQL92 = new SQLStandard(0, "SQL-92");

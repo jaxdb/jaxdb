@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.safris.commons.sql.ConnectionProxy;
+import org.lib4j.sql.ConnectionProxy;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
 import com.ibm.db2.jcc.DB2Driver;

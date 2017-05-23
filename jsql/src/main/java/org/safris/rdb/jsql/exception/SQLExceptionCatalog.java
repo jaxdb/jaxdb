@@ -25,7 +25,7 @@ import java.sql.SQLInvalidAuthorizationSpecException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.safris.commons.lang.Throwables;
+import org.lib4j.lang.Throwables;
 
 public class SQLExceptionCatalog {
   private static final Map<String,Class<? extends SQLException>> categories = new HashMap<String,Class<? extends SQLException>>();

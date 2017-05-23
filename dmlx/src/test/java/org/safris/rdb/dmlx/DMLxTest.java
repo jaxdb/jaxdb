@@ -27,14 +27,14 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.lang.Resources;
+import org.lib4j.util.Collections;
+import org.lib4j.xml.NamespaceURI;
+import org.lib4j.xml.XMLException;
 import org.libx4j.xsb.compiler.processor.GeneratorContext;
 import org.libx4j.xsb.compiler.processor.reference.SchemaReference;
 import org.libx4j.xsb.generator.Generator;
 import org.libx4j.xsb.runtime.Bindings;
-import org.safris.commons.lang.Resources;
-import org.safris.commons.util.Collections;
-import org.safris.commons.xml.NamespaceURI;
-import org.safris.commons.xml.XMLException;
 import org.safris.rdb.ddlx.Schemas;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.safris.rdb.dmlx.xe.$dmlx_data;

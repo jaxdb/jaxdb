@@ -25,7 +25,7 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.safris.commons.sql.ConnectionProxy;
+import org.lib4j.sql.ConnectionProxy;
 
 public final class DBRegistry {
   private static DBConnector makeConnector(final DataSource dataSource) {

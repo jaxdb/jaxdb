@@ -26,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.lib4j.lang.PackageLoader;
+import org.lib4j.lang.PackageNotFoundException;
+import org.lib4j.xml.XMLException;
 import org.libx4j.xsb.runtime.Bindings;
-import org.safris.commons.lang.PackageLoader;
-import org.safris.commons.lang.PackageNotFoundException;
-import org.safris.commons.xml.XMLException;
 import org.safris.rdb.ddlx.xe.$ddlx_column;
 import org.safris.rdb.ddlx.xe.$ddlx_columns;
 import org.safris.rdb.ddlx.xe.$ddlx_constraints;

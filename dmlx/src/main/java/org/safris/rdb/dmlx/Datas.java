@@ -27,10 +27,10 @@ import java.util.Iterator;
 
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.lang.ClassLoaders;
+import org.lib4j.lang.Resources;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.QName;
-import org.safris.commons.lang.ClassLoaders;
-import org.safris.commons.lang.Resources;
 import org.safris.rdb.dmlx.xe.$dmlx_binary;
 import org.safris.rdb.dmlx.xe.$dmlx_blob;
 import org.safris.rdb.dmlx.xe.$dmlx_boolean;
@@ -164,7 +164,7 @@ public final class Datas {
 
   public static void createXSD(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    org.safris.commons.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), ddlxFile, xsdFile);
+    org.lib4j.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), ddlxFile, xsdFile);
     ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), xsdFile.getParentFile().toURI().toURL());
   }
 

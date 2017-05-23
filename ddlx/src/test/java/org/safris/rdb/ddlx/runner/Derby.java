@@ -26,10 +26,10 @@ import java.util.jar.JarFile;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.lib4j.io.Files;
 import org.lib4j.io.JarFiles;
+import org.lib4j.lang.Resource;
+import org.lib4j.lang.Resources;
 import org.lib4j.net.URLs;
-import org.safris.commons.lang.Resource;
-import org.safris.commons.lang.Resources;
-import org.safris.commons.sql.ConnectionProxy;
+import org.lib4j.sql.ConnectionProxy;
 
 public class Derby implements Vendor {
   private static final File db = new File("target/generated-test-resources/rdb/derby.db");

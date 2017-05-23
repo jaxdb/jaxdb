@@ -19,8 +19,8 @@ package org.safris.rdb.dmlx;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import org.safris.commons.lang.PackageLoader;
-import org.safris.commons.lang.PackageNotFoundException;
+import org.lib4j.lang.PackageLoader;
+import org.lib4j.lang.PackageNotFoundException;
 import org.safris.rdb.dmlx.xe.$dmlx_binary;
 import org.safris.rdb.dmlx.xe.$dmlx_blob;
 import org.safris.rdb.dmlx.xe.$dmlx_boolean;

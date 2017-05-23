@@ -18,8 +18,8 @@ package org.safris.rdb.ddlx;
 
 import java.math.BigInteger;
 
+import org.lib4j.lang.Arrays;
 import org.libx4j.xsb.runtime.BindingList;
-import org.safris.commons.lang.Arrays;
 import org.safris.rdb.ddlx.xe.$ddlx_index;
 import org.safris.rdb.ddlx.xe.$ddlx_integer;
 import org.safris.rdb.ddlx.xe.$ddlx_named;

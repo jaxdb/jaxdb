@@ -20,8 +20,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
-import org.safris.commons.lang.Resources;
-import org.safris.commons.xml.XMLException;
+import org.lib4j.lang.Resources;
+import org.lib4j.xml.XMLException;
 import org.safris.rdb.jsql.generator.Generator;
 
 public abstract class JSQLTest {

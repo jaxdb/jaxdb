@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.lib4j.lang.Strings;
+import org.lib4j.xml.binding.Base64Binary;
+import org.lib4j.xml.binding.DateTime;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.Element;
 import org.libx4j.xsb.runtime.QName;
-import org.safris.commons.lang.Strings;
-import org.safris.commons.xml.binding.Base64Binary;
-import org.safris.commons.xml.binding.DateTime;
 import org.safris.rdb.dmlx.xe.$dmlx_binary;
 import org.safris.rdb.dmlx.xe.$dmlx_blob;
 import org.safris.rdb.dmlx.xe.$dmlx_clob;

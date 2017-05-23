@@ -29,8 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.safris.commons.lang.Pair;
-import org.safris.commons.util.Collections;
+import org.lib4j.lang.Pair;
+import org.lib4j.util.Collections;
 import org.safris.rdb.jsql.exception.SQLExceptionCatalog;
 import org.safris.rdb.jsql.model.select;
 import org.safris.rdb.vendor.DBVendor;

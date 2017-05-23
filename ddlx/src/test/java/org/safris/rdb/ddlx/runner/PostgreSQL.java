@@ -21,8 +21,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.lib4j.sql.ConnectionProxy;
 import org.postgresql.Driver;
-import org.safris.commons.sql.ConnectionProxy;
 
 @SuppressWarnings("unused")
 public class PostgreSQL implements Vendor {

@@ -16,7 +16,7 @@
 
 package org.safris.rdb.jsql;
 
-import org.safris.commons.lang.Strings;
+import org.lib4j.lang.Strings;
 
 public final class Alias extends Serializable {
   protected final String name;
