@@ -21,19 +21,19 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org</groupId>
-    <artifactId>lib4jx</artifactId>
+    <artifactId>libx4j</artifactId>
     <version>2.5.1</version>
   </parent>
-  <groupId>org.lib4jx</groupId>
+  <groupId>org.libx4j</groupId>
   <artifactId>rdb</artifactId>
   <version>0.9.7</version>
   <packaging>pom</packaging>
+  <name>${project.groupId}:${project.artifactId}</name>
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <name>${project.groupId}:${project.artifactId}</name>
   <modules>
     <module>ddlx</module>
     <module>dmlx</module>
@@ -87,14 +87,14 @@
       <url>https://maven.oracle.com</url>
     </repository>
     <repository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
+      <id>mvn.repo.lib4j.org</id>
+      <url>http://mvn.repo.lib4j.org/m2</url>
     </repository>
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <id>mvn.repo.safris.org</id>
-      <url>http://mvn.repo.safris.org/m2</url>
+      <id>mvn.repo.lib4j.org</id>
+      <url>http://mvn.repo.lib4j.org/m2</url>
     </pluginRepository>
   </pluginRepositories>
 </project>
