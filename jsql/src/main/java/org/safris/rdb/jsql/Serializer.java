@@ -39,8 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.safris.commons.io.Readers;
-import org.safris.commons.io.Streams;
+import org.lib4j.io.Readers;
+import org.lib4j.io.Streams;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.util.Hexadecimal;

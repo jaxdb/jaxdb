@@ -27,8 +27,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Set;
 
-import org.safris.commons.io.Readers;
-import org.safris.commons.io.Streams;
+import org.lib4j.io.Readers;
+import org.lib4j.io.Streams;
 import org.safris.rdb.jsql.type.BLOB;
 import org.safris.rdb.jsql.type.ENUM;
 import org.safris.rdb.vendor.DBVendor;

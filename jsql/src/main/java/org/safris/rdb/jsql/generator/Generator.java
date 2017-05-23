@@ -26,9 +26,9 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.lib4j.jci.CompilationException;
+import org.lib4j.jci.JavaCompiler;
 import org.libx4j.xsb.runtime.ParseException;
-import org.safris.commons.jci.CompilationException;
-import org.safris.commons.jci.JavaCompiler;
 import org.safris.commons.lang.ClassLoaders;
 import org.safris.commons.lang.Classes;
 import org.safris.commons.lang.Strings;

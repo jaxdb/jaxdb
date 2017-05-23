@@ -24,9 +24,9 @@ import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
+import org.lib4j.io.Files;
+import org.lib4j.io.JarFiles;
 import org.lib4j.net.URLs;
-import org.safris.commons.io.Files;
-import org.safris.commons.io.JarFiles;
 import org.safris.commons.lang.Resource;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.sql.ConnectionProxy;
