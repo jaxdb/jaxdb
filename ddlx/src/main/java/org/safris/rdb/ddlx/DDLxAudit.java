@@ -7,14 +7,14 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.libx4j.xsb.runtime.Bindings;
+import org.libx4j.xsb.runtime.ParseException;
 import org.safris.commons.xml.XMLException;
 import org.safris.commons.xml.validate.ValidationException;
 import org.safris.rdb.ddlx.xe.$ddlx_columns;
 import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
-import org.safris.xsb.runtime.Bindings;
-import org.safris.xsb.runtime.ParseException;
 
 public class DDLxAudit {
   protected static DDLxAudit makeAudit(final URL url, final File outDir) throws IOException, XMLException {

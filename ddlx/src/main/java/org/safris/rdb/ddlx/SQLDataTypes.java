@@ -18,12 +18,12 @@ package org.safris.rdb.ddlx;
 
 import java.math.BigInteger;
 
+import org.libx4j.xsb.runtime.BindingList;
 import org.safris.commons.lang.Arrays;
 import org.safris.rdb.ddlx.xe.$ddlx_index;
 import org.safris.rdb.ddlx.xe.$ddlx_integer;
 import org.safris.rdb.ddlx.xe.$ddlx_named;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
-import org.safris.xsb.runtime.BindingList;
 
 final class SQLDataTypes {
   protected static String csvNames(final BindingList<$ddlx_named> names) {

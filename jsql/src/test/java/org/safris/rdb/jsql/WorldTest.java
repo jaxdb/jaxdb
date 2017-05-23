@@ -28,8 +28,9 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.lib4j.test.MixedTest;
+import org.libx4j.xsb.runtime.Bindings;
 import org.safris.commons.lang.Resources;
-import org.safris.commons.test.MixedTest;
 import org.safris.commons.xml.XMLException;
 import org.safris.rdb.ddlx.Schemas;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
@@ -40,7 +41,6 @@ import org.safris.rdb.ddlx.runner.PostgreSQL;
 import org.safris.rdb.ddlx.runner.SQLite;
 import org.safris.rdb.ddlx.runner.VendorRunner;
 import org.safris.rdb.dmlx.xe.$dmlx_data;
-import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)

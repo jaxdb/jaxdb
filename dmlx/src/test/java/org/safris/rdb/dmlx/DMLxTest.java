@@ -27,6 +27,8 @@ import java.util.Set;
 
 import javax.xml.transform.TransformerException;
 
+import org.libx4j.xsb.generator.Generator;
+import org.libx4j.xsb.runtime.Bindings;
 import org.safris.commons.lang.Resources;
 import org.safris.commons.util.Collections;
 import org.safris.commons.xml.NamespaceURI;
@@ -36,8 +38,6 @@ import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.safris.rdb.dmlx.xe.$dmlx_data;
 import org.safris.xsb.compiler.processor.GeneratorContext;
 import org.safris.xsb.compiler.processor.reference.SchemaReference;
-import org.safris.xsb.generator.Generator;
-import org.safris.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class DMLxTest {

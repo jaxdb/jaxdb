@@ -9,7 +9,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.safris.commons.test.MixedTest;
+import org.lib4j.test.MixedTest;
 import org.safris.rdb.ddlx.runner.Derby;
 import org.safris.rdb.ddlx.runner.MySQL;
 import org.safris.rdb.ddlx.runner.PostgreSQL;

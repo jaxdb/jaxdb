@@ -26,6 +26,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.libx4j.xsb.runtime.ParseException;
 import org.safris.commons.jci.CompilationException;
 import org.safris.commons.jci.JavaCompiler;
 import org.safris.commons.lang.ClassLoaders;
@@ -58,7 +59,6 @@ import org.safris.rdb.jsql.Schema;
 import org.safris.rdb.jsql.type;
 import org.safris.rdb.jsql.xe.$jsql_integer;
 import org.safris.rdb.vendor.Dialect;
-import org.safris.xsb.runtime.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;

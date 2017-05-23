@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.libx4j.xsb.runtime.Bindings;
 import org.safris.commons.lang.PackageLoader;
 import org.safris.commons.lang.PackageNotFoundException;
 import org.safris.commons.xml.XMLException;
@@ -34,7 +35,6 @@ import org.safris.rdb.ddlx.xe.$ddlx_columns;
 import org.safris.rdb.ddlx.xe.$ddlx_constraints;
 import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.safris.rdb.ddlx.xe.ddlx_schema;
-import org.safris.xsb.runtime.Bindings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
