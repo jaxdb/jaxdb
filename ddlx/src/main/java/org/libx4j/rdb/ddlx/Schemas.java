@@ -28,12 +28,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lib4j.util.TopologicalSort;
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
+import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_constraints;
-import org.safris.rdb.ddlx.xe.$ddlx_foreignKey;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
 
 public final class Schemas {
   public static int[] drop(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {

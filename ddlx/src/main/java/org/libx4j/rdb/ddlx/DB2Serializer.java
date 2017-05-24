@@ -4,12 +4,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
+import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_foreignKey;
-import org.safris.rdb.ddlx.xe.$ddlx_integer;
-import org.safris.rdb.ddlx.xe.$ddlx_named;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

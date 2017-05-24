@@ -16,8 +16,8 @@
 
 package org.libx4j.rdb.dmlx;
 
+import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.dmlx.xe.$dmlx_blob;
 
 final class DerbySerializer extends Serializer {
   @Override

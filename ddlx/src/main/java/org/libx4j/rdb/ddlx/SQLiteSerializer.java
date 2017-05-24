@@ -20,14 +20,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
+import org.libx4j.rdb.ddlx.xe.$ddlx_int;
+import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_columns;
-import org.safris.rdb.ddlx.xe.$ddlx_constraints;
-import org.safris.rdb.ddlx.xe.$ddlx_int;
-import org.safris.rdb.ddlx.xe.$ddlx_integer;
-import org.safris.rdb.ddlx.xe.$ddlx_named;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

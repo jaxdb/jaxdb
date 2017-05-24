@@ -23,12 +23,12 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 
 import org.lib4j.lang.Arrays;
+import org.libx4j.rdb.dmlx.xe.$dmlx_data;
 import org.libx4j.rdb.jsql.model.case_;
 import org.libx4j.rdb.jsql.model.delete;
 import org.libx4j.rdb.jsql.model.insert;
 import org.libx4j.rdb.jsql.model.select;
 import org.libx4j.rdb.jsql.model.update;
-import org.safris.rdb.dmlx.xe.$dmlx_data;
 
 @SuppressWarnings("hiding")
 public final class DML {

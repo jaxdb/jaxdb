@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema name="types"
-  xmlns="http://rdb.safris.org/ddlx.xsd"
+  xmlns="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.safris.org/ddlx.xsd http://rdb.safris.org/ddlx.xsd">
+  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="type">
     <column name="bigint_type" xsi:type="bigint" precision="19"/>
     <column name="binary_type" xsi:type="binary" varying="true" length="255"/>

@@ -18,9 +18,9 @@ package org.libx4j.rdb.dmlx;
 
 import org.lib4j.lang.Bytes;
 import org.lib4j.util.Hexadecimal;
+import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
+import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.dmlx.xe.$dmlx_binary;
-import org.safris.rdb.dmlx.xe.$dmlx_blob;
 
 final class PostgreSQLSerializer extends Serializer {
   @Override

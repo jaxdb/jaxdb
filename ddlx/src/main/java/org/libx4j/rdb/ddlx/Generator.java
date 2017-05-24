@@ -28,11 +28,11 @@ import java.util.Set;
 
 import org.lib4j.lang.Arrays;
 import org.lib4j.xml.XMLException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_compliant;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

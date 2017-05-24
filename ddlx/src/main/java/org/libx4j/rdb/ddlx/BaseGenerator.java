@@ -29,12 +29,12 @@ import java.util.Set;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
 import org.lib4j.xml.XMLException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.xsb.runtime.Bindings;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_columns;
-import org.safris.rdb.ddlx.xe.$ddlx_constraints;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

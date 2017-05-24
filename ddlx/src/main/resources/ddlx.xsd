@@ -16,8 +16,8 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.safris.org/ddlx.xsd"
-  xmlns:ddlx="http://rdb.safris.org/ddlx.xsd"
+  targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
   <xs:include schemaLocation="ddlx-common.xsd"/>

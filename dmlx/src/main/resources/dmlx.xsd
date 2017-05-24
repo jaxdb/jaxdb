@@ -14,13 +14,14 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<xs:schema elementFormDefault="qualified"
-  xmlns:dt="http://commons.safris.org/xml/datatypes.xsd"
-  xmlns:dmlx="http://rdb.safris.org/dmlx.xsd"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  targetNamespace="http://rdb.safris.org/dmlx.xsd">
+<xs:schema
+  elementFormDefault="qualified"
+  targetNamespace="http://rdb.libx4j.org/dmlx.xsd"
+  xmlns:dt="http://xml.lib4j.org/datatypes.xsd"
+  xmlns:dmlx="http://rdb.libx4j.org/dmlx.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://commons.safris.org/xml/datatypes.xsd" schemaLocation="http://commons.safris.org/xml/datatypes.xsd"/>
+  <xs:import namespace="http://xml.lib4j.org/datatypes.xsd" schemaLocation="http://xml.lib4j.org/datatypes.xsd"/>
 
   <xs:simpleType name="boolean">
     <xs:restriction base="xs:boolean"/>

@@ -17,14 +17,14 @@
 package org.libx4j.rdb.dmlx;
 
 import org.lib4j.util.Hexadecimal;
+import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
+import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
+import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
+import org.libx4j.rdb.dmlx.xe.$dmlx_char;
+import org.libx4j.rdb.dmlx.xe.$dmlx_date;
+import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
+import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.safris.rdb.dmlx.xe.$dmlx_binary;
-import org.safris.rdb.dmlx.xe.$dmlx_blob;
-import org.safris.rdb.dmlx.xe.$dmlx_boolean;
-import org.safris.rdb.dmlx.xe.$dmlx_char;
-import org.safris.rdb.dmlx.xe.$dmlx_date;
-import org.safris.rdb.dmlx.xe.$dmlx_dateTime;
-import org.safris.rdb.dmlx.xe.$dmlx_time;
 
 final class OracleSerializer extends Serializer {
   @Override

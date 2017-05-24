@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.lib4j.lang.Resources;
 import org.lib4j.test.MixedTest;
 import org.lib4j.xml.validate.ValidationException;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -35,7 +36,6 @@ import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
 import org.xml.sax.InputSource;
 
 @RunWith(VendorRunner.class)

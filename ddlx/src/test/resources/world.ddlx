@@ -1,7 +1,7 @@
 <schema name="world"
-  xmlns="http://rdb.safris.org/ddlx.xsd"
+  xmlns="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.safris.org/ddlx.xsd http://rdb.safris.org/ddlx.xsd">
+  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="city">
     <column name="id" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>

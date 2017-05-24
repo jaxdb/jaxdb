@@ -32,12 +32,12 @@ import org.lib4j.util.Collections;
 import org.lib4j.xml.NamespaceURI;
 import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.Schemas;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.dmlx.xe.$dmlx_data;
 import org.libx4j.xsb.compiler.processor.GeneratorContext;
 import org.libx4j.xsb.compiler.processor.reference.SchemaReference;
 import org.libx4j.xsb.generator.Generator;
 import org.libx4j.xsb.runtime.Bindings;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
-import org.safris.rdb.dmlx.xe.$dmlx_data;
 import org.xml.sax.InputSource;
 
 public abstract class DMLxTest {
@@ -49,7 +49,7 @@ public abstract class DMLxTest {
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(ddlx, destFile);
 
-    final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://rdb.safris.org/dmlx.xsd"), NamespaceURI.getInstance("http://commons.safris.org/xml/datatypes.xsd"));
+    final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://rdb.safris.org/dmlx.xsd"), NamespaceURI.getInstance("http://xml.lib4j.org/datatypes.xsd"));
     final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
   }

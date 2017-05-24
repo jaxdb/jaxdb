@@ -9,12 +9,12 @@ import java.util.Map;
 
 import org.lib4j.xml.XMLException;
 import org.lib4j.xml.validate.ValidationException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
-import org.safris.rdb.ddlx.xe.$ddlx_columns;
-import org.safris.rdb.ddlx.xe.$ddlx_named;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
-import org.safris.rdb.ddlx.xe.ddlx_schema;
 
 public class DDLxAudit {
   protected static DDLxAudit makeAudit(final URL url, final File outDir) throws IOException, XMLException {

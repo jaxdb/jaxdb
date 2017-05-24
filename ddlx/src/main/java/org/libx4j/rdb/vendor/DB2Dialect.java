@@ -18,8 +18,8 @@ package org.libx4j.rdb.vendor;
 
 import java.util.List;
 
-import org.safris.rdb.ddlx.xe.$ddlx_enum;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 
 public class DB2Dialect extends Dialect {
   @Override

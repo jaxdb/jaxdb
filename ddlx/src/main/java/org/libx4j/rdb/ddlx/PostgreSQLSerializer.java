@@ -21,14 +21,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
+import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
-import org.safris.rdb.ddlx.xe.$ddlx_column;
-import org.safris.rdb.ddlx.xe.$ddlx_enum;
-import org.safris.rdb.ddlx.xe.$ddlx_index;
-import org.safris.rdb.ddlx.xe.$ddlx_integer;
-import org.safris.rdb.ddlx.xe.$ddlx_named;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,11 +19,11 @@ package org.libx4j.rdb.ddlx;
 import java.math.BigInteger;
 
 import org.lib4j.lang.Arrays;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
+import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.xsb.runtime.BindingList;
-import org.safris.rdb.ddlx.xe.$ddlx_index;
-import org.safris.rdb.ddlx.xe.$ddlx_integer;
-import org.safris.rdb.ddlx.xe.$ddlx_named;
-import org.safris.rdb.ddlx.xe.$ddlx_table;
 
 final class SQLDataTypes {
   protected static String csvNames(final BindingList<$ddlx_named> names) {
