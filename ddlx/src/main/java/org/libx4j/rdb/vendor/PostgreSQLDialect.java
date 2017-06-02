@@ -16,10 +16,15 @@
 
 package org.libx4j.rdb.vendor;
 
+import org.libx4j.rdb.ddlx.Generator;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PostgreSQLDialect extends Dialect {
+  protected static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
+
   @Override
   protected DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
@@ -88,6 +93,9 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String declareDateTime(final short precision) {
+    if (precision > 6)
+      logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed, 6");
+
     return "TIMESTAMP(" + precision + ")";
   }
 
