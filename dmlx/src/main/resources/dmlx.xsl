@@ -113,34 +113,26 @@
           <xsl:attribute name="name">
             <xsl:value-of select="@name"/>
           </xsl:attribute>
-          <xsl:choose>
-            <xsl:when test="@extends">
-              <xs:complexContent>
-                <xs:extension>
-                  <xsl:attribute name="base">
+          <xs:complexContent>
+            <xs:extension>
+              <xsl:attribute name="base">
+                <xsl:choose>
+                  <xsl:when test="@extends">
                     <xsl:text>ns:</xsl:text>
                     <xsl:value-of select="@extends"/>
-                  </xsl:attribute>
-                  <xsl:apply-templates select="ddlx:column">
-                    <xsl:with-param name="tableName">
-                      <xsl:value-of select="@name"/>
-                    </xsl:with-param>
-                  </xsl:apply-templates>
-                </xs:extension>
-              </xs:complexContent>
-            </xsl:when>
-            <xsl:otherwise>
-              <xs:complexContent>
-                <xs:extension base="dmlx:row">
-                  <xsl:apply-templates select="ddlx:column">
-                    <xsl:with-param name="tableName">
-                      <xsl:value-of select="@name"/>
-                    </xsl:with-param>
-                  </xsl:apply-templates>
-                </xs:extension>
-              </xs:complexContent>
-            </xsl:otherwise>
-          </xsl:choose>
+                  </xsl:when>
+                  <xsl:otherwise>
+                    <xsl:text>dmlx:row</xsl:text>
+                  </xsl:otherwise>
+                </xsl:choose>
+              </xsl:attribute>
+              <xsl:apply-templates select="ddlx:column">
+                <xsl:with-param name="tableName">
+                  <xsl:value-of select="@name"/>
+                </xsl:with-param>
+              </xsl:apply-templates>
+            </xs:extension>
+          </xs:complexContent>
         </xs:complexType>
       </xsl:for-each>
       
