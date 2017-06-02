@@ -203,7 +203,7 @@
           <xs:simpleType>
             <xs:restriction base="xs:integer">
               <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="19"/>
+              <xs:maxInclusive value="20"/>
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
