@@ -148,6 +148,7 @@ final class Serialization {
               results.addAll(statement.executeBatch());
 
             statement = connection.prepareStatement(batch.sql);
+            last = batch.sql;
           }
 
           for (int j = 0; j < batch.parameters.size(); j++)

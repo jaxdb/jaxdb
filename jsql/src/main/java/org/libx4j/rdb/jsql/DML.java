@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.Collection;
+import java.util.List;
 
 import org.lib4j.lang.Arrays;
 import org.libx4j.rdb.dmlx.xe.$dmlx_data;
@@ -1038,6 +1039,10 @@ public final class DML {
     return new Delete.DELETE(Arrays.splice(entities, 0, 0, entity));
   }
 
+  public static delete.DELETE DELETE(final Entity entity, final List<Entity> entities) {
+    return new Delete.DELETE(entities.toArray(new Entity[entities.size()]));
+  }
+
   /** INSERT **/
 
   public static <E extends Entity>insert.INSERT_VALUES<E> INSERT(final E entity) {
@@ -1048,6 +1053,10 @@ public final class DML {
   @SuppressWarnings("unchecked")
   public static <E extends Entity>insert.INSERT<E> INSERT(final E entity, final E ... entities) {
     return new Insert.INSERT<E>(Arrays.splice(entities, 0, 0, entity));
+  }
+
+  public static <E extends Entity>insert.INSERT<E> INSERT(final List<E> entities) {
+    return new Insert.INSERT<E>(entities.toArray(new Entity[entities.size()]));
   }
 
   @SafeVarargs
