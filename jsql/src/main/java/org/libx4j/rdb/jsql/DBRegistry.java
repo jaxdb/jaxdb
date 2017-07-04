@@ -29,7 +29,7 @@ import org.lib4j.sql.ConnectionProxy;
 
 public final class DBRegistry {
   private static DBConnector makeConnector(final DataSource dataSource) {
-    return new DBConnector() {
+    return dataSource == null ? null : new DBConnector() {
       @Override
       public Connection getConnection() throws SQLException {
         return new ConnectionProxy(dataSource.getConnection());
@@ -74,6 +74,12 @@ public final class DBRegistry {
   }
 
   private static void register(final Class<? extends Schema> schema, final DBConnector dataSource, final boolean prepared, final boolean batching) {
+    if (schema == null)
+      throw new NullPointerException("schema == null");
+
+    if (dataSource == null)
+      throw new NullPointerException("dataSource == null");
+
     dataSources.put(schema, dataSource);
     if (prepared)
       DBRegistry.prepared.add(schema);

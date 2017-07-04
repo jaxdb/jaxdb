@@ -90,7 +90,7 @@ public abstract class GenerateOn<T> {
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     private String generate(final type.DataType<String> dataType) {
-      return java.util.UUID.randomUUID().toString().toUpperCase();
+      return java.util.UUID.randomUUID().toString();
     }
 
     @Override

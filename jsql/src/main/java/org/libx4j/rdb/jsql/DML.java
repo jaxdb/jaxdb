@@ -1031,12 +1031,20 @@ public final class DML {
     return new Update.UPDATE(Arrays.splice(entities, 0, 0, entity));
   }
 
+  public static update.UPDATE UPDATE(final Collection<? extends Entity> entities) {
+    return new Update.UPDATE(entities.toArray(new Entity[entities.size()]));
+  }
+
   public static delete.DELETE_WHERE DELETE(final Entity entity) {
     return new Delete.DELETE(entity);
   }
 
   public static delete.DELETE DELETE(final Entity entity, final Entity ... entities) {
     return new Delete.DELETE(Arrays.splice(entities, 0, 0, entity));
+  }
+
+  public static delete.DELETE DELETE(final Collection<? extends Entity> entities) {
+    return new Delete.DELETE(entities.toArray(new Entity[entities.size()]));
   }
 
   public static delete.DELETE DELETE(final Entity entity, final List<Entity> entities) {
