@@ -60,7 +60,7 @@ abstract class Serializer {
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemPackageLoader().loadPackage(Serializer.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Serializer.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Serializer.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
           final Serializer serializer = (Serializer)cls.newInstance();

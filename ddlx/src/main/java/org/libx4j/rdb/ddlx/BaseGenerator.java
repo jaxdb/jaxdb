@@ -43,7 +43,7 @@ abstract class BaseGenerator {
 
   static {
     try {
-      PackageLoader.getSystemPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
+      PackageLoader.getSystemContextPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
     }
     catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
