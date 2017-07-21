@@ -16,5 +16,5 @@
 
 package org.libx4j.rdb.jsql;
 
-abstract class Command extends Serializable {
+abstract class Command extends Compilable {
 }

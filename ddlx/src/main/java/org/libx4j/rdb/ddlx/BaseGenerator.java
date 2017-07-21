@@ -142,11 +142,6 @@ abstract class BaseGenerator {
       return;
 
     final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
-    if (!superTable._abstract$().text()) {
-      logger.error("Table `" + superTable._name$().text() + "` must be abstract to be inherited by " + table._name$().text());
-      System.exit(1);
-    }
-
     mergeTable(superTable, tableNameToTable, mergedTables);
     if (superTable._column() != null) {
       if (table._column() != null) {

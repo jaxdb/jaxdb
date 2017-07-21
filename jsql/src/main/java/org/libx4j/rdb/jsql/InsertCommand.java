@@ -42,11 +42,11 @@ final class InsertCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
-    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+  protected void compile(final Compilation compilation) throws IOException {
+    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (values() != null)
-      serializer.serialize(insert(), values(), serialization);
+      compiler.compile(insert(), values(), compilation);
     else
-      serializer.serialize(insert(), serialization);
+      compiler.compile(insert(), compilation);
   }
 }

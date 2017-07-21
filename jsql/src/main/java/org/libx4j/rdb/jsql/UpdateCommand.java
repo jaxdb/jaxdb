@@ -57,11 +57,11 @@ final class UpdateCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
-    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+  protected void compile(final Compilation compilation) throws IOException {
+    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (set() != null)
-      serializer.serialize(update(), set(), where(), serialization);
+      compiler.compile(update(), set(), where(), compilation);
     else
-      serializer.serialize(update(), serialization);
+      compiler.compile(update(), compilation);
   }
 }

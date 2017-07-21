@@ -23,10 +23,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.lang.Arrays;
+import org.lib4j.util.Arrays;
 import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
@@ -77,7 +78,7 @@ public final class Generator extends BaseGenerator {
 
   protected Generator(final DDLxAudit audit) {
     super(audit);
-    sortedTableOrder = Schemas.tables(merged);
+    this.sortedTableOrder = Schemas.tables(merged);
   }
 
   private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
@@ -132,17 +133,17 @@ public final class Generator extends BaseGenerator {
     final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
     registerColumns(tableNames, columnNameToColumn, table, merged);
 
-    final Serializer serializer = Serializer.getSerializer(vendor);
+    final Compiler compiler = Compiler.getCompiler(vendor);
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    statements.addAll(serializer.types(table));
+    statements.addAll(compiler.types(table));
 
     columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
-    final CreateStatement createTable = serializer.createTableIfNotExists(table, columnNameToColumn);
+    final CreateStatement createTable = compiler.createTableIfNotExists(table, columnNameToColumn);
 
     statements.add(createTable);
 
-    statements.addAll(serializer.triggers(table));
-    statements.addAll(serializer.indexes(table));
+    statements.addAll(compiler.triggers(table));
+    statements.addAll(compiler.indexes(table));
     return statements;
   }
 
@@ -158,7 +159,7 @@ public final class Generator extends BaseGenerator {
         skipTables.add(table._name$().text());
       }
       else if (!table._abstract$().text()) {
-        final List<DropStatement> drops = Serializer.getSerializer(vendor).drops(table);
+        final List<DropStatement> drops = Compiler.getCompiler(vendor).drops(table);
         dropStatements.put(table._name$().text(), drops);
       }
     }
@@ -169,11 +170,13 @@ public final class Generator extends BaseGenerator {
         createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
 
     final List<Statement> statements = new ArrayList<Statement>();
-    final CreateStatement createSchema = Serializer.getSerializer(vendor).createSchemaIfNotExists(audit.schema());
+    final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(audit.schema());
     if (createSchema != null)
       statements.add(createSchema);
 
-    for (final $ddlx_table table : sortedTableOrder) {
+    final ListIterator<$ddlx_table> listIterator = sortedTableOrder.listIterator(sortedTableOrder.size());
+    while (listIterator.hasPrevious()) {
+      final $ddlx_table table = listIterator.previous();
       final String tableName = table._name$().text();
       if (!skipTables.contains(tableName)) {
         statements.addAll(0, dropStatements.get(tableName));

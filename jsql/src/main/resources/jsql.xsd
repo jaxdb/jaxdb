@@ -42,7 +42,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -50,7 +50,7 @@
   <xs:complexType name="clob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -60,7 +60,7 @@
   <xs:complexType name="binary">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -68,7 +68,7 @@
   <xs:complexType name="blob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -85,7 +85,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -95,7 +95,7 @@
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -105,7 +105,7 @@
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -115,9 +115,9 @@
   <xs:complexType name="date">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -125,9 +125,9 @@
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -135,9 +135,9 @@
   <xs:complexType name="dateTime">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
         <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
         <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -147,7 +147,7 @@
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -157,30 +157,16 @@
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute ref="jsql:checkOnUpdate"/>
+        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
     
   <!-- containers -->
   
-  <xs:attribute name="checkOnUpdate">
-    <xs:simpleType>
-      <xs:list>
-        <xs:simpleType>
-          <xs:restriction base="xs:NCName">
-            <xs:enumeration value="EQUALS"/>
-          </xs:restriction>
-        </xs:simpleType>
-      </xs:list>
-    </xs:simpleType>
-  </xs:attribute>
-  
   <xs:complexType name="table">
     <xs:complexContent>
-      <xs:extension base="ddlx:table">
-        <xs:attribute name="versionColumn" type="ddlx:name"/>
-      </xs:extension>
+      <xs:extension base="ddlx:table"/>
     </xs:complexContent>
   </xs:complexType>
 

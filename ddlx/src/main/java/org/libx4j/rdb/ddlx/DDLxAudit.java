@@ -1,3 +1,19 @@
+/* Copyright (c) 2017 lib4j
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * You should have received a copy of The MIT License (MIT) along with this
+ * program. If not, see <http://opensource.org/licenses/MIT/>.
+ */
+
 package org.libx4j.rdb.ddlx;
 
 import java.io.File;
@@ -29,18 +45,23 @@ public class DDLxAudit {
     }
   }
 
-  public final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
-
+  public final Map<String,$ddlx_table> tableNameToTable;
   private final ddlx_schema schema;
 
   protected DDLxAudit(final ddlx_schema schema) {
     this.schema = schema;
+    this.tableNameToTable = new HashMap<String,$ddlx_table>();
     for (final $ddlx_table table : schema._table())
       tableNameToTable.put(table._name$().text(), table);
   }
 
   public DDLxAudit(final URL url) throws IOException, ParseException, ValidationException {
     this((ddlx_schema)Bindings.parse(url));
+  }
+
+  protected DDLxAudit(final DDLxAudit copy) {
+    this.schema = copy.schema;
+    this.tableNameToTable = copy.tableNameToTable;
   }
 
   public boolean isPrimary($ddlx_table table, final $ddlx_named column) {

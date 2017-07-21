@@ -29,6 +29,11 @@ abstract class ConditionWrapper<T> extends Condition<T> {
   }
 
   @Override
+  protected Class<T> type() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   protected final int sqlType() {
     throw new UnsupportedOperationException();
   }

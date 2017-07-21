@@ -17,6 +17,7 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 abstract class Keyword<T extends Subject<?>> extends Provision {
   private final Keyword<T> parent;
@@ -30,8 +31,13 @@ abstract class Keyword<T extends Subject<?>> extends Provision {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    normalize().serialize(serialization);
+  protected final void compile(final Compilation compilation) throws IOException {
+    normalize().compile(compilation);
+  }
+
+  @Override
+  protected Object evaluate(final Set<Evaluable> visited) {
+    throw new UnsupportedOperationException();
   }
 
   protected abstract Command normalize();

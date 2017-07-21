@@ -83,7 +83,7 @@ public final class Entities {
           else if (dataType.type() == Byte.class)
             dataType.set(((BigInteger)value).byteValue());
           else
-            throw new UnsupportedOperationException("Unexpected Numeric type: " + dataType.type().getName());
+            throw new UnsupportedOperationException("Unsupported Numeric type: " + dataType.type().getName());
         }
         else if (attribute instanceof $dmlx_decimal)
           dataType.set(value);

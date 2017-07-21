@@ -57,6 +57,7 @@ import org.libx4j.rdb.jsql.GenerateOn;
 import org.libx4j.rdb.jsql.Schema;
 import org.libx4j.rdb.jsql.type;
 import org.libx4j.rdb.jsql.xe.$jsql_integer;
+import org.libx4j.rdb.jsql.xe.$jsql_table;
 import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.ParseException;
 import org.slf4j.Logger;
@@ -66,10 +67,10 @@ import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 public class Generator {
   private static final Logger logger = LoggerFactory.getLogger(Generator.class);
 
-  private final DDLxAudit audit;
+  private final JSQLAudit audit;
 
   public Generator(final URL url) throws IOException, ParseException, ValidationException {
-    this.audit = new DDLxAudit(url);
+    this.audit = new JSQLAudit(new DDLxAudit(url));
   }
 
   public void generate(final File destDir, final boolean compile) throws IOException {
@@ -89,12 +90,12 @@ public class Generator {
 
     String tables = "";
     // First create the abstract entities
-    for (final $ddlx_table table : audit.schema()._table())
+    for (final $jsql_table table : audit.schema()._table())
       if (table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
     // Then, in proper inheritance order, the real entities
-    for (final $ddlx_table table : audit.schema()._table())
+    for (final $jsql_table table : audit.schema()._table())
       if (!table._abstract$().text())
         tables += "\n\n" + makeTable(table);
 
@@ -141,22 +142,22 @@ public class Generator {
       if (!type.jsql_generateOnInsert$().isNull() && $ddlx_char.jsql_generateOnInsert$.UUID.text().equals(type.jsql_generateOnInsert$().text()))
         generateOnInsert = GenerateOn.UUID;
 
-      return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
+      return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text(), type._varying$().text());
     }
 
     if (column instanceof $ddlx_clob) {
       final $ddlx_clob type = ($ddlx_clob)column;
-      return new Type(column, type.CLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
+      return new Type(column, type.CLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text());
     }
 
     if (column instanceof $ddlx_binary) {
       final $ddlx_binary type = ($ddlx_binary)column;
-      return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type._length$().text(), type._varying$().text());
+      return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text(), type._varying$().text());
     }
 
     if (column instanceof $ddlx_blob) {
       final $ddlx_blob type = ($ddlx_blob)column;
-      return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type._length$().text());
+      return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text());
     }
 
     if (column instanceof $jsql_integer) {
@@ -168,25 +169,25 @@ public class Generator {
 
       if (column instanceof $ddlx_tinyint) {
         final $ddlx_tinyint integer = ($ddlx_tinyint)column;
-        return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
+        return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
       }
 
       if (column instanceof $ddlx_smallint) {
         final $ddlx_smallint integer = ($ddlx_smallint)column;
-        return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
+        return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
       }
 
       if (column instanceof $ddlx_int) {
         final $ddlx_int integer = ($ddlx_int)column;
-        return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
+        return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
       }
 
       if (column instanceof $ddlx_bigint) {
         final $ddlx_bigint integer = ($ddlx_bigint)column;
-        return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, integer._precision$().text().intValue(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
+        return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
       }
 
-      throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
+      throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
     }
 
     if (column instanceof $ddlx_float) {
@@ -205,12 +206,12 @@ public class Generator {
         max = type._max$().text() != null ? type._max$().text().floatValue() : null;
       }
 
-      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, min, max);
+      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $ddlx_decimal) {
       final $ddlx_decimal type = ($ddlx_decimal)column;
-      return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type._precision$().text().intValue(), type._scale$().text().intValue(), type._min$().text(), type._max$().text());
+      return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text().intValue(), type._scale$().text().intValue(), type._min$().text(), type._max$().text());
     }
 
     if (column instanceof $ddlx_date) {
@@ -223,7 +224,7 @@ public class Generator {
         if ($ddlx_date.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate);
+      return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
     }
 
     if (column instanceof $ddlx_time) {
@@ -236,7 +237,7 @@ public class Generator {
         if ($ddlx_time.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
+      return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
     }
 
     if (column instanceof $ddlx_dateTime) {
@@ -249,15 +250,17 @@ public class Generator {
         if ($ddlx_dateTime.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type._precision$().text());
+      return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
     }
 
     if (column instanceof $ddlx_boolean) {
-      return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate);
+      final $ddlx_boolean type = ($ddlx_boolean)column;
+      return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
     }
 
     if (column instanceof $ddlx_enum) {
-      return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate);
+      final $ddlx_enum type = ($ddlx_enum)column;
+      return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
@@ -270,28 +273,31 @@ public class Generator {
     private final Object[] commonParams;
     private final GenerateOn<?> generateOnInsert;
     private final GenerateOn<?> generateOnUpdate;
+    private final boolean keyForUpdate;
     private final Object[] customParams;
 
     @SuppressWarnings("rawtypes")
-    private Type(final $ddlx_column column, final Class<? extends type.DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final Object ... params) {
+    private Type(final $ddlx_column column, final Class<? extends type.DataType> type, final Object[] commonParams, final GenerateOn<?> generateOnInsert, final GenerateOn<?> generateOnUpdate, final boolean keyForUpdate, final Object ... params) {
       this.column = column;
       this.type = type;
       this.commonParams = commonParams;
       this.generateOnInsert = generateOnInsert;
       this.generateOnUpdate = generateOnUpdate;
+      this.keyForUpdate = keyForUpdate;
       this.customParams = params;
     }
 
-    private String serializeParams() {
+    private String compileParams() {
       String out = "";
       for (final Object param : commonParams)
-        out += ", " + (param == THIS ? "this" : GeneratorUtil.serialize(param));
+        out += ", " + (param == THIS ? "this" : GeneratorUtil.compile(param));
 
-      out += ", " + GeneratorUtil.serialize(generateOnInsert);
-      out += ", " + GeneratorUtil.serialize(generateOnUpdate);
+      out += ", " + GeneratorUtil.compile(generateOnInsert);
+      out += ", " + GeneratorUtil.compile(generateOnUpdate);
+      out += ", " + keyForUpdate;
       if (customParams != null)
         for (final Object param : customParams)
-          out += ", " + (param == THIS ? "this" : GeneratorUtil.serialize(param));
+          out += ", " + (param == THIS ? "this" : GeneratorUtil.compile(param));
 
       return out.substring(2);
     }
@@ -302,7 +308,7 @@ public class Generator {
 
     @Override
     public String toString() {
-      return "new " + getType() + "(" + serializeParams() + (type == type.ENUM.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
+      return "new " + getType() + "(" + compileParams() + (type == type.ENUM.class ? ", " + Strings.toTitleCase(column._name$().text()) + ".class" : "") + ")";
     }
   }
 
@@ -355,7 +361,7 @@ public class Generator {
     return count;
   }
 
-  public String makeTable(final $ddlx_table table) {
+  public String makeTable(final $jsql_table table) {
     final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(Entity.class);
     String out = "";
     String abs = "";
@@ -367,18 +373,9 @@ public class Generator {
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
     out += "  public static" + abs + " class " + entityName + " extends " + ext + " {\n";
+    // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table._abstract$().text()) {
-      out += "    protected static final " + Strings.toTitleCase(table._name$().text()) + " identity = new " + Strings.toTitleCase(table._name$().text()) + "();\n\n";
-      out += "    protected final " + Classes.getStrictName(type.DataType.class) + "<?>[] column;\n";
-      out += "    protected final " + Classes.getStrictName(type.DataType.class) + "<?>[] primary;\n\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
-      out += "    protected " + Classes.getStrictName(type.DataType.class) + "<?>[] column() {\n";
-      out += "      return column;\n";
-      out += "    }\n\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
-      out += "    protected " + Classes.getStrictName(type.DataType.class) + "<?>[] primary() {\n";
-      out += "      return primary;\n";
-      out += "    }\n\n";
+      out += "    protected static final " + entityName + " identity = new " + entityName + "();\n\n";
       out += "    @" + Classes.getStrictName(Override.class) + "\n";
       out += "    protected " + Classes.getStrictName(String.class) + " name() {\n";
       out += "      return \"" + table._name$().text() + "\";\n";
@@ -387,17 +384,17 @@ public class Generator {
       out += "    protected " + entityName + " newInstance() {\n";
       out += "      return new " + entityName + "(true);\n";
       out += "    }\n\n";
-      out += "    public " + Strings.toTitleCase(table._name$().text()) + "() {\n";
+      out += "    public " + entityName + "() {\n";
       out += "      this(false, new " + Classes.getStrictName(type.DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(type.DataType.class) + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
-      out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected) {\n";
+      out += "    protected " + entityName + "(final boolean wasSelected) {\n";
       out += "      this(wasSelected, new " + Classes.getStrictName(type.DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(type.DataType.class) + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
       // Constructor with primary key columns
       String set = "";
       if (table._column() != null && totalPrimaryCount > 0) {
-        out += "    public " + Strings.toTitleCase(table._name$().text()) + "(";
+        out += "    public " + entityName + "(";
         $ddlx_table t = table;
         String params = "";
         do {
@@ -417,7 +414,7 @@ public class Generator {
       }
 
       // Copy constructor
-      out += "    public " + Strings.toTitleCase(table._name$().text()) + "(final " + Strings.toTitleCase(table._name$().text()) + " copy) {\n";
+      out += "    public " + entityName + "(final " + entityName + " copy) {\n";
       out += "      this();\n";
       set = "";
       if (table._column() != null) {
@@ -434,12 +431,8 @@ public class Generator {
     }
 
     String defs = "";
-    out += "    protected " + Strings.toTitleCase(table._name$().text()) + "(final boolean wasSelected, final " + Classes.getStrictName(type.DataType.class) + "<?>[] column, final " + Classes.getStrictName(type.DataType.class) + "<?>[] primary) {\n";
+    out += "    protected " + entityName + "(final boolean wasSelected, final " + Classes.getStrictName(type.DataType.class) + "<?>[] column, final " + Classes.getStrictName(type.DataType.class) + "<?>[] primary) {\n";
     out += "      super(wasSelected, column, primary);\n";
-    if (!table._abstract$().text()) {
-      out += "      this.column = column;\n";
-      out += "      this.primary = primary;\n";
-    }
 
     defs = "";
     int primaryIndex = 0;
@@ -447,7 +440,9 @@ public class Generator {
       for (int i = 0; i < table._column().size(); i++) {
         final $ddlx_column column = table._column().get(i);
         final String columnName = Strings.toCamelCase(column._name$().text());
-        defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = " + (audit.isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "") + columnName + ";";
+        defs += "\n      column[" + (totalColumnCount - (table._column().size() - i)) + "] = ";
+        defs += audit.isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "";
+        defs += columnName + ";";
       }
 
       out += defs.substring(1) + "\n";
@@ -462,6 +457,19 @@ public class Generator {
       }
 
       out += "\n";
+    }
+
+    if (table._abstract$().text()) {
+      out += "\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    public abstract " + entityName + " clone();\n";
+    }
+    else {
+      out += "\n";
+      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    public " + entityName + " clone() {\n";
+      out += "      return new " + entityName + "(this);\n";
+      out += "    }\n";
     }
 
     out += "\n";

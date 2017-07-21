@@ -17,6 +17,7 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 final class NullPredicate<T> extends Predicate<T> {
   protected final boolean positive;
@@ -27,7 +28,12 @@ final class NullPredicate<T> extends Predicate<T> {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected Boolean evaluate(final Set<Evaluable> visited) {
+    return (positive ? get() == null : get() != null) ? Boolean.TRUE : Boolean.FALSE;
+  }
+
+  @Override
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

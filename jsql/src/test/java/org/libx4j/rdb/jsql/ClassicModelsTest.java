@@ -19,16 +19,13 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.lib4j.test.MixedTest;
 import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test(Derby.class)
-@Category(MixedTest.class)
 public class ClassicModelsTest extends JSQLTest {
   @Test
   public void create() throws IOException, XMLException {

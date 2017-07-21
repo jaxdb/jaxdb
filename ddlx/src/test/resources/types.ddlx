@@ -19,6 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="type">
+    <column name="id" xsi:type="int" precision="5" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="bigint_type" xsi:type="bigint" precision="19"/>
     <column name="binary_type" xsi:type="binary" varying="true" length="255"/>
     <column name="blob_type" xsi:type="blob" length="255"/>
@@ -35,5 +36,11 @@
     <column name="smallint_type" xsi:type="smallint" precision="5"/>
     <column name="tinyint_type" xsi:type="tinyint" precision="3"/>
     <column name="time_type" xsi:type="time"/>
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
   </table>
+  <table name="type_backup" extends="type"/>
 </schema>

@@ -17,24 +17,29 @@
 package org.libx4j.rdb.ddlx;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.lib4j.lang.Resources;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
+import org.lib4j.test.MixedTest;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
-import org.libx4j.xsb.runtime.Bindings;
+import org.libx4j.rdb.ddlx.runner.Derby;
+import org.libx4j.rdb.ddlx.runner.MySQL;
+import org.libx4j.rdb.ddlx.runner.Oracle;
+import org.libx4j.rdb.ddlx.runner.PostgreSQL;
+import org.libx4j.rdb.ddlx.runner.SQLite;
+import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.xsb.runtime.ParseException;
-import org.xml.sax.InputSource;
 
-public abstract class DDLxTest {
-  public static void recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final ddlx_schema schema;
-    try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
-      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
-    }
-
-    Schemas.recreate(connection, schema);
+@RunWith(VendorRunner.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
+@Category(MixedTest.class)
+public class TypesTest extends DDLxTest {
+  @Test
+  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    recreateSchema(connection, "types");
   }
 }

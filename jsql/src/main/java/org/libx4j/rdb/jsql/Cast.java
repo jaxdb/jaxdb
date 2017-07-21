@@ -17,6 +17,7 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 public class Cast {
   protected static final class AS extends Provision {
@@ -47,8 +48,13 @@ public class Cast {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+    protected void compile(final Compilation compilation) throws IOException {
+      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    }
+
+    @Override
+    protected Object evaluate(final Set<Evaluable> visited) {
+      return dataType.evaluate(visited);
     }
   }
 

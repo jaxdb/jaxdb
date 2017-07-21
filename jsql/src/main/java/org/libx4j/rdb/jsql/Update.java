@@ -40,21 +40,25 @@ final class Update {
     @Override
     public int[] execute(final Transaction transaction) throws IOException, SQLException {
       final UpdateCommand command = (UpdateCommand)normalize();
-
       final Class<? extends Schema> schema = command.update().entities[0].schema();
+      Compilation compilation = null;
       try {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
-        command.serialize(serialization);
-        final int[] count = serialization.execute(connection);
+        compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+        command.compile(compilation);
+        final int[] count = compilation.execute(connection);
+        compilation.afterExecute(true);
         if (transaction == null)
           connection.close();
 
         return count;
       }
       catch (final SQLException e) {
+        if (compilation != null)
+          compilation.afterExecute(false);
+
         throw SQLExceptionCatalog.lookup(e);
       }
     }
@@ -65,7 +69,7 @@ final class Update {
     }
   }
 
-  private abstract static class UPDATE_SET extends Execute implements update.UPDATE_SET {
+  private static abstract class UPDATE_SET extends Execute implements update.UPDATE_SET {
     protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
@@ -98,7 +102,7 @@ final class Update {
 
   protected static final class SET extends UPDATE_SET implements update.SET {
     protected final type.DataType<?> column;
-    protected final Serializable to;
+    protected final Compilable to;
 
     protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final case_.CASE<? extends T> to) {
       super(parent);

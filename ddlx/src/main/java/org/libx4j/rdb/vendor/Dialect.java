@@ -23,7 +23,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lib4j.util.Formats;
+import org.lib4j.util.NumberFormatter;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 
@@ -62,7 +62,7 @@ public abstract class Dialect {
   }
 
   public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
-  public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = Formats.createDecimalFormat("################.################;-################.################");
+  public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = NumberFormatter.createDecimalFormat("################.################;-################.################");
   public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 

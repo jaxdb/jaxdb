@@ -42,11 +42,11 @@ final class DeleteCommand extends Command {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
-    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+  protected void compile(final Compilation compilation) throws IOException {
+    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (where() != null)
-      serializer.serialize(delete(), where(), serialization);
+      compiler.compile(delete(), where(), compilation);
     else
-      serializer.serialize(delete(), serialization);
+      compiler.compile(delete(), compilation);
   }
 }

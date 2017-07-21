@@ -18,7 +18,7 @@ package org.libx4j.rdb.jsql;
 
 import org.lib4j.lang.Strings;
 
-public final class Alias extends Serializable {
+public final class Alias extends Compilable {
   protected final String name;
 
   public Alias(final int index) {
@@ -26,7 +26,7 @@ public final class Alias extends Serializable {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final void compile(final Compilation compilation) {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

@@ -1,3 +1,19 @@
+/* Copyright (c) 2017 lib4j
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * You should have received a copy of The MIT License (MIT) along with this
+ * program. If not, see <http://opensource.org/licenses/MIT/>.
+ */
+
 package org.libx4j.rdb.jsql;
 
 import java.lang.reflect.Type;
@@ -163,29 +179,29 @@ public class DMLGenerator {
   }
 
   private static final String[] singleParamFunctions = new String[] {
-    "$1 ROUND(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Round(a, 0));\n}",
-    "$1 ROUND(final $2 a, final int scale) {\n  return ($1)$n1.wrapper(new function.numeric.Round(a, scale));\n}",
-    "$1 ABS(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Abs(a));\n}",
-    "$1 FLOOR(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Floor(a));\n}",
-    "$1 CEIL(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Ceil(a));\n}",
-    "$1 SQRT(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Sqrt(a));\n}",
-    "$1 EXP(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Exp(a));\n}",
-    "$1 LN(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Ln(a));\n}",
-    "$1 LOG2(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Log2(a));\n}",
-    "$1 LOG10(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Log10(a));\n}",
-    "$1 SIN(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Sin(a));\n}",
-    "$1 ASIN(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Asin(a));\n}",
-    "$1 COS(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Cos(a));\n}",
-    "$1 ACOS(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Acos(a));\n}",
-    "$1 TAN(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Tan(a));\n}",
-    "$1 ATAN(final $2 a) {\n  return ($1)$n1.wrapper(new function.numeric.Atan(a));\n}"
+    "$1 ROUND(final $2 a) {\n  return ($1)$n1.wrapper(new function.Round(a, 0));\n}",
+    "$1 ROUND(final $2 a, final int scale) {\n  return ($1)$n1.wrapper(new function.Round(a, scale));\n}",
+    "$1 ABS(final $2 a) {\n  return ($1)$n1.wrapper(new function.Abs(a));\n}",
+    "$1 FLOOR(final $2 a) {\n  return ($1)$n1.wrapper(new function.Floor(a));\n}",
+    "$1 CEIL(final $2 a) {\n  return ($1)$n1.wrapper(new function.Ceil(a));\n}",
+    "$1 SQRT(final $2 a) {\n  return ($1)$n1.wrapper(new function.Sqrt(a));\n}",
+    "$1 EXP(final $2 a) {\n  return ($1)$n1.wrapper(new function.Exp(a));\n}",
+    "$1 LN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Ln(a));\n}",
+    "$1 LOG2(final $2 a) {\n  return ($1)$n1.wrapper(new function.Log2(a));\n}",
+    "$1 LOG10(final $2 a) {\n  return ($1)$n1.wrapper(new function.Log10(a));\n}",
+    "$1 SIN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Sin(a));\n}",
+    "$1 ASIN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Asin(a));\n}",
+    "$1 COS(final $2 a) {\n  return ($1)$n1.wrapper(new function.Cos(a));\n}",
+    "$1 ACOS(final $2 a) {\n  return ($1)$n1.wrapper(new function.Acos(a));\n}",
+    "$1 TAN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Tan(a));\n}",
+    "$1 ATAN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Atan(a));\n}"
   };
 
   private static final String[] doubleParamFunctions = new String[] {
-    "$1 POW(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Pow(a, b));\n}",
-    "$1 MOD(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Mod(a, b));\n}",
-    "$1 logger.info(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Log(a, b));\n}",
-    "$1 ATAN2(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.numeric.Atan2(a, b));\n}"
+    "$1 POW(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Pow(a, b));\n}",
+    "$1 MOD(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Mod(a, b));\n}",
+    "$1 LOG(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Log(a, b));\n}",
+    "$1 ATAN2(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Atan2(a, b));\n}"
   };
 
   private static final String[] numericExpressionsDirect = new String[] {

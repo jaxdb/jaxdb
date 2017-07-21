@@ -17,17 +17,23 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 final class As<T> extends Subject<T> {
-  private final Serializable parent;
+  private final Evaluable parent;
   private final Subject<?> variable;
 
-  public As(final Serializable parent, final Subject<?> variable) {
+  protected As(final Keyword<? extends Subject<?>> parent, final Subject<?> variable) {
     this.parent = parent;
     this.variable = variable;
   }
 
-  protected Serializable parent() {
+  protected As(final Subject<T> parent, final Subject<?> variable) {
+    this.parent = parent;
+    this.variable = variable;
+  }
+
+  protected Evaluable parent() {
     return parent;
   }
 
@@ -36,7 +42,12 @@ final class As<T> extends Subject<T> {
   }
 
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+  }
+
+  @Override
+  protected Object evaluate(final Set<Evaluable> visited) {
+    return variable.evaluate(visited);
   }
 }

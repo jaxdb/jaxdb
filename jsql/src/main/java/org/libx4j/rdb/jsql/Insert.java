@@ -48,9 +48,9 @@ final class Insert {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
-        command.serialize(serialization);
-        final int[] count = serialization.execute(connection);
+        final Compilation compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+        command.compile(compilation);
+        final int[] count = compilation.execute(connection);
         if (transaction == null)
           connection.close();
 
@@ -114,7 +114,7 @@ final class Insert {
     }
 
     @Override
-    public insert.VALUES<T> VALUES(final select.SELECT<T> select) {
+    public insert.VALUES<T> VALUES(final select.SELECT<? super T> select) {
       return new VALUES<T>(this, select);
     }
   }

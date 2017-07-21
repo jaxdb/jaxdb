@@ -48,6 +48,6 @@ public class ClassicModelsTest extends DMLxTest {
 
   @Test
   public void testClassicModels(final Connection connection) throws IOException, SQLException, XMLException {
-    testData(connection, "classicmodels");
+    loadData(connection, "classicmodels");
   }
 }

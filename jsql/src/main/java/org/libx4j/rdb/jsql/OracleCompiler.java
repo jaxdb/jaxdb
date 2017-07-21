@@ -25,11 +25,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalTime;
+import java.time.temporal.TemporalUnit;
+import java.util.Map;
 
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
-final class OracleSerializer extends Serializer {
+final class OracleCompiler extends Compiler {
   private static Constructor<?> INTERVALDS;
 
   private static Object newINTERVALDS(final String s) {
@@ -54,162 +56,160 @@ final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected String serialize(final As<?> as) {
+  protected String compile(final As<?> as) {
     return null;
   }
 
   @Override
-  protected void serialize(final SelectCommand command, final Select.SELECT<?> select, final Serialization serialization) throws IOException {
+  protected void compile(final SelectCommand command, final Select.SELECT<?> select, final Compilation compilation) throws IOException {
     if (command.limit() != null) {
-      serialization.append("SELECT * FROM (");
+      compilation.append("SELECT * FROM (");
       if (command.offset() != null) {
-        serialization.append("SELECT ROWNUM rnum3729, r.* FROM (");
-        serialization.skipFirstColumn(true);
+        compilation.append("SELECT ROWNUM rnum3729, r.* FROM (");
+        compilation.skipFirstColumn(true);
       }
     }
 
-    super.serialize(command, select, serialization);
+    super.compile(command, select, compilation);
   }
 
   @Override
-  protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Serialization serialization) {
+  protected void compile(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
-      serialization.append(") r WHERE ROWNUM <= ");
+      compilation.append(") r WHERE ROWNUM <= ");
       if (offset != null)
-        serialization.append(String.valueOf(limit.rows + offset.rows)).append(") WHERE rnum3729 > ").append(offset.rows);
+        compilation.append(String.valueOf(limit.rows + offset.rows)).append(") WHERE rnum3729 > ").append(offset.rows);
       else
-        serialization.append(String.valueOf(limit.rows));
+        compilation.append(String.valueOf(limit.rows));
     }
   }
 
   @Override
-  protected void serialize(final function.numeric.Pi function, final Serialization serialization) {
-    serialization.append("ACOS(-1)");
+  protected void compile(final function.Pi function, final Compilation compilation) {
+    compilation.append("ACOS(-1)");
   }
 
   @Override
-  protected void serialize(final function.numeric.Log2 function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(2, ");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(2, ");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final function.numeric.Log10 function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(10, ");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(10, ");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
-    expression.a.serialize(serialization);
-    serialization.append(" ");
-    if (expression.b instanceof Interval) {
-      final Interval interval = (Interval)expression.b;
-      if (interval.getUnits().size() == 1) {
-        serialization.append(expression.operator.toString());
-        serialization.append(" ");
-        expression.b.serialize(serialization);
-      }
-      else {
-        for (final Interval.Unit unit : interval.getUnits()) {
-          serialization.append(expression.operator.toString());
-          serialization.append(" ");
-          new Interval(interval.getComponent(unit), unit).serialize(serialization);
-        }
+  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+    expression.a.compile(compilation);
+    compilation.append(" ");
+    final Interval interval = expression.b;
+    if (interval.getUnits().size() == 1) {
+      compilation.append(expression.operator.toString());
+      compilation.append(" ");
+      interval.compile(compilation);
+    }
+    else {
+      for (final TemporalUnit unit : interval.getUnits()) {
+        compilation.append(expression.operator.toString());
+        compilation.append(" ");
+        new Interval(interval.get(unit), (Interval.Unit)unit).compile(compilation);
       }
     }
   }
 
   @Override
-  protected void serialize(final Interval interval, final Serialization serialization) {
+  protected void compile(final Interval interval, final Compilation compilation) {
     if (interval.getUnits().size() > 1)
       throw new UnsupportedOperationException("Interval classes with only 1 Interval.Unit are supported");
 
-    final Interval.Unit unit = interval.getUnits().iterator().next();
+    final TemporalUnit unit = interval.getUnits().iterator().next();
     if (unit == Interval.Unit.MICROS) {
-      serialization.append("INTERVAL '").append(BigDecimal.valueOf(interval.getComponent(unit)).divide(BigDecimal.valueOf(1000000l))).append("' SECOND");
+      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000000l))).append("' SECOND");
     }
     else if (unit == Interval.Unit.MILLIS) {
-      serialization.append("INTERVAL '").append(BigDecimal.valueOf(interval.getComponent(unit)).divide(BigDecimal.valueOf(1000l))).append("' SECOND");
+      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000l))).append("' SECOND");
     }
     else if (unit == Interval.Unit.WEEKS) {
-      serialization.append("INTERVAL '").append(interval.getComponent(unit) * 7).append("' DAY");
+      compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");
     }
     else if (unit == Interval.Unit.QUARTERS) {
-      serialization.append("NUMTOYMINTERVAL(").append(interval.getComponent(unit) * 3).append(", 'MONTH')");
+      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 3).append(", 'MONTH')");
     }
     else if (unit == Interval.Unit.DECADES) {
-      serialization.append("NUMTOYMINTERVAL(").append(interval.getComponent(unit) * 10).append(", 'YEAR')");
+      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 10).append(", 'YEAR')");
     }
     else if (unit == Interval.Unit.CENTURIES) {
-      serialization.append("NUMTOYMINTERVAL(").append(interval.getComponent(unit) * 100).append(", 'YEAR')");
+      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 100).append(", 'YEAR')");
     }
     else if (unit == Interval.Unit.MILLENNIA) {
-      serialization.append("NUMTOYMINTERVAL(").append(interval.getComponent(unit) * 1000).append(", 'YEAR')");
+      compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 1000).append(", 'YEAR')");
     }
-    else if (unit.name().endsWith("S")) {
-      serialization.append("INTERVAL '").append(interval.getComponent(unit)).append("' ").append(unit.name().substring(0, unit.name().length() - 1));
+    else if (unit.toString().endsWith("S")) {
+      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString().substring(0, unit.toString().length() - 1));
     }
     else {
-      throw new UnsupportedOperationException("Unexpected Interval.Unit: " + unit.name());
+      throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
     }
   }
 
   @Override
-  protected String serialize(final type.CHAR serializable) {
-    final String value = serializable.get().replace("'", "''");
+  protected String compile(final type.CHAR dataType) {
+    final String value = dataType.get().replace("'", "''");
     return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
   }
 
   @Override
-  protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
+  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof type.BINARY) {
-      serialization.append("UTL_RAW.CAST_TO_RAW(");
-      as.dataType.serialize(serialization);
-      serialization.append(")");
+      compilation.append("UTL_RAW.CAST_TO_RAW(");
+      as.dataType.compile(compilation);
+      compilation.append(")");
     }
     else if (as.cast instanceof type.BLOB) {
-      serialization.append("TO_BLOB(");
-      as.dataType.serialize(serialization);
-      serialization.append(")");
+      compilation.append("TO_BLOB(");
+      as.dataType.compile(compilation);
+      compilation.append(")");
     }
     else if (as.cast instanceof type.CLOB) {
-      serialization.append("TO_CLOB(");
-      as.dataType.serialize(serialization);
-      serialization.append(")");
+      compilation.append("TO_CLOB(");
+      as.dataType.compile(compilation);
+      compilation.append(")");
     }
     else if (as.cast instanceof type.DATE && !(as.dataType instanceof type.DATETIME)) {
-      serialization.append("TO_DATE(");
-      as.dataType.serialize(serialization);
-      serialization.append(", 'YYYY-MM-DD')");
+      compilation.append("TO_DATE(");
+      as.dataType.compile(compilation);
+      compilation.append(", 'YYYY-MM-DD')");
     }
     else if (as.cast instanceof type.DATETIME && !(as.dataType instanceof type.DATETIME)) {
-      serialization.append("TO_TIMESTAMP(");
-      as.dataType.serialize(serialization);
-      serialization.append(", 'YYYY-MM-DD HH24:MI:SS.FF')");
+      compilation.append("TO_TIMESTAMP(");
+      as.dataType.compile(compilation);
+      compilation.append(", 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
     else if (as.dataType instanceof type.DATETIME && as.cast instanceof type.TIME) {
-      serialization.append("CAST(CASE WHEN ");
-      as.dataType.serialize(serialization);
-      serialization.append(" IS NULL THEN NULL ELSE '+0 ' || TO_CHAR(");
-      as.dataType.serialize(serialization);
-      serialization.append(", 'HH24:MI:SS.FF') END");
-      serialization.append(" AS ").append(as.cast.declare(serialization.vendor)).append(")");
+      compilation.append("CAST(CASE WHEN ");
+      as.dataType.compile(compilation);
+      compilation.append(" IS NULL THEN NULL ELSE '+0 ' || TO_CHAR(");
+      as.dataType.compile(compilation);
+      compilation.append(", 'HH24:MI:SS.FF') END");
+      compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
     }
     else if (as.dataType instanceof type.TIME && as.cast instanceof type.CHAR) {
-      serialization.append("SUBSTR(CAST(");
-      as.dataType.serialize(serialization);
-      serialization.append(" AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(serialization.vendor)).append("), 10, 18)");
+      compilation.append("SUBSTR(CAST(");
+      as.dataType.compile(compilation);
+      compilation.append(" AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
     }
     else {
-      serialization.append("CAST(");
+      compilation.append("CAST(");
       if (as.cast instanceof type.TIME && !(as.dataType instanceof type.TIME))
-        serialization.append("'+0 ' || ");
+        compilation.append("'+0 ' || ");
 
-      as.dataType.serialize(serialization);
-      serialization.append(" AS ").append(as.cast.declare(serialization.vendor)).append(")");
+      as.dataType.compile(compilation);
+      compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
     }
   }
 
@@ -240,21 +240,21 @@ final class OracleSerializer extends Serializer {
   @Override
   protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
-    return resultSet.wasNull() || value == null ? null : LocalTime.parse(value.toString().substring(2), Dialect.TIME_FORMAT);
+    return resultSet.wasNull() || value == null ? null : LocalTime.parse(value.toString().substring(value.toString().indexOf(" ") + 1), Dialect.TIME_FORMAT);
   }
 
   @Override
-  protected void serializeNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Serialization serialization) throws IOException {
+  protected void compileNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (source instanceof Select.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm)) {
-      serialization.append("CASE WHEN ");
-      super.serializeNextSubject(subject, index, source, serialization);
-      serialization.append(" THEN 1 ELSE 0 END");
+      compilation.append("CASE WHEN ");
+      super.compileNextSubject(subject, index, source, translateTypes, compilation);
+      compilation.append(" THEN 1 ELSE 0 END");
     }
     else {
-      super.serializeNextSubject(subject, index, source, serialization);
+      super.compileNextSubject(subject, index, source, translateTypes, compilation);
     }
 
     if (!(source instanceof Select.GROUP_BY) && !(subject instanceof Entity) && subject.wrapper() == null)
-      serialization.append(" c" + index);
+      compilation.append(" c" + index);
   }
 }

@@ -64,7 +64,7 @@ public abstract class Schema {
     try {
       final Connection connection = dataSource.getConnection();
       if (!inited.contains(schema)) {
-        Serializer.getSerializer(getDBVendor(connection)).onRegister(connection);
+        Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
         inited.add(schema);
       }
 

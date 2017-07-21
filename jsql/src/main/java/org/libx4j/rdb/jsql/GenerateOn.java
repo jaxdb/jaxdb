@@ -16,94 +16,72 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
-import org.libx4j.rdb.jsql.type.DATE;
-import org.libx4j.rdb.jsql.type.DATETIME;
-import org.libx4j.rdb.jsql.type.TIME;
-
 public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
-    private Number generate(final type.DataType<Number> dataType) {
-      if (dataType.get() == null)
-        throw new IllegalArgumentException("value is missing");
-
-      if (dataType.get() instanceof Long)
-        return (long)(dataType.get().longValue() + 1l);
-
-      if (dataType.get() instanceof Integer)
-        return (int)(dataType.get().intValue() + 1);
-
-      if (dataType.get() instanceof Double)
-        return (double)(dataType.get().doubleValue() + 1d);
-
-      if (dataType.get() instanceof Float)
-        return (float)(dataType.get().floatValue() + 1f);
-
-      if (dataType.get() instanceof Short)
-        return (short)(dataType.get().shortValue() + 1);
-
-      return (byte)(dataType.get().byteValue() + 1);
-    }
-
     @Override
-    public Number generateStatic(final type.DataType<Number> dataType) {
-      return generate(dataType);
-    }
-
-    @Override
-    public String generateDynamic(final Serialization serialization, final type.DataType<Number> dataType) {
-      return dataType.name + " + 1";
+    @SuppressWarnings("cast")
+    public void generate(final type.DataType<Number> dataType) {
+      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
+      if (numberType instanceof type.TINYINT)
+        ((type.TINYINT)numberType).set(DML.ADD((type.TINYINT)numberType, (byte)1));
+      else if (numberType instanceof type.TINYINT.UNSIGNED)
+        ((type.TINYINT.UNSIGNED)numberType).set(DML.ADD((type.TINYINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof type.SMALLINT)
+        ((type.SMALLINT)numberType).set(DML.ADD((type.SMALLINT)numberType, (byte)1));
+      else if (numberType instanceof type.SMALLINT.UNSIGNED)
+        ((type.SMALLINT.UNSIGNED)numberType).set(DML.ADD((type.SMALLINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof type.INT)
+        ((type.INT)numberType).set(DML.ADD((type.INT)numberType, (byte)1));
+      else if (numberType instanceof type.INT.UNSIGNED)
+        ((type.INT.UNSIGNED)numberType).set(DML.ADD((type.INT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof type.BIGINT)
+        ((type.BIGINT)numberType).set(DML.ADD((type.BIGINT)numberType, (byte)1));
+      else if (numberType instanceof type.BIGINT.UNSIGNED)
+        ((type.BIGINT.UNSIGNED)numberType).set(DML.ADD((type.BIGINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof type.FLOAT)
+        ((type.FLOAT)numberType).set(DML.ADD((type.FLOAT)numberType, 1f));
+      else if (numberType instanceof type.FLOAT.UNSIGNED)
+        ((type.FLOAT.UNSIGNED)numberType).set(DML.ADD((type.FLOAT.UNSIGNED)numberType, DML.UNSIGNED(1f)));
+      else if (numberType instanceof type.DOUBLE)
+        ((type.DOUBLE)numberType).set(DML.ADD((type.DOUBLE)numberType, 1f));
+      else if (numberType instanceof type.DOUBLE.UNSIGNED)
+        ((type.DOUBLE.UNSIGNED)numberType).set(DML.ADD((type.DOUBLE.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+      else if (numberType instanceof type.DECIMAL)
+        ((type.DECIMAL)numberType).set(DML.ADD((type.DECIMAL)numberType, 1f));
+      else if (numberType instanceof type.DECIMAL.UNSIGNED)
+        ((type.DECIMAL.UNSIGNED)numberType).set(DML.ADD((type.DECIMAL.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+      else
+        throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
     }
   };
 
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
-    private Temporal generate(final type.DataType<? extends Temporal> dataType) {
-      if (dataType instanceof DATE)
-        return LocalDate.now();
-
-      if (dataType instanceof TIME)
-        return LocalTime.now();
-
-      if (dataType instanceof DATETIME)
-        return LocalDateTime.now();
-
-      throw new UnsupportedOperationException("Unknown type: " + dataType.getClass().getName());
-    }
-
     @Override
-    public Temporal generateStatic(final type.DataType<Temporal> dataType) {
-      return generate(dataType);
-    }
-
-    @Override
-    public String generateDynamic(final Serialization serialization, final type.DataType<Temporal> dataType) throws IOException {
-      dataType.set(generate(dataType));
-      serialization.addParameter(dataType);
-      return serialization.serializer.getPreparedStatementMark(dataType);
+    @SuppressWarnings("cast")
+    public void generate(final type.DataType<Temporal> dataType) {
+      final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
+      if (temporalType instanceof type.DATE)
+        dataType.value = LocalDate.now();
+      else if (temporalType instanceof type.TIME)
+        dataType.value = LocalTime.now();
+      else if (temporalType instanceof type.DATETIME)
+        dataType.value = LocalDateTime.now();
+      else
+        throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
     }
   };
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
-    private String generate(final type.DataType<String> dataType) {
-      return java.util.UUID.randomUUID().toString();
-    }
-
     @Override
-    public String generateStatic(final type.DataType<String> dataType) {
-      return generate(dataType);
-    }
-
-    @Override
-    public String generateDynamic(final Serialization serialization, final type.DataType<String> dataType) {
-      return generate(dataType);
+    public void generate(final type.DataType<String> dataType) {
+      dataType.value = java.util.UUID.randomUUID().toString();
     }
   };
 
-  public abstract T generateStatic(final type.DataType<T> dataType);
-  public abstract String generateDynamic(final Serialization serialization, final type.DataType<T> dataType) throws IOException;
+  public abstract void generate(final type.DataType<T> dataType);
 }

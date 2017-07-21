@@ -129,6 +129,6 @@ public class TypesTest extends DMLxTest {
 
   @Test
   public void testTypes(final Connection connection) throws IOException, SQLException, XMLException {
-    testData(connection, "types");
+    loadData(connection, "types");
   }
 }

@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,22 +30,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.lib4j.lang.Pair;
 import org.lib4j.util.Collections;
 import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
 import org.libx4j.rdb.jsql.model.select;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public final class Select {
-  private static void serialize(final List<Pair<type.DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
+  private static void compile(final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Subject<?> subject) {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
-      for (int i = 0; i < entity.column().length; i++)
-        dataTypes.add(new Pair<type.DataType<?>,Integer>(entity.column()[i], i));
+      for (int i = 0; i < entity.column.length; i++)
+        dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(entity.column[i], i));
     }
     else if (subject instanceof type.DataType) {
       final type.DataType<?> dataType = (type.DataType<?>)subject;
-      dataTypes.add(new Pair<type.DataType<?>,Integer>(dataType, -1));
+      dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(dataType, -1));
     }
     else {
       throw new UnsupportedOperationException("Unknown entity type: " + subject.getClass().getName());
@@ -52,9 +52,9 @@ public final class Select {
   }
 
   private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
-    final List<Pair<type.DataType<?>,Integer>> dataTypes = new ArrayList<Pair<type.DataType<?>,Integer>>();
+    final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<AbstractMap.SimpleEntry<type.DataType<?>,Integer>>();
     for (final Subject<?> entity : select.entities)
-      Select.serialize(dataTypes, entity);
+      Select.compile(dataTypes, entity);
 
     final int columnOffset = skipFirstColumn ? 2 : 1;
     final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
@@ -83,9 +83,9 @@ public final class Select {
           index = 0;
           entity = null;
           for (int i = 0; i < noColumns; i++) {
-            final Pair<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
+            final AbstractMap.SimpleEntry<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
             final type.DataType dataType;
-            if (currentTable != null && (currentTable != dataTypePrototype.a.owner || dataTypePrototype.b == -1)) {
+            if (currentTable != null && (currentTable != dataTypePrototype.getKey().owner || dataTypePrototype.getValue() == -1)) {
               final Entity cached = cache.get(entity);
               if (cached != null) {
                 row[index++] = cached;
@@ -97,19 +97,19 @@ public final class Select {
               }
             }
 
-            if (dataTypePrototype.b == -1) {
+            if (dataTypePrototype.getValue() == -1) {
               entity = null;
               currentTable = null;
-              dataType = dataTypePrototype.a.clone();
+              dataType = dataTypePrototype.getKey().clone();
               row[index++] = dataType;
             }
             else {
-              currentTable = dataTypePrototype.a.owner;
+              currentTable = dataTypePrototype.getKey().owner;
               entity = prototypes.get(currentTable.getClass());
               if (entity == null)
                 prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
-              dataType = entity.column()[dataTypePrototype.b];
+              dataType = entity.column[dataTypePrototype.getValue()];
             }
 
             dataType.set(resultSet, i + columnOffset);
@@ -158,8 +158,7 @@ public final class Select {
 
     @Override
     public T AS(final T as) {
-      final Command command = normalize();
-      as.wrapper(new As<T>(command, as));
+      as.wrapper(new As<T>(this, as));
       return as;
     }
 
@@ -193,11 +192,11 @@ public final class Select {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Serialization serialization = new Serialization(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
-        command.serialize(serialization);
+        final Compilation compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+        command.compile(compilation);
 
-        final ResultSet resultSet = serialization.executeQuery(connection);
-        return parseResultSet(vendor, connection, resultSet, command.select(), serialization.skipFirstColumn());
+        final ResultSet resultSet = compilation.executeQuery(connection);
+        return parseResultSet(vendor, connection, resultSet, command.select(), compilation.skipFirstColumn());
       }
       catch (final SQLException e) {
         throw SQLExceptionCatalog.lookup(e);
@@ -541,8 +540,7 @@ public final class Select {
 
     @Override
     public T AS(final T as) {
-      final Command command = normalize();
-      as.wrapper(new As<T>(command, as));
+      as.wrapper(new As<T>(this, as));
       return as;
     }
 
@@ -584,11 +582,10 @@ public final class Select {
         if (subject instanceof Entity) {
           final Entity entity = (Entity)subject;
           final Entity out = entity.newInstance();
-          final type.DataType<?>[] dataTypes = entity.column();
           String sql = "SELECT ";
           String select = "";
           String where = "";
-          for (final type.DataType<?> dataType : dataTypes) {
+          for (final type.DataType<?> dataType : entity.column) {
             if (dataType.primary)
               where += " AND " + dataType.name + " = ?";
             else
@@ -600,7 +597,7 @@ public final class Select {
             final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
             final PreparedStatement statement = connection.prepareStatement(sql);
             int index = 0;
-            for (final type.DataType<?> dataType : dataTypes)
+            for (final type.DataType<?> dataType : entity.column)
               if (dataType.primary)
                 dataType.get(statement, ++index);
 
@@ -620,7 +617,7 @@ public final class Select {
                       return false;
 
                     int index = 0;
-                    for (final type.DataType dataType : out.column())
+                    for (final type.DataType dataType : out.column)
                       dataType.set(resultSet, ++index);
                   }
                   catch (final SQLException e) {
@@ -691,12 +688,12 @@ public final class Select {
   }
 
   protected static final class UNION<T extends Subject<?>> extends Execute<T> implements select.UNION<T> {
-    protected final Serializable select;
+    protected final Compilable select;
     protected final boolean all;
 
     protected UNION(final Keyword<T> parent, final boolean all, final select.SELECT<T> select) {
       super(parent);
-      this.select = (Serializable)select;
+      this.select = (Compilable)select;
       this.all = all;
     }
 

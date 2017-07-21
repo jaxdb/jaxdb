@@ -27,7 +27,7 @@ abstract class Predicate<T> extends ConditionWrapper<T> {
   }
 
   @Override
-  protected final String serialize(final DBVendor vendor) {
+  protected final String compile(final DBVendor vendor) {
     throw new UnsupportedOperationException();
   }
 }

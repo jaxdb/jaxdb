@@ -19,11 +19,12 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Set;
+import java.time.temporal.TemporalUnit;
+import java.util.List;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class MySQLSerializer extends Serializer {
+final class MySQLCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;
@@ -34,95 +35,106 @@ final class MySQLSerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final StringExpression serializable, final Serialization serialization) throws IOException {
-    if (serializable.operator != Operator.CONCAT)
-      throw new UnsupportedOperationException("The only supported operator for StringExpression is: ||");
+  protected void compile(final expression.String expression, final Compilation compilation) throws IOException {
+    if (expression.operator != operator.String.CONCAT)
+      throw new UnsupportedOperationException("The only supported operator for Expression.StringExpression is: ||");
 
-    serialization.append("CONCAT(");
-    for (int i = 0; i < serializable.args.length; i++) {
-      final Serializable arg = serializable.args[i];
+    compilation.append("CONCAT(");
+    for (int i = 0; i < expression.args.length; i++) {
+      final Compilable arg = expression.args[i];
       if (i > 0)
-        serialization.append(", ");
+        compilation.append(", ");
 
-      arg.serialize(serialization);
+      arg.compile(compilation);
     }
-    serialization.append(")");
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
-    if (expression.operator == Operator.PLUS)
-      serialization.append("DATE_ADD(");
-    else if (expression.operator == Operator.MINUS)
-      serialization.append("DATE_SUB(");
+  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+    final String function;
+    if (expression.operator == operator.Arithmetic.PLUS)
+      function = "DATE_ADD";
+    else if (expression.operator == operator.Arithmetic.MINUS)
+      function = "DATE_SUB";
     else
       throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
 
-    expression.a.serialize(serialization);
-    serialization.append(", ");
-    expression.b.serialize(serialization);
-    serialization.append(")");
+    if (expression.a instanceof type.TIME) {
+      compilation.append("TIME(").append(function).append("(ADDTIME(CURDATE(), ");
+      expression.a.compile(compilation);
+      compilation.append("), ");
+      expression.b.compile(compilation);
+      compilation.append("))");
+    }
+    else {
+      compilation.append(function).append("(");
+      expression.a.compile(compilation);
+      compilation.append(", ");
+      expression.b.compile(compilation);
+      compilation.append(")");
+    }
   }
 
   @Override
-  protected void serialize(final Interval interval, final Serialization serialization) {
-    final Set<Interval.Unit> units = interval.getUnits();
+  protected void compile(final Interval interval, final Compilation compilation) {
+    final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
-    for (final Interval.Unit unit : units) {
-      final Integer component;
+    for (final TemporalUnit unit : units) {
+      final long component;
       final String unitString;
       if (unit == Interval.Unit.MICROS) {
-        component = interval.getComponent(unit);
+        component = interval.get(unit);
         unitString = "MICROSECOND";
       }
       else if (unit == Interval.Unit.MILLIS) {
-        component = interval.getComponent(unit) * 1000;
+        component = interval.get(unit) * 1000;
         unitString = "MICROSECOND";
       }
       else if (unit == Interval.Unit.DECADES) {
-        component = interval.getComponent(unit) * 10;
+        component = interval.get(unit) * 10;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.CENTURIES) {
-        component = interval.getComponent(unit) * 100;
+        component = interval.get(unit) * 100;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
-        component = interval.getComponent(unit) * 1000;
+        component = interval.get(unit) * 1000;
         unitString = "YEAR";
       }
-      else if (unit.name().endsWith("S")) {
-        component = interval.getComponent(unit);
-        unitString = unit.name().substring(0, unit.name().length() - 1);
+      else if (unit.toString().endsWith("S")) {
+        component = interval.get(unit);
+        unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
       else {
-        throw new UnsupportedOperationException("Unexpected Interval.Unit: " + unit.name());
+        throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
       }
 
       clause.append(" ").append(component).append(" " + unitString);
     }
 
-    serialization.append("INTERVAL ").append(clause.substring(1));
+    compilation.append("INTERVAL ").append(clause.substring(1));
   }
 
   @Override
-  protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
+  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
-      super.serialize(as, serialization);
+      super.compile(as, compilation);
     }
     else if (as.cast instanceof type.DECIMAL) {
-      serialization.append("CAST(");
-      as.dataType.serialize(serialization);
-      final String declaration = as.cast.declare(serialization.vendor);
-      serialization.append(" AS ").append(as.cast instanceof type.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
+      compilation.append("CAST(");
+      as.dataType.compile(compilation);
+      final String declaration = as.cast.declare(compilation.vendor);
+      compilation.append(" AS ").append(as.cast instanceof type.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
     }
     else if (as.cast instanceof type.ExactNumeric) {
-      serialization.append("CAST(");
-      as.dataType.serialize(serialization);
-      serialization.append(" AS ").append(as.cast instanceof type.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
+      compilation.append("CAST(");
+      as.dataType.compile(compilation);
+      compilation.append(" AS ").append(as.cast instanceof type.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
-      as.dataType.serialize(serialization);
+      as.dataType.compile(compilation);
     }
   }
 }

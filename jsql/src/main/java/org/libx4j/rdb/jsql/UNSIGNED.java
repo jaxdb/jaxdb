@@ -26,6 +26,37 @@ public final class UNSIGNED {
     protected abstract Class<? extends type.DataType<?>> getTypeClass();
   }
 
+  public static UnsignedNumber<?> toUnsigned(final Number number) {
+    if (number == null)
+      return null;
+
+    if (number.doubleValue() < 0)
+      throw new IllegalArgumentException("number < 0: " + number);
+
+    if (number instanceof Float)
+      return new Float(number.floatValue());
+
+    if (number instanceof Double)
+      return new Double(number.doubleValue());
+
+    if (number instanceof java.math.BigDecimal)
+      return new BigDecimal((java.math.BigDecimal)number);
+
+    if (number instanceof Byte || number instanceof Short)
+      return new Byte(number.shortValue());
+
+    if (number instanceof Integer)
+      return new Short(number.intValue());
+
+    if (number instanceof Long)
+      return new Integer(number.longValue());
+
+    if (number instanceof java.math.BigInteger)
+      return new Long((java.math.BigInteger)number);
+
+    throw new UnsupportedOperationException("Unsupported Number type: " + number.getClass().getName());
+  }
+
   public static final class Float extends UnsignedNumber<java.lang.Float> {
     private static final long serialVersionUID = -8375720072364561556L;
     private final float value;

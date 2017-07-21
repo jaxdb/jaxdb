@@ -14,25 +14,32 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.dmlx;
+package org.libx4j.rdb.ddlx;
 
 import java.io.IOException;
-
-import javax.xml.transform.TransformerException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
+import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.runner.Derby;
+import org.libx4j.rdb.ddlx.runner.MySQL;
+import org.libx4j.rdb.ddlx.runner.Oracle;
+import org.libx4j.rdb.ddlx.runner.PostgreSQL;
+import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
+import org.libx4j.xsb.runtime.ParseException;
 
 @RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
-public class WorldTest extends DMLxTest {
+public class ClassicModelsTest extends DDLxTest {
   @Test
-  public void testWorld() throws IOException, TransformerException {
-    createSchemas("world");
+  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    recreateSchema(connection, "classicmodels");
   }
 }

@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import org.lib4j.util.TopologicalSort;
+import org.lib4j.util.Collections;
+import org.lib4j.util.Digraph;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
@@ -89,7 +88,7 @@ public final class Schemas {
       return null;
 
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    Serializer.getSerializer(vendor).init(connection);
+    Compiler.getCompiler(vendor).init(connection);
     final java.sql.Statement sqlStatement = connection.createStatement();
     final int[] counts = new int[schemas.size()];
     int i = 0;
@@ -124,36 +123,36 @@ public final class Schemas {
 
   public static List<$ddlx_table> tables(final ddlx_schema schema) {
     final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
-    final Map<String,Set<String>> dependencyGraph = new HashMap<String,Set<String>>();
+    final Digraph<String> digraph = new Digraph<String>();
     for (final $ddlx_table table : schema._table()) {
       if (table._abstract$().text() || table._skip$().text())
         continue;
 
       final String tableName = table._name$().text();
+      digraph.addVertex(tableName);
       tableNameToTable.put(tableName, table);
-      Set<String> dependants = dependencyGraph.get(tableName);
-      if (dependants == null)
-        dependencyGraph.put(tableName, dependants = new HashSet<String>());
-
       if (table._constraints() != null) {
         final $ddlx_constraints constraints = table._constraints(0);
         final List<$ddlx_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
         if (foreignKeys != null)
           for (final $ddlx_table._constraints._foreignKey foreignKey : foreignKeys)
-            dependants.add(foreignKey._references$().text());
+            digraph.addEdge(tableName, foreignKey._references$().text());
       }
 
       if (table._column() != null) {
         for (final $ddlx_column column : table._column()) {
           if (column._foreignKey() != null) {
             final $ddlx_foreignKey foreignKey = column._foreignKey(0);
-            dependants.add(foreignKey._references$().text());
+            digraph.addEdge(tableName, foreignKey._references$().text());
           }
         }
       }
     }
 
-    final List<String> sortedNames = TopologicalSort.sort(dependencyGraph);
+    if (digraph.hasCycle())
+      throw new IllegalStateException("Cycle detected in foreign key dependency graph: " + Collections.toString(digraph.getCycle(), " -> "));
+
+    final List<String> sortedNames = digraph.getTopologicalOrder();
     final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(sortedNames.size());
     for (final String tableName : sortedNames)
       tables.add(tableNameToTable.get(tableName));
@@ -167,10 +166,10 @@ public final class Schemas {
 
   public static int[] truncate(final Connection connection, final Collection<$ddlx_table> tables) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final Serializer serializer = Serializer.getSerializer(vendor);
+    final Compiler compiler = Compiler.getCompiler(vendor);
     final java.sql.Statement statement = connection.createStatement();
     for (final $ddlx_table table : tables)
-      statement.addBatch(serializer.truncate(table._name$().text()));
+      statement.addBatch(compiler.truncate(table._name$().text()));
 
     return statement.executeBatch();
   }

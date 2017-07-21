@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.lang.reflect.Modifier;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.time.LocalDate;
@@ -34,30 +34,36 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.time.temporal.TemporalUnit;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.lib4j.io.Readers;
 import org.lib4j.io.Streams;
+import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
 import org.lib4j.util.Hexadecimal;
+import org.lib4j.util.IdentityHashSet;
 import org.libx4j.rdb.jsql.Insert.VALUES;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
-public abstract class Serializer {
-  private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
+public abstract class Compiler {
+  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Serializer.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
-        if (Serializer.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Serializer serializer = (Serializer)cls.newInstance();
-          serializers[serializer.getVendor().ordinal()] = serializer;
+        if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
+          final Compiler compiler = (Compiler)cls.newInstance();
+          compilers[compiler.getVendor().ordinal()] = compiler;
         }
       }
     }
@@ -66,46 +72,59 @@ public abstract class Serializer {
     }
   }
 
-  protected static Serializer getSerializer(final DBVendor vendor) {
-    final Serializer serializer = serializers[vendor.ordinal()];
-    if (serializer == null)
+  protected static Compiler getCompiler(final DBVendor vendor) {
+    final Compiler compiler = compilers[vendor.ordinal()];
+    if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
 
-    return serializer;
+    return compiler;
   }
 
-  protected void serializeEntities(final Collection<? extends Subject<?>> entities, final Keyword<?> source, final Serialization serialization) throws IOException {
+  protected void compileEntities(final Collection<? extends Subject<?>> entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     final Iterator<? extends Subject<?>> iterator = entities.iterator();
     int index = 0;
     while (iterator.hasNext()) {
       final Subject<?> subject = iterator.next();
-      serializeNextSubject(subject, index++, source, serialization);
+      compileNextSubject(subject, index++, source, translateTypes, compilation);
       if (iterator.hasNext())
-        serialization.append(", ");
+        compilation.append(", ");
     }
   }
 
-  protected void serializeNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Serialization serialization) throws IOException {
+  protected String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
+    return "";
+  }
+
+  private void checkTranslateType(final Map<Integer,type.ENUM<?>> translateTypes, final type.DataType<?> column, final int index, final Compilation compilation) {
+    if (column instanceof type.ENUM<?> && translateTypes != null) {
+      final type.ENUM<?> translateType = translateTypes.get(index);
+      if (translateType != null)
+        compilation.append(translateEnum((type.ENUM<?>)column, translateTypes.get(index)));
+    }
+  }
+
+  protected void compileNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
-      final Alias alias = serialization.registerAlias(entity);
-      final type.DataType<?>[] columns = entity.column();
-      for (int j = 0; j < columns.length; j++) {
-        final type.DataType<?> column = columns[j];
-        if (j > 0)
-          serialization.append(", ");
+      final Alias alias = compilation.registerAlias(entity);
+      for (int c = 0; c < entity.column.length; c++) {
+        final type.DataType<?> column = entity.column[c];
+        if (c > 0)
+          compilation.append(", ");
 
-        alias.serialize(serialization);
-        serialization.append(".").append(column.name);
+        alias.compile(compilation);
+        compilation.append(".").append(column.name);
+        checkTranslateType(translateTypes, column, c, compilation);
       }
     }
     else if (subject instanceof type.DataType) {
       final type.DataType<?> column = (type.DataType<?>)subject;
-      serialization.registerAlias(column.owner);
-      column.serialize(serialization);
+      compilation.registerAlias(column.owner);
+      column.compile(compilation);
+      checkTranslateType(translateTypes, column, index, compilation);
     }
     else {
-      throw new UnsupportedOperationException("Unexpected subject type: " + subject.getClass().getName());
+      throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
     }
   }
 
@@ -113,7 +132,7 @@ public abstract class Serializer {
 
   protected abstract void onRegister(final Connection connection) throws SQLException;
 
-  protected String tableName(final Entity entity, final Serialization serialization) {
+  protected String tableName(final Entity entity, final Compilation compilation) {
     return entity.name();
   }
 
@@ -121,38 +140,38 @@ public abstract class Serializer {
     return "?";
   }
 
-  protected void serialize(final Case.Simple.CASE<?,?> case_, final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
-    serialization.append("CASE ");
-    case_.variable.serialize(serialization);
+  protected void compile(final Case.Simple.CASE<?,?> case_, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+    compilation.append("CASE ");
+    case_.variable.compile(compilation);
   }
 
-  protected void serialize(final Case.Search.WHEN<?> case_, final Serialization serialization) {
-    serialization.append("CASE");
+  protected void compile(final Case.Search.WHEN<?> case_, final Compilation compilation) {
+    compilation.append("CASE");
   }
 
-  protected void serialize(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
-    serialization.append(" WHEN ");
-    when.condition.serialize(serialization);
-    serialization.append(" THEN ");
-    then.value.serialize(serialization);
+  protected void compile(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+    compilation.append(" WHEN ");
+    when.condition.compile(compilation);
+    compilation.append(" THEN ");
+    then.value.compile(compilation);
   }
 
-  protected void serialize(final Case.ELSE<?> _else, final Serialization serialization) throws IOException {
-    serialization.append(" ELSE ");
-    _else.value.serialize(serialization);
-    serialization.append(" END");
+  protected void compile(final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+    compilation.append(" ELSE ");
+    _else.value.compile(compilation);
+    compilation.append(" END");
   }
 
-  protected void serialize(final SelectCommand command, final Select.SELECT<?> select, final Serialization serialization) throws IOException {
-    serialization.append("SELECT ");
+  protected void compile(final SelectCommand command, final Select.SELECT<?> select, final Compilation compilation) throws IOException {
+    compilation.append("SELECT ");
     if (select.distinct)
-      serialization.append("DISTINCT ");
+      compilation.append("DISTINCT ");
 
-    serializeEntities(select.entities, select, serialization);
+    compileEntities(select.entities, select, command.getTranslateTypes(), compilation);
   }
 
-  protected void serialize(final Select.FROM<?> from, final Serialization serialization) throws IOException {
-    serialization.append(" FROM ");
+  protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+    compilation.append(" FROM ");
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
@@ -160,125 +179,125 @@ public abstract class Serializer {
     while (true) {
       final Entity table = iterator.next();
       if (table.wrapper() != null) {
-        table.wrapper().serialize(serialization);
+        table.wrapper().compile(compilation);
       }
       else {
-        serialization.append(tableName(table, serialization)).append(" ");
-        serialization.registerAlias(table).serialize(serialization);
+        compilation.append(tableName(table, compilation)).append(" ");
+        compilation.registerAlias(table).compile(compilation);
       }
 
       if (iterator.hasNext())
-        serialization.append(", ");
+        compilation.append(", ");
       else
         break;
     }
   }
 
-  protected void serialize(final Select.JOIN<?> join, final Select.ON<?> on, final Serialization serialization) throws IOException {
+  protected void compile(final Select.JOIN<?> join, final Select.ON<?> on, final Compilation compilation) throws IOException {
     if (join != null) {
       // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
       // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-      serialization.registerAlias(join.table);
+      compilation.registerAlias(join.table);
       if (join.cross)
-        serialization.append(" CROSS");
+        compilation.append(" CROSS");
 
       if (join.natural)
-        serialization.append(" NATURAL");
+        compilation.append(" NATURAL");
 
       if (join.left && join.right)
-        serialization.append(" FULL OUTER");
+        compilation.append(" FULL OUTER");
       else if (join.left)
-        serialization.append(" LEFT OUTER");
+        compilation.append(" LEFT OUTER");
       else if (join.right)
-        serialization.append(" RIGHT OUTER");
+        compilation.append(" RIGHT OUTER");
 
-      serialization.append(" JOIN ").append(tableName(join.table, serialization)).append(" ");
-      serialization.registerAlias(join.table).serialize(serialization);
+      compilation.append(" JOIN ").append(tableName(join.table, compilation)).append(" ");
+      compilation.registerAlias(join.table).compile(compilation);
       if (on != null) {
-        serialization.append(" ON (");
-        on.condition.serialize(serialization);
-        serialization.append(")");
+        compilation.append(" ON (");
+        on.condition.compile(compilation);
+        compilation.append(")");
       }
     }
   }
 
-  protected void serialize(final Select.WHERE<?> where, final Serialization serialization) throws IOException {
+  protected void compile(final Select.WHERE<?> where, final Compilation compilation) throws IOException {
     if (where != null) {
-      serialization.append(" WHERE ");
-      where.condition.serialize(serialization);
+      compilation.append(" WHERE ");
+      where.condition.compile(compilation);
     }
   }
 
-  protected void serialize(final Select.GROUP_BY<?> groupBy, final Serialization serialization) throws IOException {
+  protected void compile(final Select.GROUP_BY<?> groupBy, final Compilation compilation) throws IOException {
     if (groupBy != null) {
-      serialization.append(" GROUP BY ");
-      serializeEntities(groupBy.subjects, groupBy, serialization);
+      compilation.append(" GROUP BY ");
+      compileEntities(groupBy.subjects, groupBy, null, compilation);
     }
   }
 
-  protected void serialize(final Select.HAVING<?> having, final Serialization serialization) throws IOException {
+  protected void compile(final Select.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
-      serialization.append(" HAVING ");
-      having.condition.serialize(serialization);
+      compilation.append(" HAVING ");
+      having.condition.compile(compilation);
     }
   }
 
-  protected void serialize(final Select.ORDER_BY<?> orderBy, final Serialization serialization) throws IOException {
+  protected void compile(final Select.ORDER_BY<?> orderBy, final Compilation compilation) throws IOException {
     if (orderBy != null) {
-      serialization.append(" ORDER BY ");
+      compilation.append(" ORDER BY ");
       if (orderBy.columns != null) {
         for (int i = 0; i < orderBy.columns.length; i++) {
           final type.DataType<?> dataType = orderBy.columns[i];
           if (i > 0)
-            serialization.append(", ");
+            compilation.append(", ");
 
-          serialization.registerAlias(dataType.owner);
-          dataType.serialize(serialization);
+          compilation.registerAlias(dataType.owner);
+          dataType.compile(compilation);
         }
       }
       else {
         for (int i = 0; i < orderBy.columnNumbers.length; i++) {
           final int columnNumber = orderBy.columnNumbers[i];
           if (i > 0)
-            serialization.append(", ");
+            compilation.append(", ");
 
-          serialization.append(String.valueOf(columnNumber));
+          compilation.append(String.valueOf(columnNumber));
         }
       }
     }
   }
 
-  protected void serialize(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Serialization serialization) {
+  protected void compile(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
-      serialization.append(" LIMIT " + limit.rows);
+      compilation.append(" LIMIT " + limit.rows);
       if (offset != null)
-        serialization.append(" OFFSET " + offset.rows);
+        compilation.append(" OFFSET " + offset.rows);
     }
   }
 
-  protected void serialize(final Select.UNION<?> union, final Serialization serialization) throws IOException {
+  protected void compile(final Select.UNION<?> union, final Compilation compilation) throws IOException {
     if (union != null) {
-      serialization.append(" UNION ");
+      compilation.append(" UNION ");
       if (union.all)
-        serialization.append("ALL ");
+        compilation.append("ALL ");
 
-      union.select.serialize(serialization);
+      union.select.compile(compilation);
     }
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static void serializeInsert(final type.DataType<?>[] columns, final Serialization serialization) throws IOException {
+  private static void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException {
     final StringBuilder builder = new StringBuilder();
-    serialization.append("INSERT INTO ");
+    compilation.append("INSERT INTO ");
     final Entity entity = columns[0].owner;
-    entity.serialize(serialization);
+    entity.compile(compilation);
     for (int j = 0; j < columns.length; j++) {
       final type.DataType column = columns[j];
       if (!column.wasSet()) {
         if (column.generateOnInsert == null)
           continue;
 
-        column.value = column.generateOnInsert.generateStatic(column);
+        column.generateOnInsert.generate(column);
       }
 
       if (builder.length() > 0)
@@ -287,639 +306,678 @@ public abstract class Serializer {
       builder.append(column.name);
     }
 
-    serialization.append(" (").append(builder).append(") VALUES (");
+    compilation.append(" (").append(builder).append(") VALUES (");
 
     boolean paramAdded = false;
-    for (int j = 0; j < entity.column().length; j++) {
-      final type.DataType dataType = entity.column()[j];
+    for (int j = 0; j < entity.column.length; j++) {
+      final type.DataType dataType = entity.column[j];
       if (dataType.wasSet() || dataType.generateOnInsert != null) {
         if (paramAdded)
-          serialization.append(", ");
+          compilation.append(", ");
 
-        serialization.addParameter(dataType);
+        compilation.addParameter(dataType, false);
         paramAdded = true;
       }
     }
 
-    serialization.append(")");
+    compilation.append(")");
   }
 
   @SuppressWarnings("rawtypes")
-  protected void serialize(final Insert.INSERT insert, final Serialization serialization) throws IOException {
+  protected void compile(final Insert.INSERT insert, final Compilation compilation) throws IOException {
     if (insert.entities != null && insert.entities.length > 1) {
       for (int i = 0; i < insert.entities.length; i++) {
-        serializeInsert(insert.entities[i].column(), serialization);
-        serialization.addBatch();
+        compileInsert(insert.entities[i].column, compilation);
+        compilation.addBatch();
       }
     }
     else {
-      serializeInsert(insert.entities != null ? insert.entities[0].column() : insert.columns, serialization);
+      compileInsert(insert.entities != null ? insert.entities[0].column : insert.columns, compilation);
     }
   }
 
   @SuppressWarnings("rawtypes")
-  protected void serialize(final Insert.INSERT insert, final VALUES<?> values, final Serialization serialization) throws IOException {
-    final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
+  protected void compile(final Insert.INSERT insert, final VALUES<?> values, final Compilation compilation) throws IOException {
+    final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<Integer,type.ENUM<?>>();
     if (insert.entities != null) {
       if (insert.entities.length > 1)
         throw new UnsupportedOperationException("This is not supported, and should not be!");
 
-      serialization.append("INSERT INTO ");
+      compilation.append("INSERT INTO ");
       final Entity entity = insert.entities[0];
-      entity.serialize(serialization);
-      serialization.append(" (");
-      for (int i = 0; i < entity.column().length; i++) {
+      entity.compile(compilation);
+      compilation.append(" (");
+      for (int i = 0; i < entity.column.length; i++) {
         if (i > 0)
-          serialization.append(", ");
+          compilation.append(", ");
 
-        entity.column()[i].serialize(serialization);
+        final type.DataType<?> column = entity.column[i];
+        column.compile(compilation);
+        if (column instanceof type.ENUM<?>)
+          translateTypes.put(i, (type.ENUM<?>)column);
       }
 
-      serialization.append(") ");
+      compilation.append(") ");
     }
     else if (insert.columns != null) {
-      serialization.append("INSERT INTO ");
+      compilation.append("INSERT INTO ");
       final Entity entity = insert.columns[0].owner;
-      entity.serialize(serialization);
-      serialization.append(" (");
+      entity.compile(compilation);
+      compilation.append(" (");
       for (int i = 0; i < insert.columns.length; i++) {
         if (i > 0)
-          serialization.append(", ");
+          compilation.append(", ");
 
-        insert.columns[i].serialize(serialization);
+        final type.DataType<?> column = insert.columns[i];
+        column.compile(compilation);
+        if (column instanceof type.ENUM<?>)
+          translateTypes.put(i, (type.ENUM<?>)column);
       }
 
-      serialization.append(") ");
+      compilation.append(") ");
     }
 
-    selectCommand.serialize(serialization);
+    final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
+    selectCommand.setTranslateTypes(translateTypes);
+    selectCommand.compile(compilation);
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void serialize(final Update.UPDATE update, final Serialization serialization) throws IOException {
+  protected void compile(final Update.UPDATE update, final Compilation compilation) throws IOException {
     for (int i = 0; i < update.entities.length; i++) {
       final Entity entity = update.entities[i];
-      serialization.append("UPDATE ");
-      update.entities[i].serialize(serialization);
-      serialization.append(" SET ");
+      compilation.append("UPDATE ");
+      update.entities[i].compile(compilation);
+      compilation.append(" SET ");
       boolean paramAdded = false;
-      for (final type.DataType column : entity.column()) {
-        if (!column.primary && (column.wasSet() || column.generateOnUpdate != null)) {
+      for (int c = 0; c < entity.column.length; c++) {
+        final type.DataType column = entity.column[c];
+        if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
           if (column.generateOnUpdate != null)
-            column.value = column.generateOnUpdate.generateStatic(column);
+            column.generateOnUpdate.generate(column);
+
+          if (column.indirection != null) {
+            compilation.afterExecute(new Consumer<Boolean>() {
+              @Override
+              public void accept(final Boolean success) {
+                if (success) {
+                  final Object evaluated = column.evaluate(new IdentityHashSet<Evaluable>());
+                  if (evaluated == null) {
+                    column.value = null;
+                  }
+                  else if (column instanceof type.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
+                    throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                  }
+                  else if (column.type() != evaluated.getClass()) {
+                    if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+                      column.value = Numbers.valueOf((Class<? extends Number>)column.type(), (Number)evaluated);
+                    else
+                      throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                  }
+                  else {
+                    column.value = evaluated;
+                  }
+                }
+              }
+            });
+          }
 
           if (paramAdded)
-            serialization.append(", ");
+            compilation.append(", ");
 
-          serialization.append(column.name).append(" = ");
-          serialization.addParameter(column);
+          compilation.append(column.name).append(" = ");
+          compilation.addParameter(column, true);
           paramAdded = true;
         }
       }
+
+      // No changes were found
+      if (!paramAdded)
+        return;
 
       paramAdded = false;
-      for (final type.DataType column : entity.column()) {
-        if (column.primary) {
+      for (final type.DataType column : entity.column) {
+        if (column.primary || column.keyForUpdate) {
           if (paramAdded)
-            serialization.append(" AND ");
+            compilation.append(" AND ");
           else
-            serialization.append(" WHERE ");
+            compilation.append(" WHERE ");
 
-          serialization.addCondition(column);
+          compilation.addCondition(column, false);
           paramAdded = true;
         }
       }
 
-      serialization.addBatch();
+      compilation.addBatch();
     }
   }
 
-  protected void serialize(final Update.UPDATE update, final List<Update.SET> sets, final Update.WHERE where, final Serialization serialization) throws IOException {
+  protected void compile(final Update.UPDATE update, final List<Update.SET> sets, final Update.WHERE where, final Compilation compilation) throws IOException {
     if (update.entities.length > 1)
       throw new UnsupportedOperationException("This is not supported, and should not be!");
 
-    serialization.append("UPDATE ");
-    update.entities[0].serialize(serialization);
-    serialization.append(" SET ");
+    compilation.append("UPDATE ");
+    update.entities[0].compile(compilation);
+    compilation.append(" SET ");
     for (int i = 0; i < sets.size(); i++) {
       final Update.SET set = sets.get(i);
       if (i > 0)
-        serialization.append(", ");
+        compilation.append(", ");
 
-      serialization.append(set.column.name).append(" = ");
-      set.to.serialize(serialization);
+      compilation.append(set.column.name).append(" = ");
+      set.to.compile(compilation);
     }
 
     if (where != null) {
-      serialization.append(" WHERE ");
-      where.condition.serialize(serialization);
+      compilation.append(" WHERE ");
+      where.condition.compile(compilation);
     }
   }
 
-  protected void serialize(final Delete.DELETE delete, final Serialization serialization) throws IOException {
+  protected void compile(final Delete.DELETE delete, final Compilation compilation) throws IOException {
     for (int i = 0; i < delete.entities.length; i++) {
-      serialization.append("DELETE FROM ");
-      delete.entities[i].serialize(serialization);
+      compilation.append("DELETE FROM ");
+      delete.entities[i].compile(compilation);
       boolean paramAdded = false;
-      for (int j = 0; j < delete.entities[i].column().length; j++) {
-        final type.DataType<?> column = delete.entities[i].column()[j];
+      for (int j = 0; j < delete.entities[i].column.length; j++) {
+        final type.DataType<?> column = delete.entities[i].column[j];
         if (column.wasSet()) {
           if (paramAdded)
-            serialization.append(" AND ");
+            compilation.append(" AND ");
           else
-            serialization.append(" WHERE ");
+            compilation.append(" WHERE ");
 
-          serialization.addCondition(column);
+          compilation.addCondition(column, false);
           paramAdded = true;
         }
       }
 
-      serialization.addBatch();
+      compilation.addBatch();
     }
   }
 
-  protected void serialize(final Delete.DELETE delete, final Delete.WHERE where, final Serialization serialization) throws IOException {
+  protected void compile(final Delete.DELETE delete, final Delete.WHERE where, final Compilation compilation) throws IOException {
     if (delete.entities.length > 1)
       throw new UnsupportedOperationException("This is not supported, and should not be!");
 
-    serialization.append("DELETE FROM ");
-    delete.entities[0].serialize(serialization);
-    serialization.append(" WHERE ");
+    compilation.append("DELETE FROM ");
+    delete.entities[0].compile(compilation);
+    compilation.append(" WHERE ");
 
-    where.condition.serialize(serialization);
+    where.condition.compile(compilation);
   }
 
-  protected <T extends Subject<?>>void serialize(final Entity entity, final Serialization serialization) throws IOException {
+  protected <T extends Subject<?>>void compile(final Entity entity, final Compilation compilation) throws IOException {
     if (entity.wrapper() != null) {
-      entity.wrapper().serialize(serialization);
+      entity.wrapper().compile(compilation);
     }
     else {
-      serialization.append(tableName(entity, serialization));
-      final Alias alias = serialization.registerAlias(entity);
-      if (serialization.command instanceof SelectCommand) {
-        serialization.append(" ");
-        alias.serialize(serialization);
+      compilation.append(tableName(entity, compilation));
+      final Alias alias = compilation.registerAlias(entity);
+      if (compilation.command instanceof SelectCommand) {
+        compilation.append(" ");
+        alias.compile(compilation);
       }
     }
   }
 
-  protected void serialize(final StringExpression serializable, final Serialization serialization) throws IOException {
-    serialization.append("(");
-    for (int i = 0; i < serializable.args.length; i++) {
-      final Serializable arg = serializable.args[i];
+  protected void compile(final expression.String expression, final Compilation compilation) throws IOException {
+    compilation.append("(");
+    for (int i = 0; i < expression.args.length; i++) {
+      final Compilable arg = expression.args[i];
       if (i > 0)
-        serialization.append(" ").append(serializable.operator.toString()).append(" ");
+        compilation.append(" ").append(expression.operator.toString()).append(" ");
 
-      arg.serialize(serialization);
+      arg.compile(compilation);
     }
-    serialization.append(")");
+    compilation.append(")");
   }
 
-  protected void serialize(final Interval interval, final Serialization serialization) {
-    final Set<Interval.Unit> units = interval.getUnits();
+  protected void compile(final Interval interval, final Compilation compilation) {
+    final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
-    for (final Interval.Unit unit : units)
-      clause.append(" ").append(interval.getComponent(unit)).append(" " + unit.name());
+    for (final TemporalUnit unit : units)
+      clause.append(" ").append(interval.get(unit)).append(" " + unit);
 
-    serialization.append("INTERVAL '").append(clause.substring(1)).append("'");
+    compilation.append("INTERVAL '").append(clause.substring(1)).append("'");
   }
 
-  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
-    serialization.append("(");
-    expression.a.serialize(serialization);
-    serialization.append(" ");
-    serialization.append(expression.operator.toString());
-    serialization.append(" ");
-    expression.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+    compilation.append("(");
+    expression.a.compile(compilation);
+    compilation.append(" ");
+    compilation.append(expression.operator.toString());
+    compilation.append(" ");
+    expression.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final NumericExpression expression, final Serialization serialization) throws IOException {
-    serialization.append("(");
-    expression.a.serialize(serialization);
-    serialization.append(" ").append(expression.operator.toString()).append(" ");
-    expression.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
+    compilation.append("(");
+    expression.a.compile(compilation);
+    compilation.append(" ").append(expression.operator.toString()).append(" ");
+    expression.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final type.DataType<?> dataType, final Serialization serialization) throws IOException {
+  protected void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
     if (dataType.wrapper() != null) {
-      dataType.wrapper().serialize(serialization);
+      dataType.wrapper().compile(compilation);
     }
     else {
       if (dataType.owner != null) {
-        final Alias alias = serialization.getAlias(dataType.owner);
+        final Alias alias = compilation.getAlias(dataType.owner);
         if (alias != null) {
-          if (serialization.command instanceof SelectCommand) {
-            alias.serialize(serialization);
-            serialization.append(".");
+          if (compilation.command instanceof SelectCommand) {
+            alias.compile(compilation);
+            compilation.append(".");
           }
 
-          serialization.append(dataType.name);
+          compilation.append(dataType.name);
           return;
         }
       }
       else {
-        serialization.addParameter(dataType);
+        compilation.addParameter(dataType, false);
       }
     }
   }
 
-  protected void serialize(final Alias alias, final Serialization serialization) {
-    serialization.append(alias.name);
+  protected void compile(final Alias alias, final Compilation compilation) {
+    compilation.append(alias.name);
   }
 
-  protected String serialize(final As<?> as) {
+  protected String compile(final As<?> as) {
     return "AS";
   }
 
-  protected void serialize(final As<?> as, final Serialization serialization) throws IOException {
-    final Alias alias = serialization.registerAlias(as.getVariable());
-    serialization.append("(");
-    as.parent().serialize(serialization);
-    serialization.append(")");
-    final String s = serialize(as);
-    serialization.append(" ");
+  protected void compile(final As<?> as, final Compilation compilation) throws IOException {
+    final Alias alias = compilation.registerAlias(as.getVariable());
+    compilation.append("(");
+    as.parent().compile(compilation);
+    compilation.append(")");
+    final String s = compile(as);
+    compilation.append(" ");
     if (s != null && s.length() != 0)
-      serialization.append(s).append(" ");
+      compilation.append(s).append(" ");
 
-    alias.serialize(serialization);
+    alias.compile(compilation);
     as.getVariable().wrapper(as.parent());
   }
 
   // FIXME: Move this to a Util class or something
-  protected static <T extends Subject<?>>void formatBraces(final Operator<BooleanTerm> operator, final Condition<?> condition, final Serialization serialization) throws IOException {
+  protected static <T extends Subject<?>>void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
-        condition.serialize(serialization);
+        condition.compile(compilation);
       }
       else {
-        serialization.append("(");
-        condition.serialize(serialization);
-        serialization.append(")");
+        compilation.append("(");
+        condition.compile(compilation);
+        compilation.append(")");
       }
     }
     else {
-      condition.serialize(serialization);
+      condition.compile(compilation);
     }
   }
 
-  protected void serialize(final BooleanTerm condition, final Serialization serialization) throws IOException {
-    formatBraces(condition.operator, condition.a, serialization);
-    serialization.append(" ").append(condition.operator).append(" ");
-    formatBraces(condition.operator, condition.b, serialization);
+  protected void compile(final BooleanTerm condition, final Compilation compilation) throws IOException {
+    formatBraces(condition.operator, condition.a, compilation);
+    compilation.append(" ").append(condition.operator).append(" ");
+    formatBraces(condition.operator, condition.b, compilation);
     for (int i = 0; i < condition.conditions.length; i++) {
-      serialization.append(" ").append(condition.operator).append(" ");
-      formatBraces(condition.operator, condition.conditions[i], serialization);
+      compilation.append(" ").append(condition.operator).append(" ");
+      formatBraces(condition.operator, condition.conditions[i], compilation);
     }
   }
 
-  protected void serialize(final ComparisonPredicate<?> predicate, final Serialization serialization) throws IOException {
-    predicate.a.serialize(serialization);
-    serialization.append(" ").append(predicate.operator).append(" ");
-    predicate.b.serialize(serialization);
+  protected void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
+    predicate.a.compile(compilation);
+    compilation.append(" ").append(predicate.operator).append(" ");
+    predicate.b.compile(compilation);
   }
 
-  protected void serialize(final InPredicate<?> predicate, final Serialization serialization) throws IOException {
-    predicate.dataType.serialize(serialization);
-    serialization.append(" ");
+  protected void compile(final InPredicate<?> predicate, final Compilation compilation) throws IOException {
+    predicate.dataType.compile(compilation);
+    compilation.append(" ");
     if (!predicate.positive)
-      serialization.append("NOT ");
+      compilation.append("NOT ");
 
-    serialization.append("IN").append(" (");
+    compilation.append("IN").append(" (");
     for (int i = 0; i < predicate.values.length; i++) {
       if (i > 0)
-        serialization.append(", ");
+        compilation.append(", ");
 
-      predicate.values[i].serialize(serialization);
+      predicate.values[i].compile(compilation);
     }
 
-    serialization.append(")");
+    compilation.append(")");
   }
 
-  protected void serialize(final ExistsPredicate<?> predicate, final Serialization serialization) throws IOException {
-    serialization.append("EXISTS").append(" (");
-    predicate.subQuery.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final ExistsPredicate<?> predicate, final Compilation compilation) throws IOException {
+    compilation.append("EXISTS").append(" (");
+    predicate.subQuery.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final LikePredicate predicate, final Serialization serialization) throws IOException {
-    predicate.dataType.serialize(serialization);
-    serialization.append(" ");
+  protected void compile(final LikePredicate predicate, final Compilation compilation) throws IOException {
+    predicate.dataType.compile(compilation);
+    compilation.append(" ");
     if (!predicate.positive)
-      serialization.append("NOT ");
+      compilation.append("NOT ");
 
-    serialization.append("LIKE").append(" '").append(predicate.pattern).append("'");
+    compilation.append("LIKE").append(" '").append(predicate.pattern).append("'");
   }
 
-  protected void serialize(final QuantifiedComparisonPredicate<?> predicate, final Serialization serialization) throws IOException {
-    serialization.append(predicate.qualifier).append(" (");
-    predicate.subQuery.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
+    compilation.append(predicate.qualifier).append(" (");
+    predicate.subQuery.compile(compilation);
+    compilation.append(")");
   }
 
-  protected <T>void serialize(final BetweenPredicate<T> predicate, final Serialization serialization) throws IOException {
-    serialization.append("(");
-    predicate.dataType.serialize(serialization);
-    serialization.append(")");
+  protected <T>void compile(final BetweenPredicates.BetweenPredicate<T> predicate, final Compilation compilation) throws IOException {
+    compilation.append("(");
+    predicate.dataType.compile(compilation);
+    compilation.append(")");
     if (!predicate.positive)
-      serialization.append(" NOT ");
+      compilation.append(" NOT ");
 
-    serialization.append(" BETWEEN ");
-    predicate.a.serialize(serialization);
-    serialization.append(" AND ");
-    predicate.b.serialize(serialization);
+    compilation.append(" BETWEEN ");
+    predicate.a().compile(compilation);
+    compilation.append(" AND ");
+    predicate.b().compile(compilation);
   }
 
-  protected <T>void serialize(final NullPredicate<T> predicate, final Serialization serialization) throws IOException {
-    predicate.dataType.serialize(serialization);
-    serialization.append(" IS ");
+  protected <T>void compile(final NullPredicate<T> predicate, final Compilation compilation) throws IOException {
+    predicate.dataType.compile(compilation);
+    compilation.append(" IS ");
     if (!predicate.positive)
-      serialization.append("NOT ");
+      compilation.append("NOT ");
 
-    serialization.append("NULL");
+    compilation.append("NULL");
   }
 
-  protected void serialize(final function.numeric.Pi function, final Serialization serialization) {
-    serialization.append("PI()");
+  protected void compile(final function.Pi function, final Compilation compilation) {
+    compilation.append("PI()");
   }
 
-  protected void serialize(final function.numeric.Abs function, final Serialization serialization) throws IOException {
-    serialization.append("ABS(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Abs function, final Compilation compilation) throws IOException {
+    compilation.append("ABS(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Sign function, final Serialization serialization) throws IOException {
-    serialization.append("SIGN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Sign function, final Compilation compilation) throws IOException {
+    compilation.append("SIGN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Round function, final Serialization serialization) throws IOException {
-    serialization.append("ROUND(");
-    function.a.serialize(serialization);
-    serialization.append(", ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Round function, final Compilation compilation) throws IOException {
+    compilation.append("ROUND(");
+    function.a.compile(compilation);
+    compilation.append(", ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Floor function, final Serialization serialization) throws IOException {
-    serialization.append("FLOOR(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Floor function, final Compilation compilation) throws IOException {
+    compilation.append("FLOOR(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Ceil function, final Serialization serialization) throws IOException {
-    serialization.append("CEIL(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Ceil function, final Compilation compilation) throws IOException {
+    compilation.append("CEIL(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Sqrt function, final Serialization serialization) throws IOException {
-    serialization.append("SQRT(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
+    compilation.append("SQRT(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Pow function, final Serialization serialization) throws IOException {
-    serialization.append("POWER(");
-    function.a.serialize(serialization);
-    serialization.append(", ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Pow function, final Compilation compilation) throws IOException {
+    compilation.append("POWER(");
+    function.a.compile(compilation);
+    compilation.append(", ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Mod function, final Serialization serialization) throws IOException {
-    serialization.append("MOD(");
-    function.a.serialize(serialization);
-    serialization.append(", ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
+    compilation.append("MOD(");
+    function.a.compile(compilation);
+    compilation.append(", ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Sin function, final Serialization serialization) throws IOException {
-    serialization.append("SIN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Sin function, final Compilation compilation) throws IOException {
+    compilation.append("SIN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Asin function, final Serialization serialization) throws IOException {
-    serialization.append("ASIN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Asin function, final Compilation compilation) throws IOException {
+    compilation.append("ASIN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Cos function, final Serialization serialization) throws IOException {
-    serialization.append("COS(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Cos function, final Compilation compilation) throws IOException {
+    compilation.append("COS(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Acos function, final Serialization serialization) throws IOException {
-    serialization.append("ACOS(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Acos function, final Compilation compilation) throws IOException {
+    compilation.append("ACOS(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Tan function, final Serialization serialization) throws IOException {
-    serialization.append("TAN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Tan function, final Compilation compilation) throws IOException {
+    compilation.append("TAN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Atan function, final Serialization serialization) throws IOException {
-    serialization.append("ATAN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Atan function, final Compilation compilation) throws IOException {
+    compilation.append("ATAN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Atan2 function, final Serialization serialization) throws IOException {
-    serialization.append("ATAN2(");
-    function.a.serialize(serialization);
-    serialization.append(", ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
+    compilation.append("ATAN2(");
+    function.a.compile(compilation);
+    compilation.append(", ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Exp function, final Serialization serialization) throws IOException {
-    serialization.append("EXP(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Exp function, final Compilation compilation) throws IOException {
+    compilation.append("EXP(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Ln function, final Serialization serialization) throws IOException {
-    serialization.append("LN(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
+    compilation.append("LN(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Log function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(");
-    function.a.serialize(serialization);
-    serialization.append(", ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(");
+    function.a.compile(compilation);
+    compilation.append(", ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Log2 function, final Serialization serialization) throws IOException {
-    serialization.append("LOG2(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+    compilation.append("LOG2(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final function.numeric.Log10 function, final Serialization serialization) throws IOException {
-    serialization.append("LOG10(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+    compilation.append("LOG10(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
-  protected void serialize(final CountFunction count, final Serialization serialization) throws IOException {
-    serialization.append(count.function).append("(");
-    if (count.column == null) {
-      serialization.append("*");
+  protected void compile(final expression.Count expression, final Compilation compilation) throws IOException {
+    compilation.append(expression.function).append("(");
+    if (expression.column == null) {
+      compilation.append("*");
     }
     else {
-      if (count.distinct)
-        serialization.append("DISTINCT ");
+      if (expression.distinct)
+        compilation.append("DISTINCT ");
 
-      count.column.serialize(serialization);
+      expression.column.compile(compilation);
     }
 
-    serialization.append(")");
+    compilation.append(")");
   }
 
-  protected void serialize(final SetFunction function, final Serialization serialization) throws IOException {
-    serialization.append(function.function).append("(");
-    if (function.a != null) {
-      if (function.distinct)
-        serialization.append("DISTINCT ");
+  protected void compile(final expression.Set expression, final Compilation compilation) throws IOException {
+    compilation.append(expression.function).append("(");
+    if (expression.a != null) {
+      if (expression.distinct)
+        compilation.append("DISTINCT ");
 
-      function.a.serialize(serialization);
+      expression.a.compile(compilation);
 
-      if (function.b != null) {
-        serialization.append(", ");
-        function.b.serialize(serialization);
-      }
+//      if (function.b != null) {
+//        compilation.append(", ");
+//        function.b.compile(compilation);
+//      }
     }
 
-    serialization.append(")");
+    compilation.append(")");
   }
 
-  protected void serialize(final OrderingSpec spec, final Serialization serialization) throws IOException {
-    spec.dataType.serialize(serialization);
-    serialization.append(" ").append(spec.operator);
+  protected void compile(final OrderingSpec spec, final Compilation compilation) throws IOException {
+    spec.dataType.compile(compilation);
+    compilation.append(" ").append(spec.operator);
   }
 
-  protected void serialize(final TemporalFunction function, final Serialization serialization) {
-    serialization.append(function.function).append("()");
+  protected void compile(final function.Temporal function, final Compilation compilation) {
+    compilation.append(function.function).append("()");
   }
 
-  protected <T>String serialize(final type.ARRAY<T> serializable, final type.DataType<T> dataType) throws IOException {
+  protected <T>String compile(final type.ARRAY<T> column, final type.DataType<T> dataType) throws IOException {
     final StringBuilder builder = new StringBuilder();
     final type.DataType<T> clone = dataType.clone();
-    for (final T item : serializable.get()) {
+    for (final T item : column.get()) {
       type.DataType.setValue(clone, item);
-      builder.append(", ").append(type.DataType.serialize(dataType, getVendor()));
+      builder.append(", ").append(type.DataType.compile(dataType, getVendor()));
     }
 
     return "(" + builder.substring(2) + ")";
   }
 
-  protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
-    serialization.append("CAST(");
-    as.dataType.serialize(serialization);
-    serialization.append(" AS ").append(as.cast.declare(serialization.vendor)).append(")");
+  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+    compilation.append("CAST(");
+    as.dataType.compile(compilation);
+    compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
   }
 
-  protected String cast(final type.DataType<?> dataType, final Serialization serialization) {
-    return dataType.declare(serialization.vendor);
+  protected String cast(final type.DataType<?> dataType, final Compilation compilation) {
+    return dataType.declare(compilation.vendor);
   }
 
-  protected String serialize(final type.BIGINT serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.BIGINT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.BIGINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.BIGINT.UNSIGNED dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.BINARY serializable) {
-    return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(serializable.get()) + "'";
+  protected String compile(final type.BINARY dataType) {
+    return dataType.get() == null ? "NULL" : "X'" + new Hexadecimal(dataType.get()) + "'";
   }
 
-  protected String serialize(final type.BLOB serializable) throws IOException {
-    return serializable.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.readBytes(serializable.get())) + "'";
+  protected String compile(final type.BLOB dataType) throws IOException {
+    return dataType.get() == null ? "NULL" : "X'" + new Hexadecimal(Streams.readBytes(dataType.get())) + "'";
   }
 
-  protected String serialize(final type.BOOLEAN serializable) {
-    return String.valueOf(serializable.get()).toUpperCase();
+  protected String compile(final type.BOOLEAN dataType) {
+    return String.valueOf(dataType.get()).toUpperCase();
   }
 
-  protected String serialize(final type.CHAR serializable) {
-    return serializable.get() == null ? "NULL" : "'" + serializable.get().replace("'", "''") + "'";
+  protected String compile(final type.CHAR dataType) {
+    return dataType.get() == null ? "NULL" : "'" + dataType.get().replace("'", "''") + "'";
   }
 
-  protected String serialize(final type.CLOB serializable) throws IOException {
-    return serializable.get() == null ? "NULL" : "'" + Readers.readFully(serializable.get()) + "'";
+  protected String compile(final type.CLOB dataType) throws IOException {
+    return dataType.get() == null ? "NULL" : "'" + Readers.readFully(dataType.get()) + "'";
   }
 
-  protected String serialize(final type.DATE serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.DATE_FORMAT.format(serializable.get());
+  protected String compile(final type.DATE dataType) {
+    return dataType.get() == null ? "NULL" : "'" + Dialect.DATE_FORMAT.format(dataType.get()) + "'";
   }
 
-  protected String serialize(final type.DATETIME serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.DATETIME_FORMAT.format(serializable.get());
+  protected String compile(final type.DATETIME dataType) {
+    return dataType.get() == null ? "NULL" : "'" + Dialect.DATETIME_FORMAT.format(dataType.get()) + "'";
   }
 
-  protected String serialize(final type.DECIMAL serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.DECIMAL dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.DOUBLE serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.DOUBLE dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.ENUM<?> serializable) {
-    return serializable.get() == null ? "NULL" : "'" + serializable.get() + "'";
+  protected String compile(final type.ENUM<?> dataType) {
+    return dataType.get() == null ? "NULL" : "'" + dataType.get() + "'";
   }
 
-  protected String serialize(final type.FLOAT serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.FLOAT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.INT serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.INT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.INT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.INT.UNSIGNED dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.SMALLINT serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.SMALLINT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.SMALLINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.SMALLINT.UNSIGNED dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.TINYINT serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.TINYINT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.TINYINT.UNSIGNED serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(serializable.get());
+  protected String compile(final type.TINYINT.UNSIGNED dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
-  protected String serialize(final type.TIME serializable) {
-    return serializable.get() == null ? "NULL" : Dialect.TIME_FORMAT.format(serializable.get());
+  protected String compile(final type.TIME dataType) {
+    return dataType.get() == null ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
   }
 
-  protected void assignAliases(final Select.FROM<?> from, final Serialization serialization) {
+  protected void assignAliases(final Select.FROM<?> from, final Compilation compilation) {
     if (from != null)
       for (final Entity table : from.tables)
-        serialization.registerAlias(table);
+        compilation.registerAlias(table);
   }
 
   protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
@@ -942,7 +1000,7 @@ public abstract class Serializer {
   }
 
   protected Reader getParameter(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Clob value = resultSet.getClob(columnIndex);
+    final Clob value = resultSet.getClob(columnIndex);
     return value == null ? null : value.getCharacterStream();
   }
 
@@ -962,7 +1020,7 @@ public abstract class Serializer {
   protected void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDate value = dataType.get();
     if (value != null)
-      statement.setDate(parameterIndex, new java.sql.Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
+      statement.setDate(parameterIndex, new Date(value.getYear() - 1900, value.getMonthValue() - 1, value.getDayOfMonth()));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }
@@ -976,14 +1034,15 @@ public abstract class Serializer {
   protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
-      statement.setTimestamp(parameterIndex, java.sql.Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
+      statement.setTimestamp(parameterIndex, Timestamp.valueOf("1970-01-01 " + value.format(Dialect.TIME_FORMAT)));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
   protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final Time value = resultSet.getTime(columnIndex);
-    return resultSet.wasNull() || value == null ? null : value.toLocalTime();
+//    return (LocalTime)resultSet.getObject(columnIndex);
+    final Timestamp value = resultSet.getTimestamp(columnIndex);
+    return resultSet.wasNull() || value == null ? null : value.toLocalDateTime().toLocalTime();
   }
 
   private static final DateTimeFormatter TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
@@ -998,7 +1057,8 @@ public abstract class Serializer {
 
   @SuppressWarnings("deprecation")
   protected LocalDateTime getParameter(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-    final java.sql.Timestamp value = resultSet.getTimestamp(columnIndex);
+//  return (LocalDateTime)resultSet.getObject(columnIndex);
+    final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
 }

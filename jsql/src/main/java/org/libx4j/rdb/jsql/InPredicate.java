@@ -19,12 +19,13 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Set;
 
 import org.libx4j.rdb.jsql.model.select;
 
 final class InPredicate<T> extends Predicate<T> {
   protected final boolean positive;
-  protected final Serializable[] values;
+  protected final Compilable[] values;
 
   @SafeVarargs
   protected InPredicate(final type.DataType<T> dataType, final boolean positive, final T ... values) {
@@ -43,11 +44,16 @@ final class InPredicate<T> extends Predicate<T> {
   protected InPredicate(final type.DataType<T> dataType, final boolean positive, final select.SELECT<? extends type.DataType<T>> query) {
     super(dataType);
     this.positive = positive;
-    this.values = new Serializable[] {(Serializable)query};
+    this.values = new Compilable[] {(Compilable)query};
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected Object evaluate(final Set<Evaluable> visited) {
+    throw new UnsupportedOperationException("IN cannot be evaluated outside the DB");
+  }
+
+  @Override
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

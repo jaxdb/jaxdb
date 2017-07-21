@@ -24,18 +24,18 @@ import org.lib4j.lang.Numbers;
 import org.libx4j.rdb.jsql.GenerateOn;
 
 public final class GeneratorUtil {
-  public static String serialize(final Object[] object) {
+  public static String compile(final Object[] object) {
     if (object == null)
       return "null";
 
     String out = "";
     for (final Object item : object)
-      out += ", " + serialize(item);
+      out += ", " + compile(item);
 
     return "new " + object.getClass().getComponentType().getName() + "[] {" + out.substring(2) + "}";
   }
 
-  public static String serialize(final Object object) {
+  public static String compile(final Object object) {
     if (object == null)
       return "null";
 

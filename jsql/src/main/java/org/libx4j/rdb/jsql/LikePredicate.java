@@ -17,19 +17,33 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 final class LikePredicate extends Predicate<String> {
   protected final boolean positive;
   protected final CharSequence pattern;
 
-  protected LikePredicate(final type.DataType<String> dataType, final boolean positive, final CharSequence pattern) {
+  protected LikePredicate(final type.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
     super(dataType);
     this.positive = positive;
     this.pattern = pattern;
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected String evaluate(final Set<Evaluable> visited) {
+    if (dataType == null || pattern == null)
+      return null;
+
+    final type.Textual<?> a = (type.Textual<?>)dataType.evaluate(visited);
+    if (a.get() == null)
+      return null;
+
+    final String value = a.get().toString();
+    return (value.matches(pattern.toString().replace("%", ".*")) ? positive : !positive) ? value : null;
+  }
+
+  @Override
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

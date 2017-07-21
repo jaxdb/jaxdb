@@ -19,6 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.libx4j.rdb.jsql.Select.FROM;
 import org.libx4j.rdb.jsql.Select.GROUP_BY;
@@ -44,6 +45,7 @@ final class SelectCommand extends Command {
   private LIMIT<?> limit;
   private OFFSET<?> offset;
   private UNION<?> union;
+  private Map<Integer,type.ENUM<?>> translateTypes;
 
   public SelectCommand(final SELECT<?> select) {
     this.select = select;
@@ -143,21 +145,29 @@ final class SelectCommand extends Command {
     return union;
   }
 
+  public Map<Integer,type.ENUM<?>> getTranslateTypes() {
+    return this.translateTypes;
+  }
+
+  public void setTranslateTypes(final Map<Integer,type.ENUM<?>> translateTypes) {
+    this.translateTypes = translateTypes;
+  }
+
   @Override
-  protected void serialize(final Serialization serialization) throws IOException {
-    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
-    serializer.assignAliases(from(), serialization);
-    serializer.serialize(this, select(), serialization);
-    serializer.serialize(from(), serialization);
+  protected void compile(final Compilation compilation) throws IOException {
+    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
+    compiler.assignAliases(from(), compilation);
+    compiler.compile(this, select(), compilation);
+    compiler.compile(from(), compilation);
     if (join() != null)
       for (int i = 0; i < join().size(); i++)
-        serializer.serialize(join().get(i), on() != null && i < on().size() ? on().get(i) : null, serialization);
+        compiler.compile(join().get(i), on() != null && i < on().size() ? on().get(i) : null, compilation);
 
-    serializer.serialize(where(), serialization);
-    serializer.serialize(groupBy(), serialization);
-    serializer.serialize(having(), serialization);
-    serializer.serialize(orderBy(), serialization);
-    serializer.serialize(limit(), offset(), serialization);
-    serializer.serialize(union(), serialization);
+    compiler.compile(where(), compilation);
+    compiler.compile(groupBy(), compilation);
+    compiler.compile(having(), compilation);
+    compiler.compile(orderBy(), compilation);
+    compiler.compile(limit(), offset(), compilation);
+    compiler.compile(union(), compilation);
   }
 }

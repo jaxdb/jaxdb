@@ -59,20 +59,20 @@ final class CaseCommand extends Command {
 
   @Override
   @SuppressWarnings("rawtypes")
-  protected final void serialize(final Serialization serialization) throws IOException {
-    final Serializer serializer = Serializer.getSerializer(serialization.vendor);
+  protected final void compile(final Compilation compilation) throws IOException {
+    final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (simpleCase != null)
-      serializer.serialize(simpleCase, else_(), serialization);
+      compiler.compile(simpleCase, else_(), compilation);
     else if (searchCase != null)
-      serializer.serialize(searchCase, serialization);
+      compiler.compile(searchCase, compilation);
     else
       throw new UnsupportedOperationException("Both simple and search CASEs should not be null");
 
     for (int i = 0; i < then().size(); i++) {
       final THEN<?,?> then = then().get(i);
-      serializer.serialize((Case.WHEN)then.parent(), then, else_(), serialization);
+      compiler.compile((Case.WHEN)then.parent(), then, else_(), compilation);
     }
 
-    serializer.serialize(else_(), serialization);
+    compiler.compile(else_(), compilation);
   }
 }

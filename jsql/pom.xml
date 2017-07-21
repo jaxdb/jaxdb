@@ -31,6 +31,9 @@
   <build>
     <testResources>
       <testResource>
+        <directory>target/generated-test-resources/rdb</directory>
+      </testResource>
+      <testResource>
         <directory>target/generated-test-sources/rdb</directory>
       </testResource>
       <testResource>
@@ -96,6 +99,11 @@
       <groupId>org.libx4j.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.libx4j.xsb</groupId>
+      <artifactId>xsb-generator</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

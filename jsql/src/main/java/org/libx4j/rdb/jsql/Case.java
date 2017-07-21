@@ -667,6 +667,7 @@ final class Case implements case_ {
 
       @Override
       public final type.BOOLEAN END() {
+        // FIXME: This can be compressed...
         final type.BOOLEAN dataType = new type.BOOLEAN();
         dataType.wrapper(this);
         return dataType;

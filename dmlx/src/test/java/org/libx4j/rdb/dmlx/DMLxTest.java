@@ -44,7 +44,7 @@ public abstract class DMLxTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
 
-  protected static void createSchemas(final String name) throws IOException, TransformerException {
+  public static void createSchemas(final String name) throws IOException, TransformerException {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(ddlx, destFile);
@@ -54,7 +54,7 @@ public abstract class DMLxTest {
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
   }
 
-  protected static void testData(final Connection connection, final String name) throws IOException, SQLException, XMLException {
+  public static void loadData(final Connection connection, final String name) throws IOException, SQLException, XMLException {
     final ddlx_schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));

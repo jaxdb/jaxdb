@@ -1,8 +1,16 @@
 <schema name="world"
   xmlns="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
-  <table name="city">
+  xsi:schemaLocation="http://rdb.libx4j.org/jsql.xsd http://rdb.libx4j.org/jsql.xsd">
+  
+  <table name="timestamp" abstract="true">
+    <column name="created_on" xsi:type="dateTime" null="false" jsql:generateOnInsert="TIMESTAMP"/>
+    <column name="modified_on" xsi:type="dateTime" null="false" jsql:generateOnInsert="TIMESTAMP" jsql:generateOnUpdate="TIMESTAMP"/>
+    <column name="version" xsi:type="int" precision="9" unsigned="true" default="0" null="false" jsql:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
+  </table>
+  
+  <table name="city" extends="timestamp">
     <column name="id" xsi:type="int" precision="10" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="name" xsi:type="char" varying="true" length="35" null="false"/>
     <column name="country_code" xsi:type="char" length="3" null="false">
@@ -16,7 +24,8 @@
       </primaryKey>
     </constraints>
   </table>
-  <table name="country">
+  
+  <table name="country" extends="timestamp">
     <column name="code" xsi:type="char" length="3" null="false"/>
     <column name="code2" xsi:type="char" length="2" null="false"/>
     <column name="name" xsi:type="char" varying="true" length="52" null="false"/>
@@ -37,6 +46,7 @@
       </primaryKey>
     </constraints>
   </table>
+  
   <table name="lang">
     <column name="country_code" xsi:type="char" length="3" null="false">
       <foreignKey references="country" column="code"/>
@@ -44,5 +54,11 @@
     <column name="lang" xsi:type="char" varying="true" length="30" null="false"/>
     <column name="official" xsi:type="boolean" null="false"/>
     <column name="percentage" xsi:type="decimal" precision="4" scale="1" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="country_code"/>
+        <column name="lang"/>
+      </primaryKey>
+    </constraints>
   </table>
 </schema>

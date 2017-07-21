@@ -17,19 +17,25 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.libx4j.rdb.jsql.model.select;
 
 final class ExistsPredicate<T> extends Predicate<T> {
-  protected final Serializable subQuery;
+  protected final Compilable subQuery;
 
   protected ExistsPredicate(final select.SELECT<?> query) {
     super(null);
-    this.subQuery = (Serializable)query;
+    this.subQuery = (Compilable)query;
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected Object evaluate(final Set<Evaluable> visited) {
+    throw new UnsupportedOperationException("EXISTS cannot be evaluated outside the DB");
+  }
+
+  @Override
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

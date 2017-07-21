@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.lib4j.lang.Arrays;
+import org.lib4j.util.Arrays;
 
 final class SQLArray<T> implements Array {
   private final type.ARRAY<T> array;

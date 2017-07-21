@@ -19,6 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.Type;
@@ -33,10 +34,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Numbers;
 import org.libx4j.rdb.vendor.DBVendor;
+import org.libx4j.rdb.vendor.Dialect;
 
 public final class type {
   public static interface UNSIGNED {
@@ -45,9 +48,8 @@ public final class type {
   private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
 
   static {
-    final Class<?>[] classes = type.class.getClasses();
     typeToClass.put(null, ENUM.class);
-    for (final Class<?> cls : classes) {
+    for (final Class<?> cls : type.class.getClasses()) {
       if (!Modifier.isAbstract(cls.getModifiers())) {
         final Type type = Classes.getGenericSuperclasses(cls)[0];
         if (type instanceof Class<?>)
@@ -63,8 +65,8 @@ public final class type {
   }
 
   public static abstract class ApproxNumeric<T extends Number> extends Numeric<T> {
-    protected ApproxNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected ApproxNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected ApproxNumeric(final Numeric<T> copy) {
@@ -79,8 +81,8 @@ public final class type {
   protected static final class ARRAY<T> extends DataType<T[]> {
     protected final DataType<T> dataType;
 
-    protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final Class<? extends DataType<T>> type) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       try {
         this.dataType = type.newInstance();
       }
@@ -91,22 +93,33 @@ public final class type {
 
     @SuppressWarnings("unchecked")
     protected ARRAY(final ARRAY<T> copy) {
-      this(copy.owner, copy.name, copy.value, copy.unique, copy.primary, copy.nullable, copy.generateOnInsert, copy.generateOnUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
+      this(copy.owner, copy.name, copy.value, copy.unique, copy.primary, copy.nullable, copy.generateOnInsert, copy.generateOnUpdate, copy.keyForUpdate, (Class<? extends DataType<T>>)copy.dataType.getClass());
     }
 
     public ARRAY(final Class<? extends DataType<T>> type) {
-      this(null, null, null, false, false, true, null, null, type);
+      this(null, null, null, false, false, true, null, null, false, type);
     }
 
     @SuppressWarnings("unchecked")
     public ARRAY(final T[] value) {
-      this(null, null, value, false, false, true, null, null, (Class<? extends DataType<T>>)value.getClass().getComponentType());
+      this(null, null, value, false, false, true, null, null, false, (Class<? extends DataType<T>>)value.getClass().getComponentType());
+    }
+
+    public void set(final ARRAY<T> value) {
+      super.set(value);
     }
 
     @Override
     protected final String declare(final DBVendor vendor) {
       // FIXME
       throw new UnsupportedOperationException();
+    }
+
+    private Class<T[]> type;
+
+    @Override
+    protected final Class<T[]> type() {
+      return type == null ? type = (Class<T[]>)Array.newInstance(dataType.type(), 0).getClass() : type;
     }
 
     @Override
@@ -130,8 +143,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
-      return Serializer.getSerializer(vendor).serialize(this, dataType);
+    protected final String compile(final DBVendor vendor) throws IOException {
+      return Compiler.getCompiler(vendor).compile(this, dataType);
     }
 
     @Override
@@ -148,11 +161,13 @@ public final class type {
 
   public static final class BIGINT extends ExactNumeric<Long> {
     public static final class UNSIGNED extends ExactNumeric<BigInteger> implements type.UNSIGNED {
+      protected static final Class<BigInteger> type = BigInteger.class;
+
       private final BigInteger min;
       private final BigInteger max;
 
-      protected UNSIGNED(final Entity owner, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final int precision, final BigInteger min, final BigInteger max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+      protected UNSIGNED(final Entity owner, final String name, final BigInteger _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigInteger> generateOnInsert, final GenerateOn<? super BigInteger> generateOnUpdate, final boolean keyForUpdate, final int precision, final BigInteger min, final BigInteger max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         this.min = min;
         this.max = max;
       }
@@ -172,6 +187,10 @@ public final class type {
       public UNSIGNED(final BigInteger value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public void set(final BIGINT.UNSIGNED value) {
+        super.set(value);
       }
 
       public final BigInteger min() {
@@ -199,7 +218,7 @@ public final class type {
 
       @Override
       protected final BigInteger maxValue() {
-        return new BigInteger("18446744073709551615");
+        return Numbers.Unsigned.UNSIGNED_LONG_MAX_VALUE;
       }
 
       @Override
@@ -210,6 +229,11 @@ public final class type {
       @Override
       protected final String declare(final DBVendor vendor) {
         return vendor.getDialect().declareInt64(precision(), unsigned());
+      }
+
+      @Override
+      protected Class<BigInteger> type() {
+        return type;
       }
 
       @Override
@@ -245,8 +269,8 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) {
-        return Serializer.getSerializer(vendor).serialize(this);
+      protected final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
       }
 
       @Override
@@ -265,17 +289,31 @@ public final class type {
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
 
+      protected final BigInteger checkValue(final BigInteger value) {
+        if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
+          throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+
+        return value;
+      }
+
       @Override
       public final UNSIGNED clone() {
         return new UNSIGNED(this);
       }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+      }
     }
+
+    protected static final Class<Long> type = Long.class;
 
     private final Long min;
     private final Long max;
 
-    protected BIGINT(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final int precision, final Long min, final Long max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+    protected BIGINT(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       this.min = min;
       this.max = max;
     }
@@ -295,6 +333,10 @@ public final class type {
     public BIGINT(final Long value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public void set(final BIGINT value) {
+      super.set(value);
     }
 
     public final Long min() {
@@ -336,6 +378,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Long> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.BIGINT;
     }
@@ -359,13 +406,15 @@ public final class type {
         this.value = Long.valueOf((Long)value);
       else if (value instanceof Integer)
         this.value = Long.valueOf((Integer)value);
+      else if ((value instanceof Float || value instanceof Double) && Numbers.isInteger(((Number)value).floatValue()))
+        this.value = ((Number)value).longValue();
       else
-        throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported non-integer value for BIGINT: (" + value.getClass().getSimpleName() + ")" + value);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -388,13 +437,20 @@ public final class type {
     public final BIGINT clone() {
       return new BIGINT(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
   public static final class BINARY extends Serial<byte[]> {
+    protected static final Class<byte[]> type = byte[].class;
+
     private final boolean varying;
 
-    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final int length, final boolean varying) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
+    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final int length, final boolean varying) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
       this.varying = varying;
     }
 
@@ -417,6 +473,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final BINARY value) {
+      super.set(value);
+    }
+
     public boolean varying() {
       return varying;
     }
@@ -424,6 +484,11 @@ public final class type {
     @Override
     protected final String declare(final DBVendor vendor) {
       return vendor.getDialect().declareBinary(varying, length());
+    }
+
+    @Override
+    protected Class<byte[]> type() {
+      return type;
     }
 
     @Override
@@ -451,8 +516,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -470,10 +535,12 @@ public final class type {
   }
 
   public static final class BLOB extends LargeObject<InputStream> {
+    protected static final Class<InputStream> type = InputStream.class;
+
     private final long length;
 
-    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final long length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final long length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = (short)length;
     }
@@ -495,6 +562,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final BLOB value) {
+      super.set(value);
+    }
+
     protected final void checkLength(final long length) {
       if (length <= 0 || length > 4294967295l)
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
@@ -510,23 +581,28 @@ public final class type {
     }
 
     @Override
+    protected Class<InputStream> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.BLOB;
     }
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) throws IOException {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -543,9 +619,11 @@ public final class type {
     }
   }
 
-  public static class BOOLEAN extends Condition<Boolean> {
-    protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public static class BOOLEAN extends Condition<Boolean> implements Comparable<DataType<Boolean>> {
+    protected static final Class<Boolean> type = Boolean.class;
+
+    protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected BOOLEAN(final BOOLEAN copy) {
@@ -561,9 +639,18 @@ public final class type {
       set(value);
     }
 
+    public void set(final BOOLEAN value) {
+      super.set(value);
+    }
+
     @Override
     protected final String declare(final DBVendor vendor) {
       return vendor.getDialect().declareBoolean();
+    }
+
+    @Override
+    protected Class<Boolean> type() {
+      return type;
     }
 
     @Override
@@ -586,8 +673,8 @@ public final class type {
     }
 
     @Override
-    protected String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -602,13 +689,20 @@ public final class type {
     public final BOOLEAN clone() {
       return new BOOLEAN(this);
     }
+
+    @Override
+    public int compareTo(final DataType<Boolean> o) {
+      return o == null ? this.value == null ? 0 : 1 : this.value.compareTo(o.value);
+    }
   }
 
   public static final class CHAR extends Textual<String> {
+    protected static final Class<String> type = String.class;
+
     private final boolean varying;
 
-    protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final int length, final boolean varying) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, length);
+    protected CHAR(final Entity owner, final String name, final String _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final int length, final boolean varying) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
       this.varying = varying;
       checkLength(length);
     }
@@ -633,6 +727,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final CHAR value) {
+      super.set(value);
+    }
+
     protected final void checkLength(final int length) {
       if (length < 0 || (!varying() && length == 0) || length > 65535)
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
@@ -648,23 +746,28 @@ public final class type {
     }
 
     @Override
+    protected Class<String> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return varying ? Types.VARCHAR : Types.CHAR;
     }
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -674,10 +777,12 @@ public final class type {
   }
 
   public static final class CLOB extends LargeObject<Reader> {
+    protected static final Class<Reader> type = Reader.class;
+
     private final long length;
 
-    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final long length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final long length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -699,6 +804,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final CLOB value) {
+      super.set(value);
+    }
+
     protected final void checkLength(final long length) {
       if (length <= 0 || length > 4294967295l)
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
@@ -714,23 +823,28 @@ public final class type {
     }
 
     @Override
-    protected int sqlType() {
+    protected Class<Reader> type() {
+      return type;
+    }
+
+    @Override
+    protected final int sqlType() {
       return Types.CLOB;
     }
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) throws IOException {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) throws IOException {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -748,8 +862,10 @@ public final class type {
   }
 
   public static final class DATE extends Temporal<LocalDate> {
-    protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected static final Class<LocalDate> type = LocalDate.class;
+
+    protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected DATE(final DATE copy) {
@@ -765,9 +881,18 @@ public final class type {
       set(value);
     }
 
+    public void set(final DATE value) {
+      super.set(value);
+    }
+
     @Override
     protected final String declare(final DBVendor vendor) {
       return vendor.getDialect().declareDate();
+    }
+
+    @Override
+    protected Class<LocalDate> type() {
+      return type;
     }
 
     @Override
@@ -777,17 +902,17 @@ public final class type {
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -802,6 +927,37 @@ public final class type {
     public final DATE clone() {
       return new DATE(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+      if (o == null || o.value == null)
+        return this.value == null ? 0 : 1;
+
+      if (o instanceof TIME)
+        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+
+      return o instanceof DATE ? this.value.compareTo(((DATE)o).value) : LocalDateTime.of(this.value, LocalTime.MIDNIGHT).compareTo(((DATETIME)o).value);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+
+      if (obj instanceof DATE)
+        return name.equals(((DATE)obj).name) && compareTo((DATE)obj) == 0;
+
+      if (obj instanceof DATETIME)
+        return name.equals(((DATETIME)obj).name) && compareTo((DATETIME)obj) == 0;
+
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      final LocalDate get = get();
+      return get == null ? "NULL" : get.format(Dialect.DATE_FORMAT);
+    }
   }
 
   public static abstract class DataType<T> extends Subject<T> {
@@ -809,8 +965,8 @@ public final class type {
       dataType.value = value;
     }
 
-    protected static <T>String serialize(final DataType<T> dataType, final DBVendor vendor) throws IOException {
-      return dataType.serialize(vendor);
+    protected static <T>String compile(final DataType<T> dataType, final DBVendor vendor) throws IOException {
+      return dataType.compile(vendor);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -855,8 +1011,9 @@ public final class type {
     protected final boolean nullable;
     protected final GenerateOn<? super T> generateOnInsert;
     protected final GenerateOn<? super T> generateOnUpdate;
+    protected final boolean keyForUpdate;
 
-    protected DataType(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
+    protected DataType(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       this.value = _default;
       this.owner = owner;
       this.name = name;
@@ -865,6 +1022,7 @@ public final class type {
       this.nullable = nullable;
       this.generateOnInsert = generateOnInsert;
       this.generateOnUpdate = generateOnUpdate;
+      this.keyForUpdate = keyForUpdate;
     }
 
     protected DataType(final DataType<T> copy) {
@@ -876,18 +1034,25 @@ public final class type {
       this.nullable = copy.nullable;
       this.generateOnInsert = copy.generateOnInsert;
       this.generateOnUpdate = copy.generateOnUpdate;
+      this.keyForUpdate = copy.keyForUpdate;
     }
 
     protected DataType() {
-      this(null, null, null, false, false, true, null, null);
+      this(null, null, null, false, false, true, null, null, false);
     }
 
     protected T value;
+    protected DataType<T> indirection;
     protected boolean wasSet;
 
     public void set(final T value) {
       this.wasSet = true;
       this.value = value;
+    }
+
+    protected void set(final DataType<T> indirection) {
+      this.wasSet = false;
+      this.indirection = indirection;
     }
 
     public final T get() {
@@ -909,26 +1074,36 @@ public final class type {
     }
 
     @Override
-    protected void serialize(final Serialization serialization) throws IOException {
-      Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+    protected void compile(final Compilation compilation) throws IOException {
+      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
-    private Class<T> type;
+    @Override
+    protected Object evaluate(final Set<Evaluable> visited) {
+      if (indirection != null && !visited.contains(this)) {
+        visited.add(this);
+        return indirection.evaluate(visited);
+      }
 
-    @SuppressWarnings("unchecked")
-    protected Class<T> type() {
-      return type == null ? type = (Class<T>)Classes.getGenericSuperclasses(getClass())[0] : type;
+      return wrapper() != null ? wrapper().evaluate(visited) : get();
     }
 
+    protected abstract Class<T> type();
     protected abstract int sqlType();
     protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException;
     protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
-    protected abstract String serialize(final DBVendor vendor) throws IOException;
+    protected abstract String compile(final DBVendor vendor) throws IOException;
     protected abstract String declare(final DBVendor vendor);
     protected abstract DataType<?> scaleTo(final DataType<?> dataType);
 
     @Override
     public abstract DataType<T> clone();
+
+    @Override
+    public int hashCode() {
+      final T get = get();
+      return name.hashCode() + (get == null ? 0 : get.hashCode());
+    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -938,19 +1113,27 @@ public final class type {
       if (obj.getClass() != getClass())
         return false;
 
+      final DataType<?> that = (DataType<?>)obj;
       final T get = get();
-      return get != null ? get.equals(((DataType<?>)obj).get()) : ((DataType<?>)obj).get() == null;
+      return name.equals(that.name) && (get != null ? get.equals(that.get()) : that.get() == null);
+    }
+
+    @Override
+    public String toString() {
+      final T get = get();
+      return get == null ? "NULL" : get.toString();
     }
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> {
+    protected static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final short DEFAULT_PRECISION = 6;
 
     private final short precision;
 
-    protected DATETIME(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final int precision) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected DATETIME(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (short)precision;
     }
 
@@ -973,6 +1156,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final DATETIME value) {
+      super.set(value);
+    }
+
     public final short precision() {
       return precision;
     }
@@ -983,23 +1170,28 @@ public final class type {
     }
 
     @Override
+    protected Class<LocalDateTime> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.TIMESTAMP;
     }
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1014,15 +1206,46 @@ public final class type {
     public DATETIME clone() {
       return new DATETIME(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+      if (o == null || o.value == null)
+        return this.value == null ? 0 : 1;
+
+      if (o instanceof TIME)
+        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+
+      return o instanceof DATETIME ? this.value.compareTo(((DATETIME)o).value) : this.value.toLocalDate().compareTo(((DATE)o).value);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+
+      if (obj instanceof DATE)
+        return name.equals(((DATE)obj).name) && compareTo((DATE)obj) == 0;
+
+      if (obj instanceof DATETIME)
+        return name.equals(((DATETIME)obj).name) && compareTo((DATETIME)obj) == 0;
+
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      final LocalDateTime get = get();
+      return get == null ? "NULL" : get.format(Dialect.DATETIME_FORMAT);
+    }
   }
 
   public static class DECIMAL extends ExactNumeric<BigDecimal> {
     public static final class UNSIGNED extends DECIMAL implements type.UNSIGNED {
-      protected UNSIGNED(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision, scale, min, max);
+      protected UNSIGNED(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision, scale, min, max);
       }
 
-      protected UNSIGNED(final DECIMAL.UNSIGNED copy) {
+      protected UNSIGNED(final UNSIGNED copy) {
         super(copy);
       }
 
@@ -1032,6 +1255,10 @@ public final class type {
 
       public UNSIGNED(final BigDecimal value) {
         super(value);
+      }
+
+      public void set(final UNSIGNED value) {
+        super.set(value);
       }
 
       @Override
@@ -1050,17 +1277,19 @@ public final class type {
       }
 
       @Override
-      public final DECIMAL.UNSIGNED clone() {
-        return new DECIMAL.UNSIGNED(this);
+      public final UNSIGNED clone() {
+        return new UNSIGNED(this);
       }
     }
+
+    protected static final Class<BigDecimal> type = BigDecimal.class;
 
     private final short scale;
     private final BigDecimal min;
     private final BigDecimal max;
 
-    protected DECIMAL(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+    protected DECIMAL(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       checkScale(scale);
       this.scale = (short)scale;
       this.min = min;
@@ -1085,6 +1314,10 @@ public final class type {
     public DECIMAL(final BigDecimal value) {
       this(value.precision(), value.scale());
       set(value);
+    }
+
+    public void set(final DECIMAL value) {
+      super.set(value);
     }
 
     private final void checkScale(final int scale) {
@@ -1135,6 +1368,11 @@ public final class type {
     }
 
     @Override
+    protected Class<BigDecimal> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.DECIMAL;
     }
@@ -1154,8 +1392,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1169,19 +1407,31 @@ public final class type {
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
 
+    protected final BigDecimal checkValue(final BigDecimal value) {
+      if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
+        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+
+      return value;
+    }
+
     @Override
     public DECIMAL clone() {
       return new DECIMAL(this);
+    }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
   }
 
   public static class DOUBLE extends ApproxNumeric<Double> {
     public static final class UNSIGNED extends DOUBLE implements type.UNSIGNED {
-      protected UNSIGNED(final Entity owner, final String name, final Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, min, max);
+      protected UNSIGNED(final Entity owner, final String name, final Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, min, max);
       }
 
-      protected UNSIGNED(final DOUBLE.UNSIGNED copy) {
+      protected UNSIGNED(final UNSIGNED copy) {
         super(copy);
       }
 
@@ -1193,22 +1443,28 @@ public final class type {
         super();
       }
 
+      public void set(final UNSIGNED value) {
+        super.set(value);
+      }
+
       @Override
       protected final boolean unsigned() {
         return true;
       }
 
       @Override
-      public final DOUBLE.UNSIGNED clone() {
-        return new DOUBLE.UNSIGNED(this);
+      public final UNSIGNED clone() {
+        return new UNSIGNED(this);
       }
     }
+
+    protected static final Class<Double> type = Double.class;
 
     private final Double min;
     private final Double max;
 
-    protected DOUBLE(final Entity owner, final String name, final Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final Double min, final Double max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected DOUBLE(final Entity owner, final String name, final Double _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Double> generateOnInsert, final GenerateOn<? super Double> generateOnUpdate, final boolean keyForUpdate, final Double min, final Double max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.min = min;
       this.max = max;
     }
@@ -1228,6 +1484,10 @@ public final class type {
       super();
       this.min = null;
       this.max = null;
+    }
+
+    public void set(final DOUBLE value) {
+      super.set(value);
     }
 
     @Override
@@ -1259,6 +1519,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Double> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.DOUBLE;
     }
@@ -1278,8 +1543,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1299,6 +1564,11 @@ public final class type {
     public DOUBLE clone() {
       return new DOUBLE(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
   public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> {
@@ -1312,8 +1582,8 @@ public final class type {
       return length;
     }
 
-    protected ENUM(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final Class<T> type) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, calcEnumLength(type));
+    protected ENUM(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Class<T> type) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, calcEnumLength(type));
       this.enumType = type;
     }
 
@@ -1331,6 +1601,10 @@ public final class type {
     public ENUM(final T value) {
       this((Class<T>)value.getClass());
       set(value);
+    }
+
+    public void set(final ENUM<T> value) {
+      super.set(value);
     }
 
     @Override
@@ -1375,23 +1649,29 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
     public final ENUM<T> clone() {
       return new ENUM<T>(this);
     }
+
+    @Override
+    protected String evaluate(final Set<Evaluable> visited) {
+      final Enum<?> get = get();
+      return get == null ? null : get.toString();
+    }
   }
 
   public static class FLOAT extends ApproxNumeric<Float> {
     public static final class UNSIGNED extends FLOAT implements type.UNSIGNED {
-      protected UNSIGNED(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, min, max);
+      protected UNSIGNED(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, min, max);
       }
 
-      protected UNSIGNED(final FLOAT.UNSIGNED copy) {
+      protected UNSIGNED(final UNSIGNED copy) {
         super(copy);
       }
 
@@ -1403,22 +1683,28 @@ public final class type {
         super();
       }
 
+      public void set(final UNSIGNED value) {
+        super.set(value);
+      }
+
       @Override
       protected final boolean unsigned() {
         return true;
       }
 
       @Override
-      public final FLOAT.UNSIGNED clone() {
-        return new FLOAT.UNSIGNED(this);
+      public final UNSIGNED clone() {
+        return new UNSIGNED(this);
       }
     }
+
+    protected static final Class<Float> type = Float.class;
 
     private final Float min;
     private final Float max;
 
-    protected FLOAT(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final Float min, final Float max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected FLOAT(final Entity owner, final String name, final Float _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Float> generateOnInsert, final GenerateOn<? super Float> generateOnUpdate, final boolean keyForUpdate, final Float min, final Float max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.min = min;
       this.max = max;
     }
@@ -1438,6 +1724,10 @@ public final class type {
     public FLOAT(final Float value) {
       this();
       set(value);
+    }
+
+    public void set(final FLOAT value) {
+      super.set(value);
     }
 
     public final Float min() {
@@ -1469,6 +1759,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Float> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.FLOAT;
     }
@@ -1488,8 +1783,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1512,11 +1807,16 @@ public final class type {
     public FLOAT clone() {
       return new FLOAT(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
   public static abstract class LargeObject<T> extends DataType<T> {
-    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected LargeObject(final LargeObject<T> copy) {
@@ -1530,11 +1830,13 @@ public final class type {
 
   public static final class INT extends ExactNumeric<Integer> {
     public static final class UNSIGNED extends ExactNumeric<Long> implements type.UNSIGNED {
+      protected static final Class<Long> type = Long.class;
+
       private final Long min;
       private final Long max;
 
-      protected UNSIGNED(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final int precision, final Long min, final Long max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+      protected UNSIGNED(final Entity owner, final String name, final Long _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Long> generateOnInsert, final GenerateOn<? super Long> generateOnUpdate, final boolean keyForUpdate, final int precision, final Long min, final Long max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         this.min = min;
         this.max = max;
       }
@@ -1554,6 +1856,10 @@ public final class type {
       public UNSIGNED(final Long value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public void set(final INT.UNSIGNED value) {
+        super.set(value);
       }
 
       public final Long min() {
@@ -1595,6 +1901,11 @@ public final class type {
       }
 
       @Override
+      protected Class<Long> type() {
+        return type;
+      }
+
+      @Override
       protected final int sqlType() {
         return Types.INTEGER;
       }
@@ -1614,8 +1925,8 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) {
-        return Serializer.getSerializer(vendor).serialize(this);
+      protected final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
       }
 
       @Override
@@ -1637,17 +1948,25 @@ public final class type {
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
 
+
       @Override
       public final UNSIGNED clone() {
         return new UNSIGNED(this);
       }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+      }
     }
+
+    protected static final Class<Integer> type = Integer.class;
 
     private final Integer min;
     private final Integer max;
 
-    protected INT(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final Integer min, final Integer max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+    protected INT(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       this.min = min;
       this.max = max;
     }
@@ -1667,6 +1986,10 @@ public final class type {
     public INT(final Integer value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public void set(final INT value) {
+      super.set(value);
     }
 
     public final Integer min() {
@@ -1708,6 +2031,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Integer> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.INTEGER;
     }
@@ -1727,8 +2055,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1754,15 +2082,22 @@ public final class type {
     public final INT clone() {
       return new INT(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
   public static final class SMALLINT extends ExactNumeric<Short> {
     public static final class UNSIGNED extends ExactNumeric<Integer> implements type.UNSIGNED {
+      protected static final Class<Integer> type = Integer.class;
+
       private final Integer min;
       private final Integer max;
 
-      protected UNSIGNED(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final int precision, final Integer min, final Integer max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+      protected UNSIGNED(final Entity owner, final String name, final Integer _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Integer> generateOnInsert, final GenerateOn<? super Integer> generateOnUpdate, final boolean keyForUpdate, final int precision, final Integer min, final Integer max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         this.min = min;
         this.max = max;
       }
@@ -1782,6 +2117,10 @@ public final class type {
       public UNSIGNED(final Integer value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public void set(final SMALLINT.UNSIGNED value) {
+        super.set(value);
       }
 
       public final Integer min() {
@@ -1823,6 +2162,11 @@ public final class type {
       }
 
       @Override
+      protected Class<Integer> type() {
+        return type;
+      }
+
+      @Override
       protected final int sqlType() {
         return Types.SMALLINT;
       }
@@ -1842,8 +2186,8 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) {
-        return Serializer.getSerializer(vendor).serialize(this);
+      protected final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
       }
 
       @Override
@@ -1872,13 +2216,20 @@ public final class type {
       public final UNSIGNED clone() {
         return new UNSIGNED(this);
       }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+      }
     }
+
+    protected static final Class<Short> type = Short.class;
 
     private final Short min;
     private final Short max;
 
-    protected SMALLINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final Short min, final Short max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+    protected SMALLINT(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       this.min = min;
       this.max = max;
     }
@@ -1898,6 +2249,10 @@ public final class type {
     public SMALLINT(final Short value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public void set(final SMALLINT value) {
+      super.set(value);
     }
 
     public final Short min() {
@@ -1939,6 +2294,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Short> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.SMALLINT;
     }
@@ -1958,8 +2318,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -1988,11 +2348,16 @@ public final class type {
     public final SMALLINT clone() {
       return new SMALLINT(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
-  public static abstract class Numeric<T extends Number> extends DataType<T> {
-    protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public static abstract class Numeric<T extends Number> extends DataType<T> implements Comparable<DataType<? extends Number>> {
+    protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected Numeric(final Numeric<T> copy) {
@@ -2006,15 +2371,33 @@ public final class type {
     protected abstract short precision();
     protected abstract short scale();
     protected abstract boolean unsigned();
+
+    @Override
+    protected Number evaluate(final Set<Evaluable> visited) {
+      return (Number)super.evaluate(visited);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == null)
+        return true;
+
+      if (!(obj instanceof Numeric))
+        return false;
+
+      return compareTo((Numeric<?>)obj) == 0;
+    }
   }
 
   public static abstract class ExactNumeric<T extends Number> extends Numeric<T> {
     private final short precision;
 
-    protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int precision) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkPrecision(precision);
-      checkValue(_default);
+      if (_default != null)
+        checkValue(_default.doubleValue());
+
       this.precision = (short)precision;
     }
 
@@ -2032,12 +2415,6 @@ public final class type {
         throw new IllegalArgumentException("precision must be >= 1");
     }
 
-    @SuppressWarnings("unchecked")
-    private final void checkValue(final T value) {
-      if (value != null && (((Comparable<T>)value).compareTo(minValue()) < 0 || ((Comparable<T>)value).compareTo(maxValue()) > 0))
-        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-    }
-
     private final void checkPrecision(final int precision) {
       if (precision > maxPrecision())
         throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
@@ -2047,6 +2424,13 @@ public final class type {
     protected abstract T maxValue();
     protected abstract int maxPrecision();
 
+    protected final double checkValue(final double value) {
+      if (value < minValue().doubleValue() || maxValue().doubleValue() < value)
+        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
+
+      return value;
+    }
+
     @Override
     public final short precision() {
       return precision;
@@ -2054,7 +2438,9 @@ public final class type {
 
     @Override
     public final void set(final T value) {
-      checkValue(value);
+      if (value != null)
+        checkValue(value.doubleValue());
+
       super.set(value);
     }
   }
@@ -2062,8 +2448,8 @@ public final class type {
   public static abstract class Serial<T> extends DataType<T> {
     private final int length;
 
-    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
     }
@@ -2091,11 +2477,13 @@ public final class type {
 
   public static final class TINYINT extends ExactNumeric<Byte> {
     public static final class UNSIGNED extends ExactNumeric<Short> implements type.UNSIGNED {
+      protected static final Class<Short> type = Short.class;
+
       private final Short min;
       private final Short max;
 
-      protected UNSIGNED(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final int precision, final Short min, final Short max) {
-        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+      protected UNSIGNED(final Entity owner, final String name, final Short _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Short> generateOnInsert, final GenerateOn<? super Short> generateOnUpdate, final boolean keyForUpdate, final int precision, final Short min, final Short max) {
+        super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
         this.min = min;
         this.max = max;
       }
@@ -2115,6 +2503,10 @@ public final class type {
       public UNSIGNED(final Short value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public void set(final TINYINT.UNSIGNED value) {
+        super.set(value);
       }
 
       public final Short min() {
@@ -2156,6 +2548,11 @@ public final class type {
       }
 
       @Override
+      protected Class<Short> type() {
+        return type;
+      }
+
+      @Override
       protected final int sqlType() {
         return Types.TINYINT;
       }
@@ -2175,8 +2572,8 @@ public final class type {
       }
 
       @Override
-      protected final String serialize(final DBVendor vendor) {
-        return Serializer.getSerializer(vendor).serialize(this);
+      protected final String compile(final DBVendor vendor) {
+        return Compiler.getCompiler(vendor).compile(this);
       }
 
       @Override
@@ -2211,13 +2608,20 @@ public final class type {
       public final UNSIGNED clone() {
         return new UNSIGNED(this);
       }
+
+      @Override
+      public int compareTo(final DataType<? extends Number> o) {
+        return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+      }
     }
+
+    protected static final Class<Byte> type = Byte.class;
 
     private final Byte min;
     private final Byte max;
 
-    protected TINYINT(final Entity owner, final String name, final Byte _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final int precision, final Byte min, final Byte max) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, precision);
+    protected TINYINT(final Entity owner, final String name, final Byte _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Byte> generateOnInsert, final GenerateOn<? super Byte> generateOnUpdate, final boolean keyForUpdate, final int precision, final Byte min, final Byte max) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
       this.min = min;
       this.max = max;
     }
@@ -2237,6 +2641,10 @@ public final class type {
     public TINYINT(final Byte value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public void set(final TINYINT value) {
+      super.set(value);
     }
 
     public final Byte min() {
@@ -2278,6 +2686,11 @@ public final class type {
     }
 
     @Override
+    protected Class<Byte> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.TINYINT;
     }
@@ -2297,8 +2710,8 @@ public final class type {
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -2333,11 +2746,16 @@ public final class type {
     public final TINYINT clone() {
       return new TINYINT(this);
     }
+
+    @Override
+    public int compareTo(final DataType<? extends Number> o) {
+      return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
+    }
   }
 
-  public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
-    protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+  public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>> {
+    protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
 
     protected Temporal(final Temporal<T> copy) {
@@ -2347,13 +2765,18 @@ public final class type {
     protected Temporal() {
       super();
     }
+
+    @Override
+    protected java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
+      return (java.time.temporal.Temporal)super.evaluate(visited);
+    }
   }
 
-  public static abstract class Textual<T> extends DataType<T> {
+  public static abstract class Textual<T> extends DataType<T> implements Comparable<DataType<?>> {
     private final short length;
 
-    protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final int length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.length = (short)length;
     }
 
@@ -2378,15 +2801,52 @@ public final class type {
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
+
+    @Override
+    protected String evaluate(final Set<Evaluable> visited) {
+      return (String)super.evaluate(visited);
+    }
+
+    @Override
+    public int compareTo(final DataType<?> o) {
+      if (o == null)
+        return this.value == null ? 0 : 1;
+
+      if (!(o instanceof CHAR) || !(o instanceof ENUM))
+        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+
+      return this.value.toString().compareTo(o.toString());
+    }
+
+    @Override
+    public int hashCode() {
+      final T get = get();
+      return name.hashCode() + (get == null ? 0 : get.toString().hashCode());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (this == obj)
+        return true;
+
+      if (!(obj instanceof CHAR) && !(obj instanceof ENUM))
+        return false;
+
+      final DataType<?> that = (DataType<?>)obj;
+      final T get = get();
+      return name.equals(that.name) && (get == null ? that.get() == null : that.get() != null && get.toString().equals(that.get().toString()));
+    }
   }
 
   public static final class TIME extends Temporal<LocalTime> {
+    protected static final Class<LocalTime> type = LocalTime.class;
+
     private static final short DEFAULT_PRECISION = 6;
 
     private final short precision;
 
-    protected TIME(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final int precision) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate);
+    protected TIME(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.precision = (short)precision;
     }
 
@@ -2409,6 +2869,10 @@ public final class type {
       set(value);
     }
 
+    public void set(final TIME value) {
+      super.set(value);
+    }
+
     public final short precision() {
       return precision;
     }
@@ -2419,23 +2883,28 @@ public final class type {
     }
 
     @Override
+    protected Class<LocalTime> type() {
+      return type;
+    }
+
+    @Override
     protected final int sqlType() {
       return Types.TIME;
     }
 
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
-      Serializer.getSerializer(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
+      Compiler.getCompiler(DBVendor.valueOf(statement.getConnection().getMetaData())).setParameter(this, statement, parameterIndex);
     }
 
     @Override
     protected final void set(final ResultSet resultSet, final int columnIndex) throws SQLException {
-      this.value = Serializer.getSerializer(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
+      this.value = Compiler.getCompiler(DBVendor.valueOf(resultSet.getStatement().getConnection().getMetaData())).getParameter(this, resultSet, columnIndex);
     }
 
     @Override
-    protected final String serialize(final DBVendor vendor) {
-      return Serializer.getSerializer(vendor).serialize(this);
+    protected final String compile(final DBVendor vendor) {
+      return Compiler.getCompiler(vendor).compile(this);
     }
 
     @Override
@@ -2449,6 +2918,23 @@ public final class type {
     @Override
     public final TIME clone() {
       return new TIME(this);
+    }
+
+    @Override
+    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+      if (o == null || o.value == null)
+        return this.value == null ? 0 : 1;
+
+      if (!(o instanceof TIME))
+        throw new IllegalArgumentException(getShortName(o.getClass()) + " cannot be compared to " + getShortName(getClass()));
+
+      return this.value.compareTo(((TIME)o).value);
+    }
+
+    @Override
+    public String toString() {
+      final LocalTime get = get();
+      return get == null ? "NULL" : get.format(Dialect.TIME_FORMAT);
     }
   }
 }

@@ -40,13 +40,21 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.lib4j.lang.Arrays;
 import org.lib4j.lang.Throwables;
+import org.lib4j.logging.DeferredLogger;
+import org.lib4j.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ch.qos.logback.classic.Level;
+
 public class VendorRunner extends BlockJUnit4ClassRunner {
   protected static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
+
+  static {
+    final ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+    DeferredLogger.defer(logger, logger.iteratorForAppenders().next(), Level.INFO);
+  }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
@@ -153,11 +161,13 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     return new Statement() {
       @Override
       public void evaluate() throws Throwable {
+        DeferredLogger.clear();
         final Class<? extends Vendor> vendorClass = localVendor.get();
         try {
           run(vendorClass, method, test);
         }
         catch (final Throwable e) {
+          DeferredLogger.flush(Level.DEBUG);
           final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
           if (unsupported != null) {
             for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
@@ -168,7 +178,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
             }
           }
 
-          Throwables.set(e, "[" + vendorClass.getSimpleName() + "] " + e.getMessage());
+          Throwables.set(e, "[" + vendorClass.getSimpleName() + "] " + (e.getMessage() != null ? e.getMessage() : ""));
           if (e instanceof SQLException)
             throw flatten((SQLException)e);
 

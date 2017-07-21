@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.vendor;
 
-import org.libx4j.rdb.ddlx.Generator;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.slf4j.Logger;

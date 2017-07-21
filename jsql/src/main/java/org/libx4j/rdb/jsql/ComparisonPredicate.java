@@ -22,65 +22,65 @@ import org.libx4j.rdb.jsql.model.select;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
-  protected final Operator<ComparisonPredicate<?>> operator;
-  protected final Serializable a;
-  protected final Serializable b;
+  protected final operator.Logical<?> operator;
+  protected final Compilable a;
+  protected final Compilable b;
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final type.DataType<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final select.SELECT<?> a, final type.DataType<?> b) {
     this.operator = operator;
-    this.a = (Serializable)a;
+    this.a = (Compilable)a;
     this.b = b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final select.SELECT<?> a, final T b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final select.SELECT<?> a, final T b) {
     this.operator = operator;
-    this.a = (Serializable)a;
-    this.b = type.DataType.wrap(b);
+    this.a = (Compilable)a;
+    this.b = org.libx4j.rdb.jsql.type.DataType.wrap(b);
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final select.SELECT<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final select.SELECT<?> b) {
     this.operator = operator;
-    this.a = type.DataType.wrap(a);
-    this.b = (Serializable)b;
+    this.a = org.libx4j.rdb.jsql.type.DataType.wrap(a);
+    this.b = (Compilable)b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final select.SELECT<?> b) {
-    this.operator = operator;
-    this.a = a;
-    this.b = (Serializable)b;
-  }
-
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final T b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final select.SELECT<?> b) {
     this.operator = operator;
     this.a = a;
-    this.b = type.DataType.wrap(b);
+    this.b = (Compilable)b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final T b) {
+    this.operator = operator;
+    this.a = a;
+    this.b = org.libx4j.rdb.jsql.type.DataType.wrap(b);
+  }
+
+  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final T a, final type.DataType<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final type.DataType<?> b) {
     this.operator = operator;
-    this.a = type.DataType.wrap(a);
+    this.a = org.libx4j.rdb.jsql.type.DataType.wrap(a);
     this.b = b;
   }
 
-  protected ComparisonPredicate(final Operator<ComparisonPredicate<?>> operator, final type.DataType<?> a, final type.DataType<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final type.DataType<?> b) {
     this.operator = operator;
     this.a = a;
     this.b = b;
   }
 
   @Override
-  protected final String serialize(final DBVendor vendor) {
+  protected final String compile(final DBVendor vendor) {
     return operator.toString();
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

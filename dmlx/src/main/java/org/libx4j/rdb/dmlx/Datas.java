@@ -58,48 +58,48 @@ public final class Datas {
     return id.substring(id.indexOf('.') + 1);
   }
 
-  private static String getValue(final Serializer serializer, final $xs_anySimpleType attribute) {
+  private static String getValue(final Compiler compiler, final $xs_anySimpleType attribute) {
     final Object value = attribute.text();
     if (value == null)
       return "NULL";
 
     if (attribute instanceof $dmlx_boolean)
-      return serializer.serialize(($dmlx_boolean)attribute);
+      return compiler.compile(($dmlx_boolean)attribute);
 
     if (attribute instanceof $dmlx_float)
-      return serializer.serialize(($dmlx_float)attribute);
+      return compiler.compile(($dmlx_float)attribute);
 
     if (attribute instanceof $dmlx_decimal)
-      return serializer.serialize(($dmlx_decimal)attribute);
+      return compiler.compile(($dmlx_decimal)attribute);
 
     if (attribute instanceof $dmlx_integer)
-      return serializer.serialize(($dmlx_integer)attribute);
+      return compiler.compile(($dmlx_integer)attribute);
 
     if (attribute instanceof $dmlx_char)
-      return serializer.serialize(($dmlx_char)attribute);
+      return compiler.compile(($dmlx_char)attribute);
 
     if (attribute instanceof $dmlx_clob)
-      return serializer.serialize(($dmlx_clob)attribute);
+      return compiler.compile(($dmlx_clob)attribute);
 
     if (attribute instanceof $dmlx_binary)
-      return serializer.serialize(($dmlx_binary)attribute);
+      return compiler.compile(($dmlx_binary)attribute);
 
     if (attribute instanceof $dmlx_blob)
-      return serializer.serialize(($dmlx_blob)attribute);
+      return compiler.compile(($dmlx_blob)attribute);
 
     if (attribute instanceof $dmlx_date)
-      return serializer.serialize(($dmlx_date)attribute);
+      return compiler.compile(($dmlx_date)attribute);
 
     if (attribute instanceof $dmlx_time)
-      return serializer.serialize(($dmlx_time)attribute);
+      return compiler.compile(($dmlx_time)attribute);
 
     if (attribute instanceof $dmlx_dateTime)
-      return serializer.serialize(($dmlx_dateTime)attribute);
+      return compiler.compile(($dmlx_dateTime)attribute);
 
     if (attribute instanceof $dmlx_enum)
-      return serializer.serialize(($dmlx_enum)attribute);
+      return compiler.compile(($dmlx_enum)attribute);
 
-    throw new UnsupportedOperationException("Unexpected type: " + attribute.getClass());
+    throw new UnsupportedOperationException("Unsupported type: " + attribute.getClass());
   }
 
   private static String getTableName(final DBVendor vendor, final $dmlx_row row) {
@@ -123,9 +123,8 @@ public final class Datas {
     iterator = data.elementIterator();
     // TODO: implement batch
     try (final Statement statement = connection.createStatement()) {
-      while (iterator.hasNext()) {
+      while (iterator.hasNext())
         counts[index++] = statement.executeUpdate(loadRow(vendor, ($dmlx_row)iterator.next()));
-      }
 
       return counts;
     }
@@ -141,7 +140,7 @@ public final class Datas {
     final Iterator<? extends $xs_anySimpleType> iterator = row.attributeIterator();
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
-    final Serializer serializer = Serializer.getSerializer(vendor);
+    final Compiler compiler = Compiler.getCompiler(vendor);
     boolean hasValues = false;
     while (iterator.hasNext()) {
       final $xs_anySimpleType attribute = iterator.next();
@@ -152,7 +151,7 @@ public final class Datas {
         }
 
         columns.append(getColumn(attribute));
-        values.append(getValue(serializer, attribute));
+        values.append(getValue(compiler, attribute));
         hasValues = true;
       }
     }

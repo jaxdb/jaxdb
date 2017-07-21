@@ -17,20 +17,26 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.libx4j.rdb.jsql.model.select;
 
 class QuantifiedComparisonPredicate<T> extends Subject<T> {
   protected final String qualifier;
-  protected final Serializable subQuery;
+  protected final Compilable subQuery;
 
   protected QuantifiedComparisonPredicate(final String qualifier, final select.SELECT<?> subQuery) {
     this.qualifier = qualifier;
-    this.subQuery = (Serializable)subQuery;
+    this.subQuery = (Compilable)subQuery;
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+  }
+
+  @Override
+  protected Object evaluate(final Set<Evaluable> visited) {
+    throw new UnsupportedOperationException("QuantifiedComparisonPredicate cannot be evaluated outside the DB");
   }
 }

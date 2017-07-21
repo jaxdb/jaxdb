@@ -17,17 +17,18 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class BooleanTerm extends type.BOOLEAN {
-  protected final Operator<BooleanTerm> operator;
+  protected final operator.Boolean operator;
   protected final Condition<?> a;
   protected final Condition<?> b;
   protected final Condition<?>[] conditions;
 
   @SafeVarargs
-  protected BooleanTerm(final Operator<BooleanTerm> operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+  protected BooleanTerm(final operator.Boolean operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
     this.operator = operator;
     this.a = a;
     this.b = b;
@@ -35,12 +36,36 @@ final class BooleanTerm extends type.BOOLEAN {
   }
 
   @Override
-  protected final String serialize(final DBVendor vendor) {
+  protected Boolean evaluate(final Set<Evaluable> visited) {
+    if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
+      return null;
+
+    for (int i = 0; i < conditions.length; i++)
+      if (conditions[i] == null)
+        return null;
+
+    for (int i = 0; i < conditions.length; i++) {
+      final Object evaluated = conditions[i].evaluate(visited);
+      if (evaluated == null)
+        return null;
+
+      if (!(evaluated instanceof Boolean))
+        throw new RuntimeException("!!!!");
+
+      if (!(Boolean)evaluated)
+        return Boolean.FALSE;
+    }
+
+    return Boolean.TRUE;
+  }
+
+  @Override
+  protected final String compile(final DBVendor vendor) {
     return operator.toString();
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

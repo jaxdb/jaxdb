@@ -16,14 +16,14 @@
 
 package org.libx4j.rdb.jsql;
 
-public abstract class Subject<T> extends Serializable {
-  private Serializable wrapper;
+public abstract class Subject<T> extends Evaluable {
+  private Evaluable wrapper;
 
-  protected final Serializable wrapper() {
+  protected final Evaluable wrapper() {
     return wrapper;
   }
 
-  protected final Subject<T> wrapper(final Serializable wrapper) {
+  protected final Subject<T> wrapper(final Evaluable wrapper) {
     this.wrapper = wrapper;
     return this;
   }

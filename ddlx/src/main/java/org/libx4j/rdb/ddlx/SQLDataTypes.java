@@ -18,7 +18,7 @@ package org.libx4j.rdb.ddlx;
 
 import java.math.BigInteger;
 
-import org.lib4j.lang.Arrays;
+import org.lib4j.util.Arrays;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;

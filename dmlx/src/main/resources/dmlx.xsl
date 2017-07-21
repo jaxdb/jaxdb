@@ -20,6 +20,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:dmlx="http://rdb.libx4j.org/dmlx.xsd"
+  xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
   xmlns:function="http://rdb.libx4j.org/dmlx.xsl"
   xmlns:ext="http://exslt.org/common" 
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
@@ -126,11 +127,194 @@
                   </xsl:otherwise>
                 </xsl:choose>
               </xsl:attribute>
-              <xsl:apply-templates select="ddlx:column">
-                <xsl:with-param name="tableName">
-                  <xsl:value-of select="@name"/>
-                </xsl:with-param>
-              </xsl:apply-templates>
+              <xsl:variable name="tableName" select="@name"/>
+              <xsl:for-each select="ddlx:column">
+                <xs:attribute>
+                  <xsl:attribute name="id">
+                    <xsl:value-of select="concat($tableName, '.', @name)"/>
+                  </xsl:attribute>
+                  <xsl:attribute name="name">
+                    <xsl:value-of select="function:instance-case(@name)"/>
+                  </xsl:attribute>
+                  <xsl:if test="@null='false' and not(@default) and not(@jsql:generateOnInsert)">
+                    <xsl:attribute name="use">required</xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@default">
+                    <xsl:attribute name="default">
+                      <xsl:value-of select="@default"/>
+                    </xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='boolean'">
+                    <xsl:attribute name="type">dmlx:boolean</xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='date'">
+                    <xsl:attribute name="type">dmlx:date</xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='dateTime'">
+                    <xsl:attribute name="type">dmlx:dateTime</xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='time'">
+                    <xsl:attribute name="type">dmlx:time</xsl:attribute>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
+                    <xs:simpleType>
+                      <xs:restriction>
+                        <xsl:attribute name="base">dmlx:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+                        <xs:maxLength>
+                          <xsl:attribute name="value">
+                            <xsl:value-of select="@length * 2"/>
+                          </xsl:attribute>
+                        </xs:maxLength>
+                        <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
+                          <xs:minLength>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="@length * 2"/>
+                            </xsl:attribute>
+                          </xs:minLength>
+                        </xsl:if>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
+                    <xs:simpleType>
+                      <xs:restriction>
+                        <xsl:attribute name="base">dmlx:<xsl:value-of select="@xsi:type"/></xsl:attribute>
+                        <xs:maxLength>
+                          <xsl:attribute name="value">
+                            <xsl:value-of select="@length"/>
+                          </xsl:attribute>
+                        </xs:maxLength>
+                        <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
+                          <xs:minLength>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="@length"/>
+                            </xsl:attribute>
+                          </xs:minLength>
+                        </xsl:if>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='float'">
+                    <xs:simpleType>
+                      <xs:restriction base="dmlx:float">
+                        <xsl:if test="@max">
+                          <xs:maxInclusive>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="@max"/>
+                            </xsl:attribute>
+                          </xs:maxInclusive>
+                        </xsl:if>
+                        <xsl:choose>
+                          <xsl:when test="@min">
+                            <xs:minInclusive>
+                              <xsl:attribute name="value">
+                                <xsl:value-of select="@min"/>
+                              </xsl:attribute>
+                            </xs:minInclusive>
+                          </xsl:when>
+                          <xsl:when test="@unsigned='true'">
+                            <xs:minInclusive value="0"/>
+                          </xsl:when>
+                        </xsl:choose>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='decimal'">
+                    <xs:simpleType>
+                      <xs:restriction base="dmlx:decimal">
+                        <xs:fractionDigits>
+                          <xsl:attribute name="value">
+                            <xsl:value-of select="@scale"/>
+                          </xsl:attribute>
+                        </xs:fractionDigits>
+                        <xs:maxInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@max">
+                                <xsl:value-of select="@max"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:maxInclusive>
+                        <xs:minInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@min">
+                                <xsl:value-of select="@min"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:choose>
+                                  <xsl:when test="not(@unsigned='true')">
+                                    <xsl:text>-</xsl:text>
+                                    <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    <xsl:value-of select="0"/>
+                                  </xsl:otherwise>
+                                </xsl:choose>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:minInclusive>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='enum'">
+                    <xs:simpleType>
+                      <xs:restriction base="dmlx:enum">
+                        <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
+                          <xs:enumeration>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="replace(., '\\`', ' ')"/>
+                            </xsl:attribute>
+                          </xs:enumeration>
+                        </xsl:for-each>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                  <xsl:if test="@xsi:type='tinyint' or @xsi:type='smallint' or @xsi:type='int' or @xsi:type='bigint'">
+                    <xs:simpleType>
+                      <xs:restriction base="dmlx:integer">
+                        <xs:maxInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@max">
+                                <xsl:value-of select="@max"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:value-of select="function:precision-scale(@precision)"/>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:maxInclusive>
+                        <xs:minInclusive>
+                          <xsl:attribute name="value">
+                            <xsl:choose>
+                              <xsl:when test="@min">
+                                <xsl:value-of select="@min"/>
+                              </xsl:when>
+                              <xsl:otherwise>
+                                <xsl:choose>
+                                  <xsl:when test="not(@unsigned='true')">
+                                    <xsl:text>-</xsl:text>
+                                    <xsl:value-of select="function:precision-scale(@precision)"/>
+                                  </xsl:when>
+                                  <xsl:otherwise>
+                                    <xsl:value-of select="0"/>
+                                  </xsl:otherwise>
+                                </xsl:choose>
+                              </xsl:otherwise>
+                            </xsl:choose>
+                          </xsl:attribute>
+                        </xs:minInclusive>
+                      </xs:restriction>
+                    </xs:simpleType>
+                  </xsl:if>
+                </xs:attribute>
+              </xsl:for-each>
             </xs:extension>
           </xs:complexContent>
         </xs:complexType>
@@ -226,197 +410,5 @@
       </xs:element>
     </xs:schema>
   </xsl:template>
-  
-  <xsl:template name="column" match="ddlx:table/ddlx:column">
-    <xsl:param name="tableName"/>
-    <xs:attribute>
-      <xsl:attribute name="id">
-        <xsl:value-of select="concat($tableName, '.', @name)"/>
-      </xsl:attribute>
-      <xsl:attribute name="name">
-        <xsl:value-of select="function:instance-case(@name)"/>
-      </xsl:attribute>
-      <xsl:attribute name="use">
-        <xsl:choose>
-          <xsl:when test="@null='false' and not(@default)">required</xsl:when>
-          <xsl:otherwise>optional</xsl:otherwise>
-        </xsl:choose>
-      </xsl:attribute>
-      <xsl:if test="@default">
-        <xsl:attribute name="default">
-          <xsl:value-of select="@default"/>
-        </xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='boolean'">
-        <xsl:attribute name="type">dmlx:boolean</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='date'">
-        <xsl:attribute name="type">dmlx:date</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='dateTime'">
-        <xsl:attribute name="type">dmlx:dateTime</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='time'">
-        <xsl:attribute name="type">dmlx:time</xsl:attribute>
-      </xsl:if>
-      <xsl:if test="@xsi:type='binary' or @xsi:type='blob'">
-        <xs:simpleType>
-          <xs:restriction>
-            <xsl:attribute name="base">dmlx:<xsl:value-of select="@xsi:type"/></xsl:attribute>
-            <xs:maxLength>
-              <xsl:attribute name="value">
-                <xsl:value-of select="@length * 2"/>
-              </xsl:attribute>
-            </xs:maxLength>
-            <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
-              <xs:minLength>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="@length * 2"/>
-                </xsl:attribute>
-              </xs:minLength>
-            </xsl:if>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='char' or @xsi:type='clob'">
-        <xs:simpleType>
-          <xs:restriction>
-            <xsl:attribute name="base">dmlx:<xsl:value-of select="@xsi:type"/></xsl:attribute>
-            <xs:maxLength>
-              <xsl:attribute name="value">
-                <xsl:value-of select="@length"/>
-              </xsl:attribute>
-            </xs:maxLength>
-            <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
-              <xs:minLength>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="@length"/>
-                </xsl:attribute>
-              </xs:minLength>
-            </xsl:if>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='float'">
-        <xs:simpleType>
-          <xs:restriction base="dmlx:float">
-            <xsl:if test="@max">
-              <xs:maxInclusive>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="@max"/>
-                </xsl:attribute>
-              </xs:maxInclusive>
-            </xsl:if>
-            <xsl:choose>
-              <xsl:when test="@min">
-                <xs:minInclusive>
-                  <xsl:attribute name="value">
-                    <xsl:value-of select="@min"/>
-                  </xsl:attribute>
-                </xs:minInclusive>
-              </xsl:when>
-              <xsl:when test="@unsigned='true'">
-                <xs:minInclusive value="0"/>
-              </xsl:when>
-            </xsl:choose>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='decimal'">
-        <xs:simpleType>
-          <xs:restriction base="dmlx:decimal">
-            <xs:fractionDigits>
-              <xsl:attribute name="value">
-                <xsl:value-of select="@scale"/>
-              </xsl:attribute>
-            </xs:fractionDigits>
-            <xs:maxInclusive>
-              <xsl:attribute name="value">
-                <xsl:choose>
-                  <xsl:when test="@max">
-                    <xsl:value-of select="@max"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-            </xs:maxInclusive>
-            <xs:minInclusive>
-              <xsl:attribute name="value">
-                <xsl:choose>
-                  <xsl:when test="@min">
-                    <xsl:value-of select="@min"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:choose>
-                      <xsl:when test="not(@unsigned='true')">
-                        <xsl:text>-</xsl:text>
-                        <xsl:value-of select="function:precision-scale(@precision - @scale)"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of select="0"/>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-            </xs:minInclusive>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='enum'">
-        <xs:simpleType>
-          <xs:restriction base="dmlx:enum">
-            <xsl:for-each select="tokenize(replace(@values, '\\ ', '\\`'), ' ')">
-              <xs:enumeration>
-                <xsl:attribute name="value">
-                  <xsl:value-of select="replace(., '\\`', ' ')"/>
-                </xsl:attribute>
-              </xs:enumeration>
-            </xsl:for-each>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-      <xsl:if test="@xsi:type='tinyint' or @xsi:type='smallint' or @xsi:type='int' or @xsi:type='bigint'">
-        <xs:simpleType>
-          <xs:restriction base="dmlx:integer">
-            <xs:maxInclusive>
-              <xsl:attribute name="value">
-                <xsl:choose>
-                  <xsl:when test="@max">
-                    <xsl:value-of select="@max"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:value-of select="function:precision-scale(@precision)"/>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-            </xs:maxInclusive>
-            <xs:minInclusive>
-              <xsl:attribute name="value">
-                <xsl:choose>
-                  <xsl:when test="@min">
-                    <xsl:value-of select="@min"/>
-                  </xsl:when>
-                  <xsl:otherwise>
-                    <xsl:choose>
-                      <xsl:when test="not(@unsigned='true')">
-                        <xsl:text>-</xsl:text>
-                        <xsl:value-of select="function:precision-scale(@precision)"/>
-                      </xsl:when>
-                      <xsl:otherwise>
-                        <xsl:value-of select="0"/>
-                      </xsl:otherwise>
-                    </xsl:choose>
-                  </xsl:otherwise>
-                </xsl:choose>
-              </xsl:attribute>
-            </xs:minInclusive>
-          </xs:restriction>
-        </xs:simpleType>
-      </xsl:if>
-    </xs:attribute>
-  </xsl:template>
-  
+    
 </xsl:stylesheet>

@@ -16,65 +16,45 @@
 
 package org.libx4j.rdb.jsql;
 
-import static org.libx4j.rdb.jsql.DML.*;
-
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import javax.xml.transform.TransformerException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.lib4j.lang.Resources;
 import org.lib4j.test.MixedTest;
 import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.DDLxTest;
+import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
 import org.libx4j.rdb.ddlx.runner.PostgreSQL;
 import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
-import org.libx4j.rdb.dmlx.xe.$dmlx_data;
-import org.libx4j.xsb.runtime.Bindings;
-import org.xml.sax.InputSource;
+import org.libx4j.rdb.dmlx.DMLxTest;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
 public class WorldTest extends JSQLTest {
+  private static final String name = "world";
+
   @BeforeClass
   @VendorRunner.RunIn(VendorRunner.Test.class)
   public static void create() throws IOException, XMLException {
-    createEntities("world");
+    createEntities(name);
   }
 
   @Test
-  @SuppressWarnings("unchecked")
-  public void testEntities(final Connection connection) throws ClassNotFoundException, IOException, SQLException, XMLException {
-    DBRegistry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + ".world"), new DBConnector() {
-      @Override
-      public Connection getConnection() throws SQLException {
-        return connection;
-      }
-    });
-
-    final URL dmlx = Resources.getResource("world.dmlx").getURL();
-    final $dmlx_data data;
-    try (final InputStream in = dmlx.openStream()) {
-      data = ($dmlx_data)Bindings.parse(new InputSource(in));
-    }
-
-    final ddlx_schema schema;
-    try (final InputStream in = Resources.getResource("world.ddlx").getURL().openStream()) {
-      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
-    }
-    Schemas.truncate(connection, Schemas.tables(schema));
-    INSERT(data).execute();
+  public void test(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, TransformerException, XMLException {
+    DDLxTest.recreateSchema(connection, name);
+    DMLxTest.createSchemas(name);
+    JSQLTest.loadEntities(connection, name);
   }
 }

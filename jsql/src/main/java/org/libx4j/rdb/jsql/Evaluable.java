@@ -16,27 +16,8 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.IOException;
+import java.util.Set;
 
-final class CountFunction extends Expression<Long> {
-  protected static final CountFunction STAR  = new CountFunction();
-
-  protected final boolean distinct;
-  protected final String function = "COUNT";
-  protected final type.DataType<?> column;
-
-  protected CountFunction(final type.DataType<?> column, final boolean distinct) {
-    this.column = column;
-    this.distinct = distinct;
-  }
-
-  private CountFunction() {
-    this.distinct = false;
-    this.column = null;
-  }
-
-  @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
-  }
+abstract class Evaluable extends Compilable {
+  protected abstract Object evaluate(final Set<Evaluable> visited);
 }

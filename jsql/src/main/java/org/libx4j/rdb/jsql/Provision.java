@@ -16,5 +16,5 @@
 
 package org.libx4j.rdb.jsql;
 
-abstract class Provision extends Serializable {
+abstract class Provision extends Evaluable {
 }

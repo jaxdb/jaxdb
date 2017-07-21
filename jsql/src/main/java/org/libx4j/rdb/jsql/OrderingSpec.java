@@ -17,18 +17,24 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
-final class OrderingSpec extends Serializable {
-  protected final Operator<OrderingSpec> operator;
+final class OrderingSpec extends Evaluable {
+  protected final operator.Ordering operator;
   protected final type.DataType<?> dataType;
 
-  protected OrderingSpec(final Operator<OrderingSpec> operator, final type.DataType<?> dataType) {
+  protected OrderingSpec(final operator.Ordering operator, final type.DataType<?> dataType) {
     this.operator = operator;
     this.dataType = dataType;
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+  }
+
+  @Override
+  protected Object evaluate(final Set<Evaluable> visited) {
+    return dataType.evaluate(visited);
   }
 }

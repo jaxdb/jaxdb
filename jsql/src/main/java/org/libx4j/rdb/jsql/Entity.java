@@ -17,20 +17,29 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.util.Set;
 
-public abstract class Entity extends Subject<Entity> {
+public abstract class Entity extends Subject<Entity> implements Cloneable {
+  protected final type.DataType<?>[] column;
+  protected final type.DataType<?>[] primary;
   private final boolean wasSelected;
 
   protected Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
     this.wasSelected = wasSelected;
+    this.column = column;
+    this.primary = primary;
   }
 
   protected Entity(final Entity entity) {
     this.wasSelected = false;
+    this.column = entity.column.clone();
+    this.primary = entity.primary.clone();
   }
 
   protected Entity() {
     this.wasSelected = false;
+    this.column = null;
+    this.primary = null;
   }
 
   protected final boolean wasSelected() {
@@ -43,12 +52,18 @@ public abstract class Entity extends Subject<Entity> {
   }
 
   @Override
-  protected final void serialize(final Serialization serialization) throws IOException {
-    Serializer.getSerializer(serialization.vendor).serialize(this, serialization);
+  protected final Entity evaluate(final Set<Evaluable> visited) {
+    return this;
+  }
+
+  @Override
+  protected final void compile(final Compilation compilation) throws IOException {
+    Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 
   protected abstract String name();
-  protected abstract type.DataType<?>[] column();
-  protected abstract type.DataType<?>[] primary();
   protected abstract Entity newInstance();
+
+  @Override
+  protected abstract Entity clone();
 }

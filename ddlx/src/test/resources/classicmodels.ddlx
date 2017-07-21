@@ -47,6 +47,7 @@
       <check operator="ne" condition=""/>
     </column>
     <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
+      <index unique="false" type="BTREE"/>
       <check operator="ne" condition=""/>
     </column>
     <column name="phone" xsi:type="bigint" precision="19" unsigned="true" null="false"/>
@@ -67,6 +68,7 @@
       <check operator="ne" condition=""/>
     </column>
     <column name="last_name" xsi:type="char" varying="true" length="64" null="false">
+      <index/>
       <check operator="ne" condition=""/>
     </column>
     <column name="extension" xsi:type="smallint" precision="4" unsigned="true" null="false"/>
@@ -174,6 +176,7 @@
       <check operator="ne" condition=""/>
     </column>
     <column name="name" xsi:type="char" varying="true" length="70" null="false">
+      <index/>
       <check operator="ne" condition=""/>
     </column>
     <column name="product_line" xsi:type="char" varying="true" length="64" null="false">
