@@ -35,16 +35,16 @@ import org.libx4j.rdb.dmlx.xe.$dmlx_integer;
 import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 
-abstract class Serializer {
-  private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
+abstract class Compiler {
+  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Serializer.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
-        if (Serializer.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Serializer serializer = (Serializer)cls.newInstance();
-          serializers[serializer.getVendor().ordinal()] = serializer;
+        if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
+          final Compiler compiler = (Compiler)cls.newInstance();
+          compilers[compiler.getVendor().ordinal()] = compiler;
         }
       }
     }
@@ -53,61 +53,61 @@ abstract class Serializer {
     }
   }
 
-  protected static Serializer getSerializer(final DBVendor vendor) {
-    final Serializer serializer = serializers[vendor.ordinal()];
-    if (serializer == null)
+  protected static Compiler getCompiler(final DBVendor vendor) {
+    final Compiler compiler = compilers[vendor.ordinal()];
+    if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
 
-    return serializer;
+    return compiler;
   }
 
   protected abstract DBVendor getVendor();
 
-  protected String serialize(final $dmlx_boolean attribute) {
+  protected String compile(final $dmlx_boolean attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $dmlx_float attribute) {
+  protected String compile(final $dmlx_float attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $dmlx_decimal attribute) {
+  protected String compile(final $dmlx_decimal attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $dmlx_integer attribute) {
+  protected String compile(final $dmlx_integer attribute) {
     return String.valueOf(attribute.text());
   }
 
-  protected String serialize(final $dmlx_char attribute) {
+  protected String compile(final $dmlx_char attribute) {
     return "'" + attribute.text().replace("'", "''") + "'";
   }
 
-  protected String serialize(final $dmlx_clob attribute) {
+  protected String compile(final $dmlx_clob attribute) {
     return "'" + attribute.text().replace("'", "''") + "'";
   }
 
-  protected String serialize(final $dmlx_binary attribute) {
+  protected String compile(final $dmlx_binary attribute) {
     return "X'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_blob attribute) {
+  protected String compile(final $dmlx_blob attribute) {
     return "X'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_date attribute) {
+  protected String compile(final $dmlx_date attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_time attribute) {
+  protected String compile(final $dmlx_time attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_dateTime attribute) {
+  protected String compile(final $dmlx_dateTime attribute) {
     return "'" + attribute.text() + "'";
   }
 
-  protected String serialize(final $dmlx_enum attribute) {
+  protected String compile(final $dmlx_enum attribute) {
     return "'" + attribute.text() + "'";
   }
 }

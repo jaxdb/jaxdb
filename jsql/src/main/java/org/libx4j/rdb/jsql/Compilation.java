@@ -26,12 +26,13 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.lib4j.lang.IntArrayList;
 import org.libx4j.rdb.jsql.type.DataType;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class Serialization {
+final class Compilation {
   private static final class Batch {
     protected final String sql;
     protected final List<type.DataType<?>> parameters;
@@ -48,19 +49,20 @@ final class Serialization {
   private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
   private final boolean batching;
+  private Consumer<Boolean> afterExecute;
 
   protected final Command command;
   protected final DBVendor vendor;
-  protected final Serializer serializer;
+  protected final Compiler compiler;
 
   private boolean skipFirstColumn = false;
 
-  protected Serialization(final Command command, final DBVendor vendor, final boolean prepared, final boolean batching) {
+  protected Compilation(final Command command, final DBVendor vendor, final boolean prepared, final boolean batching) {
     this.command = command;
     this.vendor = vendor;
     this.prepared = prepared;
     this.batching = batching;
-    this.serializer = Serializer.getSerializer(vendor);
+    this.compiler = Compiler.getCompiler(vendor);
   }
 
   protected boolean skipFirstColumn() {
@@ -89,24 +91,27 @@ final class Serialization {
     return builder.append(seq);
   }
 
-  protected void addCondition(final type.DataType<?> dataType) throws IOException {
+  protected void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(dataType.name);
     if (dataType.get() == null) {
       append(" IS NULL");
     }
     else {
       append(" = ");
-      addParameter(dataType);
+      addParameter(dataType, considerIndirection);
     }
   }
 
-  protected void addParameter(final type.DataType<?> dataType) throws IOException {
-    if (prepared) {
-      builder.append(Serializer.getSerializer(vendor).getPreparedStatementMark(dataType));
+  protected void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+    if (considerIndirection && !dataType.wasSet() && dataType.indirection != null) {
+      dataType.indirection.compile(this);
+    }
+    else if (prepared) {
+      builder.append(Compiler.getCompiler(vendor).getPreparedStatementMark(dataType));
       parameters.add(dataType);
     }
     else {
-      builder.append(dataType.serialize(vendor));
+      builder.append(dataType.compile(vendor));
     }
   }
 
@@ -117,6 +122,15 @@ final class Serialization {
     batches.add(new Batch(builder.toString(), new ArrayList<type.DataType<?>>(parameters)));
     builder.setLength(0);
     parameters.clear();
+  }
+
+  protected void afterExecute(final Consumer<Boolean> consumer) {
+    this.afterExecute = this.afterExecute == null ? consumer : this.afterExecute.andThen(consumer);
+  }
+
+  protected void afterExecute(final boolean success) {
+    if (this.afterExecute != null)
+      this.afterExecute.accept(success);
   }
 
   protected ResultSet executeQuery(final Connection connection) throws IOException, SQLException {

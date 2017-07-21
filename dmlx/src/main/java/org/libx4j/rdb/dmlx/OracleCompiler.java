@@ -26,45 +26,45 @@ import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
 import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class OracleSerializer extends Serializer {
+final class OracleCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 
   @Override
-  protected String serialize(final $dmlx_char attribute) {
+  protected String compile(final $dmlx_char attribute) {
     final String value = attribute.text().replace("'", "''");
     return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
   }
 
   @Override
-  protected String serialize(final $dmlx_blob attribute) {
+  protected String compile(final $dmlx_blob attribute) {
     return "HEXTORAW('" + new Hexadecimal(attribute.text()) + "')";
   }
 
   @Override
-  protected String serialize(final $dmlx_binary attribute) {
+  protected String compile(final $dmlx_binary attribute) {
     return "HEXTORAW('" + new Hexadecimal(attribute.text()) + "')";
   }
 
   @Override
-  protected String serialize(final $dmlx_date attribute) {
+  protected String compile(final $dmlx_date attribute) {
     return "TO_DATE('" + attribute.text() + "','YYYY-MM-DD')";
   }
 
   @Override
-  protected String serialize(final $dmlx_time attribute) {
+  protected String compile(final $dmlx_time attribute) {
     return "'0 " + attribute.text() + "'";
   }
 
   @Override
-  protected String serialize(final $dmlx_dateTime attribute) {
+  protected String compile(final $dmlx_dateTime attribute) {
     return "TO_TIMESTAMP('" + attribute.text() + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
   }
 
   @Override
-  protected String serialize(final $dmlx_boolean attribute) {
+  protected String compile(final $dmlx_boolean attribute) {
     return attribute.text() ? "1" : "0";
   }
 }

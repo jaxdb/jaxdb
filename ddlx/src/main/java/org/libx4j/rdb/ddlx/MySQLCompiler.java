@@ -22,12 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.vendor.DBVendor;
 
-public final class MySQLSerializer extends Serializer {
+public final class MySQLCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;
@@ -86,7 +87,7 @@ public final class MySQLSerializer extends Serializer {
 
   @Override
   protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+    return isAutoIncrement(column) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
@@ -95,7 +96,7 @@ public final class MySQLSerializer extends Serializer {
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

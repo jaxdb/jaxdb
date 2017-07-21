@@ -23,6 +23,7 @@ import java.util.Map;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_int;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
@@ -31,8 +32,8 @@ import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SQLiteSerializer extends Serializer {
-  private static final Logger logger = LoggerFactory.getLogger(SQLiteSerializer.class);
+final class SQLiteCompiler extends Compiler {
+  private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
   @Override
   protected DBVendor getVendor() {
@@ -50,13 +51,12 @@ final class SQLiteSerializer extends Serializer {
 
   @Override
   protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    if (column._generateOnInsert$().isNull() || !$ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()))
+    if (!isAutoIncrement(column))
       return null;
 
-    final $ddlx_constraints constraints = table._constraints(0);
-    final $ddlx_columns primaryKey = constraints._primaryKey(0);
+    final $ddlx_columns primaryKey = table._constraints(0)._primaryKey(0);
     if (primaryKey.isNull()) {
-      logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+      logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
 
@@ -65,32 +65,33 @@ final class SQLiteSerializer extends Serializer {
       return null;
     }
 
-    for (final $ddlx_named primaryColumn : primaryKey._column()) {
-      if (primaryColumn._name$().text().equals(column._name$().text())) {
-        if (!(column instanceof $ddlx_int)) {
-          logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
-          return null;
-        }
-
+    for (final $ddlx_named primaryColumn : primaryKey._column())
+      if (primaryColumn._name$().text().equals(column._name$().text()))
         return "PRIMARY KEY";
-      }
+
+    logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
+    return null;
+  }
+
+  @Override
+  protected String createIntegerColumn(final $ddlx_integer column) {
+    if (isAutoIncrement(column)) {
+      if (!(column instanceof $ddlx_int))
+        logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
+
+      return "INTEGER";
     }
 
-    logger.warn("AUTOINCREMENT is only allowed on an INTEGER PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
-    return null;
+    return super.createIntegerColumn(column);
   }
 
   @Override
   protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
     final $ddlx_columns primaryKey = constraints._primaryKey(0);
     if (!primaryKey.isNull() && primaryKey._column().size() == 1) {
-      final $ddlx_named primaryColumn = primaryKey._column().get(0);
-      final $ddlx_column column = columnNameToColumn.get(primaryColumn._name$().text());
-      if (column instanceof $ddlx_int) {
-        final $ddlx_int intColumn = ($ddlx_int)column;
-        if (!intColumn._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(intColumn._generateOnInsert$().text()))
-          return null;
-      }
+      final $ddlx_column column = columnNameToColumn.get(primaryKey._column().get(0)._name$().text());
+      if (column instanceof $ddlx_integer && isAutoIncrement(($ddlx_integer)column))
+        return null;
     }
 
     return super.blockPrimaryKey(table, constraints, columnNameToColumn);
@@ -102,7 +103,10 @@ final class SQLiteSerializer extends Serializer {
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+    if ($ddlx_index._type$.HASH.text().equals(type.text()))
+      logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
+
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

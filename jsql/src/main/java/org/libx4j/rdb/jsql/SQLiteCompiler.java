@@ -27,14 +27,15 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.Set;
+import java.time.temporal.TemporalUnit;
+import java.util.List;
 
 import org.lib4j.io.Readers;
 import org.lib4j.io.Streams;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
-final class SQLiteSerializer extends Serializer {
+final class SQLiteCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.SQLITE;
@@ -45,118 +46,118 @@ final class SQLiteSerializer extends Serializer {
   }
 
   @Override
-  protected void serialize(final Cast.AS as, final Serialization serialization) throws IOException {
+  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof type.Temporal) {
-      serialization.append("STRFTIME(\"");
+      compilation.append("STRFTIME(\"");
       if (as.cast instanceof type.DATE) {
-        serialization.append("%Y-%m-%d");
+        compilation.append("%Y-%m-%d");
       }
       else if (as.cast instanceof type.TIME) {
-        serialization.append("%H:%M:");
-        serialization.append(((type.TIME)as.cast).precision() > 0 ? "%f" : "%S");
+        compilation.append("%H:%M:");
+        compilation.append(((type.TIME)as.cast).precision() > 0 ? "%f" : "%S");
       }
       else if (as.cast instanceof type.DATETIME) {
-        serialization.append("%Y-%m-%d %H:%M:");
-        serialization.append(((type.DATETIME)as.cast).precision() > 0 ? "%f" : "%S");
+        compilation.append("%Y-%m-%d %H:%M:");
+        compilation.append(((type.DATETIME)as.cast).precision() > 0 ? "%f" : "%S");
       }
       else {
-        throw new UnsupportedOperationException("Unexpected type.Temporal type: " + as.cast.getClass());
+        throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass());
       }
 
-      serialization.append("\", ");
-      as.dataType.serialize(serialization);
-      serialization.append(")");
+      compilation.append("\", ");
+      as.dataType.compile(compilation);
+      compilation.append(")");
     }
     else {
-      super.serialize(as, serialization);
+      super.compile(as, compilation);
     }
   }
 
   @Override
-  protected void serialize(final TemporalExpression expression, final Serialization serialization) throws IOException {
+  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     if (expression.a instanceof type.DATE)
-      serialization.append("DATE(");
+      compilation.append("DATE(");
     else if (expression.a instanceof type.TIME)
-      serialization.append("TIME(");
+      compilation.append("TIME(");
     else if (expression.a instanceof type.DATETIME)
-      serialization.append("DATETIME(");
+      compilation.append("DATETIME(");
     else
-      throw new UnsupportedOperationException("Unexpected type: " + expression.a.getClass());
+      throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass());
 
-    expression.a.serialize(serialization);
-    serialization.append(", '").append(expression.operator);
-    expression.b.serialize(serialization);
-    serialization.append("')");
+    expression.a.compile(compilation);
+    compilation.append(", '").append(expression.operator);
+    expression.b.compile(compilation);
+    compilation.append("')");
   }
 
   @Override
-  protected void serialize(final Interval interval, final Serialization serialization) {
-    final Set<Interval.Unit> units = interval.getUnits();
+  protected void compile(final Interval interval, final Compilation compilation) {
+    final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
-    for (final Interval.Unit unit : units) {
-      final Integer component;
+    for (final TemporalUnit unit : units) {
+      final long component;
       final String unitString;
       if (unit == Interval.Unit.WEEKS) {
-        component = interval.getComponent(unit) * 7;
+        component = interval.get(unit) * 7;
         unitString = "DAYS";
       }
       else if (unit == Interval.Unit.QUARTERS) {
-        component = interval.getComponent(unit) * 3;
+        component = interval.get(unit) * 3;
         unitString = "MONTHS";
       }
       else if (unit == Interval.Unit.DECADES) {
-        component = interval.getComponent(unit) * 10;
+        component = interval.get(unit) * 10;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.CENTURIES) {
-        component = interval.getComponent(unit) * 100;
+        component = interval.get(unit) * 100;
         unitString = "YEAR";
       }
       else if (unit == Interval.Unit.MILLENNIA) {
-        component = interval.getComponent(unit) * 1000;
+        component = interval.get(unit) * 1000;
         unitString = "YEAR";
       }
       else {
-        component = interval.getComponent(unit);
-        unitString = unit.name().substring(0, unit.name().length() - 1);
+        component = interval.get(unit);
+        unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
       clause.append(" ").append(component).append(" " + unitString);
     }
 
-    serialization.append(clause.substring(1));
+    compilation.append(clause.substring(1));
   }
 
   @Override
-  protected void serialize(final function.numeric.Mod function, final Serialization serialization) throws IOException {
-    serialization.append("(");
-    function.a.serialize(serialization);
-    serialization.append(" % ");
-    function.b.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
+    compilation.append("(");
+    function.a.compile(compilation);
+    compilation.append(" % ");
+    function.b.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final function.numeric.Ln function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(");
-    function.a.serialize(serialization);
-    serialization.append(") / logger.info(2.7182818284590452354)");
+  protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final function.numeric.Log function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(");
-    function.b.serialize(serialization);
-    serialization.append(") / logger.info(");
-    function.a.serialize(serialization);
-    serialization.append(")");
+  protected void compile(final function.Log function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(");
+    function.b.compile(compilation);
+    compilation.append(") / LOG(");
+    function.a.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
-  protected void serialize(final function.numeric.Log2 function, final Serialization serialization) throws IOException {
-    serialization.append("LOG(");
-    function.a.serialize(serialization);
-    serialization.append(") / logger.info(2)");
+  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+    compilation.append("LOG(");
+    function.a.compile(compilation);
+    compilation.append(") / 0.6931471805599453");
   }
 
   @Override

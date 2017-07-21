@@ -16,17 +16,11 @@
 
 package org.libx4j.rdb.dmlx;
 
-import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class SQLiteSerializer extends Serializer {
+final class MySQLCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
-    return DBVendor.SQLITE;
-  }
-
-  @Override
-  protected String serialize(final $dmlx_boolean attribute) {
-    return attribute.text() ? "1" : "0";
+    return DBVendor.MY_SQL;
   }
 }

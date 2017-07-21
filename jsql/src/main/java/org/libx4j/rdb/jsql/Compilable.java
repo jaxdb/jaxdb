@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 lib4j
+/* Copyright (c) 2016 lib4j
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,19 +14,10 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.dmlx;
+package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
-import org.libx4j.rdb.vendor.DBVendor;
+import java.io.IOException;
 
-final class DerbySerializer extends Serializer {
-  @Override
-  protected DBVendor getVendor() {
-    return DBVendor.DERBY;
-  }
-
-  @Override
-  protected final String serialize(final $dmlx_blob attribute) {
-    return "CAST(X'" + attribute.text() + "' AS BLOB)";
-  }
+abstract class Compilable {
+  protected abstract void compile(final Compilation compilation) throws IOException;
 }

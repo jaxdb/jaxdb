@@ -45,6 +45,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_float;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_int;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
@@ -55,16 +56,16 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
 
-abstract class Serializer {
-  private static final Serializer[] serializers = new Serializer[DBVendor.values().length];
+abstract class Compiler {
+  private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Serializer.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
-        if (Serializer.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Serializer serializer = (Serializer)cls.newInstance();
-          serializers[serializer.getVendor().ordinal()] = serializer;
+        if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
+          final Compiler compiler = (Compiler)cls.newInstance();
+          compilers[compiler.getVendor().ordinal()] = compiler;
         }
       }
     }
@@ -73,17 +74,21 @@ abstract class Serializer {
     }
   }
 
-  protected static Serializer getSerializer(final DBVendor vendor) {
-    final Serializer serializer = serializers[vendor.ordinal()];
-    if (serializer == null)
+  protected static Compiler getCompiler(final DBVendor vendor) {
+    final Compiler compiler = compilers[vendor.ordinal()];
+    if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
 
-    return serializer;
+    return compiler;
+  }
+
+  protected static boolean isAutoIncrement(final $ddlx_integer column) {
+    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text());
   }
 
   protected abstract DBVendor getVendor();
 
-  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns);
+  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns);
 
   protected abstract void init(final Connection connection) throws SQLException;
 
@@ -133,24 +138,8 @@ abstract class Serializer {
       final $ddlx_blob type = ($ddlx_blob)column;
       ddl.append(getVendor().getDialect().declareBlob(type._length$().text()));
     }
-    else if (column instanceof $ddlx_tinyint) {
-      final $ddlx_tinyint type = ($ddlx_tinyint)column;
-      ddl.append(getVendor().getDialect().declareInt8(type._precision$().text().shortValue(), type._unsigned$().text()));
-    }
-    else if (column instanceof $ddlx_smallint) {
-      final $ddlx_smallint type = ($ddlx_smallint)column;
-      ddl.append(getVendor().getDialect().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text()));
-    }
-    else if (column instanceof $ddlx_int) {
-      final $ddlx_int type = ($ddlx_int)column;
-      ddl.append(getVendor().getDialect().declareInt32(type._precision$().text().shortValue(), type._unsigned$().text()));
-    }
-    else if (column instanceof $ddlx_bigint) {
-      final $ddlx_bigint type = ($ddlx_bigint)column;
-      if (!type._unsigned$().text() && type._precision$().text().intValue() > 19)
-        throw new IllegalArgumentException("BIGINT maximum precision [0, 19] exceeded: " + type._precision$().text().intValue());
-
-      ddl.append(getVendor().getDialect().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text()));
+    else if (column instanceof $ddlx_integer) {
+      ddl.append(createIntegerColumn(($ddlx_integer)column));
     }
     else if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
@@ -194,6 +183,33 @@ abstract class Serializer {
     }
 
     return new CreateStatement(ddl.toString());
+  }
+
+  protected String createIntegerColumn(final $ddlx_integer column) {
+    if (column instanceof $ddlx_tinyint) {
+      final $ddlx_tinyint type = ($ddlx_tinyint)column;
+      return getVendor().getDialect().declareInt8(type._precision$().text().shortValue(), type._unsigned$().text());
+    }
+
+    if (column instanceof $ddlx_smallint) {
+      final $ddlx_smallint type = ($ddlx_smallint)column;
+      return getVendor().getDialect().declareInt16(type._precision$().text().shortValue(), type._unsigned$().text());
+    }
+
+    if (column instanceof $ddlx_int) {
+      final $ddlx_int type = ($ddlx_int)column;
+      return getVendor().getDialect().declareInt32(type._precision$().text().shortValue(), type._unsigned$().text());
+    }
+
+    if (column instanceof $ddlx_bigint) {
+      final $ddlx_bigint type = ($ddlx_bigint)column;
+      if (!type._unsigned$().text() && type._precision$().text().intValue() > 19)
+        throw new IllegalArgumentException("BIGINT maximum precision [0, 19] exceeded: " + type._precision$().text().intValue());
+
+      return getVendor().getDialect().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text());
+    }
+
+    throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
   private CreateStatement createConstraints(final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
@@ -311,7 +327,7 @@ abstract class Serializer {
             maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
           }
           else {
-            throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
+            throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
           }
         }
         else if (column instanceof $ddlx_float) {
@@ -379,10 +395,10 @@ abstract class Serializer {
           if (condition != null)
             contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + column._name$().text() + " " + operator + " " + condition + ")");
           else
-            throw new UnsupportedOperationException("Unexpected 'null' condition encountered on column '" + column._name$().text());
+            throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column._name$().text());
         }
         else if (condition != null)
-          throw new UnsupportedOperationException("Unexpected 'null' operator encountered on column '" + column._name$().text());
+          throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + column._name$().text());
       }
     }
 
@@ -438,7 +454,7 @@ abstract class Serializer {
     else if (!check._value(0).isNull())
       condition = Numbers.isNumber(check._value(0).text()) ? Numbers.roundInsignificant(check._value(0).text()) : "'" + check._value(0).text() + "'";
     else
-      throw new UnsupportedOperationException("Unexpected condition on column '" + check._column(0).text() + "'");
+      throw new UnsupportedOperationException("Unsupported condition on column '" + check._column(0).text() + "'");
 
     final String clause = check._column(0).text() + " " + check._operator(0).text() + " " + condition;
     if (!check._and(0).isNull())
@@ -458,7 +474,7 @@ abstract class Serializer {
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     if (table._indexes() != null) {
       for (final $ddlx_table._indexes._index index : table._indexes(0)._index()) {
-        final CreateStatement createIndex = createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$().text(), table._name$().text(), index._column().toArray(new $ddlx_named[index._column().size()]));
+        final CreateStatement createIndex = createIndex(!index._unique$().isNull() && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$(), table._name$().text(), index._column().toArray(new $ddlx_named[index._column().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
@@ -467,7 +483,7 @@ abstract class Serializer {
     if (table._column() != null) {
       for (final $ddlx_column column : table._column()) {
         if (column._index() != null) {
-          final CreateStatement createIndex = createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$().text(), table._name$().text(), column);
+          final CreateStatement createIndex = createIndex(!column._index(0)._unique$().isNull() && column._index(0)._unique$().text(), SQLDataTypes.getIndexName(table, column._index(0), column), column._index(0)._type$(), table._name$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }
@@ -485,14 +501,15 @@ abstract class Serializer {
 
   protected List<DropStatement> drops(final $ddlx_table table) {
     final List<DropStatement> statements = new ArrayList<DropStatement>();
-    if (table._indexes() != null)
-      for (final $ddlx_table._indexes._index index : table._indexes(0)._index())
-        statements.add(new DropStatement("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
+    // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
+//    if (table._indexes() != null)
+//      for (final $ddlx_table._indexes._index index : table._indexes(0)._index())
+//        statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
 
-    if (table._column() != null)
-      for (final $ddlx_column column : table._column())
-        if (column._index() != null)
-          statements.add(new DropStatement("DROP INDEX IF EXISTS " + SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table)));
+//    if (table._column() != null)
+//      for (final $ddlx_column column : table._column())
+//        if (column._index() != null)
+//          statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table)));
 
     if (table._triggers() != null)
       for (final $ddlx_table._triggers._trigger trigger : table._triggers().get(0)._trigger())
@@ -508,6 +525,10 @@ abstract class Serializer {
 
   protected DropStatement dropTableIfExists(final $ddlx_table table) {
     return new DropStatement("DROP TABLE IF EXISTS " + table._name$().text());
+  }
+
+  protected DropStatement dropIndexIfExists(final String indexName) {
+    return new DropStatement("DROP INDEX IF EXISTS " + indexName);
   }
 
   private static void checkNumericDefault(final $ddlx_column type, final String defalt, final boolean positive, final Integer precision, final boolean unsigned) {
@@ -570,7 +591,7 @@ abstract class Serializer {
         unsigned = type._unsigned$().text();
       }
       else {
-        throw new UnsupportedOperationException("Unexpected type: " + column.getClass().getName());
+        throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
       }
 
       if (defalt == null)

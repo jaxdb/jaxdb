@@ -16,34 +16,17 @@
 
 package org.libx4j.rdb.dmlx;
 
-import org.lib4j.lang.Bytes;
-import org.lib4j.util.Hexadecimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
+import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class PostgreSQLSerializer extends Serializer {
+final class SQLiteCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
-    return DBVendor.POSTGRE_SQL;
-  }
-
-  private static String toOctalString(final Hexadecimal hex) {
-    final short[] octals = Bytes.toOctal(hex.getBytes());
-    final StringBuilder builder = new StringBuilder();
-    for (final short octal : octals)
-      builder.append("\\\\").append(octal);
-
-    return "'" + builder + "'::BYTEA";
+    return DBVendor.SQLITE;
   }
 
   @Override
-  protected String serialize(final $dmlx_blob attribute) {
-    return toOctalString(new Hexadecimal(attribute.text()));
-  }
-
-  @Override
-  protected String serialize(final $dmlx_binary attribute) {
-    return toOctalString(new Hexadecimal(attribute.text()));
+  protected String compile(final $dmlx_boolean attribute) {
+    return attribute.text() ? "1" : "0";
   }
 }

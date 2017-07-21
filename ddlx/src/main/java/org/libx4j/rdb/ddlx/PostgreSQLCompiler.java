@@ -32,8 +32,8 @@ import org.libx4j.rdb.vendor.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class PostgreSQLSerializer extends Serializer {
-  private static final Logger logger = LoggerFactory.getLogger(PostgreSQLSerializer.class);
+public final class PostgreSQLCompiler extends Compiler {
+  private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
   @Override
   protected DBVendor getVendor() {
@@ -54,7 +54,7 @@ public final class PostgreSQLSerializer extends Serializer {
         }
         else if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
-          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (isAutoIncrement(type))
             statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type)));
         }
       }
@@ -84,7 +84,7 @@ public final class PostgreSQLSerializer extends Serializer {
         }
         else if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
-          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text()))
+          if (isAutoIncrement(type))
             statements.add(0, new CreateStatement("CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type)));
         }
       }
@@ -101,7 +101,7 @@ public final class PostgreSQLSerializer extends Serializer {
 
   @Override
   protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    return !column._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text()) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
+    return isAutoIncrement(column) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
   @Override
@@ -110,17 +110,16 @@ public final class PostgreSQLSerializer extends Serializer {
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
     final String uniqueClause;
-    if ($ddlx_index._type$.HASH.text().equals(type)) {
+    if ($ddlx_index._type$.HASH.text().equals(type.text())) {
       if (columns.length > 1) {
         logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return null;
       }
 
-      if (unique) {
-        logger.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating index non-UNIQUE index.");
-      }
+      if (unique)
+        logger.warn("UNIQUE HASH indexes are not supported by PostgreSQL. Creating non-UNIQUE index.");
 
       uniqueClause = "";
     }
@@ -128,6 +127,6 @@ public final class PostgreSQLSerializer extends Serializer {
       uniqueClause = unique ? "UNIQUE " : "";
     }
 
-    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type.text() + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey._onDelete$;
+import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
@@ -31,8 +32,8 @@ import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class OracleSerializer extends Serializer {
-  private static final Logger logger = LoggerFactory.getLogger(OracleSerializer.class);
+public final class OracleCompiler extends Compiler {
+  private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
   @Override
   protected DBVendor getVendor() {
@@ -50,7 +51,7 @@ public final class OracleSerializer extends Serializer {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
-          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
+          if (isAutoIncrement(type)) {
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + SQLDataTypes.getTriggerName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
@@ -79,7 +80,7 @@ public final class OracleSerializer extends Serializer {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
-          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
+          if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
             statements.add(0, new CreateStatement("CREATE SEQUENCE " + sequenceName + " START WITH 1"));
           }
@@ -98,7 +99,7 @@ public final class OracleSerializer extends Serializer {
       for (final $ddlx_column column : table._column()) {
         if (column instanceof $ddlx_integer) {
           final $ddlx_integer type = ($ddlx_integer)column;
-          if (!type._generateOnInsert$().isNull() && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(type._generateOnInsert$().text())) {
+          if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
             statements.add(0, new CreateStatement("CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table._name$().text() + " FOR EACH ROW when (new." + column._name$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column._name$().text() + " FROM dual; END;"));
           }
@@ -121,8 +122,11 @@ public final class OracleSerializer extends Serializer {
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final String type, final String tableName, final $ddlx_named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+    if ($ddlx_index._type$.HASH.text().equals(type.text()))
+      logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
+
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 
   private int foreignKeys = 0;
