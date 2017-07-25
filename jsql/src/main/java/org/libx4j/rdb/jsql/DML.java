@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.lib4j.util.Arrays;
+import org.lib4j.lang.Arrays;
 import org.libx4j.rdb.dmlx.xe.$dmlx_data;
 import org.libx4j.rdb.jsql.model.case_;
 import org.libx4j.rdb.jsql.model.delete;

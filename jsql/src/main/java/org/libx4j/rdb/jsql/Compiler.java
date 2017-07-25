@@ -596,13 +596,12 @@ public abstract class Compiler {
     compilation.append("(");
     as.parent().compile(compilation);
     compilation.append(")");
-    final String s = compile(as);
+    final String string = compile(as);
     compilation.append(" ");
-    if (s != null && s.length() != 0)
-      compilation.append(s).append(" ");
+    if (string != null && string.length() != 0)
+      compilation.append(string).append(" ");
 
     alias.compile(compilation);
-    as.getVariable().wrapper(as.parent());
   }
 
   // FIXME: Move this to a Util class or something
@@ -632,10 +631,21 @@ public abstract class Compiler {
     }
   }
 
+  private static Compilable unwrapAlias(final Compilable compilable) {
+    if (!(compilable instanceof Subject))
+      return compilable;
+
+    final Subject<?> subject = (Subject<?>)compilable;
+    if (!(subject.wrapper() instanceof As))
+      return compilable;
+
+    return ((As<?>)subject.wrapper()).parent();
+  }
+
   protected void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
-    predicate.a.compile(compilation);
+    unwrapAlias(predicate.a).compile(compilation);
     compilation.append(" ").append(predicate.operator).append(" ");
-    predicate.b.compile(compilation);
+    unwrapAlias(predicate.b).compile(compilation);
   }
 
   protected void compile(final InPredicate<?> predicate, final Compilation compilation) throws IOException {
@@ -865,7 +875,7 @@ public abstract class Compiler {
   }
 
   protected void compile(final OrderingSpec spec, final Compilation compilation) throws IOException {
-    spec.dataType.compile(compilation);
+    unwrapAlias(spec.dataType).compile(compilation);
     compilation.append(" ").append(spec.operator);
   }
 

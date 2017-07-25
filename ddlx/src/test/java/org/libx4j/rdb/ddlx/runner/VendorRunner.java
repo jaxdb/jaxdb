@@ -40,9 +40,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.lib4j.lang.Arrays;
 import org.lib4j.lang.Throwables;
 import org.lib4j.logging.DeferredLogger;
-import org.lib4j.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -28,6 +28,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
 
+import org.lib4j.util.Temporals;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -124,6 +125,7 @@ final class OracleCompiler extends Compiler {
 
   @Override
   protected void compile(final Interval interval, final Compilation compilation) {
+    // FIXME: This can be fixed with nested interval semantics
     if (interval.getUnits().size() > 1)
       throw new UnsupportedOperationException("Interval classes with only 1 Interval.Unit are supported");
 
@@ -240,7 +242,11 @@ final class OracleCompiler extends Compiler {
   @Override
   protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
-    return resultSet.wasNull() || value == null ? null : LocalTime.parse(value.toString().substring(value.toString().indexOf(" ") + 1), Dialect.TIME_FORMAT);
+    if (resultSet.wasNull() || value == null)
+      return null;
+
+    final LocalTime localTime = LocalTime.parse(value.toString().substring(value.toString().indexOf(" ") + 1), Dialect.TIME_FORMAT);
+    return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
   }
 
   @Override
@@ -254,7 +260,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
     }
 
-    if (!(source instanceof Select.GROUP_BY) && !(subject instanceof Entity) && subject.wrapper() == null)
+    if (!(source instanceof Select.GROUP_BY) && !(subject instanceof Entity) && !(subject.wrapper() instanceof As))
       compilation.append(" c" + index);
   }
 }

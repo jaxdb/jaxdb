@@ -27,7 +27,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.util.Arrays;
+import org.lib4j.lang.Arrays;
 import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;

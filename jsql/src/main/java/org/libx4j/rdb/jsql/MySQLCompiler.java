@@ -18,10 +18,14 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
+import org.lib4j.util.Temporals;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class MySQLCompiler extends Compiler {
@@ -60,20 +64,11 @@ final class MySQLCompiler extends Compiler {
     else
       throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
 
-    if (expression.a instanceof type.TIME) {
-      compilation.append("TIME(").append(function).append("(ADDTIME(CURDATE(), ");
-      expression.a.compile(compilation);
-      compilation.append("), ");
-      expression.b.compile(compilation);
-      compilation.append("))");
-    }
-    else {
-      compilation.append(function).append("(");
-      expression.a.compile(compilation);
-      compilation.append(", ");
-      expression.b.compile(compilation);
-      compilation.append(")");
-    }
+    compilation.append(function).append("(");
+    expression.a.compile(compilation);
+    compilation.append(", ");
+    expression.b.compile(compilation);
+    compilation.append(")");
   }
 
   @Override
@@ -136,5 +131,15 @@ final class MySQLCompiler extends Compiler {
     else {
       as.dataType.compile(compilation);
     }
+  }
+
+  @Override
+  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+    final Timestamp value = resultSet.getTimestamp(columnIndex);
+    if (resultSet.wasNull() || value == null)
+      return null;
+
+    final LocalTime localTime = value.toLocalDateTime().toLocalTime();
+    return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
   }
 }

@@ -29,4 +29,25 @@ public final class Alias extends Compilable {
   protected final void compile(final Compilation compilation) {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+
+    if (!(obj instanceof Alias))
+      return false;
+
+    return name.equals(((Alias)obj).name);
+  }
+
+  @Override
+  public int hashCode() {
+    return 199 * name.hashCode();
+  }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }
