@@ -21,10 +21,10 @@ import java.util.Set;
 
 import org.libx4j.rdb.jsql.model.select;
 
-final class ExistsPredicate<T> extends Predicate<T> {
+final class ExistsPredicate extends Predicate {
   protected final Compilable subQuery;
 
-  protected ExistsPredicate(final select.SELECT<?> query) {
+  protected ExistsPredicate(final select.untyped.SELECT<?> query) {
     super(null);
     this.subQuery = (Compilable)query;
   }

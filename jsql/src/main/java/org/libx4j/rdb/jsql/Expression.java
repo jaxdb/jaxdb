@@ -21,6 +21,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import org.libx4j.rdb.jsql.model.kind;
+
 final class expression {
   protected static abstract class Generic<T> extends Subject<T> {
   }
@@ -30,9 +32,9 @@ final class expression {
 
     protected final boolean distinct;
     protected final java.lang.String function = "COUNT";
-    protected final type.DataType<?> column;
+    protected final kind.DataType<?> column;
 
-    protected Count(final type.DataType<?> column, final boolean distinct) {
+    protected Count(final kind.DataType<?> column, final boolean distinct) {
       this.column = column;
       this.distinct = distinct;
     }
@@ -55,22 +57,22 @@ final class expression {
 
   protected static final class Numeric extends Generic<Number> {
     protected final operator.Arithmetic operator;
-    protected final type.Numeric<?> a;
-    protected final type.Numeric<?> b;
+    protected final kind.Numeric<?> a;
+    protected final kind.Numeric<?> b;
 
-    protected Numeric(final operator.Arithmetic operator, final type.Numeric<?> a, final type.Numeric<?> b) {
+    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final kind.Numeric<?> b) {
       this.operator = operator;
       this.a = a;
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final Number a, final type.Numeric<?> b) {
+    protected Numeric(final operator.Arithmetic operator, final Number a, final kind.Numeric<?> b) {
       this.operator = operator;
       this.a = (type.Numeric<?>)type.DataType.wrap(a);
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final type.Numeric<?> a, final Number b) {
+    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final Number b) {
       this.operator = operator;
       this.a = a;
       this.b = (type.Numeric<?>)type.DataType.wrap(b);
@@ -83,11 +85,14 @@ final class expression {
 
     @Override
     protected Number evaluate(final java.util.Set<Evaluable> visited) {
-      final Number a = this.a.evaluate(visited);
+      if (!(this.a instanceof Evaluable) || !(this.b instanceof Evaluable))
+        return null;
+
+      final Number a = (Number)((Evaluable)this.a).evaluate(visited);
       if (a == null)
         return null;
 
-      final Number b = this.b.evaluate(visited);
+      final Number b = (Number)((Evaluable)this.b).evaluate(visited);
       if (b == null)
         return null;
 
@@ -139,61 +144,61 @@ final class expression {
 
   protected static final class String extends Generic<java.lang.String> {
     protected final operator.String operator;
-    protected final type.DataType<?>[] args;
+    protected final kind.DataType<?>[] args;
 
-    protected String(final operator.String operator, final type.DataType<?> a, final type.DataType<?> b) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {a, b};
+      this.args = new kind.DataType[] {a, b};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final type.DataType<?> b, final CharSequence c) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {a, b, type.DataType.wrap(c)};
+      this.args = new kind.DataType[] {a, b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {a, type.DataType.wrap(b)};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b)};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {a, type.DataType.wrap(b), c};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c, final CharSequence d) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b, c};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c, final CharSequence d) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d, final CharSequence e) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
       this.operator = operator;
-      this.args = new type.DataType<?>[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
     }
 
     @Override
@@ -204,11 +209,11 @@ final class expression {
     @Override
     protected java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
-      for (final type.DataType<?> arg : args) {
-        if (arg == null)
+      for (final kind.DataType<?> arg : args) {
+        if (arg == null || !(arg instanceof Evaluable))
           return null;
 
-        builder.append(arg.evaluate(visited));
+        builder.append(((Evaluable)arg).evaluate(visited));
       }
 
       return builder.toString();

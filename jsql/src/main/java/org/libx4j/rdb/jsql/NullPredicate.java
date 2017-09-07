@@ -19,10 +19,12 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-final class NullPredicate<T> extends Predicate<T> {
+import org.libx4j.rdb.jsql.model.kind;
+
+final class NullPredicate extends Predicate {
   protected final boolean positive;
 
-  protected NullPredicate(final type.DataType<T> dataType, final boolean positive) {
+  protected NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
     super(dataType);
     this.positive = positive;
   }

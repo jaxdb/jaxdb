@@ -29,6 +29,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.Map;
 
 import org.lib4j.util.Temporals;
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -72,6 +73,14 @@ final class OracleCompiler extends Compiler {
     }
 
     super.compile(command, select, compilation);
+  }
+
+  @Override
+  protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+    if (from != null)
+      super.compile(from, compilation);
+    else
+      compilation.append(" FROM DUAL");
   }
 
   @Override
@@ -167,51 +176,52 @@ final class OracleCompiler extends Compiler {
 
   @Override
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
-    if (as.cast instanceof type.BINARY) {
-      compilation.append("UTL_RAW.CAST_TO_RAW(");
-      as.dataType.compile(compilation);
-      compilation.append(")");
+    if (as.cast instanceof kind.BINARY) {
+      compilation.append("UTL_RAW.CAST_TO_RAW((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("))");
     }
-    else if (as.cast instanceof type.BLOB) {
-      compilation.append("TO_BLOB(");
-      as.dataType.compile(compilation);
-      compilation.append(")");
+    else if (as.cast instanceof kind.BLOB) {
+      compilation.append("TO_BLOB((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("))");
     }
-    else if (as.cast instanceof type.CLOB) {
-      compilation.append("TO_CLOB(");
-      as.dataType.compile(compilation);
-      compilation.append(")");
+    else if (as.cast instanceof kind.CLOB) {
+      compilation.append("TO_CLOB((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("))");
     }
-    else if (as.cast instanceof type.DATE && !(as.dataType instanceof type.DATETIME)) {
-      compilation.append("TO_DATE(");
-      as.dataType.compile(compilation);
-      compilation.append(", 'YYYY-MM-DD')");
+    else if (as.cast instanceof kind.DATE && (!(as.dataType instanceof type.DATETIME) && (!(as.dataType instanceof Keyword) || ((Keyword<?>)as.dataType).kind() != kind.DATETIME.class))) {
+      compilation.append("TO_DATE((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("), 'YYYY-MM-DD')");
     }
-    else if (as.cast instanceof type.DATETIME && !(as.dataType instanceof type.DATETIME)) {
-      compilation.append("TO_TIMESTAMP(");
-      as.dataType.compile(compilation);
-      compilation.append(", 'YYYY-MM-DD HH24:MI:SS.FF')");
+    else if (as.cast instanceof kind.DATETIME && (!(as.dataType instanceof type.DATETIME) && (!(as.dataType instanceof Keyword) || ((Keyword<?>)as.dataType).kind() != kind.DATETIME.class))) {
+      compilation.append("TO_TIMESTAMP((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
-    else if (as.dataType instanceof type.DATETIME && as.cast instanceof type.TIME) {
-      compilation.append("CAST(CASE WHEN ");
-      as.dataType.compile(compilation);
-      compilation.append(" IS NULL THEN NULL ELSE '+0 ' || TO_CHAR(");
-      as.dataType.compile(compilation);
-      compilation.append(", 'HH24:MI:SS.FF') END");
+    else if (as.cast instanceof kind.TIME && (as.dataType instanceof type.DATETIME || (as.dataType instanceof Keyword && ((Keyword<?>)as.dataType).kind() == kind.DATETIME.class))) {
+      compilation.append("CAST(CASE WHEN (");
+      compilable(as.dataType).compile(compilation);
+      compilation.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("), 'HH24:MI:SS.FF') END");
       compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
     }
-    else if (as.dataType instanceof type.TIME && as.cast instanceof type.CHAR) {
-      compilation.append("SUBSTR(CAST(");
-      as.dataType.compile(compilation);
-      compilation.append(" AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
+    else if (as.cast instanceof kind.CHAR && as.dataType instanceof kind.TIME) {
+      compilation.append("SUBSTR(CAST((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append(") AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
     }
     else {
-      compilation.append("CAST(");
-      if (as.cast instanceof type.TIME && !(as.dataType instanceof type.TIME))
+      compilation.append("CAST((");
+      if (as.cast instanceof kind.TIME && (!(as.dataType instanceof type.TIME) && (!(as.dataType instanceof Keyword) || ((Keyword<?>)as.dataType).kind() != kind.TIME.class)))
         compilation.append("'+0 ' || ");
 
-      as.dataType.compile(compilation);
-      compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
+      compilation.append("(");
+      compilable(as.dataType).compile(compilation);
+      compilation.append(")) AS ").append(as.cast.declare(compilation.vendor)).append(")");
     }
   }
 
@@ -250,8 +260,8 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compileNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
-    if (source instanceof Select.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm)) {
+  protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+    if (source instanceof Select.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
       compilation.append(" THEN 1 ELSE 0 END");
@@ -260,7 +270,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
     }
 
-    if (!(source instanceof Select.GROUP_BY) && !(subject instanceof Entity) && !(subject.wrapper() instanceof As))
+    if (!(source instanceof Select.GROUP_BY) && !(subject instanceof Entity) && (!(subject instanceof Subject) || !(((Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
   }
 }

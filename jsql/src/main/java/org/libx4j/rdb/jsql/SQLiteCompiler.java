@@ -64,9 +64,9 @@ final class SQLiteCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass());
       }
 
-      compilation.append("\", ");
-      as.dataType.compile(compilation);
-      compilation.append(")");
+      compilation.append("\", (");
+      compilable(as.dataType).compile(compilation);
+      compilation.append("))");
     }
     else {
       super.compile(as, compilation);

@@ -18,7 +18,7 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
-import org.libx4j.rdb.jsql.model.select;
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
@@ -26,52 +26,28 @@ final class ComparisonPredicate<T> extends type.BOOLEAN {
   protected final Compilable a;
   protected final Compilable b;
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final select.SELECT<?> a, final type.DataType<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
     this.operator = operator;
-    this.a = (Compilable)a;
-    this.b = b;
-  }
-
-  protected ComparisonPredicate(final operator.Logical<?> operator, final select.SELECT<?> a, final T b) {
-    this.operator = operator;
-    this.a = (Compilable)a;
+    this.a = Compiler.compilable(a);
     this.b = org.libx4j.rdb.jsql.type.DataType.wrap(b);
   }
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final select.SELECT<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
+    this.operator = operator;
+    this.a = Compiler.compilable(a);
+    this.b = b;
+  }
+
+  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final kind.DataType<?> b) {
     this.operator = operator;
     this.a = org.libx4j.rdb.jsql.type.DataType.wrap(a);
-    this.b = (Compilable)b;
+    this.b = Compiler.compilable(b);
   }
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final select.SELECT<?> b) {
+  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final kind.DataType<?> b) {
     this.operator = operator;
-    this.a = a;
-    this.b = (Compilable)b;
-  }
-
-  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final T b) {
-    this.operator = operator;
-    this.a = a;
-    this.b = org.libx4j.rdb.jsql.type.DataType.wrap(b);
-  }
-
-  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
-    this.operator = operator;
-    this.a = a;
-    this.b = b;
-  }
-
-  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final type.DataType<?> b) {
-    this.operator = operator;
-    this.a = org.libx4j.rdb.jsql.type.DataType.wrap(a);
-    this.b = b;
-  }
-
-  protected ComparisonPredicate(final operator.Logical<?> operator, final type.DataType<?> a, final type.DataType<?> b) {
-    this.operator = operator;
-    this.a = a;
-    this.b = b;
+    this.a = Compiler.compilable(a);
+    this.b = Compiler.compilable(b);
   }
 
   @Override

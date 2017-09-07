@@ -22,6 +22,7 @@ import java.sql.SQLException;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
+// FIXME: Is this class needed?
 abstract class ConditionWrapper<T> extends Condition<T> {
   @Override
   protected final String declare(final DBVendor vendor) {

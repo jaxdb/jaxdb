@@ -49,7 +49,7 @@ public abstract class DMLxTest {
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(ddlx, destFile);
 
-    final Set<NamespaceURI> excludes = Collections.asCollection(HashSet.class, NamespaceURI.getInstance("http://rdb.safris.org/dmlx.xsd"), NamespaceURI.getInstance("http://xml.lib4j.org/datatypes.xsd"));
+    final Set<NamespaceURI> excludes = Collections.asCollection(new HashSet<NamespaceURI>(), NamespaceURI.getInstance("http://rdb.safris.org/dmlx.xsd"), NamespaceURI.getInstance("http://xml.lib4j.org/datatypes.xsd"));
     final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
     new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
   }

@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.libx4j.rdb.jsql.generator.Args;
+import org.libx4j.rdb.jsql.model.kind;
 
 public class DMLGenerator {
   private static final Class<?>[] types = new Class<?>[] {
@@ -76,7 +77,7 @@ public class DMLGenerator {
     putApprox(r, a, b, includeScaled);
 
     final Class<?> ua = getUnsignedClass(a);
-    final boolean bUnsigned = type.UNSIGNED.class.isAssignableFrom(b);
+    final boolean bUnsigned = kind.Numeric.UNSIGNED.class.isAssignableFrom(b);
     final Class<?> ur = getUnsignedClass(r);
       putApprox(bUnsigned ? ur : r, ua, b, includeScaled);
 
@@ -90,7 +91,7 @@ public class DMLGenerator {
   private static Class<?> getGenericType(final Class<?> cls) {
     final Type[] genericTypes = Classes.getGenericSuperclasses(cls);
     final Class<?> generic = genericTypes != null ? (Class<?>)genericTypes[0] : getGenericType(cls.getSuperclass());
-    return type.UNSIGNED.class.isAssignableFrom(cls) ? getUnsignedPrimitive(generic) : generic;
+    return kind.Numeric.UNSIGNED.class.isAssignableFrom(cls) ? getUnsignedPrimitive(generic) : generic;
   }
 
   private static Class<?> getUnsignedPrimitive(final Class<?> cls) {
@@ -248,13 +249,13 @@ public class DMLGenerator {
   private static String newInstance(final Class<?> a, final Class<?> b, final Class<?> c) {
     if (a == type.FLOAT.class || a == type.DOUBLE.class || a == type.DECIMAL.class) {
       if (b == type.FLOAT.class || b == type.DOUBLE.class || b == type.DECIMAL.class) {
-        if (c == null || c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class || type.UNSIGNED.class.isAssignableFrom(c)) {
+        if (c == null || c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class || kind.Numeric.UNSIGNED.class.isAssignableFrom(c)) {
           final String ub = c == type.FLOAT.class || c == type.DOUBLE.class || c == type.DECIMAL.class ? " && b.unsigned()" : "";
           return "(a.unsigned()" + ub + " ? new " + getName(a) + ".UNSIGNED($p) : new " + getName(a) + "($p))";
         }
       }
 
-      if (type.UNSIGNED.class.isAssignableFrom(b))
+      if (kind.Numeric.UNSIGNED.class.isAssignableFrom(b))
         return "new " + getName(a) + ".UNSIGNED($p)";
     }
 
@@ -319,17 +320,17 @@ public class DMLGenerator {
         if (args.b == UNSIGNED.Integer.class && map.get(new Args(args.a, UNSIGNED.Long.class)) == entry.getValue())
           removes.add(args);
 
-        if (!type.UNSIGNED.class.isAssignableFrom(entry.getValue()) && UNSIGNED.class.isAssignableFrom(args.b))
+        if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && UNSIGNED.class.isAssignableFrom(args.b))
           removes.add(args);
       }
 
-      if (!type.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.a == type.FLOAT.UNSIGNED.class || args.a == type.DOUBLE.UNSIGNED.class || args.a == type.DECIMAL.UNSIGNED.class))
+      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.a == type.FLOAT.UNSIGNED.class || args.a == type.DOUBLE.UNSIGNED.class || args.a == type.DECIMAL.UNSIGNED.class))
         removes.add(args);
 
-      if (!type.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.b == type.FLOAT.UNSIGNED.class || args.b == type.DOUBLE.UNSIGNED.class || args.b == type.DECIMAL.UNSIGNED.class))
+      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (args.b == type.FLOAT.UNSIGNED.class || args.b == type.DOUBLE.UNSIGNED.class || args.b == type.DECIMAL.UNSIGNED.class))
         removes.add(args);
 
-      if (!type.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.a) || UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.b)))
+      if (!kind.Numeric.UNSIGNED.class.isAssignableFrom(entry.getValue()) && (UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.a) || UNSIGNED.UnsignedNumber.class.isAssignableFrom(args.b)))
         removes.add(args);
     }
 

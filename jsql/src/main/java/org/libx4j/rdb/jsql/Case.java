@@ -26,7 +26,7 @@ import org.libx4j.rdb.jsql.model.case_;
 final class Case implements case_ {
   protected static abstract class ChainedKeyword extends Keyword<Subject<?>> {
     protected ChainedKeyword(final ChainedKeyword parent) {
-      super(parent);
+      super(parent, null);
     }
 
     protected abstract type.DataType<?> createReturnType();

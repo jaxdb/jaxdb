@@ -16,13 +16,13 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.type.DataType;
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
-abstract class Predicate<T> extends ConditionWrapper<T> {
-  protected final type.DataType<?> dataType;
+abstract class Predicate extends type.BOOLEAN {
+  protected final kind.DataType<?> dataType;
 
-  protected Predicate(final DataType<?> dataType) {
+  protected Predicate(final kind.DataType<?> dataType) {
     this.dataType = dataType;
   }
 

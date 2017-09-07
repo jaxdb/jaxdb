@@ -28,8 +28,8 @@ import org.libx4j.rdb.vendor.DBVendor;
 
 final class Insert {
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
-    protected Execute(final Keyword<T> parent) {
-      super(parent);
+    protected Execute(final Keyword<T> parent, final Class<?> kind) {
+      super(parent, kind);
     }
 
     @Override
@@ -68,10 +68,10 @@ final class Insert {
   }
 
   protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements insert.VALUES<T> {
-    protected final select.SELECT<?> select;
+    protected final select.untyped.SELECT<?> select;
 
-    protected VALUES(final Keyword<T> parent, final select.SELECT<?> select) {
-      super(parent);
+    protected VALUES(final Keyword<T> parent, final Class<?> kind, final select.untyped.SELECT<?> select) {
+      super(parent, kind);
       this.select = select;
     }
 
@@ -88,15 +88,15 @@ final class Insert {
     protected final type.DataType<?>[] columns;
 
     @SafeVarargs
-    protected INSERT(final Entity ... entities) {
-      super(null);
+    protected INSERT(final Class<?> kind, final Entity ... entities) {
+      super(null, kind);
       this.entities = entities;
       this.columns = null;
     }
 
     @SafeVarargs
-    protected INSERT(final type.DataType<?> ... columns) {
-      super(null);
+    protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
+      super(null, kind);
       this.entities = null;
       this.columns = columns;
       Entity entity = columns[0].owner;
@@ -114,8 +114,8 @@ final class Insert {
     }
 
     @Override
-    public insert.VALUES<T> VALUES(final select.SELECT<? super T> select) {
-      return new VALUES<T>(this, select);
+    public insert.VALUES<T> VALUES(final select.untyped.SELECT<?> select) {
+      return new VALUES<T>(this, kind(), select);
     }
   }
 }

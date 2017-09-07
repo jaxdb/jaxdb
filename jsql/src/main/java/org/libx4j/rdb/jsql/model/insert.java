@@ -26,6 +26,6 @@ public interface insert {
   }
 
   public interface INSERT_VALUES<T extends Subject<?>> extends INSERT<T> {
-    public VALUES<T> VALUES(final select.SELECT<? super T> select);
+    public VALUES<T> VALUES(final select.untyped.SELECT<?> select);
   }
 }

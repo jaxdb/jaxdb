@@ -17,30 +17,38 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Set;
+
+import org.libx4j.rdb.jsql.model.kind;
 
 public class Cast {
   protected static final class AS extends Provision {
+    protected final kind.DataType<?> dataType;
     protected final type.DataType<?> cast;
-    protected final type.DataType<?> dataType;
     protected final Integer length;
     protected final Integer scale;
 
-    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
+    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = length;
       this.scale = null;
     }
 
-    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs) {
+    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = null;
       this.scale = null;
     }
 
-    protected AS(final type.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
+    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = length;
@@ -54,7 +62,7 @@ public class Cast {
 
     @Override
     protected Object evaluate(final Set<Evaluable> visited) {
-      return dataType.evaluate(visited);
+      return dataType instanceof Evaluable ? ((Evaluable)dataType).evaluate(visited) : null;
     }
   }
 
@@ -75,9 +83,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.BOOLEAN value;
+    private final kind.BOOLEAN<Boolean> value;
 
-    public BOOLEAN(final type.BOOLEAN value) {
+    public BOOLEAN(final kind.BOOLEAN<Boolean> value) {
       this.value = value;
     }
   }
@@ -189,9 +197,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.FLOAT value;
+    private final kind.FLOAT<Float> value;
 
-    public FLOAT(final type.FLOAT value) {
+    public FLOAT(final kind.FLOAT<Float> value) {
       this.value = value;
     }
   }
@@ -303,9 +311,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.DOUBLE value;
+    private final kind.DOUBLE<Double> value;
 
-    public DOUBLE(final type.DOUBLE value) {
+    public DOUBLE(final kind.DOUBLE<Double> value) {
       this.value = value;
     }
   }
@@ -429,9 +437,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.DECIMAL value;
+    private final kind.DECIMAL<BigDecimal> value;
 
-    public DECIMAL(final type.DECIMAL value) {
+    public DECIMAL(final kind.DECIMAL<BigDecimal> value) {
       this.value = value;
     }
   }
@@ -555,9 +563,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.TINYINT value;
+    private final kind.TINYINT<Byte> value;
 
-    public TINYINT(final type.TINYINT value) {
+    public TINYINT(final kind.TINYINT<Byte> value) {
       this.value = value;
     }
   }
@@ -681,9 +689,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.SMALLINT value;
+    private final kind.SMALLINT<Short> value;
 
-    public SMALLINT(final type.SMALLINT value) {
+    public SMALLINT(final kind.SMALLINT<Short> value) {
       this.value = value;
     }
   }
@@ -807,9 +815,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.INT value;
+    private final kind.INT<Integer> value;
 
-    public INT(final type.INT value) {
+    public INT(final kind.INT<Integer> value) {
       this.value = value;
     }
   }
@@ -933,9 +941,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.BIGINT value;
+    private final kind.BIGINT<Long> value;
 
-    public BIGINT(final type.BIGINT value) {
+    public BIGINT(final kind.BIGINT<Long> value) {
       this.value = value;
     }
   }
@@ -1067,9 +1075,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.Textual<?> value;
+    private final kind.Textual<?> value;
 
-    public CHAR(final type.Textual<?> value) {
+    public CHAR(final kind.Textual<?> value) {
       this.value = value;
     }
   }
@@ -1085,9 +1093,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.DATE value;
+    private final kind.DATE<LocalDate> value;
 
-    public DATE(final type.DATE value) {
+    public DATE(final kind.DATE<LocalDate> value) {
       this.value = value;
     }
   }
@@ -1115,9 +1123,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.TIME value;
+    private final kind.TIME<LocalTime> value;
 
-    public TIME(final type.TIME value) {
+    public TIME(final kind.TIME<LocalTime> value) {
       this.value = value;
     }
   }
@@ -1163,9 +1171,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.DATETIME value;
+    private final kind.DATETIME<LocalDateTime> value;
 
-    public DATETIME(final type.DATETIME value) {
+    public DATETIME(final kind.DATETIME<LocalDateTime> value) {
       this.value = value;
     }
   }
@@ -1187,9 +1195,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.CLOB value;
+    private final kind.CLOB<Reader> value;
 
-    public CLOB(final type.CLOB value) {
+    public CLOB(final kind.CLOB<Reader> value) {
       this.value = value;
     }
   }
@@ -1205,9 +1213,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.BLOB value;
+    private final kind.BLOB<InputStream> value;
 
-    public BLOB(final type.BLOB value) {
+    public BLOB(final kind.BLOB<InputStream> value) {
       this.value = value;
     }
   }
@@ -1229,9 +1237,9 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final type.BINARY value;
+    private final kind.BINARY<byte[]> value;
 
-    public BINARY(final type.BINARY value) {
+    public BINARY(final kind.BINARY<byte[]> value) {
       this.value = value;
     }
   }

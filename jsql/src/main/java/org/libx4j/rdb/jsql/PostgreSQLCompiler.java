@@ -100,7 +100,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   protected void compile(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
-    final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate<?>)when.condition).dataType.getClass() : when.condition.getClass();
+    final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate)when.condition).dataType.getClass() : when.condition.getClass();
     if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof Case.CHAR.ELSE)) {
       compilation.append(" WHEN ");
       if (when.condition instanceof type.ENUM)
@@ -136,7 +136,7 @@ final class PostgreSQLCompiler extends Compiler {
 
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
-      final Compilable arg = expression.args[i];
+      final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
         compilation.append(", ");
 
@@ -236,7 +236,7 @@ final class PostgreSQLCompiler extends Compiler {
     compilation.append(")");
   }
 
-  private static void compileCastNumeric(final type.Numeric<?> dateType, final Compilation compilation) throws IOException {
+  private static void compileCastNumeric(final Compilable dateType, final Compilation compilation) throws IOException {
     if (dateType instanceof type.ApproxNumeric) {
       compilation.append("CAST(");
       dateType.compile(compilation);
@@ -282,7 +282,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
-    if (function.b.get() != null && function.b.get().intValue() == 0) {
+    if (function.b instanceof type.Numeric<?> && ((type.Numeric<?>)function.b).get() != null && ((type.Numeric<?>)function.b).get().intValue() == 0) {
       function.a.compile(compilation);
     }
     else {

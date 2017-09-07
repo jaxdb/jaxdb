@@ -122,6 +122,14 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
+  protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+    if (from != null)
+      super.compile(from, compilation);
+    else
+      compilation.append(" FROM SYSIBM.SYSDUMMY1");
+  }
+
+  @Override
   protected void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
@@ -155,11 +163,11 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   protected void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
-    compilation.append("(");
-    expression.a.compile(compilation);
-    compilation.append(" ").append(expression.operator.toString()).append(" ");
-    expression.b.compile(compilation);
-    compilation.append(")");
+    compilation.append("((");
+    compilable(expression.a).compile(compilation);
+    compilation.append(") ").append(expression.operator.toString()).append(" (");
+    compilable(expression.b).compile(compilation);
+    compilation.append("))");
   }
 
   @Override
@@ -178,7 +186,7 @@ final class DerbyCompiler extends Compiler {
       final SELECT<?> select = ((SelectCommand)compilation.command).select();
       final SelectCommand command = (SelectCommand)compilation.command;
       if (command.groupBy() == null) {
-        final GROUP_BY<?> groupBy = new GROUP_BY(null, select.getEntitiesWithOwners());
+        final GROUP_BY<?> groupBy = new GROUP_BY(null, having.kind(), select.getEntitiesWithOwners());
         compile(groupBy, compilation);
       }
 

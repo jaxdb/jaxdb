@@ -27,7 +27,7 @@ import org.libx4j.rdb.vendor.DBVendor;
 final class Delete {
   private static abstract class Execute extends Keyword<type.DataType<?>> implements delete.DELETE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent);
+      super(parent, null);
     }
 
     @Override

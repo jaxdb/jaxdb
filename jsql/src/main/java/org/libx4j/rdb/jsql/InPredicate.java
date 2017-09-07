@@ -17,31 +17,33 @@
 package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Set;
 
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.jsql.model.select;
 
-final class InPredicate<T> extends Predicate<T> {
+final class InPredicate extends Predicate {
   protected final boolean positive;
   protected final Compilable[] values;
 
   @SafeVarargs
-  protected InPredicate(final type.DataType<T> dataType, final boolean positive, final T ... values) {
+  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
+    this(dataType, positive, Arrays.asList(values));
+  }
+
+  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Collection<?> values) {
     super(dataType);
     this.positive = positive;
-    this.values = new type.DataType<?>[values.length];
-    for (int i = 0; i < values.length; i++)
-      this.values[i] = type.DataType.wrap(values[i]);
+    final Iterator<?> iterator = values.iterator();
+    this.values = new type.DataType<?>[values.size()];
+    for (int i = 0; iterator.hasNext(); i++)
+      this.values[i] = org.libx4j.rdb.jsql.type.DataType.wrap(iterator.next());
   }
 
-  @SuppressWarnings("unchecked")
-  protected InPredicate(final type.DataType<T> dataType, final boolean positive, final Collection<T> values) {
-    this(dataType, positive, values.toArray((T[])Array.newInstance(dataType.type(), values.size())));
-  }
-
-  protected InPredicate(final type.DataType<T> dataType, final boolean positive, final select.SELECT<? extends type.DataType<T>> query) {
+  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final select.untyped.SELECT<? extends type.DataType<?>> query) {
     super(dataType);
     this.positive = positive;
     this.values = new Compilable[] {(Compilable)query};

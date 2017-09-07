@@ -74,9 +74,6 @@ public final class DBRegistry {
   }
 
   private static void register(final Class<? extends Schema> schema, final DBConnector dataSource, final boolean prepared, final boolean batching) {
-    if (schema == null)
-      throw new NullPointerException("schema == null");
-
     if (dataSource == null)
       throw new NullPointerException("dataSource == null");
 

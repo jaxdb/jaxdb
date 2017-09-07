@@ -19,7 +19,9 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class Entity extends Subject<Entity> implements Cloneable {
+import org.libx4j.rdb.jsql.model.kind;
+
+public abstract class Entity extends Subject<Entity> implements kind.Entity<Entity>, Cloneable {
   protected final type.DataType<?>[] column;
   protected final type.DataType<?>[] primary;
   private final boolean wasSelected;

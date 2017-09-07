@@ -149,8 +149,9 @@ public final class Schemas {
       }
     }
 
+    // FIXME: There should be a better exception thrown here
     if (digraph.hasCycle())
-      throw new IllegalStateException("Cycle detected in foreign key dependency graph: " + Collections.toString(digraph.getCycle(), " -> "));
+      throw new IllegalArgumentException("Cycle detected in foreign key dependency graph: " + Collections.toString(digraph.getCycle(), " -> "));
 
     final List<String> sortedNames = digraph.getTopologicalOrder();
     final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(sortedNames.size());

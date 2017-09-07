@@ -16,14 +16,36 @@
 
 package org.libx4j.rdb.jsql;
 
+import org.lib4j.lang.Classes;
+
 public abstract class Subject<T> extends Evaluable {
+  @SuppressWarnings("unchecked")
+  protected static <T extends Subject<?>>T as(final Keyword<T> select) {
+    try {
+      Keyword<T> keyword = select;
+      do {
+        if (keyword instanceof Select.SELECT) {
+          final Class<?> cls = Classes.getGreatestCommonSuperclass(((Select.SELECT<?>)keyword).entities);
+          final T as = (T)cls.newInstance();
+          as.wrapper(new As<T>(select, as, false));
+          return as;
+        }
+      }
+      while ((keyword = keyword.parent()) != null);
+      return null;
+    }
+    catch (final IllegalAccessException | InstantiationException e) {
+      throw new UnsupportedOperationException(e);
+    }
+  }
+
   private Evaluable wrapper;
 
   protected final Evaluable wrapper() {
     return wrapper;
   }
 
-  protected final Subject<T> wrapper(final Evaluable wrapper) {
+  protected Subject<T> wrapper(final Evaluable wrapper) {
     this.wrapper = wrapper;
     return this;
   }

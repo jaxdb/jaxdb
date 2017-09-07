@@ -22,15 +22,18 @@ import java.util.Set;
 final class As<T> extends Subject<T> {
   private final Evaluable parent;
   private final Subject<?> variable;
+  private final boolean explicit;
 
-  protected As(final Keyword<? extends Subject<?>> parent, final Subject<?> variable) {
+  protected As(final Keyword<? extends Subject<?>> parent, final Subject<?> variable, final boolean explicit) {
     this.parent = parent;
     this.variable = variable;
+    this.explicit = explicit;
   }
 
   protected As(final Subject<T> parent, final Subject<?> variable) {
     this.parent = parent;
     this.variable = variable;
+    this.explicit = true;
   }
 
   protected Evaluable parent() {
@@ -39,6 +42,10 @@ final class As<T> extends Subject<T> {
 
   protected Subject<?> getVariable() {
     return variable;
+  }
+
+  protected boolean isExplicit() {
+    return this.explicit;
   }
 
   @Override

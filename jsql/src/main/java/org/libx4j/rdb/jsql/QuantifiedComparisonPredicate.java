@@ -25,7 +25,7 @@ class QuantifiedComparisonPredicate<T> extends Subject<T> {
   protected final String qualifier;
   protected final Compilable subQuery;
 
-  protected QuantifiedComparisonPredicate(final String qualifier, final select.SELECT<?> subQuery) {
+  protected QuantifiedComparisonPredicate(final String qualifier, final select.untyped.SELECT<?> subQuery) {
     this.qualifier = qualifier;
     this.subQuery = (Compilable)subQuery;
   }

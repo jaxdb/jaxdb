@@ -51,6 +51,7 @@ import org.lib4j.lang.PackageNotFoundException;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
 import org.libx4j.rdb.jsql.Insert.VALUES;
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -80,11 +81,11 @@ public abstract class Compiler {
     return compiler;
   }
 
-  protected void compileEntities(final Collection<? extends Subject<?>> entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
-    final Iterator<? extends Subject<?>> iterator = entities.iterator();
+  protected void compileEntities(final Collection<? extends Compilable> entities, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+    final Iterator<? extends Compilable> iterator = entities.iterator();
     int index = 0;
     while (iterator.hasNext()) {
-      final Subject<?> subject = iterator.next();
+      final Compilable subject = iterator.next();
       compileNextSubject(subject, index++, source, translateTypes, compilation);
       if (iterator.hasNext())
         compilation.append(", ");
@@ -103,7 +104,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compileNextSubject(final Subject<?> subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (subject instanceof Entity) {
       final Entity entity = (Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
@@ -123,6 +124,11 @@ public abstract class Compiler {
       column.compile(compilation);
       checkTranslateType(translateTypes, column, index, compilation);
     }
+    else if (subject instanceof Keyword) {
+      compilation.append("(");
+      subject.compile(compilation);
+      compilation.append(")");
+    }
     else {
       throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
     }
@@ -131,6 +137,10 @@ public abstract class Compiler {
   protected abstract DBVendor getVendor();
 
   protected abstract void onRegister(final Connection connection) throws SQLException;
+
+  protected static <T extends kind.DataType<?>>Compilable compilable(final T kind) {
+    return (Compilable)kind;
+  }
 
   protected String tableName(final Entity entity, final Compilation compilation) {
     return entity.name();
@@ -171,6 +181,9 @@ public abstract class Compiler {
   }
 
   protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+    if (from == null)
+      return;
+
     compilation.append(" FROM ");
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
@@ -405,7 +418,7 @@ public abstract class Compiler {
                   if (evaluated == null) {
                     column.value = null;
                   }
-                  else if (column instanceof type.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
+                  else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
                     throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
                   }
                   else if (column.type() != evaluated.getClass()) {
@@ -524,7 +537,7 @@ public abstract class Compiler {
   protected void compile(final expression.String expression, final Compilation compilation) throws IOException {
     compilation.append("(");
     for (int i = 0; i < expression.args.length; i++) {
-      final Compilable arg = expression.args[i];
+      final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
         compilation.append(" ").append(expression.operator.toString()).append(" ");
 
@@ -543,21 +556,21 @@ public abstract class Compiler {
   }
 
   protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
-    compilation.append("(");
+    compilation.append("((");
     expression.a.compile(compilation);
-    compilation.append(" ");
+    compilation.append(") ");
     compilation.append(expression.operator.toString());
-    compilation.append(" ");
+    compilation.append(" (");
     expression.b.compile(compilation);
-    compilation.append(")");
+    compilation.append("))");
   }
 
   protected void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
-    compilation.append("(");
-    expression.a.compile(compilation);
-    compilation.append(" ").append(expression.operator.toString()).append(" ");
-    expression.b.compile(compilation);
-    compilation.append(")");
+    compilation.append("((");
+    compilable(expression.a).compile(compilation);
+    compilation.append(") ").append(expression.operator.toString()).append(" (");
+    compilable(expression.b).compile(compilation);
+    compilation.append("))");
   }
 
   protected void compile(final type.DataType<?> dataType, final Compilation compilation) throws IOException {
@@ -596,12 +609,14 @@ public abstract class Compiler {
     compilation.append("(");
     as.parent().compile(compilation);
     compilation.append(")");
-    final String string = compile(as);
-    compilation.append(" ");
-    if (string != null && string.length() != 0)
-      compilation.append(string).append(" ");
+    if (as.isExplicit()) {
+      final String string = compile(as);
+      compilation.append(" ");
+      if (string != null && string.length() != 0)
+        compilation.append(string).append(" ");
 
-    alias.compile(compilation);
+      alias.compile(compilation);
+    }
   }
 
   // FIXME: Move this to a Util class or something
@@ -648,8 +663,8 @@ public abstract class Compiler {
     unwrapAlias(predicate.b).compile(compilation);
   }
 
-  protected void compile(final InPredicate<?> predicate, final Compilation compilation) throws IOException {
-    predicate.dataType.compile(compilation);
+  protected void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
+    compilable(predicate.dataType).compile(compilation);
     compilation.append(" ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -665,15 +680,16 @@ public abstract class Compiler {
     compilation.append(")");
   }
 
-  protected void compile(final ExistsPredicate<?> predicate, final Compilation compilation) throws IOException {
+  protected void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException {
     compilation.append("EXISTS").append(" (");
     predicate.subQuery.compile(compilation);
     compilation.append(")");
   }
 
   protected void compile(final LikePredicate predicate, final Compilation compilation) throws IOException {
-    predicate.dataType.compile(compilation);
-    compilation.append(" ");
+    compilation.append("(");
+    compilable(predicate.dataType).compile(compilation);
+    compilation.append(") ");
     if (!predicate.positive)
       compilation.append("NOT ");
 
@@ -686,12 +702,12 @@ public abstract class Compiler {
     compilation.append(")");
   }
 
-  protected <T>void compile(final BetweenPredicates.BetweenPredicate<T> predicate, final Compilation compilation) throws IOException {
+  protected void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException {
     compilation.append("(");
-    predicate.dataType.compile(compilation);
+    compilable(predicate.dataType).compile(compilation);
     compilation.append(")");
     if (!predicate.positive)
-      compilation.append(" NOT ");
+      compilation.append(" NOT");
 
     compilation.append(" BETWEEN ");
     predicate.a().compile(compilation);
@@ -699,8 +715,8 @@ public abstract class Compiler {
     predicate.b().compile(compilation);
   }
 
-  protected <T>void compile(final NullPredicate<T> predicate, final Compilation compilation) throws IOException {
-    predicate.dataType.compile(compilation);
+  protected <T>void compile(final NullPredicate predicate, final Compilation compilation) throws IOException {
+    compilable(predicate.dataType).compile(compilation);
     compilation.append(" IS ");
     if (!predicate.positive)
       compilation.append("NOT ");
@@ -851,7 +867,7 @@ public abstract class Compiler {
       if (expression.distinct)
         compilation.append("DISTINCT ");
 
-      expression.column.compile(compilation);
+      compilable(expression.column).compile(compilation);
     }
 
     compilation.append(")");
@@ -895,9 +911,9 @@ public abstract class Compiler {
   }
 
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
-    compilation.append("CAST(");
-    as.dataType.compile(compilation);
-    compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
+    compilation.append("CAST((");
+    compilable(as.dataType).compile(compilation);
+    compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(")");
   }
 
   protected String cast(final type.DataType<?> dataType, final Compilation compilation) {
@@ -944,7 +960,15 @@ public abstract class Compiler {
     return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
+  protected String compile(final type.DECIMAL.UNSIGNED dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  }
+
   protected String compile(final type.DOUBLE dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  }
+
+  protected String compile(final type.DOUBLE.UNSIGNED dataType) {
     return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 
@@ -953,6 +977,10 @@ public abstract class Compiler {
   }
 
   protected String compile(final type.FLOAT dataType) {
+    return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
+  }
+
+  protected String compile(final type.FLOAT.UNSIGNED dataType) {
     return dataType.get() == null ? "NULL" : Dialect.NUMBER_FORMAT.get().format(dataType.get());
   }
 

@@ -28,7 +28,7 @@ import org.libx4j.rdb.vendor.DBVendor;
 final class Update {
   private static abstract class Execute extends Keyword<type.DataType<?>> implements update.UPDATE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent);
+      super(parent, null);
     }
 
     /**

@@ -19,11 +19,13 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-final class LikePredicate extends Predicate<String> {
+import org.libx4j.rdb.jsql.model.kind;
+
+final class LikePredicate extends Predicate {
   protected final boolean positive;
   protected final CharSequence pattern;
 
-  protected LikePredicate(final type.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
+  protected LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
     super(dataType);
     this.positive = positive;
     this.pattern = pattern;
@@ -31,10 +33,10 @@ final class LikePredicate extends Predicate<String> {
 
   @Override
   protected String evaluate(final Set<Evaluable> visited) {
-    if (dataType == null || pattern == null)
+    if (dataType == null || pattern == null || !(dataType instanceof Evaluable))
       return null;
 
-    final type.Textual<?> a = (type.Textual<?>)dataType.evaluate(visited);
+    final type.Textual<?> a = (type.Textual<?>)((Evaluable)dataType).evaluate(visited);
     if (a.get() == null)
       return null;
 

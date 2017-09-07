@@ -26,6 +26,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.lib4j.util.Temporals;
+import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class MySQLCompiler extends Compiler {
@@ -45,7 +46,7 @@ final class MySQLCompiler extends Compiler {
 
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
-      final Compilable arg = expression.args[i];
+      final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
         compilation.append(", ");
 
@@ -118,18 +119,20 @@ final class MySQLCompiler extends Compiler {
       super.compile(as, compilation);
     }
     else if (as.cast instanceof type.DECIMAL) {
-      compilation.append("CAST(");
-      as.dataType.compile(compilation);
+      compilation.append("CAST((");
+      compilable(as.dataType).compile(compilation);
       final String declaration = as.cast.declare(compilation.vendor);
-      compilation.append(" AS ").append(as.cast instanceof type.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
+      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
     }
     else if (as.cast instanceof type.ExactNumeric) {
-      compilation.append("CAST(");
-      as.dataType.compile(compilation);
-      compilation.append(" AS ").append(as.cast instanceof type.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
+      compilation.append("CAST((");
+      compilable(as.dataType).compile(compilation);
+      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
-      as.dataType.compile(compilation);
+      compilation.append("(");
+      compilable(as.dataType).compile(compilation);
+      compilation.append(")");
     }
   }
 
