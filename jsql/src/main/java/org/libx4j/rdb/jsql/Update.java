@@ -14,134 +14,21 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.jsql.model;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.libx4j.rdb.jsql.Condition;
+import org.libx4j.rdb.jsql.type;
 
-import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.model.case_;
-import org.libx4j.rdb.jsql.model.update;
-import org.libx4j.rdb.vendor.DBVendor;
-
-final class Update {
-  private static abstract class Execute extends Keyword<type.DataType<?>> implements update.UPDATE {
-    protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent, null);
-    }
-
-    /**
-     * Executes the SQL statement in this <code>XDE</code> object.
-     *
-     * @return the row modification count
-     * @exception SQLException if a database access error occurs
-     */
-    @Override
-    public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final UpdateCommand command = (UpdateCommand)normalize();
-      final Class<? extends Schema> schema = command.update().entities[0].schema();
-      Compilation compilation = null;
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        final DBVendor vendor = Schema.getDBVendor(connection);
-
-        compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
-        command.compile(compilation);
-        final int[] count = compilation.execute(connection);
-        compilation.afterExecute(true);
-        if (transaction == null)
-          connection.close();
-
-        return count;
-      }
-      catch (final SQLException e) {
-        if (compilation != null)
-          compilation.afterExecute(false);
-
-        throw SQLExceptionCatalog.lookup(e);
-      }
-    }
-
-    @Override
-    public int[] execute() throws IOException, SQLException {
-      return execute(null);
-    }
+public interface update {
+  public interface UPDATE extends ExecuteUpdate {
   }
 
-  private static abstract class UPDATE_SET extends Execute implements update.UPDATE_SET {
-    protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
-      super(parent);
-    }
-
-    @Override
-    public final <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
-      return new SET(this, column, to);
-    }
-
-    @Override
-    public final <T>SET SET(final type.DataType<T> column, final T to) {
-      final type.DataType<T> wrap = type.DataType.wrap(to);
-      return new SET(this, column, wrap);
-    }
+  public interface UPDATE_SET extends UPDATE {
+    public <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to);
+    public <T>SET SET(final type.DataType<T> column, final T to);
   }
 
-  protected static final class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
-    protected final Entity[] entities;
-
-    protected UPDATE(final Entity ... entities) {
-      super(null);
-      this.entities = entities;
-    }
-
-    @Override
-    protected final Command normalize() {
-      return new UpdateCommand(this);
-    }
-  }
-
-  protected static final class SET extends UPDATE_SET implements update.SET {
-    protected final type.DataType<?> column;
-    protected final Compilable to;
-
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final case_.CASE<? extends T> to) {
-      super(parent);
-      this.column = column;
-      this.to = (Provision)to;
-    }
-
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
-      super(parent);
-      this.column = column;
-      this.to = to;
-    }
-
-    @Override
-    public WHERE WHERE(final Condition<?> condition) {
-      return new WHERE(this, condition);
-    }
-
-    @Override
-    protected final Command normalize() {
-      final UpdateCommand command = (UpdateCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
-  }
-
-  protected static final class WHERE extends Execute implements update.UPDATE {
-    protected final Condition<?> condition;
-
-    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
-      super(parent);
-      this.condition = condition;
-    }
-
-    @Override
-    protected final Command normalize() {
-      final UpdateCommand command = (UpdateCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
+  public interface SET extends UPDATE_SET {
+    public UPDATE WHERE(final Condition<?> condition);
   }
 }

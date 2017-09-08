@@ -14,108 +14,18 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.jsql.model;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+import org.libx4j.rdb.jsql.Subject;
 
-import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.model.ExecuteUpdate;
-import org.libx4j.rdb.jsql.model.insert;
-import org.libx4j.rdb.jsql.model.select;
-import org.libx4j.rdb.vendor.DBVendor;
-
-final class Insert {
-  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
-    protected Execute(final Keyword<T> parent, final Class<?> kind) {
-      super(parent, kind);
-    }
-
-    @Override
-    public final int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final InsertCommand command = (InsertCommand)normalize();
-
-      final Class<? extends Schema> schema;
-      if (command.insert().entities != null)
-        schema = command.insert().entities[0].schema();
-      else if (command.insert().columns != null)
-        schema = command.insert().columns[0].owner.schema();
-      else
-        throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
-
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        final DBVendor vendor = Schema.getDBVendor(connection);
-
-        final Compilation compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
-        command.compile(compilation);
-        final int[] count = compilation.execute(connection);
-        if (transaction == null)
-          connection.close();
-
-        return count;
-      }
-      catch (final SQLException e) {
-        throw SQLExceptionCatalog.lookup(e);
-      }
-    }
-
-    @Override
-    public final int[] execute() throws IOException, SQLException {
-      return execute(null);
-    }
+public interface insert {
+  public interface VALUES<T extends Subject<?>> extends ExecuteUpdate {
   }
 
-  protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements insert.VALUES<T> {
-    protected final select.untyped.SELECT<?> select;
-
-    protected VALUES(final Keyword<T> parent, final Class<?> kind, final select.untyped.SELECT<?> select) {
-      super(parent, kind);
-      this.select = select;
-    }
-
-    @Override
-    protected Command normalize() {
-      final InsertCommand command = (InsertCommand)parent().normalize();
-      command.add(this);
-      return command;
-    }
+  public interface INSERT<T extends Subject<?>> extends ExecuteUpdate {
   }
 
-  protected static final class INSERT<T extends Subject<?>> extends Execute<T> implements insert.INSERT_VALUES<T> {
-    protected final Entity[] entities;
-    protected final type.DataType<?>[] columns;
-
-    @SafeVarargs
-    protected INSERT(final Class<?> kind, final Entity ... entities) {
-      super(null, kind);
-      this.entities = entities;
-      this.columns = null;
-    }
-
-    @SafeVarargs
-    protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
-      super(null, kind);
-      this.entities = null;
-      this.columns = columns;
-      Entity entity = columns[0].owner;
-      if (entity == null)
-        throw new IllegalArgumentException("DataType must belong to an Entity");
-
-      for (int i = 1; i < columns.length; i++)
-        if (!columns[i].owner.equals(entity))
-          throw new IllegalArgumentException("All columns must belong to the same Entity");
-    }
-
-    @Override
-    protected final Command normalize() {
-      return new InsertCommand(this);
-    }
-
-    @Override
-    public insert.VALUES<T> VALUES(final select.untyped.SELECT<?> select) {
-      return new VALUES<T>(this, kind(), select);
-    }
+  public interface INSERT_VALUES<T extends Subject<?>> extends INSERT<T> {
+    public VALUES<T> VALUES(final select.untyped.SELECT<?> select);
   }
 }
