@@ -26,9 +26,40 @@ import java.util.Map;
 import java.util.Set;
 
 import org.lib4j.lang.Classes;
-import org.libx4j.rdb.jsql.generator.Args;
 
 public class DMLGenerator {
+  public static class Args {
+    public final Class<?> a;
+    public final Class<?> b;
+
+    public Args(final Class<?> a, final Class<?> b) {
+      this.a = a;
+      this.b = b;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+      if (obj == this)
+        return true;
+
+      if (!(obj instanceof Args))
+        return false;
+
+      final Args that = (Args)obj;
+      return a == that.a && b == that.b;
+    }
+
+    @Override
+    public int hashCode() {
+      return a.hashCode() ^ b.hashCode();
+    }
+
+    @Override
+    public String toString() {
+      return "(" + DMLGenerator.getName(a) + ", " + DMLGenerator.getName(b) + ")";
+    }
+  }
+
   private static final Class<?>[] types = new Class<?>[] {
     type.FLOAT.class,
     type.DOUBLE.class,
