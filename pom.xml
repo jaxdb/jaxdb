@@ -39,6 +39,14 @@
     <module>dmlx</module>
     <module>jsql</module>
   </modules>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.libx4j.maven.plugin</groupId>
+        <artifactId>xml-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
   <dependencies>
     <dependency>
       <groupId>org.lib4j</groupId>
