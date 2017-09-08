@@ -23,7 +23,6 @@ import java.util.Set;
 
 import org.lib4j.lang.Numbers;
 import org.lib4j.util.Temporals;
-import org.libx4j.rdb.jsql.model.kind;
 
 final class BetweenPredicates {
   protected static abstract class BetweenPredicate extends Predicate {

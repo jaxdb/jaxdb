@@ -51,7 +51,6 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.$ddlx_time;
 import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
-import org.libx4j.rdb.jsql.Entity;
 import org.libx4j.rdb.jsql.EntityEnum;
 import org.libx4j.rdb.jsql.GenerateOn;
 import org.libx4j.rdb.jsql.Schema;
@@ -362,7 +361,7 @@ public class Generator {
   }
 
   public String makeTable(final $jsql_table table) {
-    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(Entity.class);
+    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(type.Entity.class);
     String out = "";
     String abs = "";
     if (table._abstract$().text())

@@ -18,8 +18,8 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
-import org.libx4j.rdb.jsql.Delete.DELETE;
-import org.libx4j.rdb.jsql.Delete.WHERE;
+import org.libx4j.rdb.jsql.DeleteImpl.DELETE;
+import org.libx4j.rdb.jsql.DeleteImpl.WHERE;
 
 final class DeleteCommand extends Command {
   private final DELETE delete;

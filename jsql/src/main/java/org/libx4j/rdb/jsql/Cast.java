@@ -25,8 +25,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Set;
 
-import org.libx4j.rdb.jsql.model.kind;
-
 public class Cast {
   protected static final class AS extends Provision {
     protected final kind.DataType<?> dataType;

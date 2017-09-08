@@ -90,18 +90,18 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Case.Simple.CASE<?,?> case_, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
-    if (case_.variable instanceof type.ENUM && _else instanceof Case.CHAR.ELSE)
+    if (case_.variable instanceof type.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
       toChar((type.ENUM<?>)case_.variable, compilation);
     else
       case_.variable.compile(compilation);
   }
 
   @Override
-  protected void compile(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate)when.condition).dataType.getClass() : when.condition.getClass();
-    if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof Case.CHAR.ELSE)) {
+    if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof CaseImpl.CHAR.ELSE)) {
       compilation.append(" WHEN ");
       if (when.condition instanceof type.ENUM)
         toChar((type.ENUM<?>)when.condition, compilation);
@@ -120,9 +120,9 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
-    if (_else instanceof Case.CHAR.ELSE && _else.value instanceof type.ENUM)
+    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
       toChar((type.ENUM<?>)_else.value, compilation);
     else
       _else.value.compile(compilation);

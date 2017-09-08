@@ -21,13 +21,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.model.delete;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class Delete {
-  private static abstract class Execute extends Keyword<type.DataType<?>> implements delete.DELETE {
+final class DeleteImpl {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements Delete.DELETE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent, null);
+      super(parent);
     }
 
     @Override
@@ -58,7 +57,7 @@ final class Delete {
     }
   }
 
-  protected static final class WHERE extends Execute implements delete.DELETE {
+  protected static final class WHERE extends Execute implements Delete.DELETE {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
@@ -74,10 +73,10 @@ final class Delete {
     }
   }
 
-  protected static final class DELETE extends Execute implements delete.DELETE_WHERE {
-    protected final Entity[] entities;
+  protected static final class DELETE extends Execute implements Delete._DELETE {
+    protected final type.Entity[] entities;
 
-    protected DELETE(final Entity ... entities) {
+    protected DELETE(final type.Entity ... entities) {
       super(null);
       this.entities = entities;
     }

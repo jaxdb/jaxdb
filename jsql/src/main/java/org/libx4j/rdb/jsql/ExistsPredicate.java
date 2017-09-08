@@ -19,12 +19,12 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-import org.libx4j.rdb.jsql.model.select;
+import org.libx4j.rdb.jsql.Select;
 
 final class ExistsPredicate extends Predicate {
   protected final Compilable subQuery;
 
-  protected ExistsPredicate(final select.untyped.SELECT<?> query) {
+  protected ExistsPredicate(final Select.untyped.SELECT<?> query) {
     super(null);
     this.subQuery = (Compilable)query;
   }

@@ -19,8 +19,6 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-import org.libx4j.rdb.jsql.model.kind;
-
 final class LikePredicate extends Predicate {
   protected final boolean positive;
   protected final CharSequence pattern;

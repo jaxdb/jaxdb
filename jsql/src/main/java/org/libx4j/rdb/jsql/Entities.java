@@ -52,14 +52,14 @@ public final class Entities {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static Entity toEntity(final $dmlx_row row) {
+  private static type.Entity toEntity(final $dmlx_row row) {
     final Element element = (Element)row;
     final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName entityName = getName(row.getClass().getSuperclass());
 
     try {
       final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
-      final Entity entity = (Entity)binding.newInstance();
+      final type.Entity entity = (type.Entity)binding.newInstance();
       final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
       while (attributeIterator.hasNext()) {
         final $xs_anySimpleType attribute = attributeIterator.next();
@@ -122,13 +122,13 @@ public final class Entities {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends Entity>T[] toEntities(final $dmlx_data data) {
+  public static <T extends type.Entity>T[] toEntities(final $dmlx_data data) {
     final Iterator<Binding> iterator = data.elementIterator();
-    final List<Entity> entities = new ArrayList<Entity>();
+    final List<type.Entity> entities = new ArrayList<type.Entity>();
     while (iterator.hasNext())
       entities.add(toEntity(($dmlx_row)iterator.next()));
 
-    return (T[])entities.toArray(new Entity[entities.size()]);
+    return (T[])entities.toArray(new type.Entity[entities.size()]);
   }
 
   private Entities() {

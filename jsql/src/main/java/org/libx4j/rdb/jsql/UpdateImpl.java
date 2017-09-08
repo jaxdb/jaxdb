@@ -21,14 +21,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.model.case_;
-import org.libx4j.rdb.jsql.model.update;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class Update {
-  private static abstract class Execute extends Keyword<type.DataType<?>> implements update.UPDATE {
+final class UpdateImpl {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements Update.UPDATE {
     protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent, null);
+      super(parent);
     }
 
     /**
@@ -69,7 +67,7 @@ final class Update {
     }
   }
 
-  private static abstract class UPDATE_SET extends Execute implements update.UPDATE_SET {
+  private static abstract class UPDATE_SET extends Execute implements Update._SET {
     protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
@@ -86,10 +84,10 @@ final class Update {
     }
   }
 
-  protected static final class UPDATE extends UPDATE_SET implements update.UPDATE_SET {
-    protected final Entity[] entities;
+  protected static final class UPDATE extends UPDATE_SET implements Update._SET {
+    protected final type.Entity[] entities;
 
-    protected UPDATE(final Entity ... entities) {
+    protected UPDATE(final type.Entity ... entities) {
       super(null);
       this.entities = entities;
     }
@@ -100,11 +98,11 @@ final class Update {
     }
   }
 
-  protected static final class SET extends UPDATE_SET implements update.SET {
+  protected static final class SET extends UPDATE_SET implements Update.SET {
     protected final type.DataType<?> column;
     protected final Compilable to;
 
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final case_.CASE<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = (Provision)to;
@@ -129,7 +127,7 @@ final class Update {
     }
   }
 
-  protected static final class WHERE extends Execute implements update.UPDATE {
+  protected static final class WHERE extends Execute implements Update.UPDATE {
     protected final Condition<?> condition;
 
     protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {

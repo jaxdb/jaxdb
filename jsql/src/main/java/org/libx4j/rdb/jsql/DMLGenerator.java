@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.libx4j.rdb.jsql.generator.Args;
-import org.libx4j.rdb.jsql.model.kind;
 
 public class DMLGenerator {
   private static final Class<?>[] types = new Class<?>[] {

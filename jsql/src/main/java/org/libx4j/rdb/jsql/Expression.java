@@ -21,8 +21,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.libx4j.rdb.jsql.model.kind;
-
 final class expression {
   protected static abstract class Generic<T> extends Subject<T> {
   }

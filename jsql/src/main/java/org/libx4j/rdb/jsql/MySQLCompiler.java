@@ -26,7 +26,6 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.lib4j.util.Temporals;
-import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class MySQLCompiler extends Compiler {

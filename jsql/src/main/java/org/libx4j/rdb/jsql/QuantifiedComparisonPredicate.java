@@ -19,13 +19,13 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-import org.libx4j.rdb.jsql.model.select;
+import org.libx4j.rdb.jsql.Select;
 
 class QuantifiedComparisonPredicate<T> extends Subject<T> {
   protected final String qualifier;
   protected final Compilable subQuery;
 
-  protected QuantifiedComparisonPredicate(final String qualifier, final select.untyped.SELECT<?> subQuery) {
+  protected QuantifiedComparisonPredicate(final String qualifier, final Select.untyped.SELECT<?> subQuery) {
     this.qualifier = qualifier;
     this.subQuery = (Compilable)subQuery;
   }

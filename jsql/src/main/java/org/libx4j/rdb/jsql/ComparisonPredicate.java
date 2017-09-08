@@ -18,7 +18,6 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
-import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {

@@ -39,7 +39,6 @@ import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Numbers;
-import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -2814,6 +2813,55 @@ public final class type {
 
       return compareTo((Numeric<?>)obj) == 0;
     }
+  }
+
+  public static abstract class Entity extends Subject<Entity> implements kind.Entity<Entity>, Cloneable {
+    protected final type.DataType<?>[] column;
+    protected final type.DataType<?>[] primary;
+    private final boolean wasSelected;
+
+    protected Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
+      this.wasSelected = wasSelected;
+      this.column = column;
+      this.primary = primary;
+    }
+
+    protected Entity(final Entity entity) {
+      this.wasSelected = false;
+      this.column = entity.column.clone();
+      this.primary = entity.primary.clone();
+    }
+
+    protected Entity() {
+      this.wasSelected = false;
+      this.column = null;
+      this.primary = null;
+    }
+
+    protected final boolean wasSelected() {
+      return wasSelected;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected final Class<? extends Schema> schema() {
+      return (Class<? extends Schema>)getClass().getEnclosingClass();
+    }
+
+    @Override
+    protected final Entity evaluate(final Set<Evaluable> visited) {
+      return this;
+    }
+
+    @Override
+    protected final void compile(final Compilation compilation) throws IOException {
+      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    }
+
+    protected abstract String name();
+    protected abstract Entity newInstance();
+
+    @Override
+    protected abstract Entity clone();
   }
 
   public static abstract class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {

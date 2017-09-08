@@ -14,18 +14,20 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.Subject;
+import org.libx4j.rdb.jsql.Select;
+import org.libx4j.rdb.jsql.Select.untyped;
+import org.libx4j.rdb.jsql.Select.untyped.SELECT;
 
-public interface insert {
+public interface Insert {
   public interface VALUES<T extends Subject<?>> extends ExecuteUpdate {
   }
 
   public interface INSERT<T extends Subject<?>> extends ExecuteUpdate {
   }
 
-  public interface INSERT_VALUES<T extends Subject<?>> extends INSERT<T> {
-    public VALUES<T> VALUES(final select.untyped.SELECT<?> select);
+  public interface _INSERT<T extends Subject<?>> extends INSERT<T> {
+    public VALUES<T> VALUES(final Select.untyped.SELECT<?> select);
   }
 }

@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.jsql.Update.SET;
-import org.libx4j.rdb.jsql.Update.UPDATE;
-import org.libx4j.rdb.jsql.Update.WHERE;
+import org.libx4j.rdb.jsql.UpdateImpl.SET;
+import org.libx4j.rdb.jsql.UpdateImpl.UPDATE;
+import org.libx4j.rdb.jsql.UpdateImpl.WHERE;
 
 final class UpdateCommand extends Command {
   private final UPDATE update;

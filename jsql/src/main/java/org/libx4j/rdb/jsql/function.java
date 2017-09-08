@@ -26,7 +26,6 @@ import java.util.Set;
 import org.lib4j.lang.Numbers;
 import org.lib4j.math.BigDecimals;
 import org.lib4j.math.SafeMath;
-import org.libx4j.rdb.jsql.model.kind;
 
 final class function {
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);

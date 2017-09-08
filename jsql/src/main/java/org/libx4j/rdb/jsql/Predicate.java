@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.model.kind;
 import org.libx4j.rdb.vendor.DBVendor;
 
 abstract class Predicate extends type.BOOLEAN {

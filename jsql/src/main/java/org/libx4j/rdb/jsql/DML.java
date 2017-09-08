@@ -30,12 +30,7 @@ import java.util.Set;
 
 import org.lib4j.lang.Arrays;
 import org.libx4j.rdb.dmlx.xe.$dmlx_data;
-import org.libx4j.rdb.jsql.model.case_;
-import org.libx4j.rdb.jsql.model.delete;
-import org.libx4j.rdb.jsql.model.insert;
-import org.libx4j.rdb.jsql.model.kind;
-import org.libx4j.rdb.jsql.model.select;
-import org.libx4j.rdb.jsql.model.update;
+import org.libx4j.rdb.jsql.Select;
 
 @SuppressWarnings("hiding")
 public final class DML {
@@ -699,379 +694,399 @@ public final class DML {
   /** SELECT **/
 
   @SafeVarargs
-  public static <T extends Entity>select.Entity._SELECT<T> SELECT(final T ... entities) {
-    return new Select.SELECT<T>(false, kind.Entity.class, entities);
+  public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> SELECT(final kind.ARRAY<? extends T> ... entities) {
+    return new SelectImpl.ARRAY.SELECT<type.ARRAY<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.Entity._SELECT<Subject<?>> SELECT(final kind.Subject<?> ... entities) {
-    return new Select.SELECT<Subject<?>>(false, kind.Subject.class, entities);
+  public static Select.BIGINT._SELECT<type.BIGINT> SELECT(final kind.BIGINT<Long> ... entities) {
+    return new SelectImpl.BIGINT.SELECT<type.BIGINT>(false, entities);
   }
 
   @SafeVarargs
-  public static <T>select.DataType._SELECT<type.DataType<T>> SELECT(final kind.DataType<? extends T> ... entities) {
-    return new Select.SELECT<type.DataType<T>>(false, kind.DataType.class, entities);
+  public static Select.BIGINT.UNSIGNED._SELECT<type.BIGINT.UNSIGNED> SELECT(final kind.BIGINT.UNSIGNED<BigInteger> ... entities) {
+    return new SelectImpl.BIGINT.UNSIGNED.SELECT<type.BIGINT.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static <T extends Number>select.Numeric._SELECT<type.Numeric<T>> SELECT(final kind.Numeric<? extends T> ... entities) {
-    return new Select.SELECT<type.Numeric<T>>(false, kind.Numeric.class, entities);
+  public static Select.BINARY._SELECT<type.BINARY> SELECT(final kind.BINARY<byte[]> ... entities) {
+    return new SelectImpl.BINARY.SELECT<type.BINARY>(false, entities);
   }
 
   @SafeVarargs
-  public static <T>select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) {
-    return new Select.SELECT<type.Textual<T>>(false, kind.Textual.class, entities);
+  public static Select.BLOB._SELECT<type.BLOB> SELECT(final kind.BLOB<InputStream> ... entities) {
+    return new SelectImpl.BLOB.SELECT<type.BLOB>(false, entities);
   }
 
   @SafeVarargs
-  public static <T>select.ARRAY._SELECT<type.ARRAY<T>> SELECT(final kind.ARRAY<? extends T> ... entities) {
-    return new Select.SELECT<type.ARRAY<T>>(false, kind.ARRAY.class, entities);
+  public static Select.BOOLEAN._SELECT<type.BOOLEAN> SELECT(final kind.BOOLEAN<Boolean> ... entities) {
+    return new SelectImpl.BOOLEAN.SELECT<type.BOOLEAN>(false, entities);
   }
 
   @SafeVarargs
-  public static select.BIGINT._SELECT<type.BIGINT> SELECT(final kind.BIGINT<Long> ... entities) {
-    return new Select.SELECT<type.BIGINT>(false, kind.BIGINT.class, entities);
+  public static Select.CHAR._SELECT<type.CHAR> SELECT(final kind.CHAR<String> ... entities) {
+    return new SelectImpl.CHAR.SELECT<type.CHAR>(false, entities);
   }
 
   @SafeVarargs
-  public static select.BIGINT._SELECT<type.BIGINT.UNSIGNED> SELECT(final kind.BIGINT.UNSIGNED<BigInteger> ... entities) {
-    return new Select.SELECT<type.BIGINT.UNSIGNED>(false, kind.BIGINT.UNSIGNED.class, entities);
+  public static Select.CLOB._SELECT<type.CLOB> SELECT(final kind.CLOB<Reader> ... entities) {
+    return new SelectImpl.CLOB.SELECT<type.CLOB>(false, entities);
   }
 
   @SafeVarargs
-  public static select.BINARY._SELECT<type.BINARY> SELECT(final kind.BINARY<byte[]> ... entities) {
-    return new Select.SELECT<type.BINARY>(false, kind.BINARY.class, entities);
+  public static <T>Select.DataType._SELECT<type.DataType<T>> SELECT(final kind.DataType<? extends T> ... entities) {
+    return new SelectImpl.DataType.SELECT<type.DataType<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.BLOB._SELECT<type.BLOB> SELECT(final kind.BLOB<InputStream> ... entities) {
-    return new Select.SELECT<type.BLOB>(false, kind.BLOB.class, entities);
+  public static Select.DATE._SELECT<type.DATE> SELECT(final kind.DATE<LocalDate> ... entities) {
+    return new SelectImpl.DATE.SELECT<type.DATE>(false, entities);
   }
 
   @SafeVarargs
-  public static select.BOOLEAN._SELECT<type.BOOLEAN> SELECT(final kind.BOOLEAN<Boolean> ... entities) {
-    return new Select.SELECT<type.BOOLEAN>(false, kind.BOOLEAN.class, entities);
+  public static Select.DATETIME._SELECT<type.DATETIME> SELECT(final kind.DATETIME<LocalDateTime> ... entities) {
+    return new SelectImpl.DATETIME.SELECT<type.DATETIME>(false, entities);
   }
 
   @SafeVarargs
-  public static select.CHAR._SELECT<type.CHAR> SELECT(final kind.CHAR<String> ... entities) {
-    return new Select.SELECT<type.CHAR>(false, kind.CHAR.class, entities);
+  public static Select.DECIMAL._SELECT<type.DECIMAL> SELECT(final kind.DECIMAL<BigDecimal> ... entities) {
+    return new SelectImpl.DECIMAL.SELECT<type.DECIMAL>(false, entities);
   }
 
   @SafeVarargs
-  public static select.CLOB._SELECT<type.CLOB> SELECT(final kind.CLOB<Reader> ... entities) {
-    return new Select.SELECT<type.CLOB>(false, kind.CLOB.class, entities);
+  public static Select.DECIMAL.UNSIGNED._SELECT<type.DECIMAL.UNSIGNED> SELECT(final kind.DECIMAL.UNSIGNED<BigDecimal> ... entities) {
+    return new SelectImpl.DECIMAL.UNSIGNED.SELECT<type.DECIMAL.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DATE._SELECT<type.DATE> SELECT(final kind.DATE<LocalDate> ... entities) {
-    return new Select.SELECT<type.DATE>(false, kind.DATE.class, entities);
+  public static Select.DOUBLE._SELECT<type.DOUBLE> SELECT(final kind.DOUBLE<Double> ... entities) {
+    return new SelectImpl.DOUBLE.SELECT<type.DOUBLE>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DATETIME._SELECT<type.DATETIME> SELECT(final kind.DATETIME<LocalDateTime> ... entities) {
-    return new Select.SELECT<type.DATETIME>(false, kind.DATETIME.class, entities);
+  public static Select.DOUBLE.UNSIGNED._SELECT<type.DOUBLE.UNSIGNED> SELECT(final kind.DOUBLE.UNSIGNED<Double> ... entities) {
+    return new SelectImpl.DOUBLE.UNSIGNED.SELECT<type.DOUBLE.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DECIMAL._SELECT<type.DECIMAL> SELECT(final kind.DECIMAL<BigDecimal> ... entities) {
-    return new Select.SELECT<type.DECIMAL>(false, kind.DECIMAL.class, entities);
+  public static <T extends type.Entity>Select.Entity._SELECT<T> SELECT(final T ... entities) {
+    return new SelectImpl.Entity.SELECT<T>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DECIMAL._SELECT<type.DECIMAL.UNSIGNED> SELECT(final kind.DECIMAL.UNSIGNED<BigDecimal> ... entities) {
-    return new Select.SELECT<type.DECIMAL.UNSIGNED>(false, kind.DECIMAL.UNSIGNED.class, entities);
+  public static <T extends Enum<?> & EntityEnum>Select.ENUM._SELECT<type.ENUM<T>> SELECT(final kind.ENUM<? extends T> ... entities) {
+    return new SelectImpl.ENUM.SELECT<type.ENUM<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DOUBLE._SELECT<type.DOUBLE> SELECT(final kind.DOUBLE<Double> ... entities) {
-    return new Select.SELECT<type.DOUBLE>(false, kind.DOUBLE.class, entities);
+  public static Select.FLOAT._SELECT<type.FLOAT> SELECT(final kind.FLOAT<Float> ... entities) {
+    return new SelectImpl.FLOAT.SELECT<type.FLOAT>(false, entities);
   }
 
   @SafeVarargs
-  public static select.DOUBLE._SELECT<type.DOUBLE.UNSIGNED> SELECT(final kind.DOUBLE.UNSIGNED<Double> ... entities) {
-    return new Select.SELECT<type.DOUBLE.UNSIGNED>(false, kind.DOUBLE.UNSIGNED.class, entities);
+  public static Select.FLOAT.UNSIGNED._SELECT<type.FLOAT.UNSIGNED> SELECT(final kind.FLOAT.UNSIGNED<Float> ... entities) {
+    return new SelectImpl.FLOAT.UNSIGNED.SELECT<type.FLOAT.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static <T extends Enum<?> & EntityEnum>select.ENUM._SELECT<type.ENUM<T>> SELECT(final kind.ENUM<? extends T> ... entities) {
-    return new Select.SELECT<type.ENUM<T>>(false, kind.ENUM.class, entities);
+  public static Select.INT._SELECT<type.INT> SELECT(final kind.INT<Integer> ... entities) {
+    return new SelectImpl.INT.SELECT<type.INT>(false, entities);
   }
 
   @SafeVarargs
-  public static select.FLOAT._SELECT<type.FLOAT> SELECT(final kind.FLOAT<Float> ... entities) {
-    return new Select.SELECT<type.FLOAT>(false, kind.FLOAT.class, entities);
+  public static Select.INT.UNSIGNED._SELECT<type.INT.UNSIGNED> SELECT(final kind.INT.UNSIGNED<Long> ... entities) {
+    return new SelectImpl.INT.UNSIGNED.SELECT<type.INT.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static select.FLOAT._SELECT<type.FLOAT.UNSIGNED> SELECT(final kind.FLOAT.UNSIGNED<Float> ... entities) {
-    return new Select.SELECT<type.FLOAT.UNSIGNED>(false, kind.FLOAT.UNSIGNED.class, entities);
+  public static <T extends Number>Select.LargeObject._SELECT<type.LargeObject<T>> SELECT(final kind.LargeObject<? extends T> ... entities) {
+    return new SelectImpl.LargeObject.SELECT<type.LargeObject<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.INT._SELECT<type.INT> SELECT(final kind.INT<Integer> ... entities) {
-    return new Select.SELECT<type.INT>(false, kind.INT.class, entities);
+  public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> SELECT(final kind.Numeric<? extends T> ... entities) {
+    return new SelectImpl.Numeric.SELECT<type.Numeric<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.INT._SELECT<type.INT.UNSIGNED> SELECT(final kind.INT.UNSIGNED<Long> ... entities) {
-    return new Select.SELECT<type.INT.UNSIGNED>(false, kind.INT.UNSIGNED.class, entities);
+  public static Select.SMALLINT._SELECT<type.SMALLINT> SELECT(final kind.SMALLINT<Short> ... entities) {
+    return new SelectImpl.SMALLINT.SELECT<type.SMALLINT>(false, entities);
   }
 
   @SafeVarargs
-  public static select.SMALLINT._SELECT<type.SMALLINT> SELECT(final kind.SMALLINT<Short> ... entities) {
-    return new Select.SELECT<type.SMALLINT>(false, kind.SMALLINT.class, entities);
+  public static Select.SMALLINT.UNSIGNED._SELECT<type.SMALLINT.UNSIGNED> SELECT(final kind.SMALLINT.UNSIGNED<Integer> ... entities) {
+    return new SelectImpl.SMALLINT.UNSIGNED.SELECT<type.SMALLINT.UNSIGNED>(false, entities);
   }
 
   @SafeVarargs
-  public static select.SMALLINT._SELECT<type.SMALLINT.UNSIGNED> SELECT(final kind.SMALLINT.UNSIGNED<Integer> ... entities) {
-    return new Select.SELECT<type.SMALLINT.UNSIGNED>(false, kind.SMALLINT.UNSIGNED.class, entities);
+  public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> SELECT(final kind.Temporal<? extends T> ... entities) {
+    return new SelectImpl.Temporal.SELECT<type.Temporal<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.TIME._SELECT<type.TIME> SELECT(final kind.TIME<LocalTime> ... entities) {
-    return new Select.SELECT<type.TIME>(false, kind.TIME.class, entities);
+  public static <T>Select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) {
+    return new SelectImpl.Textual.SELECT<type.Textual<T>>(false, entities);
   }
 
   @SafeVarargs
-  public static select.TINYINT._SELECT<type.TINYINT> SELECT(final kind.TINYINT<Byte> ... entities) {
-    return new Select.SELECT<type.TINYINT>(false, kind.TINYINT.class, entities);
+  public static Select.TIME._SELECT<type.TIME> SELECT(final kind.TIME<LocalTime> ... entities) {
+    return new SelectImpl.TIME.SELECT<type.TIME>(false, entities);
   }
 
   @SafeVarargs
-  public static select.TINYINT._SELECT<type.TINYINT.UNSIGNED> SELECT(final kind.TINYINT.UNSIGNED<Short> ... entities) {
-    return new Select.SELECT<type.TINYINT.UNSIGNED>(false, kind.TINYINT.UNSIGNED.class, entities);
+  public static Select.TINYINT._SELECT<type.TINYINT> SELECT(final kind.TINYINT<Byte> ... entities) {
+    return new SelectImpl.TINYINT.SELECT<type.TINYINT>(false, entities);
+  }
+
+  @SafeVarargs
+  public static Select.TINYINT.UNSIGNED._SELECT<type.TINYINT.UNSIGNED> SELECT(final kind.TINYINT.UNSIGNED<Short> ... entities) {
+    return new SelectImpl.TINYINT.UNSIGNED.SELECT<type.TINYINT.UNSIGNED>(false, entities);
+  }
+
+  @SafeVarargs
+  public static Select.Entity._SELECT<Subject<?>> SELECT(final kind.Subject<?> ... entities) {
+    return new SelectImpl.Entity.SELECT<Subject<?>>(false, entities);
   }
 
   public static final class SELECT {
     @SafeVarargs
-    public static <T extends Entity>select.Entity._SELECT<T> DISTINCT(final T ... entities) {
-      return new Select.SELECT<T>(true, kind.Entity.class, entities);
+    public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> DISTINCT(final kind.ARRAY<? extends T> ... entities) {
+      return new SelectImpl.ARRAY.SELECT<type.ARRAY<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.Entity._SELECT<Subject<?>> DISTINCT(final kind.Subject<?> ... entities) {
-      return new Select.SELECT<Subject<?>>(true, kind.Subject.class, entities);
+    public static Select.BIGINT._SELECT<type.BIGINT> DISTINCT(final kind.BIGINT<Long> ... entities) {
+      return new SelectImpl.BIGINT.SELECT<type.BIGINT>(true, entities);
     }
 
     @SafeVarargs
-    public static <T>select.DataType._SELECT<type.DataType<T>> DISTINCT(final kind.DataType<? extends T> ... entities) {
-      return new Select.SELECT<type.DataType<T>>(true, kind.DataType.class, entities);
+    public static Select.BIGINT.UNSIGNED._SELECT<type.BIGINT.UNSIGNED> DISTINCT(final kind.BIGINT.UNSIGNED<BigInteger> ... entities) {
+      return new SelectImpl.BIGINT.UNSIGNED.SELECT<type.BIGINT.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static <T extends Number>select.Numeric._SELECT<type.Numeric<?>> DISTINCT(final kind.Numeric<? extends T> ... entities) {
-      return new Select.SELECT<type.Numeric<?>>(true, kind.Numeric.class, entities);
+    public static Select.BINARY._SELECT<type.BINARY> DISTINCT(final kind.BINARY<byte[]> ... entities) {
+      return new SelectImpl.BINARY.SELECT<type.BINARY>(true, entities);
     }
 
     @SafeVarargs
-    public static <T>select.Textual._SELECT<type.Textual<?>> DISTINCT(final kind.Textual<? extends T> ... entities) {
-      return new Select.SELECT<type.Textual<?>>(true, kind.Textual.class, entities);
+    public static Select.BLOB._SELECT<type.BLOB> DISTINCT(final kind.BLOB<InputStream> ... entities) {
+      return new SelectImpl.BLOB.SELECT<type.BLOB>(true, entities);
     }
 
     @SafeVarargs
-    public static <T>select.ARRAY._SELECT<type.ARRAY<T>> DISTINCT(final kind.ARRAY<? extends T> ... entities) {
-      return new Select.SELECT<type.ARRAY<T>>(true, kind.ARRAY.class, entities);
+    public static Select.BOOLEAN._SELECT<type.BOOLEAN> DISTINCT(final kind.BOOLEAN<Boolean> ... entities) {
+      return new SelectImpl.BOOLEAN.SELECT<type.BOOLEAN>(true, entities);
     }
 
     @SafeVarargs
-    public static select.BIGINT._SELECT<type.BIGINT> DISTINCT(final kind.BIGINT<Long> ... entities) {
-      return new Select.SELECT<type.BIGINT>(true, kind.BIGINT.class, entities);
+    public static Select.CHAR._SELECT<type.CHAR> DISTINCT(final kind.CHAR<String> ... entities) {
+      return new SelectImpl.CHAR.SELECT<type.CHAR>(true, entities);
     }
 
     @SafeVarargs
-    public static select.BIGINT._SELECT<type.BIGINT.UNSIGNED> DISTINCT(final kind.BIGINT.UNSIGNED<BigInteger> ... entities) {
-      return new Select.SELECT<type.BIGINT.UNSIGNED>(true, kind.BIGINT.UNSIGNED.class, entities);
+    public static Select.CLOB._SELECT<type.CLOB> DISTINCT(final kind.CLOB<Reader> ... entities) {
+      return new SelectImpl.CLOB.SELECT<type.CLOB>(true, entities);
     }
 
     @SafeVarargs
-    public static select.BINARY._SELECT<type.BINARY> DISTINCT(final kind.BINARY<byte[]> ... entities) {
-      return new Select.SELECT<type.BINARY>(true, kind.BINARY.class, entities);
+    public static <T>Select.DataType._SELECT<type.DataType<T>> DISTINCT(final kind.DataType<? extends T> ... entities) {
+      return new SelectImpl.DataType.SELECT<type.DataType<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.BLOB._SELECT<type.BLOB> DISTINCT(final kind.BLOB<InputStream> ... entities) {
-      return new Select.SELECT<type.BLOB>(true, kind.BLOB.class, entities);
+    public static Select.DATE._SELECT<type.DATE> DISTINCT(final kind.DATE<LocalDate> ... entities) {
+      return new SelectImpl.DATE.SELECT<type.DATE>(true, entities);
     }
 
     @SafeVarargs
-    public static select.BOOLEAN._SELECT<type.BOOLEAN> DISTINCT(final kind.BOOLEAN<Boolean> ... entities) {
-      return new Select.SELECT<type.BOOLEAN>(true, kind.BOOLEAN.class, entities);
+    public static Select.DATETIME._SELECT<type.DATETIME> DISTINCT(final kind.DATETIME<LocalDateTime> ... entities) {
+      return new SelectImpl.DATETIME.SELECT<type.DATETIME>(true, entities);
     }
 
     @SafeVarargs
-    public static select.CHAR._SELECT<type.CHAR> DISTINCT(final kind.CHAR<String> ... entities) {
-      return new Select.SELECT<type.CHAR>(true, kind.CHAR.class, entities);
+    public static Select.DECIMAL._SELECT<type.DECIMAL> DISTINCT(final kind.DECIMAL<BigDecimal> ... entities) {
+      return new SelectImpl.DECIMAL.SELECT<type.DECIMAL>(true, entities);
     }
 
     @SafeVarargs
-    public static select.CLOB._SELECT<type.CLOB> DISTINCT(final kind.CLOB<Reader> ... entities) {
-      return new Select.SELECT<type.CLOB>(true, kind.CLOB.class, entities);
+    public static Select.DECIMAL.UNSIGNED._SELECT<type.DECIMAL.UNSIGNED> DISTINCT(final kind.DECIMAL.UNSIGNED<BigDecimal> ... entities) {
+      return new SelectImpl.DECIMAL.UNSIGNED.SELECT<type.DECIMAL.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DATE._SELECT<type.DATE> DISTINCT(final kind.DATE<LocalDate> ... entities) {
-      return new Select.SELECT<type.DATE>(true, kind.DATE.class, entities);
+    public static Select.DOUBLE._SELECT<type.DOUBLE> DISTINCT(final kind.DOUBLE<Double> ... entities) {
+      return new SelectImpl.DOUBLE.SELECT<type.DOUBLE>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DATETIME._SELECT<type.DATETIME> DISTINCT(final kind.DATETIME<LocalDateTime> ... entities) {
-      return new Select.SELECT<type.DATETIME>(true, kind.DATETIME.class, entities);
+    public static Select.DOUBLE.UNSIGNED._SELECT<type.DOUBLE.UNSIGNED> DISTINCT(final kind.DOUBLE.UNSIGNED<Double> ... entities) {
+      return new SelectImpl.DOUBLE.UNSIGNED.SELECT<type.DOUBLE.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DECIMAL._SELECT<type.DECIMAL> DISTINCT(final kind.DECIMAL<BigDecimal> ... entities) {
-      return new Select.SELECT<type.DECIMAL>(true, kind.DECIMAL.class, entities);
+    public static <T extends type.Entity>Select.Entity._SELECT<T> DISTINCT(final T ... entities) {
+      return new SelectImpl.Entity.SELECT<T>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DECIMAL._SELECT<type.DECIMAL.UNSIGNED> DISTINCT(final kind.DECIMAL.UNSIGNED<BigDecimal> ... entities) {
-      return new Select.SELECT<type.DECIMAL.UNSIGNED>(true, kind.DECIMAL.UNSIGNED.class, entities);
+    public static <T extends Enum<?> & EntityEnum>Select.ENUM._SELECT<type.ENUM<T>> DISTINCT(final kind.ENUM<? extends T> ... entities) {
+      return new SelectImpl.ENUM.SELECT<type.ENUM<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DOUBLE._SELECT<type.DOUBLE> DISTINCT(final kind.DOUBLE<Double> ... entities) {
-      return new Select.SELECT<type.DOUBLE>(true, kind.DOUBLE.class, entities);
+    public static Select.FLOAT._SELECT<type.FLOAT> DISTINCT(final kind.FLOAT<Float> ... entities) {
+      return new SelectImpl.FLOAT.SELECT<type.FLOAT>(true, entities);
     }
 
     @SafeVarargs
-    public static select.DOUBLE._SELECT<type.DOUBLE.UNSIGNED> DISTINCT(final kind.DOUBLE.UNSIGNED<Double> ... entities) {
-      return new Select.SELECT<type.DOUBLE.UNSIGNED>(true, kind.DOUBLE.UNSIGNED.class, entities);
+    public static Select.FLOAT.UNSIGNED._SELECT<type.FLOAT.UNSIGNED> DISTINCT(final kind.FLOAT.UNSIGNED<Float> ... entities) {
+      return new SelectImpl.FLOAT.UNSIGNED.SELECT<type.FLOAT.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static <T extends Enum<?> & EntityEnum>select.ENUM._SELECT<type.ENUM<T>> DISTINCT(final kind.ENUM<? extends T> ... entities) {
-      return new Select.SELECT<type.ENUM<T>>(true, kind.ENUM.class, entities);
+    public static Select.INT._SELECT<type.INT> DISTINCT(final kind.INT<Integer> ... entities) {
+      return new SelectImpl.INT.SELECT<type.INT>(true, entities);
     }
 
     @SafeVarargs
-    public static select.FLOAT._SELECT<type.FLOAT> DISTINCT(final kind.FLOAT<Float> ... entities) {
-      return new Select.SELECT<type.FLOAT>(true, kind.FLOAT.class, entities);
+    public static Select.INT.UNSIGNED._SELECT<type.INT.UNSIGNED> DISTINCT(final kind.INT.UNSIGNED<Long> ... entities) {
+      return new SelectImpl.INT.UNSIGNED.SELECT<type.INT.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static select.FLOAT._SELECT<type.FLOAT.UNSIGNED> DISTINCT(final kind.FLOAT.UNSIGNED<Float> ... entities) {
-      return new Select.SELECT<type.FLOAT.UNSIGNED>(true, kind.FLOAT.UNSIGNED.class, entities);
+    public static <T extends Number>Select.LargeObject._SELECT<type.LargeObject<T>> DISTINCT(final kind.LargeObject<? extends T> ... entities) {
+      return new SelectImpl.LargeObject.SELECT<type.LargeObject<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.INT._SELECT<type.INT> DISTINCT(final kind.INT<Integer> ... entities) {
-      return new Select.SELECT<type.INT>(true, kind.INT.class, entities);
+    public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> DISTINCT(final kind.Numeric<? extends T> ... entities) {
+      return new SelectImpl.Numeric.SELECT<type.Numeric<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.INT._SELECT<type.INT.UNSIGNED> DISTINCT(final kind.INT.UNSIGNED<Long> ... entities) {
-      return new Select.SELECT<type.INT.UNSIGNED>(true, kind.INT.UNSIGNED.class, entities);
+    public static Select.SMALLINT._SELECT<type.SMALLINT> DISTINCT(final kind.SMALLINT<Short> ... entities) {
+      return new SelectImpl.SMALLINT.SELECT<type.SMALLINT>(true, entities);
     }
 
     @SafeVarargs
-    public static select.SMALLINT._SELECT<type.SMALLINT> DISTINCT(final kind.SMALLINT<Short> ... entities) {
-      return new Select.SELECT<type.SMALLINT>(true, kind.SMALLINT.class, entities);
+    public static Select.SMALLINT.UNSIGNED._SELECT<type.SMALLINT.UNSIGNED> DISTINCT(final kind.SMALLINT.UNSIGNED<Integer> ... entities) {
+      return new SelectImpl.SMALLINT.UNSIGNED.SELECT<type.SMALLINT.UNSIGNED>(true, entities);
     }
 
     @SafeVarargs
-    public static select.SMALLINT._SELECT<type.SMALLINT.UNSIGNED> DISTINCT(final kind.SMALLINT.UNSIGNED<Integer> ... entities) {
-      return new Select.SELECT<type.SMALLINT.UNSIGNED>(true, kind.SMALLINT.UNSIGNED.class, entities);
+    public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> DISTINCT(final kind.Temporal<? extends T> ... entities) {
+      return new SelectImpl.Temporal.SELECT<type.Temporal<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.TIME._SELECT<type.TIME> DISTINCT(final kind.TIME<LocalTime> ... entities) {
-      return new Select.SELECT<type.TIME>(true, kind.TIME.class, entities);
+    public static <T>Select.Textual._SELECT<type.Textual<T>> DISTINCT(final kind.Textual<? extends T> ... entities) {
+      return new SelectImpl.Textual.SELECT<type.Textual<T>>(true, entities);
     }
 
     @SafeVarargs
-    public static select.TINYINT._SELECT<type.TINYINT> DISTINCT(final kind.TINYINT<Byte> ... entities) {
-      return new Select.SELECT<type.TINYINT>(true, kind.TINYINT.class, entities);
+    public static Select.TIME._SELECT<type.TIME> DISTINCT(final kind.TIME<LocalTime> ... entities) {
+      return new SelectImpl.TIME.SELECT<type.TIME>(true, entities);
     }
 
     @SafeVarargs
-    public static select.TINYINT._SELECT<type.TINYINT.UNSIGNED> DISTINCT(final kind.TINYINT.UNSIGNED<Short> ... entities) {
-      return new Select.SELECT<type.TINYINT.UNSIGNED>(true, kind.TINYINT.UNSIGNED.class, entities);
+    public static Select.TINYINT._SELECT<type.TINYINT> DISTINCT(final kind.TINYINT<Byte> ... entities) {
+      return new SelectImpl.TINYINT.SELECT<type.TINYINT>(true, entities);
+    }
+
+    @SafeVarargs
+    public static Select.TINYINT.UNSIGNED._SELECT<type.TINYINT.UNSIGNED> DISTINCT(final kind.TINYINT.UNSIGNED<Short> ... entities) {
+      return new SelectImpl.TINYINT.UNSIGNED.SELECT<type.TINYINT.UNSIGNED>(true, entities);
+    }
+
+    @SafeVarargs
+    public static Select.Entity._SELECT<Subject<?>> DISTINCT(final kind.Subject<?> ... entities) {
+      return new SelectImpl.Entity.SELECT<Subject<?>>(true, entities);
     }
   }
 
   /** CASE **/
 
   public static final class CASE {
-    public static <T>case_.search.WHEN<T> WHEN(final Condition<T> condition) {
-      return new Case.Search.WHEN<T>(null, condition);
+    public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) {
+      return new CaseImpl.Search.WHEN<T>(null, condition);
     }
   }
 
-  public static case_.simple.CASE<byte[]> CASE(final type.BINARY binary) {
-    return new Case.Simple.CASE<byte[],type.BINARY>(binary);
+  public static Case.simple.CASE<byte[]> CASE(final type.BINARY binary) {
+    return new CaseImpl.Simple.CASE<byte[],type.BINARY>(binary);
   }
 
-  public static case_.simple.CASE<Boolean> CASE(final type.BOOLEAN bool) {
-    return new Case.Simple.CASE<Boolean,type.BOOLEAN>(bool);
+  public static Case.simple.CASE<Boolean> CASE(final type.BOOLEAN bool) {
+    return new CaseImpl.Simple.CASE<Boolean,type.BOOLEAN>(bool);
   }
 
-  public static <T extends Temporal>case_.simple.CASE<T> CASE(final type.Temporal<T> temporal) {
-    return new Case.Simple.CASE<T,type.Temporal<T>>(temporal);
+  public static <T extends Temporal>Case.simple.CASE<T> CASE(final type.Temporal<T> temporal) {
+    return new CaseImpl.Simple.CASE<T,type.Temporal<T>>(temporal);
   }
 
-  public static <T>case_.simple.CASE<T> CASE(final type.Textual<T> textual) {
-    return new Case.Simple.CASE<T,type.Textual<T>>(textual);
+  public static <T>Case.simple.CASE<T> CASE(final type.Textual<T> textual) {
+    return new CaseImpl.Simple.CASE<T,type.Textual<T>>(textual);
   }
 
-  public static <T extends Number>case_.simple.CASE<T> CASE(final type.Numeric<T> numeric) {
-    return new Case.Simple.CASE<T,type.Numeric<T>>(numeric);
+  public static <T extends Number>Case.simple.CASE<T> CASE(final type.Numeric<T> numeric) {
+    return new CaseImpl.Simple.CASE<T,type.Numeric<T>>(numeric);
   }
 
   /** DELETE **/
 
-  public static update.UPDATE_SET UPDATE(final Entity entity) {
-    return new Update.UPDATE(entity);
+  public static Update._SET UPDATE(final type.Entity entity) {
+    return new UpdateImpl.UPDATE(entity);
   }
 
-  public static update.UPDATE UPDATE(final Entity entity, final Entity ... entities) {
-    return new Update.UPDATE(Arrays.splice(entities, 0, 0, entity));
+  public static Update.UPDATE UPDATE(final type.Entity entity, final type.Entity ... entities) {
+    return new UpdateImpl.UPDATE(Arrays.splice(entities, 0, 0, entity));
   }
 
-  public static update.UPDATE UPDATE(final Collection<? extends Entity> entities) {
-    return new Update.UPDATE(entities.toArray(new Entity[entities.size()]));
+  public static Update.UPDATE UPDATE(final Collection<? extends type.Entity> entities) {
+    return new UpdateImpl.UPDATE(entities.toArray(new type.Entity[entities.size()]));
   }
 
-  public static delete.DELETE_WHERE DELETE(final Entity entity) {
-    return new Delete.DELETE(entity);
+  public static Delete._DELETE DELETE(final type.Entity entity) {
+    return new DeleteImpl.DELETE(entity);
   }
 
-  public static delete.DELETE DELETE(final Entity entity, final Entity ... entities) {
-    return new Delete.DELETE(Arrays.splice(entities, 0, 0, entity));
+  public static Delete.DELETE DELETE(final type.Entity entity, final type.Entity ... entities) {
+    return new DeleteImpl.DELETE(Arrays.splice(entities, 0, 0, entity));
   }
 
-  public static delete.DELETE DELETE(final Collection<? extends Entity> entities) {
-    return new Delete.DELETE(entities.toArray(new Entity[entities.size()]));
+  public static Delete.DELETE DELETE(final Collection<? extends type.Entity> entities) {
+    return new DeleteImpl.DELETE(entities.toArray(new type.Entity[entities.size()]));
   }
 
-  public static delete.DELETE DELETE(final Entity entity, final List<Entity> entities) {
-    return new Delete.DELETE(entities.toArray(new Entity[entities.size()]));
+  public static Delete.DELETE DELETE(final type.Entity entity, final List<type.Entity> entities) {
+    return new DeleteImpl.DELETE(entities.toArray(new type.Entity[entities.size()]));
   }
 
   /** INSERT **/
 
-  public static <E extends Entity>insert.INSERT_VALUES<E> INSERT(final E entity) {
-    return new Insert.INSERT<E>(kind.Entity.class, entity);
+  public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) {
+    return new InsertImpl.INSERT<E>(kind.Entity.class, entity);
   }
 
   @SafeVarargs
   @SuppressWarnings("unchecked")
-  public static <E extends Entity>insert.INSERT<E> INSERT(final E entity, final E ... entities) {
-    return new Insert.INSERT<E>(kind.Entity.class, Arrays.splice(entities, 0, 0, entity));
+  public static <E extends type.Entity>Insert.INSERT<E> INSERT(final E entity, final E ... entities) {
+    return new InsertImpl.INSERT<E>(kind.Entity.class, Arrays.splice(entities, 0, 0, entity));
   }
 
-  public static <E extends Entity>insert.INSERT<E> INSERT(final List<E> entities) {
-    return new Insert.INSERT<E>(kind.Entity.class, entities.toArray(new Entity[entities.size()]));
+  public static <E extends type.Entity>Insert.INSERT<E> INSERT(final List<E> entities) {
+    return new InsertImpl.INSERT<E>(kind.Entity.class, entities.toArray(new type.Entity[entities.size()]));
   }
 
   @SafeVarargs
   @SuppressWarnings("unchecked")
-  public static <DataType extends type.DataType<?>>insert.INSERT_VALUES<DataType> INSERT(final DataType column, final DataType ... columns) {
-    return new Insert.INSERT<DataType>(kind.DataType.class, Arrays.splice(columns, 0, 0, column));
+  public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) {
+    return new InsertImpl.INSERT<DataType>(kind.DataType.class, Arrays.splice(columns, 0, 0, column));
   }
 
-  public static insert.INSERT<?> INSERT(final $dmlx_data data) {
-    return new Insert.INSERT<Subject<?>>(kind.Subject.class, Entities.toEntities(data));
+  public static Insert.INSERT<?> INSERT(final $dmlx_data data) {
+    return new InsertImpl.INSERT<Subject<?>>(kind.Subject.class, Entities.toEntities(data));
   }
 
   /** String Functions **/
@@ -12298,32 +12313,32 @@ public final class DML {
   /** Predicate **/
 
   protected static final class ALL<T> extends QuantifiedComparisonPredicate<T> {
-    protected ALL(final select.untyped.SELECT<?> subQuery) {
+    protected ALL(final Select.untyped.SELECT<?> subQuery) {
       super("ALL", subQuery);
     }
   }
 
   protected static final class ANY<T> extends QuantifiedComparisonPredicate<T> {
-    protected ANY(final select.untyped.SELECT<?> subQuery) {
+    protected ANY(final Select.untyped.SELECT<?> subQuery) {
       super("ANY", subQuery);
     }
   }
 
   protected static final class SOME<T> extends QuantifiedComparisonPredicate<T> {
-    protected SOME(final select.untyped.SELECT<?> subQuery) {
+    protected SOME(final Select.untyped.SELECT<?> subQuery) {
       super("SOME", subQuery);
     }
   }
 
-  public static <T>ALL<T> ALL(final select.untyped.SELECT<? extends Subject<T>> subQuery) {
+  public static <T>ALL<T> ALL(final Select.untyped.SELECT<? extends Subject<T>> subQuery) {
     return new ALL<T>(subQuery);
   }
 
-  public static <T>ANY<T> ANY(final select.untyped.SELECT<? extends Subject<T>> subQuery) {
+  public static <T>ANY<T> ANY(final Select.untyped.SELECT<? extends Subject<T>> subQuery) {
     return new ANY<T>(subQuery);
   }
 
-  public static <T>SOME<T> SOME(final select.untyped.SELECT<? extends Subject<T>> subQuery) {
+  public static <T>SOME<T> SOME(final Select.untyped.SELECT<? extends Subject<T>> subQuery) {
     return new SOME<T>(subQuery);
   }
 
@@ -12500,11 +12515,11 @@ public final class DML {
     return new InPredicate(a, true, b);
   }
 
-  public static <T>Predicate IN(final kind.DataType<T> a, final select.untyped.SELECT<? extends type.DataType<T>> b) {
+  public static <T>Predicate IN(final kind.DataType<T> a, final Select.untyped.SELECT<? extends type.DataType<T>> b) {
     return new InPredicate(a, true, b);
   }
 
-  public static Predicate EXISTS(final select.untyped.SELECT<?> subQuery) {
+  public static Predicate EXISTS(final Select.untyped.SELECT<?> subQuery) {
     return new ExistsPredicate(subQuery);
   }
 
@@ -12710,7 +12725,7 @@ public final class DML {
       return new InPredicate(a, false, b);
     }
 
-    public static <T>Predicate IN(final kind.DataType<T> a, final select.untyped.SELECT<? extends type.DataType<T>> b) {
+    public static <T>Predicate IN(final kind.DataType<T> a, final Select.untyped.SELECT<? extends type.DataType<T>> b) {
       return new InPredicate(a, false, b);
     }
   }

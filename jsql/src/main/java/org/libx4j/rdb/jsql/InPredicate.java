@@ -22,8 +22,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.libx4j.rdb.jsql.model.kind;
-import org.libx4j.rdb.jsql.model.select;
+import org.libx4j.rdb.jsql.Select;
 
 final class InPredicate extends Predicate {
   protected final boolean positive;
@@ -43,7 +42,7 @@ final class InPredicate extends Predicate {
       this.values[i] = org.libx4j.rdb.jsql.type.DataType.wrap(iterator.next());
   }
 
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final select.untyped.SELECT<? extends type.DataType<?>> query) {
+  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
     super(dataType);
     this.positive = positive;
     this.values = new Compilable[] {(Compilable)query};

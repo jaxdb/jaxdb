@@ -14,153 +14,150 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.libx4j.rdb.jsql.Condition;
-import org.libx4j.rdb.jsql.type;
-
-public interface case_ {
+public interface Case {
   public interface CASE<T> {
   }
 
   public interface simple {
-    public interface CASE<T> extends case_.CASE<T> {
-      public case_.simple.WHEN<T> WHEN(final T condition);
+    public interface CASE<T> extends Case.CASE<T> {
+      public Case.simple.WHEN<T> WHEN(final T condition);
     }
 
     public interface WHEN<T> {
-      public case_.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool);
-      public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-      public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-      public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-      public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-      public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-      public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-      public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-      public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-      public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-      public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-      public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-      public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-      public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+      public Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool);
+      public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+      public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+      public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+      public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+      public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+      public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+      public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+      public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+      public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+      public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+      public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+      public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+      public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.BOOLEAN.simple.THEN THEN(final boolean bool);
-      public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-      public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-      public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-      public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-      public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-      public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-      public case_.TINYINT.simple.THEN<T> THEN(final byte numeric);
-      public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-      public case_.SMALLINT.simple.THEN<T> THEN(final short numeric);
-      public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-      public case_.INT.simple.THEN<T> THEN(final int numeric);
-      public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-      public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
-      public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+      public Case.BOOLEAN.simple.THEN THEN(final boolean bool);
+      public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+      public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+      public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+      public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+      public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+      public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+      public Case.TINYINT.simple.THEN<T> THEN(final byte numeric);
+      public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+      public Case.SMALLINT.simple.THEN<T> THEN(final short numeric);
+      public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+      public Case.INT.simple.THEN<T> THEN(final int numeric);
+      public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+      public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
+      public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
 
-      public case_.BINARY.simple.THEN<T> THEN(final type.BINARY binary);
-      public case_.DATE.simple.THEN<T> THEN(final type.DATE date);
-      public case_.TIME.simple.THEN<T> THEN(final type.TIME time);
-      public case_.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime);
-      public case_.CHAR.simple.THEN<T> THEN(final type.CHAR text);
-      public case_.ENUM.simple.THEN<T> THEN(final type.ENUM<?> dateTime);
-      public case_.BINARY.simple.THEN<T> THEN(final byte[] binary);
-      public case_.DATE.simple.THEN<T> THEN(final LocalDate date);
-      public case_.TIME.simple.THEN<T> THEN(final LocalTime time);
-      public case_.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime);
-      public case_.CHAR.simple.THEN<T> THEN(final String text);
-      public case_.ENUM.simple.THEN<T> THEN(final Enum<?> dateTime);
+      public Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary);
+      public Case.DATE.simple.THEN<T> THEN(final type.DATE date);
+      public Case.TIME.simple.THEN<T> THEN(final type.TIME time);
+      public Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime);
+      public Case.CHAR.simple.THEN<T> THEN(final type.CHAR text);
+      public Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> dateTime);
+      public Case.BINARY.simple.THEN<T> THEN(final byte[] binary);
+      public Case.DATE.simple.THEN<T> THEN(final LocalDate date);
+      public Case.TIME.simple.THEN<T> THEN(final LocalTime time);
+      public Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime);
+      public Case.CHAR.simple.THEN<T> THEN(final String text);
+      public Case.ENUM.simple.THEN<T> THEN(final Enum<?> dateTime);
     }
   }
 
   public interface search {
     public interface WHEN<T> {
-      public case_.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
-      public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-      public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-      public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-      public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-      public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-      public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-      public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
-      public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-      public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-      public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-      public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-      public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-      public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+      public Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
+      public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+      public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+      public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+      public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+      public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+      public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+      public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
+      public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+      public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+      public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+      public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+      public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+      public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.BOOLEAN.search.THEN<T> THEN(final boolean bool);
-      public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-      public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-      public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-      public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-      public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-      public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-      public case_.TINYINT.search.THEN<T> THEN(final byte numeric);
-      public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-      public case_.SMALLINT.search.THEN<T> THEN(final short numeric);
-      public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-      public case_.INT.search.THEN<T> THEN(final int numeric);
-      public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-      public case_.BIGINT.search.THEN<T> THEN(final long numeric);
-      public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+      public Case.BOOLEAN.search.THEN<T> THEN(final boolean bool);
+      public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+      public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+      public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+      public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+      public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+      public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+      public Case.TINYINT.search.THEN<T> THEN(final byte numeric);
+      public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+      public Case.SMALLINT.search.THEN<T> THEN(final short numeric);
+      public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+      public Case.INT.search.THEN<T> THEN(final int numeric);
+      public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+      public Case.BIGINT.search.THEN<T> THEN(final long numeric);
+      public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
 
-      public case_.BINARY.search.THEN<T> THEN(final type.BINARY binary);
-      public case_.DATE.search.THEN<T> THEN(final type.DATE date);
-      public case_.TIME.search.THEN<T> THEN(final type.TIME time);
-      public case_.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime);
-      public case_.CHAR.search.THEN<T> THEN(final type.CHAR text);
-      public case_.ENUM.search.THEN<T> THEN(final type.ENUM<?> dateTime);
-      public case_.BINARY.search.THEN<T> THEN(final byte[] binary);
-      public case_.DATE.search.THEN<T> THEN(final LocalDate date);
-      public case_.TIME.search.THEN<T> THEN(final LocalTime time);
-      public case_.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime);
-      public case_.CHAR.search.THEN<T> THEN(final String text);
-      public case_.ENUM.search.THEN<T> THEN(final Enum<?> text);
+      public Case.BINARY.search.THEN<T> THEN(final type.BINARY binary);
+      public Case.DATE.search.THEN<T> THEN(final type.DATE date);
+      public Case.TIME.search.THEN<T> THEN(final type.TIME time);
+      public Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime);
+      public Case.CHAR.search.THEN<T> THEN(final type.CHAR text);
+      public Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> dateTime);
+      public Case.BINARY.search.THEN<T> THEN(final byte[] binary);
+      public Case.DATE.search.THEN<T> THEN(final LocalDate date);
+      public Case.TIME.search.THEN<T> THEN(final LocalTime time);
+      public Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime);
+      public Case.CHAR.search.THEN<T> THEN(final String text);
+      public Case.ENUM.search.THEN<T> THEN(final Enum<?> text);
     }
   }
 
   public interface BOOLEAN {
     public interface simple {
       public interface WHEN {
-        public case_.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool);
-        public case_.BOOLEAN.simple.THEN THEN(final boolean bool);
+        public Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool);
+        public Case.BOOLEAN.simple.THEN THEN(final boolean bool);
       }
 
       public interface THEN extends BOOLEAN.THEN {
-        public case_.BOOLEAN.simple.WHEN WHEN(final boolean condition);
+        public Case.BOOLEAN.simple.WHEN WHEN(final boolean condition);
       }
     }
 
     public interface search {
       public interface CASE<T> {
-        public case_.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
-        public case_.BOOLEAN.search.THEN<T> THEN(final boolean bool);
+        public Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
+        public Case.BOOLEAN.search.THEN<T> THEN(final boolean bool);
       }
 
       public interface WHEN<T> {
-        public case_.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
-        public case_.BOOLEAN.search.THEN<T> THEN(final boolean bool);
+        public Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool);
+        public Case.BOOLEAN.search.THEN<T> THEN(final boolean bool);
       }
 
       public interface THEN<T> extends BOOLEAN.THEN {
-        public case_.BOOLEAN.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.BOOLEAN.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.BOOLEAN.ELSE ELSE(final type.BOOLEAN bool);
-      public case_.BOOLEAN.ELSE ELSE(final boolean bool);
+      public Case.BOOLEAN.ELSE ELSE(final type.BOOLEAN bool);
+      public Case.BOOLEAN.ELSE ELSE(final boolean bool);
     }
 
     public interface ELSE {
@@ -172,110 +169,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.FLOAT.simple.THEN<T> THEN(final byte numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final short numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final int numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final long numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final byte numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final short numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final int numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final long numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends FLOAT.UNSIGNED.THEN {
-          public case_.FLOAT.simple.WHEN<T> WHEN(final T condition);
+          public Case.FLOAT.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.FLOAT.search.THEN<T> THEN(final byte numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final short numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final int numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final long numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final byte numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final short numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final int numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final long numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends FLOAT.UNSIGNED.THEN {
-          public case_.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.INT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.FLOAT.ELSE ELSE(final type.TINYINT numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.INT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.ELSE ELSE(final float numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.FLOAT.ELSE ELSE(final byte numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.DOUBLE.ELSE ELSE(final short numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.DOUBLE.ELSE ELSE(final int numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.DOUBLE.ELSE ELSE(final long numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.FLOAT.ELSE ELSE(final float numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.FLOAT.ELSE ELSE(final byte numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.DOUBLE.ELSE ELSE(final short numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.DOUBLE.ELSE ELSE(final int numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.DOUBLE.ELSE ELSE(final long numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -285,80 +282,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.FLOAT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.FLOAT.simple.THEN<T> THEN(final byte numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final short numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final int numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final byte numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final short numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final int numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends FLOAT.THEN {
-        public case_.FLOAT.simple.WHEN<T> WHEN(final T condition);
+        public Case.FLOAT.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.FLOAT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.FLOAT.search.THEN<T> THEN(final byte numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final short numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final int numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final byte numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final short numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final int numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends FLOAT.THEN {
-        public case_.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.FLOAT.ELSE ELSE(final type.TINYINT numeric);
-      public case_.FLOAT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.INT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.FLOAT.ELSE ELSE(final type.TINYINT numeric);
+      public Case.FLOAT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.INT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.FLOAT.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.FLOAT.ELSE ELSE(final byte numeric);
-      public case_.DOUBLE.ELSE ELSE(final short numeric);
-      public case_.DOUBLE.ELSE ELSE(final int numeric);
-      public case_.DOUBLE.ELSE ELSE(final long numeric);
+      public Case.FLOAT.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.FLOAT.ELSE ELSE(final byte numeric);
+      public Case.DOUBLE.ELSE ELSE(final short numeric);
+      public Case.DOUBLE.ELSE ELSE(final int numeric);
+      public Case.DOUBLE.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -370,110 +367,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final byte numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final short numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final int numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final long numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final byte numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final short numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final int numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final long numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends DOUBLE.UNSIGNED.THEN {
-          public case_.DOUBLE.simple.WHEN<T> WHEN(final T condition);
+          public Case.DOUBLE.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final byte numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final short numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final int numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final long numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final byte numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final short numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final int numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final long numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends DOUBLE.UNSIGNED.THEN {
-          public case_.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.INT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.TINYINT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.INT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.ELSE ELSE(final float numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.DOUBLE.ELSE ELSE(final byte numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.DOUBLE.ELSE ELSE(final short numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.DOUBLE.ELSE ELSE(final int numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.DOUBLE.ELSE ELSE(final long numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.DOUBLE.ELSE ELSE(final float numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.DOUBLE.ELSE ELSE(final byte numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.DOUBLE.ELSE ELSE(final short numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.DOUBLE.ELSE ELSE(final int numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.DOUBLE.ELSE ELSE(final long numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -483,80 +480,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final byte numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final short numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final int numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final byte numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final short numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final int numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends DOUBLE.THEN {
-        public case_.DOUBLE.simple.WHEN<T> WHEN(final T condition);
+        public Case.DOUBLE.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final byte numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final short numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final int numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final byte numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final short numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final int numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends DOUBLE.THEN {
-        public case_.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.TINYINT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.INT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.TINYINT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.INT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.BIGINT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.DOUBLE.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.DOUBLE.ELSE ELSE(final byte numeric);
-      public case_.DOUBLE.ELSE ELSE(final short numeric);
-      public case_.DOUBLE.ELSE ELSE(final int numeric);
-      public case_.DOUBLE.ELSE ELSE(final long numeric);
+      public Case.DOUBLE.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.DOUBLE.ELSE ELSE(final byte numeric);
+      public Case.DOUBLE.ELSE ELSE(final short numeric);
+      public Case.DOUBLE.ELSE ELSE(final int numeric);
+      public Case.DOUBLE.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -568,110 +565,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DECIMAL.simple.THEN<T> THEN(final float numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final double numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final byte numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final short numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final int numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final long numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final float numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final double numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final byte numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final short numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final int numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final long numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends DECIMAL.UNSIGNED.THEN {
-          public case_.DECIMAL.simple.WHEN<T> WHEN(final T condition);
+          public Case.DECIMAL.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.INT numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.INT numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DECIMAL.search.THEN<T> THEN(final float numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final double numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final byte numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final short numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final int numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final long numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final float numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final double numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final byte numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final short numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final int numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final long numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends DECIMAL.UNSIGNED.THEN {
-          public case_.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.DECIMAL.ELSE ELSE(final type.FLOAT numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.INT numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.BIGINT numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.FLOAT numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.TINYINT numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.INT numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.BIGINT numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DECIMAL.ELSE ELSE(final float numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DECIMAL.ELSE ELSE(final double numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.DECIMAL.ELSE ELSE(final byte numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.DECIMAL.ELSE ELSE(final short numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.DECIMAL.ELSE ELSE(final int numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.DECIMAL.ELSE ELSE(final long numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.DECIMAL.ELSE ELSE(final float numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DECIMAL.ELSE ELSE(final double numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.DECIMAL.ELSE ELSE(final byte numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.DECIMAL.ELSE ELSE(final short numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.DECIMAL.ELSE ELSE(final int numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.DECIMAL.ELSE ELSE(final long numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -681,80 +678,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DECIMAL.simple.THEN<T> THEN(final float numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final byte numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final short numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final int numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final long numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final float numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final byte numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final short numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final int numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends DECIMAL.THEN {
-        public case_.DECIMAL.simple.WHEN<T> WHEN(final T condition);
+        public Case.DECIMAL.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.INT numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.INT numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DECIMAL.search.THEN<T> THEN(final float numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final byte numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final short numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final int numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final long numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final float numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final byte numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final short numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final int numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends DECIMAL.THEN {
-        public case_.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DECIMAL.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.TINYINT numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.INT numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.BIGINT numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.TINYINT numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.INT numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.BIGINT numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.DECIMAL.ELSE ELSE(final float numeric);
-      public case_.DECIMAL.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.DECIMAL.ELSE ELSE(final byte numeric);
-      public case_.DECIMAL.ELSE ELSE(final short numeric);
-      public case_.DECIMAL.ELSE ELSE(final int numeric);
-      public case_.DECIMAL.ELSE ELSE(final long numeric);
+      public Case.DECIMAL.ELSE ELSE(final float numeric);
+      public Case.DECIMAL.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.DECIMAL.ELSE ELSE(final byte numeric);
+      public Case.DECIMAL.ELSE ELSE(final short numeric);
+      public Case.DECIMAL.ELSE ELSE(final int numeric);
+      public Case.DECIMAL.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -766,110 +763,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.TINYINT.simple.THEN<T> THEN(final byte numeric);
-          public case_.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final short numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.simple.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.TINYINT.simple.THEN<T> THEN(final byte numeric);
+          public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final short numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.simple.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends TINYINT.UNSIGNED.THEN {
-          public case_.TINYINT.simple.WHEN<T> WHEN(final T condition);
+          public Case.TINYINT.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.TINYINT.search.THEN<T> THEN(final byte numeric);
-          public case_.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final short numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.search.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.TINYINT.search.THEN<T> THEN(final byte numeric);
+          public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final short numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.search.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends TINYINT.UNSIGNED.THEN {
-          public case_.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric);
-        public case_.TINYINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.ELSE ELSE(final type.INT numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.TINYINT.ELSE ELSE(final type.TINYINT numeric);
+        public Case.TINYINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.ELSE ELSE(final type.INT numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.ELSE ELSE(final float numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.TINYINT.ELSE ELSE(final byte numeric);
-        public case_.TINYINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.SMALLINT.ELSE ELSE(final short numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.INT.ELSE ELSE(final int numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.BIGINT.ELSE ELSE(final long numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.FLOAT.ELSE ELSE(final float numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.TINYINT.ELSE ELSE(final byte numeric);
+        public Case.TINYINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.SMALLINT.ELSE ELSE(final short numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.INT.ELSE ELSE(final int numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.BIGINT.ELSE ELSE(final long numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -879,80 +876,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.TINYINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.TINYINT.simple.THEN<T> THEN(final byte numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final short numeric);
-        public case_.INT.simple.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.TINYINT.simple.THEN<T> THEN(final byte numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final short numeric);
+        public Case.INT.simple.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends TINYINT.THEN {
-        public case_.TINYINT.simple.WHEN<T> WHEN(final T condition);
+        public Case.TINYINT.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.TINYINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.TINYINT.search.THEN<T> THEN(final byte numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final short numeric);
-        public case_.INT.search.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.TINYINT.search.THEN<T> THEN(final byte numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final short numeric);
+        public Case.INT.search.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends TINYINT.THEN {
-        public case_.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.TINYINT.ELSE ELSE(final type.TINYINT numeric);
-      public case_.TINYINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.INT.ELSE ELSE(final type.INT numeric);
-      public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.TINYINT.ELSE ELSE(final type.TINYINT numeric);
+      public Case.TINYINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.INT.ELSE ELSE(final type.INT numeric);
+      public Case.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.FLOAT.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.TINYINT.ELSE ELSE(final byte numeric);
-      public case_.SMALLINT.ELSE ELSE(final short numeric);
-      public case_.INT.ELSE ELSE(final int numeric);
-      public case_.BIGINT.ELSE ELSE(final long numeric);
+      public Case.FLOAT.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.TINYINT.ELSE ELSE(final byte numeric);
+      public Case.SMALLINT.ELSE ELSE(final short numeric);
+      public Case.INT.ELSE ELSE(final int numeric);
+      public Case.BIGINT.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -964,110 +961,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final byte numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.SMALLINT.simple.THEN<T> THEN(final short numeric);
-          public case_.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.simple.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final byte numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.SMALLINT.simple.THEN<T> THEN(final short numeric);
+          public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.simple.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends SMALLINT.UNSIGNED.THEN {
-          public case_.SMALLINT.simple.WHEN<T> WHEN(final T condition);
+          public Case.SMALLINT.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-          public case_.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final byte numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.SMALLINT.search.THEN<T> THEN(final short numeric);
-          public case_.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.search.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+          public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final byte numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.SMALLINT.search.THEN<T> THEN(final short numeric);
+          public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.search.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends SMALLINT.UNSIGNED.THEN {
-          public case_.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.ELSE ELSE(final type.INT numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.SMALLINT.ELSE ELSE(final type.TINYINT numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.ELSE ELSE(final type.INT numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.ELSE ELSE(final float numeric);
-        public case_.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.SMALLINT.ELSE ELSE(final byte numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.SMALLINT.ELSE ELSE(final short numeric);
-        public case_.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.INT.ELSE ELSE(final int numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.BIGINT.ELSE ELSE(final long numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.FLOAT.ELSE ELSE(final float numeric);
+        public Case.FLOAT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.SMALLINT.ELSE ELSE(final byte numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.SMALLINT.ELSE ELSE(final short numeric);
+        public Case.SMALLINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.INT.ELSE ELSE(final int numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.BIGINT.ELSE ELSE(final long numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -1077,80 +1074,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final byte numeric);
-        public case_.SMALLINT.simple.THEN<T> THEN(final short numeric);
-        public case_.INT.simple.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final byte numeric);
+        public Case.SMALLINT.simple.THEN<T> THEN(final short numeric);
+        public Case.INT.simple.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends SMALLINT.THEN {
-        public case_.SMALLINT.simple.WHEN<T> WHEN(final T condition);
+        public Case.SMALLINT.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.FLOAT.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final byte numeric);
-        public case_.SMALLINT.search.THEN<T> THEN(final short numeric);
-        public case_.INT.search.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final long numeric);
+        public Case.FLOAT.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final byte numeric);
+        public Case.SMALLINT.search.THEN<T> THEN(final short numeric);
+        public Case.INT.search.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends SMALLINT.THEN {
-        public case_.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.FLOAT.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.TINYINT numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.INT.ELSE ELSE(final type.INT numeric);
-      public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.FLOAT.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.TINYINT numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.SMALLINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.INT.ELSE ELSE(final type.INT numeric);
+      public Case.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.FLOAT.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.SMALLINT.ELSE ELSE(final byte numeric);
-      public case_.SMALLINT.ELSE ELSE(final short numeric);
-      public case_.INT.ELSE ELSE(final int numeric);
-      public case_.BIGINT.ELSE ELSE(final long numeric);
+      public Case.FLOAT.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.SMALLINT.ELSE ELSE(final byte numeric);
+      public Case.SMALLINT.ELSE ELSE(final short numeric);
+      public Case.INT.ELSE ELSE(final int numeric);
+      public Case.BIGINT.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -1162,110 +1159,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.INT.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.INT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.INT.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.INT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.INT.simple.THEN<T> THEN(final byte numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.INT.simple.THEN<T> THEN(final short numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.simple.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.INT.simple.THEN<T> THEN(final byte numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.INT.simple.THEN<T> THEN(final short numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.simple.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends INT.UNSIGNED.THEN {
-          public case_.INT.simple.WHEN<T> WHEN(final T condition);
+          public Case.INT.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.INT.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.INT.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.INT.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.INT.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.INT.search.THEN<T> THEN(final byte numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.INT.search.THEN<T> THEN(final short numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.INT.search.THEN<T> THEN(final int numeric);
-          public case_.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.INT.search.THEN<T> THEN(final byte numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.INT.search.THEN<T> THEN(final short numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.INT.search.THEN<T> THEN(final int numeric);
+          public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends INT.UNSIGNED.THEN {
-          public case_.INT.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.INT.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.INT.ELSE ELSE(final type.TINYINT numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.INT.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.ELSE ELSE(final type.INT numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.INT.ELSE ELSE(final type.TINYINT numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.INT.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.ELSE ELSE(final type.INT numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.ELSE ELSE(final float numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.INT.ELSE ELSE(final byte numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.INT.ELSE ELSE(final short numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.INT.ELSE ELSE(final int numeric);
-        public case_.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.BIGINT.ELSE ELSE(final long numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.DOUBLE.ELSE ELSE(final float numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.INT.ELSE ELSE(final byte numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.INT.ELSE ELSE(final short numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.INT.ELSE ELSE(final int numeric);
+        public Case.INT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.BIGINT.ELSE ELSE(final long numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -1275,80 +1272,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.INT.simple.THEN<T> THEN(final byte numeric);
-        public case_.INT.simple.THEN<T> THEN(final short numeric);
-        public case_.INT.simple.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.INT.simple.THEN<T> THEN(final byte numeric);
+        public Case.INT.simple.THEN<T> THEN(final short numeric);
+        public Case.INT.simple.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends INT.THEN {
-        public case_.INT.simple.WHEN<T> WHEN(final T condition);
+        public Case.INT.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.INT.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.INT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.INT.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.INT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT numeric);
-        public case_.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.INT.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.INT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.INT.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.INT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT numeric);
+        public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.INT.search.THEN<T> THEN(final byte numeric);
-        public case_.INT.search.THEN<T> THEN(final short numeric);
-        public case_.INT.search.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.INT.search.THEN<T> THEN(final byte numeric);
+        public Case.INT.search.THEN<T> THEN(final short numeric);
+        public Case.INT.search.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends INT.THEN {
-        public case_.INT.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.INT.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.INT.ELSE ELSE(final type.TINYINT numeric);
-      public case_.INT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.INT.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.INT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.INT.ELSE ELSE(final type.INT numeric);
-      public case_.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.INT.ELSE ELSE(final type.TINYINT numeric);
+      public Case.INT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.INT.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.INT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.INT.ELSE ELSE(final type.INT numeric);
+      public Case.INT.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.DOUBLE.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.INT.ELSE ELSE(final byte numeric);
-      public case_.INT.ELSE ELSE(final short numeric);
-      public case_.INT.ELSE ELSE(final int numeric);
-      public case_.BIGINT.ELSE ELSE(final long numeric);
+      public Case.DOUBLE.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.INT.ELSE ELSE(final byte numeric);
+      public Case.INT.ELSE ELSE(final short numeric);
+      public Case.INT.ELSE ELSE(final int numeric);
+      public Case.BIGINT.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -1360,110 +1357,110 @@ public interface case_ {
     public interface UNSIGNED {
       public interface simple {
         public interface WHEN<T> {
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.INT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.INT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final byte numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final short numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final int numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final byte numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final short numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final int numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends BIGINT.UNSIGNED.THEN {
-          public case_.BIGINT.simple.WHEN<T> WHEN(final T condition);
+          public Case.BIGINT.simple.WHEN<T> WHEN(final T condition);
         }
       }
 
       public interface search {
         public interface WHEN<T> {
-          public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.INT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.INT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-          public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-          public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-          public case_.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-          public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-          public case_.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final byte numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final short numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final int numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-          public case_.BIGINT.search.THEN<T> THEN(final long numeric);
-          public case_.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+          public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+          public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+          public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+          public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final byte numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final short numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final int numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+          public Case.BIGINT.search.THEN<T> THEN(final long numeric);
+          public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
         }
 
         public interface THEN<T> extends BIGINT.UNSIGNED.THEN {
-          public case_.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition);
+          public Case.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition);
         }
       }
 
       interface THEN {
-        public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
-        public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
-        public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.INT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.FLOAT.UNSIGNED numeric);
+        public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final type.DOUBLE.UNSIGNED numeric);
+        public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final type.DECIMAL.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.TINYINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.SMALLINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.INT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.ELSE ELSE(final float numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
-        public case_.DOUBLE.ELSE ELSE(final double numeric);
-        public case_.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
-        public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-        public case_.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
-        public case_.BIGINT.ELSE ELSE(final byte numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
-        public case_.BIGINT.ELSE ELSE(final short numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
-        public case_.BIGINT.ELSE ELSE(final int numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
-        public case_.BIGINT.ELSE ELSE(final long numeric);
-        public case_.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
+        public Case.DOUBLE.ELSE ELSE(final float numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric);
+        public Case.DOUBLE.ELSE ELSE(final double numeric);
+        public Case.DOUBLE.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric);
+        public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+        public Case.DECIMAL.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric);
+        public Case.BIGINT.ELSE ELSE(final byte numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric);
+        public Case.BIGINT.ELSE ELSE(final short numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric);
+        public Case.BIGINT.ELSE ELSE(final int numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric);
+        public Case.BIGINT.ELSE ELSE(final long numeric);
+        public Case.BIGINT.UNSIGNED.ELSE ELSE(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric);
       }
 
       public interface ELSE {
@@ -1473,80 +1470,80 @@ public interface case_ {
 
     public interface simple {
       public interface WHEN<T> {
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.INT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.INT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.simple.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.simple.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final byte numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final short numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.simple.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.simple.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final byte numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final short numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.simple.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends BIGINT.THEN {
-        public case_.BIGINT.simple.WHEN<T> WHEN(final T condition);
+        public Case.BIGINT.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.INT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.INT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric);
 
-        public case_.DOUBLE.search.THEN<T> THEN(final float numeric);
-        public case_.DOUBLE.search.THEN<T> THEN(final double numeric);
-        public case_.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final byte numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final short numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final int numeric);
-        public case_.BIGINT.search.THEN<T> THEN(final long numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final float numeric);
+        public Case.DOUBLE.search.THEN<T> THEN(final double numeric);
+        public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final byte numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final short numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final int numeric);
+        public Case.BIGINT.search.THEN<T> THEN(final long numeric);
       }
 
       public interface THEN<T> extends BIGINT.THEN {
-        public case_.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
-      public case_.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
-      public case_.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
-      public case_.BIGINT.ELSE ELSE(final type.TINYINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.SMALLINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.INT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.INT.UNSIGNED numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT numeric);
-      public case_.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.FLOAT numeric);
+      public Case.DOUBLE.ELSE ELSE(final type.DOUBLE numeric);
+      public Case.DECIMAL.ELSE ELSE(final type.DECIMAL numeric);
+      public Case.BIGINT.ELSE ELSE(final type.TINYINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.TINYINT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.SMALLINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.SMALLINT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.INT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.INT.UNSIGNED numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT numeric);
+      public Case.BIGINT.ELSE ELSE(final type.BIGINT.UNSIGNED numeric);
 
-      public case_.DOUBLE.ELSE ELSE(final float numeric);
-      public case_.DOUBLE.ELSE ELSE(final double numeric);
-      public case_.DECIMAL.ELSE ELSE(final BigDecimal numeric);
-      public case_.BIGINT.ELSE ELSE(final byte numeric);
-      public case_.BIGINT.ELSE ELSE(final short numeric);
-      public case_.BIGINT.ELSE ELSE(final int numeric);
-      public case_.BIGINT.ELSE ELSE(final long numeric);
+      public Case.DOUBLE.ELSE ELSE(final float numeric);
+      public Case.DOUBLE.ELSE ELSE(final double numeric);
+      public Case.DECIMAL.ELSE ELSE(final BigDecimal numeric);
+      public Case.BIGINT.ELSE ELSE(final byte numeric);
+      public Case.BIGINT.ELSE ELSE(final short numeric);
+      public Case.BIGINT.ELSE ELSE(final int numeric);
+      public Case.BIGINT.ELSE ELSE(final long numeric);
     }
 
     public interface ELSE {
@@ -1557,29 +1554,29 @@ public interface case_ {
   public interface BINARY {
     public interface simple {
       public interface WHEN<T> {
-        public case_.BINARY.simple.THEN<T> THEN(final type.BINARY binary);
-        public case_.BINARY.simple.THEN<T> THEN(final byte[] binary);
+        public Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary);
+        public Case.BINARY.simple.THEN<T> THEN(final byte[] binary);
       }
 
       public interface THEN<T> extends BINARY.THEN {
-        public case_.BINARY.simple.WHEN<T> WHEN(final T condition);
+        public Case.BINARY.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.BINARY.search.THEN<T> THEN(final type.BINARY binary);
-        public case_.BINARY.search.THEN<T> THEN(final byte[] binary);
+        public Case.BINARY.search.THEN<T> THEN(final type.BINARY binary);
+        public Case.BINARY.search.THEN<T> THEN(final byte[] binary);
       }
 
       public interface THEN<T> extends BINARY.THEN {
-        public case_.BINARY.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.BINARY.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.BINARY.ELSE ELSE(final type.BINARY binary);
-      public case_.BINARY.ELSE ELSE(final byte[] binary);
+      public Case.BINARY.ELSE ELSE(final type.BINARY binary);
+      public Case.BINARY.ELSE ELSE(final byte[] binary);
     }
 
     public interface ELSE {
@@ -1590,29 +1587,29 @@ public interface case_ {
   public interface DATE {
     public interface simple {
       public interface WHEN<T> {
-        public case_.DATE.simple.THEN<T> THEN(final type.DATE date);
-        public case_.DATE.simple.THEN<T> THEN(final LocalDate date);
+        public Case.DATE.simple.THEN<T> THEN(final type.DATE date);
+        public Case.DATE.simple.THEN<T> THEN(final LocalDate date);
       }
 
       public interface THEN<T> extends DATE.THEN {
-        public case_.DATE.simple.WHEN<T> WHEN(final T condition);
+        public Case.DATE.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DATE.search.THEN<T> THEN(final type.DATE date);
-        public case_.DATE.search.THEN<T> THEN(final LocalDate date);
+        public Case.DATE.search.THEN<T> THEN(final type.DATE date);
+        public Case.DATE.search.THEN<T> THEN(final LocalDate date);
       }
 
       public interface THEN<T> extends DATE.THEN {
-        public case_.DATE.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.DATE.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DATE.ELSE ELSE(final type.DATE date);
-      public case_.DATE.ELSE ELSE(final LocalDate date);
+      public Case.DATE.ELSE ELSE(final type.DATE date);
+      public Case.DATE.ELSE ELSE(final LocalDate date);
     }
 
     public interface ELSE {
@@ -1623,29 +1620,29 @@ public interface case_ {
   public interface TIME {
     public interface simple {
       public interface WHEN<T> {
-        public case_.TIME.simple.THEN<T> THEN(final type.TIME time);
-        public case_.TIME.simple.THEN<T> THEN(final LocalTime time);
+        public Case.TIME.simple.THEN<T> THEN(final type.TIME time);
+        public Case.TIME.simple.THEN<T> THEN(final LocalTime time);
       }
 
       public interface THEN<T> extends TIME.THEN {
-        public case_.TIME.simple.WHEN<T> WHEN(final T condition);
+        public Case.TIME.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.TIME.search.THEN<T> THEN(final type.TIME time);
-        public case_.TIME.search.THEN<T> THEN(final LocalTime time);
+        public Case.TIME.search.THEN<T> THEN(final type.TIME time);
+        public Case.TIME.search.THEN<T> THEN(final LocalTime time);
       }
 
       public interface THEN<T> extends TIME.THEN {
-        public case_.TIME.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.TIME.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.TIME.ELSE ELSE(final type.TIME time);
-      public case_.TIME.ELSE ELSE(final LocalTime time);
+      public Case.TIME.ELSE ELSE(final type.TIME time);
+      public Case.TIME.ELSE ELSE(final LocalTime time);
     }
 
     public interface ELSE {
@@ -1656,29 +1653,29 @@ public interface case_ {
   public interface DATETIME {
     public interface simple {
       public interface WHEN<T> {
-        public case_.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime);
-        public case_.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime);
+        public Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime);
+        public Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime);
       }
 
       public interface THEN<T> extends DATETIME.THEN {
-        public case_.DATETIME.simple.WHEN<T> WHEN(final T condition);
+        public Case.DATETIME.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime);
-        public case_.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime);
+        public Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime);
+        public Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime);
       }
 
       public interface THEN<T> extends DATETIME.THEN {
-        public case_.DATETIME.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.DATETIME.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.DATETIME.ELSE ELSE(final type.DATETIME dateTime);
-      public case_.DATETIME.ELSE ELSE(final LocalDateTime dateTime);
+      public Case.DATETIME.ELSE ELSE(final type.DATETIME dateTime);
+      public Case.DATETIME.ELSE ELSE(final LocalDateTime dateTime);
     }
 
     public interface ELSE {
@@ -1689,35 +1686,35 @@ public interface case_ {
   public interface CHAR {
     public interface simple {
       public interface WHEN<T> {
-        public case_.CHAR.simple.THEN<T> THEN(final type.ENUM<?> text);
-        public case_.CHAR.simple.THEN<T> THEN(final type.CHAR text);
-        public case_.CHAR.simple.THEN<T> THEN(final Enum<?> text);
-        public case_.CHAR.simple.THEN<T> THEN(final String text);
+        public Case.CHAR.simple.THEN<T> THEN(final type.ENUM<?> text);
+        public Case.CHAR.simple.THEN<T> THEN(final type.CHAR text);
+        public Case.CHAR.simple.THEN<T> THEN(final Enum<?> text);
+        public Case.CHAR.simple.THEN<T> THEN(final String text);
       }
 
       public interface THEN<T> extends CHAR.THEN {
-        public case_.CHAR.simple.WHEN<T> WHEN(final T condition);
+        public Case.CHAR.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.CHAR.search.THEN<T> THEN(final type.ENUM<?> text);
-        public case_.CHAR.search.THEN<T> THEN(final type.CHAR text);
-        public case_.CHAR.search.THEN<T> THEN(final Enum<?> text);
-        public case_.CHAR.search.THEN<T> THEN(final String text);
+        public Case.CHAR.search.THEN<T> THEN(final type.ENUM<?> text);
+        public Case.CHAR.search.THEN<T> THEN(final type.CHAR text);
+        public Case.CHAR.search.THEN<T> THEN(final Enum<?> text);
+        public Case.CHAR.search.THEN<T> THEN(final String text);
       }
 
       public interface THEN<T> extends CHAR.THEN {
-        public case_.CHAR.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.CHAR.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.CHAR.ELSE ELSE(final type.ENUM<?> text);
-      public case_.CHAR.ELSE ELSE(final type.CHAR text);
-      public case_.CHAR.ELSE ELSE(final Enum<?> text);
-      public case_.CHAR.ELSE ELSE(final String text);
+      public Case.CHAR.ELSE ELSE(final type.ENUM<?> text);
+      public Case.CHAR.ELSE ELSE(final type.CHAR text);
+      public Case.CHAR.ELSE ELSE(final Enum<?> text);
+      public Case.CHAR.ELSE ELSE(final String text);
     }
 
     public interface ELSE {
@@ -1728,35 +1725,35 @@ public interface case_ {
   public interface ENUM {
     public interface simple {
       public interface WHEN<T> {
-        public case_.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text);
-        public case_.CHAR.simple.THEN<T> THEN(final type.CHAR text);
-        public case_.ENUM.simple.THEN<T> THEN(final Enum<?> text);
-        public case_.CHAR.simple.THEN<T> THEN(final String text);
+        public Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text);
+        public Case.CHAR.simple.THEN<T> THEN(final type.CHAR text);
+        public Case.ENUM.simple.THEN<T> THEN(final Enum<?> text);
+        public Case.CHAR.simple.THEN<T> THEN(final String text);
       }
 
       public interface THEN<T> extends ENUM.THEN {
-        public case_.ENUM.simple.WHEN<T> WHEN(final T condition);
+        public Case.ENUM.simple.WHEN<T> WHEN(final T condition);
       }
     }
 
     public interface search {
       public interface WHEN<T> {
-        public case_.ENUM.search.THEN<T> THEN(final type.ENUM<?> text);
-        public case_.CHAR.search.THEN<T> THEN(final type.CHAR text);
-        public case_.ENUM.search.THEN<T> THEN(final Enum<?> text);
-        public case_.CHAR.search.THEN<T> THEN(final String text);
+        public Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> text);
+        public Case.CHAR.search.THEN<T> THEN(final type.CHAR text);
+        public Case.ENUM.search.THEN<T> THEN(final Enum<?> text);
+        public Case.CHAR.search.THEN<T> THEN(final String text);
       }
 
       public interface THEN<T> extends ENUM.THEN {
-        public case_.ENUM.search.WHEN<T> WHEN(final Condition<T> condition);
+        public Case.ENUM.search.WHEN<T> WHEN(final Condition<T> condition);
       }
     }
 
     interface THEN {
-      public case_.ENUM.ELSE ELSE(final type.ENUM<?> text);
-      public case_.CHAR.ELSE ELSE(final type.CHAR text);
-      public case_.ENUM.ELSE ELSE(final Enum<?> text);
-      public case_.CHAR.ELSE ELSE(final String text);
+      public Case.ENUM.ELSE ELSE(final type.ENUM<?> text);
+      public Case.CHAR.ELSE ELSE(final type.CHAR text);
+      public Case.ENUM.ELSE ELSE(final Enum<?> text);
+      public Case.CHAR.ELSE ELSE(final String text);
     }
 
     public interface ELSE {

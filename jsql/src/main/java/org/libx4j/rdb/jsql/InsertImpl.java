@@ -21,15 +21,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.model.ExecuteUpdate;
-import org.libx4j.rdb.jsql.model.insert;
-import org.libx4j.rdb.jsql.model.select;
+import org.libx4j.rdb.jsql.Select;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class Insert {
+final class InsertImpl {
   protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
-    protected Execute(final Keyword<T> parent, final Class<?> kind) {
-      super(parent, kind);
+    protected Execute(final Keyword<T> parent) {
+      super(parent);
     }
 
     @Override
@@ -67,11 +65,11 @@ final class Insert {
     }
   }
 
-  protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements insert.VALUES<T> {
-    protected final select.untyped.SELECT<?> select;
+  protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
+    protected final Select.untyped.SELECT<?> select;
 
-    protected VALUES(final Keyword<T> parent, final Class<?> kind, final select.untyped.SELECT<?> select) {
-      super(parent, kind);
+    protected VALUES(final Keyword<T> parent, final Select.untyped.SELECT<?> select) {
+      super(parent);
       this.select = select;
     }
 
@@ -83,23 +81,23 @@ final class Insert {
     }
   }
 
-  protected static final class INSERT<T extends Subject<?>> extends Execute<T> implements insert.INSERT_VALUES<T> {
-    protected final Entity[] entities;
+  protected static final class INSERT<T extends Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
+    protected final type.Entity[] entities;
     protected final type.DataType<?>[] columns;
 
     @SafeVarargs
-    protected INSERT(final Class<?> kind, final Entity ... entities) {
-      super(null, kind);
+    protected INSERT(final Class<?> kind, final type.Entity ... entities) {
+      super(null);
       this.entities = entities;
       this.columns = null;
     }
 
     @SafeVarargs
     protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
-      super(null, kind);
+      super(null);
       this.entities = null;
       this.columns = columns;
-      Entity entity = columns[0].owner;
+      type.Entity entity = columns[0].owner;
       if (entity == null)
         throw new IllegalArgumentException("DataType must belong to an Entity");
 
@@ -114,8 +112,8 @@ final class Insert {
     }
 
     @Override
-    public insert.VALUES<T> VALUES(final select.untyped.SELECT<?> select) {
-      return new VALUES<T>(this, kind(), select);
+    public Insert.VALUES<T> VALUES(final Select.untyped.SELECT<?> select) {
+      return new VALUES<T>(this, select);
     }
   }
 }

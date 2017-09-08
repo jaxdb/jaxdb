@@ -14,21 +14,18 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.Condition;
-import org.libx4j.rdb.jsql.type;
-
-public interface update {
+public interface Update {
   public interface UPDATE extends ExecuteUpdate {
   }
 
-  public interface UPDATE_SET extends UPDATE {
+  public interface _SET extends UPDATE {
     public <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to);
     public <T>SET SET(final type.DataType<T> column, final T to);
   }
 
-  public interface SET extends UPDATE_SET {
+  public interface SET extends _SET {
     public UPDATE WHERE(final Condition<?> condition);
   }
 }

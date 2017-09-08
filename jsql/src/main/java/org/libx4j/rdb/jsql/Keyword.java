@@ -21,19 +21,13 @@ import java.util.Set;
 
 public abstract class Keyword<T extends Subject<?>> extends Provision {
   private final Keyword<T> parent;
-  private final Class<?> kind;
 
-  protected Keyword(final Keyword<T> parent, final Class<?> kind) {
+  protected Keyword(final Keyword<T> parent) {
     this.parent = parent;
-    this.kind = kind;
   }
 
   protected final Keyword<T> parent() {
     return parent;
-  }
-
-  protected final Class<?> kind() {
-    return kind;
   }
 
   @Override

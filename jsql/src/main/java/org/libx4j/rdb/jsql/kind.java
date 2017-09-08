@@ -1,4 +1,4 @@
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
 public interface kind {
   public interface Subject<T> {

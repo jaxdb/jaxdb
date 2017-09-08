@@ -20,10 +20,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.jsql.Case.ELSE;
-import org.libx4j.rdb.jsql.Case.Search;
-import org.libx4j.rdb.jsql.Case.Simple;
-import org.libx4j.rdb.jsql.Case.THEN;
+import org.libx4j.rdb.jsql.CaseImpl.ELSE;
+import org.libx4j.rdb.jsql.CaseImpl.Search;
+import org.libx4j.rdb.jsql.CaseImpl.Simple;
+import org.libx4j.rdb.jsql.CaseImpl.THEN;
 
 final class CaseCommand extends Command {
   private final Simple.CASE<?,?> simpleCase;
@@ -70,7 +70,7 @@ final class CaseCommand extends Command {
 
     for (int i = 0; i < then().size(); i++) {
       final THEN<?,?> then = then().get(i);
-      compiler.compile((Case.WHEN)then.parent(), then, else_(), compilation);
+      compiler.compile((CaseImpl.WHEN)then.parent(), then, else_(), compilation);
     }
 
     compiler.compile(else_(), compilation);

@@ -14,12 +14,10 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import org.libx4j.rdb.jsql.Transaction;
 
 public interface ExecuteDelete {
   public int[] execute(final Transaction transaction) throws IOException, SQLException;

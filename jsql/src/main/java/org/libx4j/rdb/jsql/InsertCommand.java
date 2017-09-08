@@ -18,8 +18,8 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
-import org.libx4j.rdb.jsql.Insert.INSERT;
-import org.libx4j.rdb.jsql.Insert.VALUES;
+import org.libx4j.rdb.jsql.InsertImpl.INSERT;
+import org.libx4j.rdb.jsql.InsertImpl.VALUES;
 
 final class InsertCommand extends Command {
   private final INSERT<?> insert;

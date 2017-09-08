@@ -14,15 +14,13 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql.model;
+package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.Condition;
-
-public interface delete {
+public interface Delete {
   public interface DELETE extends ExecuteUpdate {
   }
 
-  public interface DELETE_WHERE extends DELETE {
+  public interface _DELETE extends DELETE {
     public DELETE WHERE(final Condition<?> condition);
   }
 }

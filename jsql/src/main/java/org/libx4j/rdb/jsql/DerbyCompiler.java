@@ -29,8 +29,6 @@ import java.util.List;
 import org.lib4j.math.Constants;
 import org.lib4j.math.SafeMath;
 import org.lib4j.sql.DateTimes;
-import org.libx4j.rdb.jsql.Select.GROUP_BY;
-import org.libx4j.rdb.jsql.Select.SELECT;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class DerbyCompiler extends Compiler {
@@ -122,7 +120,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
     if (from != null)
       super.compile(from, compilation);
     else
@@ -181,12 +179,12 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void compile(final Select.HAVING<?> having, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
-      final SELECT<?> select = ((SelectCommand)compilation.command).select();
+      final SelectImpl.untyped.SELECT<?> select = ((SelectCommand)compilation.command).select();
       final SelectCommand command = (SelectCommand)compilation.command;
       if (command.groupBy() == null) {
-        final GROUP_BY<?> groupBy = new GROUP_BY(null, having.kind(), select.getEntitiesWithOwners());
+        final SelectImpl.untyped.GROUP_BY<?> groupBy = new SelectImpl.Entity.GROUP_BY(null, select.getEntitiesWithOwners());
         compile(groupBy, compilation);
       }
 
@@ -196,7 +194,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Compilation compilation) {
+  protected void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
       if (offset != null)
         compilation.append(" OFFSET ").append(offset.rows).append(" ROWS");

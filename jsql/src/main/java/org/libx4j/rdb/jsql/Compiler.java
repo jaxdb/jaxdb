@@ -50,8 +50,7 @@ import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
-import org.libx4j.rdb.jsql.Insert.VALUES;
-import org.libx4j.rdb.jsql.model.kind;
+import org.libx4j.rdb.jsql.InsertImpl.VALUES;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -105,8 +104,8 @@ public abstract class Compiler {
   }
 
   protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
-    if (subject instanceof Entity) {
-      final Entity entity = (Entity)subject;
+    if (subject instanceof type.Entity) {
+      final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
       for (int c = 0; c < entity.column.length; c++) {
         final type.DataType<?> column = entity.column[c];
@@ -142,7 +141,7 @@ public abstract class Compiler {
     return (Compilable)kind;
   }
 
-  protected String tableName(final Entity entity, final Compilation compilation) {
+  protected String tableName(final type.Entity entity, final Compilation compilation) {
     return entity.name();
   }
 
@@ -150,29 +149,29 @@ public abstract class Compiler {
     return "?";
   }
 
-  protected void compile(final Case.Simple.CASE<?,?> case_, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
     case_.variable.compile(compilation);
   }
 
-  protected void compile(final Case.Search.WHEN<?> case_, final Compilation compilation) {
+  protected void compile(final CaseImpl.Search.WHEN<?> case_, final Compilation compilation) {
     compilation.append("CASE");
   }
 
-  protected void compile(final Case.WHEN<?> when, final Case.THEN<?,?> then, final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" WHEN ");
     when.condition.compile(compilation);
     compilation.append(" THEN ");
     then.value.compile(compilation);
   }
 
-  protected void compile(final Case.ELSE<?> _else, final Compilation compilation) throws IOException {
+  protected void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
     _else.value.compile(compilation);
     compilation.append(" END");
   }
 
-  protected void compile(final SelectCommand command, final Select.SELECT<?> select, final Compilation compilation) throws IOException {
+  protected void compile(final SelectCommand command, final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
     compilation.append("SELECT ");
     if (select.distinct)
       compilation.append("DISTINCT ");
@@ -180,7 +179,7 @@ public abstract class Compiler {
     compileEntities(select.entities, select, command.getTranslateTypes(), compilation);
   }
 
-  protected void compile(final Select.FROM<?> from, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
     if (from == null)
       return;
 
@@ -188,9 +187,9 @@ public abstract class Compiler {
 
     // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
     // FIXME: referring to, because this table must be the last in the table order here
-    final Iterator<Entity> iterator = from.tables.iterator();
+    final Iterator<type.Entity> iterator = from.tables.iterator();
     while (true) {
-      final Entity table = iterator.next();
+      final type.Entity table = iterator.next();
       if (table.wrapper() != null) {
         table.wrapper().compile(compilation);
       }
@@ -206,7 +205,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Select.JOIN<?> join, final Select.ON<?> on, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.JOIN<?> join, final SelectImpl.untyped.ON<?> on, final Compilation compilation) throws IOException {
     if (join != null) {
       // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
       // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
@@ -234,28 +233,28 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Select.WHERE<?> where, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.WHERE<?> where, final Compilation compilation) throws IOException {
     if (where != null) {
       compilation.append(" WHERE ");
       where.condition.compile(compilation);
     }
   }
 
-  protected void compile(final Select.GROUP_BY<?> groupBy, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.GROUP_BY<?> groupBy, final Compilation compilation) throws IOException {
     if (groupBy != null) {
       compilation.append(" GROUP BY ");
       compileEntities(groupBy.subjects, groupBy, null, compilation);
     }
   }
 
-  protected void compile(final Select.HAVING<?> having, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
       compilation.append(" HAVING ");
       having.condition.compile(compilation);
     }
   }
 
-  protected void compile(final Select.ORDER_BY<?> orderBy, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.ORDER_BY<?> orderBy, final Compilation compilation) throws IOException {
     if (orderBy != null) {
       compilation.append(" ORDER BY ");
       if (orderBy.columns != null) {
@@ -280,7 +279,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Select.LIMIT<?> limit, final Select.OFFSET<?> offset, final Compilation compilation) {
+  protected void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
       compilation.append(" LIMIT " + limit.rows);
       if (offset != null)
@@ -288,7 +287,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Select.UNION<?> union, final Compilation compilation) throws IOException {
+  protected void compile(final SelectImpl.untyped.UNION<?> union, final Compilation compilation) throws IOException {
     if (union != null) {
       compilation.append(" UNION ");
       if (union.all)
@@ -302,7 +301,7 @@ public abstract class Compiler {
   private static void compileInsert(final type.DataType<?>[] columns, final Compilation compilation) throws IOException {
     final StringBuilder builder = new StringBuilder();
     compilation.append("INSERT INTO ");
-    final Entity entity = columns[0].owner;
+    final type.Entity entity = columns[0].owner;
     entity.compile(compilation);
     for (int j = 0; j < columns.length; j++) {
       final type.DataType column = columns[j];
@@ -337,7 +336,7 @@ public abstract class Compiler {
   }
 
   @SuppressWarnings("rawtypes")
-  protected void compile(final Insert.INSERT insert, final Compilation compilation) throws IOException {
+  protected void compile(final InsertImpl.INSERT insert, final Compilation compilation) throws IOException {
     if (insert.entities != null && insert.entities.length > 1) {
       for (int i = 0; i < insert.entities.length; i++) {
         compileInsert(insert.entities[i].column, compilation);
@@ -350,14 +349,14 @@ public abstract class Compiler {
   }
 
   @SuppressWarnings("rawtypes")
-  protected void compile(final Insert.INSERT insert, final VALUES<?> values, final Compilation compilation) throws IOException {
+  protected void compile(final InsertImpl.INSERT insert, final VALUES<?> values, final Compilation compilation) throws IOException {
     final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<Integer,type.ENUM<?>>();
     if (insert.entities != null) {
       if (insert.entities.length > 1)
         throw new UnsupportedOperationException("This is not supported, and should not be!");
 
       compilation.append("INSERT INTO ");
-      final Entity entity = insert.entities[0];
+      final type.Entity entity = insert.entities[0];
       entity.compile(compilation);
       compilation.append(" (");
       for (int i = 0; i < entity.column.length; i++) {
@@ -374,7 +373,7 @@ public abstract class Compiler {
     }
     else if (insert.columns != null) {
       compilation.append("INSERT INTO ");
-      final Entity entity = insert.columns[0].owner;
+      final type.Entity entity = insert.columns[0].owner;
       entity.compile(compilation);
       compilation.append(" (");
       for (int i = 0; i < insert.columns.length; i++) {
@@ -396,9 +395,9 @@ public abstract class Compiler {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void compile(final Update.UPDATE update, final Compilation compilation) throws IOException {
+  protected void compile(final UpdateImpl.UPDATE update, final Compilation compilation) throws IOException {
     for (int i = 0; i < update.entities.length; i++) {
-      final Entity entity = update.entities[i];
+      final type.Entity entity = update.entities[i];
       compilation.append("UPDATE ");
       update.entities[i].compile(compilation);
       compilation.append(" SET ");
@@ -465,7 +464,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Update.UPDATE update, final List<Update.SET> sets, final Update.WHERE where, final Compilation compilation) throws IOException {
+  protected void compile(final UpdateImpl.UPDATE update, final List<UpdateImpl.SET> sets, final UpdateImpl.WHERE where, final Compilation compilation) throws IOException {
     if (update.entities.length > 1)
       throw new UnsupportedOperationException("This is not supported, and should not be!");
 
@@ -473,7 +472,7 @@ public abstract class Compiler {
     update.entities[0].compile(compilation);
     compilation.append(" SET ");
     for (int i = 0; i < sets.size(); i++) {
-      final Update.SET set = sets.get(i);
+      final UpdateImpl.SET set = sets.get(i);
       if (i > 0)
         compilation.append(", ");
 
@@ -487,7 +486,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Delete.DELETE delete, final Compilation compilation) throws IOException {
+  protected void compile(final DeleteImpl.DELETE delete, final Compilation compilation) throws IOException {
     for (int i = 0; i < delete.entities.length; i++) {
       compilation.append("DELETE FROM ");
       delete.entities[i].compile(compilation);
@@ -509,7 +508,7 @@ public abstract class Compiler {
     }
   }
 
-  protected void compile(final Delete.DELETE delete, final Delete.WHERE where, final Compilation compilation) throws IOException {
+  protected void compile(final DeleteImpl.DELETE delete, final DeleteImpl.WHERE where, final Compilation compilation) throws IOException {
     if (delete.entities.length > 1)
       throw new UnsupportedOperationException("This is not supported, and should not be!");
 
@@ -520,7 +519,7 @@ public abstract class Compiler {
     where.condition.compile(compilation);
   }
 
-  protected <T extends Subject<?>>void compile(final Entity entity, final Compilation compilation) throws IOException {
+  protected <T extends Subject<?>>void compile(final type.Entity entity, final Compilation compilation) throws IOException {
     if (entity.wrapper() != null) {
       entity.wrapper().compile(compilation);
     }
@@ -1012,9 +1011,9 @@ public abstract class Compiler {
     return dataType.get() == null ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
   }
 
-  protected void assignAliases(final Select.FROM<?> from, final Compilation compilation) {
+  protected void assignAliases(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) {
     if (from != null)
-      for (final Entity table : from.tables)
+      for (final type.Entity table : from.tables)
         compilation.registerAlias(table);
   }
 

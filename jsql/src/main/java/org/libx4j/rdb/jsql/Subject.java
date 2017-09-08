@@ -24,8 +24,8 @@ public abstract class Subject<T> extends Evaluable {
     try {
       Keyword<T> keyword = select;
       do {
-        if (keyword instanceof Select.SELECT) {
-          final Class<?> cls = Classes.getGreatestCommonSuperclass(((Select.SELECT<?>)keyword).entities);
+        if (keyword instanceof SelectImpl.untyped.SELECT) {
+          final Class<?> cls = Classes.getGreatestCommonSuperclass(((SelectImpl.untyped.SELECT<?>)keyword).entities);
           final T as = (T)cls.newInstance();
           as.wrapper(new As<T>(select, as, false));
           return as;
