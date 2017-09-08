@@ -1,6 +1,6 @@
 package org.libx4j.rdb.jsql;
 
-public interface kind {
+interface kind {
   public interface Subject<T> {
   }
 

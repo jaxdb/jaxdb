@@ -43,7 +43,7 @@ public abstract class JSQLTest {
 
   @SuppressWarnings("unchecked")
   protected static void loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, XMLException {
-    DBRegistry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new DBConnector() {
+    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
         return connection;

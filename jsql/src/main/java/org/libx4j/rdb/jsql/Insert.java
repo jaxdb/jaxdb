@@ -16,10 +16,6 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.Select;
-import org.libx4j.rdb.jsql.Select.untyped;
-import org.libx4j.rdb.jsql.Select.untyped.SELECT;
-
 public interface Insert {
   public interface VALUES<T extends Subject<?>> extends ExecuteUpdate {
   }

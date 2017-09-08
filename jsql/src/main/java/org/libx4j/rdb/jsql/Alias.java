@@ -18,7 +18,7 @@ package org.libx4j.rdb.jsql;
 
 import org.lib4j.lang.Strings;
 
-public final class Alias extends Compilable {
+final class Alias extends Compilable {
   protected final String name;
 
   public Alias(final int index) {
@@ -31,14 +31,8 @@ public final class Alias extends Compilable {
   }
 
   @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-
-    if (!(obj instanceof Alias))
-      return false;
-
-    return name.equals(((Alias)obj).name);
+  public boolean equals(final Object obj) {
+    return this == obj || obj instanceof Alias && name.equals(((Alias)obj).name);
   }
 
   @Override

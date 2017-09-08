@@ -46,7 +46,7 @@ final class InsertImpl {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        final Compilation compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+        final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
         command.compile(compilation);
         final int[] count = compilation.execute(connection);
         if (transaction == null)

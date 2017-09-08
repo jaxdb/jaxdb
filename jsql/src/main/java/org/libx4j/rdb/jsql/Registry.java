@@ -27,9 +27,9 @@ import javax.sql.DataSource;
 
 import org.lib4j.sql.ConnectionProxy;
 
-public final class DBRegistry {
-  private static DBConnector makeConnector(final DataSource dataSource) {
-    return dataSource == null ? null : new DBConnector() {
+public final class Registry {
+  private static Connector makeConnector(final DataSource dataSource) {
+    return dataSource == null ? null : new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
         return new ConnectionProxy(dataSource.getConnection());
@@ -37,11 +37,11 @@ public final class DBRegistry {
     };
   }
 
-  private static final Map<Class<? extends Schema>,DBConnector> dataSources = new HashMap<Class<? extends Schema>,DBConnector>();
+  private static final Map<Class<? extends Schema>,Connector> dataSources = new HashMap<Class<? extends Schema>,Connector>();
   private static final Set<Class<? extends Schema>> prepared = new HashSet<Class<? extends Schema>>();
   private static final Set<Class<? extends Schema>> batching = new HashSet<Class<? extends Schema>>();
 
-  public static void register(final Class<? extends Schema> schema, final DBConnector dataSource) {
+  public static void register(final Class<? extends Schema> schema, final Connector dataSource) {
     register(schema, dataSource, false, false);
   }
 
@@ -49,7 +49,7 @@ public final class DBRegistry {
     register(schema, makeConnector(dataSource), false, false);
   }
 
-  public static void registerPrepared(final Class<? extends Schema> schema, final DBConnector connector) {
+  public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector) {
     register(schema, connector, true, false);
   }
 
@@ -57,7 +57,7 @@ public final class DBRegistry {
     register(schema, makeConnector(dataSource), true, false);
   }
 
-  public static void registerBatching(final Class<? extends Schema> schema, final DBConnector connector) {
+  public static void registerBatching(final Class<? extends Schema> schema, final Connector connector) {
     register(schema, connector, false, true);
   }
 
@@ -65,7 +65,7 @@ public final class DBRegistry {
     register(schema, makeConnector(dataSource), false, true);
   }
 
-  public static void registerPreparedBatching(final Class<? extends Schema> schema, final DBConnector connector) {
+  public static void registerPreparedBatching(final Class<? extends Schema> schema, final Connector connector) {
     register(schema, connector, true, true);
   }
 
@@ -73,19 +73,19 @@ public final class DBRegistry {
     register(schema, makeConnector(dataSource), true, true);
   }
 
-  private static void register(final Class<? extends Schema> schema, final DBConnector dataSource, final boolean prepared, final boolean batching) {
+  private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final boolean batching) {
     if (dataSource == null)
       throw new NullPointerException("dataSource == null");
 
     dataSources.put(schema, dataSource);
     if (prepared)
-      DBRegistry.prepared.add(schema);
+      Registry.prepared.add(schema);
 
     if (batching)
-      DBRegistry.batching.add(schema);
+      Registry.batching.add(schema);
   }
 
-  protected static DBConnector getDataSource(final Class<? extends Schema> schema) {
+  protected static Connector getDataSource(final Class<? extends Schema> schema) {
     return dataSources.get(schema);
   }
 
@@ -97,6 +97,6 @@ public final class DBRegistry {
     return batching.contains(schema);
   }
 
-  private DBRegistry() {
+  private Registry() {
   }
 }

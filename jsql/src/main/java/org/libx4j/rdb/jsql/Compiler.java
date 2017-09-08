@@ -54,7 +54,7 @@ import org.libx4j.rdb.jsql.InsertImpl.VALUES;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
-public abstract class Compiler {
+abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {

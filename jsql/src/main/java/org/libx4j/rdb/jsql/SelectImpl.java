@@ -79,7 +79,7 @@ class SelectImpl {
       final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
       final DBVendor vendor = Schema.getDBVendor(connection);
 
-      final Compilation compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+      final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
       command.compile(compilation);
 
       final ResultSet resultSet = compilation.executeQuery(connection);
@@ -380,13 +380,7 @@ class SelectImpl {
         this.distinct = distinct;
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -912,13 +906,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -1403,13 +1391,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -1892,13 +1874,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -2382,13 +2358,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -2872,13 +2842,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -3362,13 +3326,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -3852,13 +3810,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -4342,13 +4294,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -4832,13 +4778,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -5322,13 +5262,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -5812,13 +5746,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -6303,13 +6231,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -6792,13 +6714,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -7283,13 +7199,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -7772,13 +7682,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -8262,13 +8166,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -8752,13 +8650,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -9243,13 +9135,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -9732,13 +9618,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -10223,13 +10103,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -10712,13 +10586,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -11202,13 +11070,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -11692,13 +11554,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -12183,13 +12039,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -12672,13 +12522,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -13162,13 +13006,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -13652,13 +13490,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -14142,13 +13974,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }
@@ -14633,13 +14459,7 @@ class SelectImpl {
           super(distinct, entities);
         }
 
-        @SafeVarargs
-        public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-          this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-          for (final kind.DataType<?> e : entities)
-            this.entities.add((Compilable)e);
-        }
-
+        @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
           this(distinct, Collections.asCollection(new ArrayList(), entities));
         }
@@ -15122,13 +14942,7 @@ class SelectImpl {
         super(distinct, entities);
       }
 
-      @SafeVarargs
-      public SELECT(final boolean distinct, final T entity, final kind.DataType<?> ... entities) {
-        this(distinct, Collections.asCollection(new ArrayList<Compilable>(), entity));
-        for (final kind.DataType<?> e : entities)
-          this.entities.add((Compilable)e);
-      }
-
+      @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
         this(distinct, Collections.asCollection(new ArrayList(), entities));
       }

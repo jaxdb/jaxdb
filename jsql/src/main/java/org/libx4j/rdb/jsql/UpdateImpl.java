@@ -44,7 +44,7 @@ final class UpdateImpl {
         final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
         final DBVendor vendor = Schema.getDBVendor(connection);
 
-        compilation = new Compilation(command, vendor, DBRegistry.isPrepared(schema), DBRegistry.isBatching(schema));
+        compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
         command.compile(compilation);
         final int[] count = compilation.execute(connection);
         compilation.afterExecute(true);

@@ -19,6 +19,6 @@ package org.libx4j.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public interface DBConnector {
+public interface Connector {
   public Connection getConnection() throws SQLException;
 }
