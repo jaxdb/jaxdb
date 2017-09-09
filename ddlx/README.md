@@ -55,11 +55,11 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </pluginRepositories>
   ```
 
-3. Create a `basis.ddlx` **DDLx** Schema and put it in `src/main/resources/`.
+3. Create a `basis.ddlx` **DDLx** schema and put it in `src/main/resources/`.
 
   ```xml
   <schema name="basis"
-    xmlns="http://rdb.lib4j.org/ddlx.xsd"
+    xmlns="http://rdb.libx4j.org/ddlx.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
 
@@ -100,7 +100,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   <plugin>
     <groupId>org.libx4j.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
-    <version>1.3.2</version>
+    <version>0.9.8-SNAPSHOT</version>
     <executions>
       <execution>
         <id>default-schema</id>
