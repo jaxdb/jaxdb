@@ -519,7 +519,7 @@ abstract class Compiler {
     where.condition.compile(compilation);
   }
 
-  protected <T extends Subject<?>>void compile(final type.Entity entity, final Compilation compilation) throws IOException {
+  protected <T extends type.Subject<?>>void compile(final type.Entity entity, final Compilation compilation) throws IOException {
     if (entity.wrapper() != null) {
       entity.wrapper().compile(compilation);
     }
@@ -619,7 +619,7 @@ abstract class Compiler {
   }
 
   // FIXME: Move this to a Util class or something
-  protected static <T extends Subject<?>>void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
+  protected static <T extends type.Subject<?>>void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
         condition.compile(compilation);
@@ -646,10 +646,10 @@ abstract class Compiler {
   }
 
   private static Compilable unwrapAlias(final Compilable compilable) {
-    if (!(compilable instanceof Subject))
+    if (!(compilable instanceof type.Subject))
       return compilable;
 
-    final Subject<?> subject = (Subject<?>)compilable;
+    final type.Subject<?> subject = (type.Subject<?>)compilable;
     if (!(subject.wrapper() instanceof As))
       return compilable;
 

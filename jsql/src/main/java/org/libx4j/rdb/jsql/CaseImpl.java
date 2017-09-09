@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 final class CaseImpl implements Case {
-  protected static abstract class ChainedKeyword extends Keyword<Subject<?>> {
+  protected static abstract class ChainedKeyword extends Keyword<type.Subject<?>> {
     protected ChainedKeyword(final ChainedKeyword parent) {
       super(parent);
     }

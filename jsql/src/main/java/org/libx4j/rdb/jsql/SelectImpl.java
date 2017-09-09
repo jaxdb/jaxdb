@@ -71,7 +71,7 @@ class SelectImpl {
     }
   }
 
-  protected static <T extends Subject<?>>RowIterator<T> execute(final Transaction transaction, final Keyword<T> keyword) throws IOException, SQLException {
+  protected static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final Keyword<T> keyword) throws IOException, SQLException {
     final SelectCommand command = (SelectCommand)keyword.normalize();
 
     final Class<? extends Schema> schema = command.from() != null ? command.from().tables.iterator().next().schema() : null;
@@ -90,7 +90,7 @@ class SelectImpl {
     }
   }
 
-  private static <B extends Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final untyped.SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
+  private static <B extends type.Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final untyped.SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
     final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<AbstractMap.SimpleEntry<type.DataType<?>,Integer>>();
     for (final Compilable entity : select.entities)
       compile(dataTypes, entity);
@@ -111,14 +111,14 @@ class SelectImpl {
           return true;
         }
 
-        Subject<?>[] row;
+        type.Subject<?>[] row;
         int index;
         type.Entity entity;
         try {
           if (!resultSet.next())
             return false;
 
-          row = new Subject[select.entities.size()];
+          row = new type.Subject[select.entities.size()];
           index = 0;
           entity = null;
           for (int i = 0; i < noColumns; i++) {
@@ -191,7 +191,7 @@ class SelectImpl {
   }
 
   public static class untyped {
-    protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements Select.untyped.SELECT<T>, Select.untyped.UNION<T> {
+    protected static abstract class Execute<T extends type.Subject<?>> extends Keyword<T> implements Select.untyped.SELECT<T>, Select.untyped.UNION<T> {
       protected Execute(final Keyword<T> parent) {
         super(parent);
       }
@@ -213,7 +213,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class FROM<T extends Subject<?>> extends Execute<T> implements Select.untyped.FROM<T> {
+    public static abstract class FROM<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.FROM<T> {
       protected final Collection<type.Entity> tables;
 
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
@@ -233,16 +233,16 @@ class SelectImpl {
       }
     }
 
-    public static abstract class GROUP_BY<T extends Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
-      protected final Collection<Subject<?>> subjects;
+    public static abstract class GROUP_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.GROUP_BY<T> {
+      protected final Collection<type.Subject<?>> subjects;
 
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent);
         this.subjects = subjects;
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -253,7 +253,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class HAVING<T extends Subject<?>> extends Execute<T> implements Select.untyped.HAVING<T> {
+    public static abstract class HAVING<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.HAVING<T> {
       protected final Condition<?> condition;
 
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
@@ -269,7 +269,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class JOIN<T extends Subject<?>> extends Execute<T> implements Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.FROM<T> {
+    public static abstract class JOIN<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.JOIN<T>, Select.untyped.ADV_JOIN<T>, Select.untyped.FROM<T> {
       protected final boolean cross;
       protected final boolean natural;
       protected final boolean left;
@@ -295,7 +295,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class ON<T extends Subject<?>> extends Execute<T> implements Select.untyped.ON<T>, Select.untyped.FROM<T> {
+    public static abstract class ON<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ON<T>, Select.untyped.FROM<T> {
       protected final Condition<?> condition;
 
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
@@ -311,7 +311,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class ORDER_BY<T extends Subject<?>> extends Execute<T> implements Select.untyped.ORDER_BY<T> {
+    public static abstract class ORDER_BY<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.ORDER_BY<T> {
       protected final type.DataType<?>[] columns;
       protected final int[] columnNumbers;
 
@@ -335,7 +335,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class LIMIT<T extends Subject<?>> extends Execute<T> implements Select.untyped.LIMIT<T> {
+    public static abstract class LIMIT<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.LIMIT<T> {
       protected final int rows;
 
       protected LIMIT(final Keyword<T> parent, final int rows) {
@@ -351,7 +351,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class OFFSET<T extends Subject<?>> extends Execute<T> implements Select.untyped.OFFSET<T> {
+    public static abstract class OFFSET<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.OFFSET<T> {
       protected final int rows;
 
       protected OFFSET(final Keyword<T> parent, final int rows) {
@@ -367,7 +367,7 @@ class SelectImpl {
       }
     }
 
-    protected static abstract class SELECT<T extends Subject<?>> extends Keyword<T> implements Select.untyped._SELECT<T> {
+    protected static abstract class SELECT<T extends type.Subject<?>> extends Keyword<T> implements Select.untyped._SELECT<T> {
       protected final boolean distinct;
       protected final Collection<Compilable> entities;
 
@@ -482,7 +482,7 @@ class SelectImpl {
       }
     }
 
-    public static abstract class WHERE<T extends Subject<?>> extends Execute<T> implements Select.untyped.WHERE<T> {
+    public static abstract class WHERE<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.WHERE<T> {
       protected final Condition<?> condition;
 
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
@@ -498,7 +498,7 @@ class SelectImpl {
       }
     }
 
-    protected static abstract class UNION<T extends Subject<?>> extends Execute<T> implements Select.untyped.UNION<T> {
+    protected static abstract class UNION<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.UNION<T> {
       protected final Compilable select;
       protected final boolean all;
 
@@ -518,10 +518,10 @@ class SelectImpl {
   }
 
   public static class ARRAY {
-    protected static interface Execute<T extends Subject<?>> extends Select.ARRAY.SELECT<T>, Select.ARRAY.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.ARRAY.SELECT<T>, Select.ARRAY.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ARRAY.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ARRAY.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -531,7 +531,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -601,13 +601,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ARRAY.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ARRAY.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -636,7 +636,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ARRAY.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ARRAY.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -667,7 +667,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ARRAY.JOIN<T>, Select.ARRAY.ADV_JOIN<T>, Select.ARRAY.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ARRAY.JOIN<T>, Select.ARRAY.ADV_JOIN<T>, Select.ARRAY.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -723,7 +723,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -748,7 +748,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.ARRAY.ON<T>, Select.ARRAY.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.ARRAY.ON<T>, Select.ARRAY.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -794,7 +794,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -824,7 +824,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ARRAY.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ARRAY.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -854,7 +854,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.ARRAY.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.ARRAY.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -880,7 +880,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.ARRAY.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.ARRAY.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -901,7 +901,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ARRAY._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ARRAY._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -943,7 +943,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ARRAY.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ARRAY.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -974,12 +974,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ARRAY.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ARRAY.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -1003,10 +1003,10 @@ class SelectImpl {
 
   public static class BIGINT {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.BIGINT.UNSIGNED.SELECT<T>, Select.BIGINT.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.BIGINT.UNSIGNED.SELECT<T>, Select.BIGINT.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -1016,7 +1016,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -1086,13 +1086,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -1121,7 +1121,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -1152,7 +1152,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.UNSIGNED.JOIN<T>, Select.BIGINT.UNSIGNED.ADV_JOIN<T>, Select.BIGINT.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.UNSIGNED.JOIN<T>, Select.BIGINT.UNSIGNED.ADV_JOIN<T>, Select.BIGINT.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -1208,7 +1208,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -1233,7 +1233,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGINT.UNSIGNED.ON<T>, Select.BIGINT.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGINT.UNSIGNED.ON<T>, Select.BIGINT.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -1279,7 +1279,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -1309,7 +1309,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -1339,7 +1339,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGINT.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGINT.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -1365,7 +1365,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGINT.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGINT.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -1386,7 +1386,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -1428,7 +1428,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -1459,12 +1459,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -1486,10 +1486,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.BIGINT.SELECT<T>, Select.BIGINT.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.BIGINT.SELECT<T>, Select.BIGINT.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BIGINT.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -1499,7 +1499,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -1569,13 +1569,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BIGINT.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -1604,7 +1604,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BIGINT.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -1635,7 +1635,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.JOIN<T>, Select.BIGINT.ADV_JOIN<T>, Select.BIGINT.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BIGINT.JOIN<T>, Select.BIGINT.ADV_JOIN<T>, Select.BIGINT.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -1691,7 +1691,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -1716,7 +1716,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGINT.ON<T>, Select.BIGINT.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BIGINT.ON<T>, Select.BIGINT.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -1762,7 +1762,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -1792,7 +1792,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BIGINT.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -1822,7 +1822,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGINT.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BIGINT.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -1848,7 +1848,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGINT.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BIGINT.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -1869,7 +1869,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BIGINT._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -1911,7 +1911,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BIGINT.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -1942,12 +1942,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -1970,10 +1970,10 @@ class SelectImpl {
   }
 
   public static class BINARY {
-    protected static interface Execute<T extends Subject<?>> extends Select.BINARY.SELECT<T>, Select.BINARY.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.BINARY.SELECT<T>, Select.BINARY.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BINARY.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BINARY.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -1983,7 +1983,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -2053,13 +2053,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BINARY.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BINARY.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -2088,7 +2088,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BINARY.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BINARY.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2119,7 +2119,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BINARY.JOIN<T>, Select.BINARY.ADV_JOIN<T>, Select.BINARY.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BINARY.JOIN<T>, Select.BINARY.ADV_JOIN<T>, Select.BINARY.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -2175,7 +2175,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -2200,7 +2200,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BINARY.ON<T>, Select.BINARY.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BINARY.ON<T>, Select.BINARY.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2246,7 +2246,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -2276,7 +2276,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BINARY.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BINARY.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -2306,7 +2306,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BINARY.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BINARY.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -2332,7 +2332,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BINARY.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BINARY.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -2353,7 +2353,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BINARY._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BINARY._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -2395,7 +2395,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BINARY.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BINARY.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2426,12 +2426,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BINARY.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BINARY.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BINARY.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -2454,10 +2454,10 @@ class SelectImpl {
   }
 
   public static class BLOB {
-    protected static interface Execute<T extends Subject<?>> extends Select.BLOB.SELECT<T>, Select.BLOB.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.BLOB.SELECT<T>, Select.BLOB.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BLOB.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BLOB.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -2467,7 +2467,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -2537,13 +2537,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BLOB.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BLOB.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -2572,7 +2572,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BLOB.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BLOB.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2603,7 +2603,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BLOB.JOIN<T>, Select.BLOB.ADV_JOIN<T>, Select.BLOB.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BLOB.JOIN<T>, Select.BLOB.ADV_JOIN<T>, Select.BLOB.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -2659,7 +2659,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -2684,7 +2684,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BLOB.ON<T>, Select.BLOB.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BLOB.ON<T>, Select.BLOB.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2730,7 +2730,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -2760,7 +2760,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BLOB.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BLOB.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -2790,7 +2790,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BLOB.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BLOB.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -2816,7 +2816,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BLOB.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BLOB.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -2837,7 +2837,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BLOB._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BLOB._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -2879,7 +2879,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BLOB.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BLOB.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -2910,12 +2910,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BLOB.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BLOB.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -2938,10 +2938,10 @@ class SelectImpl {
   }
 
   public static class BOOLEAN {
-    protected static interface Execute<T extends Subject<?>> extends Select.BOOLEAN.SELECT<T>, Select.BOOLEAN.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.BOOLEAN.SELECT<T>, Select.BOOLEAN.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BOOLEAN.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.BOOLEAN.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -2951,7 +2951,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -3021,13 +3021,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BOOLEAN.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.BOOLEAN.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -3056,7 +3056,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BOOLEAN.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.BOOLEAN.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3087,7 +3087,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BOOLEAN.JOIN<T>, Select.BOOLEAN.ADV_JOIN<T>, Select.BOOLEAN.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.BOOLEAN.JOIN<T>, Select.BOOLEAN.ADV_JOIN<T>, Select.BOOLEAN.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -3143,7 +3143,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -3168,7 +3168,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BOOLEAN.ON<T>, Select.BOOLEAN.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.BOOLEAN.ON<T>, Select.BOOLEAN.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3214,7 +3214,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -3244,7 +3244,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BOOLEAN.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.BOOLEAN.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -3274,7 +3274,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BOOLEAN.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.BOOLEAN.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -3300,7 +3300,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BOOLEAN.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.BOOLEAN.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -3321,7 +3321,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BOOLEAN._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.BOOLEAN._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -3363,7 +3363,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BOOLEAN.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.BOOLEAN.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3394,12 +3394,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BOOLEAN.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BOOLEAN.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -3422,10 +3422,10 @@ class SelectImpl {
   }
 
   public static class CHAR {
-    protected static interface Execute<T extends Subject<?>> extends Select.CHAR.SELECT<T>, Select.CHAR.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.CHAR.SELECT<T>, Select.CHAR.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CHAR.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CHAR.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -3435,7 +3435,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -3505,13 +3505,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CHAR.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CHAR.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -3540,7 +3540,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CHAR.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CHAR.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3571,7 +3571,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CHAR.JOIN<T>, Select.CHAR.ADV_JOIN<T>, Select.CHAR.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CHAR.JOIN<T>, Select.CHAR.ADV_JOIN<T>, Select.CHAR.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -3627,7 +3627,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -3652,7 +3652,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.CHAR.ON<T>, Select.CHAR.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.CHAR.ON<T>, Select.CHAR.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3698,7 +3698,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -3728,7 +3728,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CHAR.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CHAR.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -3758,7 +3758,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.CHAR.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.CHAR.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -3784,7 +3784,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.CHAR.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.CHAR.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -3805,7 +3805,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CHAR._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CHAR._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -3847,7 +3847,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CHAR.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CHAR.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -3878,12 +3878,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CHAR.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CHAR.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CHAR.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -3906,10 +3906,10 @@ class SelectImpl {
   }
 
   public static class CLOB {
-    protected static interface Execute<T extends Subject<?>> extends Select.CLOB.SELECT<T>, Select.CLOB.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.CLOB.SELECT<T>, Select.CLOB.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CLOB.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.CLOB.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -3919,7 +3919,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -3989,13 +3989,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CLOB.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.CLOB.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -4024,7 +4024,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CLOB.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.CLOB.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4055,7 +4055,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CLOB.JOIN<T>, Select.CLOB.ADV_JOIN<T>, Select.CLOB.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.CLOB.JOIN<T>, Select.CLOB.ADV_JOIN<T>, Select.CLOB.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -4111,7 +4111,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -4136,7 +4136,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.CLOB.ON<T>, Select.CLOB.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.CLOB.ON<T>, Select.CLOB.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4182,7 +4182,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -4212,7 +4212,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CLOB.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.CLOB.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -4242,7 +4242,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.CLOB.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.CLOB.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -4268,7 +4268,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.CLOB.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.CLOB.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -4289,7 +4289,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CLOB._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.CLOB._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -4331,7 +4331,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CLOB.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.CLOB.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4362,12 +4362,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.CLOB.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CLOB.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CLOB.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -4390,10 +4390,10 @@ class SelectImpl {
   }
 
   public static class DataType {
-    protected static interface Execute<T extends Subject<?>> extends Select.DataType.SELECT<T>, Select.DataType.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.DataType.SELECT<T>, Select.DataType.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DataType.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DataType.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -4403,7 +4403,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -4473,13 +4473,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DataType.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DataType.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -4508,7 +4508,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DataType.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DataType.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4539,7 +4539,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DataType.JOIN<T>, Select.DataType.ADV_JOIN<T>, Select.DataType.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DataType.JOIN<T>, Select.DataType.ADV_JOIN<T>, Select.DataType.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -4595,7 +4595,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -4620,7 +4620,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DataType.ON<T>, Select.DataType.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DataType.ON<T>, Select.DataType.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4666,7 +4666,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -4696,7 +4696,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DataType.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DataType.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -4726,7 +4726,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DataType.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DataType.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -4752,7 +4752,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DataType.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DataType.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -4773,7 +4773,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DataType._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DataType._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -4815,7 +4815,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DataType.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DataType.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -4846,12 +4846,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DataType.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DataType.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DataType.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -4874,10 +4874,10 @@ class SelectImpl {
   }
 
   public static class DATE {
-    protected static interface Execute<T extends Subject<?>> extends Select.DATE.SELECT<T>, Select.DATE.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.DATE.SELECT<T>, Select.DATE.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATE.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATE.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -4887,7 +4887,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -4957,13 +4957,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATE.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATE.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -4992,7 +4992,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATE.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATE.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5023,7 +5023,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATE.JOIN<T>, Select.DATE.ADV_JOIN<T>, Select.DATE.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATE.JOIN<T>, Select.DATE.ADV_JOIN<T>, Select.DATE.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -5079,7 +5079,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -5104,7 +5104,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DATE.ON<T>, Select.DATE.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DATE.ON<T>, Select.DATE.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5150,7 +5150,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -5180,7 +5180,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATE.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATE.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -5210,7 +5210,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DATE.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DATE.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -5236,7 +5236,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DATE.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DATE.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -5257,7 +5257,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATE._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATE._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -5299,7 +5299,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATE.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATE.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5330,12 +5330,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATE.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATE.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -5358,10 +5358,10 @@ class SelectImpl {
   }
 
   public static class DATETIME {
-    protected static interface Execute<T extends Subject<?>> extends Select.DATETIME.SELECT<T>, Select.DATETIME.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.DATETIME.SELECT<T>, Select.DATETIME.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATETIME.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DATETIME.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -5371,7 +5371,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -5441,13 +5441,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATETIME.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DATETIME.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -5476,7 +5476,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATETIME.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DATETIME.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5507,7 +5507,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATETIME.JOIN<T>, Select.DATETIME.ADV_JOIN<T>, Select.DATETIME.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DATETIME.JOIN<T>, Select.DATETIME.ADV_JOIN<T>, Select.DATETIME.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -5563,7 +5563,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -5588,7 +5588,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DATETIME.ON<T>, Select.DATETIME.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DATETIME.ON<T>, Select.DATETIME.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5634,7 +5634,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -5664,7 +5664,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATETIME.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DATETIME.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -5694,7 +5694,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DATETIME.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DATETIME.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -5720,7 +5720,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DATETIME.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DATETIME.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -5741,7 +5741,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATETIME._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DATETIME._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -5783,7 +5783,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATETIME.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DATETIME.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -5814,12 +5814,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATETIME.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATETIME.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -5843,10 +5843,10 @@ class SelectImpl {
 
   public static class DECIMAL {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.DECIMAL.UNSIGNED.SELECT<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.DECIMAL.UNSIGNED.SELECT<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -5856,7 +5856,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -5926,13 +5926,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -5961,7 +5961,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -5992,7 +5992,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.JOIN<T>, Select.DECIMAL.UNSIGNED.ADV_JOIN<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.JOIN<T>, Select.DECIMAL.UNSIGNED.ADV_JOIN<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -6048,7 +6048,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -6073,7 +6073,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.ON<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.ON<T>, Select.DECIMAL.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -6119,7 +6119,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -6149,7 +6149,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -6179,7 +6179,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -6205,7 +6205,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -6226,7 +6226,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -6268,7 +6268,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -6299,12 +6299,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -6326,10 +6326,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.DECIMAL.SELECT<T>, Select.DECIMAL.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.DECIMAL.SELECT<T>, Select.DECIMAL.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DECIMAL.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -6339,7 +6339,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -6409,13 +6409,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DECIMAL.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -6444,7 +6444,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DECIMAL.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -6475,7 +6475,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.JOIN<T>, Select.DECIMAL.ADV_JOIN<T>, Select.DECIMAL.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DECIMAL.JOIN<T>, Select.DECIMAL.ADV_JOIN<T>, Select.DECIMAL.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -6531,7 +6531,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -6556,7 +6556,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DECIMAL.ON<T>, Select.DECIMAL.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DECIMAL.ON<T>, Select.DECIMAL.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -6602,7 +6602,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -6632,7 +6632,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DECIMAL.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -6662,7 +6662,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DECIMAL.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DECIMAL.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -6688,7 +6688,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DECIMAL.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DECIMAL.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -6709,7 +6709,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DECIMAL._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -6751,7 +6751,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DECIMAL.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -6782,12 +6782,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -6811,10 +6811,10 @@ class SelectImpl {
 
   public static class DOUBLE {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.DOUBLE.UNSIGNED.SELECT<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.DOUBLE.UNSIGNED.SELECT<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -6824,7 +6824,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -6894,13 +6894,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -6929,7 +6929,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -6960,7 +6960,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.JOIN<T>, Select.DOUBLE.UNSIGNED.ADV_JOIN<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.JOIN<T>, Select.DOUBLE.UNSIGNED.ADV_JOIN<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -7016,7 +7016,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -7041,7 +7041,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.ON<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.ON<T>, Select.DOUBLE.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -7087,7 +7087,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -7117,7 +7117,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -7147,7 +7147,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -7173,7 +7173,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -7194,7 +7194,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -7236,7 +7236,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -7267,12 +7267,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -7294,10 +7294,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.DOUBLE.SELECT<T>, Select.DOUBLE.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.DOUBLE.SELECT<T>, Select.DOUBLE.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.DOUBLE.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -7307,7 +7307,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -7377,13 +7377,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.DOUBLE.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -7412,7 +7412,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.DOUBLE.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -7443,7 +7443,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.JOIN<T>, Select.DOUBLE.ADV_JOIN<T>, Select.DOUBLE.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.DOUBLE.JOIN<T>, Select.DOUBLE.ADV_JOIN<T>, Select.DOUBLE.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -7499,7 +7499,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -7524,7 +7524,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DOUBLE.ON<T>, Select.DOUBLE.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.DOUBLE.ON<T>, Select.DOUBLE.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -7570,7 +7570,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -7600,7 +7600,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.DOUBLE.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -7630,7 +7630,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DOUBLE.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.DOUBLE.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -7656,7 +7656,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DOUBLE.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.DOUBLE.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -7677,7 +7677,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.DOUBLE._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -7719,7 +7719,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.DOUBLE.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -7750,12 +7750,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -7778,10 +7778,10 @@ class SelectImpl {
   }
 
   public static class Entity {
-    protected static interface Execute<T extends Subject<?>> extends Select.Entity.SELECT<T>, Select.Entity.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.Entity.SELECT<T>, Select.Entity.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Entity.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Entity.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -7791,7 +7791,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -7861,13 +7861,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Entity.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Entity.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -7896,7 +7896,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Entity.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Entity.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -7927,7 +7927,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Entity.JOIN<T>, Select.Entity.ADV_JOIN<T>, Select.Entity.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Entity.JOIN<T>, Select.Entity.ADV_JOIN<T>, Select.Entity.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -7983,7 +7983,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -8008,7 +8008,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Entity.ON<T>, Select.Entity.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Entity.ON<T>, Select.Entity.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -8054,7 +8054,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -8084,7 +8084,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Entity.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Entity.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -8114,7 +8114,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Entity.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Entity.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -8140,7 +8140,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Entity.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Entity.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -8161,7 +8161,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Entity._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Entity._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -8203,7 +8203,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Entity.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Entity.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -8234,12 +8234,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Entity.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Entity.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Entity.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -8262,10 +8262,10 @@ class SelectImpl {
   }
 
   public static class ENUM {
-    protected static interface Execute<T extends Subject<?>> extends Select.ENUM.SELECT<T>, Select.ENUM.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.ENUM.SELECT<T>, Select.ENUM.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ENUM.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.ENUM.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -8275,7 +8275,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -8345,13 +8345,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ENUM.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.ENUM.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -8380,7 +8380,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ENUM.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.ENUM.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -8411,7 +8411,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ENUM.JOIN<T>, Select.ENUM.ADV_JOIN<T>, Select.ENUM.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.ENUM.JOIN<T>, Select.ENUM.ADV_JOIN<T>, Select.ENUM.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -8467,7 +8467,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -8492,7 +8492,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.ENUM.ON<T>, Select.ENUM.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.ENUM.ON<T>, Select.ENUM.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -8538,7 +8538,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -8568,7 +8568,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ENUM.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.ENUM.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -8598,7 +8598,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.ENUM.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.ENUM.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -8624,7 +8624,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.ENUM.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.ENUM.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -8645,7 +8645,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ENUM._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.ENUM._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -8687,7 +8687,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ENUM.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.ENUM.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -8718,12 +8718,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.ENUM.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ENUM.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ENUM.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -8747,10 +8747,10 @@ class SelectImpl {
 
   public static class FLOAT {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.FLOAT.UNSIGNED.SELECT<T>, Select.FLOAT.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.FLOAT.UNSIGNED.SELECT<T>, Select.FLOAT.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -8760,7 +8760,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -8830,13 +8830,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -8865,7 +8865,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -8896,7 +8896,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.UNSIGNED.JOIN<T>, Select.FLOAT.UNSIGNED.ADV_JOIN<T>, Select.FLOAT.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.UNSIGNED.JOIN<T>, Select.FLOAT.UNSIGNED.ADV_JOIN<T>, Select.FLOAT.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -8952,7 +8952,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -8977,7 +8977,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.FLOAT.UNSIGNED.ON<T>, Select.FLOAT.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.FLOAT.UNSIGNED.ON<T>, Select.FLOAT.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -9023,7 +9023,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -9053,7 +9053,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -9083,7 +9083,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.FLOAT.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.FLOAT.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -9109,7 +9109,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.FLOAT.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.FLOAT.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -9130,7 +9130,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -9172,7 +9172,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -9203,12 +9203,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -9230,10 +9230,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.FLOAT.SELECT<T>, Select.FLOAT.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.FLOAT.SELECT<T>, Select.FLOAT.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.FLOAT.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -9243,7 +9243,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -9313,13 +9313,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.FLOAT.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -9348,7 +9348,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.FLOAT.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -9379,7 +9379,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.JOIN<T>, Select.FLOAT.ADV_JOIN<T>, Select.FLOAT.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.FLOAT.JOIN<T>, Select.FLOAT.ADV_JOIN<T>, Select.FLOAT.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -9435,7 +9435,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -9460,7 +9460,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.FLOAT.ON<T>, Select.FLOAT.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.FLOAT.ON<T>, Select.FLOAT.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -9506,7 +9506,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -9536,7 +9536,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.FLOAT.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -9566,7 +9566,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.FLOAT.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.FLOAT.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -9592,7 +9592,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.FLOAT.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.FLOAT.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -9613,7 +9613,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.FLOAT._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -9655,7 +9655,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.FLOAT.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -9686,12 +9686,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -9715,10 +9715,10 @@ class SelectImpl {
 
   public static class INT {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.INT.UNSIGNED.SELECT<T>, Select.INT.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.INT.UNSIGNED.SELECT<T>, Select.INT.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -9728,7 +9728,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -9798,13 +9798,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -9833,7 +9833,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -9864,7 +9864,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.UNSIGNED.JOIN<T>, Select.INT.UNSIGNED.ADV_JOIN<T>, Select.INT.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.UNSIGNED.JOIN<T>, Select.INT.UNSIGNED.ADV_JOIN<T>, Select.INT.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -9920,7 +9920,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -9945,7 +9945,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.INT.UNSIGNED.ON<T>, Select.INT.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.INT.UNSIGNED.ON<T>, Select.INT.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -9991,7 +9991,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -10021,7 +10021,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -10051,7 +10051,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.INT.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.INT.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -10077,7 +10077,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.INT.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.INT.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -10098,7 +10098,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -10140,7 +10140,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -10171,12 +10171,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -10198,10 +10198,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.INT.SELECT<T>, Select.INT.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.INT.SELECT<T>, Select.INT.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.INT.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -10211,7 +10211,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -10281,13 +10281,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.INT.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -10316,7 +10316,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.INT.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -10347,7 +10347,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.JOIN<T>, Select.INT.ADV_JOIN<T>, Select.INT.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.INT.JOIN<T>, Select.INT.ADV_JOIN<T>, Select.INT.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -10403,7 +10403,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -10428,7 +10428,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.INT.ON<T>, Select.INT.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.INT.ON<T>, Select.INT.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -10474,7 +10474,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -10504,7 +10504,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.INT.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -10534,7 +10534,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.INT.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.INT.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -10560,7 +10560,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.INT.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.INT.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -10581,7 +10581,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.INT._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -10623,7 +10623,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.INT.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -10654,12 +10654,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.INT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -10682,10 +10682,10 @@ class SelectImpl {
   }
 
   public static class LargeObject {
-    protected static interface Execute<T extends Subject<?>> extends Select.LargeObject.SELECT<T>, Select.LargeObject.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.LargeObject.SELECT<T>, Select.LargeObject.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.LargeObject.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.LargeObject.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -10695,7 +10695,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -10765,13 +10765,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.LargeObject.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.LargeObject.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -10800,7 +10800,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.LargeObject.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.LargeObject.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -10831,7 +10831,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.LargeObject.JOIN<T>, Select.LargeObject.ADV_JOIN<T>, Select.LargeObject.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.LargeObject.JOIN<T>, Select.LargeObject.ADV_JOIN<T>, Select.LargeObject.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -10887,7 +10887,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -10912,7 +10912,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.LargeObject.ON<T>, Select.LargeObject.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.LargeObject.ON<T>, Select.LargeObject.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -10958,7 +10958,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -10988,7 +10988,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.LargeObject.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.LargeObject.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -11018,7 +11018,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.LargeObject.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.LargeObject.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -11044,7 +11044,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.LargeObject.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.LargeObject.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -11065,7 +11065,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.LargeObject._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.LargeObject._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -11107,7 +11107,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.LargeObject.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.LargeObject.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -11138,12 +11138,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.LargeObject.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.LargeObject.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -11166,10 +11166,10 @@ class SelectImpl {
   }
 
   public static class Numeric {
-    protected static interface Execute<T extends Subject<?>> extends Select.Numeric.SELECT<T>, Select.Numeric.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.Numeric.SELECT<T>, Select.Numeric.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Numeric.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Numeric.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -11179,7 +11179,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -11249,13 +11249,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Numeric.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Numeric.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -11284,7 +11284,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Numeric.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Numeric.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -11315,7 +11315,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Numeric.JOIN<T>, Select.Numeric.ADV_JOIN<T>, Select.Numeric.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Numeric.JOIN<T>, Select.Numeric.ADV_JOIN<T>, Select.Numeric.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -11371,7 +11371,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -11396,7 +11396,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Numeric.ON<T>, Select.Numeric.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Numeric.ON<T>, Select.Numeric.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -11442,7 +11442,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -11472,7 +11472,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Numeric.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Numeric.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -11502,7 +11502,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Numeric.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Numeric.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -11528,7 +11528,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Numeric.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Numeric.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -11549,7 +11549,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Numeric._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Numeric._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -11591,7 +11591,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Numeric.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Numeric.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -11622,12 +11622,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Numeric.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Numeric.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Numeric.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -11651,10 +11651,10 @@ class SelectImpl {
 
   public static class SMALLINT {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.SMALLINT.UNSIGNED.SELECT<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.SMALLINT.UNSIGNED.SELECT<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -11664,7 +11664,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -11734,13 +11734,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -11769,7 +11769,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -11800,7 +11800,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.JOIN<T>, Select.SMALLINT.UNSIGNED.ADV_JOIN<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.JOIN<T>, Select.SMALLINT.UNSIGNED.ADV_JOIN<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -11856,7 +11856,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -11881,7 +11881,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.ON<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.ON<T>, Select.SMALLINT.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -11927,7 +11927,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -11957,7 +11957,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -11987,7 +11987,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -12013,7 +12013,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -12034,7 +12034,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -12076,7 +12076,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -12107,12 +12107,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -12134,10 +12134,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.SMALLINT.SELECT<T>, Select.SMALLINT.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.SMALLINT.SELECT<T>, Select.SMALLINT.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.SMALLINT.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -12147,7 +12147,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -12217,13 +12217,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.SMALLINT.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -12252,7 +12252,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.SMALLINT.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -12283,7 +12283,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.JOIN<T>, Select.SMALLINT.ADV_JOIN<T>, Select.SMALLINT.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.SMALLINT.JOIN<T>, Select.SMALLINT.ADV_JOIN<T>, Select.SMALLINT.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -12339,7 +12339,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -12364,7 +12364,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.SMALLINT.ON<T>, Select.SMALLINT.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.SMALLINT.ON<T>, Select.SMALLINT.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -12410,7 +12410,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -12440,7 +12440,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.SMALLINT.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -12470,7 +12470,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.SMALLINT.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.SMALLINT.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -12496,7 +12496,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.SMALLINT.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.SMALLINT.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -12517,7 +12517,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.SMALLINT._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -12559,7 +12559,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.SMALLINT.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -12590,12 +12590,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -12618,10 +12618,10 @@ class SelectImpl {
   }
 
   public static class Temporal {
-    protected static interface Execute<T extends Subject<?>> extends Select.Temporal.SELECT<T>, Select.Temporal.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.Temporal.SELECT<T>, Select.Temporal.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Temporal.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Temporal.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -12631,7 +12631,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -12701,13 +12701,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Temporal.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Temporal.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -12736,7 +12736,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Temporal.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Temporal.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -12767,7 +12767,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Temporal.JOIN<T>, Select.Temporal.ADV_JOIN<T>, Select.Temporal.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Temporal.JOIN<T>, Select.Temporal.ADV_JOIN<T>, Select.Temporal.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -12823,7 +12823,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -12848,7 +12848,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Temporal.ON<T>, Select.Temporal.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Temporal.ON<T>, Select.Temporal.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -12894,7 +12894,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -12924,7 +12924,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Temporal.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Temporal.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -12954,7 +12954,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Temporal.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Temporal.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -12980,7 +12980,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Temporal.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Temporal.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -13001,7 +13001,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Temporal._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Temporal._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -13043,7 +13043,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Temporal.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Temporal.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13074,12 +13074,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Temporal.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Temporal.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Temporal.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -13102,10 +13102,10 @@ class SelectImpl {
   }
 
   public static class Textual {
-    protected static interface Execute<T extends Subject<?>> extends Select.Textual.SELECT<T>, Select.Textual.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.Textual.SELECT<T>, Select.Textual.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Textual.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.Textual.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -13115,7 +13115,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -13185,13 +13185,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Textual.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.Textual.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -13220,7 +13220,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Textual.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.Textual.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13251,7 +13251,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Textual.JOIN<T>, Select.Textual.ADV_JOIN<T>, Select.Textual.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.Textual.JOIN<T>, Select.Textual.ADV_JOIN<T>, Select.Textual.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -13307,7 +13307,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -13332,7 +13332,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Textual.ON<T>, Select.Textual.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.Textual.ON<T>, Select.Textual.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13378,7 +13378,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -13408,7 +13408,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Textual.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.Textual.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -13438,7 +13438,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Textual.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.Textual.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -13464,7 +13464,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Textual.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.Textual.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -13485,7 +13485,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Textual._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.Textual._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -13527,7 +13527,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Textual.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.Textual.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13558,12 +13558,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.Textual.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Textual.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Textual.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -13586,10 +13586,10 @@ class SelectImpl {
   }
 
   public static class TIME {
-    protected static interface Execute<T extends Subject<?>> extends Select.TIME.SELECT<T>, Select.TIME.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.TIME.SELECT<T>, Select.TIME.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TIME.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TIME.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -13599,7 +13599,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -13669,13 +13669,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TIME.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TIME.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -13704,7 +13704,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TIME.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TIME.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13735,7 +13735,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TIME.JOIN<T>, Select.TIME.ADV_JOIN<T>, Select.TIME.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TIME.JOIN<T>, Select.TIME.ADV_JOIN<T>, Select.TIME.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -13791,7 +13791,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -13816,7 +13816,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TIME.ON<T>, Select.TIME.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TIME.ON<T>, Select.TIME.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -13862,7 +13862,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -13892,7 +13892,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TIME.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TIME.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -13922,7 +13922,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TIME.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TIME.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -13948,7 +13948,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TIME.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TIME.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -13969,7 +13969,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TIME._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TIME._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -14011,7 +14011,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TIME.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TIME.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -14042,12 +14042,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TIME.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TIME.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TIME.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -14071,10 +14071,10 @@ class SelectImpl {
 
   public static class TINYINT {
     public static class UNSIGNED {
-      protected static interface Execute<T extends Subject<?>> extends Select.TINYINT.UNSIGNED.SELECT<T>, Select.TINYINT.UNSIGNED.UNION<T> {
+      protected static interface Execute<T extends type.Subject<?>> extends Select.TINYINT.UNSIGNED.SELECT<T>, Select.TINYINT.UNSIGNED.UNION<T> {
       }
 
-      public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.UNSIGNED.FROM<T> {
+      public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.UNSIGNED.FROM<T> {
         protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
           super(parent, tables);
         }
@@ -14084,7 +14084,7 @@ class SelectImpl {
         }
 
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
           return new GROUP_BY<T>(this, columns);
         }
 
@@ -14154,13 +14154,13 @@ class SelectImpl {
         }
       }
 
-      public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.GROUP_BY<T> {
-        protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+      public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.GROUP_BY<T> {
+        protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
           super(parent, subjects);
         }
 
-        protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+        protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -14189,7 +14189,7 @@ class SelectImpl {
         }
       }
 
-      public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.UNSIGNED.HAVING<T> {
+      public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.UNSIGNED.HAVING<T> {
         protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -14220,7 +14220,7 @@ class SelectImpl {
         }
       }
 
-      public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.UNSIGNED.JOIN<T>, Select.TINYINT.UNSIGNED.ADV_JOIN<T>, Select.TINYINT.UNSIGNED.FROM<T> {
+      public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.UNSIGNED.JOIN<T>, Select.TINYINT.UNSIGNED.ADV_JOIN<T>, Select.TINYINT.UNSIGNED.FROM<T> {
         protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
           super(parent, table, cross, natural, left, right);
         }
@@ -14276,7 +14276,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -14301,7 +14301,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TINYINT.UNSIGNED.ON<T>, Select.TINYINT.UNSIGNED.FROM<T> {
+      public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TINYINT.UNSIGNED.ON<T>, Select.TINYINT.UNSIGNED.FROM<T> {
         protected ON(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -14347,7 +14347,7 @@ class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
 
@@ -14377,7 +14377,7 @@ class SelectImpl {
         }
       }
 
-      public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.ORDER_BY<T> {
+      public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.UNSIGNED.ORDER_BY<T> {
         protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
           super(parent, columns);
         }
@@ -14407,7 +14407,7 @@ class SelectImpl {
         }
       }
 
-      public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TINYINT.UNSIGNED.LIMIT<T> {
+      public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TINYINT.UNSIGNED.LIMIT<T> {
         protected LIMIT(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -14433,7 +14433,7 @@ class SelectImpl {
         }
       }
 
-      public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TINYINT.UNSIGNED.OFFSET<T> {
+      public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TINYINT.UNSIGNED.OFFSET<T> {
         protected OFFSET(final Keyword<T> parent, final int rows) {
           super(parent, rows);
         }
@@ -14454,7 +14454,7 @@ class SelectImpl {
         }
       }
 
-      protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT.UNSIGNED._SELECT<T> {
+      protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT.UNSIGNED._SELECT<T> {
         public SELECT(final boolean distinct, final Collection<Compilable> entities) {
           super(distinct, entities);
         }
@@ -14496,7 +14496,7 @@ class SelectImpl {
         }
       }
 
-      public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.UNSIGNED.WHERE<T> {
+      public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.UNSIGNED.WHERE<T> {
         protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
           super(parent, condition);
         }
@@ -14527,12 +14527,12 @@ class SelectImpl {
         }
 
         @Override
-        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+        public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
           return new GROUP_BY<T>(this, subjects);
         }
       }
 
-      protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNSIGNED.UNION<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -14554,10 +14554,10 @@ class SelectImpl {
       }
     }
 
-    protected static interface Execute<T extends Subject<?>> extends Select.TINYINT.SELECT<T>, Select.TINYINT.UNION<T> {
+    protected static interface Execute<T extends type.Subject<?>> extends Select.TINYINT.SELECT<T>, Select.TINYINT.UNION<T> {
     }
 
-    public static final class FROM<T extends Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.FROM<T> {
+    public static final class FROM<T extends type.Subject<?>> extends untyped.FROM<T> implements Execute<T>, Select.TINYINT.FROM<T> {
       protected FROM(final Keyword<T> parent, final Collection<type.Entity> tables) {
         super(parent, tables);
       }
@@ -14567,7 +14567,7 @@ class SelectImpl {
       }
 
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... columns) {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
         return new GROUP_BY<T>(this, columns);
       }
 
@@ -14637,13 +14637,13 @@ class SelectImpl {
       }
     }
 
-    public static final class GROUP_BY<T extends Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.GROUP_BY<T> {
-      protected GROUP_BY(final Keyword<T> parent, final Collection<Subject<?>> subjects) {
+    public static final class GROUP_BY<T extends type.Subject<?>> extends untyped.GROUP_BY<T> implements Execute<T>, Select.TINYINT.GROUP_BY<T> {
+      protected GROUP_BY(final Keyword<T> parent, final Collection<type.Subject<?>> subjects) {
         super(parent, subjects);
       }
 
-      protected GROUP_BY(final Keyword<T> parent, final Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<Subject<?>>(), subjects));
+      protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
+        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -14672,7 +14672,7 @@ class SelectImpl {
       }
     }
 
-    public static final class HAVING<T extends Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.HAVING<T> {
+    public static final class HAVING<T extends type.Subject<?>> extends untyped.HAVING<T> implements Execute<T>, Select.TINYINT.HAVING<T> {
       protected HAVING(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -14703,7 +14703,7 @@ class SelectImpl {
       }
     }
 
-    public static final class JOIN<T extends Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.JOIN<T>, Select.TINYINT.ADV_JOIN<T>, Select.TINYINT.FROM<T> {
+    public static final class JOIN<T extends type.Subject<?>> extends untyped.JOIN<T> implements Execute<T>, Select.TINYINT.JOIN<T>, Select.TINYINT.ADV_JOIN<T>, Select.TINYINT.FROM<T> {
       protected JOIN(final Keyword<T> parent, final type.Entity table, final boolean cross, final boolean natural, final boolean left, final boolean right) {
         super(parent, table, cross, natural, left, right);
       }
@@ -14759,7 +14759,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -14784,7 +14784,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ON<T extends Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TINYINT.ON<T>, Select.TINYINT.FROM<T> {
+    public static final class ON<T extends type.Subject<?>> extends untyped.ON<T> implements Execute<T>, Select.TINYINT.ON<T>, Select.TINYINT.FROM<T> {
       protected ON(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -14830,7 +14830,7 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
 
@@ -14860,7 +14860,7 @@ class SelectImpl {
       }
     }
 
-    public static final class ORDER_BY<T extends Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.ORDER_BY<T> {
+    public static final class ORDER_BY<T extends type.Subject<?>> extends untyped.ORDER_BY<T> implements Execute<T>, Select.TINYINT.ORDER_BY<T> {
       protected ORDER_BY(final Keyword<T> parent, final type.DataType<?> ... columns) {
         super(parent, columns);
       }
@@ -14890,7 +14890,7 @@ class SelectImpl {
       }
     }
 
-    public static final class LIMIT<T extends Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TINYINT.LIMIT<T> {
+    public static final class LIMIT<T extends type.Subject<?>> extends untyped.LIMIT<T> implements Execute<T>, Select.TINYINT.LIMIT<T> {
       protected LIMIT(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -14916,7 +14916,7 @@ class SelectImpl {
       }
     }
 
-    public static final class OFFSET<T extends Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TINYINT.OFFSET<T> {
+    public static final class OFFSET<T extends type.Subject<?>> extends untyped.OFFSET<T> implements Execute<T>, Select.TINYINT.OFFSET<T> {
       protected OFFSET(final Keyword<T> parent, final int rows) {
         super(parent, rows);
       }
@@ -14937,7 +14937,7 @@ class SelectImpl {
       }
     }
 
-    protected static class SELECT<T extends Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT._SELECT<T> {
+    protected static class SELECT<T extends type.Subject<?>> extends untyped.SELECT<T> implements Execute<T>, Select.TINYINT._SELECT<T> {
       public SELECT(final boolean distinct, final Collection<Compilable> entities) {
         super(distinct, entities);
       }
@@ -14979,7 +14979,7 @@ class SelectImpl {
       }
     }
 
-    public static final class WHERE<T extends Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.WHERE<T> {
+    public static final class WHERE<T extends type.Subject<?>> extends untyped.WHERE<T> implements Execute<T>, Select.TINYINT.WHERE<T> {
       protected WHERE(final Keyword<T> parent, final Condition<?> condition) {
         super(parent, condition);
       }
@@ -15010,12 +15010,12 @@ class SelectImpl {
       }
 
       @Override
-      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects) {
+      public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
         return new GROUP_BY<T>(this, subjects);
       }
     }
 
-    protected static final class UNION<T extends Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNION<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }

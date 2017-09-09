@@ -16,6 +16,7 @@
 
 package org.libx4j.rdb.jsql;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -163,8 +164,8 @@ public final class type {
     }
   }
 
-  public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT<Long> {
-    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED<BigInteger> {
+  public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
+    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED {
       protected static final Class<BigInteger> type = BigInteger.class;
 
       private final BigInteger min;
@@ -470,23 +471,29 @@ public final class type {
     }
   }
 
-  public static final class BINARY extends Serial<byte[]> implements kind.BINARY<byte[]> {
+  public static final class BINARY extends DataType<byte[]> implements kind.BINARY {
     protected static final Class<byte[]> type = byte[].class;
 
+    private final int length;
     private final boolean varying;
 
     protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final int length, final boolean varying) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      checkLength(length);
+      this.length = length;
       this.varying = varying;
     }
 
     protected BINARY(final BINARY copy) {
       super(copy);
+      this.length = copy.length;
       this.varying = copy.varying;
     }
 
     public BINARY(final int length, final boolean varying) {
-      super(length);
+      super();
+      checkLength(length);
+      this.length = length;
       this.varying = varying;
     }
 
@@ -497,6 +504,15 @@ public final class type {
     public BINARY(final byte[] value) {
       this(value.length, false);
       set(value);
+    }
+
+    protected void checkLength(final int length) {
+      if (length <= 0 || length > 65535)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
+    }
+
+    public final int length() {
+      return length;
     }
 
     public void set(final BINARY value) {
@@ -548,8 +564,8 @@ public final class type {
 
     @Override
     protected final DataType<?> scaleTo(final DataType<?> dataType) {
-      if (dataType instanceof Serial)
-        return new BINARY(Math.max(length(), ((Serial<?>)dataType).length()));
+      if (dataType instanceof BINARY)
+        return new BINARY(Math.max(length(), ((BINARY)dataType).length()));
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
     }
@@ -565,31 +581,23 @@ public final class type {
     }
   }
 
-  public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB<InputStream> {
+  public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB {
     protected static final Class<InputStream> type = InputStream.class;
 
-    private final long length;
-
     protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final long length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      checkLength(length);
-      this.length = (short)length;
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
     protected BLOB(final BLOB copy) {
       super(copy);
-      this.length = copy.length;
     }
 
     public BLOB(final long length) {
-      super();
-      checkLength(length);
-      this.length = (short)length;
+      super(length);
     }
 
     public BLOB(final InputStream value) {
-      super();
-      this.length = 4294967296l;
+      super(4294967296l);
       set(value);
     }
 
@@ -597,18 +605,9 @@ public final class type {
       super.set(value);
     }
 
-    protected final void checkLength(final long length) {
-      if (length <= 0 || length > 4294967295l)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
-    }
-
-    public final long length() {
-      return length;
-    }
-
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareBlob(length);
+      return vendor.getDialect().declareBlob(length());
     }
 
     @Override
@@ -655,7 +654,7 @@ public final class type {
     }
   }
 
-  public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN<Boolean>, Comparable<DataType<Boolean>> {
+  public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
     protected static final Class<Boolean> type = Boolean.class;
 
     protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
@@ -737,7 +736,7 @@ public final class type {
     }
   }
 
-  public static final class CHAR extends Textual<String> implements kind.CHAR<String> {
+  public static final class CHAR extends Textual<String> implements kind.CHAR {
     protected static final Class<String> type = String.class;
 
     private final boolean varying;
@@ -827,31 +826,23 @@ public final class type {
     }
   }
 
-  public static final class CLOB extends LargeObject<Reader> implements kind.CLOB<Reader> {
+  public static final class CLOB extends LargeObject<Reader> implements kind.CLOB {
     protected static final Class<Reader> type = Reader.class;
 
-    private final long length;
-
     protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final long length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      checkLength(length);
-      this.length = length;
+      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
     protected CLOB(final CLOB copy) {
       super(copy);
-      this.length = copy.length;
     }
 
     public CLOB(final long length) {
-      super();
-      checkLength(length);
-      this.length = length;
+      super(length);
     }
 
     public CLOB(final Reader value) {
-      super();
-      this.length = 4294967296l;
+      super(4294967296l);
       set(value);
     }
 
@@ -859,18 +850,9 @@ public final class type {
       super.set(value);
     }
 
-    protected final void checkLength(final long length) {
-      if (length <= 0 || length > 4294967295l)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
-    }
-
-    public final long length() {
-      return length;
-    }
-
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareClob(length);
+      return vendor.getDialect().declareClob(length());
     }
 
     @Override
@@ -917,7 +899,7 @@ public final class type {
     }
   }
 
-  public static final class DATE extends Temporal<LocalDate> implements kind.DATE<LocalDate> {
+  public static final class DATE extends Temporal<LocalDate> implements kind.DATE {
     protected static final Class<LocalDate> type = LocalDate.class;
 
     protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
@@ -1021,7 +1003,7 @@ public final class type {
     }
   }
 
-  public static abstract class DataType<T> extends Subject<T> implements kind.DataType<T> {
+  public static abstract class DataType<T> extends type.Subject<T> implements kind.DataType<T> {
     protected static <T>void setValue(final DataType<T> dataType, final T value) {
       dataType.value = value;
     }
@@ -1185,7 +1167,7 @@ public final class type {
     }
   }
 
-  public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME<LocalDateTime> {
+  public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
     protected static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final short DEFAULT_PRECISION = 6;
@@ -1304,8 +1286,8 @@ public final class type {
     }
   }
 
-  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL<BigDecimal> {
-    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED<BigDecimal> {
+  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
+    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
       protected static final Class<BigDecimal> type = BigDecimal.class;
 
       private final Short scale;
@@ -1616,8 +1598,8 @@ public final class type {
     }
   }
 
-  public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE<Double> {
-    public static final class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED<Double> {
+  public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
+    public static final class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
       protected static final Class<Double> type = Double.class;
 
       private final Double min;
@@ -1953,8 +1935,8 @@ public final class type {
     }
   }
 
-  public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT<Float> {
-    public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED<Float> {
+  public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
+    public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
       protected static final Class<Float> type = Float.class;
 
       private final Float min;
@@ -2197,22 +2179,37 @@ public final class type {
     }
   }
 
-  public static abstract class LargeObject<T> extends DataType<T> implements kind.LargeObject<T> {
-    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+  public static abstract class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
+    private final long length;
+
+    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
+      checkLength(length);
+      this.length = length;
     }
 
     protected LargeObject(final LargeObject<T> copy) {
       super(copy);
+      this.length = copy.length;
     }
 
-    protected LargeObject() {
+    protected LargeObject(final long length) {
       super();
+      this.length = length;
+    }
+
+    public final long length() {
+      return length;
+    }
+
+    private final void checkLength(final long length) {
+      if (length <= 0 || length > 4294967295l)
+        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
     }
   }
 
-  public static final class INT extends ExactNumeric<Integer> implements kind.INT<Integer> {
-    public static final class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED<Long> {
+  public static final class INT extends ExactNumeric<Integer> implements kind.INT {
+    public static final class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
       protected static final Class<Long> type = Long.class;
 
       private final Long min;
@@ -2493,8 +2490,8 @@ public final class type {
     }
   }
 
-  public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT<Short> {
-    public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED<Integer> {
+  public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
+    public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
       protected static final Class<Integer> type = Integer.class;
 
       private final Integer min;
@@ -2815,7 +2812,7 @@ public final class type {
     }
   }
 
-  public static abstract class Entity extends Subject<Entity> implements kind.Entity<Entity>, Cloneable {
+  public static abstract class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
     protected final type.DataType<?>[] column;
     protected final type.DataType<?>[] primary;
     private final boolean wasSelected;
@@ -2925,38 +2922,8 @@ public final class type {
     }
   }
 
-  public static abstract class Serial<T> extends DataType<T> implements kind.Serial<T> {
-    private final int length;
-
-    protected Serial(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
-      super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      checkLength(length);
-      this.length = length;
-    }
-
-    protected Serial(final Serial<T> copy) {
-      super(copy);
-      this.length = copy.length;
-    }
-
-    protected Serial(final int length) {
-      super();
-      checkLength(length);
-      this.length = length;
-    }
-
-    protected void checkLength(final int length) {
-      if (length <= 0 || length > 65535)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
-    }
-
-    public final int length() {
-      return length;
-    }
-  }
-
-  public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT<Byte> {
-    public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED<Short> {
+  public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
+    public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
       protected static final Class<Short> type = Short.class;
 
       private final Short min;
@@ -3255,6 +3222,39 @@ public final class type {
     }
   }
 
+  public static abstract class Subject<T> extends Evaluable {
+    @SuppressWarnings("unchecked")
+    protected static <T extends type.Subject<?>>T as(final Keyword<T> select) {
+      try {
+        Keyword<T> keyword = select;
+        do {
+          if (keyword instanceof SelectImpl.untyped.SELECT) {
+            final Class<?> cls = Classes.getGreatestCommonSuperclass(((SelectImpl.untyped.SELECT<?>)keyword).entities);
+            final T as = (T)cls.newInstance();
+            as.wrapper(new As<T>(select, as, false));
+            return as;
+          }
+        }
+        while ((keyword = keyword.parent()) != null);
+        return null;
+      }
+      catch (final IllegalAccessException | InstantiationException e) {
+        throw new UnsupportedOperationException(e);
+      }
+    }
+
+    private Evaluable wrapper;
+
+    protected final Evaluable wrapper() {
+      return wrapper;
+    }
+
+    protected type.Subject<T> wrapper(final Evaluable wrapper) {
+      this.wrapper = wrapper;
+      return this;
+    }
+  }
+
   public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
     protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -3274,7 +3274,7 @@ public final class type {
     }
   }
 
-  public static abstract class Textual<T> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
+  public static abstract class Textual<T extends Comparable<?>> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
     protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
@@ -3340,7 +3340,7 @@ public final class type {
     }
   }
 
-  public static final class TIME extends Temporal<LocalTime> implements kind.TIME<LocalTime> {
+  public static final class TIME extends Temporal<LocalTime> implements kind.TIME {
     protected static final Class<LocalTime> type = LocalTime.class;
 
     private static final short DEFAULT_PRECISION = 6;

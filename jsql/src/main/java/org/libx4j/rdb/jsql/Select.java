@@ -16,70 +16,64 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.io.Closeable;
 
 public interface Select {
   public interface ARRAY {
-    public interface OFFSET<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -94,27 +88,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.ARRAY<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.ARRAY<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.ARRAY<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.ARRAY<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.ARRAY<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -122,10 +116,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.ARRAY<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.ARRAY<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.ARRAY<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.ARRAY<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -133,60 +127,60 @@ public interface Select {
 
   public interface BIGINT {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -201,27 +195,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -229,69 +223,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.BIGINT.UNSIGNED<BigInteger>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.BIGINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.BIGINT, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.BIGINT, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.BIGINT, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.BIGINT, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.BIGINT, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.BIGINT, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -306,27 +300,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.BIGINT<Long>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.BIGINT, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.BIGINT, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.BIGINT<Long>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.BIGINT, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.BIGINT, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.BIGINT<Long>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.BIGINT, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -334,70 +328,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.BIGINT<Long>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.BIGINT, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.BIGINT<Long>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.BIGINT, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface BINARY {
-    public interface OFFSET<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.BINARY, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.BINARY, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.BINARY, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.BINARY, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.BINARY, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.BINARY, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.BINARY, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -412,27 +406,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.BINARY<byte[]>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.BINARY, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.BINARY, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.BINARY<byte[]>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.BINARY, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.BINARY, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.BINARY<byte[]>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.BINARY, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -440,70 +434,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.BINARY<byte[]>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.BINARY, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.BINARY<byte[]>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.BINARY, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface BLOB {
-    public interface OFFSET<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.BLOB, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.BLOB, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.BLOB, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.BLOB, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.BLOB, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.BLOB, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.BLOB, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -518,27 +512,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.BLOB<InputStream>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.BLOB, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.BLOB, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.BLOB<InputStream>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.BLOB, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.BLOB, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.BLOB<InputStream>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.BLOB, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -546,70 +540,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.BLOB<InputStream>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.BLOB, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.BLOB<InputStream>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.BLOB, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface BOOLEAN {
-    public interface OFFSET<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -624,27 +618,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.BOOLEAN, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.BOOLEAN, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.BOOLEAN, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -652,70 +646,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.BOOLEAN, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.BOOLEAN<Boolean>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.BOOLEAN, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface CHAR {
-    public interface OFFSET<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.CHAR<String>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.CHAR, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.CHAR<String>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.CHAR, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.CHAR<String>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.CHAR, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.CHAR<String>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.CHAR, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.CHAR<String>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.CHAR, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.CHAR<String>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.CHAR, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.CHAR<String>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.CHAR, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -730,27 +724,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.CHAR<String>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.CHAR, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.CHAR<String>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.CHAR, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.CHAR<String>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.CHAR, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.CHAR<String>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.CHAR, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.CHAR<String>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.CHAR, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -758,70 +752,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.CHAR<String>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.CHAR, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.CHAR<String>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.CHAR, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface CLOB {
-    public interface OFFSET<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.CLOB, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.CLOB, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.CLOB, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.CLOB, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.CLOB, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.CLOB, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.CLOB, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -836,27 +830,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.CLOB<Reader>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.CLOB, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.CLOB, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.CLOB<Reader>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.CLOB, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.CLOB, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.CLOB<Reader>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.CLOB, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -864,70 +858,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.CLOB<Reader>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.CLOB, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.CLOB<Reader>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.CLOB, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface DataType {
-    public interface OFFSET<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.Entity<Object>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.Entity<Object>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.Entity<Object>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.Entity<Object>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.Entity<Object>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.Entity<Object>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -942,27 +936,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.Entity<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.Entity<Object>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -970,70 +964,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface DATE {
-    public interface OFFSET<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.DATE, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DATE, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DATE, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.DATE, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.DATE, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.DATE, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.DATE, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1048,27 +1042,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.DATE<LocalDate>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.DATE, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.DATE, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.DATE<LocalDate>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.DATE, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.DATE, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.DATE<LocalDate>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.DATE, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1076,70 +1070,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.DATE<LocalDate>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.DATE, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.DATE<LocalDate>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.DATE, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface DATETIME {
-    public interface OFFSET<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.DATETIME, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DATETIME, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DATETIME, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.DATETIME, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.DATETIME, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.DATETIME, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.DATETIME, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1154,27 +1148,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.DATETIME, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.DATETIME, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.DATETIME, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.DATETIME, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.DATETIME, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1182,10 +1176,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.DATETIME, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.DATETIME<LocalDateTime>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.DATETIME, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -1193,60 +1187,60 @@ public interface Select {
 
   public interface DECIMAL {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -1261,27 +1255,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -1289,69 +1283,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.DECIMAL.UNSIGNED<BigDecimal>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.DECIMAL.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.DECIMAL, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DECIMAL, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.DECIMAL, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.DECIMAL, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.DECIMAL, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.DECIMAL, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1366,27 +1360,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.DECIMAL, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.DECIMAL, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.DECIMAL, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.DECIMAL, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.DECIMAL, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1394,10 +1388,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.DECIMAL, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.DECIMAL<BigDecimal>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.DECIMAL, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -1405,60 +1399,60 @@ public interface Select {
 
   public interface DOUBLE {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -1473,27 +1467,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -1501,69 +1495,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.DOUBLE.UNSIGNED<Double>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.DOUBLE.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.DOUBLE, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.DOUBLE, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.DOUBLE, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.DOUBLE, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.DOUBLE, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.DOUBLE, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1578,27 +1572,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.DOUBLE<Double>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.DOUBLE, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.DOUBLE, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.DOUBLE<Double>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.DOUBLE, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.DOUBLE, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.DOUBLE<Double>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.DOUBLE, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1606,70 +1600,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.DOUBLE<Double>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.DOUBLE, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.DOUBLE<Double>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.DOUBLE, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface Entity {
-    public interface OFFSET<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.Entity<Object>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.Entity<Object>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.Entity<Object>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.Entity<Object>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.Entity<Object>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.Entity<Object>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1684,27 +1678,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.Entity<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.Entity<Object>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.Entity<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.Entity<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1712,70 +1706,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.Entity<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface ENUM<T extends Enum<?> & EntityEnum> {
-    public interface OFFSET<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -1790,27 +1784,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.ENUM<Enum<?>>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.ENUM<Enum<?>>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -1818,10 +1812,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.ENUM<Enum<?>>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.ENUM<Enum<?>>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.ENUM<Enum<?>>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -1829,60 +1823,60 @@ public interface Select {
 
   public interface FLOAT {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -1897,27 +1891,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -1925,69 +1919,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.FLOAT.UNSIGNED<Float>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.FLOAT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.FLOAT, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.FLOAT, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.FLOAT, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.FLOAT, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.FLOAT, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.FLOAT, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2002,27 +1996,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.FLOAT<Float>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.FLOAT, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.FLOAT, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.FLOAT<Float>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.FLOAT, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.FLOAT, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.FLOAT<Float>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.FLOAT, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2030,10 +2024,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.FLOAT<Float>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.FLOAT, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.FLOAT<Float>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.FLOAT, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -2041,60 +2035,60 @@ public interface Select {
 
   public interface INT {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -2109,27 +2103,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.INT.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.INT.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.INT.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -2137,69 +2131,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.INT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.INT.UNSIGNED<Long>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.INT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.INT, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.INT<Integer>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.INT, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.INT, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.INT<Integer>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.INT, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.INT<Integer>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.INT, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.INT<Integer>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.INT, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.INT<Integer>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.INT, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.INT<Integer>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.INT, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.INT<Integer>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.INT, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2214,27 +2208,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.INT<Integer>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.INT, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.INT<Integer>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.INT, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.INT<Integer>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.INT, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.INT<Integer>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.INT, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.INT<Integer>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.INT, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2242,70 +2236,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.INT<Integer>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.INT, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.INT<Integer>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.INT, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface LargeObject {
-    public interface OFFSET<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2320,27 +2314,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.LargeObject<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.LargeObject<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.LargeObject<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2348,70 +2342,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.LargeObject<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.LargeObject<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.LargeObject<Closeable>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface Numeric {
-    public interface OFFSET<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.Numeric<Number>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.Numeric<Number>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.Numeric<Number>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.Numeric<Number>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.Numeric<Number>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.Numeric<Number>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.Numeric<Number>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2426,27 +2420,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.Numeric<Number>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.Numeric<Number>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.Numeric<Number>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.Numeric<Number>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.Numeric<Number>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.Numeric<Number>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.Numeric<Number>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2454,10 +2448,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.Numeric<Number>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.Numeric<Number>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.Numeric<Number>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.Numeric<Number>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -2465,60 +2459,60 @@ public interface Select {
 
   public interface SMALLINT {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -2533,27 +2527,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -2561,69 +2555,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.SMALLINT.UNSIGNED<Integer>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.SMALLINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.SMALLINT, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.SMALLINT, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.SMALLINT, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.SMALLINT, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.SMALLINT, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.SMALLINT, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2638,27 +2632,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.SMALLINT<Short>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.SMALLINT, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.SMALLINT, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.SMALLINT<Short>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.SMALLINT, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.SMALLINT, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.SMALLINT<Short>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.SMALLINT, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2666,70 +2660,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.SMALLINT<Short>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.SMALLINT, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.SMALLINT<Short>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.SMALLINT, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface Temporal {
-    public interface OFFSET<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2744,27 +2738,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2772,70 +2766,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.Temporal<java.time.temporal.Temporal>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface Textual<T> {
-    public interface OFFSET<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.Textual<Object>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.Textual<Object>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.Textual<Object>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.Textual<Object>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.Textual<Object>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.Textual<Object>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.Textual<Object>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2850,27 +2844,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.Textual<Object>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.Textual<Object>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.Textual<Object>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.Textual<Object>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.Textual<Object>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2878,70 +2872,70 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.Textual<Object>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.Textual<Object>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.Textual<Comparable<?>>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface TIME {
-    public interface OFFSET<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.TIME, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.TIME, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.TIME, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.TIME, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.TIME, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.TIME, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.TIME, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -2956,27 +2950,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.TIME<LocalTime>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.TIME, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.TIME, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.TIME<LocalTime>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.TIME, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.TIME, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.TIME<LocalTime>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.TIME, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -2984,10 +2978,10 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.TIME<LocalTime>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.TIME, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.TIME<LocalTime>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.TIME, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
@@ -2995,60 +2989,60 @@ public interface Select {
 
   public interface TINYINT {
     public interface UNSIGNED {
-      public interface OFFSET<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, untyped.OFFSET<T> {
+      public interface OFFSET<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, untyped.OFFSET<T> {
       }
 
-      public interface _LIMIT<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._LIMIT<T> {
+      public interface _LIMIT<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._LIMIT<T> {
         @Override
         public LIMIT<T> LIMIT(final int rows);
       }
 
-      public interface LIMIT<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, untyped.LIMIT<T> {
+      public interface LIMIT<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, untyped.LIMIT<T> {
         @Override
         public OFFSET<T> OFFSET(final int rows);
       }
 
-      public interface _ORDER_BY<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._ORDER_BY<T> {
+      public interface _ORDER_BY<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._ORDER_BY<T> {
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
       }
 
-      public interface ORDER_BY<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+      public interface ORDER_BY<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
       }
 
-      public interface _GROUP_BY<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._GROUP_BY<T> {
+      public interface _GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._GROUP_BY<T> {
         @Override
-        public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+        public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
       }
 
-      public interface GROUP_BY<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+      public interface GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
       }
 
-      public interface _HAVING<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._HAVING<T> {
+      public interface _HAVING<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._HAVING<T> {
         @Override
         public HAVING<T> HAVING(final Condition<?> condition);
       }
 
-      public interface HAVING<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+      public interface HAVING<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
       }
 
-      public interface _WHERE<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._WHERE<T> {
+      public interface _WHERE<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._WHERE<T> {
         @Override
         public WHERE<T> WHERE(final Condition<?> condition);
       }
 
-      public interface WHERE<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+      public interface WHERE<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
       }
 
-      public interface _ON<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._ON<T> {
+      public interface _ON<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._ON<T> {
         @Override
         public ON<T> ON(final Condition<?> condition);
       }
 
-      public interface ON<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+      public interface ON<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
       }
 
-      public interface _JOIN<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._JOIN<T> {
+      public interface _JOIN<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._JOIN<T> {
         @Override
         public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
         @Override
@@ -3063,27 +3057,27 @@ public interface Select {
         public JOIN<T> JOIN(final type.Entity table);
       }
 
-      public interface JOIN<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+      public interface JOIN<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
       }
 
-      public interface ADV_JOIN<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+      public interface ADV_JOIN<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
       }
 
-      public interface _FROM<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._FROM<T> {
+      public interface _FROM<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._FROM<T> {
         @Override
         public FROM<T> FROM(final type.Entity ... tables);
       }
 
-      public interface FROM<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+      public interface FROM<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
       }
 
-      public interface _SELECT<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+      public interface _SELECT<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
       }
 
-      public interface _UNION<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._UNION_TYPE<T> {
+      public interface _UNION<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._UNION_TYPE<T> {
         public UNION<T> UNION(final SELECT<T> union);
 
-        public interface ALL<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, untyped._UNION_TYPE.ALL_TYPE<T> {
+        public interface ALL<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, untyped._UNION_TYPE.ALL_TYPE<T> {
           public UNION<T> ALL(final SELECT<T> union);
         }
 
@@ -3091,69 +3085,69 @@ public interface Select {
         public ALL<T> UNION();
       }
 
-      public interface UNION<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+      public interface UNION<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
       }
 
-      public interface SELECT<T extends Subject<?>> extends kind.TINYINT.UNSIGNED<Short>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+      public interface SELECT<T extends type.Subject<?>> extends kind.TINYINT.UNSIGNED, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
         @Override
         public T AS(final T as);
       }
     }
 
-    public interface OFFSET<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, untyped.OFFSET<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, untyped.OFFSET<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._LIMIT<T> {
+    public interface _LIMIT<T extends type.Subject<?>> extends kind.TINYINT, untyped._LIMIT<T> {
       @Override
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, untyped.LIMIT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, untyped.LIMIT<T> {
       @Override
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._ORDER_BY<T> {
+    public interface _ORDER_BY<T extends type.Subject<?>> extends kind.TINYINT, untyped._ORDER_BY<T> {
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _LIMIT<T>, untyped.ORDER_BY<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._GROUP_BY<T> {
+    public interface _GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT, untyped._GROUP_BY<T> {
       @Override
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _LIMIT<T>, _HAVING<T>, untyped.GROUP_BY<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._HAVING<T> {
+    public interface _HAVING<T extends type.Subject<?>> extends kind.TINYINT, untyped._HAVING<T> {
       @Override
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
+    public interface HAVING<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.HAVING<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._WHERE<T> {
+    public interface _WHERE<T extends type.Subject<?>> extends kind.TINYINT, untyped._WHERE<T> {
       @Override
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
+    public interface WHERE<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T>, untyped.WHERE<T> {
     }
 
-    public interface _ON<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._ON<T> {
+    public interface _ON<T extends type.Subject<?>> extends kind.TINYINT, untyped._ON<T> {
       @Override
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
+    public interface ON<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.ON<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._JOIN<T> {
+    public interface _JOIN<T extends type.Subject<?>> extends kind.TINYINT, untyped._JOIN<T> {
       @Override
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       @Override
@@ -3168,27 +3162,27 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends kind.TINYINT<Byte>, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
+    public interface JOIN<T extends type.Subject<?>> extends kind.TINYINT, _JOIN<T>, _ON<T>, untyped.JOIN<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _JOIN<T>, untyped.ADV_JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._FROM<T> {
+    public interface _FROM<T extends type.Subject<?>> extends kind.TINYINT, untyped._FROM<T> {
       @Override
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
+    public interface FROM<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T>, untyped.FROM<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends kind.TINYINT<Byte>, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends kind.TINYINT, SELECT<T>, _LIMIT<T>, _FROM<T>, untyped._SELECT<T> {
     }
 
-    public interface _UNION<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._UNION_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends kind.TINYINT, untyped._UNION_TYPE<T> {
       public UNION<T> UNION(final SELECT<T> union);
 
-      public interface ALL<T extends Subject<?>> extends kind.TINYINT<Byte>, untyped._UNION_TYPE.ALL_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends kind.TINYINT, untyped._UNION_TYPE.ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
@@ -3196,63 +3190,63 @@ public interface Select {
       public ALL<T> UNION();
     }
 
-    public interface UNION<T extends Subject<?>> extends kind.TINYINT<Byte>, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
+    public interface UNION<T extends type.Subject<?>> extends kind.TINYINT, ExecuteQuery<T>, _UNION<T>, untyped.UNION<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends kind.TINYINT<Byte>, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
+    public interface SELECT<T extends type.Subject<?>> extends kind.TINYINT, ExecuteQuery<T>, _UNION<T>, untyped.SELECT<T> {
       @Override
       public T AS(final T as);
     }
   }
 
   public interface untyped {
-    public interface OFFSET<T extends Subject<?>> extends SELECT<T> {
+    public interface OFFSET<T extends type.Subject<?>> extends SELECT<T> {
     }
 
-    public interface _LIMIT<T extends Subject<?>> {
+    public interface _LIMIT<T extends type.Subject<?>> {
       public LIMIT<T> LIMIT(final int rows);
     }
 
-    public interface LIMIT<T extends Subject<?>> extends SELECT<T> {
+    public interface LIMIT<T extends type.Subject<?>> extends SELECT<T> {
       public OFFSET<T> OFFSET(final int rows);
     }
 
-    public interface _ORDER_BY<T extends Subject<?>> {
+    public interface _ORDER_BY<T extends type.Subject<?>> {
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns);
     }
 
-    public interface ORDER_BY<T extends Subject<?>> extends SELECT<T>, _LIMIT<T> {
+    public interface ORDER_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T> {
     }
 
-    public interface _GROUP_BY<T extends Subject<?>> {
-      public GROUP_BY<T> GROUP_BY(final Subject<?> ... subjects);
+    public interface _GROUP_BY<T extends type.Subject<?>> {
+      public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects);
     }
 
-    public interface GROUP_BY<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {
+    public interface GROUP_BY<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _HAVING<T> {
     }
 
-    public interface _HAVING<T extends Subject<?>> {
+    public interface _HAVING<T extends type.Subject<?>> {
       public HAVING<T> HAVING(final Condition<?> condition);
     }
 
-    public interface HAVING<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _ORDER_BY<T> {
+    public interface HAVING<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _ORDER_BY<T> {
     }
 
-    public interface _WHERE<T extends Subject<?>> {
+    public interface _WHERE<T extends type.Subject<?>> {
       public WHERE<T> WHERE(final Condition<?> condition);
     }
 
-    public interface WHERE<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T> {
+    public interface WHERE<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _LIMIT<T>, _ORDER_BY<T> {
     }
 
-    public interface _ON<T extends Subject<?>> {
+    public interface _ON<T extends type.Subject<?>> {
       public ON<T> ON(final Condition<?> condition);
     }
 
-    public interface ON<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
+    public interface ON<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
     }
 
-    public interface _JOIN<T extends Subject<?>> {
+    public interface _JOIN<T extends type.Subject<?>> {
       public ADV_JOIN<T> CROSS_JOIN(final type.Entity table);
       public ADV_JOIN<T> NATURAL_JOIN(final type.Entity table);
       public JOIN<T> LEFT_JOIN(final type.Entity table);
@@ -3261,41 +3255,41 @@ public interface Select {
       public JOIN<T> JOIN(final type.Entity table);
     }
 
-    public interface JOIN<T extends Subject<?>> extends _JOIN<T>, _ON<T> {
+    public interface JOIN<T extends type.Subject<?>> extends _JOIN<T>, _ON<T> {
     }
 
-    public interface ADV_JOIN<T extends Subject<?>> extends SELECT<T>, _JOIN<T> {
+    public interface ADV_JOIN<T extends type.Subject<?>> extends SELECT<T>, _JOIN<T> {
     }
 
-    public interface _FROM<T extends Subject<?>> {
+    public interface _FROM<T extends type.Subject<?>> {
       public FROM<T> FROM(final type.Entity ... tables);
     }
 
-    public interface FROM<T extends Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
+    public interface FROM<T extends type.Subject<?>> extends SELECT<T>, _GROUP_BY<T>, _HAVING<T>, _JOIN<T>, _LIMIT<T>, _ORDER_BY<T>, _WHERE<T> {
     }
 
-    public interface _SELECT<T extends Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T> {
+    public interface _SELECT<T extends type.Subject<?>> extends SELECT<T>, _LIMIT<T>, _FROM<T> {
     }
 
-    public interface _UNION_TYPE<T extends Subject<?>> {
-      public interface ALL_TYPE<T extends Subject<?>> {
+    public interface _UNION_TYPE<T extends type.Subject<?>> {
+      public interface ALL_TYPE<T extends type.Subject<?>> {
       }
 
       public ALL_TYPE<T> UNION();
     }
 
-    public interface _UNION<T extends Subject<?>> extends _UNION_TYPE<T> {
-      public interface ALL<T extends Subject<?>> extends ALL_TYPE<T> {
+    public interface _UNION<T extends type.Subject<?>> extends _UNION_TYPE<T> {
+      public interface ALL<T extends type.Subject<?>> extends ALL_TYPE<T> {
         public UNION<T> ALL(final SELECT<T> union);
       }
 
       public UNION<T> UNION(final SELECT<T> union);
     }
 
-    public interface UNION<T extends Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
+    public interface UNION<T extends type.Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
     }
 
-    public interface SELECT<T extends Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
+    public interface SELECT<T extends type.Subject<?>> extends ExecuteQuery<T>, _UNION_TYPE<T> {
       public T AS(final T as);
     }
   }

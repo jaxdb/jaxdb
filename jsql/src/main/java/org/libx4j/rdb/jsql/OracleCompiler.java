@@ -269,7 +269,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
     }
 
-    if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof type.Entity) && (!(subject instanceof Subject) || !(((Subject<?>)subject).wrapper() instanceof As)))
+    if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
   }
 }

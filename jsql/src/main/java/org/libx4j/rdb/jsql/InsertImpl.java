@@ -25,7 +25,7 @@ import org.libx4j.rdb.jsql.Select;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class InsertImpl {
-  protected static abstract class Execute<T extends Subject<?>> extends Keyword<T> implements ExecuteUpdate {
+  protected static abstract class Execute<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
     protected Execute(final Keyword<T> parent) {
       super(parent);
     }
@@ -65,7 +65,7 @@ final class InsertImpl {
     }
   }
 
-  protected static final class VALUES<T extends Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
+  protected static final class VALUES<T extends type.Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
     protected final Select.untyped.SELECT<?> select;
 
     protected VALUES(final Keyword<T> parent, final Select.untyped.SELECT<?> select) {
@@ -81,7 +81,7 @@ final class InsertImpl {
     }
   }
 
-  protected static final class INSERT<T extends Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
+  protected static final class INSERT<T extends type.Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
     protected final type.Entity[] entities;
     protected final type.DataType<?>[] columns;
 

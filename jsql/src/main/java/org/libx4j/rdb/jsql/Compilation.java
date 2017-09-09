@@ -73,9 +73,9 @@ final class Compilation {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<Subject<?>,Alias> aliases = new IdentityHashMap<Subject<?>,Alias>();
+  private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<type.Subject<?>,Alias>();
 
-  protected Alias registerAlias(final Subject<?> subject) {
+  protected Alias registerAlias(final type.Subject<?> subject) {
     Alias alias = aliases.get(subject);
     if (alias == null)
       aliases.put(subject, alias = new Alias(aliases.size()));
@@ -83,7 +83,7 @@ final class Compilation {
     return alias;
   }
 
-  protected Alias getAlias(final Subject<?> subject) {
+  protected Alias getAlias(final type.Subject<?> subject) {
     return aliases.get(subject);
   }
 

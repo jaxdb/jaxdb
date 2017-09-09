@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 final class expression {
-  protected static abstract class Generic<T> extends Subject<T> {
+  protected static abstract class Generic<T> extends type.Subject<T> {
   }
 
   protected static final class Count extends Generic<Long> {
@@ -221,9 +221,9 @@ final class expression {
   protected static final class Set extends Generic<Object> {
     protected final java.lang.String function;
     protected final boolean distinct;
-    protected final Subject<?> a;
+    protected final type.Subject<?> a;
 
-    protected Set(final java.lang.String function, final Subject<?> subject, final boolean distinct) {
+    protected Set(final java.lang.String function, final type.Subject<?> subject, final boolean distinct) {
       this.function = function;
       this.a = subject;
       this.distinct = distinct;
