@@ -104,8 +104,9 @@ public final class type {
       this(null, null, value, false, false, true, null, null, false, (Class<? extends DataType<T>>)value.getClass().getComponentType());
     }
 
-    public void set(final ARRAY<T> value) {
+    public final ARRAY<T> set(final ARRAY<T> value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -148,7 +149,7 @@ public final class type {
     }
 
     @Override
-    protected DataType<?> scaleTo(final DataType<?> dataType) {
+    protected final DataType<?> scaleTo(final DataType<?> dataType) {
       throw new UnsupportedOperationException();
     }
 
@@ -200,8 +201,9 @@ public final class type {
         set(value);
       }
 
-      public void set(final BIGINT.UNSIGNED value) {
+      public final UNSIGNED set(final BIGINT.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       public final BigInteger min() {
@@ -243,7 +245,7 @@ public final class type {
       }
 
       @Override
-      protected Class<BigInteger> type() {
+      protected final Class<BigInteger> type() {
         return type;
       }
 
@@ -318,7 +320,7 @@ public final class type {
       }
 
       @Override
-      public int compareTo(final DataType<? extends Number> o) {
+      public final int compareTo(final DataType<? extends Number> o) {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
       }
     }
@@ -357,8 +359,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final BIGINT value) {
+    public final BIGINT set(final BIGINT value) {
       super.set(value);
+      return this;
     }
 
     public final Long min() {
@@ -400,7 +403,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Long> type() {
+    protected final Class<Long> type() {
       return type;
     }
 
@@ -466,7 +469,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
   }
@@ -506,7 +509,7 @@ public final class type {
       set(value);
     }
 
-    protected void checkLength(final int length) {
+    protected final void checkLength(final int length) {
       if (length <= 0 || length > 65535)
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
     }
@@ -515,11 +518,12 @@ public final class type {
       return length;
     }
 
-    public void set(final BINARY value) {
+    public final BINARY set(final BINARY value) {
       super.set(value);
+      return this;
     }
 
-    public boolean varying() {
+    public final boolean varying() {
       return varying;
     }
 
@@ -529,7 +533,7 @@ public final class type {
     }
 
     @Override
-    protected Class<byte[]> type() {
+    protected final Class<byte[]> type() {
       return type;
     }
 
@@ -601,8 +605,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final BLOB value) {
+    public final BLOB set(final BLOB value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -611,7 +616,7 @@ public final class type {
     }
 
     @Override
-    protected Class<InputStream> type() {
+    protected final Class<InputStream> type() {
       return type;
     }
 
@@ -674,8 +679,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final BOOLEAN value) {
+    public final BOOLEAN set(final BOOLEAN value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -684,7 +690,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Boolean> type() {
+    protected final Class<Boolean> type() {
       return type;
     }
 
@@ -721,7 +727,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<Boolean> o) {
+    public final int compareTo(final DataType<Boolean> o) {
       return o == null ? this.value == null ? 0 : 1 : this.value.compareTo(o.get());
     }
 
@@ -772,8 +778,9 @@ public final class type {
       this.varying = true;
     }
 
-    public void set(final CHAR value) {
+    public final CHAR set(final CHAR value) {
       super.set(value);
+      return this;
     }
 
     protected final void checkLength(final int length) {
@@ -781,7 +788,7 @@ public final class type {
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
     }
 
-    public boolean varying() {
+    public final boolean varying() {
       return varying;
     }
 
@@ -791,7 +798,7 @@ public final class type {
     }
 
     @Override
-    protected Class<String> type() {
+    protected final Class<String> type() {
       return type;
     }
 
@@ -846,8 +853,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final CLOB value) {
+    public final CLOB set(final CLOB value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -856,7 +864,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Reader> type() {
+    protected final Class<Reader> type() {
       return type;
     }
 
@@ -919,8 +927,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final DATE value) {
+    public final DATE set(final DATE value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -929,7 +938,7 @@ public final class type {
     }
 
     @Override
-    protected Class<LocalDate> type() {
+    protected final Class<LocalDate> type() {
       return type;
     }
 
@@ -972,7 +981,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+    public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
       if (o == null || o.value == null)
         return this.value == null ? 0 : 1;
 
@@ -983,7 +992,7 @@ public final class type {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
       if (this == obj)
         return true;
 
@@ -997,7 +1006,7 @@ public final class type {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       final LocalDate get = get();
       return get == null ? "NULL" : get.format(Dialect.DATE_FORMAT);
     }
@@ -1088,12 +1097,13 @@ public final class type {
     protected DataType<T> indirection;
     protected boolean wasSet;
 
-    public void set(final T value) {
+    public DataType<T> set(final T value) {
       this.wasSet = true;
       this.value = value;
+      return this;
     }
 
-    protected void set(final DataType<T> indirection) {
+    protected final void set(final DataType<T> indirection) {
       this.wasSet = false;
       this.indirection = indirection;
     }
@@ -1198,8 +1208,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final DATETIME value) {
+    public final DATETIME set(final DATETIME value) {
       super.set(value);
+      return this;
     }
 
     public final short precision() {
@@ -1212,7 +1223,7 @@ public final class type {
     }
 
     @Override
-    protected Class<LocalDateTime> type() {
+    protected final Class<LocalDateTime> type() {
       return type;
     }
 
@@ -1255,7 +1266,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+    public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
       if (o == null || o.value == null)
         return this.value == null ? 0 : 1;
 
@@ -1266,7 +1277,7 @@ public final class type {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
       if (this == obj)
         return true;
 
@@ -1280,7 +1291,7 @@ public final class type {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       final LocalDateTime get = get();
       return get == null ? "NULL" : get.format(Dialect.DATETIME_FORMAT);
     }
@@ -1593,7 +1604,7 @@ public final class type {
     }
 
     @Override
-    public DECIMAL clone() {
+    public final DECIMAL clone() {
       return new DECIMAL(this);
     }
   }
@@ -1868,8 +1879,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final ENUM<T> value) {
+    public final ENUM<T> set(final ENUM<T> value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -1929,7 +1941,7 @@ public final class type {
     }
 
     @Override
-    protected String evaluate(final Set<Evaluable> visited) {
+    protected final String evaluate(final Set<Evaluable> visited) {
       final Enum<?> get = get();
       return get == null ? null : get.toString();
     }
@@ -2174,7 +2186,7 @@ public final class type {
     }
 
     @Override
-    public FLOAT clone() {
+    public final FLOAT clone() {
       return new FLOAT(this);
     }
   }
@@ -2244,8 +2256,9 @@ public final class type {
         set(value);
       }
 
-      public void set(final INT.UNSIGNED value) {
+      public final UNSIGNED set(final INT.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       public final Long min() {
@@ -2287,7 +2300,7 @@ public final class type {
       }
 
       @Override
-      protected Class<Long> type() {
+      protected final Class<Long> type() {
         return type;
       }
 
@@ -2335,7 +2348,7 @@ public final class type {
       }
 
       @Override
-      public int compareTo(final DataType<? extends Number> o) {
+      public final int compareTo(final DataType<? extends Number> o) {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
       }
 
@@ -2384,8 +2397,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final INT value) {
+    public final INT set(final INT value) {
       super.set(value);
+      return this;
     }
 
     public final Integer min() {
@@ -2427,7 +2441,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Integer> type() {
+    protected final Class<Integer> type() {
       return type;
     }
 
@@ -2475,7 +2489,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
 
@@ -2526,8 +2540,9 @@ public final class type {
         set(value);
       }
 
-      public void set(final SMALLINT.UNSIGNED value) {
+      public final UNSIGNED set(final SMALLINT.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       public final Integer min() {
@@ -2569,7 +2584,7 @@ public final class type {
       }
 
       @Override
-      protected Class<Integer> type() {
+      protected final Class<Integer> type() {
         return type;
       }
 
@@ -2620,7 +2635,7 @@ public final class type {
       }
 
       @Override
-      public int compareTo(final DataType<? extends Number> o) {
+      public final int compareTo(final DataType<? extends Number> o) {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
       }
 
@@ -2669,8 +2684,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final SMALLINT value) {
+    public final SMALLINT set(final SMALLINT value) {
       super.set(value);
+      return this;
     }
 
     public final Short min() {
@@ -2712,7 +2728,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Short> type() {
+    protected final Class<Short> type() {
       return type;
     }
 
@@ -2763,7 +2779,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
 
@@ -2796,12 +2812,12 @@ public final class type {
     protected abstract boolean unsigned();
 
     @Override
-    protected Number evaluate(final Set<Evaluable> visited) {
+    protected final Number evaluate(final Set<Evaluable> visited) {
       return (Number)super.evaluate(visited);
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
       if (obj == null)
         return true;
 
@@ -2914,11 +2930,12 @@ public final class type {
     }
 
     @Override
-    public final void set(final T value) {
+    public final ExactNumeric<T> set(final T value) {
       if (value != null)
         checkValue(value.doubleValue());
 
       super.set(value);
+      return this;
     }
   }
 
@@ -2958,8 +2975,9 @@ public final class type {
         set(value);
       }
 
-      public void set(final TINYINT.UNSIGNED value) {
+      public final UNSIGNED set(final TINYINT.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       public final Short min() {
@@ -3001,7 +3019,7 @@ public final class type {
       }
 
       @Override
-      protected Class<Short> type() {
+      protected final Class<Short> type() {
         return type;
       }
 
@@ -3058,7 +3076,7 @@ public final class type {
       }
 
       @Override
-      public int compareTo(final DataType<? extends Number> o) {
+      public final int compareTo(final DataType<? extends Number> o) {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
       }
 
@@ -3107,8 +3125,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final TINYINT value) {
+    public final TINYINT set(final TINYINT value) {
       super.set(value);
+      return this;
     }
 
     public final Byte min() {
@@ -3150,7 +3169,7 @@ public final class type {
     }
 
     @Override
-    protected Class<Byte> type() {
+    protected final Class<Byte> type() {
       return type;
     }
 
@@ -3207,7 +3226,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends Number> o) {
+    public final int compareTo(final DataType<? extends Number> o) {
       return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
     }
 
@@ -3269,7 +3288,7 @@ public final class type {
     }
 
     @Override
-    protected java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
+    protected final java.time.temporal.Temporal evaluate(final Set<Evaluable> visited) {
       return (java.time.temporal.Temporal)super.evaluate(visited);
     }
   }
@@ -3310,7 +3329,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final Textual<?> o) {
+    public final int compareTo(final Textual<?> o) {
       if (o == null)
         return this.value == null ? 0 : 1;
 
@@ -3321,13 +3340,13 @@ public final class type {
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
       final T get = get();
       return name.hashCode() + (get == null ? 0 : get.toString().hashCode());
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
       if (this == obj)
         return true;
 
@@ -3371,8 +3390,9 @@ public final class type {
       set(value);
     }
 
-    public void set(final TIME value) {
+    public final TIME set(final TIME value) {
       super.set(value);
+      return this;
     }
 
     public final short precision() {
@@ -3385,7 +3405,7 @@ public final class type {
     }
 
     @Override
-    protected Class<LocalTime> type() {
+    protected final Class<LocalTime> type() {
       return type;
     }
 
@@ -3418,7 +3438,7 @@ public final class type {
     }
 
     @Override
-    public int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
+    public final int compareTo(final DataType<? extends java.time.temporal.Temporal> o) {
       if (o == null || o.value == null)
         return this.value == null ? 0 : 1;
 
@@ -3439,7 +3459,7 @@ public final class type {
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
       final LocalTime get = get();
       return get == null ? "NULL" : get.format(Dialect.TIME_FORMAT);
     }
