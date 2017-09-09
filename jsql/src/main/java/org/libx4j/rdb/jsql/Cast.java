@@ -189,9 +189,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.FLOAT value;
+    private final kind.Numeric<?> value;
 
     public FLOAT(final kind.FLOAT value) {
+      this.value = value;
+    }
+
+    public FLOAT(final kind.FLOAT.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -303,9 +307,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.DOUBLE value;
+    private final kind.Numeric<?> value;
 
     public DOUBLE(final kind.DOUBLE value) {
+      this.value = value;
+    }
+
+    public DOUBLE(final kind.DOUBLE.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -429,9 +437,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.DECIMAL value;
+    private final kind.Numeric<?> value;
 
     public DECIMAL(final kind.DECIMAL value) {
+      this.value = value;
+    }
+
+    public DECIMAL(final kind.DECIMAL.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -555,9 +567,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.TINYINT value;
+    private final kind.Numeric<?> value;
 
     public TINYINT(final kind.TINYINT value) {
+      this.value = value;
+    }
+
+    public TINYINT(final kind.TINYINT.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -681,9 +697,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.SMALLINT value;
+    private final kind.Numeric<?> value;
 
     public SMALLINT(final kind.SMALLINT value) {
+      this.value = value;
+    }
+
+    public SMALLINT(final kind.SMALLINT.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -807,9 +827,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.INT value;
+    private final kind.Numeric<?> value;
 
     public INT(final kind.INT value) {
+      this.value = value;
+    }
+
+    public INT(final kind.INT.UNSIGNED value) {
       this.value = value;
     }
   }
@@ -933,9 +957,13 @@ public class Cast {
 
     public final AS AS = new AS();
 
-    private final kind.BIGINT value;
+    private final kind.Numeric<?> value;
 
     public BIGINT(final kind.BIGINT value) {
+      this.value = value;
+    }
+
+    public BIGINT(final kind.BIGINT.UNSIGNED value) {
       this.value = value;
     }
   }

@@ -40,6 +40,7 @@ import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Numbers;
+import org.libx4j.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -206,10 +207,12 @@ public final class type {
         return this;
       }
 
+      @Override
       public final BigInteger min() {
         return min;
       }
 
+      @Override
       public final BigInteger max() {
         return max;
       }
@@ -364,10 +367,12 @@ public final class type {
       return this;
     }
 
+    @Override
     public final Long min() {
       return min;
     }
 
+    @Override
     public final Long max() {
       return max;
     }
@@ -1300,6 +1305,7 @@ public final class type {
   public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
     public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
       protected static final Class<BigDecimal> type = BigDecimal.class;
+      private static final BigDecimal maxValue = new BigDecimal("340282366920938463463374607431768211455");
 
       private final Short scale;
       private final BigDecimal min;
@@ -1340,13 +1346,14 @@ public final class type {
         set(value);
       }
 
-      public final void set(final DECIMAL value) {
+      public final UNSIGNED set(final DECIMAL.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       private final void checkScale(final int scale) {
-        if (scale > maxScale())
-          throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale() + "] exceeded: " + scale);
+        if (scale > maxScale)
+          throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
       }
 
       @Override
@@ -1366,7 +1373,7 @@ public final class type {
 
       @Override
       protected final BigDecimal maxValue() {
-        return new BigDecimal("340282366920938463463374607431768211455");
+        return maxValue;
       }
 
       @Override
@@ -1374,14 +1381,12 @@ public final class type {
         return 39;
       }
 
-      protected static final int maxScale() {
-        return 38;
-      }
-
+      @Override
       public final BigDecimal min() {
         return min;
       }
 
+      @Override
       public final BigDecimal max() {
         return max;
       }
@@ -1455,6 +1460,9 @@ public final class type {
     }
 
     protected static final Class<BigDecimal> type = BigDecimal.class;
+    private static final BigDecimal minValue = new BigDecimal("-170141183460469231731687303715884105728");
+    private static final BigDecimal maxValue = new BigDecimal("170141183460469231731687303715884105727");
+    private static final byte maxScale = 38;
 
     private final Short scale;
     private final BigDecimal min;
@@ -1495,13 +1503,14 @@ public final class type {
       set(value);
     }
 
-    public final void set(final DECIMAL value) {
+    public final DECIMAL set(final DECIMAL value) {
       super.set(value);
+      return this;
     }
 
     private final void checkScale(final int scale) {
-      if (scale > maxScale())
-        throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale() + "] exceeded: " + scale);
+      if (scale > maxScale)
+        throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
     }
 
     @Override
@@ -1516,12 +1525,12 @@ public final class type {
 
     @Override
     protected final BigDecimal minValue() {
-      return new BigDecimal("-170141183460469231731687303715884105728");
+      return minValue;
     }
 
     @Override
     protected final BigDecimal maxValue() {
-      return new BigDecimal("170141183460469231731687303715884105727");
+      return maxValue;
     }
 
     @Override
@@ -1529,14 +1538,12 @@ public final class type {
       return 39;
     }
 
-    protected static final int maxScale() {
-      return 38;
-    }
-
+    @Override
     public final BigDecimal min() {
       return min;
     }
 
+    @Override
     public final BigDecimal max() {
       return max;
     }
@@ -1639,8 +1646,9 @@ public final class type {
         this.max = null;
       }
 
-      public final void set(final DOUBLE.UNSIGNED value) {
+      public final UNSIGNED set(final DOUBLE.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
       @Override
@@ -1658,10 +1666,12 @@ public final class type {
         return true;
       }
 
+      @Override
       public final Double min() {
         return min;
       }
 
+      @Override
       public final Double max() {
         return max;
       }
@@ -1757,8 +1767,9 @@ public final class type {
       this.max = null;
     }
 
-    public final void set(final DOUBLE value) {
+    public final DOUBLE set(final DOUBLE value) {
       super.set(value);
+      return this;
     }
 
     @Override
@@ -1776,10 +1787,12 @@ public final class type {
       return false;
     }
 
+    @Override
     public final Double min() {
       return min;
     }
 
+    @Override
     public final Double max() {
       return max;
     }
@@ -1977,14 +1990,17 @@ public final class type {
         set(value);
       }
 
-      public final void set(final FLOAT.UNSIGNED value) {
+      public final UNSIGNED set(final FLOAT.UNSIGNED value) {
         super.set(value);
+        return this;
       }
 
+      @Override
       public final Float min() {
         return min;
       }
 
+      @Override
       public final Float max() {
         return max;
       }
@@ -2098,14 +2114,17 @@ public final class type {
       set(value);
     }
 
-    public final void set(final FLOAT value) {
+    public final FLOAT set(final FLOAT value) {
       super.set(value);
+      return this;
     }
 
+    @Override
     public final Float min() {
       return min;
     }
 
+    @Override
     public final Float max() {
       return max;
     }
@@ -2261,10 +2280,12 @@ public final class type {
         return this;
       }
 
+      @Override
       public final Long min() {
         return min;
       }
 
+      @Override
       public final Long max() {
         return max;
       }
@@ -2402,10 +2423,12 @@ public final class type {
       return this;
     }
 
+    @Override
     public final Integer min() {
       return min;
     }
 
+    @Override
     public final Integer max() {
       return max;
     }
@@ -2545,10 +2568,12 @@ public final class type {
         return this;
       }
 
+      @Override
       public final Integer min() {
         return min;
       }
 
+      @Override
       public final Integer max() {
         return max;
       }
@@ -2689,10 +2714,12 @@ public final class type {
       return this;
     }
 
+    @Override
     public final Short min() {
       return min;
     }
 
+    @Override
     public final Short max() {
       return max;
     }
@@ -2810,6 +2837,8 @@ public final class type {
     protected abstract short precision();
     protected abstract short scale();
     protected abstract boolean unsigned();
+    public abstract T min();
+    public abstract T max();
 
     @Override
     protected final Number evaluate(final Set<Evaluable> visited) {
@@ -2980,10 +3009,12 @@ public final class type {
         return this;
       }
 
+      @Override
       public final Short min() {
         return min;
       }
 
+      @Override
       public final Short max() {
         return max;
       }
@@ -3130,10 +3161,12 @@ public final class type {
       return this;
     }
 
+    @Override
     public final Byte min() {
       return min;
     }
 
+    @Override
     public final Byte max() {
       return max;
     }
@@ -3242,26 +3275,6 @@ public final class type {
   }
 
   public static abstract class Subject<T> extends Evaluable {
-    @SuppressWarnings("unchecked")
-    protected static <T extends type.Subject<?>>T as(final Keyword<T> select) {
-      try {
-        Keyword<T> keyword = select;
-        do {
-          if (keyword instanceof SelectImpl.untyped.SELECT) {
-            final Class<?> cls = Classes.getGreatestCommonSuperclass(((SelectImpl.untyped.SELECT<?>)keyword).entities);
-            final T as = (T)cls.newInstance();
-            as.wrapper(new As<T>(select, as, false));
-            return as;
-          }
-        }
-        while ((keyword = keyword.parent()) != null);
-        return null;
-      }
-      catch (final IllegalAccessException | InstantiationException e) {
-        throw new UnsupportedOperationException(e);
-      }
-    }
-
     private Evaluable wrapper;
 
     protected final Evaluable wrapper() {

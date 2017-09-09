@@ -50,6 +50,10 @@ public final class DML {
     return new Cast.BIGINT(a);
   }
 
+  public static Cast.BIGINT CAST(final kind.BIGINT.UNSIGNED a) {
+    return new Cast.BIGINT(a);
+  }
+
   public static Cast.BINARY CAST(final kind.BINARY a) {
     return new Cast.BINARY(a);
   }
@@ -82,7 +86,15 @@ public final class DML {
     return new Cast.DECIMAL(a);
   }
 
+  public static Cast.DECIMAL CAST(final kind.DECIMAL.UNSIGNED a) {
+    return new Cast.DECIMAL(a);
+  }
+
   public static Cast.DOUBLE CAST(final kind.DOUBLE a) {
+    return new Cast.DOUBLE(a);
+  }
+
+  public static Cast.DOUBLE CAST(final kind.DOUBLE.UNSIGNED a) {
     return new Cast.DOUBLE(a);
   }
 
@@ -90,7 +102,15 @@ public final class DML {
     return new Cast.FLOAT(a);
   }
 
+  public static Cast.FLOAT CAST(final kind.FLOAT.UNSIGNED a) {
+    return new Cast.FLOAT(a);
+  }
+
   public static Cast.INT CAST(final kind.INT a) {
+    return new Cast.INT(a);
+  }
+
+  public static Cast.INT CAST(final kind.INT.UNSIGNED a) {
     return new Cast.INT(a);
   }
 
@@ -98,7 +118,15 @@ public final class DML {
     return new Cast.SMALLINT(a);
   }
 
+  public static Cast.SMALLINT CAST(final kind.SMALLINT.UNSIGNED a) {
+    return new Cast.SMALLINT(a);
+  }
+
   public static Cast.TINYINT CAST(final kind.TINYINT a) {
+    return new Cast.TINYINT(a);
+  }
+
+  public static Cast.TINYINT CAST(final kind.TINYINT.UNSIGNED a) {
     return new Cast.TINYINT(a);
   }
 

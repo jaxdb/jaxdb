@@ -536,13 +536,13 @@ Specification                                                                   
  
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details. 
 
-[libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
 [dbcp.xsd]: https://github.com/libx4j/libx4j-dbcp/blob/master/src/main/resources/dbcp.xsd
 [ddlx-example]: https://github.com/libx4j/rdb/tree/master/ddlx#example
 [ddlx]: https://github.com/libx4j/rdb/tree/master/ddlx/
 [hospital.ddlx]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
 
