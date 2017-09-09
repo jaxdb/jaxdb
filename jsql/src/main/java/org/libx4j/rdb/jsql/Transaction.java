@@ -19,7 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
+import org.lib4j.sql.exception.SQLExceptionCatalog;
 
 public final class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;

@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.Closeable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;

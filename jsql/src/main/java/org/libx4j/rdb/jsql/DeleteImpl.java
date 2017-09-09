@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.libx4j.rdb.jsql.exception.SQLExceptionCatalog;
+import org.lib4j.sql.exception.SQLExceptionCatalog;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class DeleteImpl {
