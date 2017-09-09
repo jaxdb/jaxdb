@@ -287,13 +287,15 @@ abstract class Compiler {
     }
   }
 
-  protected void compile(final SelectImpl.untyped.UNION<?> union, final Compilation compilation) throws IOException {
-    if (union != null) {
-      compilation.append(" UNION ");
-      if (union.all)
-        compilation.append("ALL ");
+  protected void compile(final Collection<SelectImpl.untyped.UNION<?>> unions, final Compilation compilation) throws IOException {
+    if (unions != null) {
+      for (final SelectImpl.untyped.UNION<?> union : unions) {
+        compilation.append(" UNION ");
+        if (union.all)
+          compilation.append("ALL ");
 
-      union.select.compile(compilation);
+        union.select.compile(compilation);
+      }
     }
   }
 

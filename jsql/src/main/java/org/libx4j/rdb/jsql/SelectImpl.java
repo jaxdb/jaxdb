@@ -509,7 +509,7 @@ class SelectImpl {
       }
 
       @Override
-      protected Command normalize() {
+      protected final Command normalize() {
         final SelectCommand command = (SelectCommand)parent().normalize();
         command.add(this);
         return command;
