@@ -19,7 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-public class Cast {
+public final class Cast {
   protected static final class AS extends Provision {
     protected final type.DataType<?> dataType;
     protected final data.DataType<?> cast;
@@ -1262,5 +1262,8 @@ public class Cast {
     public BINARY(final type.BINARY value) {
       this.value = value;
     }
+  }
+
+  private Cast() {
   }
 }

@@ -19,7 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-public abstract class Keyword<T extends data.Subject<?>> extends Provision {
+abstract class Keyword<T extends data.Subject<?>> extends Provision {
   private final Keyword<T> parent;
 
   protected Keyword(final Keyword<T> parent) {

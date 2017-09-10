@@ -21,7 +21,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public interface Case {
+interface Case {
   public interface CASE<T> {
   }
 
