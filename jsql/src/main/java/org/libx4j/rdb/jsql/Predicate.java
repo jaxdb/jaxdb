@@ -18,10 +18,10 @@ package org.libx4j.rdb.jsql;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
-abstract class Predicate extends type.BOOLEAN {
-  protected final kind.DataType<?> dataType;
+abstract class Predicate extends data.BOOLEAN {
+  protected final type.DataType<?> dataType;
 
-  protected Predicate(final kind.DataType<?> dataType) {
+  protected Predicate(final type.DataType<?> dataType) {
     this.dataType = dataType;
   }
 

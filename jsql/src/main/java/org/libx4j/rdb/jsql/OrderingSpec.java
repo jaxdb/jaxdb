@@ -21,9 +21,9 @@ import java.util.Set;
 
 final class OrderingSpec extends Evaluable {
   protected final operator.Ordering operator;
-  protected final type.DataType<?> dataType;
+  protected final data.DataType<?> dataType;
 
-  protected OrderingSpec(final operator.Ordering operator, final type.DataType<?> dataType) {
+  protected OrderingSpec(final operator.Ordering operator, final data.DataType<?> dataType) {
     this.operator = operator;
     this.dataType = dataType;
   }

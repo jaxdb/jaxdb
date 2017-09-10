@@ -25,36 +25,36 @@ public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("cast")
-    public void generate(final type.DataType<Number> dataType) {
-      final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
-      if (numberType instanceof type.TINYINT)
-        ((type.TINYINT)numberType).set(DML.ADD((type.TINYINT)numberType, (byte)1));
-      else if (numberType instanceof type.TINYINT.UNSIGNED)
-        ((type.TINYINT.UNSIGNED)numberType).set(DML.ADD((type.TINYINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
-      else if (numberType instanceof type.SMALLINT)
-        ((type.SMALLINT)numberType).set(DML.ADD((type.SMALLINT)numberType, (byte)1));
-      else if (numberType instanceof type.SMALLINT.UNSIGNED)
-        ((type.SMALLINT.UNSIGNED)numberType).set(DML.ADD((type.SMALLINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
-      else if (numberType instanceof type.INT)
-        ((type.INT)numberType).set(DML.ADD((type.INT)numberType, (byte)1));
-      else if (numberType instanceof type.INT.UNSIGNED)
-        ((type.INT.UNSIGNED)numberType).set(DML.ADD((type.INT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
-      else if (numberType instanceof type.BIGINT)
-        ((type.BIGINT)numberType).set(DML.ADD((type.BIGINT)numberType, (byte)1));
-      else if (numberType instanceof type.BIGINT.UNSIGNED)
-        ((type.BIGINT.UNSIGNED)numberType).set(DML.ADD((type.BIGINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
-      else if (numberType instanceof type.FLOAT)
-        ((type.FLOAT)numberType).set(DML.ADD((type.FLOAT)numberType, 1f));
-      else if (numberType instanceof type.FLOAT.UNSIGNED)
-        ((type.FLOAT.UNSIGNED)numberType).set(DML.ADD((type.FLOAT.UNSIGNED)numberType, DML.UNSIGNED(1f)));
-      else if (numberType instanceof type.DOUBLE)
-        ((type.DOUBLE)numberType).set(DML.ADD((type.DOUBLE)numberType, 1f));
-      else if (numberType instanceof type.DOUBLE.UNSIGNED)
-        ((type.DOUBLE.UNSIGNED)numberType).set(DML.ADD((type.DOUBLE.UNSIGNED)numberType, DML.UNSIGNED(1d)));
-      else if (numberType instanceof type.DECIMAL)
-        ((type.DECIMAL)numberType).set(DML.ADD((type.DECIMAL)numberType, 1f));
-      else if (numberType instanceof type.DECIMAL.UNSIGNED)
-        ((type.DECIMAL.UNSIGNED)numberType).set(DML.ADD((type.DECIMAL.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+    public void generate(final data.DataType<Number> dataType) {
+      final data.DataType<? extends Number> numberType = (data.DataType<? extends Number>)dataType;
+      if (numberType instanceof data.TINYINT)
+        ((data.TINYINT)numberType).set(DML.ADD((data.TINYINT)numberType, (byte)1));
+      else if (numberType instanceof data.TINYINT.UNSIGNED)
+        ((data.TINYINT.UNSIGNED)numberType).set(DML.ADD((data.TINYINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof data.SMALLINT)
+        ((data.SMALLINT)numberType).set(DML.ADD((data.SMALLINT)numberType, (byte)1));
+      else if (numberType instanceof data.SMALLINT.UNSIGNED)
+        ((data.SMALLINT.UNSIGNED)numberType).set(DML.ADD((data.SMALLINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof data.INT)
+        ((data.INT)numberType).set(DML.ADD((data.INT)numberType, (byte)1));
+      else if (numberType instanceof data.INT.UNSIGNED)
+        ((data.INT.UNSIGNED)numberType).set(DML.ADD((data.INT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof data.BIGINT)
+        ((data.BIGINT)numberType).set(DML.ADD((data.BIGINT)numberType, (byte)1));
+      else if (numberType instanceof data.BIGINT.UNSIGNED)
+        ((data.BIGINT.UNSIGNED)numberType).set(DML.ADD((data.BIGINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
+      else if (numberType instanceof data.FLOAT)
+        ((data.FLOAT)numberType).set(DML.ADD((data.FLOAT)numberType, 1f));
+      else if (numberType instanceof data.FLOAT.UNSIGNED)
+        ((data.FLOAT.UNSIGNED)numberType).set(DML.ADD((data.FLOAT.UNSIGNED)numberType, DML.UNSIGNED(1f)));
+      else if (numberType instanceof data.DOUBLE)
+        ((data.DOUBLE)numberType).set(DML.ADD((data.DOUBLE)numberType, 1f));
+      else if (numberType instanceof data.DOUBLE.UNSIGNED)
+        ((data.DOUBLE.UNSIGNED)numberType).set(DML.ADD((data.DOUBLE.UNSIGNED)numberType, DML.UNSIGNED(1d)));
+      else if (numberType instanceof data.DECIMAL)
+        ((data.DECIMAL)numberType).set(DML.ADD((data.DECIMAL)numberType, 1f));
+      else if (numberType instanceof data.DECIMAL.UNSIGNED)
+        ((data.DECIMAL.UNSIGNED)numberType).set(DML.ADD((data.DECIMAL.UNSIGNED)numberType, DML.UNSIGNED(1d)));
       else
         throw new UnsupportedOperationException("Unsupported type: " + numberType.getClass().getName());
     }
@@ -63,13 +63,13 @@ public abstract class GenerateOn<T> {
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
     @SuppressWarnings("cast")
-    public void generate(final type.DataType<Temporal> dataType) {
-      final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
-      if (temporalType instanceof type.DATE)
+    public void generate(final data.DataType<Temporal> dataType) {
+      final data.DataType<? extends Temporal> temporalType = (data.DataType<? extends Temporal>)dataType;
+      if (temporalType instanceof data.DATE)
         dataType.value = LocalDate.now();
-      else if (temporalType instanceof type.TIME)
+      else if (temporalType instanceof data.TIME)
         dataType.value = LocalTime.now();
-      else if (temporalType instanceof type.DATETIME)
+      else if (temporalType instanceof data.DATETIME)
         dataType.value = LocalDateTime.now();
       else
         throw new UnsupportedOperationException("Unsupported type: " + dataType.getClass().getName());
@@ -78,10 +78,10 @@ public abstract class GenerateOn<T> {
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
-    public void generate(final type.DataType<String> dataType) {
+    public void generate(final data.DataType<String> dataType) {
       dataType.value = java.util.UUID.randomUUID().toString();
     }
   };
 
-  public abstract void generate(final type.DataType<T> dataType);
+  public abstract void generate(final data.DataType<T> dataType);
 }

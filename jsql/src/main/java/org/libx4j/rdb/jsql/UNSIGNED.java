@@ -16,14 +16,14 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.jsql.type.DataType;
+import org.libx4j.rdb.jsql.data.DataType;
 
 public final class UNSIGNED {
   protected static abstract class UnsignedNumber<N extends Number> extends Number {
     private static final long serialVersionUID = 7628853114521559991L;
 
     protected abstract N value();
-    protected abstract Class<? extends type.DataType<?>> getTypeClass();
+    protected abstract Class<? extends data.DataType<?>> getTypeClass();
   }
 
   public static UnsignedNumber<?> toUnsigned(final Number number) {
@@ -73,7 +73,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.FLOAT.UNSIGNED.class;
+      return data.FLOAT.UNSIGNED.class;
     }
 
     @Override
@@ -113,7 +113,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.DOUBLE.UNSIGNED.class;
+      return data.DOUBLE.UNSIGNED.class;
     }
 
     @Override
@@ -154,7 +154,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.DECIMAL.UNSIGNED.class;
+      return data.DECIMAL.UNSIGNED.class;
     }
 
     @Override
@@ -194,7 +194,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.TINYINT.UNSIGNED.class;
+      return data.TINYINT.UNSIGNED.class;
     }
 
     @Override
@@ -234,7 +234,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.SMALLINT.UNSIGNED.class;
+      return data.SMALLINT.UNSIGNED.class;
     }
 
     @Override
@@ -274,7 +274,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.INT.UNSIGNED.class;
+      return data.INT.UNSIGNED.class;
     }
 
     @Override
@@ -315,7 +315,7 @@ public final class UNSIGNED {
 
     @Override
     protected Class<? extends DataType<?>> getTypeClass() {
-      return type.BIGINT.UNSIGNED.class;
+      return data.BIGINT.UNSIGNED.class;
     }
 
     @Override

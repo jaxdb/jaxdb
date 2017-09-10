@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class RowIterator<T extends type.Subject<?>> implements AutoCloseable {
+public abstract class RowIterator<T extends data.Subject<?>> implements AutoCloseable {
   protected final List<T[]> rows = new ArrayList<T[]>();
   protected int rowIndex = -1;
 

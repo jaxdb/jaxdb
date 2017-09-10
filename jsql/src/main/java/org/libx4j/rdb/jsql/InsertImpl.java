@@ -25,7 +25,7 @@ import org.libx4j.rdb.jsql.Select;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class InsertImpl {
-  protected static abstract class Execute<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
+  protected static abstract class Execute<T extends data.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
     protected Execute(final Keyword<T> parent) {
       super(parent);
     }
@@ -65,7 +65,7 @@ final class InsertImpl {
     }
   }
 
-  protected static final class VALUES<T extends type.Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
+  protected static final class VALUES<T extends data.Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
     protected final Select.untyped.SELECT<?> select;
 
     protected VALUES(final Keyword<T> parent, final Select.untyped.SELECT<?> select) {
@@ -81,23 +81,23 @@ final class InsertImpl {
     }
   }
 
-  protected static final class INSERT<T extends type.Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
-    protected final type.Entity[] entities;
-    protected final type.DataType<?>[] columns;
+  protected static final class INSERT<T extends data.Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
+    protected final data.Entity[] entities;
+    protected final data.DataType<?>[] columns;
 
     @SafeVarargs
-    protected INSERT(final Class<?> kind, final type.Entity ... entities) {
+    protected INSERT(final Class<?> kind, final data.Entity ... entities) {
       super(null);
       this.entities = entities;
       this.columns = null;
     }
 
     @SafeVarargs
-    protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
+    protected INSERT(final Class<?> kind, final data.DataType<?> ... columns) {
       super(null);
       this.entities = null;
       this.columns = columns;
-      type.Entity entity = columns[0].owner;
+      data.Entity entity = columns[0].owner;
       if (entity == null)
         throw new IllegalArgumentException("DataType must belong to an Entity");
 

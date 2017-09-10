@@ -29,20 +29,20 @@ final class InPredicate extends Predicate {
   protected final Compilable[] values;
 
   @SafeVarargs
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
+  protected InPredicate(final type.DataType<?> dataType, final boolean positive, final Object ... values) {
     this(dataType, positive, Arrays.asList(values));
   }
 
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Collection<?> values) {
+  protected InPredicate(final type.DataType<?> dataType, final boolean positive, final Collection<?> values) {
     super(dataType);
     this.positive = positive;
     final Iterator<?> iterator = values.iterator();
-    this.values = new type.DataType<?>[values.size()];
+    this.values = new data.DataType<?>[values.size()];
     for (int i = 0; iterator.hasNext(); i++)
-      this.values[i] = org.libx4j.rdb.jsql.type.DataType.wrap(iterator.next());
+      this.values[i] = org.libx4j.rdb.jsql.data.DataType.wrap(iterator.next());
   }
 
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
+  protected InPredicate(final type.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends data.DataType<?>> query) {
     super(dataType);
     this.positive = positive;
     this.values = new Compilable[] {(Compilable)query};

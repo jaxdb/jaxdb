@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class BooleanTerm extends type.BOOLEAN {
+final class BooleanTerm extends data.BOOLEAN {
   protected final operator.Boolean operator;
   protected final Condition<?> a;
   protected final Condition<?> b;

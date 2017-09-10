@@ -19,18 +19,18 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-final class As<T> extends type.Subject<T> {
+final class As<T> extends data.Subject<T> {
   private final Evaluable parent;
-  private final type.Subject<?> variable;
+  private final data.Subject<?> variable;
   private final boolean explicit;
 
-  protected As(final Keyword<? extends type.Subject<?>> parent, final type.Subject<?> variable, final boolean explicit) {
+  protected As(final Keyword<? extends data.Subject<?>> parent, final data.Subject<?> variable, final boolean explicit) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = explicit;
   }
 
-  protected As(final type.Subject<T> parent, final type.Subject<?> variable) {
+  protected As(final data.Subject<T> parent, final data.Subject<?> variable) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = true;
@@ -40,7 +40,7 @@ final class As<T> extends type.Subject<T> {
     return parent;
   }
 
-  protected type.Subject<?> getVariable() {
+  protected data.Subject<?> getVariable() {
     return variable;
   }
 

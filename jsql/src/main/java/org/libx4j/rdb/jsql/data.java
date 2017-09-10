@@ -40,16 +40,15 @@ import java.util.Set;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Numbers;
-import org.libx4j.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
-public final class type {
+public final class data {
   private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
 
   static {
     typeToClass.put(null, ENUM.class);
-    for (final Class<?> cls : type.class.getClasses()) {
+    for (final Class<?> cls : data.class.getClasses()) {
       if (!Modifier.isAbstract(cls.getModifiers())) {
         final Type type = Classes.getGenericSuperclasses(cls)[0];
         if (type instanceof Class<?>)
@@ -64,7 +63,7 @@ public final class type {
     return dataTypeClass.getConstructor(genericType);
   }
 
-  public static abstract class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
+  public static abstract class ApproxNumeric<T extends Number> extends Numeric<T> implements type.ApproxNumeric<T> {
     protected ApproxNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -78,7 +77,7 @@ public final class type {
     }
   }
 
-  protected static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
+  protected static final class ARRAY<T> extends DataType<T[]> implements type.ARRAY<T[]> {
     protected final DataType<T> dataType;
 
     protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
@@ -166,8 +165,8 @@ public final class type {
     }
   }
 
-  public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
-    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED {
+  public static final class BIGINT extends ExactNumeric<Long> implements type.BIGINT {
+    public static final class UNSIGNED extends ExactNumeric<BigInteger> implements type.BIGINT.UNSIGNED {
       protected static final Class<BigInteger> type = BigInteger.class;
 
       private final BigInteger min;
@@ -479,7 +478,7 @@ public final class type {
     }
   }
 
-  public static final class BINARY extends DataType<byte[]> implements kind.BINARY {
+  public static final class BINARY extends DataType<byte[]> implements type.BINARY {
     protected static final Class<byte[]> type = byte[].class;
 
     private final int length;
@@ -590,7 +589,7 @@ public final class type {
     }
   }
 
-  public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB {
+  public static final class BLOB extends LargeObject<InputStream> implements type.BLOB {
     protected static final Class<InputStream> type = InputStream.class;
 
     protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final long length) {
@@ -664,7 +663,7 @@ public final class type {
     }
   }
 
-  public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
+  public static class BOOLEAN extends Condition<Boolean> implements type.BOOLEAN, Comparable<DataType<Boolean>> {
     protected static final Class<Boolean> type = Boolean.class;
 
     protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
@@ -747,7 +746,7 @@ public final class type {
     }
   }
 
-  public static final class CHAR extends Textual<String> implements kind.CHAR {
+  public static final class CHAR extends Textual<String> implements type.CHAR {
     protected static final Class<String> type = String.class;
 
     private final boolean varying;
@@ -838,7 +837,7 @@ public final class type {
     }
   }
 
-  public static final class CLOB extends LargeObject<Reader> implements kind.CLOB {
+  public static final class CLOB extends LargeObject<Reader> implements type.CLOB {
     protected static final Class<Reader> type = Reader.class;
 
     protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final long length) {
@@ -912,7 +911,7 @@ public final class type {
     }
   }
 
-  public static final class DATE extends Temporal<LocalDate> implements kind.DATE {
+  public static final class DATE extends Temporal<LocalDate> implements type.DATE {
     protected static final Class<LocalDate> type = LocalDate.class;
 
     protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
@@ -1017,7 +1016,7 @@ public final class type {
     }
   }
 
-  public static abstract class DataType<T> extends type.Subject<T> implements kind.DataType<T> {
+  public static abstract class DataType<T> extends data.Subject<T> implements type.DataType<T> {
     protected static <T>void setValue(final DataType<T> dataType, final T value) {
       dataType.value = value;
     }
@@ -1050,7 +1049,7 @@ public final class type {
       if (value.getClass().getComponentType().isEnum())
         array = new ARRAY<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
       else
-        array = new ARRAY<T>((Class<? extends DataType<T>>)org.libx4j.rdb.jsql.type.typeToClass.get(value.getClass().getComponentType()));
+        array = new ARRAY<T>((Class<? extends DataType<T>>)org.libx4j.rdb.jsql.data.typeToClass.get(value.getClass().getComponentType()));
 
       array.set(value);
       return array;
@@ -1182,7 +1181,7 @@ public final class type {
     }
   }
 
-  public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
+  public static class DATETIME extends Temporal<LocalDateTime> implements type.DATETIME {
     protected static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final short DEFAULT_PRECISION = 6;
@@ -1302,8 +1301,8 @@ public final class type {
     }
   }
 
-  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
-    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
+  public static final class DECIMAL extends ExactNumeric<BigDecimal> implements type.DECIMAL {
+    public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements type.DECIMAL.UNSIGNED {
       protected static final Class<BigDecimal> type = BigDecimal.class;
       private static final BigDecimal maxValue = new BigDecimal("340282366920938463463374607431768211455");
 
@@ -1616,8 +1615,8 @@ public final class type {
     }
   }
 
-  public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
-    public static final class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
+  public static class DOUBLE extends ApproxNumeric<Double> implements type.DOUBLE {
+    public static final class UNSIGNED extends ApproxNumeric<Double> implements type.DOUBLE.UNSIGNED {
       protected static final Class<Double> type = Double.class;
 
       private final Double min;
@@ -1860,7 +1859,7 @@ public final class type {
     }
   }
 
-  public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
+  public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements type.ENUM<T> {
     private final Class<T> enumType;
 
     private static short calcEnumLength(final Class<?> enumType) {
@@ -1960,8 +1959,8 @@ public final class type {
     }
   }
 
-  public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
-    public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
+  public static final class FLOAT extends ApproxNumeric<Float> implements type.FLOAT {
+    public static final class UNSIGNED extends ApproxNumeric<Float> implements type.FLOAT.UNSIGNED {
       protected static final Class<Float> type = Float.class;
 
       private final Float min;
@@ -2210,7 +2209,7 @@ public final class type {
     }
   }
 
-  public static abstract class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
+  public static abstract class LargeObject<T extends Closeable> extends DataType<T> implements type.LargeObject<T> {
     private final long length;
 
     protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
@@ -2239,8 +2238,8 @@ public final class type {
     }
   }
 
-  public static final class INT extends ExactNumeric<Integer> implements kind.INT {
-    public static final class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
+  public static final class INT extends ExactNumeric<Integer> implements type.INT {
+    public static final class UNSIGNED extends ExactNumeric<Long> implements type.INT.UNSIGNED {
       protected static final Class<Long> type = Long.class;
 
       private final Long min;
@@ -2527,8 +2526,8 @@ public final class type {
     }
   }
 
-  public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
-    public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
+  public static final class SMALLINT extends ExactNumeric<Short> implements type.SMALLINT {
+    public static final class UNSIGNED extends ExactNumeric<Integer> implements type.SMALLINT.UNSIGNED {
       protected static final Class<Integer> type = Integer.class;
 
       private final Integer min;
@@ -2821,7 +2820,7 @@ public final class type {
     }
   }
 
-  public static abstract class Numeric<T extends Number> extends DataType<T> implements Comparable<DataType<? extends Number>>, kind.Numeric<T> {
+  public static abstract class Numeric<T extends Number> extends DataType<T> implements Comparable<DataType<? extends Number>>, type.Numeric<T> {
     protected Numeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -2857,12 +2856,12 @@ public final class type {
     }
   }
 
-  public static abstract class Entity extends type.Subject<Entity> implements kind.Entity<Entity>, Cloneable {
-    protected final type.DataType<?>[] column;
-    protected final type.DataType<?>[] primary;
+  public static abstract class Entity extends data.Subject<Entity> implements type.Entity<Entity>, Cloneable {
+    protected final data.DataType<?>[] column;
+    protected final data.DataType<?>[] primary;
     private final boolean wasSelected;
 
-    protected Entity(final boolean wasSelected, final type.DataType<?>[] column, final type.DataType<?>[] primary) {
+    protected Entity(final boolean wasSelected, final data.DataType<?>[] column, final data.DataType<?>[] primary) {
       this.wasSelected = wasSelected;
       this.column = column;
       this.primary = primary;
@@ -2906,7 +2905,7 @@ public final class type {
     protected abstract Entity clone();
   }
 
-  public static abstract class ExactNumeric<T extends Number> extends Numeric<T> implements kind.ExactNumeric<T> {
+  public static abstract class ExactNumeric<T extends Number> extends Numeric<T> implements type.ExactNumeric<T> {
     protected final Integer precision;
 
     protected ExactNumeric(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int precision) {
@@ -2968,8 +2967,8 @@ public final class type {
     }
   }
 
-  public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
-    public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
+  public static final class TINYINT extends ExactNumeric<Byte> implements type.TINYINT {
+    public static final class UNSIGNED extends ExactNumeric<Short> implements type.TINYINT.UNSIGNED {
       protected static final Class<Short> type = Short.class;
 
       private final Short min;
@@ -3281,13 +3280,13 @@ public final class type {
       return wrapper;
     }
 
-    protected type.Subject<T> wrapper(final Evaluable wrapper) {
+    protected data.Subject<T> wrapper(final Evaluable wrapper) {
       this.wrapper = wrapper;
       return this;
     }
   }
 
-  public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, kind.Temporal<T> {
+  public static abstract class Temporal<T extends java.time.temporal.Temporal> extends DataType<T> implements Comparable<DataType<? extends java.time.temporal.Temporal>>, type.Temporal<T> {
     protected Temporal(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
     }
@@ -3306,7 +3305,7 @@ public final class type {
     }
   }
 
-  public static abstract class Textual<T extends Comparable<?>> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
+  public static abstract class Textual<T extends Comparable<?>> extends DataType<T> implements type.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
     protected Textual(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
@@ -3372,7 +3371,7 @@ public final class type {
     }
   }
 
-  public static final class TIME extends Temporal<LocalTime> implements kind.TIME {
+  public static final class TIME extends Temporal<LocalTime> implements type.TIME {
     protected static final Class<LocalTime> type = LocalTime.class;
 
     private static final short DEFAULT_PRECISION = 6;
@@ -3476,5 +3475,8 @@ public final class type {
       final LocalTime get = get();
       return get == null ? "NULL" : get.format(Dialect.TIME_FORMAT);
     }
+  }
+
+  private data() {
   }
 }

@@ -27,7 +27,7 @@ final class BetweenPredicates {
   protected static abstract class BetweenPredicate extends Predicate {
     protected final boolean positive;
 
-    protected BetweenPredicate(final kind.DataType<?> dataType, final boolean positive) {
+    protected BetweenPredicate(final type.DataType<?> dataType, final boolean positive) {
       super(dataType);
       this.positive = positive;
     }
@@ -45,7 +45,7 @@ final class BetweenPredicates {
     protected final Compilable a;
     protected final Compilable b;
 
-    protected NumericBetweenPredicate(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b, final boolean positive) {
+    protected NumericBetweenPredicate(final type.Numeric<?> dataType, final type.Numeric<?> a, final type.Numeric<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
@@ -77,7 +77,7 @@ final class BetweenPredicates {
     protected final Compilable a;
     protected final Compilable b;
 
-    protected TemporalBetweenPredicate(final kind.Temporal<?> dataType, final kind.Temporal<?> a, final kind.Temporal<?> b, final boolean positive) {
+    protected TemporalBetweenPredicate(final type.Temporal<?> dataType, final type.Temporal<?> a, final type.Temporal<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
@@ -109,7 +109,7 @@ final class BetweenPredicates {
     protected final Compilable a;
     protected final Compilable b;
 
-    protected TimeBetweenPredicate(final kind.TIME dataType, final kind.TIME a, final kind.TIME b, final boolean positive) {
+    protected TimeBetweenPredicate(final type.TIME dataType, final type.TIME a, final type.TIME b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
@@ -141,7 +141,7 @@ final class BetweenPredicates {
     protected final Compilable a;
     protected final Compilable b;
 
-    protected TextualBetweenPredicate(final kind.Textual<?> dataType, final kind.Textual<?> a, final kind.Textual<?> b, final boolean positive) {
+    protected TextualBetweenPredicate(final type.Textual<?> dataType, final type.Textual<?> a, final type.Textual<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;

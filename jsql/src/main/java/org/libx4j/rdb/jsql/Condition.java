@@ -16,8 +16,8 @@
 
 package org.libx4j.rdb.jsql;
 
-public abstract class Condition<T> extends type.DataType<T> {
-  protected Condition(final type.Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+public abstract class Condition<T> extends data.DataType<T> {
+  protected Condition(final data.Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
     super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
   }
 

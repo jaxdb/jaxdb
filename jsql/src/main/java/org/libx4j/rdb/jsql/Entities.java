@@ -52,14 +52,14 @@ public final class Entities {
   }
 
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Entity toEntity(final $dmlx_row row) {
+  private static data.Entity toEntity(final $dmlx_row row) {
     final Element element = (Element)row;
     final QName schemaName = getName(element.owner().getClass().getSuperclass());
     final QName entityName = getName(row.getClass().getSuperclass());
 
     try {
       final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
-      final type.Entity entity = (type.Entity)binding.newInstance();
+      final data.Entity entity = (data.Entity)binding.newInstance();
       final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
       while (attributeIterator.hasNext()) {
         final $xs_anySimpleType attribute = attributeIterator.next();
@@ -67,7 +67,7 @@ public final class Entities {
           continue;
 
         final Field field = binding.getField(Strings.toCamelCase(attribute.name().getLocalPart()));
-        final type.DataType dataType = (type.DataType<?>)field.get(entity);
+        final data.DataType dataType = (data.DataType<?>)field.get(entity);
         final Object value = attribute.text();
         if (value == null)
           dataType.set(null);
@@ -94,7 +94,7 @@ public final class Entities {
         else if (attribute instanceof $dmlx_dateTime)
           dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
         else if (attribute instanceof $dmlx_enum) {
-          for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
+          for (final Object constant : ((data.ENUM)dataType).type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
               dataType.set(constant);
               break;
@@ -122,13 +122,13 @@ public final class Entities {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends type.Entity>T[] toEntities(final $dmlx_data data) {
+  public static <T extends data.Entity>T[] toEntities(final $dmlx_data data) {
     final Iterator<Binding> iterator = data.elementIterator();
-    final List<type.Entity> entities = new ArrayList<type.Entity>();
+    final List<data.Entity> entities = new ArrayList<data.Entity>();
     while (iterator.hasNext())
       entities.add(toEntity(($dmlx_row)iterator.next()));
 
-    return (T[])entities.toArray(new type.Entity[entities.size()]);
+    return (T[])entities.toArray(new data.Entity[entities.size()]);
   }
 
   private Entities() {

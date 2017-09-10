@@ -25,7 +25,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-interface kind {
+interface type {
   public interface ApproxNumeric<T extends Number> extends Numeric<T> {
   }
 

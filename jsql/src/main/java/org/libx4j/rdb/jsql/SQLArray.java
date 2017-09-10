@@ -24,9 +24,9 @@ import java.util.Map;
 import org.lib4j.lang.Arrays;
 
 final class SQLArray<T> implements Array {
-  private final type.ARRAY<T> array;
+  private final data.ARRAY<T> array;
 
-  public SQLArray(final type.ARRAY<T> array) {
+  public SQLArray(final data.ARRAY<T> array) {
     this.array = array;
   }
 

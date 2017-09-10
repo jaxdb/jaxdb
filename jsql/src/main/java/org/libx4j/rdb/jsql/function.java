@@ -36,31 +36,31 @@ final class function {
     protected final Compilable a;
     protected final Compilable b;
 
-    protected Generic(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Generic(final type.Numeric<?> a, final type.Numeric<?> b) {
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
-    protected Generic(final kind.Numeric<?> a, final Number b) {
+    protected Generic(final type.Numeric<?> a, final Number b) {
       this.a = (Compilable)a;
-      this.b = type.DataType.wrap(b);
+      this.b = data.DataType.wrap(b);
     }
 
-    protected Generic(final Number a, final kind.Numeric<?> b) {
-      this.a = type.DataType.wrap(a);
+    protected Generic(final Number a, final type.Numeric<?> b) {
+      this.a = data.DataType.wrap(a);
       this.b = (Compilable)b;
     }
   }
 
   protected static abstract class Function0 extends Generic {
     protected Function0() {
-      super((kind.Numeric<?>)null, (kind.Numeric<?>)null);
+      super((type.Numeric<?>)null, (type.Numeric<?>)null);
     }
   }
 
   protected static abstract class Function1 extends Generic {
-    protected Function1(final kind.Numeric<?> dataType) {
-      super(dataType, (kind.Numeric<?>)null);
+    protected Function1(final type.Numeric<?> dataType) {
+      super(dataType, (type.Numeric<?>)null);
     }
 
     @Override
@@ -76,15 +76,15 @@ final class function {
   }
 
   protected static abstract class Function2 extends Generic {
-    protected Function2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Function2(final type.Numeric<?> a, final type.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Function2(final kind.Numeric<?> a, final Number b) {
+    protected Function2(final type.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Function2(final Number a, final kind.Numeric<?> b) {
+    protected Function2(final Number a, final type.Numeric<?> b) {
       super(a, b);
     }
 
@@ -124,7 +124,7 @@ final class function {
   }
 
   static final class Abs extends Function1 {
-    protected Abs(final kind.Numeric<?> a) {
+    protected Abs(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -158,7 +158,7 @@ final class function {
   }
 
   static final class Sign extends Function1 {
-    protected Sign(final kind.Numeric<?> a) {
+    protected Sign(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -198,11 +198,11 @@ final class function {
   }
 
   static final class Round extends Function2 {
-    protected Round(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Round(final type.Numeric<?> a, final type.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Round(final kind.Numeric<?> a, final Number b) {
+    protected Round(final type.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
@@ -230,7 +230,7 @@ final class function {
   }
 
   static final class Floor extends Function1 {
-    protected Floor(final kind.Numeric<?> a) {
+    protected Floor(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -258,7 +258,7 @@ final class function {
   }
 
   static final class Ceil extends Function1 {
-    protected Ceil(final kind.Numeric<?> a) {
+    protected Ceil(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -286,7 +286,7 @@ final class function {
   }
 
   static final class Sqrt extends Function1 {
-    protected Sqrt(final kind.Numeric<?> a) {
+    protected Sqrt(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -326,15 +326,15 @@ final class function {
   }
 
   static final class Pow extends Function2 {
-    protected Pow(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Pow(final type.Numeric<?> a, final type.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Pow(final kind.Numeric<?> a, final Number b) {
+    protected Pow(final type.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Pow(final Number a, final kind.Numeric<?> b) {
+    protected Pow(final Number a, final type.Numeric<?> b) {
       super(a, b);
     }
 
@@ -383,15 +383,15 @@ final class function {
   }
 
   static final class Mod extends Function2 {
-    protected Mod(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Mod(final type.Numeric<?> a, final type.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Mod(final kind.Numeric<?> a, final Number b) {
+    protected Mod(final type.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Mod(final Number a, final kind.Numeric<?> b) {
+    protected Mod(final Number a, final type.Numeric<?> b) {
       super(a, b);
     }
 
@@ -631,7 +631,7 @@ final class function {
   }
 
   static final class Sin extends Function1 {
-    protected Sin(final kind.Numeric<?> a) {
+    protected Sin(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -671,7 +671,7 @@ final class function {
   }
 
   static final class Asin extends Function1 {
-    protected Asin(final kind.Numeric<?> a) {
+    protected Asin(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -711,7 +711,7 @@ final class function {
   }
 
   static final class Cos extends Function1 {
-    protected Cos(final kind.Numeric<?> a) {
+    protected Cos(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -751,7 +751,7 @@ final class function {
   }
 
   static final class Acos extends Function1 {
-    protected Acos(final kind.Numeric<?> a) {
+    protected Acos(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -791,7 +791,7 @@ final class function {
   }
 
   static final class Tan extends Function1 {
-    protected Tan(final kind.Numeric<?> a) {
+    protected Tan(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -831,7 +831,7 @@ final class function {
   }
 
   static final class Atan extends Function1 {
-    protected Atan(final kind.Numeric<?> a) {
+    protected Atan(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -871,15 +871,15 @@ final class function {
   }
 
   static final class Atan2 extends Function2 {
-    protected Atan2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    protected Atan2(final type.Numeric<?> a, final type.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Atan2(final kind.Numeric<?> a, final Number b) {
+    protected Atan2(final type.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Atan2(final Number a, final kind.Numeric<?> b) {
+    protected Atan2(final Number a, final type.Numeric<?> b) {
       super(a, b);
     }
 
@@ -934,7 +934,7 @@ final class function {
   }
 
   static final class Exp extends Function1 {
-    protected Exp(final kind.Numeric<?> a) {
+    protected Exp(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -974,7 +974,7 @@ final class function {
   }
 
   static final class Ln extends Function1 {
-    protected Ln(final kind.Numeric<?> a) {
+    protected Ln(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -999,15 +999,15 @@ final class function {
   }
 
   static final class Log extends Function2 {
-    protected Log(final kind.Numeric<?> b, final kind.Numeric<?> n) {
+    protected Log(final type.Numeric<?> b, final type.Numeric<?> n) {
       super(b, n);
     }
 
-    protected Log(final kind.Numeric<?> b, final Number n) {
+    protected Log(final type.Numeric<?> b, final Number n) {
       super(b, n);
     }
 
-    protected Log(final Number b, final kind.Numeric<?> n) {
+    protected Log(final Number b, final type.Numeric<?> n) {
       super(b, n);
     }
 
@@ -1062,7 +1062,7 @@ final class function {
   }
 
   static final class Log2 extends Function1 {
-    protected Log2(final kind.Numeric<?> a) {
+    protected Log2(final type.Numeric<?> a) {
       super(a);
     }
 
@@ -1087,7 +1087,7 @@ final class function {
   }
 
   static final class Log10 extends Function1 {
-    protected Log10(final kind.Numeric<?> a) {
+    protected Log10(final type.Numeric<?> a) {
       super(a);
     }
 

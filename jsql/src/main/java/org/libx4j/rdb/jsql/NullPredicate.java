@@ -22,7 +22,7 @@ import java.util.Set;
 final class NullPredicate extends Predicate {
   protected final boolean positive;
 
-  protected NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
+  protected NullPredicate(final type.DataType<?> dataType, final boolean positive) {
     super(dataType);
     this.positive = positive;
   }
