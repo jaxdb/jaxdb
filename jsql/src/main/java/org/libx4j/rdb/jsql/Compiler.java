@@ -392,6 +392,7 @@ abstract class Compiler {
     }
 
     final SelectCommand selectCommand = (SelectCommand)((Keyword<?>)values.select).normalize();
+    compilation.command.add(selectCommand);
     selectCommand.setTranslateTypes(translateTypes);
     selectCommand.compile(compilation);
   }
@@ -528,7 +529,7 @@ abstract class Compiler {
     else {
       compilation.append(tableName(entity, compilation));
       final Alias alias = compilation.registerAlias(entity);
-      if (compilation.command instanceof SelectCommand) {
+      if (compilation.command.peek() instanceof SelectCommand) {
         compilation.append(" ");
         alias.compile(compilation);
       }
@@ -582,7 +583,7 @@ abstract class Compiler {
       if (dataType.owner != null) {
         final Alias alias = compilation.getAlias(dataType.owner);
         if (alias != null) {
-          if (compilation.command instanceof SelectCommand) {
+          if (compilation.command.peek() instanceof SelectCommand) {
             alias.compile(compilation);
             compilation.append(".");
           }

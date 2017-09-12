@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 import java.util.function.Consumer;
 
 import org.lib4j.lang.IntArrayList;
@@ -51,14 +52,14 @@ final class Compilation {
   private final boolean batching;
   private Consumer<Boolean> afterExecute;
 
-  protected final Command command;
+  protected final Stack<Command> command = new Stack<Command>();
   protected final DBVendor vendor;
   protected final Compiler compiler;
 
   private boolean skipFirstColumn = false;
 
   protected Compilation(final Command command, final DBVendor vendor, final boolean prepared, final boolean batching) {
-    this.command = command;
+    this.command.add(command);
     this.vendor = vendor;
     this.prepared = prepared;
     this.batching = batching;
