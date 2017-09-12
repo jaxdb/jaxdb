@@ -46,7 +46,7 @@ final class SelectCommand extends Command {
   private LIMIT<?> limit;
   private OFFSET<?> offset;
   private Collection<UNION<?>> union;
-  private Map<Integer,data.ENUM<?>> translateTypes;
+  private Map<Integer,type.ENUM<?>> translateTypes;
 
   public SelectCommand(final SELECT<?> select) {
     this.select = select;
@@ -149,11 +149,11 @@ final class SelectCommand extends Command {
     return union;
   }
 
-  public Map<Integer,data.ENUM<?>> getTranslateTypes() {
+  public Map<Integer,type.ENUM<?>> getTranslateTypes() {
     return this.translateTypes;
   }
 
-  public void setTranslateTypes(final Map<Integer,data.ENUM<?>> translateTypes) {
+  public void setTranslateTypes(final Map<Integer,type.ENUM<?>> translateTypes) {
     this.translateTypes = translateTypes;
   }
 

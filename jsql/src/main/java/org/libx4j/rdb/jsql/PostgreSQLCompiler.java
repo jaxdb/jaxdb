@@ -30,8 +30,8 @@ import java.util.List;
 
 import org.lib4j.io.Readers;
 import org.lib4j.io.Streams;
-import org.libx4j.rdb.jsql.data.BLOB;
-import org.libx4j.rdb.jsql.data.ENUM;
+import org.libx4j.rdb.jsql.type.BLOB;
+import org.libx4j.rdb.jsql.type.ENUM;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -85,15 +85,15 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String translateEnum(final data.ENUM<?> from, final data.ENUM<?> to) {
+  protected String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
     return "::text::" + Dialect.getTypeName(to.owner.name(), to.name);
   }
 
   @Override
   protected void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
-    if (case_.variable instanceof data.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
-      toChar((data.ENUM<?>)case_.variable, compilation);
+    if (case_.variable instanceof type.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
+      toChar((type.ENUM<?>)case_.variable, compilation);
     else
       case_.variable.compile(compilation);
   }
@@ -101,16 +101,16 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   protected void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate)when.condition).dataType.getClass() : when.condition.getClass();
-    if ((when.condition instanceof data.ENUM || then.value instanceof data.ENUM) && (conditionClass != then.value.getClass() || _else instanceof CaseImpl.CHAR.ELSE)) {
+    if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof CaseImpl.CHAR.ELSE)) {
       compilation.append(" WHEN ");
-      if (when.condition instanceof data.ENUM)
-        toChar((data.ENUM<?>)when.condition, compilation);
+      if (when.condition instanceof type.ENUM)
+        toChar((type.ENUM<?>)when.condition, compilation);
       else
         when.condition.compile(compilation);
 
       compilation.append(" THEN ");
-      if (then.value instanceof data.ENUM)
-        toChar((data.ENUM<?>)then.value, compilation);
+      if (then.value instanceof type.ENUM)
+        toChar((type.ENUM<?>)then.value, compilation);
       else
         then.value.compile(compilation);
     }
@@ -122,8 +122,8 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   protected void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
-    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof data.ENUM)
-      toChar((data.ENUM<?>)_else.value, compilation);
+    if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
+      toChar((type.ENUM<?>)_else.value, compilation);
     else
       _else.value.compile(compilation);
     compilation.append(" END");
@@ -184,7 +184,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String getPreparedStatementMark(final data.DataType<?> dataType) {
+  protected String getPreparedStatementMark(final type.DataType<?> dataType) {
     if (dataType instanceof ENUM) {
       final EntityEnum entityEnum = (EntityEnum)dataType.get();
       return "?::" + Dialect.getTypeName(entityEnum.table(), entityEnum.column());
@@ -202,7 +202,7 @@ final class PostgreSQLCompiler extends Compiler {
     return "E'\\" + integer.toString(8); // FIXME: This is only half done
   }
 
-  private static void toChar(final data.ENUM<?> dataType, final Compilation compilation) throws IOException {
+  private static void toChar(final type.ENUM<?> dataType, final Compilation compilation) throws IOException {
     compilation.append("CAST(");
     dataType.compile(compilation);
     compilation.append(" AS CHAR(").append(dataType.length()).append("))");
@@ -210,18 +210,18 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   protected final void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
-    if (predicate.a.getClass() == predicate.b.getClass() || (!(predicate.a instanceof data.ENUM) && !(predicate.b instanceof data.ENUM))) {
+    if (predicate.a.getClass() == predicate.b.getClass() || (!(predicate.a instanceof type.ENUM) && !(predicate.b instanceof type.ENUM))) {
       super.compile(predicate, compilation);
     }
     else {
-      if (predicate.a instanceof data.ENUM)
-        toChar((data.ENUM<?>)predicate.a, compilation);
+      if (predicate.a instanceof type.ENUM)
+        toChar((type.ENUM<?>)predicate.a, compilation);
       else
         predicate.a.compile(compilation);
 
       compilation.append(" ").append(predicate.operator).append(" ");
-      if (predicate.b instanceof data.ENUM)
-        toChar((data.ENUM<?>)predicate.b, compilation);
+      if (predicate.b instanceof type.ENUM)
+        toChar((type.ENUM<?>)predicate.b, compilation);
       else
         predicate.b.compile(compilation);
     }
@@ -237,7 +237,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void compileCastNumeric(final Compilable dateType, final Compilation compilation) throws IOException {
-    if (dateType instanceof data.ApproxNumeric) {
+    if (dateType instanceof type.ApproxNumeric) {
       compilation.append("CAST(");
       dateType.compile(compilation);
       compilation.append(" AS NUMERIC)");
@@ -282,7 +282,7 @@ final class PostgreSQLCompiler extends Compiler {
   @Override
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
-    if (function.b instanceof data.Numeric<?> && ((data.Numeric<?>)function.b).get() != null && ((data.Numeric<?>)function.b).get().intValue() == 0) {
+    if (function.b instanceof type.Numeric<?> && ((type.Numeric<?>)function.b).get() != null && ((type.Numeric<?>)function.b).get().intValue() == 0) {
       function.a.compile(compilation);
     }
     else {
@@ -294,7 +294,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final data.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+  protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setString(parameterIndex, Readers.readFully(dataType.get()));
     else
@@ -302,13 +302,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value == null ? null : new StringReader(value);
   }
 
   @Override
-  protected void setParameter(final data.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+  protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
     else

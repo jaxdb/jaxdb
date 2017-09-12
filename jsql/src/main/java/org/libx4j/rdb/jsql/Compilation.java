@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.lib4j.lang.IntArrayList;
-import org.libx4j.rdb.jsql.data.DataType;
+import org.libx4j.rdb.jsql.type.DataType;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class Compilation {
   private static final class Batch {
     protected final String sql;
-    protected final List<data.DataType<?>> parameters;
+    protected final List<type.DataType<?>> parameters;
 
     public Batch(final String sql, final List<DataType<?>> parameters) {
       this.sql = sql;
@@ -46,7 +46,7 @@ final class Compilation {
   private List<Batch> batches;
 
   private final StringBuilder builder = new StringBuilder();
-  private final List<data.DataType<?>> parameters = new ArrayList<data.DataType<?>>();
+  private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
   private final boolean batching;
   private Consumer<Boolean> afterExecute;
@@ -73,9 +73,9 @@ final class Compilation {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<data.Subject<?>,Alias> aliases = new IdentityHashMap<data.Subject<?>,Alias>();
+  private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<type.Subject<?>,Alias>();
 
-  protected Alias registerAlias(final data.Subject<?> subject) {
+  protected Alias registerAlias(final type.Subject<?> subject) {
     Alias alias = aliases.get(subject);
     if (alias == null)
       aliases.put(subject, alias = new Alias(aliases.size()));
@@ -83,7 +83,7 @@ final class Compilation {
     return alias;
   }
 
-  protected Alias getAlias(final data.Subject<?> subject) {
+  protected Alias getAlias(final type.Subject<?> subject) {
     return aliases.get(subject);
   }
 
@@ -91,7 +91,7 @@ final class Compilation {
     return builder.append(seq);
   }
 
-  protected void addCondition(final data.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  protected void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(dataType.name);
     if (dataType.get() == null) {
       append(" IS NULL");
@@ -102,7 +102,7 @@ final class Compilation {
     }
   }
 
-  protected void addParameter(final data.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  protected void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     if (considerIndirection && !dataType.wasSet() && dataType.indirection != null) {
       dataType.indirection.compile(this);
     }
@@ -119,7 +119,7 @@ final class Compilation {
     if (batches == null)
       batches = new ArrayList<Batch>();
 
-    batches.add(new Batch(builder.toString(), new ArrayList<data.DataType<?>>(parameters)));
+    batches.add(new Batch(builder.toString(), new ArrayList<type.DataType<?>>(parameters)));
     builder.setLength(0);
     parameters.clear();
   }

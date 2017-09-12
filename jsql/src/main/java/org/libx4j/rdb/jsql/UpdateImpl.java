@@ -24,8 +24,8 @@ import org.lib4j.sql.exception.SQLExceptionCatalog;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class UpdateImpl {
-  private static abstract class Execute extends Keyword<data.DataType<?>> implements Update.UPDATE {
-    protected Execute(final Keyword<data.DataType<?>> parent) {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements Update.UPDATE {
+    protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -68,26 +68,26 @@ final class UpdateImpl {
   }
 
   private static abstract class UPDATE_SET extends Execute implements Update._SET {
-    protected UPDATE_SET(final Keyword<data.DataType<?>> parent) {
+    protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
     @Override
-    public final <T>SET SET(final data.DataType<? extends T> column, final data.DataType<? extends T> to) {
+    public final <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       return new SET(this, column, to);
     }
 
     @Override
-    public final <T>SET SET(final data.DataType<T> column, final T to) {
-      final data.DataType<T> wrap = data.DataType.wrap(to);
+    public final <T>SET SET(final type.DataType<T> column, final T to) {
+      final type.DataType<T> wrap = type.DataType.wrap(to);
       return new SET(this, column, wrap);
     }
   }
 
   protected static final class UPDATE extends UPDATE_SET implements Update._SET {
-    protected final data.Entity[] entities;
+    protected final type.Entity[] entities;
 
-    protected UPDATE(final data.Entity ... entities) {
+    protected UPDATE(final type.Entity ... entities) {
       super(null);
       this.entities = entities;
     }
@@ -99,16 +99,16 @@ final class UpdateImpl {
   }
 
   protected static final class SET extends UPDATE_SET implements Update.SET {
-    protected final data.DataType<?> column;
+    protected final type.DataType<?> column;
     protected final Compilable to;
 
-    protected <T>SET(final Keyword<data.DataType<?>> parent, final data.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = (Provision)to;
     }
 
-    protected <T>SET(final Keyword<data.DataType<?>> parent, final data.DataType<? extends T> column, final data.DataType<? extends T> to) {
+    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = to;
@@ -130,7 +130,7 @@ final class UpdateImpl {
   protected static final class WHERE extends Execute implements Update.UPDATE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<data.DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }

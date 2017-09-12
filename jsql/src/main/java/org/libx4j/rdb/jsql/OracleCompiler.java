@@ -168,39 +168,39 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final data.CHAR dataType) {
+  protected String compile(final type.CHAR dataType) {
     final String value = dataType.get().replace("'", "''");
     return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
   }
 
   @Override
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
-    if (as.cast instanceof type.BINARY) {
+    if (as.cast instanceof kind.BINARY) {
       compilation.append("UTL_RAW.CAST_TO_RAW((");
       compilable(as.dataType).compile(compilation);
       compilation.append("))");
     }
-    else if (as.cast instanceof type.BLOB) {
+    else if (as.cast instanceof kind.BLOB) {
       compilation.append("TO_BLOB((");
       compilable(as.dataType).compile(compilation);
       compilation.append("))");
     }
-    else if (as.cast instanceof type.CLOB) {
+    else if (as.cast instanceof kind.CLOB) {
       compilation.append("TO_CLOB((");
       compilable(as.dataType).compile(compilation);
       compilation.append("))");
     }
-    else if (as.cast instanceof type.DATE && !(as.dataType instanceof type.DATETIME)) {
+    else if (as.cast instanceof kind.DATE && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_DATE((");
       compilable(as.dataType).compile(compilation);
       compilation.append("), 'YYYY-MM-DD')");
     }
-    else if (as.cast instanceof type.DATETIME && !(as.dataType instanceof type.DATETIME)) {
+    else if (as.cast instanceof kind.DATETIME && !(as.dataType instanceof kind.DATETIME)) {
       compilation.append("TO_TIMESTAMP((");
       compilable(as.dataType).compile(compilation);
       compilation.append("), 'YYYY-MM-DD HH24:MI:SS.FF')");
     }
-    else if (as.cast instanceof type.TIME && as.dataType instanceof type.DATETIME) {
+    else if (as.cast instanceof kind.TIME && as.dataType instanceof kind.DATETIME) {
       compilation.append("CAST(CASE WHEN (");
       compilable(as.dataType).compile(compilation);
       compilation.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
@@ -208,14 +208,14 @@ final class OracleCompiler extends Compiler {
       compilation.append("), 'HH24:MI:SS.FF') END");
       compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
     }
-    else if (as.cast instanceof type.CHAR && as.dataType instanceof type.TIME) {
+    else if (as.cast instanceof kind.CHAR && as.dataType instanceof kind.TIME) {
       compilation.append("SUBSTR(CAST((");
       compilable(as.dataType).compile(compilation);
-      compilation.append(") AS ").append(new data.CHAR(((data.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
+      compilation.append(") AS ").append(new type.CHAR(((type.CHAR)as.cast).length(), true).declare(compilation.vendor)).append("), 10, 18)");
     }
     else {
       compilation.append("CAST((");
-      if (as.cast instanceof type.TIME && !(as.dataType instanceof type.TIME))
+      if (as.cast instanceof kind.TIME && !(as.dataType instanceof kind.TIME))
         compilation.append("'+0 ' || ");
 
       compilation.append("(");
@@ -225,7 +225,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final data.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final String value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.length() == 0 || value.charAt(0) == ' ' ? " " + value : value);
@@ -234,13 +234,13 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String getParameter(final data.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value != null && value.startsWith(" ") ? value.substring(1) : value;
   }
 
   @Override
-  protected void setParameter(final data.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
       statement.setObject(parameterIndex, newINTERVALDS("+0 " + value.format(Dialect.TIME_FORMAT)));
@@ -249,7 +249,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final data.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -259,7 +259,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,data.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (source instanceof SelectImpl.untyped.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
@@ -269,7 +269,7 @@ final class OracleCompiler extends Compiler {
       super.compileNextSubject(subject, index, source, translateTypes, compilation);
     }
 
-    if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof data.Entity) && (!(subject instanceof data.Subject) || !(((data.Subject<?>)subject).wrapper() instanceof As)))
+    if (!(source instanceof SelectImpl.untyped.GROUP_BY) && !(subject instanceof type.Entity) && (!(subject instanceof type.Subject) || !(((type.Subject<?>)subject).wrapper() instanceof As)))
       compilation.append(" c" + index);
   }
 }

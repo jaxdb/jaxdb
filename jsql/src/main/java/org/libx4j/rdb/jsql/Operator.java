@@ -22,7 +22,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.libx4j.rdb.jsql.data.DataType;
+import org.libx4j.rdb.jsql.type.DataType;
 
 final class operator {
   public static abstract class Generic {
@@ -440,7 +440,7 @@ final class operator {
   }
 
   static abstract class Logical<D> extends Generic {
-    public static final Logical<data.DataType<?>> EQ = new Logical<data.DataType<?>>("=") {
+    public static final Logical<type.DataType<?>> EQ = new Logical<type.DataType<?>>("=") {
       @Override
       protected java.lang.Boolean evaluate(final DataType<?> a, final DataType<?> b) {
         return a == null || b == null ? null : a.equals(b);
@@ -470,9 +470,9 @@ final class operator {
         return LTE.evaluate(b, a);
       }
     };
-    public static final Logical<data.DataType<?>> NE = new Logical<data.DataType<?>>("<>") {
+    public static final Logical<type.DataType<?>> NE = new Logical<type.DataType<?>>("<>") {
       @Override
-      protected java.lang.Boolean evaluate(final data.DataType<?> a, final data.DataType<?> b) {
+      protected java.lang.Boolean evaluate(final type.DataType<?> a, final type.DataType<?> b) {
         return !EQ.evaluate(a, b);
       }
     };

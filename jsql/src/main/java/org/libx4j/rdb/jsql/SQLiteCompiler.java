@@ -47,18 +47,18 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
-    if (as.cast instanceof data.Temporal) {
+    if (as.cast instanceof type.Temporal) {
       compilation.append("STRFTIME(\"");
-      if (as.cast instanceof data.DATE) {
+      if (as.cast instanceof type.DATE) {
         compilation.append("%Y-%m-%d");
       }
-      else if (as.cast instanceof data.TIME) {
+      else if (as.cast instanceof type.TIME) {
         compilation.append("%H:%M:");
-        compilation.append(((data.TIME)as.cast).precision() > 0 ? "%f" : "%S");
+        compilation.append(((type.TIME)as.cast).precision() > 0 ? "%f" : "%S");
       }
-      else if (as.cast instanceof data.DATETIME) {
+      else if (as.cast instanceof type.DATETIME) {
         compilation.append("%Y-%m-%d %H:%M:");
-        compilation.append(((data.DATETIME)as.cast).precision() > 0 ? "%f" : "%S");
+        compilation.append(((type.DATETIME)as.cast).precision() > 0 ? "%f" : "%S");
       }
       else {
         throw new UnsupportedOperationException("Unsupported type.Temporal type: " + as.cast.getClass());
@@ -75,11 +75,11 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
-    if (expression.a instanceof data.DATE)
+    if (expression.a instanceof type.DATE)
       compilation.append("DATE(");
-    else if (expression.a instanceof data.TIME)
+    else if (expression.a instanceof type.TIME)
       compilation.append("TIME(");
-    else if (expression.a instanceof data.DATETIME)
+    else if (expression.a instanceof type.DATETIME)
       compilation.append("DATETIME(");
     else
       throw new UnsupportedOperationException("Unsupported type: " + expression.a.getClass());
@@ -161,7 +161,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final data.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+  protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setString(parameterIndex, Readers.readFully(dataType.get()));
     else
@@ -169,13 +169,13 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected Reader getParameter(final data.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value == null ? null : new StringReader(value);
   }
 
   @Override
-  protected void setParameter(final data.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDate value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.DATE_FORMAT.format(value));
@@ -184,7 +184,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalDate getParameter(final data.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected LocalDate getParameter(final type.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -196,7 +196,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final data.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.format(Dialect.TIME_FORMAT));
@@ -205,7 +205,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final data.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected LocalTime getParameter(final type.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -217,7 +217,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final data.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.format(Dialect.DATETIME_FORMAT));
@@ -226,13 +226,13 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalDateTime getParameter(final data.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected LocalDateTime getParameter(final type.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.parse(value, Dialect.DATETIME_FORMAT);
   }
 
   @Override
-  protected void setParameter(final data.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+  protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
     else

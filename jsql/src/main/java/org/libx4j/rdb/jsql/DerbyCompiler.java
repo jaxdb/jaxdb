@@ -143,11 +143,11 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
-    if (expression.a instanceof data.DATE)
+    if (expression.a instanceof type.DATE)
       compilation.append("DATE");
-    else if (expression.a instanceof data.TIME)
+    else if (expression.a instanceof type.TIME)
       compilation.append("TIME");
-    else if (expression.a instanceof data.DATETIME)
+    else if (expression.a instanceof type.DATETIME)
       compilation.append("TIMESTAMP");
     else
       throw new UnsupportedOperationException("Unsupported temporal type: " + expression.a.getClass());

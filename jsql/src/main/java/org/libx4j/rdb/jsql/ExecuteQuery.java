@@ -19,7 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public interface ExecuteQuery<T extends data.Subject<?>> {
+public interface ExecuteQuery<T extends type.Subject<?>> {
   public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
   public RowIterator<T> execute() throws IOException, SQLException;
 }

@@ -24,8 +24,8 @@ import org.lib4j.sql.exception.SQLExceptionCatalog;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class DeleteImpl {
-  private static abstract class Execute extends Keyword<data.DataType<?>> implements Delete.DELETE {
-    protected Execute(final Keyword<data.DataType<?>> parent) {
+  private static abstract class Execute extends Keyword<type.DataType<?>> implements Delete.DELETE {
+    protected Execute(final Keyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -60,7 +60,7 @@ final class DeleteImpl {
   protected static final class WHERE extends Execute implements Delete.DELETE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<data.DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }
@@ -74,9 +74,9 @@ final class DeleteImpl {
   }
 
   protected static final class DELETE extends Execute implements Delete._DELETE {
-    protected final data.Entity[] entities;
+    protected final type.Entity[] entities;
 
-    protected DELETE(final data.Entity ... entities) {
+    protected DELETE(final type.Entity ... entities) {
       super(null);
       this.entities = entities;
     }

@@ -23,7 +23,7 @@ final class LikePredicate extends Predicate {
   protected final boolean positive;
   protected final CharSequence pattern;
 
-  protected LikePredicate(final type.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
+  protected LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
     super(dataType);
     this.positive = positive;
     this.pattern = pattern;
@@ -34,7 +34,7 @@ final class LikePredicate extends Predicate {
     if (dataType == null || pattern == null || !(dataType instanceof Evaluable))
       return null;
 
-    final data.Textual<?> a = (data.Textual<?>)((Evaluable)dataType).evaluate(visited);
+    final type.Textual<?> a = (type.Textual<?>)((Evaluable)dataType).evaluate(visited);
     if (a.get() == null)
       return null;
 

@@ -21,7 +21,7 @@ import java.util.Set;
 
 import org.libx4j.rdb.jsql.Select;
 
-class QuantifiedComparisonPredicate<T> extends data.Subject<T> {
+class QuantifiedComparisonPredicate<T> extends type.Subject<T> {
   protected final String qualifier;
   protected final Compilable subQuery;
 

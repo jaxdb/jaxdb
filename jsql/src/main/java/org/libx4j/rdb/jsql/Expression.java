@@ -22,7 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 final class expression {
-  protected static abstract class Generic<T> extends data.Subject<T> {
+  protected static abstract class Generic<T> extends type.Subject<T> {
   }
 
   protected static final class Count extends Generic<Long> {
@@ -30,9 +30,9 @@ final class expression {
 
     protected final boolean distinct;
     protected final java.lang.String function = "COUNT";
-    protected final type.DataType<?> column;
+    protected final kind.DataType<?> column;
 
-    protected Count(final type.DataType<?> column, final boolean distinct) {
+    protected Count(final kind.DataType<?> column, final boolean distinct) {
       this.column = column;
       this.distinct = distinct;
     }
@@ -55,25 +55,25 @@ final class expression {
 
   protected static final class Numeric extends Generic<Number> {
     protected final operator.Arithmetic operator;
-    protected final type.Numeric<?> a;
-    protected final type.Numeric<?> b;
+    protected final kind.Numeric<?> a;
+    protected final kind.Numeric<?> b;
 
-    protected Numeric(final operator.Arithmetic operator, final type.Numeric<?> a, final type.Numeric<?> b) {
+    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final kind.Numeric<?> b) {
       this.operator = operator;
       this.a = a;
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final Number a, final type.Numeric<?> b) {
+    protected Numeric(final operator.Arithmetic operator, final Number a, final kind.Numeric<?> b) {
       this.operator = operator;
-      this.a = (data.Numeric<?>)data.DataType.wrap(a);
+      this.a = (type.Numeric<?>)type.DataType.wrap(a);
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final type.Numeric<?> a, final Number b) {
+    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final Number b) {
       this.operator = operator;
       this.a = a;
-      this.b = (data.Numeric<?>)data.DataType.wrap(b);
+      this.b = (type.Numeric<?>)type.DataType.wrap(b);
     }
 
     @Override
@@ -100,10 +100,10 @@ final class expression {
 
   protected static class Temporal extends Generic<java.time.temporal.Temporal> {
     protected final operator.ArithmeticPlusMinus operator;
-    protected final data.Temporal<?> a;
+    protected final type.Temporal<?> a;
     protected final Interval b;
 
-    protected Temporal(final operator.ArithmeticPlusMinus operator, final data.Temporal<?> a, final Interval b) {
+    protected Temporal(final operator.ArithmeticPlusMinus operator, final type.Temporal<?> a, final Interval b) {
       this.operator = operator;
       this.a = a;
       this.b = b;
@@ -132,7 +132,7 @@ final class expression {
 
     @Override
     protected final void compile(final Compilation compilation) throws IOException {
-      final Interval interval = a instanceof data.TIME ? b.toTimeInterval() : a instanceof data.DATE ? b.toDateInterval() : b;
+      final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
         Compiler.getCompiler(compilation.vendor).compile(a, compilation);
       else
@@ -142,61 +142,61 @@ final class expression {
 
   protected static final class String extends Generic<java.lang.String> {
     protected final operator.String operator;
-    protected final type.DataType<?>[] args;
+    protected final kind.DataType<?>[] args;
 
-    protected String(final operator.String operator, final type.DataType<?> a, final type.DataType<?> b) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b) {
       this.operator = operator;
-      this.args = new type.DataType[] {a, b};
+      this.args = new kind.DataType[] {a, b};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final type.DataType<?> b, final CharSequence c) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
       this.operator = operator;
-      this.args = new type.DataType[] {a, b, data.DataType.wrap(c)};
+      this.args = new kind.DataType[] {a, b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b) {
       this.operator = operator;
-      this.args = new type.DataType[] {a, data.DataType.wrap(b)};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b)};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
       this.operator = operator;
-      this.args = new type.DataType[] {a, data.DataType.wrap(b), c};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c};
     }
 
-    protected String(final operator.String operator, final type.DataType<?> a, final CharSequence b, final type.DataType<?> c, final CharSequence d) {
+    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
       this.operator = operator;
-      this.args = new type.DataType[] {a, data.DataType.wrap(b), c, data.DataType.wrap(d)};
+      this.args = new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b, c};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b, data.DataType.wrap(c)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final type.DataType<?> c, final CharSequence d) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b, c, data.DataType.wrap(d)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b, data.DataType.wrap(c), d};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final type.DataType<?> b, final CharSequence c, final type.DataType<?> d, final CharSequence e) {
+    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
       this.operator = operator;
-      this.args = new type.DataType[] {data.DataType.wrap(a), b, data.DataType.wrap(c), d, data.DataType.wrap(e)};
+      this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
     }
 
     @Override
@@ -207,7 +207,7 @@ final class expression {
     @Override
     protected java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
-      for (final type.DataType<?> arg : args) {
+      for (final kind.DataType<?> arg : args) {
         if (arg == null || !(arg instanceof Evaluable))
           return null;
 
@@ -221,9 +221,9 @@ final class expression {
   protected static final class Set extends Generic<Object> {
     protected final java.lang.String function;
     protected final boolean distinct;
-    protected final data.Subject<?> a;
+    protected final type.Subject<?> a;
 
-    protected Set(final java.lang.String function, final data.Subject<?> subject, final boolean distinct) {
+    protected Set(final java.lang.String function, final type.Subject<?> subject, final boolean distinct) {
       this.function = function;
       this.a = subject;
       this.distinct = distinct;

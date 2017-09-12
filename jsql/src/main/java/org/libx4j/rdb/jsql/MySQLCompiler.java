@@ -114,19 +114,19 @@ final class MySQLCompiler extends Compiler {
 
   @Override
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
-    if (as.cast instanceof data.Temporal || as.cast instanceof data.Textual || as.cast instanceof data.BINARY) {
+    if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.compile(as, compilation);
     }
-    else if (as.cast instanceof data.DECIMAL) {
+    else if (as.cast instanceof type.DECIMAL) {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation);
       final String declaration = as.cast.declare(compilation.vendor);
-      compilation.append(") AS ").append(as.cast instanceof type.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
+      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
     }
-    else if (as.cast instanceof data.ExactNumeric) {
+    else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation);
-      compilation.append(") AS ").append(as.cast instanceof type.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
+      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
       compilation.append("(");
@@ -136,7 +136,7 @@ final class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final data.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;

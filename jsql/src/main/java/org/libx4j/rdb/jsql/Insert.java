@@ -17,13 +17,13 @@
 package org.libx4j.rdb.jsql;
 
 public interface Insert {
-  public interface VALUES<T extends data.Subject<?>> extends ExecuteUpdate {
+  public interface VALUES<T extends type.Subject<?>> extends ExecuteUpdate {
   }
 
-  public interface INSERT<T extends data.Subject<?>> extends ExecuteUpdate {
+  public interface INSERT<T extends type.Subject<?>> extends ExecuteUpdate {
   }
 
-  public interface _INSERT<T extends data.Subject<?>> extends INSERT<T> {
+  public interface _INSERT<T extends type.Subject<?>> extends INSERT<T> {
     public VALUES<T> VALUES(final Select.untyped.SELECT<?> select);
   }
 }
