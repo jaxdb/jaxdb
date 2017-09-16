@@ -130,10 +130,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.String expression, final Compilation compilation) throws IOException {
-    if (expression.operator != operator.String.CONCAT)
-      throw new UnsupportedOperationException("The only supported operator for StringExpression is: ||");
-
+  protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);

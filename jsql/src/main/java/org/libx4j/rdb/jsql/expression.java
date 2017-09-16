@@ -140,62 +140,78 @@ final class expression {
     }
   }
 
-  protected static final class String extends Generic<java.lang.String> {
-    protected final operator.String operator;
+  protected static abstract class String extends Generic<java.lang.String> {
+  }
+
+  protected static final class ChangeCase extends String {
+    protected final operator.String1 operator;
+    protected final kind.DataType<?> arg;
+
+    protected ChangeCase(final operator.String1 operator, final kind.DataType<?> a) {
+      this.operator = operator;
+      this.arg = a;
+    }
+
+    protected ChangeCase(final operator.String1 operator, final CharSequence a) {
+      this.operator = operator;
+      this.arg = type.DataType.wrap(a);
+    }
+
+    @Override
+    protected final void compile(final Compilation compilation) throws IOException {
+      Compiler.getCompiler(compilation.vendor).compile(this, compilation);
+    }
+
+    @Override
+    protected final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
+      return arg == null || !(arg instanceof Evaluable) ? null : operator.evaluate((java.lang.String)((Evaluable)arg).evaluate(visited));
+    }
+  }
+
+  protected static final class Concat extends String {
     protected final kind.DataType<?>[] args;
 
-    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b) {
-      this.operator = operator;
+    protected Concat(final kind.DataType<?> a, final kind.DataType<?> b) {
       this.args = new kind.DataType[] {a, b};
     }
 
-    protected String(final operator.String operator, final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
-      this.operator = operator;
+    protected Concat(final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
       this.args = new kind.DataType[] {a, b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b) {
-      this.operator = operator;
+    protected Concat(final kind.DataType<?> a, final CharSequence b) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b)};
     }
 
-    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
-      this.operator = operator;
+    protected Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b), c};
     }
 
-    protected String(final operator.String operator, final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
-      this.operator = operator;
+    protected Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, c};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
     }
 
-    protected String(final operator.String operator, final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
-      this.operator = operator;
+    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
     }
 
@@ -205,7 +221,7 @@ final class expression {
     }
 
     @Override
-    protected java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
+    protected final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
       for (final kind.DataType<?> arg : args) {
         if (arg == null || !(arg instanceof Evaluable))

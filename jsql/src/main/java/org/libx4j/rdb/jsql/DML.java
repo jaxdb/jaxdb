@@ -1107,155 +1107,171 @@ public final class DML {
   /** String Functions **/
 
   public static type.CHAR CONCAT(final kind.CHAR a, final kind.CHAR b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final kind.CHAR c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final CharSequence b, final kind.CHAR c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final kind.CHAR b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final CharSequence c, final kind.CHAR d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final CharSequence b, final kind.CHAR c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final kind.CHAR c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final CharSequence c, final kind.CHAR d, final CharSequence e) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d, e));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d, e));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final kind.ENUM<?> b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final kind.ENUM<?> c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final CharSequence b, final kind.ENUM<?> c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final kind.ENUM<?> b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final CharSequence c, final kind.ENUM<?> d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final CharSequence b, final kind.ENUM<?> c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final kind.ENUM<?> c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final CharSequence c, final kind.ENUM<?> d, final CharSequence e) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d, e));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d, e));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final kind.ENUM<?> b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final kind.ENUM<?> c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final CharSequence b, final kind.ENUM<?> c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final CharSequence c, final kind.ENUM<?> d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final kind.ENUM<?> c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final kind.ENUM<?> b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final CharSequence b, final kind.ENUM<?> c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final CharSequence c, final kind.ENUM<?> d, final CharSequence e) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d, e));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d, e));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final kind.CHAR b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final kind.CHAR c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final CharSequence b, final kind.CHAR c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final kind.CHAR b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final CharSequence c, final kind.CHAR d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final CharSequence b, final kind.CHAR c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final kind.CHAR c, final CharSequence d) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final CharSequence c, final kind.CHAR d, final CharSequence e) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c, d, e));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c, d, e));
   }
 
   public static type.CHAR CONCAT(final kind.CHAR a, final CharSequence b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.CHAR b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final kind.ENUM<?> a, final CharSequence b) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b));
+    return new type.CHAR().wrapper(new expression.Concat(a, b));
   }
 
   public static type.CHAR CONCAT(final CharSequence a, final kind.ENUM<?> b, final CharSequence c) {
-    return new type.CHAR().wrapper(new expression.String(operator.String.CONCAT, a, b, c));
+    return new type.CHAR().wrapper(new expression.Concat(a, b, c));
+  }
+
+  public static type.CHAR LOWER(final kind.CHAR a) {
+    return new type.CHAR().wrapper(new expression.ChangeCase(operator.String.LOWER_CASE, a));
+  }
+
+  public static type.CHAR LOWER(final CharSequence a) {
+    return new type.CHAR().wrapper(new expression.ChangeCase(operator.String.LOWER_CASE, a));
+  }
+
+  public static type.CHAR UPPER(final kind.CHAR a) {
+    return new type.CHAR().wrapper(new expression.ChangeCase(operator.String.UPPER_CASE, a));
+  }
+
+  public static type.CHAR UPPER(final CharSequence a) {
+    return new type.CHAR().wrapper(new expression.ChangeCase(operator.String.UPPER_CASE, a));
   }
 
   /** Start UnsignedNumber(s) **/

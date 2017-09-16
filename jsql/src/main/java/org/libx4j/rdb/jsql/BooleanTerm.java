@@ -36,7 +36,7 @@ final class BooleanTerm extends type.BOOLEAN {
   }
 
   @Override
-  protected Boolean evaluate(final Set<Evaluable> visited) {
+  protected final Boolean evaluate(final Set<Evaluable> visited) {
     if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
       return null;
 
@@ -50,7 +50,7 @@ final class BooleanTerm extends type.BOOLEAN {
         return null;
 
       if (!(evaluated instanceof Boolean))
-        throw new RuntimeException("!!!!");
+        throw new AssertionError();
 
       if (!(Boolean)evaluated)
         return Boolean.FALSE;

@@ -485,18 +485,39 @@ final class operator {
   }
 
   static abstract class String extends Generic {
-    public static final String CONCAT = new String("||") {
+    public static final String1 LOWER_CASE = new String1("LOWER") {
       @Override
-      protected java.lang.String evaluate(final java.lang.String a, final java.lang.String b) {
-        return a == null || b == null ? null : a + b;
+      protected java.lang.String evaluate(final java.lang.String a) {
+        return a == null ? null : a.toLowerCase();
+      }
+    };
+
+    public static final String1 UPPER_CASE = new String1("UPPER") {
+      @Override
+      protected java.lang.String evaluate(final java.lang.String a) {
+        return a == null ? null : a.toUpperCase();
       }
     };
 
     protected String(final java.lang.String symbol) {
       super(symbol);
     }
+  }
 
-    protected abstract java.lang.String evaluate(final java.lang.String a, final java.lang.String b);
+  static abstract class String1 extends String {
+    protected String1(final java.lang.String symbol) {
+      super(symbol);
+    }
+
+    protected abstract java.lang.String evaluate(final java.lang.String a);
+  }
+
+  static abstract class StringN extends String {
+    protected StringN(final java.lang.String symbol) {
+      super(symbol);
+    }
+
+    protected abstract java.lang.String evaluate(final java.lang.String ... strings);
   }
 
   public static class Ordering extends Generic {

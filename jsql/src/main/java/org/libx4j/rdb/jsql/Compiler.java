@@ -536,12 +536,18 @@ abstract class Compiler {
     }
   }
 
-  protected void compile(final expression.String expression, final Compilation compilation) throws IOException {
+  protected void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException {
+    compilation.append(expression.operator.toString()).append("(");
+    compilable(expression.arg).compile(compilation);
+    compilation.append(")");
+  }
+
+  protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append("(");
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
-        compilation.append(" ").append(expression.operator.toString()).append(" ");
+        compilation.append(" || ");
 
       arg.compile(compilation);
     }
