@@ -64,8 +64,12 @@ public abstract class Schema {
     try {
       final Connection connection = dataSource.getConnection();
       if (!inited.contains(schema)) {
-        Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
-        inited.add(schema);
+        synchronized (schema) {
+         if (!inited.contains(schema)) {
+           Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
+           inited.add(schema);
+         }
+        }
       }
 
       return connection;
