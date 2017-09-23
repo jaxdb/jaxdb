@@ -46,9 +46,13 @@ import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.QName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public final class Datas {
+  private static final Logger logger = LoggerFactory.getLogger(Datas.class);
+
   private static QName getName(final Class<?> cls) {
     return cls.getAnnotation(QName.class);
   }
@@ -164,7 +168,12 @@ public final class Datas {
   public static void createXSD(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
     org.lib4j.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), ddlxFile, xsdFile);
-    ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), xsdFile.getParentFile().toURI().toURL());
+    // FIXME: This does not work in java 9.
+    final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+    if (classLoader instanceof URLClassLoader)
+      ClassLoaders.addURL((URLClassLoader)classLoader, xsdFile.getParentFile().toURI().toURL());
+    else
+      logger.warn("Unable to add " + xsdFile.getParentFile().toURI().toURL() + " to system ClassLoader.");
   }
 
   private Datas() {
