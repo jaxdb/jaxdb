@@ -22,13 +22,11 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
-import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Strings;
 import org.lib4j.xml.validate.ValidationException;
@@ -123,8 +121,6 @@ public class Generator {
       catch (final CompilationException e) {
         throw new UnsupportedOperationException(e);
       }
-
-      ClassLoaders.addURL((URLClassLoader)ClassLoader.getSystemClassLoader(), destDir.toURI().toURL());
     }
   }
 

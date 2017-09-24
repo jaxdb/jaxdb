@@ -19,7 +19,6 @@ package org.libx4j.rdb.dmlx;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,7 +26,6 @@ import java.util.Iterator;
 
 import javax.xml.transform.TransformerException;
 
-import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resources;
 import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
 import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
@@ -46,13 +44,9 @@ import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.QName;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public final class Datas {
-  private static final Logger logger = LoggerFactory.getLogger(Datas.class);
-
   private static QName getName(final Class<?> cls) {
     return cls.getAnnotation(QName.class);
   }
@@ -168,12 +162,6 @@ public final class Datas {
   public static void createXSD(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
     org.lib4j.xml.transform.Transformer.transform(Resources.getResource("dmlx.xsl").getURL(), ddlxFile, xsdFile);
-    // FIXME: This does not work in java 9.
-    final ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-    if (classLoader instanceof URLClassLoader)
-      ClassLoaders.addURL((URLClassLoader)classLoader, xsdFile.getParentFile().toURI().toURL());
-    else
-      logger.warn("Unable to add " + xsdFile.getParentFile().toURI().toURL() + " to system ClassLoader.");
   }
 
   private Datas() {
