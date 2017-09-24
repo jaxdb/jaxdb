@@ -80,6 +80,34 @@
         </configuration>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <configuration>
+            <reuseForks>false</reuseForks>
+            <additionalClasspathElements>
+              <additionalClasspathElement>${basedir}/target/generated-test-resources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/target/generated-test-sources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/target/generated-test-sources/xsb</additionalClasspathElement>
+            </additionalClasspathElements>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <reuseForks>false</reuseForks>
+            <additionalClasspathElements>
+              <additionalClasspathElement>${basedir}/target/generated-test-resources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/target/generated-test-sources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${basedir}/target/generated-test-sources/xsb</additionalClasspathElement>
+            </additionalClasspathElements>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
   <dependencies>
     <dependency>

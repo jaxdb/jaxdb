@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import javax.xml.transform.TransformerException;
-
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -39,15 +36,9 @@ import org.libx4j.rdb.ddlx.runner.VendorRunner;
 @VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
-public class ClassicModelsTest extends DMLxTest {
-  @BeforeClass
-  @VendorRunner.RunIn(VendorRunner.Test.class)
-  public static void createSchema() throws IOException, TransformerException {
-    createSchemas("classicmodels");
-  }
-
+public class ClassicModelsDataTest extends DMLxTest {
   @Test
-  public void testClassicModels(final Connection connection) throws IOException, SQLException, XMLException {
+  public void testLoadData(final Connection connection) throws IOException, SQLException, XMLException {
     loadData(connection, "classicmodels");
   }
 }

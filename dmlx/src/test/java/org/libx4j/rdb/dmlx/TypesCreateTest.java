@@ -1,19 +1,3 @@
-/* Copyright (c) 2017 lib4j
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * You should have received a copy of The MIT License (MIT) along with this
- * program. If not, see <http://opensource.org/licenses/MIT/>.
- */
-
 package org.libx4j.rdb.dmlx;
 
 import java.io.File;
@@ -21,8 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -30,27 +12,12 @@ import java.time.format.DateTimeFormatter;
 
 import javax.xml.transform.TransformerException;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.lib4j.lang.Strings;
-import org.lib4j.test.MixedTest;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.Random;
-import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.ddlx.runner.Derby;
-import org.libx4j.rdb.ddlx.runner.MySQL;
-import org.libx4j.rdb.ddlx.runner.Oracle;
-import org.libx4j.rdb.ddlx.runner.PostgreSQL;
-import org.libx4j.rdb.ddlx.runner.SQLite;
-import org.libx4j.rdb.ddlx.runner.VendorRunner;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class TypesTest extends DMLxTest {
+public class TypesCreateTest extends DMLxTest {
   private static void createTypeData(final OutputStream out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<Types xmlns=\"dmlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"dmlx.types types.xsd\">\n".getBytes());
@@ -112,23 +79,16 @@ public class TypesTest extends DMLxTest {
     out.flush();
   }
 
-  @BeforeClass
-  @VendorRunner.RunIn(VendorRunner.Test.class)
-  public static void createSchema() throws IOException, TransformerException {
+  @Test
+  public void testCreateSchema() throws IOException, TransformerException {
     createSchemas("types");
   }
 
-  @BeforeClass
-  @VendorRunner.RunIn(VendorRunner.Test.class)
-  public static void createData() throws IOException {
+  @Test
+  public void testCreateData() throws IOException {
     resourcesDestDir.mkdirs();
     try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.dmlx"))) {
       createTypeData(out);
     }
-  }
-
-  @Test
-  public void testTypes(final Connection connection) throws IOException, SQLException, XMLException {
-    loadData(connection, "types");
   }
 }

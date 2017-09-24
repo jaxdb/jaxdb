@@ -19,16 +19,11 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.ddlx.runner.Derby;
-import org.libx4j.rdb.ddlx.runner.VendorRunner;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
-public class ClassicModelsTest extends JSQLTest {
+public class TypesCreateTest extends JSQLTest {
   @Test
-  public void create() throws IOException, XMLException {
-    createEntities("classicmodels");
+  public void testCreate() throws IOException, XMLException {
+    createEntities("types");
   }
 }

@@ -18,17 +18,18 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.ddlx.runner.Derby;
-import org.libx4j.rdb.ddlx.runner.VendorRunner;
+import javax.xml.transform.TransformerException;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test(Derby.class)
-public class TypesTest extends JSQLTest {
+import org.junit.Test;
+import org.lib4j.xml.XMLException;
+import org.libx4j.rdb.dmlx.DMLxTest;
+
+public class WorldCreateTest extends JSQLTest {
+  private static final String name = "world";
+
   @Test
-  public void create() throws IOException, XMLException {
-    createEntities("types");
+  public void testCreate() throws IOException, TransformerException, XMLException {
+    createEntities(name);
+    DMLxTest.createSchemas(name);
   }
 }
