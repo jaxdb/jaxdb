@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
 import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
@@ -69,7 +68,7 @@ abstract class Compiler {
         }
       }
     }
-    catch (final PackageNotFoundException | ReflectiveOperationException e) {
+    catch (final ReflectiveOperationException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
