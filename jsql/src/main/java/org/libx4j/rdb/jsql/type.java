@@ -77,7 +77,7 @@ public final class type {
     }
   }
 
-  protected static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
+  public static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
     protected final DataType<T> dataType;
 
     protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
