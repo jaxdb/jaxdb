@@ -67,7 +67,7 @@ abstract class Compiler {
         }
       }
     }
-    catch (final PackageNotFoundException | ReflectiveOperationException e) {
+    catch (final ReflectiveOperationException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
