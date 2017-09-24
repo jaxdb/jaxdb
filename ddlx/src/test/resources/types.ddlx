@@ -19,7 +19,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="type">
-    <column name="id" xsi:type="int" precision="5" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
+    <column name="id" xsi:type="int" precision="6" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="bigint_type" xsi:type="bigint" precision="19"/>
     <column name="binary_type" xsi:type="binary" varying="true" length="255"/>
     <column name="blob_type" xsi:type="blob" length="255"/>
