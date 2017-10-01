@@ -39,7 +39,7 @@ final class OracleCompiler extends Compiler {
     try {
       return (INTERVALDS == null ? INTERVALDS = Class.forName("oracle.sql.INTERVALDS").getConstructor(String.class) : INTERVALDS).newInstance(s);
     }
-    catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException | SecurityException e) {
+    catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
       throw new ExceptionInInitializerError(e);
     }
     catch (final InstantiationException | InvocationTargetException e) {

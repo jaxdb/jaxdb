@@ -20,7 +20,6 @@ import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
 import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
 import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
 import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
