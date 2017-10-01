@@ -19,6 +19,7 @@ package org.libx4j.rdb.jsql.generator;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
@@ -332,7 +333,7 @@ public class Generator {
 
       return value.text();
     }
-    catch (final Exception e) {
+    catch (final IllegalAccessException | InvocationTargetException e) {
       throw new UnsupportedOperationException(e);
     }
   }
