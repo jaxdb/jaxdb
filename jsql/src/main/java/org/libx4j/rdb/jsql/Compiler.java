@@ -49,7 +49,6 @@ import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
-import org.libx4j.rdb.jsql.InsertImpl.VALUES;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -194,7 +193,7 @@ abstract class Compiler {
       }
       else {
         compilation.append(tableName(table, compilation)).append(" ");
-        compilation.registerAlias(table).compile(compilation);
+        compilation.getAlias(table).compile(compilation);
       }
 
       if (iterator.hasNext())
@@ -206,9 +205,6 @@ abstract class Compiler {
 
   protected void compile(final SelectImpl.untyped.JOIN<?> join, final SelectImpl.untyped.ON<?> on, final Compilation compilation) throws IOException {
     if (join != null) {
-      // NOTE: JOINed tables must have aliases. So, if the JOINed table is not part of the SELECT,
-      // NOTE: it will not have had this assignment made. Therefore, ensure it's been made!
-      compilation.registerAlias(join.table);
       if (join.cross)
         compilation.append(" CROSS");
 
@@ -350,7 +346,7 @@ abstract class Compiler {
   }
 
   @SuppressWarnings("rawtypes")
-  protected void compile(final InsertImpl.INSERT insert, final VALUES<?> values, final Compilation compilation) throws IOException {
+  protected void compile(final InsertImpl.INSERT insert, final InsertImpl.VALUES<?> values, final Compilation compilation) throws IOException {
     final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<Integer,type.ENUM<?>>();
     if (insert.entities != null) {
       if (insert.entities.length > 1)
@@ -1019,10 +1015,14 @@ abstract class Compiler {
     return dataType.get() == null ? "NULL" : "'" + Dialect.TIME_FORMAT.format(dataType.get()) + "'";
   }
 
-  protected void assignAliases(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) {
+  protected void assignAliases(final SelectImpl.untyped.FROM<?> from, final List<SelectImpl.untyped.JOIN<?>> joins, final Compilation compilation) {
     if (from != null)
       for (final type.Entity table : from.tables)
         compilation.registerAlias(table);
+
+    if (joins != null)
+      for (final SelectImpl.untyped.JOIN<?> join : joins)
+        compilation.registerAlias(join.table);
   }
 
   protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {

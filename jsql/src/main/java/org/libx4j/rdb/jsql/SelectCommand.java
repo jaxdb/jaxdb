@@ -160,7 +160,7 @@ final class SelectCommand extends Command {
   @Override
   protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
-    compiler.assignAliases(from(), compilation);
+    compiler.assignAliases(from(), join(), compilation);
     compiler.compile(this, select(), compilation);
     compiler.compile(from(), compilation);
     if (join() != null)
