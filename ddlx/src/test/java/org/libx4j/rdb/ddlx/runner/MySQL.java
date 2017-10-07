@@ -22,11 +22,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 
 import com.mysql.cj.jdbc.Driver;
 
 @SuppressWarnings("unused")
 public class MySQL implements Vendor {
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.MY_SQL;
+  }
+
   @Override
   public synchronized void init() throws IOException, SQLException {
 //  CREATE USER rdb;

@@ -30,9 +30,15 @@ import org.lib4j.lang.Resource;
 import org.lib4j.lang.Resources;
 import org.lib4j.net.URLs;
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 
 public class Derby implements Vendor {
   private static final File db = new File("target/generated-test-resources/rdb/derby.db");
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.DERBY;
+  }
 
   @Override
   @SuppressWarnings("unused")

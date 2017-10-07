@@ -27,6 +27,17 @@ public class DerbyDialect extends Dialect {
     return DBVendor.DERBY;
   }
 
+  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
+  @Override
+  public int decimalMaxPrecision() {
+    return 31;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return false;
+  }
+
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -38,7 +49,7 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }

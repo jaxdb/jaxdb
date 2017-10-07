@@ -29,6 +29,17 @@ public class PostgreSQLDialect extends Dialect {
     return DBVendor.POSTGRE_SQL;
   }
 
+  // https://www.postgresql.org/docs/9.6/static/datatype-numeric.html
+  @Override
+  public int decimalMaxPrecision() {
+    return 1000;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return false;
+  }
+
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -40,7 +51,7 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }

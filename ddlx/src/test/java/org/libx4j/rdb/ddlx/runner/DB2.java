@@ -22,11 +22,17 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
 import com.ibm.db2.jcc.DB2Driver;
 
 public class DB2 implements Vendor {
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.DB2;
+  }
+
   @Override
   @SuppressWarnings("unused")
   public synchronized void init() throws IOException, SQLException {

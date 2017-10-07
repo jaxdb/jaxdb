@@ -22,10 +22,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 import org.postgresql.Driver;
 
 @SuppressWarnings("unused")
 public class PostgreSQL implements Vendor {
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.POSTGRE_SQL;
+  }
+
   @Override
   public synchronized void init() throws IOException, SQLException {
 //  CREATE USER rdb WITH PASSWORD 'rdb';

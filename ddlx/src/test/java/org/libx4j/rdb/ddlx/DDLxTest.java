@@ -18,12 +18,18 @@ package org.libx4j.rdb.ddlx;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.lib4j.lang.Resources;
 import org.lib4j.xml.validate.ValidationException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
+import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.vendor.DBVendor;
+import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
@@ -34,6 +40,13 @@ public abstract class DDLxTest {
     try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
+
+    final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
+    for (final $ddlx_table table : schema._table())
+      if (table._column() != null)
+        for (final $ddlx_column column : table._column())
+          if (column instanceof $ddlx_decimal)
+            (($ddlx_decimal)column)._precision$().text(BigInteger.valueOf(dialect.decimalMaxPrecision()));
 
     Schemas.recreate(connection, schema);
   }

@@ -4771,7 +4771,7 @@ final class CaseImpl implements Case {
       @Override
       public final type.SMALLINT END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.SMALLINT dataType = numeric instanceof type.SMALLINT ? (type.SMALLINT)numeric.clone() : new type.SMALLINT(numeric.precision());
+        final type.SMALLINT dataType = numeric instanceof type.SMALLINT ? (type.SMALLINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.SMALLINT(((type.ExactNumeric<?>)numeric).precision()) : new type.SMALLINT();
         dataType.wrapper(this);
         return dataType;
       }
@@ -5798,7 +5798,7 @@ final class CaseImpl implements Case {
       @Override
       public final type.INT END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.INT dataType = numeric instanceof type.INT ? (type.INT)numeric.clone() : new type.INT(numeric.precision());
+        final type.INT dataType = numeric instanceof type.INT ? (type.INT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.INT(((type.ExactNumeric<?>)numeric).precision()) : new type.INT();
         dataType.wrapper(this);
         return dataType;
       }
@@ -6825,7 +6825,7 @@ final class CaseImpl implements Case {
       @Override
       public final type.BIGINT END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.BIGINT dataType = numeric instanceof type.BIGINT ? (type.BIGINT)numeric.clone() : new type.BIGINT(numeric.precision());
+        final type.BIGINT dataType = numeric instanceof type.BIGINT ? (type.BIGINT)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.BIGINT(((type.ExactNumeric<?>)numeric).precision()) : new type.BIGINT();
         dataType.wrapper(this);
         return dataType;
       }
@@ -7440,7 +7440,7 @@ final class CaseImpl implements Case {
         @Override
         public final type.DECIMAL.UNSIGNED END() {
           final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-          final type.DECIMAL.UNSIGNED dataType = numeric instanceof type.DECIMAL.UNSIGNED ? (type.DECIMAL.UNSIGNED)numeric.clone() : new type.DECIMAL.UNSIGNED(numeric.precision(), numeric.scale());
+          final type.DECIMAL.UNSIGNED dataType = numeric instanceof type.DECIMAL.UNSIGNED ? (type.DECIMAL.UNSIGNED)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL.UNSIGNED(((type.ExactNumeric<?>)numeric).precision(), 0) : new type.DECIMAL.UNSIGNED();
           dataType.wrapper(this);
           return dataType;
         }
@@ -7853,7 +7853,7 @@ final class CaseImpl implements Case {
       @Override
       public final type.DECIMAL END() {
         final type.Numeric<?> numeric = (type.Numeric<?>)((THEN_ELSE<type.ENUM<?>>)parent()).createReturnType().clone();
-        final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : new type.DECIMAL(numeric.precision(), numeric.scale());
+        final type.DECIMAL dataType = numeric instanceof type.DECIMAL ? (type.DECIMAL)numeric.clone() : numeric instanceof type.ExactNumeric ? new type.DECIMAL(((type.ExactNumeric<?>)numeric).precision(), 0) : new type.DECIMAL();
         dataType.wrapper(this);
         return dataType;
       }

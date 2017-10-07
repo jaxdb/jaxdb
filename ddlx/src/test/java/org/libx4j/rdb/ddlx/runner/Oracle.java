@@ -23,8 +23,14 @@ import java.sql.SQLException;
 import java.util.TimeZone;
 
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 
 public class Oracle implements Vendor {
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.ORACLE;
+  }
+
   @Override
   public synchronized void init() throws IOException, SQLException {
     // NOTE: If TimeZone.setDefault() is not called:

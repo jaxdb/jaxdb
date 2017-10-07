@@ -27,6 +27,17 @@ public class SQLiteDialect extends Dialect {
     return DBVendor.SQLITE;
   }
 
+  // http://www.sqlite.org/datatype3.html
+  @Override
+  public int decimalMaxPrecision() {
+    return 15;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return false;
+  }
+
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -38,7 +49,7 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }

@@ -27,6 +27,17 @@ public class DB2Dialect extends Dialect {
     return DBVendor.DB2;
   }
 
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
+  @Override
+  public int decimalMaxPrecision() {
+    return 31;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return false;
+  }
+
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -38,7 +49,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }

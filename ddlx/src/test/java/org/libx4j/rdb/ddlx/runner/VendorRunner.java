@@ -100,7 +100,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<Class<? extends Vendor>,Vendor>();
 
-  private Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IOException, ReflectiveOperationException, SQLException {
+  protected Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IllegalAccessException, InstantiationException, IOException, SQLException {
     Vendor vendor = vendors.get(vendorClass);
     if (vendor == null) {
       vendors.put(vendorClass, vendor = vendorClass.newInstance());
@@ -110,18 +110,18 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     return vendor;
   }
 
-  protected final Connection getConnection(final Class<? extends Vendor> vendorClass) throws IOException, ReflectiveOperationException, SQLException {
-    return getVendor(vendorClass).getConnection();
-  }
-
   @Override
   protected void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
     final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
     for (final FrameworkMethod method : methods) {
       method.validatePublicVoid(isStatic, errors);
-      if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
-        errors.add(new Exception("Method " + method.getName() + " should have no parameters or a " + Connection.class.getName() + " parameter"));
+      checkParameters(method, errors);
     }
+  }
+
+  protected void checkParameters(final FrameworkMethod method, final List<Throwable> errors) {
+    if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
+      errors.add(new Exception("Method " + method.getName() + " should have no parameters or a " + Connection.class.getName() + " parameter"));
   }
 
   private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<FrameworkMethod>();
@@ -130,7 +130,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     final RunIn runIn = method.getMethod().getAnnotation(RunIn.class);
     if (runIn == null || Arrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
       if (method.getMethod().getParameterTypes().length > 0) {
-        try (final Connection connection = getConnection(vendorClass)) {
+        try (final Connection connection = getVendor(vendorClass).getConnection()) {
           logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
           method.invokeExplosively(test, connection);
         }

@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.libx4j.rdb.vendor.DBVendor;
+
 public interface Vendor {
+  public DBVendor getDBVendor();
   public void init() throws IOException, SQLException;
   public Connection getConnection() throws IOException, SQLException;
   public void destroy() throws IOException, SQLException;

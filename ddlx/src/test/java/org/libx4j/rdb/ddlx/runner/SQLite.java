@@ -29,9 +29,15 @@ import org.lib4j.lang.Resource;
 import org.lib4j.lang.Resources;
 import org.lib4j.net.URLs;
 import org.lib4j.sql.ConnectionProxy;
+import org.libx4j.rdb.vendor.DBVendor;
 
 public class SQLite implements Vendor {
   private static final File db = new File("target/generated-test-resources/rdb/sqlite.db");
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.SQLITE;
+  }
 
   @Override
   public synchronized void init() throws IOException, SQLException {

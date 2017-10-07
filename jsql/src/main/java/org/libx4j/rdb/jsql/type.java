@@ -243,6 +243,10 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
+        final int maxUnsignedPrecision = vendor.getDialect().allowsUnsigned() ? 20 : 19;
+        if (precision() > maxUnsignedPrecision)
+          throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + maxUnsignedPrecision + " allowed by " + vendor);
+
         return vendor.getDialect().declareInt64(precision(), unsigned());
       }
 
@@ -403,6 +407,9 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
+      if (precision() > 19)
+        throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of 19 allowed by " + vendor);
+
       return vendor.getDialect().declareInt64(precision(), unsigned());
     }
 
@@ -1312,7 +1319,7 @@ public final class type {
 
       protected UNSIGNED(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
         super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
-        checkScale(scale);
+        checkScale(precision, scale);
         this.scale = (short)scale;
         this.min = min;
         this.max = max;
@@ -1327,7 +1334,7 @@ public final class type {
 
       public UNSIGNED(final int precision, final int scale) {
         super(precision);
-        checkScale(scale);
+        checkScale(precision, scale);
         this.scale = (short)scale;
         this.min = null;
         this.max = null;
@@ -1350,8 +1357,11 @@ public final class type {
         return this;
       }
 
-      private final void checkScale(final int scale) {
-        if (scale > maxScale)
+      private final void checkScale(final int precision, final int scale) {
+        if (precision < scale)
+          throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+
+        if (scale >= 0 && scale > maxScale)
           throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
       }
 
@@ -1377,7 +1387,7 @@ public final class type {
 
       @Override
       protected final int maxPrecision() {
-        return 39;
+        return -1;
       }
 
       @Override
@@ -1392,6 +1402,9 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
+        if (precision() > vendor.getDialect().decimalMaxPrecision())
+          throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + vendor.getDialect().decimalMaxPrecision() + " allowed by " + vendor);
+
         return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
       }
 
@@ -1469,7 +1482,7 @@ public final class type {
 
     protected DECIMAL(final Entity owner, final String name, final BigDecimal _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super BigDecimal> generateOnInsert, final GenerateOn<? super BigDecimal> generateOnUpdate, final boolean keyForUpdate, final int precision, final int scale, final BigDecimal min, final BigDecimal max) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, precision);
-      checkScale(scale);
+      checkScale(precision, scale);
       this.scale = (short)scale;
       this.min = min;
       this.max = max;
@@ -1484,7 +1497,7 @@ public final class type {
 
     public DECIMAL(final int precision, final int scale) {
       super(precision);
-      checkScale(scale);
+      checkScale(precision, scale);
       this.scale = (short)scale;
       this.min = null;
       this.max = null;
@@ -1507,8 +1520,11 @@ public final class type {
       return this;
     }
 
-    private final void checkScale(final int scale) {
-      if (scale > maxScale)
+    private final void checkScale(final int precision, final int scale) {
+      if (precision < scale)
+        throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
+
+      if (scale >= 0 && scale > maxScale)
         throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
     }
 
@@ -1534,7 +1550,7 @@ public final class type {
 
     @Override
     protected final int maxPrecision() {
-      return 39;
+      return -1;
     }
 
     @Override
@@ -1549,6 +1565,9 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
+      if (precision() > vendor.getDialect().decimalMaxPrecision())
+        throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + vendor.getDialect().decimalMaxPrecision() + " allowed by " + vendor);
+
       return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
     }
 
@@ -1648,16 +1667,6 @@ public final class type {
       public final UNSIGNED set(final DOUBLE.UNSIGNED value) {
         super.set(value);
         return this;
-      }
-
-      @Override
-      protected final short precision() {
-        return 19;
-      }
-
-      @Override
-      protected final short scale() {
-        return 16;
       }
 
       @Override
@@ -1769,16 +1778,6 @@ public final class type {
     public final DOUBLE set(final DOUBLE value) {
       super.set(value);
       return this;
-    }
-
-    @Override
-    protected final short precision() {
-      return 19;
-    }
-
-    @Override
-    protected final short scale() {
-      return 16;
     }
 
     @Override
@@ -2005,16 +2004,6 @@ public final class type {
       }
 
       @Override
-      protected final short precision() {
-        return 10;
-      }
-
-      @Override
-      protected final short scale() {
-        return 16;
-      }
-
-      @Override
       protected final boolean unsigned() {
         return true;
       }
@@ -2126,16 +2115,6 @@ public final class type {
     @Override
     public final Float max() {
       return max;
-    }
-
-    @Override
-    protected final short precision() {
-      return 10;
-    }
-
-    @Override
-    protected final short scale() {
-      return 16;
     }
 
     @Override
@@ -2833,8 +2812,6 @@ public final class type {
       super();
     }
 
-    protected abstract short precision();
-    protected abstract short scale();
     protected abstract boolean unsigned();
     public abstract T min();
     public abstract T max();
@@ -2936,25 +2913,25 @@ public final class type {
       }
     }
 
-    private final void checkPrecision(final Integer precision) {
-      if (precision != null && precision > maxPrecision())
-        throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
+    public final short precision() {
+      return precision.shortValue();
     }
 
+    protected abstract short scale();
     protected abstract T minValue();
     protected abstract T maxValue();
     protected abstract int maxPrecision();
+
+    private final void checkPrecision(final Integer precision) {
+      if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
+        throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
+    }
 
     protected final double checkValue(final double value) {
       if (value < minValue().doubleValue() || maxValue().doubleValue() < value)
         throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
 
       return value;
-    }
-
-    @Override
-    public final short precision() {
-      return precision.shortValue();
     }
 
     @Override

@@ -28,9 +28,9 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 
 public abstract class Dialect {
-  protected static void checkValidNumber(final short precision, final short scale) {
+  protected static void checkValidNumber(final int precision, final short scale) {
     if (precision < scale)
-      throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,S), M must be >= S.");
+      throw new IllegalArgumentException("[ERROR] ERROR 1427 (42000): For decimal(M,S), M [" + precision + "] must be >= S [" + scale + "].");
   }
 
   public static String getTypeName(final String tableName, final String columnName) {
@@ -68,10 +68,13 @@ public abstract class Dialect {
 
   protected abstract DBVendor getVendor();
 
+  public abstract int decimalMaxPrecision();
+  public abstract boolean allowsUnsigned();
+
   public abstract String declareBoolean();
 
   public abstract String declareFloat(final boolean doublePrecision, final boolean unsigned);
-  public abstract String declareDecimal(final short precision, final short scale, final boolean unsigned);
+  public abstract String declareDecimal(final int precision, final short scale, final boolean unsigned);
 
   public abstract String declareInt8(final short precision, final boolean unsigned);
   public abstract String declareInt16(final short precision, final boolean unsigned);

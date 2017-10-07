@@ -27,6 +27,17 @@ public class MySQLDialect extends Dialect {
     return DBVendor.MY_SQL;
   }
 
+  // https://dev.mysql.com/doc/refman/5.5/en/fixed-point-types.html
+  @Override
+  public int decimalMaxPrecision() {
+    return 65;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return true;
+  }
+
   @Override
   public String declareBoolean() {
     return "BOOLEAN";
@@ -38,7 +49,7 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")" + (unsigned ? " UNSIGNED" : "");
   }

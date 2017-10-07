@@ -27,6 +27,17 @@ public class OracleDialect extends Dialect {
     return DBVendor.ORACLE;
   }
 
+  // https://docs.oracle.com/cd/B19306_01/olap.102/b14346/dml_datatypes002.htm
+  @Override
+  public int decimalMaxPrecision() {
+    return 38;
+  }
+
+  @Override
+  public boolean allowsUnsigned() {
+    return false;
+  }
+
   @Override
   public String declareBoolean() {
     return "NUMBER(1)";
@@ -38,7 +49,7 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final short precision, final short scale, final boolean unsigned) {
+  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
     Dialect.checkValidNumber(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }

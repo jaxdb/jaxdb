@@ -17,6 +17,7 @@
 package org.libx4j.rdb.ddlx;
 
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -146,7 +147,10 @@ abstract class Compiler {
     }
     else if (column instanceof $ddlx_decimal) {
       final $ddlx_decimal type = ($ddlx_decimal)column;
-      ddl.append(getVendor().getDialect().declareDecimal(type._precision$().text().shortValue(), type._scale$().text().shortValue(), type._unsigned$().text()));
+      if (type._precision$().text().intValue() > getVendor().getDialect().decimalMaxPrecision())
+        throw new IllegalArgumentException("DECIMAL precision of " + type._precision$().text().intValue() + " exceeds the max of " + getVendor().getDialect().decimalMaxPrecision() + " allowed by " + getVendor());
+
+      ddl.append(getVendor().getDialect().declareDecimal(type._precision$().text().intValue(), type._scale$().text().shortValue(), type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_date) {
       ddl.append(getVendor().getDialect().declareDate());
@@ -202,8 +206,12 @@ abstract class Compiler {
 
     if (column instanceof $ddlx_bigint) {
       final $ddlx_bigint type = ($ddlx_bigint)column;
+      final int maxUnsignedPrecision = getVendor().getDialect().allowsUnsigned() ? 20 : 19;
+      if (type._unsigned$().text() && type._precision$().text().intValue() > maxUnsignedPrecision)
+        throw new IllegalArgumentException("UNSIGNED BIGINT precision of " + type._precision$().text().intValue() + " exceeds the max of " + maxUnsignedPrecision + " allowed by " + getVendor());
+
       if (!type._unsigned$().text() && type._precision$().text().intValue() > 19)
-        throw new IllegalArgumentException("BIGINT maximum precision [0, 19] exceeded: " + type._precision$().text().intValue());
+        throw new IllegalArgumentException("BIGINT precision of " + type._precision$().text().intValue() + " exceeds the max of 19 allowed by " + getVendor());
 
       return getVendor().getDialect().declareInt64(type._precision$().text().shortValue(), type._unsigned$().text());
     }
@@ -530,12 +538,20 @@ abstract class Compiler {
     return new DropStatement("DROP INDEX IF EXISTS " + indexName);
   }
 
-  private static void checkNumericDefault(final $ddlx_column type, final String defalt, final boolean positive, final Integer precision, final boolean unsigned) {
+  private static void checkNumericDefault(final DBVendor vendor, final $ddlx_column type, final Number defaultValue, final boolean positive, final Integer precision, final boolean unsigned) {
     if (!positive && unsigned)
-      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is negative, but type is declared UNSIGNED");
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
 
-    if (precision != null && defalt.toString().length() > precision)
-      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defalt + " is longer than declared PRECISION " + precision + ")");
+    if (type instanceof $ddlx_bigint) {
+      final BigInteger maxValue = vendor.getDialect().allowsUnsigned() ? BigInteger.valueOf(2).pow(8 * 8) : BigInteger.valueOf(2).pow(8 * 8).divide(BigInteger.valueOf(2));
+      if (((BigInteger)defaultValue).compareTo(maxValue) >= 0)
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is larger than the maximum value of " + maxValue.subtract(BigInteger.ONE) + " allowed by " + vendor);
+    }
+    else if (type instanceof $ddlx_decimal) {
+      final BigDecimal defaultDecimal = (BigDecimal)defaultValue;
+      if (defaultDecimal.precision() > precision)
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is longer than declared PRECISION " + precision);
+    }
   }
 
   protected String $default(final $ddlx_table table, final $ddlx_column column) {
@@ -596,7 +612,7 @@ abstract class Compiler {
       if (defalt == null)
         return null;
 
-      checkNumericDefault(column, defalt.toString(), defalt.compareTo(BigInteger.ZERO) >= 0, precision, unsigned);
+      checkNumericDefault(getVendor(), column, defalt, defalt.compareTo(BigInteger.ZERO) >= 0, precision, unsigned);
       return String.valueOf(defalt);
     }
 
@@ -605,7 +621,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, null, type._unsigned$().text());
+      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text().doubleValue() > 0, null, type._unsigned$().text());
       return type._default$().text().toString();
     }
 
@@ -614,7 +630,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      checkNumericDefault(type, type._default$().text().toString(), type._default$().text().doubleValue() > 0, type._precision$().text().intValue(), type._unsigned$().text());
+      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text().doubleValue() > 0, type._precision$().text().intValue(), type._unsigned$().text());
       return type._default$().text().toString();
     }
 

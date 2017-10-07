@@ -2220,6 +2220,10 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new function.Pow(a, b));
   }
 
+  public static final kind.FLOAT POW(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new function.Pow(a, b));
+  }
+
   public static final type.FLOAT.UNSIGNED POW(final kind.FLOAT.UNSIGNED a, final kind.FLOAT.UNSIGNED b) {
     return new type.FLOAT.UNSIGNED().wrapper(new function.Pow(a, b));
   }
@@ -2230,6 +2234,14 @@ public final class DML {
 
   public static final type.DOUBLE.UNSIGNED POW(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static final type.DOUBLE.UNSIGNED POW(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE.UNSIGNED().wrapper(new function.Pow(a, b));
+  }
+
+  public static final type.DOUBLE POW(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new function.Pow(a, b));
   }
 
   public static final type.DOUBLE.UNSIGNED POW(final kind.INT.UNSIGNED a, final kind.INT.UNSIGNED b) {
@@ -2248,8 +2260,8 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Pow(a, b));
   }
 
-  public static final type.DOUBLE.UNSIGNED POW(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
-    return new type.DOUBLE.UNSIGNED().wrapper(new function.Pow(a, b));
+  public static final type.DECIMAL POW(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Pow(a, b));
   }
 
   public static final type.FLOAT POW(final kind.TINYINT a, final kind.TINYINT b) {
@@ -3452,6 +3464,14 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new function.Mod(a, b));
   }
 
+  public static final type.FLOAT.UNSIGNED MOD(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static final type.FLOAT MOD(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new function.Mod(a, b));
+  }
+
   public static final type.DOUBLE MOD(final kind.DOUBLE a, final kind.DOUBLE b) {
     return (type.DOUBLE)(a instanceof kind.Numeric.UNSIGNED ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.Mod(a, b));
   }
@@ -3468,8 +3488,24 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
   }
 
+  public static final type.DECIMAL.UNSIGNED MOD(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static final type.DECIMAL MOD(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Mod(a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED MOD(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static final type.DOUBLE.UNSIGNED MOD(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE.UNSIGNED().wrapper(new function.Mod(a, b));
+  }
+
+  public static final type.DOUBLE MOD(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new function.Mod(a, b));
   }
 
   public static final type.FLOAT MOD(final kind.TINYINT a, final kind.TINYINT b) {
@@ -4672,6 +4708,14 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new function.Log(a, b));
   }
 
+  public static final type.FLOAT.UNSIGNED LOG(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static final type.FLOAT LOG(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new function.Log(a, b));
+  }
+
   public static final type.DOUBLE LOG(final kind.DOUBLE a, final kind.DOUBLE b) {
     return (type.DOUBLE)(a instanceof kind.Numeric.UNSIGNED ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.Log(a, b));
   }
@@ -4688,8 +4732,24 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
   }
 
+  public static final type.DECIMAL.UNSIGNED LOG(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static final type.DECIMAL LOG(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Log(a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED LOG(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static final type.DOUBLE.UNSIGNED LOG(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE.UNSIGNED().wrapper(new function.Log(a, b));
+  }
+
+  public static final type.DOUBLE LOG(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new function.Log(a, b));
   }
 
   public static final type.FLOAT LOG(final kind.TINYINT a, final kind.TINYINT b) {
@@ -5864,6 +5924,14 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new function.Atan2(a, b));
   }
 
+  public static final type.FLOAT ATAN2(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT().wrapper(new function.Atan2(a, b));
+  }
+
+  public static final type.FLOAT ATAN2(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new function.Atan2(a, b));
+  }
+
   public static final type.DOUBLE ATAN2(final kind.DOUBLE a, final kind.DOUBLE b) {
     return (type.DOUBLE)(a instanceof kind.Numeric.UNSIGNED ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new function.Atan2(a, b));
   }
@@ -5880,8 +5948,24 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Atan2(a, b));
   }
 
+  public static final type.DECIMAL ATAN2(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
+  public static final type.DECIMAL ATAN2(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new function.Atan2(a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED ATAN2(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new function.Atan2(a, b));
+  }
+
+  public static final type.DOUBLE ATAN2(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE().wrapper(new function.Atan2(a, b));
+  }
+
+  public static final type.DOUBLE ATAN2(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new function.Atan2(a, b));
   }
 
   public static final type.FLOAT ATAN2(final kind.TINYINT a, final kind.TINYINT b) {
@@ -7086,12 +7170,36 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static final type.FLOAT ADD(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static final type.FLOAT ADD(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static final type.DECIMAL.UNSIGNED ADD(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
+  public static final type.DECIMAL ADD(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static final type.DECIMAL ADD(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED ADD(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static final type.DOUBLE ADD(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
+  }
+
+  public static final type.DOUBLE ADD(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
   }
 
   public static final type.TINYINT ADD(final kind.TINYINT a, final kind.TINYINT b) {
@@ -8398,12 +8506,36 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static final type.FLOAT SUB(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static final type.FLOAT SUB(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static final type.DECIMAL.UNSIGNED SUB(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
+  public static final type.DECIMAL SUB(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static final type.DECIMAL SUB(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED SUB(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static final type.DOUBLE SUB(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
+  }
+
+  public static final type.DOUBLE SUB(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.MINUS, a, b));
   }
 
   public static final type.TINYINT SUB(final kind.TINYINT a, final kind.TINYINT b) {
@@ -9690,12 +9822,36 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static final type.FLOAT MUL(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static final type.FLOAT MUL(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static final type.DECIMAL.UNSIGNED MUL(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL.UNSIGNED b) {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
+  public static final type.DECIMAL MUL(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static final type.DECIMAL MUL(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED MUL(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static final type.DOUBLE MUL(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
+  }
+
+  public static final type.DOUBLE MUL(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.MULTIPLY, a, b));
   }
 
   public static final type.TINYINT MUL(final kind.TINYINT a, final kind.TINYINT b) {
@@ -10974,6 +11130,14 @@ public final class DML {
     return new type.FLOAT.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
+  public static final type.FLOAT DIV(final kind.FLOAT.UNSIGNED a, final kind.FLOAT b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static final type.FLOAT DIV(final kind.FLOAT a, final kind.FLOAT.UNSIGNED b) {
+    return new type.FLOAT().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
   public static final type.DOUBLE DIV(final kind.DOUBLE a, final kind.DOUBLE b) {
     return (type.DOUBLE)(a instanceof kind.Numeric.UNSIGNED && b instanceof kind.Numeric.UNSIGNED ? new type.DOUBLE.UNSIGNED() : new type.DOUBLE()).wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
@@ -10990,8 +11154,24 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
+  public static final type.DECIMAL DIV(final kind.DECIMAL.UNSIGNED a, final kind.DECIMAL b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static final type.DECIMAL DIV(final kind.DECIMAL a, final kind.DECIMAL.UNSIGNED b) {
+    return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
   public static final type.DOUBLE.UNSIGNED DIV(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE.UNSIGNED b) {
     return new type.DOUBLE.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static final type.DOUBLE DIV(final kind.DOUBLE.UNSIGNED a, final kind.DOUBLE b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
+  }
+
+  public static final type.DOUBLE DIV(final kind.DOUBLE a, final kind.DOUBLE.UNSIGNED b) {
+    return new type.DOUBLE().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
   public static final type.FLOAT DIV(final kind.TINYINT a, final kind.TINYINT b) {
