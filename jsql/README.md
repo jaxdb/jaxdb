@@ -560,7 +560,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [hospital.ddlx]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
-[jep215]:(https://bugs.openjdk.java.net/browse/JDK-8051946)
+[jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
 [libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
