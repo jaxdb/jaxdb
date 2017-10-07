@@ -236,7 +236,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="clob">
-    <xs:attribute name="length" use="required">
+    <xs:attribute name="length">
       <xs:simpleType>
         <xs:restriction base="xs:long">
           <xs:minInclusive value="1"/>
@@ -253,7 +253,7 @@
       <xs:simpleType>
         <xs:restriction base="xs:positiveInteger">
           <xs:minInclusive value="1"/>
-          <xs:maxInclusive value="65535"/>
+          <xs:maxInclusive value="2000000000"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -262,7 +262,7 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="blob">
-    <xs:attribute name="length" use="required">
+    <xs:attribute name="length">
       <xs:simpleType>
         <xs:restriction base="xs:long">
           <xs:minInclusive value="1"/>
@@ -307,15 +307,15 @@
   
   <xs:attributeGroup name="decimal">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-    <xs:attribute name="precision" use="required">
+    <xs:attribute name="precision">
       <xs:simpleType>
-        <xs:restriction base="xs:integer">
+        <xs:restriction base="xs:short">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="1000"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="scale" use="required">
+    <xs:attribute name="scale">
       <xs:simpleType>
         <xs:restriction base="xs:short">
           <xs:minInclusive value="0"/>
@@ -349,7 +349,13 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="time">
-    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
+    <xs:attribute name="precision" default="6">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="default" type="dt:localTime"/>
     <xs:attribute name="generateOnInsert">
       <xs:simpleType>
@@ -368,7 +374,13 @@
   </xs:attributeGroup>
 
   <xs:attributeGroup name="dateTime">
-    <xs:attribute name="precision" type="xs:nonNegativeInteger" default="6"/>
+    <xs:attribute name="precision" default="6">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
     <xs:attribute name="default" type="dt:localDateTime"/>
   </xs:attributeGroup>
 

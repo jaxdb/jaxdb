@@ -27,14 +27,8 @@ public class DerbyDialect extends Dialect {
     return DBVendor.DERBY;
   }
 
-  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public int decimalMaxPrecision() {
-    return 31;
-  }
-
-  @Override
-  public boolean allowsUnsigned() {
+  public boolean allowsUnsignedNumeric() {
     return false;
   }
 
@@ -48,50 +42,92 @@ public class DerbyDialect extends Dialect {
     return doublePrecision ? "DOUBLE" : "FLOAT";
   }
 
+  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
-    Dialect.checkValidNumber(precision, scale);
+  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 5;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }
 
+  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
   @Override
-  public String declareInt8(final short precision, final boolean unsigned) {
+  public short decimalMaxPrecision() {
+    return 31;
+  }
+
+  @Override
+  protected Integer decimalMaxScale() {
+    return null;
+  }
+
+  @Override
+  protected String declareInt8(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  public String declareInt16(final short precision, final boolean unsigned) {
+  protected String declareInt16(final byte precision, final boolean unsigned) {
     return unsigned ? "INTEGER" : "SMALLINT";
   }
 
   @Override
-  public String declareInt32(final short precision, final boolean unsigned) {
+  protected String declareInt32(final byte precision, final boolean unsigned) {
     return unsigned ? "BIGINT" : "INTEGER";
   }
 
   @Override
-  public String declareInt64(final short precision, final boolean unsigned) {
+  protected String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT";
   }
 
   @Override
-  public String declareBinary(final boolean varying, final long length) {
-    return "CHAR" + (varying ? " VARYING" : "") + "(" + length + ") FOR BIT DATA";
+  protected String declareBinary(final boolean varying, final int length) {
+    return (varying ? "VAR" : "") + "CHAR(" + length + ") FOR BIT DATA";
+  }
+
+  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj30118.html
+  @Override
+  protected Integer binaryMaxLength() {
+    return 32700;
   }
 
   @Override
-  public String declareChar(final boolean varying, final long length) {
+  protected String declareBlob(final Long length) {
+    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  }
+
+  // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
+  @Override
+  protected Long blobMaxLength() {
+    return 2147483647l;
+  }
+
+  @Override
+  protected String declareChar(final boolean varying, final int length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 
+  // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj41207.html
   @Override
-  public String declareClob(final long length) {
-    return "CLOB(" + length + ")";
+  protected Integer charMaxLength() {
+    return 32672;
   }
 
   @Override
-  public String declareBlob(final long length) {
-    return "BLOB" + "(" + length + ")";
+  protected String declareClob(final Long length) {
+    return "CLOB" + (length != null ? "(" + length + ")" : "");
+  }
+
+  // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
+  @Override
+  protected Long clobMaxLength() {
+    return 2147483647l;
   }
 
   @Override
@@ -100,12 +136,12 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final short precision) {
+  public String declareDateTime(final byte precision) {
     return "TIMESTAMP";
   }
 
   @Override
-  public String declareTime(final short precision) {
+  public String declareTime(final byte precision) {
     return "TIME";
   }
 

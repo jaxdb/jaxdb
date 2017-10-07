@@ -190,7 +190,7 @@ public final class type {
         this.max = null;
       }
 
-      protected UNSIGNED() {
+      public UNSIGNED() {
         super(-1);
         this.min = null;
         this.max = null;
@@ -243,11 +243,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        final int maxUnsignedPrecision = vendor.getDialect().allowsUnsigned() ? 20 : 19;
-        if (precision() > maxUnsignedPrecision)
-          throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + maxUnsignedPrecision + " allowed by " + vendor);
-
-        return vendor.getDialect().declareInt64(precision(), unsigned());
+        return vendor.getDialect().compileInt64((byte)precision(), unsigned());
       }
 
       @Override
@@ -354,7 +350,7 @@ public final class type {
       this.max = null;
     }
 
-    protected BIGINT() {
+    public BIGINT() {
       super(null);
       this.min = null;
       this.max = null;
@@ -407,10 +403,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      if (precision() > 19)
-        throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of 19 allowed by " + vendor);
-
-      return vendor.getDialect().declareInt64(precision(), unsigned());
+      return vendor.getDialect().compileInt64((byte)precision(), unsigned());
     }
 
     @Override
@@ -491,7 +484,7 @@ public final class type {
     private final int length;
     private final boolean varying;
 
-    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final int length, final boolean varying) {
+    protected BINARY(final Entity owner, final String name, final byte[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final Integer length, final boolean varying) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
@@ -520,9 +513,9 @@ public final class type {
       set(value);
     }
 
-    protected final void checkLength(final int length) {
-      if (length <= 0 || length > 65535)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
+    private final void checkLength(final int length) {
+      if (length <= 0)
+        throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
     }
 
     public final int length() {
@@ -540,7 +533,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareBinary(varying, length());
+      return vendor.getDialect().compileBinary(varying, length);
     }
 
     @Override
@@ -599,7 +592,7 @@ public final class type {
   public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB {
     protected static final Class<InputStream> type = InputStream.class;
 
-    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final long length) {
+    protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
@@ -611,8 +604,12 @@ public final class type {
       super(length);
     }
 
+    public BLOB() {
+      super((Long)null);
+    }
+
     public BLOB(final InputStream value) {
-      super(4294967296l);
+      super((Long)null);
       set(value);
     }
 
@@ -623,7 +620,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareBlob(length());
+      return vendor.getDialect().compileBlob(length());
     }
 
     @Override
@@ -780,18 +777,18 @@ public final class type {
     }
 
     public CHAR(final String value) {
-      this(65535, true);
+      this(value.length(), true);
       set(value);
-    }
-
-    protected CHAR() {
-      super(null);
-      this.varying = true;
     }
 
     public final CHAR set(final CHAR value) {
       super.set(value);
       return this;
+    }
+
+    protected CHAR() {
+      super(null);
+      this.varying = true;
     }
 
     protected final void checkLength(final int length) {
@@ -805,7 +802,10 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareChar(varying, length());
+      if (length() == null)
+        throw new UnsupportedOperationException("Cannot declare a CHAR with null length");
+
+      return vendor.getDialect().compileChar(varying, length());
     }
 
     @Override
@@ -847,7 +847,7 @@ public final class type {
   public static final class CLOB extends LargeObject<Reader> implements kind.CLOB {
     protected static final Class<Reader> type = Reader.class;
 
-    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final long length) {
+    protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate, length);
     }
 
@@ -860,8 +860,12 @@ public final class type {
     }
 
     public CLOB(final Reader value) {
-      super(4294967296l);
+      super((Long)null);
       set(value);
+    }
+
+    public CLOB() {
+      super((Long)null);
     }
 
     public final CLOB set(final CLOB value) {
@@ -871,7 +875,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareClob(length());
+      return vendor.getDialect().compileClob(length());
     }
 
     @Override
@@ -1191,13 +1195,13 @@ public final class type {
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
     protected static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
-    private static final short DEFAULT_PRECISION = 6;
+    private static final byte DEFAULT_PRECISION = 6;
 
-    private final short precision;
+    private final byte precision;
 
     protected DATETIME(final Entity owner, final String name, final LocalDateTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDateTime> generateOnInsert, final GenerateOn<? super LocalDateTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      this.precision = (short)precision;
+      this.precision = (byte)precision;
     }
 
     protected DATETIME(final DATETIME copy) {
@@ -1207,7 +1211,7 @@ public final class type {
 
     public DATETIME(final int precision) {
       super();
-      this.precision = (short)precision;
+      this.precision = (byte)precision;
     }
 
     public DATETIME() {
@@ -1311,7 +1315,6 @@ public final class type {
   public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
     public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
       protected static final Class<BigDecimal> type = BigDecimal.class;
-      private static final BigDecimal maxValue = new BigDecimal("340282366920938463463374607431768211455");
 
       private final Short scale;
       private final BigDecimal min;
@@ -1340,16 +1343,16 @@ public final class type {
         this.max = null;
       }
 
-      protected UNSIGNED() {
+      public UNSIGNED(final BigDecimal value) {
+        this(value.precision(), value.scale());
+        set(value);
+      }
+
+      public UNSIGNED() {
         super(null);
         this.scale = null;
         this.min = null;
         this.max = null;
-      }
-
-      public UNSIGNED(final BigDecimal value) {
-        this(value.precision(), value.scale());
-        set(value);
       }
 
       public final UNSIGNED set(final DECIMAL.UNSIGNED value) {
@@ -1382,7 +1385,7 @@ public final class type {
 
       @Override
       protected final BigDecimal maxValue() {
-        return maxValue;
+        return null;
       }
 
       @Override
@@ -1402,9 +1405,6 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        if (precision() > vendor.getDialect().decimalMaxPrecision())
-          throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + vendor.getDialect().decimalMaxPrecision() + " allowed by " + vendor);
-
         return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
       }
 
@@ -1448,13 +1448,6 @@ public final class type {
         throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
       }
 
-      protected final BigDecimal checkValue(final BigDecimal value) {
-        if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
-          throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-
-        return value;
-      }
-
       @Override
       public final int compareTo(final DataType<? extends Number> o) {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
@@ -1472,8 +1465,6 @@ public final class type {
     }
 
     protected static final Class<BigDecimal> type = BigDecimal.class;
-    private static final BigDecimal minValue = new BigDecimal("-170141183460469231731687303715884105728");
-    private static final BigDecimal maxValue = new BigDecimal("170141183460469231731687303715884105727");
     private static final byte maxScale = 38;
 
     private final Short scale;
@@ -1503,16 +1494,16 @@ public final class type {
       this.max = null;
     }
 
-    protected DECIMAL() {
+    public DECIMAL(final BigDecimal value) {
+      this(value.precision(), value.scale());
+      set(value);
+    }
+
+    public DECIMAL() {
       super(null);
       this.scale = null;
       this.min = null;
       this.max = null;
-    }
-
-    public DECIMAL(final BigDecimal value) {
-      this(value.precision(), value.scale());
-      set(value);
     }
 
     public final DECIMAL set(final DECIMAL value) {
@@ -1540,12 +1531,12 @@ public final class type {
 
     @Override
     protected final BigDecimal minValue() {
-      return minValue;
+      return null;
     }
 
     @Override
     protected final BigDecimal maxValue() {
-      return maxValue;
+      return null;
     }
 
     @Override
@@ -1565,9 +1556,6 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      if (precision() > vendor.getDialect().decimalMaxPrecision())
-        throw new IllegalArgumentException(getShortName(getClass()) + " precision of " + precision() + " exceeds the max of " + vendor.getDialect().decimalMaxPrecision() + " allowed by " + vendor);
-
       return vendor.getDialect().declareDecimal(precision(), scale(), unsigned());
     }
 
@@ -1609,13 +1597,6 @@ public final class type {
         return new DECIMAL(Math.max(precision(), ((ExactNumeric<?>)dataType).precision()) + 1, scale());
 
       throw new IllegalArgumentException("type." + getClass().getSimpleName() + " cannot be scaled against type." + dataType.getClass().getSimpleName());
-    }
-
-    protected final BigDecimal checkValue(final BigDecimal value) {
-      if (value.compareTo(minValue()) == -1 || maxValue().compareTo(value) == 1)
-        throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-
-      return value;
     }
 
     @Override
@@ -2189,7 +2170,7 @@ public final class type {
   }
 
   public static abstract class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
-    private final long length;
+    private final Long length;
 
     protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
@@ -2202,18 +2183,18 @@ public final class type {
       this.length = copy.length;
     }
 
-    protected LargeObject(final long length) {
+    protected LargeObject(final Long length) {
       super();
       this.length = length;
     }
 
-    public final long length() {
+    public final Long length() {
       return length;
     }
 
-    private final void checkLength(final long length) {
-      if (length <= 0 || length > 4294967295l)
-        throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 4294967295] exceeded: " + length);
+    private final void checkLength(final Long length) {
+      if (length != null && length <= 0)
+        throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
     }
   }
 
@@ -2242,15 +2223,15 @@ public final class type {
         this.max = null;
       }
 
-      protected UNSIGNED() {
-        super(null);
-        this.min = null;
-        this.max = null;
-      }
-
       public UNSIGNED(final Long value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public UNSIGNED() {
+        super(null);
+        this.min = null;
+        this.max = null;
       }
 
       public final UNSIGNED set(final INT.UNSIGNED value) {
@@ -2295,7 +2276,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getDialect().declareInt32(precision(), unsigned());
+        return vendor.getDialect().compileInt32((byte)precision(), unsigned());
       }
 
       @Override
@@ -2385,15 +2366,15 @@ public final class type {
       this.max = null;
     }
 
-    protected INT() {
-      super(null);
-      this.min = null;
-      this.max = null;
-    }
-
     public INT(final Integer value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public INT() {
+      super(null);
+      this.min = null;
+      this.max = null;
     }
 
     public final INT set(final INT value) {
@@ -2438,7 +2419,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareInt32(precision(), unsigned());
+      return vendor.getDialect().compileInt32((byte)precision(), unsigned());
     }
 
     @Override
@@ -2530,15 +2511,15 @@ public final class type {
         this.max = null;
       }
 
-      protected UNSIGNED() {
-        super(null);
-        this.min = null;
-        this.max = null;
-      }
-
       public UNSIGNED(final Integer value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public UNSIGNED() {
+        super(null);
+        this.min = null;
+        this.max = null;
       }
 
       public final UNSIGNED set(final SMALLINT.UNSIGNED value) {
@@ -2583,7 +2564,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getDialect().declareInt32(precision(), unsigned());
+        return vendor.getDialect().compileInt16((byte)precision(), unsigned());
       }
 
       @Override
@@ -2676,15 +2657,15 @@ public final class type {
       this.max = null;
     }
 
-    protected SMALLINT() {
-      super(null);
-      this.min = null;
-      this.max = null;
-    }
-
     public SMALLINT(final Short value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public SMALLINT() {
+      super(null);
+      this.min = null;
+      this.max = null;
     }
 
     public final SMALLINT set(final SMALLINT value) {
@@ -2729,7 +2710,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareInt32(precision(), unsigned());
+      return vendor.getDialect().compileInt16((byte)precision(), unsigned());
     }
 
     @Override
@@ -2927,11 +2908,9 @@ public final class type {
         throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
     }
 
-    protected final double checkValue(final double value) {
-      if (value < minValue().doubleValue() || maxValue().doubleValue() < value)
+    protected final void checkValue(final double value) {
+      if (minValue() != null && value < minValue().doubleValue() || maxValue() != null && maxValue().doubleValue() < value)
         throw new IllegalArgumentException(getShortName(getClass()) + " value range [" + minValue() + ", " + maxValue() + "] exceeded: " + value);
-
-      return value;
     }
 
     @Override
@@ -2969,15 +2948,15 @@ public final class type {
         this.max = null;
       }
 
-      protected UNSIGNED() {
-        super(null);
-        this.min = null;
-        this.max = null;
-      }
-
       public UNSIGNED(final Short value) {
         this(Numbers.precision(value));
         set(value);
+      }
+
+      public UNSIGNED() {
+        super(null);
+        this.min = null;
+        this.max = null;
       }
 
       public final UNSIGNED set(final TINYINT.UNSIGNED value) {
@@ -3022,7 +3001,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getDialect().declareInt8(precision(), unsigned());
+        return vendor.getDialect().compileInt8((byte)precision(), unsigned());
       }
 
       @Override
@@ -3121,15 +3100,15 @@ public final class type {
       this.max = null;
     }
 
-    protected TINYINT() {
-      super(null);
-      this.min = null;
-      this.max = null;
-    }
-
     public TINYINT(final Byte value) {
       this(Numbers.precision(value));
       set(value);
+    }
+
+    public TINYINT() {
+      super(null);
+      this.min = null;
+      this.max = null;
     }
 
     public final TINYINT set(final TINYINT value) {
@@ -3174,7 +3153,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareInt8(precision(), unsigned());
+      return vendor.getDialect().compileInt8((byte)precision(), unsigned());
     }
 
     @Override
@@ -3351,13 +3330,13 @@ public final class type {
   public static final class TIME extends Temporal<LocalTime> implements kind.TIME {
     protected static final Class<LocalTime> type = LocalTime.class;
 
-    private static final short DEFAULT_PRECISION = 6;
+    private static final byte DEFAULT_PRECISION = 6;
 
-    private final short precision;
+    private final byte precision;
 
     protected TIME(final Entity owner, final String name, final LocalTime _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalTime> generateOnInsert, final GenerateOn<? super LocalTime> generateOnUpdate, final boolean keyForUpdate, final int precision) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
-      this.precision = (short)precision;
+      this.precision = (byte)precision;
     }
 
     protected TIME(final TIME copy) {
@@ -3367,7 +3346,7 @@ public final class type {
 
     public TIME(final int precision) {
       super();
-      this.precision = (short)precision;
+      this.precision = (byte)precision;
     }
 
     public TIME() {

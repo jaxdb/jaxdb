@@ -18,7 +18,6 @@ package org.libx4j.rdb.ddlx;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -46,7 +45,7 @@ public abstract class DDLxTest {
       if (table._column() != null)
         for (final $ddlx_column column : table._column())
           if (column instanceof $ddlx_decimal)
-            (($ddlx_decimal)column)._precision$().text(BigInteger.valueOf(dialect.decimalMaxPrecision()));
+            (($ddlx_decimal)column)._precision$(new $ddlx_decimal._precision$(dialect.decimalMaxPrecision()));
 
     Schemas.recreate(connection, schema);
   }

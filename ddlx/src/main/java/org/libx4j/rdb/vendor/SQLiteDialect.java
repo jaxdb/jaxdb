@@ -27,14 +27,8 @@ public class SQLiteDialect extends Dialect {
     return DBVendor.SQLITE;
   }
 
-  // http://www.sqlite.org/datatype3.html
   @Override
-  public int decimalMaxPrecision() {
-    return 15;
-  }
-
-  @Override
-  public boolean allowsUnsigned() {
+  public boolean allowsUnsignedNumeric() {
     return false;
   }
 
@@ -49,49 +43,86 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
-    Dialect.checkValidNumber(precision, scale);
-    return "DECIMAL(" + precision + ", " + scale + ")";
+  public String declareDecimal(Short precision, final Short scale, final boolean unsigned) {
+    if (precision == null && scale != null)
+      precision = scale;
+
+    assertValidDecimal(precision, scale);
+    return precision == null ? "DECIMAL" : "DECIMAL(" + precision + ", " + (scale != null ? scale : 0) + ")";
+  }
+
+  // http://www.sqlite.org/datatype3.html
+  @Override
+  public short decimalMaxPrecision() {
+    return 15;
   }
 
   @Override
-  public String declareInt8(final short precision, final boolean unsigned) {
+  protected Integer decimalMaxScale() {
+    return null;
+  }
+
+  @Override
+  protected String declareInt8(final byte precision, final boolean unsigned) {
     return "TINYINT";
   }
 
   @Override
-  public String declareInt16(final short precision, final boolean unsigned) {
+  protected String declareInt16(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  public String declareInt32(final short precision, final boolean unsigned) {
+  protected String declareInt32(final byte precision, final boolean unsigned) {
     return precision < 8 ? "MEDIUMINT" : "INT";
   }
 
   @Override
-  public String declareInt64(final short precision, final boolean unsigned) {
+  protected String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT" + (unsigned ? " UNSIGNED" : "");
   }
 
+  // FIXME: Could not find a definitive spec for BINARY/BLOB
   @Override
-  public String declareBinary(final boolean varying, final long length) {
-    return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
+  protected String declareBinary(final boolean varying, final int length) {
+    return "BINARY" + "(" + length + ")";
+  }
+
+  // https://sqlite.org/limits.html#max_length
+  @Override
+  protected Integer binaryMaxLength() {
+    return null;
   }
 
   @Override
-  public String declareChar(final boolean varying, final long length) {
+  protected String declareBlob(final Long length) {
+    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  }
+
+  @Override
+  protected Long blobMaxLength() {
+    return null;
+  }
+
+  @Override
+  protected String declareChar(final boolean varying, final int length) {
     return (varying ? "VARCHAR" : "CHARACTER") + "(" + length + ")";
   }
 
+  // QLite does not impose any length restrictions (other than the large global SQLITE_MAX_LENGTH limit) on the length of strings, BLOBs or numeric values.
   @Override
-  public String declareClob(final long length) {
-    return "TEXT";
+  protected Integer charMaxLength() {
+    return null;
   }
 
   @Override
-  public String declareBlob(final long length) {
-    return "BLOB(" + length + ")";
+  protected String declareClob(final Long length) {
+    return "TEXT" + (length != null ? "(" + length + ")" : "");
+  }
+
+  @Override
+  protected Long clobMaxLength() {
+    return null;
   }
 
   @Override
@@ -100,12 +131,12 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final short precision) {
+  public String declareDateTime(final byte precision) {
     return "DATETIME";
   }
 
   @Override
-  public String declareTime(final short precision) {
+  public String declareTime(final byte precision) {
     return "TIME";
   }
 

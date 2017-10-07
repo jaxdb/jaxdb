@@ -16,8 +16,6 @@
 
 package org.libx4j.rdb.vendor;
 
-import java.util.List;
-
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 
@@ -27,14 +25,8 @@ public class DB2Dialect extends Dialect {
     return DBVendor.DB2;
   }
 
-  // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
   @Override
-  public int decimalMaxPrecision() {
-    return 31;
-  }
-
-  @Override
-  public boolean allowsUnsigned() {
+  public boolean allowsUnsignedNumeric() {
     return false;
   }
 
@@ -48,82 +40,116 @@ public class DB2Dialect extends Dialect {
     return doublePrecision ? "DOUBLE" : "FLOAT";
   }
 
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000791.html
   @Override
-  public String declareDecimal(final int precision, final short scale, final boolean unsigned) {
-    Dialect.checkValidNumber(precision, scale);
+  public String declareDecimal(Short precision, Short scale, final boolean unsigned) {
+    if (precision == null)
+      precision = 31;
+
+    if (scale == null)
+      scale = 0;
+
+    assertValidDecimal(precision, scale);
     return "DECIMAL(" + precision + ", " + scale + ")";
   }
 
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
   @Override
-  public String declareInt8(final short precision, final boolean unsigned) {
-    return "SMALLINT";
+  public short decimalMaxPrecision() {
+    return 31;
   }
 
   @Override
-  public String declareInt16(final short precision, final boolean unsigned) {
-    return unsigned ? "INTEGER" : "SMALLINT";
+  protected Integer decimalMaxScale() {
+    return null;
   }
 
   @Override
-  public String declareInt32(final short precision, final boolean unsigned) {
-    return unsigned ? "BIGINT" : "INTEGER";
+  protected String declareInt8(final byte precision, final boolean unsigned) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareInt64(final short precision, final boolean unsigned) {
-    return "BIGINT";
+  protected String declareInt16(final byte precision, final boolean unsigned) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareBinary(final boolean varying, final long length) {
-    return "CHAR" + (varying ? " VARYING" : "") + "(" + length + ") FOR BIT DATA";
+  protected String declareInt32(final byte precision, final boolean unsigned) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+  protected String declareInt64(final byte precision, final boolean unsigned) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareClob(final long length) {
-    return "CLOB(" + length + ")";
+  protected String declareBinary(final boolean varying, final int length) {
+    return "VARBINARY" + "(" + length + ")";
+  }
+
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_10.0.0/sqlref/src/tpc/db2z_bif_varbinary.html
+  @Override
+  protected Integer binaryMaxLength() {
+    return 32704;
   }
 
   @Override
-  public String declareBlob(final long length) {
-    return "BLOB" + "(" + length + ")";
+  protected String declareBlob(final Long length) {
+    return "BLOB" + (length != null ? "(" + length + ")" : "");
+  }
+
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
+  @Override
+  protected Long blobMaxLength() {
+    return 2147483647l;
+  }
+
+  @Override
+  protected String declareChar(final boolean varying, final int length) {
+    return varying && length <= 255 ? "CHAR(" + length + ")" : "VARCHAR(" + length + ")";
+  }
+
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_stringdatatypes.html
+  @Override
+  protected Integer charMaxLength() {
+    return 32704;
+  }
+
+  @Override
+  protected String declareClob(final Long length) {
+    return "CLOB" + (length != null ? "(" + length + ")" : "");
+  }
+
+  // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
+  @Override
+  protected Long clobMaxLength() {
+    return 2147483647l;
   }
 
   @Override
   public String declareDate() {
-    return "DATE";
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareDateTime(final short precision) {
-    return "TIMESTAMP";
+  public String declareDateTime(final byte precision) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
-  public String declareTime(final short precision) {
-    return "TIME";
+  public String declareTime(final byte precision) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String declareInterval() {
-    return "INTERVAL";
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
-    if (type._values$().isNull())
-      return "VARCHAR(0)";
-
-    final List<String> enums = Dialect.parseEnum(type._values$().text());
-    int maxLength = 0;
-    for (final String value : enums)
-      maxLength = Math.max(maxLength, value.length());
-
-    return "VARCHAR(" + maxLength + ")";
+    throw new UnsupportedOperationException();
   }
 }
