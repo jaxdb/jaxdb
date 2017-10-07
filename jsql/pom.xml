@@ -109,6 +109,29 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <activation>
+        <property>
+          <name>!maven.test.skip</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.libx4j.rdb</groupId>
+          <artifactId>rdb-dmlx</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.libx4j.rdb</groupId>
+          <artifactId>rdb-ddlx</artifactId>
+          <type>test-jar</type>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.lib4j</groupId>
@@ -128,19 +151,7 @@
     </dependency>
     <dependency>
       <groupId>org.libx4j.rdb</groupId>
-      <artifactId>rdb-dmlx</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.libx4j.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.libx4j.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
-      <type>test-jar</type>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.libx4j.xsb</groupId>
