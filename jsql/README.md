@@ -477,15 +477,33 @@ Specification                                                                   
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|:-------------------------------------------------------:|
 **<a name="numeric_types">&lt;numeric type&gt;</a>** ::=&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;</samp>  | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          | [:white_check_mark:][CastTest]                          |
 
- Type                                  | Bytes                 | Min                                                        | Max                                                                                             | Precision             | Java Type                             |
---------------------------------------:|:----------------------|:-----------------------------------------------------------|:------------------------------------------------------------------------------------------------|:----------------------|:--------------------------------------|
-**<samp>TINYINT<br>.UNSIGNED</samp>**  | <samp>1<br>1</samp>   | <samp>-128<br>0</samp>                                     | <samp>127<br>255</samp>                                                                         | <samp>3<br>3</samp>   | <samp>Byte<br>Short</samp>            |
-**<samp>SMALLINT<br>.UNSIGNED</samp>** | <samp>2<br>2</samp>   | <samp>-32768<br>0</samp>                                   | <samp>32767<br>64535</samp>                                                                     | <samp>5<br>5</samp>   | <samp>Short<br>Integer</samp>         |
-**<samp>INT<br>.UNSIGNED</samp>**      | <samp>4<br>4</samp>   | <samp>-2147483648<br>0</samp>                              | <samp>2147483647<br>4294967295</samp>                                                           | <samp>10<br>10</samp> | <samp>Integer<br>Long</samp>          |
-**<samp>BIGINT<br>.UNSIGNED</samp>**   | <samp>8<br>8</samp>   | <samp>-9223372036854775808<br>0</samp>                     | <samp>9223372036854775807<br>18446744073709551615</samp>                                        | <samp>19<br>20</samp> | <samp>Long<br>BigInteger</samp>       |
-**<samp>FLOAT<br>.UNSIGNED</samp>**    | <samp>4<br>4</samp>   | <samp>-3.4028235E+38<br>0</samp>                           | <samp>3.4028235E+38<br>3.4028235E+38</samp>                                                     | <samp>6<br>6</samp>   | <samp>Float<br>Float</samp>           |
-**<samp>DOUBLE<br>.UNSIGNED</samp>**   | <samp>8<br>8</samp>   | <samp>-1.7976931348623E+308<br>0</samp>                    | <samp>1.7976931348623E+308<br>1.7976931348623E+308</samp>                                       | <samp>15<br>15</samp> | <samp>Double<br>Double</samp>         |
-**<samp>DECIMAL<br>.UNSIGNED</samp>**  | <samp>16<br>16</samp> | <samp>-170141183460469231731687303715884105728<br>0</samp> | <samp>170141183460469231731687303715884105727<br>340282366920938463463374607431768211455</samp> | <samp>39<br>39</samp> | <samp>BigDecimal<br>BigDecimal</samp> |
+ Type                                  | Bytes                 | Min                                                        | Max                                                                                             | Precision             | Java Type                               |
+--------------------------------------:|:----------------------|:-----------------------------------------------------------|:------------------------------------------------------------------------------------------------|:----------------------|:----------------------------------------|
+**<samp>TINYINT<br>.UNSIGNED</samp>**  | <samp>1<br>1\*</samp> | <samp>-128<br>0\*</samp>                                   | <samp>127<br>255\*</samp>                                                                       | <samp>3<br>3\*</samp>   | <samp>Byte<br>Short</samp>            |
+**<samp>SMALLINT<br>.UNSIGNED</samp>** | <samp>2<br>2\*</samp> | <samp>-32768<br>0\*</samp>                                 | <samp>32767<br>64535\*</samp>                                                                   | <samp>5<br>5\*</samp>   | <samp>Short<br>Integer</samp>         |
+**<samp>INT<br>.UNSIGNED</samp>**      | <samp>4<br>4\*</samp> | <samp>-2147483648<br>0\*</samp>                            | <samp>2147483647<br>4294967295\*</samp>                                                         | <samp>10<br>10\*</samp> | <samp>Integer<br>Long</samp>          |
+**<samp>BIGINT<br>.UNSIGNED</samp>**   | <samp>8<br>8\*</samp> | <samp>-9223372036854775808<br>0\*</samp>                   | <samp>9223372036854775807<br>18446744073709551615\*</samp>                                      | <samp>19<br>20\*</samp> | <samp>Long<br>BigInteger</samp>       |
+**<samp>FLOAT<br>.UNSIGNED</samp>**    | <samp>4<br>4\*</samp> | <samp>-3.4028235E+38<br>0\*</samp>                         | <samp>3.4028235E+38<br>3.4028235E+38\*</samp>                                                   | <samp>6<br>6\*</samp>   | <samp>Float<br>Float</samp>           |
+**<samp>DOUBLE<br>.UNSIGNED</samp>**   | <samp>8<br>8\*</samp> | <samp>-1.7976931348623E+308<br>0\*</samp>                  | <samp>1.7976931348623E+308<br>1.7976931348623E+308\*</samp>                                     | <samp>15<br>15\*</samp> | <samp>Double<br>Double</samp>         |
+**<samp>DECIMAL<br>.UNSIGNED</samp>**  | <samp>@<br>@</samp>   | <samp>@<br>@</samp>                                        | <samp>@<br>@</samp>                                                                             | <samp>@<br>@</samp>     | <samp>BigDecimal<br>BigDecimal</samp> |
+
+<br>
+
+   **`*`** For vendors that do not support UNSIGNED types, the maximum value bounds are constrained by the value bounds of the signed limit.
+
+   **`@`** <samp>DECIMAL</samp> precision, scale and value ranges varry with each vendor. This type's bounds in RDB are therefore vendor specific. Refer to the following table for vendor-specific limits.
+
+<br>
+
+ Vendor                       | Supports<br>Unsigned | DECIMAL<br>[precision, (scale)]                                         |
+-----------------------------:|:--------------------:|:------------------------------------------------------------------------|
+<samp>Derby</samp>            | <samp>No</samp>      | <samp>[[0-31, (0-precision)]][derby-decimal]</samp>                     |
+<samp>SQLite</samp>           | <samp>No</samp>      | <samp>[[0-15, (0-precision)]][sqltile-decial]</samp>                    |
+<samp>MySQL<br>MariaDB</samp> | <samp>Yes</samp>     | <samp>[[0-65, (0-precision)]][mysql-decimal]</samp>                     |
+<samp>PostgreSQL</samp>       | <samp>No</samp>      | <samp>[[0-1000, (0-precision)] explicit<br>[0-131072, (0-(precision &lt; 16384))]][postgres-decimal]</samp> |
+<samp>Oracle</samp>           | <samp>No</samp>      | <samp>[[0-38, (0-precision)]][oracle-decimal]</samp>                    |
+<samp>DB2</samp>              | <samp>No</samp>      | <samp>[[0-31, (0-precision)]][db2-decimal]</samp>                       |
+<samp>SQL Server</samp>       | <samp>No</samp>      | <samp>[[0-38, (0-precision)]][sqlserver-decimal]</samp>                 |
 
 <br>
 
@@ -551,6 +569,15 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
+
+[derby-decimal]: https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
+[sqltile-decial]: http://www.sqlite.org/datatype3.html
+[mysql-decimal]: https://dev.mysql.com/doc/refman/5.5/en/fixed-point-types.html
+[postgres-decimal]: https://www.postgresql.org/docs/current/static/datatype-numeric.html
+[oracle-decimal]: https://docs.oracle.com/cd/B19306_01/olap.102/b14346/dml_datatypes002.htm
+[db2-decimal]: https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
+[sqlserver-decimal]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql
+
 
 [BetweenPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BetweenPredicateTest.java
 [BooleanValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
