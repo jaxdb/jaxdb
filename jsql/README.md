@@ -50,7 +50,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 #### Prerequisites
 
-* [Java 8][jdk8-download] - The minimum required JDK version.
+* [Java 9][jdk9-download] - The minimum required JDK version. Java 9 is required due to this framework triggering [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
 * [Maven][maven] - The dependency management system.
 
 #### Example
@@ -559,7 +559,8 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [ddlx]: https://github.com/libx4j/rdb/tree/master/ddlx/
 [hospital.ddlx]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
-[jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
+[jep215]:(https://bugs.openjdk.java.net/browse/JDK-8051946)
 [libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
@@ -571,7 +572,6 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [oracle-decimal]: https://docs.oracle.com/cd/B19306_01/olap.102/b14346/dml_datatypes002.htm
 [db2-decimal]: https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
 [sqlserver-decimal]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql
-
 
 [BetweenPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BetweenPredicateTest.java
 [BooleanValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
