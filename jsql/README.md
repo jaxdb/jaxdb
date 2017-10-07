@@ -129,7 +129,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://commons.lib4j.org/dbcp.xsd"
+    xmlns="http://libx4j.org/dbcp.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="http://libx4j.org/dbcp.xsd http://libx4j.org/dbcp.xsd">
     <jdbc>
@@ -137,36 +137,30 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
       <driverClassName>org.postgresql.Driver</driverClassName>
       <username>basis</username>
       <password>basis</password>
-      <loginTimeout>5000</loginTimeout>
     </jdbc>
     <default>
       <autoCommit>true</autoCommit>
       <readOnly>false</readOnly>
       <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
+      <queryTimeout>1000</queryTimeout>
     </default>
     <size>
       <initialSize>0</initialSize>
-      <maxActive>16</maxActive>
+      <maxTotal>16</maxTotal>
       <maxIdle>16</maxIdle>
       <minIdle>0</minIdle>
-      <maxWait>1000</maxWait>
+      <maxOpenPreparedStatements>10</maxOpenPreparedStatements>
     </size>
-    <management>
-      <timeBetweenEvictionRuns>-1</timeBetweenEvictionRuns>
-      <numTestsPerEvictionRun>3</numTestsPerEvictionRun>
-      <minEvictableIdleTime>1800000</minEvictableIdleTime>
-    </management>
-    <preparedStatements>
-      <poolPreparedStatements>false</poolPreparedStatements>
-      <maxOpenPreparedStatements>-1</maxOpenPreparedStatements>
-    </preparedStatements>
-    <removal>
-      <removeAbandoned>false</removeAbandoned>
-      <removeAbandonedTimeout>300</removeAbandonedTimeout>
-      <logAbandoned>false</logAbandoned>
-    </removal>
+    <pool>
+      <evictor>
+        <timeBetweenRuns>30</timeBetweenRuns>
+        <numTestsPerRun>3</numTestsPerRun>
+        <minIdleTime>1800000</minIdleTime>
+      </evictor>
+      <removeAbandoned on="borrow" timeout="300"/>
+    </pool>
     <logging>
-      <level>ALL</level>
+      <level>TRACE</level>
       <logExpiredConnections>true</logExpiredConnections>
       <logAbandoned>true</logAbandoned>
     </logging>
