@@ -102,7 +102,10 @@ abstract class Compiler {
   }
 
   protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
-    if (subject instanceof type.Entity) {
+    if (subject == null) {
+      compilation.append("NULL");
+    }
+    else if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
       for (int c = 0; c < entity.column.length; c++) {

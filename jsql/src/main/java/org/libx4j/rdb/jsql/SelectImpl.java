@@ -43,7 +43,10 @@ class SelectImpl {
   };
 
   private static void compile(final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Compilable subject) {
-    if (subject instanceof type.Entity) {
+    if (subject == null) {
+      dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(null, -1));
+    }
+    else if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       for (int i = 0; i < entity.column.length; i++)
         dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(entity.column[i], i));
@@ -137,7 +140,7 @@ class SelectImpl {
             if (dataTypePrototype.getValue() == -1) {
               entity = null;
               currentTable = null;
-              dataType = dataTypePrototype.getKey().clone();
+              dataType = dataTypePrototype.getKey() == null ? null : dataTypePrototype.getKey().clone();
               row[index++] = dataType;
             }
             else {
@@ -149,7 +152,8 @@ class SelectImpl {
               dataType = entity.column[dataTypePrototype.getValue()];
             }
 
-            dataType.set(resultSet, i + columnOffset);
+            if (dataType != null)
+              dataType.set(resultSet, i + columnOffset);
           }
         }
         catch (final SQLException e) {
