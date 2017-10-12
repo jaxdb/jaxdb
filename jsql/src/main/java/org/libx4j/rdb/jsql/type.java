@@ -78,6 +78,7 @@ public final class type {
   }
 
   public static final class ARRAY<T> extends DataType<T[]> implements kind.ARRAY<T[]> {
+//    public static final ARRAY<?> NULL = new ARRAY();
     protected final DataType<T> dataType;
 
     protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
@@ -167,6 +168,8 @@ public final class type {
 
   public static final class BIGINT extends ExactNumeric<Long> implements kind.BIGINT {
     public static final class UNSIGNED extends ExactNumeric<BigInteger> implements kind.BIGINT.UNSIGNED {
+      public static final BIGINT.UNSIGNED NULL = new BIGINT.UNSIGNED();
+
       protected static final Class<BigInteger> type = BigInteger.class;
 
       private final BigInteger min;
@@ -191,7 +194,7 @@ public final class type {
       }
 
       public UNSIGNED() {
-        super(-1);
+        super(null);
         this.min = null;
         this.max = null;
       }
@@ -326,6 +329,8 @@ public final class type {
         return o == null ? 1 : value == null && o.value == null ? 0 : Double.compare(value.doubleValue(), o.value.doubleValue());
       }
     }
+
+    public static final BIGINT NULL = new BIGINT();
 
     protected static final Class<Long> type = Long.class;
 
@@ -479,6 +484,8 @@ public final class type {
   }
 
   public static final class BINARY extends DataType<byte[]> implements kind.BINARY {
+    public static final BINARY NULL = new BINARY((byte[])null);
+
     protected static final Class<byte[]> type = byte[].class;
 
     private final int length;
@@ -509,7 +516,9 @@ public final class type {
     }
 
     public BINARY(final byte[] value) {
-      this(value.length, false);
+      super();
+      this.length = value == null ? 0 : value.length;
+      this.varying = false;
       set(value);
     }
 
@@ -590,6 +599,8 @@ public final class type {
   }
 
   public static final class BLOB extends LargeObject<InputStream> implements kind.BLOB {
+    public static final BLOB NULL = new BLOB();
+
     protected static final Class<InputStream> type = InputStream.class;
 
     protected BLOB(final Entity owner, final String name, final InputStream _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super InputStream> generateOnInsert, final GenerateOn<? super InputStream> generateOnUpdate, final boolean keyForUpdate, final Long length) {
@@ -668,6 +679,8 @@ public final class type {
   }
 
   public static class BOOLEAN extends Condition<Boolean> implements kind.BOOLEAN, Comparable<DataType<Boolean>> {
+    public static final BOOLEAN NULL = new BOOLEAN();
+
     protected static final Class<Boolean> type = Boolean.class;
 
     protected BOOLEAN(final Entity owner, final String name, final Boolean _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Boolean> generateOnInsert, final GenerateOn<? super Boolean> generateOnUpdate, final boolean keyForUpdate) {
@@ -751,6 +764,8 @@ public final class type {
   }
 
   public static final class CHAR extends Textual<String> implements kind.CHAR {
+    public static final CHAR NULL = new CHAR();
+
     protected static final Class<String> type = String.class;
 
     private final boolean varying;
@@ -845,6 +860,8 @@ public final class type {
   }
 
   public static final class CLOB extends LargeObject<Reader> implements kind.CLOB {
+    public static final CLOB NULL = new CLOB();
+
     protected static final Class<Reader> type = Reader.class;
 
     protected CLOB(final Entity owner, final String name, final Reader _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super Reader> generateOnInsert, final GenerateOn<? super Reader> generateOnUpdate, final boolean keyForUpdate, final Long length) {
@@ -923,6 +940,8 @@ public final class type {
   }
 
   public static final class DATE extends Temporal<LocalDate> implements kind.DATE {
+    public static final DATE NULL = new DATE();
+
     protected static final Class<LocalDate> type = LocalDate.class;
 
     protected DATE(final Entity owner, final String name, final LocalDate _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super LocalDate> generateOnInsert, final GenerateOn<? super LocalDate> generateOnUpdate, final boolean keyForUpdate) {
@@ -1193,6 +1212,8 @@ public final class type {
   }
 
   public static class DATETIME extends Temporal<LocalDateTime> implements kind.DATETIME {
+    public static final DATETIME NULL = new DATETIME();
+
     protected static final Class<LocalDateTime> type = LocalDateTime.class;
     // FIXME: Is this the correct default? MySQL says that 6 is per the SQL spec, but their own default is 0
     private static final byte DEFAULT_PRECISION = 6;
@@ -1314,6 +1335,8 @@ public final class type {
 
   public static final class DECIMAL extends ExactNumeric<BigDecimal> implements kind.DECIMAL {
     public static final class UNSIGNED extends ExactNumeric<BigDecimal> implements kind.DECIMAL.UNSIGNED {
+      public static final DECIMAL.UNSIGNED NULL = new DECIMAL.UNSIGNED();
+
       protected static final Class<BigDecimal> type = BigDecimal.class;
 
       private final Short scale;
@@ -1463,6 +1486,8 @@ public final class type {
         return new DECIMAL.UNSIGNED(this);
       }
     }
+
+    public static final DECIMAL NULL = new DECIMAL();
 
     protected static final Class<BigDecimal> type = BigDecimal.class;
     private static final byte maxScale = 38;
@@ -1617,6 +1642,8 @@ public final class type {
 
   public static class DOUBLE extends ApproxNumeric<Double> implements kind.DOUBLE {
     public static final class UNSIGNED extends ApproxNumeric<Double> implements kind.DOUBLE.UNSIGNED {
+      public static final DOUBLE.UNSIGNED NULL = new DOUBLE.UNSIGNED();
+
       protected static final Class<Double> type = Double.class;
 
       private final Double min;
@@ -1727,6 +1754,8 @@ public final class type {
         return new DOUBLE.UNSIGNED(this);
       }
     }
+
+    public static final DOUBLE NULL = new DOUBLE();
 
     protected static final Class<Double> type = Double.class;
 
@@ -1840,6 +1869,8 @@ public final class type {
   }
 
   public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
+    public static final ENUM<?> NULL = new ENUM();
+
     private final Class<T> enumType;
 
     private static short calcEnumLength(final Class<?> enumType) {
@@ -1863,6 +1894,11 @@ public final class type {
     public ENUM(final Class<T> enumType) {
       super(calcEnumLength(enumType));
       this.enumType = enumType;
+    }
+
+    private ENUM() {
+      super(null);
+      this.enumType = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -1941,6 +1977,8 @@ public final class type {
 
   public static final class FLOAT extends ApproxNumeric<Float> implements kind.FLOAT {
     public static final class UNSIGNED extends ApproxNumeric<Float> implements kind.FLOAT.UNSIGNED {
+      public static final FLOAT.UNSIGNED NULL = new FLOAT.UNSIGNED();
+
       protected static final Class<Float> type = Float.class;
 
       private final Float min;
@@ -2054,6 +2092,8 @@ public final class type {
         return new FLOAT.UNSIGNED(this);
       }
     }
+
+    public static final FLOAT NULL = new FLOAT();
 
     protected static final Class<Float> type = Float.class;
 
@@ -2200,6 +2240,8 @@ public final class type {
 
   public static final class INT extends ExactNumeric<Integer> implements kind.INT {
     public static final class UNSIGNED extends ExactNumeric<Long> implements kind.INT.UNSIGNED {
+      public static final INT.UNSIGNED NULL = new INT.UNSIGNED();
+
       protected static final Class<Long> type = Long.class;
 
       private final Long min;
@@ -2342,6 +2384,8 @@ public final class type {
         return new INT.UNSIGNED(this);
       }
     }
+
+    public static final INT NULL = new INT();
 
     protected static final Class<Integer> type = Integer.class;
 
@@ -2488,6 +2532,8 @@ public final class type {
 
   public static final class SMALLINT extends ExactNumeric<Short> implements kind.SMALLINT {
     public static final class UNSIGNED extends ExactNumeric<Integer> implements kind.SMALLINT.UNSIGNED {
+      public static final SMALLINT.UNSIGNED NULL = new SMALLINT.UNSIGNED();
+
       protected static final Class<Integer> type = Integer.class;
 
       private final Integer min;
@@ -2633,6 +2679,8 @@ public final class type {
         return new SMALLINT.UNSIGNED(this);
       }
     }
+
+    public static final SMALLINT NULL = new SMALLINT();
 
     protected static final Class<Short> type = Short.class;
 
@@ -2925,6 +2973,8 @@ public final class type {
 
   public static final class TINYINT extends ExactNumeric<Byte> implements kind.TINYINT {
     public static final class UNSIGNED extends ExactNumeric<Short> implements kind.TINYINT.UNSIGNED {
+      public static final TINYINT.UNSIGNED NULL = new TINYINT.UNSIGNED();
+
       protected static final Class<Short> type = Short.class;
 
       private final Short min;
@@ -3076,6 +3126,8 @@ public final class type {
         return new TINYINT.UNSIGNED(this);
       }
     }
+
+    public static final TINYINT NULL = new TINYINT();
 
     protected static final Class<Byte> type = Byte.class;
 
@@ -3328,6 +3380,8 @@ public final class type {
   }
 
   public static final class TIME extends Temporal<LocalTime> implements kind.TIME {
+    public static final TIME NULL = new TIME();
+
     protected static final Class<LocalTime> type = LocalTime.class;
 
     private static final byte DEFAULT_PRECISION = 6;

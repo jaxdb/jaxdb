@@ -43,10 +43,7 @@ class SelectImpl {
   };
 
   private static void compile(final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Compilable subject) {
-    if (subject == null) {
-      dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(null, -1));
-    }
-    else if (subject instanceof type.Entity) {
+    if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       for (int i = 0; i < entity.column.length; i++)
         dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(entity.column[i], i));
@@ -140,7 +137,7 @@ class SelectImpl {
             if (dataTypePrototype.getValue() == -1) {
               entity = null;
               currentTable = null;
-              dataType = dataTypePrototype.getKey() == null ? null : dataTypePrototype.getKey().clone();
+              dataType = dataTypePrototype.getKey().clone();
               row[index++] = dataType;
             }
             else {
@@ -152,8 +149,7 @@ class SelectImpl {
               dataType = entity.column[dataTypePrototype.getValue()];
             }
 
-            if (dataType != null)
-              dataType.set(resultSet, i + columnOffset);
+            dataType.set(resultSet, i + columnOffset);
           }
         }
         catch (final SQLException e) {
@@ -377,6 +373,10 @@ class SelectImpl {
         super(null);
         if (entities.size() < 1)
           throw new IllegalArgumentException("entities.size() < 1");
+
+        for (final Compilable entity : entities)
+          if (entity == null)
+            throw new IllegalArgumentException("SELECT argument cannot be null. Use type.?.NULL instead.");
 
         this.entities = entities;
         this.distinct = distinct;
