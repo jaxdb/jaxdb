@@ -102,9 +102,9 @@
             <id>default</id>
             <configuration>
               <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
-              <resources>
-                <resource>src/main/resources/dmlx.xsd</resource>
-              </resources>
+              <schemas>
+                <schema>src/main/resources/dmlx.xsd</schema>
+              </schemas>
             </configuration>
           </execution>
           <execution>
@@ -115,13 +115,13 @@
             <phase>generate-test-resources</phase>
             <configuration>
               <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
-              <resources>
-                <resource>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</resource>
-                <resource>${project.build.directory}/generated-test-resources/rdb/types.xsd</resource>
-              </resources>
-              <xjbs>
-                <xjb>src/main/resources/dmlx.xjb</xjb>
-              </xjbs>
+              <schemas>
+                <schema>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/rdb/types.xsd</schema>
+              </schemas>
+              <bindings>
+                <binding>src/main/resources/dmlx.xjb</binding>
+              </bindings>
             </configuration>
           </execution>
         </executions>

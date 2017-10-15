@@ -56,9 +56,9 @@
         <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
           <destDir>${project.build.directory}/generated-sources/xsb</destDir>
-          <resources>
-            <resource>src/main/resources/ddlx.xsd</resource>
-          </resources>
+          <schemas>
+            <schema>src/main/resources/ddlx.xsd</schema>
+          </schemas>
         </configuration>
       </plugin>
     </plugins>

@@ -72,9 +72,9 @@
         <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
           <destDir>${project.build.directory}/generated-sources/xsb</destDir>
-          <resources>
-            <resource>src/main/resources/jsql.xsd</resource>
-          </resources>
+          <schemas>
+            <schema>src/main/resources/jsql.xsd</schema>
+          </schemas>
         </configuration>
       </plugin>
     </plugins>
