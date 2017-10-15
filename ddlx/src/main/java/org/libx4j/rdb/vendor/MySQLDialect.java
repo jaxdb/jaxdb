@@ -38,8 +38,13 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return (doublePrecision ? "DOUBLE" : "FLOAT") + (unsigned ? " UNSIGNED" : "");
+  public String declareFloat(final boolean unsigned) {
+    return "FLOAT" + (unsigned ? " UNSIGNED" : "");
+  }
+
+  @Override
+  public String declareDouble(final boolean unsigned) {
+    return "DOUBLE" + (unsigned ? " UNSIGNED" : "");
   }
 
   @Override

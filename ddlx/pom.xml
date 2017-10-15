@@ -17,7 +17,7 @@
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd http://maven.lib4j.org/common/manifest.xsd http://maven.lib4j.org/common/manifest.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.libx4j</groupId>
@@ -31,7 +31,7 @@
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-resources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -55,12 +55,10 @@
         <groupId>org.libx4j.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
-          <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
-            <destdir>generated-sources/xsb</destdir>
-            <resources>
-              <resource>src/main/resources/ddlx.xsd</resource>
-            </resources>
-          </manifest>
+          <destDir>${project.build.directory}/generated-sources/xsb</destDir>
+          <resources>
+            <resource>src/main/resources/ddlx.xsd</resource>
+          </resources>
         </configuration>
       </plugin>
     </plugins>

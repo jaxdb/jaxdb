@@ -42,6 +42,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
 import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
+import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_float;
 import org.libx4j.rdb.ddlx.xe.$ddlx_int;
@@ -188,20 +189,17 @@ public class Generator {
 
     if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
-      final Class<? extends type.DataType<?>> javaType;
-      final Number min;
-      final Number max;
-      if (type._double$().text()) {
-        javaType = type._unsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
-        min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
-        max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
-      }
-      else {
-        javaType = type._unsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
-        min = type._min$().text() != null ? type._min$().text().floatValue() : null;
-        max = type._max$().text() != null ? type._max$().text().floatValue() : null;
-      }
+      final Class<? extends type.DataType<?>> javaType = type._unsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
+      final Number min = type._min$().text() != null ? type._min$().text().floatValue() : null;
+      final Number max = type._max$().text() != null ? type._max$().text().floatValue() : null;
+      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), min, max);
+    }
 
+    if (column instanceof $ddlx_double) {
+      final $ddlx_double type = ($ddlx_double)column;
+      final Class<? extends type.DataType<?>> javaType = type._unsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
+      final Number min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
+      final Number max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
       return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), min, max);
     }
 

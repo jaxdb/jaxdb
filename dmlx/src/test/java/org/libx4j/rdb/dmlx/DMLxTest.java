@@ -22,39 +22,61 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.LinkedHashSet;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.jci.CompilationException;
+import org.lib4j.jci.JavaCompiler;
+import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resources;
-import org.lib4j.util.Collections;
-import org.lib4j.xml.NamespaceURI;
+import org.lib4j.lang.Strings;
 import org.lib4j.xml.XMLException;
+import org.lib4j.xml.jaxb.JaxbUtil;
+import org.lib4j.xml.jaxb.XJCompiler;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
-import org.libx4j.rdb.dmlx.xe.$dmlx_data;
-import org.libx4j.xsb.compiler.processor.GeneratorContext;
-import org.libx4j.xsb.compiler.processor.reference.SchemaReference;
-import org.libx4j.xsb.generator.Generator;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public abstract class DMLxTest {
-  private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
+  private static final File sourcesDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
+  protected static final File testClassesDir = new File("target/test-classes");
 
-  public static void createSchemas(final String name) throws IOException, TransformerException {
+  public static void createSchemas(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     Datas.createXSD(ddlx, destFile);
 
-    final Set<NamespaceURI> excludes = Collections.asCollection(new HashSet<NamespaceURI>(), NamespaceURI.getInstance("http://rdb.safris.org/dmlx.xsd"), NamespaceURI.getInstance("http://xml.lib4j.org/datatypes.xsd"));
-    final GeneratorContext generatorContext = new GeneratorContext(sourcesDestDir, true, true, false, null, excludes);
-    new Generator(generatorContext, java.util.Collections.singleton(new SchemaReference(destFile.toURI().toURL(), false)), null).generate();
+    final XJCompiler.Command command = new XJCompiler.Command();
+    command.setExtension(true);
+    command.setDestDir(sourcesDestDir);
+
+    final LinkedHashSet<URL> xjbs = new LinkedHashSet<URL>();
+    xjbs.add(Resources.getResource("dmlx.xjb").getURL());
+    command.setXJBs(xjbs);
+
+    final LinkedHashSet<URL> schemas = new LinkedHashSet<URL>();
+    schemas.add(destFile.toURI().toURL());
+    command.setSchemas(schemas);
+
+    final URL[] mainClasspath = ClassLoaders.getClassPath();
+    final URL[] testClasspath = ClassLoaders.getTestClassPath();
+    final File[] classpath = new File[mainClasspath.length + testClasspath.length];
+    for (int i = 0; i < mainClasspath.length; i++)
+      classpath[i] = new File(mainClasspath[i].getFile());
+
+    for (int i = 0; i < testClasspath.length; i++)
+      classpath[i + mainClasspath.length] = new File(testClasspath[i].getFile());
+
+    XJCompiler.compile(command, classpath);
+    new JavaCompiler(testClassesDir, classpath).compile(command.getDestDir());
   }
 
-  public static void loadData(final Connection connection, final String name) throws IOException, SQLException, XMLException {
+  public static int[] loadData(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
     final ddlx_schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
@@ -63,11 +85,11 @@ public abstract class DMLxTest {
     Schemas.truncate(connection, Schemas.tables(schema));
 
     final URL dmlx = Resources.getResource(name + ".dmlx").getURL();
-    final $dmlx_data data;
+    final Database database;
     try (final InputStream in = dmlx.openStream()) {
-      data = ($dmlx_data)Bindings.parse(new InputSource(in));
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".dmlx." + Strings.toTitleCase(name)), dmlx, false);
     }
 
-    Datas.loadData(connection, data);
+    return Datas.insert(connection, database);
   }
 }

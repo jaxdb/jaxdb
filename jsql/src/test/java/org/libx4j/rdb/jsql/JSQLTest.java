@@ -26,13 +26,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.lib4j.lang.Resources;
+import org.lib4j.lang.Strings;
 import org.lib4j.xml.XMLException;
+import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
-import org.libx4j.rdb.dmlx.xe.$dmlx_data;
+import org.libx4j.rdb.dmlx.Database;
 import org.libx4j.rdb.jsql.generator.Generator;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws IOException, XMLException {
@@ -42,7 +45,7 @@ public abstract class JSQLTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static void loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, XMLException {
+  protected static int[] loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
@@ -51,17 +54,17 @@ public abstract class JSQLTest {
     });
 
     final URL dmlx = Resources.getResource(name + ".dmlx").getURL();
-    final $dmlx_data data;
+    final Database database;
     try (final InputStream in = dmlx.openStream()) {
-      data = ($dmlx_data)Bindings.parse(new InputSource(in));
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".dmlx." + Strings.toTitleCase(name)), dmlx, false);
     }
 
     final ddlx_schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
-    Schemas.truncate(connection, Schemas.tables(schema));
 
-    INSERT(data).execute();
+    Schemas.truncate(connection, Schemas.tables(schema));
+    return INSERT(database).execute();
   }
 }

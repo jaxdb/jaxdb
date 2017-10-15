@@ -19,81 +19,58 @@ package org.libx4j.rdb.jsql;
 import java.io.ByteArrayInputStream;
 import java.io.StringReader;
 import java.lang.reflect.Field;
-import java.math.BigInteger;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlType;
+
 import org.lib4j.lang.Strings;
-import org.lib4j.xml.binding.Base64Binary;
-import org.lib4j.xml.binding.DateTime;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_clob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_data;
-import org.libx4j.rdb.dmlx.xe.$dmlx_date;
-import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
-import org.libx4j.rdb.dmlx.xe.$dmlx_decimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_enum;
-import org.libx4j.rdb.dmlx.xe.$dmlx_integer;
-import org.libx4j.rdb.dmlx.xe.$dmlx_row;
-import org.libx4j.rdb.dmlx.xe.$dmlx_time;
-import org.libx4j.xsb.runtime.Binding;
-import org.libx4j.xsb.runtime.Element;
-import org.libx4j.xsb.runtime.QName;
-import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
+import org.libx4j.rdb.ddlx.Column;
+import org.libx4j.rdb.ddlx.Schema;
+import org.libx4j.rdb.ddlx.Table;
+import org.libx4j.rdb.dmlx.Database;
+import org.libx4j.rdb.dmlx.Insert;
+import org.libx4j.rdb.dmlx.Row;
+import org.libx4j.rdb.dmlx.sqlx;
 
 public final class Entities {
-  private static QName getName(final Class<?> cls) {
-    return cls.getAnnotation(QName.class);
-  }
-
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Entity toEntity(final $dmlx_row row) {
-    final Element element = (Element)row;
-    final QName schemaName = getName(element.owner().getClass().getSuperclass());
-    final QName entityName = getName(row.getClass().getSuperclass());
-
-    try {
-      final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schemaName.localPart()) + "$" + Strings.toTitleCase(entityName.localPart()));
-      final type.Entity entity = (type.Entity)binding.newInstance();
-      final Iterator<? extends $xs_anySimpleType> attributeIterator = row.attributeIterator();
-      while (attributeIterator.hasNext()) {
-        final $xs_anySimpleType attribute = attributeIterator.next();
-        if (attribute == null)
+  private static type.Entity toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException {
+    final Schema schema = database.getClass().getAnnotation(Schema.class);
+    final Table table = row.getClass().getAnnotation(Table.class);
+    // FIXME: This is brittle... Need to modularize it and make it clearer:
+    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schema.name()) + "$" + Strings.toTitleCase(table.name()));
+    final type.Entity entity = (type.Entity)binding.newInstance();
+    for (final Method method : row.getClass().getMethods()) {
+      if (method.getName().startsWith("get") && sqlx.Column.class.isAssignableFrom(method.getReturnType())) {
+        final sqlx.Column<?> column = (sqlx.Column<?>)method.invoke(row);
+        if (column == null)
           continue;
 
-        final Field field = binding.getField(Strings.toCamelCase(attribute.name().getLocalPart()));
+        final Field field = binding.getField(Strings.toCamelCase(method.getAnnotation(Column.class).name()));
         final type.DataType dataType = (type.DataType<?>)field.get(entity);
-        final Object value = attribute.text();
+
+        final Object value = column.get();
         if (value == null)
           dataType.set(null);
-        else if (attribute instanceof $dmlx_integer) {
-          if (dataType.type() == BigInteger.class)
-            dataType.set(value);
-          else if (dataType.type() == Long.class)
-            dataType.set(((BigInteger)value).longValue());
-          else if (dataType.type() == Integer.class)
-            dataType.set(((BigInteger)value).intValue());
-          else if (dataType.type() == Short.class)
-            dataType.set(((BigInteger)value).shortValue());
-          else if (dataType.type() == Byte.class)
-            dataType.set(((BigInteger)value).byteValue());
-          else
-            throw new UnsupportedOperationException("Unsupported Numeric type: " + dataType.type().getName());
-        }
-        else if (attribute instanceof $dmlx_decimal)
-          dataType.set(value);
-        else if (attribute instanceof $dmlx_date)
+        else if (column instanceof sqlx.BLOB)
+          dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
+        else if (column instanceof sqlx.BINARY)
+          dataType.set(((String)value).getBytes());
+        else if (column instanceof sqlx.CLOB)
+          dataType.set(new StringReader((String)value));
+        else if (column instanceof sqlx.DATE)
           dataType.set(LocalDate.parse((String)value));
-        else if (attribute instanceof $dmlx_time)
+        else if (column instanceof sqlx.DATETIME)
+          dataType.set(LocalDateTime.parse((String)value));
+        else if (column instanceof sqlx.TIME)
           dataType.set(LocalTime.parse((String)value));
-        else if (attribute instanceof $dmlx_dateTime)
-          dataType.set(LocalDateTime.parse(((DateTime)value).toString()));
-        else if (attribute instanceof $dmlx_enum) {
+        else if (column instanceof sqlx.ENUM) {
           for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
               dataType.set(constant);
@@ -104,31 +81,29 @@ public final class Entities {
           if (!dataType.wasSet())
             throw new IllegalArgumentException("'" + value + "' is not a valid value for " + dataType.name);
         }
-        else if (attribute instanceof $dmlx_binary)
-          dataType.set(((Base64Binary)value).getBytes());
-        else if (attribute instanceof $dmlx_blob)
-          dataType.set(new ByteArrayInputStream(((Base64Binary)value).getBytes()));
-        else if (attribute instanceof $dmlx_clob)
-          dataType.set(new StringReader((String)value));
         else
           dataType.set(value);
       }
+    }
 
-      return entity;
-    }
-    catch (final ReflectiveOperationException e) {
-      throw new UnsupportedOperationException(e);
-    }
+    return entity;
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends type.Entity>T[] toEntities(final $dmlx_data data) {
-    final Iterator<Binding> iterator = data.elementIterator();
-    final List<type.Entity> entities = new ArrayList<type.Entity>();
-    while (iterator.hasNext())
-      entities.add(toEntity(($dmlx_row)iterator.next()));
+  public static <T extends type.Entity>T[] toEntities(final Database database) {
+    try {
+      final List<type.Entity> entities = new ArrayList<type.Entity>();
+      final Insert insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
+      final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
+      for (final String tableName : xmlType.propOrder())
+        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert))
+          entities.add(toEntity(database, row));
 
-    return (T[])entities.toArray(new type.Entity[entities.size()]);
+      return (T[])entities.toArray(new type.Entity[entities.size()]);
+    }
+    catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | NoSuchFieldException e) {
+      throw new UnsupportedOperationException(e);
+    }
   }
 
   private Entities() {

@@ -18,143 +18,153 @@ package org.libx4j.rdb.dmlx;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.TransformerException;
 
 import org.lib4j.lang.Resources;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
-import org.libx4j.rdb.dmlx.xe.$dmlx_char;
-import org.libx4j.rdb.dmlx.xe.$dmlx_clob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_data;
-import org.libx4j.rdb.dmlx.xe.$dmlx_date;
-import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
-import org.libx4j.rdb.dmlx.xe.$dmlx_decimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_enum;
-import org.libx4j.rdb.dmlx.xe.$dmlx_float;
-import org.libx4j.rdb.dmlx.xe.$dmlx_integer;
-import org.libx4j.rdb.dmlx.xe.$dmlx_row;
-import org.libx4j.rdb.dmlx.xe.$dmlx_time;
+import org.lib4j.lang.Strings;
+import org.libx4j.rdb.ddlx.Column;
+import org.libx4j.rdb.ddlx.Table;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.libx4j.xsb.runtime.Binding;
-import org.libx4j.xsb.runtime.QName;
-import org.w3.x2001.xmlschema.xe.$xs_anySimpleType;
 
 public final class Datas {
-  private static QName getName(final Class<?> cls) {
-    return cls.getAnnotation(QName.class);
-  }
-
-  private static String getColumn(final $xs_anySimpleType attribute) {
-    final String id = attribute.id();
-    return id.substring(id.indexOf('.') + 1);
-  }
-
-  private static String getValue(final Compiler compiler, final $xs_anySimpleType attribute) {
-    final Object value = attribute.text();
+  private static String getValue(final Compiler compiler, final sqlx.Column<?> value) {
     if (value == null)
-      return "NULL";
+      return null;
 
-    if (attribute instanceof $dmlx_boolean)
-      return compiler.compile(($dmlx_boolean)attribute);
+    if (value instanceof sqlx.BIGINT)
+      return compiler.compile((sqlx.BIGINT)value);
 
-    if (attribute instanceof $dmlx_float)
-      return compiler.compile(($dmlx_float)attribute);
+    if (value instanceof sqlx.BINARY)
+      return compiler.compile((sqlx.BINARY)value);
 
-    if (attribute instanceof $dmlx_decimal)
-      return compiler.compile(($dmlx_decimal)attribute);
+    if (value instanceof sqlx.BLOB)
+      return compiler.compile((sqlx.BLOB)value);
 
-    if (attribute instanceof $dmlx_integer)
-      return compiler.compile(($dmlx_integer)attribute);
+    if (value instanceof sqlx.BOOLEAN)
+      return compiler.compile((sqlx.BOOLEAN)value);
 
-    if (attribute instanceof $dmlx_char)
-      return compiler.compile(($dmlx_char)attribute);
+    if (value instanceof sqlx.CHAR)
+      return compiler.compile((sqlx.CHAR)value);
 
-    if (attribute instanceof $dmlx_clob)
-      return compiler.compile(($dmlx_clob)attribute);
+    if (value instanceof sqlx.CLOB)
+      return compiler.compile((sqlx.CLOB)value);
 
-    if (attribute instanceof $dmlx_binary)
-      return compiler.compile(($dmlx_binary)attribute);
+    if (value instanceof sqlx.DATE)
+      return compiler.compile((sqlx.DATE)value);
 
-    if (attribute instanceof $dmlx_blob)
-      return compiler.compile(($dmlx_blob)attribute);
+    if (value instanceof sqlx.DATETIME)
+      return compiler.compile((sqlx.DATETIME)value);
 
-    if (attribute instanceof $dmlx_date)
-      return compiler.compile(($dmlx_date)attribute);
+    if (value instanceof sqlx.DECIMAL)
+      return compiler.compile((sqlx.DECIMAL)value);
 
-    if (attribute instanceof $dmlx_time)
-      return compiler.compile(($dmlx_time)attribute);
+    if (value instanceof sqlx.DOUBLE)
+      return compiler.compile((sqlx.DOUBLE)value);
 
-    if (attribute instanceof $dmlx_dateTime)
-      return compiler.compile(($dmlx_dateTime)attribute);
+    if (value instanceof sqlx.ENUM)
+      return compiler.compile((sqlx.ENUM)value);
 
-    if (attribute instanceof $dmlx_enum)
-      return compiler.compile(($dmlx_enum)attribute);
+    if (value instanceof sqlx.FLOAT)
+      return compiler.compile((sqlx.FLOAT)value);
 
-    throw new UnsupportedOperationException("Unsupported type: " + attribute.getClass());
+    if (value instanceof sqlx.INT)
+      return compiler.compile((sqlx.INT)value);
+
+    if (value instanceof sqlx.SMALLINT)
+      return compiler.compile((sqlx.SMALLINT)value);
+
+    if (value instanceof sqlx.TIME)
+      return compiler.compile((sqlx.TIME)value);
+
+    if (value instanceof sqlx.TINYINT)
+      return compiler.compile((sqlx.TINYINT)value);
+
+    throw new UnsupportedOperationException("Unsupported type: " + value.getClass());
   }
 
-  private static String getTableName(final DBVendor vendor, final $dmlx_row row) {
-//    final Element element = (Element)row;
-//    final QName schemaName = getName(element.owner().getClass().getSuperclass());
-    final QName tableName = getName(row.getClass().getSuperclass());
-    return tableName.localPart();
-  }
-
-  public static int[] loadData(final Connection connection, final $dmlx_data data) throws SQLException {
+  @SuppressWarnings("unchecked")
+  public static int[] insert(final Connection connection, final Insert insert) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    int index = 0;
-    Iterator<Binding> iterator = data.elementIterator();
-    while (iterator.hasNext()) {
-      iterator.next();
-      index++;
+    final List<Integer> counts = new ArrayList<Integer>();
+
+    try {
+      if (insert == null) {
+        int i = 0;
+      }
+      final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
+      final List<Row> rows = new ArrayList<Row>();
+      for (final String tableName : xmlType.propOrder())
+        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert))
+          rows.add(row);
+
+      if (rows.size() == 0)
+        return new int[0];
+
+      // TODO: Implement batch.
+      try (final Statement statement = connection.createStatement()) {
+        for (final Row row : rows)
+          counts.add(statement.executeUpdate(loadRow(vendor, row)));
+      }
+    }
+    catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new UnsupportedOperationException(e);
     }
 
-    final int[] counts = new int[index];
-    index = 0;
-    iterator = data.elementIterator();
-    // TODO: implement batch
-    try (final Statement statement = connection.createStatement()) {
-      while (iterator.hasNext())
-        counts[index++] = statement.executeUpdate(loadRow(vendor, ($dmlx_row)iterator.next()));
+    final int[] array = new int[counts.size()];
+    for (int i = 0; i < counts.size(); i++)
+      array[i] = counts.get(i);
 
-      return counts;
+    return array;
+  }
+
+  public static int[] insert(final Connection connection, final Database database) throws SQLException {
+    try {
+      return insert(connection, (Insert)database.getClass().getMethod("getInsert").invoke(database));
+    }
+    catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+      throw new UnsupportedOperationException(e);
     }
   }
 
-  public static int loadRow(final Connection connection, final $dmlx_row row) throws SQLException {
-    try (final Statement statement = connection.createStatement()) {
-      return statement.executeUpdate(loadRow(DBVendor.valueOf(connection.getMetaData()), row));
-    }
-  }
-
-  private static String loadRow(final DBVendor vendor, final $dmlx_row row) {
-    final Iterator<? extends $xs_anySimpleType> iterator = row.attributeIterator();
+  private static String loadRow(final DBVendor vendor, final Row row) throws IllegalAccessException, InvocationTargetException {
     final StringBuilder columns = new StringBuilder();
     final StringBuilder values = new StringBuilder();
     final Compiler compiler = Compiler.getCompiler(vendor);
     boolean hasValues = false;
-    while (iterator.hasNext()) {
-      final $xs_anySimpleType attribute = iterator.next();
-      if (attribute != null) {
-        if (hasValues) {
-          columns.append(", ");
-          values.append(", ");
-        }
+    for (final Method method : row.getClass().getMethods()) {
+      if (!method.getName().startsWith("get"))
+        continue;
 
-        columns.append(getColumn(attribute));
-        values.append(getValue(compiler, attribute));
-        hasValues = true;
+      final Column column = method.getAnnotation(Column.class);
+      if (column == null)
+        continue;
+
+      final String value = getValue(compiler, (sqlx.Column<?>)method.invoke(row));
+      if (value == null)
+        continue;
+
+      if (hasValues) {
+        columns.append(", ");
+        values.append(", ");
       }
+
+      columns.append(column.name());
+      values.append(value);
+      hasValues = true;
     }
 
-    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(getTableName(vendor, row));
+    final Table table = row.getClass().getAnnotation(Table.class);
+    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(table.name());
     builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
     return builder.toString();
   }

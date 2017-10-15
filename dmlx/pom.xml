@@ -17,7 +17,7 @@
 <project
   xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd http://maven.lib4j.org/common/manifest.xsd http://maven.lib4j.org/common/manifest.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.libx4j</groupId>
@@ -31,10 +31,10 @@
   <build>
     <testResources>
       <testResource>
-        <directory>target/generated-test-resources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
-        <directory>target/generated-test-sources/xsb</directory>
+        <directory>${project.build.directory}/generated-test-sources/jaxb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -60,27 +60,10 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <additionalClasspathElements>
-            <additionalClasspathElement>${basedir}/target/generated-test-resources/rdb</additionalClasspathElement>
-            <additionalClasspathElement>${basedir}/target/generated-test-sources/xsb</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.libx4j.maven.plugin</groupId>
-        <artifactId>xsb-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default</id>
-            <configuration>
-              <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
-                <destdir>generated-sources/xsb</destdir>
-                <resources>
-                  <resource>src/main/resources/dmlx.xsd</resource>
-                </resources>
-              </manifest>
-            </configuration>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.lib4j.maven.plugin</groupId>
@@ -100,12 +83,45 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <destdir>target/generated-test-resources/rdb</destdir>
+              <destDir>${project.build.directory}/generated-test-resources/rdb</destDir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/dmlx.xsl</stylesheet>
-              <includes>
-                <include>src/test/resources/world.ddlx</include>
-              </includes>
+              <resources>
+                <resource>classicmodels.ddlx</resource>
+                <resource>types.ddlx</resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.lib4j.maven.plugin</groupId>
+        <artifactId>xjc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default</id>
+            <configuration>
+              <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
+              <resources>
+                <resource>src/main/resources/dmlx.xsd</resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-resources</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
+              <resources>
+                <resource>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</resource>
+                <resource>${project.build.directory}/generated-test-resources/rdb/types.xsd</resource>
+              </resources>
+              <xjbs>
+                <xjb>src/main/resources/dmlx.xjb</xjb>
+              </xjbs>
             </configuration>
           </execution>
         </executions>
@@ -135,13 +151,13 @@
       <artifactId>lib4j-xml</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.libx4j.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
+      <groupId>org.lib4j</groupId>
+      <artifactId>lib4j-jci</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.libx4j.xsb</groupId>
-      <artifactId>xsb-generator</artifactId>
-      <scope>test</scope>
+      <groupId>org.libx4j.rdb</groupId>
+      <artifactId>rdb-ddlx</artifactId>
     </dependency>
   </dependencies>
 </project>

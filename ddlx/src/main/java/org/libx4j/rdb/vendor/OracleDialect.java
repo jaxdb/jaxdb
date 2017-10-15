@@ -38,8 +38,13 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return doublePrecision ? "DOUBLE PRECISION" : "FLOAT";
+  public String declareFloat(final boolean unsigned) {
+    return "FLOAT";
+  }
+
+  @Override
+  public String declareDouble(final boolean unsigned) {
+    return "DOUBLE PRECISION";
   }
 
   @Override

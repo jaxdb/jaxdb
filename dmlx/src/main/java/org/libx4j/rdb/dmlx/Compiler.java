@@ -20,18 +20,6 @@ import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import org.lib4j.lang.PackageLoader;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
-import org.libx4j.rdb.dmlx.xe.$dmlx_char;
-import org.libx4j.rdb.dmlx.xe.$dmlx_clob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_date;
-import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
-import org.libx4j.rdb.dmlx.xe.$dmlx_decimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_enum;
-import org.libx4j.rdb.dmlx.xe.$dmlx_float;
-import org.libx4j.rdb.dmlx.xe.$dmlx_integer;
-import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 
 abstract class Compiler {
@@ -62,51 +50,67 @@ abstract class Compiler {
 
   protected abstract DBVendor getVendor();
 
-  protected String compile(final $dmlx_boolean attribute) {
-    return String.valueOf(attribute.text());
+  protected String compile(final sqlx.BIGINT value) {
+    return value.toString();
   }
 
-  protected String compile(final $dmlx_float attribute) {
-    return String.valueOf(attribute.text());
+  protected String compile(final sqlx.BINARY value) {
+    return "X'" + value + "'";
   }
 
-  protected String compile(final $dmlx_decimal attribute) {
-    return String.valueOf(attribute.text());
+  protected String compile(final sqlx.BLOB value) {
+    return "X'" + value + "'";
   }
 
-  protected String compile(final $dmlx_integer attribute) {
-    return String.valueOf(attribute.text());
+  protected String compile(final sqlx.BOOLEAN value) {
+    return value.toString();
   }
 
-  protected String compile(final $dmlx_char attribute) {
-    return "'" + attribute.text().replace("'", "''") + "'";
+  protected String compile(final sqlx.CHAR value) {
+    return "'" + value.get().replace("'", "''") + "'";
   }
 
-  protected String compile(final $dmlx_clob attribute) {
-    return "'" + attribute.text().replace("'", "''") + "'";
+  protected String compile(final sqlx.CLOB value) {
+    return "'" + value.get().replace("'", "''") + "'";
   }
 
-  protected String compile(final $dmlx_binary attribute) {
-    return "X'" + attribute.text() + "'";
+  protected String compile(final sqlx.DATE value) {
+    return "'" + value + "'";
   }
 
-  protected String compile(final $dmlx_blob attribute) {
-    return "X'" + attribute.text() + "'";
+  protected String compile(final sqlx.DATETIME value) {
+    return "'" + value + "'";
   }
 
-  protected String compile(final $dmlx_date attribute) {
-    return "'" + attribute.text() + "'";
+  protected String compile(final sqlx.DECIMAL value) {
+    return value.toString();
   }
 
-  protected String compile(final $dmlx_time attribute) {
-    return "'" + attribute.text() + "'";
+  protected String compile(final sqlx.DOUBLE value) {
+    return value.toString();
   }
 
-  protected String compile(final $dmlx_dateTime attribute) {
-    return "'" + attribute.text() + "'";
+  protected String compile(final sqlx.ENUM value) {
+    return "'" + value + "'";
   }
 
-  protected String compile(final $dmlx_enum attribute) {
-    return "'" + attribute.text() + "'";
+  protected String compile(final sqlx.FLOAT value) {
+    return value.toString();
+  }
+
+  protected String compile(final sqlx.INT value) {
+    return value.toString();
+  }
+
+  protected String compile(final sqlx.SMALLINT value) {
+    return value.toString();
+  }
+
+  protected String compile(final sqlx.TIME value) {
+    return "'" + value + "'";
+  }
+
+  protected String compile(final sqlx.TINYINT value) {
+    return value.toString();
   }
 }

@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2006 lib4j
+  Copyright (c) 2016 lib4j
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -27,14 +27,7 @@
   <xs:complexType name="char">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
-              <xs:attribute name="condition" type="xs:string" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        <xs:group ref="ddlx:char" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:char"/>
       </xs:extension>
     </xs:complexContent>
@@ -43,14 +36,7 @@
   <xs:complexType name="clob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
-              <xs:attribute name="condition" type="xs:string" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        <xs:group ref="ddlx:clob" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:clob"/>
       </xs:extension>
     </xs:complexContent>
@@ -79,38 +65,8 @@
   <xs:complexType name="tinyint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:attribute name="precision" default="3">
-          <xs:simpleType>
-            <xs:restriction base="xs:byte">
-              <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="3"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-128"/>
-              <xs:maxInclusive value="255"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="min">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-128"/>
-              <xs:maxInclusive value="255"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="max">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-128"/>
-              <xs:maxInclusive value="255"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="ddlx:tinyint" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:tinyint"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -118,38 +74,8 @@
   <xs:complexType name="smallint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:attribute name="precision" default="5">
-          <xs:simpleType>
-            <xs:restriction base="xs:byte">
-              <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="5"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-32768"/>
-              <xs:maxInclusive value="64535"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="min">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-32768"/>
-              <xs:maxInclusive value="64535"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="max">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-32768"/>
-              <xs:maxInclusive value="64535"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="ddlx:bigint" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:smallint"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -157,38 +83,8 @@
   <xs:complexType name="int">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:attribute name="precision" default="10">
-          <xs:simpleType>
-            <xs:restriction base="xs:byte">
-              <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="10"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-2147483648"/>
-              <xs:maxInclusive value="4294967295"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="min">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-2147483648"/>
-              <xs:maxInclusive value="4294967295"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="max">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-2147483648"/>
-              <xs:maxInclusive value="4294967295"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="ddlx:int" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:int"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -196,38 +92,8 @@
   <xs:complexType name="bigint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
-        <xs:attribute name="precision">
-          <xs:simpleType>
-            <xs:restriction base="xs:byte">
-              <xs:minInclusive value="1"/>
-              <xs:maxInclusive value="20"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="default">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-9223372036854775808"/>
-              <xs:maxInclusive value="18446744073709551615"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="min">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-9223372036854775808"/>
-              <xs:maxInclusive value="18446744073709551615"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="max">
-          <xs:simpleType>
-            <xs:restriction base="xs:integer">
-              <xs:minInclusive value="-9223372036854775808"/>
-              <xs:maxInclusive value="18446744073709551615"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
+        <xs:group ref="ddlx:bigint" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:bigint"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -237,15 +103,17 @@
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-              <xs:attribute name="condition" type="xs:decimal" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        <xs:group ref="ddlx:float" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:float"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="double">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:group ref="ddlx:double" minOccurs="0"/>
+        <xs:attributeGroup ref="ddlx:double"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -255,14 +123,7 @@
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-              <xs:attribute name="condition" type="xs:decimal" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
+        <xs:group ref="ddlx:decimal" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:decimal"/>
       </xs:extension>
     </xs:complexContent>

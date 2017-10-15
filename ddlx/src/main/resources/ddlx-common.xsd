@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2006 lib4j
+  Copyright (c) 2016 lib4j
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -17,12 +17,12 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:dt="http://xml.lib4j.org/datatypes.xsd"
   xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://xml.lib4j.org/datatypes.xsd" schemaLocation="http://xml.lib4j.org/datatypes.xsd"/>
-
+  <xs:import namespace="http://rdb.libx4j.org/sqlx.xsd" schemaLocation="http://rdb.libx4j.org/sqlx.xsd"/>
+  
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
       <xs:maxLength value="64"/> <!-- http://dev.mysql.com/doc/refman/5.7/en/identifiers.html -->
@@ -33,15 +33,7 @@
   <xs:complexType name="named">
     <xs:attribute name="name" type="ddlx:name" use="required"/>
   </xs:complexType>
-
-  <xs:complexType name="foreignKey">
-    <xs:attribute name="id" type="xs:string"/>
-    <xs:attribute name="references" type="ddlx:name" use="required"/>
-    <xs:attribute name="column" type="ddlx:name" use="required"/>
-    <xs:attribute name="onDelete" type="ddlx:changeAction" default="RESTRICT"/>
-    <xs:attribute name="onUpdate" type="ddlx:changeAction" default="RESTRICT"/>
-  </xs:complexType>
-
+  
   <xs:simpleType name="changeAction">
     <xs:restriction base="xs:string">
       <xs:enumeration value="RESTRICT"/>
@@ -50,6 +42,14 @@
       <xs:enumeration value="SET DEFAULT"/>
     </xs:restriction>
   </xs:simpleType>
+  
+  <xs:complexType name="foreignKey">
+    <xs:attribute name="id" type="xs:string"/>
+    <xs:attribute name="references" type="ddlx:name" use="required"/>
+    <xs:attribute name="column" type="ddlx:name" use="required"/>
+    <xs:attribute name="onDelete" type="ddlx:changeAction" default="RESTRICT"/>
+    <xs:attribute name="onUpdate" type="ddlx:changeAction" default="RESTRICT"/>
+  </xs:complexType>
 
   <xs:complexType name="index">
     <xs:attribute name="unique" type="xs:boolean" default="false"/>
@@ -93,13 +93,6 @@
       <xs:enumeration value="gte"/>
       <xs:enumeration value="lt"/>
       <xs:enumeration value="lte"/>
-    </xs:restriction>
-  </xs:simpleType>
-
-  <xs:simpleType name="integerType">
-    <xs:restriction base="xs:integer">
-      <xs:minInclusive value="-9223372036854775808"/>
-      <xs:maxInclusive value="18446744073709551615"/>
     </xs:restriction>
   </xs:simpleType>
 
@@ -217,7 +210,7 @@
 
   <xs:attributeGroup name="char">
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="xs:string"/>
+    <xs:attribute name="default" type="sqlx:char"/>
     <xs:attribute name="length" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:positiveInteger">
@@ -226,14 +219,18 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="generateOnInsert">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="UUID"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
   </xs:attributeGroup>
+  
+  <xs:group name="char">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+          <xs:attribute name="condition" type="xs:string" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
 
   <xs:attributeGroup name="clob">
     <xs:attribute name="length">
@@ -245,6 +242,17 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
+  
+  <xs:group name="clob">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:equalityOperator" use="required"/>
+          <xs:attribute name="condition" type="xs:string" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
 
   <!-- binary data -->
 
@@ -258,7 +266,7 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="xs:base64Binary"/>
+    <xs:attribute name="default" type="sqlx:binary"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="blob">
@@ -273,26 +281,10 @@
   </xs:attributeGroup>
 
   <!-- numeric data -->
-
-  <xs:attributeGroup name="float">
-    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-    <xs:attribute name="double" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="xs:double"/>
-    <xs:attribute name="min" type="xs:double"/>
-    <xs:attribute name="max" type="xs:double"/>
-  </xs:attributeGroup>
   
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:sequence minOccurs="0">
-          <xs:element name="check">
-            <xs:complexType>
-              <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-              <xs:attribute name="condition" type="ddlx:integerType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
         <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
         <xs:attribute name="generateOnInsert">
           <xs:simpleType>
@@ -304,6 +296,143 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+  
+  <xs:attributeGroup name="bigint">
+    <xs:attribute name="precision">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="20"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:bigint"/>
+    <xs:attribute name="min" type="sqlx:bigint"/>
+    <xs:attribute name="max" type="sqlx:bigint"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="bigint">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:bigint" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="int">
+    <xs:attribute name="precision" default="10">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="10"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:int"/>
+    <xs:attribute name="min" type="sqlx:int"/>
+    <xs:attribute name="max" type="sqlx:int"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="int">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:int" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="smallint">
+    <xs:attribute name="precision" default="5">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="5"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:smallint"/>    
+    <xs:attribute name="min" type="sqlx:smallint"/>
+    <xs:attribute name="max" type="sqlx:smallint"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="smallint">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:smallint" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="tinyint">
+    <xs:attribute name="precision" default="3">
+      <xs:simpleType>
+        <xs:restriction base="xs:byte">
+          <xs:minInclusive value="1"/>
+          <xs:maxInclusive value="3"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:tinyint"/>    
+    <xs:attribute name="min" type="sqlx:tinyint"/>
+    <xs:attribute name="max" type="sqlx:tinyint"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="tinyint">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:tinyint" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="float">
+    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="sqlx:float"/>
+    <xs:attribute name="min" type="sqlx:float"/>
+    <xs:attribute name="max" type="sqlx:float"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="float">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:float" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  
+  <xs:attributeGroup name="double">
+    <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
+    <xs:attribute name="double" type="xs:boolean" default="false"/>
+    <xs:attribute name="default" type="sqlx:double"/>
+    <xs:attribute name="min" type="sqlx:double"/>
+    <xs:attribute name="max" type="sqlx:double"/>
+  </xs:attributeGroup>
+  
+  <xs:group name="double">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="sqlx:double" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
   
   <xs:attributeGroup name="decimal">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
@@ -323,29 +452,26 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="xs:decimal"/>
-    <xs:attribute name="min" type="xs:decimal"/>
-    <xs:attribute name="max" type="xs:decimal"/>
+    <xs:attribute name="default" type="sqlx:decimal"/>
+    <xs:attribute name="min" type="sqlx:decimal"/>
+    <xs:attribute name="max" type="sqlx:decimal"/>
   </xs:attributeGroup>
+  
+  <xs:group name="decimal">
+    <xs:sequence>
+      <xs:element name="check">
+        <xs:complexType>
+          <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
+          <xs:attribute name="condition" type="xs:decimal" use="required"/>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
 
   <!-- time data -->
 
   <xs:attributeGroup name="date">
-    <xs:attribute name="default" type="dt:localDate"/>
-    <xs:attribute name="generateOnInsert">
-      <xs:simpleType>
-        <xs:restriction base="xs:NCName">
-          <xs:enumeration value="TIMESTAMP"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="generateOnUpdate">
-      <xs:simpleType>
-        <xs:restriction base="xs:NCName">
-          <xs:enumeration value="TIMESTAMP"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:date"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="time">
@@ -356,21 +482,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:localTime"/>
-    <xs:attribute name="generateOnInsert">
-      <xs:simpleType>
-        <xs:restriction base="xs:NCName">
-          <xs:enumeration value="TIMESTAMP"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="generateOnUpdate">
-      <xs:simpleType>
-        <xs:restriction base="xs:NCName">
-          <xs:enumeration value="TIMESTAMP"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
+    <xs:attribute name="default" type="sqlx:time"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="dateTime">
@@ -381,11 +493,11 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:localDateTime"/>
+    <xs:attribute name="default" type="sqlx:dateTime"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="boolean">
-    <xs:attribute name="default" type="xs:boolean"/>
+    <xs:attribute name="default" type="sqlx:boolean"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="enum">
@@ -396,7 +508,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="xs:string"/>
+    <xs:attribute name="default" type="sqlx:enum"/>
   </xs:attributeGroup>
 
   <xs:complexType name="column" abstract="true">

@@ -38,8 +38,13 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return doublePrecision ? "DOUBLE" : "FLOAT";
+  public String declareFloat(final boolean unsigned) {
+    return "FLOAT";
+  }
+
+  @Override
+  public String declareDouble(final boolean unsigned) {
+    return "DOUBLE";
   }
 
   @Override

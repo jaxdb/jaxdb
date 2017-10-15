@@ -10,9 +10,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
+import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.Strings;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.Random;
@@ -20,7 +22,7 @@ import org.lib4j.util.Random;
 public class TypesCreateTest extends DMLxTest {
   private static void createTypeData(final OutputStream out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
-    out.write("<Types xmlns=\"dmlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"dmlx.types types.xsd\">\n".getBytes());
+    out.write("<types xmlns=\"dmlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"dmlx.types types.xsd\">\n  <insert>\n".getBytes());
     for (int i = 0; i < 1000; i++) {
       final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
       final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
@@ -39,48 +41,48 @@ public class TypesCreateTest extends DMLxTest {
       final String tinyintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 8) - 1))));
       final String enumType = values[(int)(Math.random() * values.length)];
 
-      out.write("  <Type\n".getBytes());
+      out.write("    <type".getBytes());
       if (Math.random() < .9)
-        out.write(("    bigintType=\"" + bigintType + "\"\n").getBytes());
+        out.write(("\n      bigintType=\"" + bigintType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    binaryType=\"" + binaryType + "\"\n").getBytes());
+        out.write(("\n      binaryType=\"" + binaryType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    blobType=\"" + blobType + "\"\n").getBytes());
+        out.write(("\n      blobType=\"" + blobType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    booleanType=\"" + booleanType + "\"\n").getBytes());
+        out.write(("\n      booleanType=\"" + booleanType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    charType=\"" + charType + "\"\n").getBytes());
+        out.write(("\n      charType=\"" + charType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    clobType=\"" + clobType + "\"\n").getBytes());
+        out.write(("\n      clobType=\"" + clobType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    dateType=\"" + dateType + "\"\n").getBytes());
+        out.write(("\n      dateType=\"" + dateType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    datetimeType=\"" + datetimeType + "\"\n").getBytes());
+        out.write(("\n      datetimeType=\"" + datetimeType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    doubleType=\"" + doubleType + "\"\n").getBytes());
+        out.write(("\n      doubleType=\"" + doubleType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    decimalType=\"" + decimalType + "\"\n").getBytes());
+        out.write(("\n      decimalType=\"" + decimalType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    enumType=\"" + enumType + "\"\n").getBytes());
+        out.write(("\n      enumType=\"" + enumType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    floatType=\"" + floatType + "\"\n").getBytes());
+        out.write(("\n      floatType=\"" + floatType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    intType=\"" + intType + "\"\n").getBytes());
+        out.write(("\n      intType=\"" + intType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    smallintType=\"" + smallintType + "\"\n").getBytes());
+        out.write(("\n      smallintType=\"" + smallintType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    tinyintType=\"" + tinyintType + "\"\n").getBytes());
+        out.write(("\n      tinyintType=\"" + tinyintType + "\"").getBytes());
       if (Math.random() < .9)
-        out.write(("    timeType=\"" + timeType + "\"").getBytes());
+        out.write(("\n      timeType=\"" + timeType + "\"").getBytes());
       out.write(("/>\n").getBytes());
     }
 
-    out.write("</Types>".getBytes());
+    out.write("  </insert>\n</types>".getBytes());
     out.flush();
   }
 
   @Test
-  public void testCreateSchema() throws IOException, TransformerException {
+  public void testCreateSchema() throws CompilationException, IOException, JAXBException, TransformerException {
     createSchemas("types");
   }
 

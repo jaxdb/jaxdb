@@ -1694,7 +1694,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getDialect().declareFloat(true, unsigned());
+        return vendor.getDialect().declareDouble(unsigned());
       }
 
       @Override
@@ -1807,7 +1807,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareFloat(true, unsigned());
+      return vendor.getDialect().declareDouble(unsigned());
     }
 
     @Override
@@ -2029,7 +2029,7 @@ public final class type {
 
       @Override
       protected final String declare(final DBVendor vendor) {
-        return vendor.getDialect().declareFloat(false, unsigned());
+        return vendor.getDialect().declareFloat(unsigned());
       }
 
       @Override
@@ -2145,7 +2145,7 @@ public final class type {
 
     @Override
     protected final String declare(final DBVendor vendor) {
-      return vendor.getDialect().declareFloat(false, unsigned());
+      return vendor.getDialect().declareFloat(unsigned());
     }
 
     @Override

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -31,6 +32,7 @@ import org.libx4j.rdb.ddlx.runner.Oracle;
 import org.libx4j.rdb.ddlx.runner.PostgreSQL;
 import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
+import org.xml.sax.SAXException;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
@@ -38,7 +40,7 @@ import org.libx4j.rdb.ddlx.runner.VendorRunner;
 @Category(MixedTest.class)
 public class ClassicModelsDataTest extends DMLxTest {
   @Test
-  public void testLoadData(final Connection connection) throws IOException, SQLException, XMLException {
-    loadData(connection, "classicmodels");
+  public void testLoadData(final Connection connection) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
+    Assert.assertEquals(3864, loadData(connection, "classicmodels").length);
   }
 }

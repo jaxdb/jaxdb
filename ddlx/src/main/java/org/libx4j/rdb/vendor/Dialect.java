@@ -122,7 +122,9 @@ public abstract class Dialect {
   public abstract short decimalMaxPrecision();
   protected abstract Integer decimalMaxScale();
 
-  public abstract String declareFloat(final boolean doublePrecision, final boolean unsigned);
+  public abstract String declareFloat(final boolean unsigned);
+
+  public abstract String declareDouble(final boolean unsigned);
 
   protected abstract String declareInt8(final byte precision, final boolean unsigned);
   protected static final byte int8SignedMaxPrecision = 3;

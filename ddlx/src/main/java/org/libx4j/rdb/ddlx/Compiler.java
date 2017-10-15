@@ -42,6 +42,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
 import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
+import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
 import org.libx4j.rdb.ddlx.xe.$ddlx_float;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
@@ -143,7 +144,11 @@ abstract class Compiler {
     }
     else if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
-      ddl.append(getVendor().getDialect().declareFloat(type._double$().text(), type._unsigned$().text()));
+      ddl.append(getVendor().getDialect().declareFloat(type._unsigned$().text()));
+    }
+    else if (column instanceof $ddlx_double) {
+      final $ddlx_double type = ($ddlx_double)column;
+      ddl.append(getVendor().getDialect().declareDouble(type._unsigned$().text()));
     }
     else if (column instanceof $ddlx_decimal) {
       final $ddlx_decimal type = ($ddlx_decimal)column;
@@ -332,6 +337,11 @@ abstract class Compiler {
           minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
           maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
         }
+        else if (column instanceof $ddlx_double) {
+          final $ddlx_double type = ($ddlx_double)column;
+          minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
+          maxCheck = !type._max$().isNull() ? String.valueOf(type._max$().text()) : null;
+        }
         else if (column instanceof $ddlx_decimal) {
           final $ddlx_decimal type = ($ddlx_decimal)column;
           minCheck = !type._min$().isNull() ? String.valueOf(type._min$().text()) : null;
@@ -366,10 +376,31 @@ abstract class Compiler {
             condition = "'" + type._check(0)._condition$().text() + "'";
           }
         }
-        else if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+        else if (column instanceof $ddlx_tinyint) {
+          final $ddlx_tinyint type = ($ddlx_tinyint)column;
           if (!type._check(0).isNull()) {
-            operator = $ddlx_integer._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_integer._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_integer._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_integer._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_integer._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_integer._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            operator = $ddlx_tinyint._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_tinyint._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_tinyint._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_tinyint._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_tinyint._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_tinyint._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $ddlx_smallint) {
+          final $ddlx_smallint type = ($ddlx_smallint)column;
+          if (!type._check(0).isNull()) {
+            operator = $ddlx_smallint._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_smallint._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_smallint._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_smallint._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_smallint._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_smallint._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $ddlx_int) {
+          final $ddlx_int type = ($ddlx_int)column;
+          if (!type._check(0).isNull()) {
+            operator = $ddlx_int._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_int._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_int._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_int._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_int._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_int._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $ddlx_bigint) {
+          final $ddlx_bigint type = ($ddlx_bigint)column;
+          if (!type._check(0).isNull()) {
+            operator = $ddlx_bigint._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_bigint._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_bigint._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_bigint._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_bigint._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_bigint._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
             condition = String.valueOf(type._check(0)._condition$().text());
           }
         }
@@ -377,6 +408,13 @@ abstract class Compiler {
           final $ddlx_float type = ($ddlx_float)column;
           if (!type._check(0).isNull()) {
             operator = $ddlx_float._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_float._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_float._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_float._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_float._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_float._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
+            condition = String.valueOf(type._check(0)._condition$().text());
+          }
+        }
+        else if (column instanceof $ddlx_double) {
+          final $ddlx_double type = ($ddlx_double)column;
+          if (!type._check(0).isNull()) {
+            operator = $ddlx_double._check._operator$.eq.text().equals(type._check(0)._operator$().text()) ? "=" : $ddlx_double._check._operator$.ne.text().equals(type._check(0)._operator$().text()) ? "!=" : $ddlx_double._check._operator$.gt.text().equals(type._check(0)._operator$().text()) ? ">" : $ddlx_double._check._operator$.gte.text().equals(type._check(0)._operator$().text()) ? ">=" : $ddlx_double._check._operator$.lt.text().equals(type._check(0)._operator$().text()) ? "<" : $ddlx_double._check._operator$.lte.text().equals(type._check(0)._operator$().text()) ? "<=" : null;
             condition = String.valueOf(type._check(0)._condition$().text());
           }
         }
@@ -608,6 +646,15 @@ abstract class Compiler {
 
     if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
+      if (type._default$().isNull())
+        return null;
+
+      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text() > 0, null, type._unsigned$().text());
+      return type._default$().text().toString();
+    }
+
+    if (column instanceof $ddlx_double) {
+      final $ddlx_double type = ($ddlx_double)column;
       if (type._default$().isNull())
         return null;
 

@@ -18,8 +18,6 @@ package org.libx4j.rdb.dmlx;
 
 import org.lib4j.lang.Bytes;
 import org.lib4j.util.Hexadecimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class PostgreSQLCompiler extends Compiler {
@@ -38,12 +36,12 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final $dmlx_blob attribute) {
-    return toOctalString(new Hexadecimal(attribute.text()));
+  protected String compile(final sqlx.BINARY value) {
+    return toOctalString(new Hexadecimal(value.get()));
   }
 
   @Override
-  protected String compile(final $dmlx_binary attribute) {
-    return toOctalString(new Hexadecimal(attribute.text()));
+  protected String compile(final sqlx.BLOB value) {
+    return toOctalString(new Hexadecimal(value.get()));
   }
 }

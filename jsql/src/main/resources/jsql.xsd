@@ -24,25 +24,38 @@
   
   <xs:import namespace="http://rdb.libx4j.org/ddlx.xsd" schemaLocation="jsql-ddlx.xsd"/>
   
+  <xs:simpleType name="uuid">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UUID"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:attributeGroup name="generateOnUuid">
+    <xs:attribute name="generateOnInsert" type="jsql:uuid"/>
+  </xs:attributeGroup>
+  
   <xs:simpleType name="timestamp">
     <xs:restriction base="xs:string">
       <xs:enumeration value="TIMESTAMP"/>
     </xs:restriction>
   </xs:simpleType>
-
+  
+  <xs:attributeGroup name="generateOnTimestamp">
+    <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
+    <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="keyForUpdate">
+    <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+  </xs:attributeGroup>
+  
   <!-- text data -->
   
   <xs:complexType name="char">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="generateOnInsert">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:enumeration value="UUID"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:generateOnUuid"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -50,7 +63,7 @@
   <xs:complexType name="clob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -60,7 +73,7 @@
   <xs:complexType name="binary">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -68,7 +81,7 @@
   <xs:complexType name="blob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -85,7 +98,7 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -95,7 +108,15 @@
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  
+  <xs:complexType name="double">
+    <xs:complexContent>
+      <xs:extension base="ddlx:column">
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -105,7 +126,7 @@
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -115,9 +136,8 @@
   <xs:complexType name="date">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
-        <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:generateOnTimestamp"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -125,9 +145,8 @@
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
-        <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:generateOnTimestamp"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -135,9 +154,8 @@
   <xs:complexType name="dateTime">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="generateOnInsert" type="jsql:timestamp"/>
-        <xs:attribute name="generateOnUpdate" type="jsql:timestamp"/>
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:generateOnTimestamp"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -147,7 +165,7 @@
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -157,7 +175,7 @@
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
-        <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
+        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

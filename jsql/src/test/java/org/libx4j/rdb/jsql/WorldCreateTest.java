@@ -18,9 +18,11 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
+import org.lib4j.jci.CompilationException;
 import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.dmlx.DMLxTest;
 
@@ -28,7 +30,7 @@ public class WorldCreateTest extends JSQLTest {
   private static final String name = "world";
 
   @Test
-  public void testCreate() throws IOException, TransformerException, XMLException {
+  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, XMLException {
     createEntities(name);
     DMLxTest.createSchemas(name);
   }

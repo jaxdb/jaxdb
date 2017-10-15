@@ -17,13 +17,6 @@
 package org.libx4j.rdb.dmlx;
 
 import org.lib4j.util.Hexadecimal;
-import org.libx4j.rdb.dmlx.xe.$dmlx_binary;
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
-import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
-import org.libx4j.rdb.dmlx.xe.$dmlx_char;
-import org.libx4j.rdb.dmlx.xe.$dmlx_date;
-import org.libx4j.rdb.dmlx.xe.$dmlx_dateTime;
-import org.libx4j.rdb.dmlx.xe.$dmlx_time;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class OracleCompiler extends Compiler {
@@ -33,38 +26,38 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final $dmlx_char attribute) {
-    final String value = attribute.text().replace("'", "''");
-    return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
+  protected String compile(final sqlx.BINARY value) {
+    return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
   }
 
   @Override
-  protected String compile(final $dmlx_blob attribute) {
-    return "HEXTORAW('" + new Hexadecimal(attribute.text()) + "')";
+  protected String compile(final sqlx.BLOB value) {
+    return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
   }
 
   @Override
-  protected String compile(final $dmlx_binary attribute) {
-    return "HEXTORAW('" + new Hexadecimal(attribute.text()) + "')";
+  protected String compile(final sqlx.BOOLEAN value) {
+    return value.get() ? "1" : "0";
   }
 
   @Override
-  protected String compile(final $dmlx_date attribute) {
-    return "TO_DATE('" + attribute.text() + "','YYYY-MM-DD')";
+  protected String compile(final sqlx.CHAR value) {
+    final String string = value.get().replace("'", "''");
+    return string.length() == 0 || string.charAt(0) == ' ' ? "' " + string + "'" : "'" + string + "'";
   }
 
   @Override
-  protected String compile(final $dmlx_time attribute) {
-    return "'0 " + attribute.text() + "'";
+  protected String compile(final sqlx.DATE value) {
+    return "TO_DATE('" + value + "','YYYY-MM-DD')";
   }
 
   @Override
-  protected String compile(final $dmlx_dateTime attribute) {
-    return "TO_TIMESTAMP('" + attribute.text() + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
+  protected String compile(final sqlx.DATETIME value) {
+    return "TO_TIMESTAMP('" + value + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
   }
 
   @Override
-  protected String compile(final $dmlx_boolean attribute) {
-    return attribute.text() ? "1" : "0";
+  protected String compile(final sqlx.TIME value) {
+    return "'0 " + value + "'";
   }
 }

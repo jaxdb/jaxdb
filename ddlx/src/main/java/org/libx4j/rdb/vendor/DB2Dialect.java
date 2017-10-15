@@ -36,8 +36,13 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareFloat(final boolean doublePrecision, final boolean unsigned) {
-    return doublePrecision ? "DOUBLE" : "FLOAT";
+  public String declareFloat(final boolean unsigned) {
+    return "FLOAT";
+  }
+
+  @Override
+  public String declareDouble(final boolean unsigned) {
+    return "DOUBLE";
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0000791.html

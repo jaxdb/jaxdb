@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.dmlx;
 
-import org.libx4j.rdb.dmlx.xe.$dmlx_boolean;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class SQLiteCompiler extends Compiler {
@@ -26,7 +25,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final $dmlx_boolean attribute) {
-    return attribute.text() ? "1" : "0";
+  protected String compile(final sqlx.BOOLEAN value) {
+    return value.get() ? "1" : "0";
   }
 }

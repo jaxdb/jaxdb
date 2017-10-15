@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.dmlx;
 
-import org.libx4j.rdb.dmlx.xe.$dmlx_blob;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class DerbyCompiler extends Compiler {
@@ -26,7 +25,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected final String compile(final $dmlx_blob attribute) {
-    return "CAST(X'" + attribute.text() + "' AS BLOB)";
+  protected final String compile(final sqlx.BLOB value) {
+    return "CAST(X'" + value + "' AS BLOB)";
   }
 }

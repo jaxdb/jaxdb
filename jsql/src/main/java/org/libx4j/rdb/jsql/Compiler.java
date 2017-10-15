@@ -31,9 +31,6 @@ import java.sql.Types;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalUnit;
 import java.util.Collection;
 import java.util.HashMap;
@@ -49,6 +46,7 @@ import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
+import org.libx4j.rdb.dmlx.sqlx;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -1085,24 +1083,20 @@ abstract class Compiler {
   }
 
   protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-//    return (LocalTime)resultSet.getObject(columnIndex);
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : value.toLocalDateTime().toLocalTime();
   }
 
-  private static final DateTimeFormatter TIMESTAMP_FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
-
   protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
-      statement.setTimestamp(parameterIndex, Timestamp.valueOf(value.format(TIMESTAMP_FORMATTER)));
+      statement.setTimestamp(parameterIndex, sqlx.DATETIME.toTimestamp(value));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
   @SuppressWarnings("deprecation")
   protected LocalDateTime getParameter(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
-//  return (LocalDateTime)resultSet.getObject(columnIndex);
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate(), value.getHours(), value.getMinutes(), value.getSeconds(), value.getNanos());
   }
