@@ -98,9 +98,6 @@ public final class Datas {
     final List<Integer> counts = new ArrayList<Integer>();
 
     try {
-      if (insert == null) {
-        int i = 0;
-      }
       final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
       final List<Row> rows = new ArrayList<Row>();
       for (final String tableName : xmlType.propOrder())
