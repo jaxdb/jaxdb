@@ -177,15 +177,15 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dependency>
   ```
   
-8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `DBRegistry`.
+8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `Registry`.
 
   ```java
-  final dbcp_dbcp dbcp = (dbcp_dbcp)Bindings.parse(new InputSource(Resources.getResourceOrFile("dbcp.xml").getURL().openStream()));
+  final Dbcp dbcp = JaxbUtil.parse(Dbcp.class, Thread.currentThread().getContextClassLoader().getResource("dbcp.xml").openStream()));
   final DataSource dataSource = DataSources.createDataSource(dbcp);
-  DBRegistry.registerPreparedBatching(basis.class, new DBConnector() {
+  Registry.registerPreparedBatching(basis.class, new Connector() {
     @Override
     public Connection getConnection() throws SQLException {
-      return new ConnectionProxy(dataSource.getConnection());
+      return dataSource.getConnection();
     }
   });
   ```
