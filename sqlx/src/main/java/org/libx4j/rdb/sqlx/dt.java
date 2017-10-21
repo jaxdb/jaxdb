@@ -28,11 +28,11 @@ import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
 public class dt {
-  public static abstract class Column<T> implements Serializable {
+  public static abstract class DataType<T> implements Serializable {
     private static final long serialVersionUID = 5744263596183372559L;
     protected final T value;
 
-    public Column(final T value) {
+    public DataType(final T value) {
       this.value = value;
     }
 
@@ -46,7 +46,7 @@ public class dt {
     }
   }
 
-  public static class BOOLEAN extends Column<java.lang.Boolean> {
+  public static class BOOLEAN extends DataType<java.lang.Boolean> {
     private static final long serialVersionUID = -4485533995297797429L;
 
     public static String print(final BOOLEAN binding) {
@@ -66,7 +66,7 @@ public class dt {
     }
   }
 
-  public static class BIGINT extends Column<BigInteger> {
+  public static class BIGINT extends DataType<BigInteger> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     public static String print(final BIGINT binding) {
@@ -86,7 +86,7 @@ public class dt {
     }
   }
 
-  public static class BINARY extends Column<String> {
+  public static class BINARY extends DataType<String> {
     private static final long serialVersionUID = -6480289821282094847L;
 
     public static String print(final BINARY binding) {
@@ -102,7 +102,7 @@ public class dt {
     }
   }
 
-  public static class BLOB extends Column<String> {
+  public static class BLOB extends DataType<String> {
     private static final long serialVersionUID = 363574745916397965L;
 
     public static String print(final BLOB binding) {
@@ -118,7 +118,7 @@ public class dt {
     }
   }
 
-  public static class CHAR extends Column<String> {
+  public static class CHAR extends DataType<String> {
     private static final long serialVersionUID = 4342711843352764121L;
 
     public static String print(final CHAR binding) {
@@ -134,7 +134,7 @@ public class dt {
     }
   }
 
-  public static class CLOB extends Column<String> {
+  public static class CLOB extends DataType<String> {
     private static final long serialVersionUID = -4971755608584963685L;
 
     public static String print(final CLOB binding) {
@@ -150,7 +150,7 @@ public class dt {
     }
   }
 
-  public static class DATE extends Column<LocalDate> {
+  public static class DATE extends DataType<LocalDate> {
     private static final long serialVersionUID = -2990133263070615612L;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ISO_DATE;
 
@@ -176,7 +176,7 @@ public class dt {
     }
   }
 
-  public static class DATETIME extends Column<LocalDateTime> {
+  public static class DATETIME extends DataType<LocalDateTime> {
     private static final long serialVersionUID = -6612981768174021637L;
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
@@ -206,7 +206,7 @@ public class dt {
     }
   }
 
-  public static class DECIMAL extends Column<BigDecimal> {
+  public static class DECIMAL extends DataType<BigDecimal> {
     private static final long serialVersionUID = -7880579934877572719L;
 
     public static String print(final DECIMAL binding) {
@@ -231,7 +231,7 @@ public class dt {
     }
   }
 
-  public static class DOUBLE extends Column<java.lang.Double> {
+  public static class DOUBLE extends DataType<java.lang.Double> {
     private static final long serialVersionUID = 8510411838107614004L;
 
     public static String print(final DOUBLE binding) {
@@ -251,7 +251,7 @@ public class dt {
     }
   }
 
-  public static class ENUM extends Column<String> {
+  public static class ENUM extends DataType<String> {
     private static final long serialVersionUID = 5895800099722941093L;
 
     public static String print(final ENUM binding) {
@@ -267,7 +267,7 @@ public class dt {
     }
   }
 
-  public static class FLOAT extends Column<java.lang.Float> {
+  public static class FLOAT extends DataType<java.lang.Float> {
     private static final long serialVersionUID = 8510411838107614004L;
 
     public static String print(final FLOAT binding) {
@@ -287,7 +287,7 @@ public class dt {
     }
   }
 
-  public static class INT extends Column<Long> {
+  public static class INT extends DataType<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     public static String print(final INT binding) {
@@ -307,7 +307,7 @@ public class dt {
     }
   }
 
-  public static class SMALLINT extends Column<java.lang.Integer> {
+  public static class SMALLINT extends DataType<java.lang.Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     public static String print(final SMALLINT binding) {
@@ -327,7 +327,7 @@ public class dt {
     }
   }
 
-  public static class TIME extends Column<LocalTime> {
+  public static class TIME extends DataType<LocalTime> {
     private static final long serialVersionUID = 7396289524599140702L;
     private static final DateTimeFormatter FORMATTER = new DateTimeFormatterBuilder().appendPattern("HH:mm:ss").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
@@ -353,7 +353,7 @@ public class dt {
     }
   }
 
-  public static class TINYINT extends Column<Short> {
+  public static class TINYINT extends DataType<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
 
     public static String print(final TINYINT binding) {

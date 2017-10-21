@@ -178,7 +178,11 @@
                   <xs:annotation>
                     <xs:appinfo>
                       <annox:annotate>
-                        <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;)')"/>
+                        <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
+                        <xsl:if test="@sqlx:generateOnInsert">
+                          <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
+                        </xsl:if>
+                        <xsl:text>)</xsl:text>
                       </annox:annotate>
                     </xs:appinfo>
                   </xs:annotation>

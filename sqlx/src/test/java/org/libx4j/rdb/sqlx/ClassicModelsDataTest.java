@@ -26,6 +26,8 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
 import org.lib4j.xml.XMLException;
+import org.libx4j.rdb.ddlx.DDLxTest;
+import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -39,8 +41,10 @@ import org.xml.sax.SAXException;
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
 public class ClassicModelsDataTest extends SQLxTest {
+  private static final String name = "classicmodels";
   @Test
-  public void testLoadData(final Connection connection) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
-    Assert.assertEquals(3864, loadData(connection, "classicmodels").length);
+  public void testLoadData(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException, XMLException {
+    DDLxTest.recreateSchema(connection, name);
+    Assert.assertEquals(3864, loadData(connection, name).length);
   }
 }

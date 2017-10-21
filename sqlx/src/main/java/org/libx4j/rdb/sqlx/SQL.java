@@ -24,12 +24,17 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.lang.Classes;
 import org.lib4j.lang.Resources;
 import org.lib4j.lang.Strings;
 import org.libx4j.rdb.ddlx.annotation.Column;
@@ -37,7 +42,7 @@ import org.libx4j.rdb.ddlx.annotation.Table;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public final class SQL {
-  private static String getValue(final Compiler compiler, final dt.Column<?> value) {
+  private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
     if (value == null)
       return null;
 
@@ -92,6 +97,24 @@ public final class SQL {
     throw new UnsupportedOperationException("Unsupported type: " + value.getClass());
   }
 
+  private static String generateValue(final Compiler compiler, final Class<?> dataType, final String generateOnInsert) {
+    if ("UUID".equals(generateOnInsert) && dt.CHAR.class == dataType)
+      return getValue(compiler, new dt.CHAR(UUID.randomUUID().toString()));
+
+    if ("TIMESTAMP".equals(generateOnInsert)) {
+      if (dataType == dt.DATE.class)
+        return getValue(compiler, new dt.DATE(LocalDate.now()));
+
+      if (dataType == dt.DATETIME.class)
+        return getValue(compiler, new dt.DATETIME(LocalDateTime.now()));
+
+      if (dataType == dt.TIME.class)
+        return getValue(compiler, new dt.TIME(LocalTime.now()));
+    }
+
+    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + Classes.getStrictName(dataType));
+  }
+
   @SuppressWarnings("unchecked")
   public static int[] INSERT(final Connection connection, final Insert insert) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
@@ -100,9 +123,11 @@ public final class SQL {
     try {
       final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
       final List<Row> rows = new ArrayList<Row>();
-      for (final String tableName : xmlType.propOrder())
-        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert))
+      for (final String tableName : xmlType.propOrder()) {
+        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert)) {
           rows.add(row);
+        }
+      }
 
       if (rows.size() == 0)
         return new int[0];
@@ -146,9 +171,13 @@ public final class SQL {
       if (column == null)
         continue;
 
-      final String value = getValue(compiler, (dt.Column<?>)method.invoke(row));
-      if (value == null)
-        continue;
+      String value = getValue(compiler, (dt.DataType<?>)method.invoke(row));
+      if (value == null) {
+        if (column.generateOnInsert().length() == 0)
+          continue;
+
+        value = generateValue(compiler, method.getReturnType(), column.generateOnInsert());
+      }
 
       if (hasValues) {
         columns.append(", ");

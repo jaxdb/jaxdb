@@ -16,10 +16,17 @@
 -->
 <schema name="classicmodels"
   xmlns="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
+  xsi:schemaLocation="http://rdb.libx4j.org/sqlx.xsd http://rdb.libx4j.org/sqlx.xsd">
 
-  <table name="address" abstract="true">
+  <table name="timestamp" abstract="true">
+    <column name="created_on" xsi:type="dateTime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
+    <column name="modified_on" xsi:type="dateTime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
+    <column name="version" xsi:type="int" precision="9" unsigned="true" default="0" null="false" sqlx:generateOnUpdate="INCREMENT"/>
+  </table>
+  
+  <table name="address" abstract="true" extends="timestamp">
     <column name="address1" xsi:type="char" varying="true" length="255" null="false">
       <check operator="ne" condition=""/>
     </column>

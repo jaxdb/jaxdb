@@ -47,8 +47,8 @@ public final class Entities {
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schema.name()) + "$" + Strings.toTitleCase(table.name()));
     final type.Entity entity = (type.Entity)binding.newInstance();
     for (final Method method : row.getClass().getMethods()) {
-      if (method.getName().startsWith("get") && dt.Column.class.isAssignableFrom(method.getReturnType())) {
-        final dt.Column<?> column = (dt.Column<?>)method.invoke(row);
+      if (method.getName().startsWith("get") && dt.DataType.class.isAssignableFrom(method.getReturnType())) {
+        final dt.DataType<?> column = (dt.DataType<?>)method.invoke(row);
         if (column == null)
           continue;
 
