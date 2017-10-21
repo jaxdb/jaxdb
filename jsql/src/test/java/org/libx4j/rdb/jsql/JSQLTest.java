@@ -31,8 +31,8 @@ import org.lib4j.xml.XMLException;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
-import org.libx4j.rdb.dmlx.Database;
 import org.libx4j.rdb.jsql.generator.Generator;
+import org.libx4j.rdb.sqlx.Database;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -53,10 +53,10 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL dmlx = Resources.getResource(name + ".dmlx").getURL();
+    final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
     final Database database;
-    try (final InputStream in = dmlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".dmlx." + Strings.toTitleCase(name)), dmlx, false);
+    try (final InputStream in = sqlx.openStream()) {
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Strings.toTitleCase(name)), sqlx, false);
     }
 
     final ddlx_schema schema;

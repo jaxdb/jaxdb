@@ -103,19 +103,15 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
     <version>0.9.8-SNAPSHOT</version>
     <executions>
       <execution>
-        <id>default-schema</id>
-        <phase>generate-resources</phase>
         <goals>
-          <goal>ddl</goal>
+          <goal>ddlx</goal>
         </goals>
         <configuration>
           <vendor>PostgreSQL</vendor>
-          <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
-            <destdir>generated-resources/rdb</destdir>
-            <resources>
-              <resource>src/main/resources/basis.ddlx</resource>
-            </resources>
-          </manifest>
+          <destDir>${project.build.directory}/generated-resources/rdb</destDir>
+          <schemas>
+            <schema>src/main/resources/basis.ddlx</schema>
+          </schemas>
         </configuration>
       </execution>
     </executions>

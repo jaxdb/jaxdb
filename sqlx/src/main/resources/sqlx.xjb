@@ -1,0 +1,29 @@
+<jxb:bindings
+  jxb:version="2.1"
+  jxb:extensionBindingPrefixes="annox"
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:dt="http://rdb.libx4j.org/datatypes.xsd"
+  xmlns:annox="http://annox.dev.java.net"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <jxb:bindings schemaLocation="http://rdb.libx4j.org/datatypes.xsd" node="/xs:schema">
+    <jxb:globalBindings>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.BOOLEAN" xmlType="dt:boolean"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.BIGINT" xmlType="dt:bigint"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.BINARY" xmlType="dt:binary"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.BLOB" xmlType="dt:blob"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.CHAR" xmlType="dt:char"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.CLOB" xmlType="dt:clob"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DATE" xmlType="dt:date"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DATETIME" xmlType="dt:dateTime"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DECIMAL" xmlType="dt:decimal"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DOUBLE" xmlType="dt:double"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.ENUM" xmlType="dt:enum"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.FLOAT" xmlType="dt:float"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.INT" xmlType="dt:int"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.SMALLINT" xmlType="dt:smallint"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.TINYINT" xmlType="dt:tinyint"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.TIME" xmlType="dt:time"/>
+    </jxb:globalBindings>
+  </jxb:bindings>
+</jxb:bindings>

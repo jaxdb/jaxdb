@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.sqlx;
 
 import java.io.IOException;
 
@@ -23,15 +23,10 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 import org.lib4j.jci.CompilationException;
-import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.sqlx.SQLxTest;
 
-public class WorldCreateTest extends JSQLTest {
-  private static final String name = "world";
-
+public class ClassicModelsCreateTest extends SQLxTest {
   @Test
-  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, XMLException {
-    createEntities(name);
-    SQLxTest.createSchemas(name);
+  public void testCreateSchema() throws CompilationException, IOException, JAXBException, TransformerException {
+    createSchemas("classicmodels");
   }
 }

@@ -36,7 +36,7 @@
   </properties>
   <modules>
     <module>ddlx</module>
-    <module>dmlx</module>
+    <module>sqlx</module>
     <module>jsql</module>
   </modules>
   <dependencies>

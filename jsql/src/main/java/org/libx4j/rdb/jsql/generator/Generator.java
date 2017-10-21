@@ -136,7 +136,7 @@ public class Generator {
     final Object[] params = new Object[] {THIS, column._name$().text(), _default, audit.isUnique(table, column), audit.isPrimary(table, column), column._null$().text()};
     if (column instanceof $ddlx_char) {
       final $ddlx_char type = ($ddlx_char)column;
-      if (!type.jsql_generateOnInsert$().isNull() && $ddlx_char.jsql_generateOnInsert$.UUID.text().equals(type.jsql_generateOnInsert$().text()))
+      if (!type.sqlx_generateOnInsert$().isNull() && $ddlx_char.sqlx_generateOnInsert$.UUID.text().equals(type.sqlx_generateOnInsert$().text()))
         generateOnInsert = GenerateOn.UUID;
 
       return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text(), type._varying$().text());
@@ -160,8 +160,8 @@ public class Generator {
     if (column instanceof $jsql_integer) {
       final $jsql_integer type = ($jsql_integer)column;
       // no autogenerator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
-      if (!type.jsql_generateOnUpdate$().isNull())
-        if ($jsql_integer.jsql_generateOnUpdate$.INCREMENT.text().equals(type.jsql_generateOnUpdate$().text()))
+      if (!type.sqlx_generateOnUpdate$().isNull())
+        if ($jsql_integer.sqlx_generateOnUpdate$.INCREMENT.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.INCREMENT;
 
       if (column instanceof $ddlx_tinyint) {
@@ -210,12 +210,12 @@ public class Generator {
 
     if (column instanceof $ddlx_date) {
       final $ddlx_date type = ($ddlx_date)column;
-      if (!type.jsql_generateOnInsert$().isNull())
-        if ($ddlx_date.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
+      if (!type.sqlx_generateOnInsert$().isNull())
+        if ($ddlx_date.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.jsql_generateOnUpdate$().isNull())
-        if ($ddlx_date.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
+      if (!type.sqlx_generateOnUpdate$().isNull())
+        if ($ddlx_date.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
       return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
@@ -223,12 +223,12 @@ public class Generator {
 
     if (column instanceof $ddlx_time) {
       final $ddlx_time type = ($ddlx_time)column;
-      if (!type.jsql_generateOnInsert$().isNull())
-        if ($ddlx_time.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
+      if (!type.sqlx_generateOnInsert$().isNull())
+        if ($ddlx_time.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.jsql_generateOnUpdate$().isNull())
-        if ($ddlx_time.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
+      if (!type.sqlx_generateOnUpdate$().isNull())
+        if ($ddlx_time.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
       return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
@@ -236,12 +236,12 @@ public class Generator {
 
     if (column instanceof $ddlx_dateTime) {
       final $ddlx_dateTime type = ($ddlx_dateTime)column;
-      if (!type.jsql_generateOnInsert$().isNull())
-        if ($ddlx_dateTime.jsql_generateOnInsert$.TIMESTAMP.text().equals(type.jsql_generateOnInsert$().text()))
+      if (!type.sqlx_generateOnInsert$().isNull())
+        if ($ddlx_dateTime.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.jsql_generateOnUpdate$().isNull())
-        if ($ddlx_dateTime.jsql_generateOnUpdate$.TIMESTAMP.text().equals(type.jsql_generateOnUpdate$().text()))
+      if (!type.sqlx_generateOnUpdate$().isNull())
+        if ($ddlx_dateTime.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
       return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());

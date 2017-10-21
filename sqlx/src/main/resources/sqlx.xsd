@@ -17,18 +17,14 @@
 <xs:schema
   elementFormDefault="qualified"
   attributeFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/jsql.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
+  targetNamespace="http://rdb.libx4j.org/sqlx.xsd"
   xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
-  xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
+  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://rdb.libx4j.org/ddlx.xsd" schemaLocation="jsql-ddlx.xsd"/>
-  <xs:import namespace="http://rdb.libx4j.org/sqlx.xsd" schemaLocation="http://rdb.libx4j.org/sqlx.xsd"/>
+  <xs:import namespace="http://rdb.libx4j.org/ddlx.xsd" schemaLocation="sqlx-ddlx.xsd"/>
   
-  <xs:attributeGroup name="keyForUpdate">
-    <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
-  </xs:attributeGroup>
+  <xs:include schemaLocation="sqlx-common.xsd"/>
   
   <!-- text data -->
   
@@ -36,16 +32,13 @@
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:char"/>
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -53,17 +46,13 @@
   
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -73,7 +62,6 @@
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
         <xs:attributeGroup ref="sqlx:integer"/>
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -82,17 +70,13 @@
   
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -100,9 +84,7 @@
   
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -112,7 +94,6 @@
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:date"/>
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -121,7 +102,6 @@
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:time"/>
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -130,7 +110,6 @@
     <xs:complexContent>
       <xs:extension base="ddlx:column">
         <xs:attributeGroup ref="sqlx:dateTime"/>
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -139,9 +118,7 @@
   
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
   
@@ -149,12 +126,10 @@
   
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="ddlx:column">
-        <xs:attributeGroup ref="jsql:keyForUpdate"/>
-      </xs:extension>
+      <xs:extension base="ddlx:column"/>
     </xs:complexContent>
   </xs:complexType>
-  
+    
   <!-- containers -->
   
   <xs:complexType name="table">
@@ -168,5 +143,5 @@
   <xs:complexType name="insert"/>
   
   <xs:complexType name="database"/>
-  
+
 </xs:schema>

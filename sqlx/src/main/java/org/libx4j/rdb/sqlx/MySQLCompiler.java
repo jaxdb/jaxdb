@@ -14,24 +14,13 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.sqlx;
 
-import java.io.IOException;
+import org.libx4j.rdb.vendor.DBVendor;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
-
-import org.junit.Test;
-import org.lib4j.jci.CompilationException;
-import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.sqlx.SQLxTest;
-
-public class WorldCreateTest extends JSQLTest {
-  private static final String name = "world";
-
-  @Test
-  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, XMLException {
-    createEntities(name);
-    SQLxTest.createSchemas(name);
+final class MySQLCompiler extends Compiler {
+  @Override
+  protected DBVendor getVendor() {
+    return DBVendor.MY_SQL;
   }
 }

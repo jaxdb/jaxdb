@@ -46,7 +46,7 @@ import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
-import org.libx4j.rdb.dmlx.sqlx;
+import org.libx4j.rdb.sqlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
@@ -1090,7 +1090,7 @@ abstract class Compiler {
   protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
-      statement.setTimestamp(parameterIndex, sqlx.DATETIME.toTimestamp(value));
+      statement.setTimestamp(parameterIndex, dt.DATETIME.toTimestamp(value));
     else
       statement.setNull(parameterIndex, dataType.sqlType());
   }

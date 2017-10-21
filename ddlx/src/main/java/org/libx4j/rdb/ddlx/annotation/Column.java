@@ -14,24 +14,15 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.ddlx.annotation;
 
-import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
-
-import org.junit.Test;
-import org.lib4j.jci.CompilationException;
-import org.lib4j.xml.XMLException;
-import org.libx4j.rdb.sqlx.SQLxTest;
-
-public class WorldCreateTest extends JSQLTest {
-  private static final String name = "world";
-
-  @Test
-  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, XMLException {
-    createEntities(name);
-    SQLxTest.createSchemas(name);
-  }
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Column {
+  String name();
 }

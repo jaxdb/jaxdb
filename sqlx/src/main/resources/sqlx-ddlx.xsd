@@ -19,10 +19,9 @@
   targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
-  xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://rdb.libx4j.org/jsql.xsd" schemaLocation="jsql.xsd"/>
+  <xs:import namespace="http://rdb.libx4j.org/sqlx.xsd" schemaLocation="sqlx.xsd"/>
   
   <xs:include schemaLocation="http://rdb.libx4j.org/ddlx-common.xsd"/>
   
@@ -30,7 +29,7 @@
   
   <xs:complexType name="char">
     <xs:complexContent>
-      <xs:extension base="jsql:char">
+      <xs:extension base="sqlx:char">
         <xs:group ref="ddlx:char" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:char"/>
       </xs:extension>
@@ -39,7 +38,7 @@
   
   <xs:complexType name="clob">
     <xs:complexContent>
-      <xs:extension base="jsql:clob">
+      <xs:extension base="sqlx:clob">
         <xs:group ref="ddlx:clob" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:clob"/>
       </xs:extension>
@@ -50,25 +49,25 @@
   
   <xs:complexType name="binary">
     <xs:complexContent>
-      <xs:extension base="jsql:binary">
+      <xs:extension base="sqlx:binary">
         <xs:attributeGroup ref="ddlx:binary"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="blob">
     <xs:complexContent>
-      <xs:extension base="jsql:blob">
+      <xs:extension base="sqlx:blob">
         <xs:attributeGroup ref="ddlx:blob"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- numeric data -->
-  
+
   <xs:complexType name="tinyint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
+      <xs:extension base="sqlx:integer">
         <xs:group ref="ddlx:tinyint" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:tinyint"/>
       </xs:extension>
@@ -77,7 +76,7 @@
   
   <xs:complexType name="smallint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
+      <xs:extension base="sqlx:integer">
         <xs:group ref="ddlx:smallint" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:smallint"/>
       </xs:extension>
@@ -86,7 +85,7 @@
   
   <xs:complexType name="int">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
+      <xs:extension base="sqlx:integer">
         <xs:group ref="ddlx:int" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:int"/>
       </xs:extension>
@@ -95,7 +94,7 @@
   
   <xs:complexType name="bigint">
     <xs:complexContent>
-      <xs:extension base="jsql:integer">
+      <xs:extension base="sqlx:integer">
         <xs:group ref="ddlx:bigint" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:bigint"/>
       </xs:extension>
@@ -106,7 +105,7 @@
   
   <xs:complexType name="float">
     <xs:complexContent>
-      <xs:extension base="jsql:float">
+      <xs:extension base="sqlx:float">
         <xs:group ref="ddlx:float" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:float"/>
       </xs:extension>
@@ -115,7 +114,7 @@
   
   <xs:complexType name="double">
     <xs:complexContent>
-      <xs:extension base="jsql:double">
+      <xs:extension base="sqlx:double">
         <xs:group ref="ddlx:double" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:double"/>
       </xs:extension>
@@ -126,18 +125,18 @@
   
   <xs:complexType name="decimal">
     <xs:complexContent>
-      <xs:extension base="jsql:decimal">
+      <xs:extension base="sqlx:decimal">
         <xs:group ref="ddlx:decimal" minOccurs="0"/>
         <xs:attributeGroup ref="ddlx:decimal"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- time data -->
-  
+
   <xs:complexType name="date">
     <xs:complexContent>
-      <xs:extension base="jsql:date">
+      <xs:extension base="sqlx:date">
         <xs:attributeGroup ref="ddlx:date"/>
       </xs:extension>
     </xs:complexContent>
@@ -145,7 +144,7 @@
   
   <xs:complexType name="time">
     <xs:complexContent>
-      <xs:extension base="jsql:time">
+      <xs:extension base="sqlx:time">
         <xs:attributeGroup ref="ddlx:time"/>
       </xs:extension>
     </xs:complexContent>
@@ -153,7 +152,7 @@
   
   <xs:complexType name="dateTime">
     <xs:complexContent>
-      <xs:extension base="jsql:dateTime">
+      <xs:extension base="sqlx:dateTime">
         <xs:attributeGroup ref="ddlx:dateTime"/>
       </xs:extension>
     </xs:complexContent>
@@ -163,7 +162,7 @@
   
   <xs:complexType name="boolean">
     <xs:complexContent>
-      <xs:extension base="jsql:boolean">
+      <xs:extension base="sqlx:boolean">
         <xs:attributeGroup ref="ddlx:boolean"/>
       </xs:extension>
     </xs:complexContent>
@@ -173,7 +172,7 @@
   
   <xs:complexType name="enum">
     <xs:complexContent>
-      <xs:extension base="jsql:enum">
+      <xs:extension base="sqlx:enum">
         <xs:attributeGroup ref="ddlx:enum"/>
       </xs:extension>
     </xs:complexContent>
@@ -185,7 +184,7 @@
     <xs:complexContent>
       <xs:extension base="ddlx:compliant">
         <xs:sequence>
-          <xs:element name="table" type="jsql:table" minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded">
             <!--<xs:unique name="primaryKey">
               <xs:selector xpath="*"/>
               <xs:field xpath="@primary"/>
@@ -211,7 +210,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:element name="schema" type="ddlx:schema">
     <xs:key name="keyTableName">
       <xs:selector xpath="./ddlx:table"/>
@@ -226,5 +225,5 @@
       <xs:field xpath="@extends"/>
     </xs:keyref>
   </xs:element>
-  
+
 </xs:schema>

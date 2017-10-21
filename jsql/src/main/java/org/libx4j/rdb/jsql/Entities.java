@@ -30,13 +30,13 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
 import org.lib4j.lang.Strings;
-import org.libx4j.rdb.ddlx.Column;
-import org.libx4j.rdb.ddlx.Schema;
-import org.libx4j.rdb.ddlx.Table;
-import org.libx4j.rdb.dmlx.Database;
-import org.libx4j.rdb.dmlx.Insert;
-import org.libx4j.rdb.dmlx.Row;
-import org.libx4j.rdb.dmlx.sqlx;
+import org.libx4j.rdb.ddlx.annotation.Column;
+import org.libx4j.rdb.ddlx.annotation.Schema;
+import org.libx4j.rdb.ddlx.annotation.Table;
+import org.libx4j.rdb.sqlx.Database;
+import org.libx4j.rdb.sqlx.Insert;
+import org.libx4j.rdb.sqlx.Row;
+import org.libx4j.rdb.sqlx.dt;
 
 public final class Entities {
   @SuppressWarnings({"rawtypes", "unchecked"})
@@ -47,8 +47,8 @@ public final class Entities {
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schema.name()) + "$" + Strings.toTitleCase(table.name()));
     final type.Entity entity = (type.Entity)binding.newInstance();
     for (final Method method : row.getClass().getMethods()) {
-      if (method.getName().startsWith("get") && sqlx.Column.class.isAssignableFrom(method.getReturnType())) {
-        final sqlx.Column<?> column = (sqlx.Column<?>)method.invoke(row);
+      if (method.getName().startsWith("get") && dt.Column.class.isAssignableFrom(method.getReturnType())) {
+        final dt.Column<?> column = (dt.Column<?>)method.invoke(row);
         if (column == null)
           continue;
 
@@ -58,19 +58,19 @@ public final class Entities {
         final Object value = column.get();
         if (value == null)
           dataType.set(null);
-        else if (column instanceof sqlx.BLOB)
+        else if (column instanceof dt.BLOB)
           dataType.set(new ByteArrayInputStream(((String)value).getBytes()));
-        else if (column instanceof sqlx.BINARY)
+        else if (column instanceof dt.BINARY)
           dataType.set(((String)value).getBytes());
-        else if (column instanceof sqlx.CLOB)
+        else if (column instanceof dt.CLOB)
           dataType.set(new StringReader((String)value));
-        else if (column instanceof sqlx.DATE)
+        else if (column instanceof dt.DATE)
           dataType.set(LocalDate.parse((String)value));
-        else if (column instanceof sqlx.DATETIME)
+        else if (column instanceof dt.DATETIME)
           dataType.set(LocalDateTime.parse((String)value));
-        else if (column instanceof sqlx.TIME)
+        else if (column instanceof dt.TIME)
           dataType.set(LocalTime.parse((String)value));
-        else if (column instanceof sqlx.ENUM) {
+        else if (column instanceof dt.ENUM) {
           for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
               dataType.set(constant);

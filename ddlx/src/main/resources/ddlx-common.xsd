@@ -18,10 +18,10 @@
   elementFormDefault="qualified"
   targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
+  xmlns:dt="http://rdb.libx4j.org/datatypes.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://rdb.libx4j.org/sqlx.xsd" schemaLocation="http://rdb.libx4j.org/sqlx.xsd"/>
+  <xs:import namespace="http://rdb.libx4j.org/datatypes.xsd" schemaLocation="http://rdb.libx4j.org/datatypes.xsd"/>
   
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
@@ -210,7 +210,7 @@
 
   <xs:attributeGroup name="char">
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="sqlx:char"/>
+    <xs:attribute name="default" type="dt:char"/>
     <xs:attribute name="length" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:positiveInteger">
@@ -266,7 +266,7 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="varying" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="sqlx:binary"/>
+    <xs:attribute name="default" type="dt:binary"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="blob">
@@ -306,9 +306,9 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:bigint"/>
-    <xs:attribute name="min" type="sqlx:bigint"/>
-    <xs:attribute name="max" type="sqlx:bigint"/>
+    <xs:attribute name="default" type="dt:bigint"/>
+    <xs:attribute name="min" type="dt:bigint"/>
+    <xs:attribute name="max" type="dt:bigint"/>
   </xs:attributeGroup>
   
   <xs:group name="bigint">
@@ -316,7 +316,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:bigint" use="required"/>
+          <xs:attribute name="condition" type="dt:bigint" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -331,9 +331,9 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:int"/>
-    <xs:attribute name="min" type="sqlx:int"/>
-    <xs:attribute name="max" type="sqlx:int"/>
+    <xs:attribute name="default" type="dt:int"/>
+    <xs:attribute name="min" type="dt:int"/>
+    <xs:attribute name="max" type="dt:int"/>
   </xs:attributeGroup>
   
   <xs:group name="int">
@@ -341,7 +341,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:int" use="required"/>
+          <xs:attribute name="condition" type="dt:int" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -356,9 +356,9 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:smallint"/>    
-    <xs:attribute name="min" type="sqlx:smallint"/>
-    <xs:attribute name="max" type="sqlx:smallint"/>
+    <xs:attribute name="default" type="dt:smallint"/>    
+    <xs:attribute name="min" type="dt:smallint"/>
+    <xs:attribute name="max" type="dt:smallint"/>
   </xs:attributeGroup>
   
   <xs:group name="smallint">
@@ -366,7 +366,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:smallint" use="required"/>
+          <xs:attribute name="condition" type="dt:smallint" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -381,9 +381,9 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:tinyint"/>    
-    <xs:attribute name="min" type="sqlx:tinyint"/>
-    <xs:attribute name="max" type="sqlx:tinyint"/>
+    <xs:attribute name="default" type="dt:tinyint"/>    
+    <xs:attribute name="min" type="dt:tinyint"/>
+    <xs:attribute name="max" type="dt:tinyint"/>
   </xs:attributeGroup>
   
   <xs:group name="tinyint">
@@ -391,7 +391,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:tinyint" use="required"/>
+          <xs:attribute name="condition" type="dt:tinyint" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -399,9 +399,9 @@
   
   <xs:attributeGroup name="float">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="sqlx:float"/>
-    <xs:attribute name="min" type="sqlx:float"/>
-    <xs:attribute name="max" type="sqlx:float"/>
+    <xs:attribute name="default" type="dt:float"/>
+    <xs:attribute name="min" type="dt:float"/>
+    <xs:attribute name="max" type="dt:float"/>
   </xs:attributeGroup>
   
   <xs:group name="float">
@@ -409,7 +409,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:float" use="required"/>
+          <xs:attribute name="condition" type="dt:float" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -418,9 +418,9 @@
   <xs:attributeGroup name="double">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="double" type="xs:boolean" default="false"/>
-    <xs:attribute name="default" type="sqlx:double"/>
-    <xs:attribute name="min" type="sqlx:double"/>
-    <xs:attribute name="max" type="sqlx:double"/>
+    <xs:attribute name="default" type="dt:double"/>
+    <xs:attribute name="min" type="dt:double"/>
+    <xs:attribute name="max" type="dt:double"/>
   </xs:attributeGroup>
   
   <xs:group name="double">
@@ -428,7 +428,7 @@
       <xs:element name="check">
         <xs:complexType>
           <xs:attribute name="operator" type="ddlx:rangeOperator" use="required"/>
-          <xs:attribute name="condition" type="sqlx:double" use="required"/>
+          <xs:attribute name="condition" type="dt:double" use="required"/>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -452,9 +452,9 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:decimal"/>
-    <xs:attribute name="min" type="sqlx:decimal"/>
-    <xs:attribute name="max" type="sqlx:decimal"/>
+    <xs:attribute name="default" type="dt:decimal"/>
+    <xs:attribute name="min" type="dt:decimal"/>
+    <xs:attribute name="max" type="dt:decimal"/>
   </xs:attributeGroup>
   
   <xs:group name="decimal">
@@ -471,7 +471,7 @@
   <!-- time data -->
 
   <xs:attributeGroup name="date">
-    <xs:attribute name="default" type="sqlx:date"/>
+    <xs:attribute name="default" type="dt:date"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="time">
@@ -482,7 +482,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:time"/>
+    <xs:attribute name="default" type="dt:time"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="dateTime">
@@ -493,11 +493,11 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:dateTime"/>
+    <xs:attribute name="default" type="dt:dateTime"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="boolean">
-    <xs:attribute name="default" type="sqlx:boolean"/>
+    <xs:attribute name="default" type="dt:boolean"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="enum">
@@ -508,7 +508,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="sqlx:enum"/>
+    <xs:attribute name="default" type="dt:enum"/>
   </xs:attributeGroup>
 
   <xs:complexType name="column" abstract="true">

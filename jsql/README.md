@@ -77,14 +77,14 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
     <executions>
       <!-- [...] the ddlx <execution> is here -->
       <execution>
-        <id>jsql</id>
+        <goals>
+          <goal>jsql</goal>
+        </goals>
         <configuration>
-          <manifest xmlns="http://maven.lib4j.org/common/manifest.xsd">
-            <destdir>generated-sources/rdb</destdir>
-            <resources>
-              <resource>src/main/resources/schema.ddlx</resource>
-            </resources>
-          </manifest>
+          <destDir>${project.build.directory}/generated-sources/rdb</destDir>
+          <schemas>
+            <schema>src/main/resources/schema.ddlx</schema>
+          </schemas>
         </configuration>
       </execution>
     </executions>

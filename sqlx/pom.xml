@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2012 lib4j
+  Copyright (c) 2016 lib4j
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@
     <version>0.9.8-SNAPSHOT</version>
   </parent>
   <groupId>org.libx4j.rdb</groupId>
-  <artifactId>rdb-jsql</artifactId>
+  <artifactId>rdb-sqlx</artifactId>
   <version>0.9.8-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
@@ -34,7 +34,7 @@
         <directory>${project.build.directory}/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
-        <directory>${project.build.directory}/generated-test-sources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-sources/jaxb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -55,6 +55,17 @@
         </executions>
       </plugin>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <reuseForks>false</reuseForks>
+          <additionalClasspathElements>
+            <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
+          </additionalClasspathElements>
+        </configuration>
+      </plugin>
+      <plugin>
         <groupId>org.lib4j.maven.plugin</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
@@ -63,7 +74,55 @@
             <goals>
               <goal>validate</goal>
             </goals>
-            <phase>test</phase>
+            <phase>integration-test</phase>
+          </execution>
+          <execution>
+            <id>default-transform</id>
+            <goals>
+              <goal>transform</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+            <configuration>
+              <destDir>${project.build.directory}/generated-test-resources/rdb</destDir>
+              <rename>/\.\S+$/.xsd/</rename>
+              <stylesheet>src/main/resources/sqlx.xsl</stylesheet>
+              <resources>
+                <resource>classicmodels.ddlx</resource>
+                <resource>types.ddlx</resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.lib4j.maven.plugin</groupId>
+        <artifactId>xjc-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>default</id>
+            <configuration>
+              <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
+              <schemas>
+                <schema>src/main/resources/sqlx.xsd</schema>
+              </schemas>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-resources</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
+              <schemas>
+                <schema>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/rdb/types.xsd</schema>
+              </schemas>
+              <bindings>
+                <binding>src/main/resources/sqlx.xjb</binding>
+              </bindings>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -73,41 +132,11 @@
         <configuration>
           <destDir>${project.build.directory}/generated-sources/xsb</destDir>
           <schemas>
-            <schema>src/main/resources/jsql.xsd</schema>
+            <schema>src/main/resources/sqlx.xsd</schema>
           </schemas>
         </configuration>
       </plugin>
     </plugins>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <configuration>
-            <reuseForks>false</reuseForks>
-            <additionalClasspathElements>
-              <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
-            </additionalClasspathElements>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <reuseForks>false</reuseForks>
-            <additionalClasspathElements>
-              <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
-            </additionalClasspathElements>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
   <profiles>
     <profile>
@@ -117,12 +146,6 @@
         </property>
       </activation>
       <dependencies>
-        <dependency>
-          <groupId>org.libx4j.rdb</groupId>
-          <artifactId>rdb-sqlx</artifactId>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
         <dependency>
           <groupId>org.libx4j.rdb</groupId>
           <artifactId>rdb-ddlx</artifactId>
@@ -135,28 +158,16 @@
   <dependencies>
     <dependency>
       <groupId>org.lib4j</groupId>
-      <artifactId>lib4j-math</artifactId>
+      <artifactId>lib4j-xml</artifactId>
     </dependency>
     <dependency>
       <groupId>org.lib4j</groupId>
       <artifactId>lib4j-jci</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.lib4j</groupId>
-      <artifactId>lib4j-sql</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.libx4j.rdb</groupId>
-      <artifactId>rdb-sqlx</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.libx4j.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.libx4j.xsb</groupId>
-      <artifactId>xsb-generator</artifactId>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 </project>
