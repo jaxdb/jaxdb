@@ -19,7 +19,14 @@ package org.libx4j.rdb.ddlx;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -29,16 +36,26 @@ import java.util.Set;
 
 import org.lib4j.lang.Arrays;
 import org.lib4j.xml.XMLException;
+import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
+import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
+import org.libx4j.xsb.runtime.MarshalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Generator extends BaseGenerator {
   protected static final Logger logger = LoggerFactory.getLogger(Generator.class);
+
+  private static final Comparator<AbstractMap.SimpleEntry<Integer,$ddlx_column>> comparator = new Comparator<AbstractMap.SimpleEntry<Integer,$ddlx_column>>() {
+    @Override
+    public int compare(final SimpleEntry<Integer,$ddlx_column> o1, final SimpleEntry<Integer,$ddlx_column> o2) {
+      return Integer.compare(o1.getKey(), o2.getKey());
+    }
+  };
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
@@ -47,6 +64,40 @@ public final class Generator extends BaseGenerator {
     }
 
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]), null);
+  }
+
+  public static ddlx_schema createDDL(final Connection connection) throws SQLException {
+    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final Compiler compiler = Compiler.getCompiler(vendor);
+    final DatabaseMetaData meta = connection.getMetaData();
+    final ResultSet tableRows = meta.getTables(null, null, null, new String[] {"TABLE"});
+    final ddlx_schema schema = new ddlx_schema();
+    while (tableRows.next()) {
+      final String tableName = tableRows.getString(3);
+      final $ddlx_table table = new ddlx_schema._table();
+      table._name$(new $ddlx_named._name$(tableName.toLowerCase()));
+      schema._table(table);
+
+      final ResultSet columnRows = meta.getColumns(null, null, tableName, null);
+      final List<AbstractMap.SimpleEntry<Integer,$ddlx_column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$ddlx_column>>();
+      while (columnRows.next()) {
+        final String columnName = columnRows.getString("COLUMN_NAME");
+        final String typeName = columnRows.getString("TYPE_NAME");
+        final int columnSize = columnRows.getInt("COLUMN_SIZE");
+        final String _default = columnRows.getString("COLUMN_DEF");
+        final int index = columnRows.getInt("ORDINAL_POSITION");
+        final String nullable = columnRows.getString("IS_NULLABLE");
+        final String autoIncrement = columnRows.getString("IS_AUTOINCREMENT");
+        final int decimalDigits = columnRows.getInt("DECIMAL_DIGITS");
+        final $ddlx_column column = compiler.makeColumn(columnName.toLowerCase(), typeName, columnSize, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
+        columns.add(new AbstractMap.SimpleEntry<Integer,$ddlx_column>(index, column));
+      }
+
+      columns.sort(comparator);
+      columns.stream().forEach(c -> table._column(c.getValue()));
+    }
+
+    return schema;
   }
 
   public static List<Statement> createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {

@@ -83,4 +83,9 @@ class DB2Compiler extends Compiler {
 
     return "ON UPDATE " + onUpdate.text();
   }
+
+  @Override
+  protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+    throw new UnsupportedOperationException();
+  }
 }

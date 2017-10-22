@@ -606,30 +606,30 @@ abstract class Compiler {
     }
 
     if (column instanceof $ddlx_integer) {
-      final BigInteger defalt;
+      final BigInteger _default;
       final Byte precision;
       final boolean unsigned;
       if (column instanceof $ddlx_tinyint) {
         final $ddlx_tinyint type = ($ddlx_tinyint)column;
-        defalt = type._default$().text();
+        _default = type._default$().text();
         precision = type._precision$().text();
         unsigned = type._unsigned$().text();
       }
       else if (column instanceof $ddlx_smallint) {
         final $ddlx_smallint type = ($ddlx_smallint)column;
-        defalt = type._default$().text();
+        _default = type._default$().text();
         precision = type._precision$().text();
         unsigned = type._unsigned$().text();
       }
       else if (column instanceof $ddlx_int) {
         final $ddlx_int type = ($ddlx_int)column;
-        defalt = type._default$().text();
+        _default = type._default$().text();
         precision = type._precision$().text();
         unsigned = type._unsigned$().text();
       }
       else if (column instanceof $ddlx_bigint) {
         final $ddlx_bigint type = ($ddlx_bigint)column;
-        defalt = type._default$().text();
+        _default = type._default$().text();
         precision = type._precision$().text();
         unsigned = type._unsigned$().text();
       }
@@ -637,11 +637,13 @@ abstract class Compiler {
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
       }
 
-      if (defalt == null)
+      if (_default == null)
         return null;
 
-      checkNumericDefault(getVendor(), column, defalt, defalt.compareTo(BigInteger.ZERO) >= 0, precision.shortValue(), unsigned);
-      return String.valueOf(defalt);
+      if (precision != null)
+        checkNumericDefault(getVendor(), column, _default, _default.compareTo(BigInteger.ZERO) >= 0, precision.shortValue(), unsigned);
+
+      return String.valueOf(_default);
     }
 
     if (column instanceof $ddlx_float) {
@@ -676,7 +678,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return type._default$().text().toString();
+      return "'" + type._default$().text().toString() + "'";
     }
 
     if (column instanceof $ddlx_time) {
@@ -684,7 +686,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return type._default$().text().toString();
+      return "'" + type._default$().text().toString() + "'";
     }
 
     if (column instanceof $ddlx_dateTime) {
@@ -692,7 +694,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return type._default$().text().toString();
+      return "'" + type._default$().text().toString() + "'";
     }
 
     if (column instanceof $ddlx_boolean) {
@@ -723,4 +725,171 @@ abstract class Compiler {
 
   protected abstract String $null(final $ddlx_table table, final $ddlx_column column);
   protected abstract String $autoIncrement(final $ddlx_table table, final $ddlx_integer column);
+
+  @SuppressWarnings("unchecked")
+  protected static final <T extends $ddlx_column>T newColumn(final Class<T> type) {
+    if (type == $ddlx_bigint.class)
+      return (T)new $ddlx_bigint() {
+        private static final long serialVersionUID = 8340538426557873933L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_binary.class)
+      return (T)new $ddlx_binary() {
+        private static final long serialVersionUID = -4511455354880159839L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_blob.class)
+      return (T)new $ddlx_blob() {
+        private static final long serialVersionUID = -3621793530236960424L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_boolean.class)
+      return (T)new $ddlx_boolean() {
+        private static final long serialVersionUID = -1244791230666618613L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_char.class)
+      return (T)new $ddlx_char() {
+        private static final long serialVersionUID = -1408310289647069164L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_clob.class)
+      return (T)new $ddlx_clob() {
+        private static final long serialVersionUID = 1338245363928630992L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_date.class)
+      return (T)new $ddlx_date() {
+        private static final long serialVersionUID = -2226523068522710931L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_dateTime.class)
+      return (T)new $ddlx_dateTime() {
+        private static final long serialVersionUID = -8962376436200133621L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_decimal.class)
+      return (T)new $ddlx_decimal() {
+        private static final long serialVersionUID = 5135485324988707324L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_double.class)
+      return (T)new $ddlx_double() {
+        private static final long serialVersionUID = 725203596626982344L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_enum.class)
+      return (T)new $ddlx_enum() {
+        private static final long serialVersionUID = -3659603056107131400L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_float.class)
+      return (T)new $ddlx_float() {
+        private static final long serialVersionUID = -3315953293206810433L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_int.class)
+      return (T)new $ddlx_int() {
+        private static final long serialVersionUID = 1949632547146151337L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_smallint.class)
+      return (T)new $ddlx_smallint() {
+        private static final long serialVersionUID = 1537745275729895670L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_time.class)
+      return (T)new $ddlx_time() {
+        private static final long serialVersionUID = 4269181853044686010L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    if (type == $ddlx_tinyint.class)
+      return (T)new $ddlx_tinyint() {
+        private static final long serialVersionUID = -5494299754935677721L;
+
+        @Override
+        protected $ddlx_named inherits() {
+          return null;
+        }
+      };
+
+    throw new UnsupportedOperationException("Unsupported column type: " + type.getClass().getName());
+  }
+
+  protected abstract $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement);
 }

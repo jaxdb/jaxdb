@@ -20,16 +20,16 @@
   xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="implicit">
     <column name="id" xsi:type="int" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
-    <column name="bigint_type" xsi:type="bigint"/>
+    <column name="bigint_type" xsi:type="bigint" default="100"/>
     <column name="blob_type" xsi:type="blob"/>
     <column name="clob_type" xsi:type="clob"/>
-    <column name="date_type" xsi:type="date"/>
-    <column name="datetime_type" xsi:type="dateTime"/>
-    <column name="decimal_type" xsi:type="decimal"/>
-    <column name="int_type" xsi:type="int"/>
-    <column name="smallint_type" xsi:type="smallint"/>
-    <column name="tinyint_type" xsi:type="tinyint"/>
-    <column name="time_type" xsi:type="time"/>
+    <column name="date_type" xsi:type="date" default="2017-10-10"/>
+    <column name="datetime_type" xsi:type="dateTime" default="2017-10-10 12:34:56"/>
+    <column name="decimal_type" xsi:type="decimal" default="1234"/>
+    <column name="int_type" xsi:type="int" default="50"/>
+    <column name="smallint_type" xsi:type="smallint" default="20"/>
+    <column name="tinyint_type" xsi:type="tinyint" default="10"/>
+    <column name="time_type" xsi:type="time" default="12:34:56"/>
     <constraints>
       <primaryKey>
         <column name="id"/>
