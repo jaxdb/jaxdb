@@ -1,0 +1,431 @@
+<!--
+  Copyright (c) 2017 lib4j
+  
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<schema
+  xmlns="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
+  <table name="t_bigint">
+    <column name="c_auto" xsi:type="bigint" precision="14" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_null" xsi:type="bigint" precision="15"/>
+    <column name="c_default" xsi:type="bigint" precision="16" default="16"/>
+    <column name="c_unsigned" xsi:type="bigint" precision="17" unsigned="true"/>
+    <column name="c_not_null" xsi:type="bigint" precision="18" null="false"/>
+    <column name="c_min_max" xsi:type="bigint" precision="19" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="bigint">
+      <check operator="ne" condition="0"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_auto"/>
+      </primaryKey>
+      <unique>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_binary">
+    <column name="c_non_varrying" xsi:type="binary" length="214"/>
+    <column name="c_null" xsi:type="binary" varying="true" length="215"/>
+    <column name="c_default" xsi:type="binary" varying="true" length="216" default="FFFFFF"/>
+    <column name="c_not_null" xsi:type="binary" varying="true" length="218" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_null"/>
+        <column name="c_non_varrying"/>
+      </index>
+      <index>
+        <column name="c_default"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_blob">
+    <column name="c_null" xsi:type="blob" length="215"/>
+    <column name="c_not_null" xsi:type="blob" length="218" null="false"/>
+    <column name="c_implicit" xsi:type="blob"/>
+  </table>
+  <table name="t_boolean">
+    <column name="c_default" xsi:type="boolean" default="true"/>
+    <column name="c_not_null" xsi:type="boolean" null="false"/>
+    <column name="c_implicit" xsi:type="boolean"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_implicit"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_char">
+    <column name="c_non_varrying" xsi:type="char" length="214"/>
+    <column name="c_null" xsi:type="char" varying="true" length="15"/>
+    <column name="c_default" xsi:type="char" varying="true" length="16" default="16"/>
+    <column name="c_not_null" xsi:type="char" varying="true" length="18" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_non_varrying"/>
+      </index>
+      <index>
+        <column name="c_default"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_clob">
+    <column name="c_null" xsi:type="clob" length="215"/>
+    <column name="c_not_null" xsi:type="clob" length="218" null="false"/>
+    <column name="c_implicit" xsi:type="clob"/>
+  </table>
+  <table name="t_date">
+    <column name="c_null" xsi:type="date"/>
+    <column name="c_default" xsi:type="date" default="2017-10-10"/>
+    <column name="c_not_null" xsi:type="date" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_null"/>
+      </index>
+      <index>
+        <column name="c_default"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_datetime">
+    <column name="c_null" xsi:type="datetime" precision="6"/>
+    <column name="c_default" xsi:type="datetime" precision="9" default="2017-10-10 12:34:56"/>
+    <column name="c_not_null" xsi:type="datetime" precision="12" null="false"/>
+    <column name="c_implicit" xsi:type="datetime"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_implicit"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_decimal">
+    <column name="c_auto" xsi:type="decimal" precision="14" scale="2" null="false"/>
+    <column name="c_null" xsi:type="decimal" precision="15" scale="3"/>
+    <column name="c_default" xsi:type="decimal" precision="16" scale="4" default="16"/>
+    <column name="c_unsigned" xsi:type="decimal" precision="17" scale="5" unsigned="true"/>
+    <column name="c_not_null" xsi:type="decimal" precision="18" scale="6" null="false"/>
+    <column name="c_min_max" xsi:type="decimal" precision="19" scale="7" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="decimal">
+      <check operator="ne" condition="0"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_auto"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_double">
+    <column name="c_null" xsi:type="double"/>
+    <column name="c_default" xsi:type="double" default="16"/>
+    <column name="c_unsigned" xsi:type="double" unsigned="true"/>
+    <column name="c_not_null" xsi:type="double" null="false"/>
+    <column name="c_min_max" xsi:type="double" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="double">
+      <check operator="ne" condition="1"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_unsigned"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_enum">
+    <column name="c_null" xsi:type="enum" values="ONE TWO THREE"/>
+    <column name="c_default" xsi:type="enum" values="FOUR FIVE SIX" default="SIX"/>
+    <column name="c_not_null" xsi:type="enum" values="SEVEN EIGHT NINE" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_default"/>
+        <column name="c_not_null"/>
+      </index>
+      <index>
+        <column name="c_default"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_float">
+    <column name="c_null" xsi:type="float"/>
+    <column name="c_default" xsi:type="float" default="16"/>
+    <column name="c_unsigned" xsi:type="float" unsigned="true"/>
+    <column name="c_not_null" xsi:type="float" null="false"/>
+    <column name="c_min_max" xsi:type="float" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="float">
+      <check operator="ne" condition="1"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_unsigned"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_int">
+    <column name="c_auto" xsi:type="int" precision="5" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_null" xsi:type="int" precision="6"/>
+    <column name="c_default" xsi:type="int" precision="7" default="7"/>
+    <column name="c_unsigned" xsi:type="int" precision="8" unsigned="true"/>
+    <column name="c_not_null" xsi:type="int" precision="9" null="false"/>
+    <column name="c_min_max" xsi:type="int" precision="10" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="int">
+      <check operator="ne" condition="0"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_auto"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_smallint">
+    <column name="c_auto" xsi:type="smallint" precision="5" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_null" xsi:type="smallint" precision="4"/>
+    <column name="c_default" xsi:type="smallint" precision="3" default="3"/>
+    <column name="c_unsigned" xsi:type="smallint" precision="4" unsigned="true"/>
+    <column name="c_not_null" xsi:type="smallint" precision="5" null="false"/>
+    <column name="c_min_max" xsi:type="smallint" precision="5" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="smallint">
+      <check operator="ne" condition="0"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_auto"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_time">
+    <column name="c_null" xsi:type="time" precision="6"/>
+    <column name="c_default" xsi:type="time" precision="9" default="12:34:56"/>
+    <column name="c_not_null" xsi:type="time" precision="12" null="false"/>
+    <column name="c_implicit" xsi:type="time"/>
+    <constraints>
+      <primaryKey>
+        <column name="c_not_null"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_implicit"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_tinyint">
+    <column name="c_auto" xsi:type="tinyint" precision="3" generateOnInsert="AUTO_INCREMENT" null="false"/>
+    <column name="c_null" xsi:type="tinyint" precision="2"/>
+    <column name="c_default" xsi:type="tinyint" precision="1" default="1"/>
+    <column name="c_unsigned" xsi:type="tinyint" precision="2" unsigned="true"/>
+    <column name="c_not_null" xsi:type="tinyint" precision="3" null="false"/>
+    <column name="c_min_max" xsi:type="tinyint" precision="2" min="-19" max="19"/>
+    <column name="c_implicit" xsi:type="tinyint">
+      <check operator="ne" condition="0"/>
+    </column>
+    <constraints>
+      <primaryKey>
+        <column name="c_auto"/>
+      </primaryKey>
+      <unique>
+        <column name="c_default"/>
+        <column name="c_null"/>
+      </unique>
+    </constraints>
+    <indexes>
+      <index>
+        <column name="c_not_null"/>
+        <column name="c_min_max"/>
+      </index>
+      <index>
+        <column name="c_implicit"/>
+      </index>
+    </indexes>
+  </table>
+  <table name="t_foreign">
+    <column name="c_bigint" xsi:type="bigint" precision="14">
+      <foreignKey references="t_bigint" column="c_auto"/>
+    </column>
+    <column name="c_binary" xsi:type="binary" varying="true" length="218" null="false">
+      <foreignKey references="t_binary" column="c_not_null"/>
+    </column>
+    <column name="c_boolean" xsi:type="boolean" null="false">
+      <foreignKey references="t_boolean" column="c_not_null"/>
+    </column>
+    <column name="c_char" xsi:type="char" varying="true" length="18" null="false">
+      <foreignKey references="t_char" column="c_not_null"/>
+    </column>
+    <column name="c_date" xsi:type="date" null="false">
+      <foreignKey references="t_date" column="c_not_null"/>
+    </column>
+    <column name="c_datetime" xsi:type="datetime" precision="12" null="false">
+      <foreignKey references="t_datetime" column="c_not_null"/>
+    </column>
+    <column name="c_decimal" xsi:type="decimal" precision="14" scale="2">
+      <foreignKey references="t_decimal" column="c_auto"/>
+    </column>
+    <column name="c_double" xsi:type="double" null="false">
+      <foreignKey references="t_double" column="c_not_null"/>
+    </column>
+    <column name="c_enum" xsi:type="enum" values="SEVEN EIGHT NINE" null="false">
+      <foreignKey references="t_enum" column="c_not_null"/>
+    </column>
+    <column name="c_float" xsi:type="float" null="false">
+      <foreignKey references="t_float" column="c_not_null"/>
+    </column>
+    <column name="c_int" xsi:type="int" precision="5">
+      <foreignKey references="t_int" column="c_auto"/>
+    </column>
+    <column name="c_smallint" xsi:type="smallint" precision="5">
+      <foreignKey references="t_smallint" column="c_auto"/>
+    </column>
+    <column name="c_time" xsi:type="time" precision="12" null="false">
+      <foreignKey references="t_time" column="c_not_null"/>
+    </column>
+    <column name="c_tinyint" xsi:type="tinyint" precision="3">
+      <foreignKey references="t_tinyint" column="c_auto"/>
+    </column>
+  </table>
+</schema>

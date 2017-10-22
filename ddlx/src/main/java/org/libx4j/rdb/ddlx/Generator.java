@@ -36,14 +36,12 @@ import java.util.Set;
 
 import org.lib4j.lang.Arrays;
 import org.lib4j.xml.XMLException;
-import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
-import org.libx4j.xsb.runtime.MarshalException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,14 +61,14 @@ public final class Generator extends BaseGenerator {
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 
-    createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]), null);
+    createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]));
   }
 
   public static ddlx_schema createDDL(final Connection connection) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final DatabaseMetaData meta = connection.getMetaData();
-    final ResultSet tableRows = meta.getTables(null, null, null, new String[] {"TABLE"});
+    final DatabaseMetaData metaData = connection.getMetaData();
+    final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"});
     final ddlx_schema schema = new ddlx_schema();
     while (tableRows.next()) {
       final String tableName = tableRows.getString(3);
@@ -78,7 +76,7 @@ public final class Generator extends BaseGenerator {
       table._name$(new $ddlx_named._name$(tableName.toLowerCase()));
       schema._table(table);
 
-      final ResultSet columnRows = meta.getColumns(null, null, tableName, null);
+      final ResultSet columnRows = metaData.getColumns(null, null, tableName, null);
       final List<AbstractMap.SimpleEntry<Integer,$ddlx_column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$ddlx_column>>();
       while (columnRows.next()) {
         final String columnName = columnRows.getString("COLUMN_NAME");
@@ -100,15 +98,14 @@ public final class Generator extends BaseGenerator {
     return schema;
   }
 
-  public static List<Statement> createDDL(final URL url, final DBVendor vendor, final File outDir) throws GeneratorExecutionException, IOException, XMLException {
-    return Generator.createDDL(DDLxAudit.makeAudit(url, outDir), vendor, outDir);
+  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, XMLException {
+    return Generator.createDDL(DDLxAudit.makeAudit(url), vendor);
   }
 
-  private static List<Statement> createDDL(final DDLxAudit audit, final DBVendor vendor, final File outDir) throws GeneratorExecutionException {
+  private static StatementBatch createDDL(final DDLxAudit audit, final DBVendor vendor) throws GeneratorExecutionException {
     final Generator generator = new Generator(audit);
-    final List<Statement> statements = generator.parse(vendor);
-    writeOutput(statements, outDir != null ? new File(outDir, generator.merged._name$().text() + ".sql") : null);
-    return statements;
+    final StatementBatch statementBatch = new StatementBatch(generator.parse(vendor));
+    return statementBatch;
   }
 
   private static String checkNameViolation(String string, final boolean strict) {
@@ -147,7 +144,7 @@ public final class Generator extends BaseGenerator {
       violations.add(violation);
 
     if (tableNames.contains(tableName))
-      throw new GeneratorExecutionException("Circular table dependency detected: " + schema._name$().text() + "." + tableName);
+      throw new GeneratorExecutionException("Circular table dependency detected: " + tableName);
 
     tableNames.add(tableName);
     if (table._column() != null) {
@@ -159,7 +156,7 @@ public final class Generator extends BaseGenerator {
 
         final $ddlx_column existing = columnNameToColumn.get(columnName);
         if (existing != null)
-          throw new GeneratorExecutionException("Duplicate column definition: " + schema._name$().text() + "." + tableName + "." + columnName);
+          throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
 
         columnNameToColumn.put(columnName, column);
       }
@@ -171,11 +168,10 @@ public final class Generator extends BaseGenerator {
         for (final String v : violations)
           builder.append(" ").append(v);
 
-        throw new GeneratorExecutionException(schema._name$().text() + ": " + builder.substring(1));
+        throw new GeneratorExecutionException(builder.substring(1));
       }
 
-      for (final String v : violations)
-        logger.warn(v);
+      violations.stream().forEach(v -> logger.warn(v));
     }
   }
 

@@ -192,18 +192,14 @@
   </xs:complexType>
 
   <xs:complexType name="compliant">
-    <xs:complexContent>
-      <xs:extension base="ddlx:named">
-        <xs:attribute name="compliance" default="strict">
-          <xs:simpleType>
-            <xs:restriction base="xs:string">
-              <xs:enumeration value="lax"/>
-              <xs:enumeration value="strict"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
-      </xs:extension>
-    </xs:complexContent>
+    <xs:attribute name="compliance" default="strict">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="lax"/>
+          <xs:enumeration value="strict"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <!-- text data -->

@@ -32,9 +32,12 @@
   
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
   
+  <xsl:variable name="database">
+    <xsl:value-of select="function:file-name(base-uri())"/>
+  </xsl:variable>
+  
   <xsl:variable name="namespace">
-    <xsl:text>sqlx.</xsl:text>
-    <xsl:value-of select="//ddlx:schema/@name"/>
+    <xsl:value-of select="concat('sqlx.', $database)"/>
   </xsl:variable>  
   
   <xsl:variable name="xmlns">
@@ -90,6 +93,18 @@
   <xsl:function name="function:instance-case">
     <xsl:param name="string"/>
     <xsl:value-of select="concat(lower-case(substring($string, 1, 1)), substring(function:camel-case($string), 2))"/>
+  </xsl:function>
+  
+  <xsl:function name="function:substring-after-last-match" as="xs:string">
+    <xsl:param name="arg" as="xs:string?"/>
+    <xsl:param name="regex" as="xs:string"/>
+    
+    <xsl:sequence select="replace($arg, concat('^.*',$regex), '')"/>
+  </xsl:function>
+  
+  <xsl:function name="function:file-name">
+    <xsl:param name="string"/>
+    <xsl:value-of select="substring-before(function:substring-after-last-match($string, '/'), '.')"/>
   </xsl:function>
   
   <xsl:function name="function:precision-scale">
@@ -407,12 +422,12 @@
       
       <xs:complexType>
         <xsl:attribute name="name">
-          <xsl:value-of select="function:instance-case(@name)"/>
+          <xsl:value-of select="$database"/>
         </xsl:attribute>
         <xs:annotation>
           <xs:appinfo>
             <annox:annotate>
-              <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Schema(name = &quot;', @name, '&quot;)')"/>
+              <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
             </annox:annotate>
           </xs:appinfo>
         </xs:annotation>
@@ -427,10 +442,10 @@
       
       <xs:element>
         <xsl:attribute name="name">
-          <xsl:value-of select="function:instance-case(@name)"/>
+          <xsl:value-of select="$database"/>
         </xsl:attribute>
         <xsl:attribute name="type">
-          <xsl:value-of select="concat('ns:', function:instance-case(@name))"/>
+          <xsl:value-of select="concat('ns:', $database)"/>
         </xsl:attribute>
         <xsl:for-each select="ddlx:table[not(@abstract='true')]">
           <xsl:variable name="primaryKey" select="function:getPrimaryKey(current())"/>

@@ -50,31 +50,6 @@ abstract class BaseGenerator {
     }
   }
 
-  protected static void writeOutput(final List<Statement> statements, final File file) {
-    if (file == null)
-      return;
-
-    final StringBuilder builder = new StringBuilder();
-    for (final Statement statement : statements)
-      builder.append("\n\n").append(statement).append(";");
-
-    try {
-      if (file.getParentFile().isFile())
-        throw new IllegalArgumentException(file.getParent() + " is a file.");
-
-      if (!file.getParentFile().exists())
-        if (!file.getParentFile().mkdirs())
-          throw new IllegalArgumentException("Could not create path: " + file.getParent());
-
-      try (final FileOutputStream out = new FileOutputStream(file)) {
-        out.write(builder.substring(2).getBytes());
-      }
-    }
-    catch (final IOException e) {
-      throw new UnsupportedOperationException(e);
-    }
-  }
-
   protected static ddlx_schema merge(final ddlx_schema schema) {
     final ddlx_schema merged;
     try {

@@ -193,8 +193,11 @@ final class DerbyCompiler extends Compiler {
 
       column = type;
     }
-    else if ("VARCHAR () FOR BIT DATA".equals(typeName)) {
+    else if ("CHAR () FOR BIT DATA".equals(typeName) || "VARCHAR () FOR BIT DATA".equals(typeName)) {
       final $ddlx_binary type = newColumn($ddlx_binary.class);
+      if (typeName.startsWith("VARCHAR"))
+        type._varying$(new $ddlx_binary._varying$(true));
+
       type._length$(new $ddlx_binary._length$(size));
       column = type;
     }
@@ -210,9 +213,11 @@ final class DerbyCompiler extends Compiler {
 
       column = type;
     }
-    else if ("VARCHAR".equals(typeName)) {
+    else if ("VARCHAR".equals(typeName) || "CHAR".equals(typeName)) {
       final $ddlx_char type = newColumn($ddlx_char.class);
-      type._varying$(new $ddlx_char._varying$(true));
+      if ("VARCHAR".equals(typeName))
+        type._varying$(new $ddlx_char._varying$(true));
+
       type._length$(new $ddlx_char._length$(size));
       if (_default != null)
         type._default$(new $ddlx_char._default$(_default.substring(1, _default.length() - 1)));
@@ -311,7 +316,7 @@ final class DerbyCompiler extends Compiler {
 //      column = type;
 //    }
     else {
-      throw new UnsupportedOperationException("Unsupported column type: " + typeName.getClass().getName());
+      throw new UnsupportedOperationException("Unsupported column type: " + typeName);
     }
 
     column._name$(new $ddlx_column._name$(columnName));

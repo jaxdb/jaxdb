@@ -14,7 +14,7 @@
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
-<schema name="types"
+<schema
   xmlns="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">

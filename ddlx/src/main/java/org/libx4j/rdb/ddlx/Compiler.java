@@ -602,7 +602,7 @@ abstract class Compiler {
       if (type._default$().text().getBytes().length > type._length$().text())
         throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH " + type._length$().text());
 
-      return "'" + type._default$().text() + "'";
+      return compileBinary(type._default$().text().toString());
     }
 
     if (column instanceof $ddlx_integer) {
@@ -889,6 +889,10 @@ abstract class Compiler {
       };
 
     throw new UnsupportedOperationException("Unsupported column type: " + type.getClass().getName());
+  }
+
+  protected String compileBinary(final String value) {
+    return "X'" + value + "'";
   }
 
   protected abstract $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement);

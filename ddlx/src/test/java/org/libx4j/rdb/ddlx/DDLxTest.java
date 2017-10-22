@@ -34,7 +34,7 @@ import org.libx4j.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {
-  public static void recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public static ddlx_schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final ddlx_schema schema;
     try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
@@ -48,5 +48,6 @@ public abstract class DDLxTest {
             (($ddlx_decimal)column)._precision$(new $ddlx_decimal._precision$(dialect.decimalMaxPrecision()));
 
     Schemas.recreate(connection, schema);
+    return schema;
   }
 }

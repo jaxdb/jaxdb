@@ -26,8 +26,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lib4j.jci.CompilationException;
-import org.lib4j.jci.JavaCompiler;
+import org.lib4j.io.Files;
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Strings;
 import org.lib4j.xml.validate.ValidationException;
@@ -72,8 +71,8 @@ public class Generator {
     this.audit = new JSQLAudit(new DDLxAudit(url));
   }
 
-  public void generate(final File destDir, final boolean compile) throws IOException {
-    logger.info("Generating jSQL: " + audit.schema()._name$().text());
+  public void generate(final String name, final File destDir) throws IOException {
+    logger.info("Generating jSQL: " + name);
 
     final String pkg = type.class.getPackage().getName();
 
@@ -82,7 +81,7 @@ public class Generator {
       if (!dir.mkdirs())
         throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String classSimpleName = Strings.toInstanceCase(audit.schema()._name$().text());
+    final String classSimpleName = Strings.toInstanceCase(name);
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Classes.getStrictName(Schema.class) + " {\n";
@@ -114,15 +113,6 @@ public class Generator {
     final File javaFile = new File(dir, classSimpleName + ".java");
     try (final FileOutputStream out = new FileOutputStream(javaFile)) {
       out.write(code.getBytes());
-    }
-
-    if (compile) {
-      try {
-        new JavaCompiler(destDir).compile(destDir);
-      }
-      catch (final CompilationException e) {
-        throw new UnsupportedOperationException(e);
-      }
     }
   }
 

@@ -138,12 +138,15 @@ final class SQLiteCompiler extends Compiler {
   @Override
   protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $ddlx_column column;
-    if ("BIGINT".equals(typeName)) {
+    if (typeName.startsWith("BIGINT")) {
       final $ddlx_bigint type = newColumn($ddlx_bigint.class);
       if (size != 2000000000)
         type._precision$(new $ddlx_bigint._precision$((byte)size));
 
-      if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
+      if (typeName.endsWith("UNSIGNED"))
+        type._unsigned$(new $ddlx_integer._unsigned$(true));
+
+      if (_default != null)
         type._default$(new $ddlx_bigint._default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
@@ -174,9 +177,11 @@ final class SQLiteCompiler extends Compiler {
 
       column = type;
     }
-    else if (typeName.startsWith("VARCHAR")) {
+    else if (typeName.startsWith("VARCHAR") || typeName.startsWith("CHARACTER")) {
       final $ddlx_char type = newColumn($ddlx_char.class);
-      type._varying$(new $ddlx_char._varying$(true));
+      if (typeName.startsWith("VARCHAR"))
+        type._varying$(new $ddlx_char._varying$(true));
+
       final Long length = getLength(typeName);
       if (length != null)
         type._length$(new $ddlx_char._length$(length.intValue()));
@@ -253,7 +258,7 @@ final class SQLiteCompiler extends Compiler {
 
       column = type;
     }
-    else if (typeName.startsWith("INT")) {
+    else if (typeName.startsWith("INT") || typeName.startsWith("MEDIUMINT")) {
       final $ddlx_int type = newColumn($ddlx_int.class);
       if (size != 2000000000)
         type._precision$(new $ddlx_int._precision$((byte)size));
@@ -271,7 +276,7 @@ final class SQLiteCompiler extends Compiler {
       if (size != 2000000000)
         type._precision$(new $ddlx_smallint._precision$((byte)size));
 
-      if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
+      if (_default != null)
         type._default$(new $ddlx_smallint._default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
@@ -294,7 +299,7 @@ final class SQLiteCompiler extends Compiler {
       if (size != 2000000000)
         type._precision$(new $ddlx_tinyint._precision$((byte)size));
 
-      if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
+      if (_default != null)
         type._default$(new $ddlx_tinyint._default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
@@ -303,7 +308,7 @@ final class SQLiteCompiler extends Compiler {
       column = type;
     }
     else {
-      throw new UnsupportedOperationException("Unsupported column type: " + typeName.getClass().getName());
+      throw new UnsupportedOperationException("Unsupported column type: " + typeName);
     }
 
     column._name$(new $ddlx_column._name$(columnName));

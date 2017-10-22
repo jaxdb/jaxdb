@@ -24,6 +24,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -54,6 +56,12 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   static {
     final ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
     DeferredLogger.defer(logger, logger.iteratorForAppenders().next(), Level.INFO);
+  }
+
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.RUNTIME)
+  public static @interface Order {
+    int value();
   }
 
   @Target(ElementType.METHOD)
@@ -154,6 +162,28 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
         }
       }
     }
+  }
+
+  private static final Comparator<FrameworkMethod> orderComparator = new Comparator<FrameworkMethod>() {
+    @Override
+    public int compare(final FrameworkMethod o1, final FrameworkMethod o2) {
+      final Order a1 = o1.getAnnotation(Order.class);
+      if (a1 == null)
+        return -1;
+
+      final Order a2 = o2.getAnnotation(Order.class);
+      if (a2 == null)
+        return -1;
+
+      return Integer.compare(a1.value(), a2.value());
+    }
+  };
+
+  @Override
+  protected List<FrameworkMethod> computeTestMethods() {
+    final List<FrameworkMethod> methods = new ArrayList<FrameworkMethod>(super.computeTestMethods());
+    methods.sort(orderComparator);
+    return methods;
   }
 
   @Override

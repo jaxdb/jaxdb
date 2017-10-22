@@ -1,4 +1,4 @@
-<schema name="world"
+<schema
   xmlns="http://rdb.libx4j.org/ddlx.xsd"
   xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
   xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
