@@ -131,7 +131,9 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   protected CreateStatement createSchemaIfNotExists(final ddlx_schema schema) {
-    return new CreateStatement("CALL CREATE_SCHEMA_IF_NOT_EXISTS('" + schema._name$().text() + "')");
+    // NOTE: This has been commented out because it should not be up to rdb to set which schema the tables are written to.
+    // NOTE: Derby's schema is like Oracle's schema -- a user-space differentiating facet.
+    return null; //new CreateStatement("CALL CREATE_SCHEMA_IF_NOT_EXISTS('" + schema._name$().text() + "')");
   }
 
   @Override
