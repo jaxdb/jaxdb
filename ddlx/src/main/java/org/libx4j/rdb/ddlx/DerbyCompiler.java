@@ -36,7 +36,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_char;
 import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
+import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
 import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_float;
@@ -230,10 +230,10 @@ final class DerbyCompiler extends Compiler {
       column = type;
     }
     else if ("TIMESTAMP".equals(typeName)) {
-      final $ddlx_dateTime type = newColumn($ddlx_dateTime.class);
-      type._precision$(new $ddlx_dateTime._precision$((byte)size));
+      final $ddlx_datetime type = newColumn($ddlx_datetime.class);
+      type._precision$(new $ddlx_datetime._precision$((byte)size));
       if (_default != null)
-        type._default$(new $ddlx_dateTime._default$(_default.substring(1, _default.length() - 1)));
+        type._default$(new $ddlx_datetime._default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }

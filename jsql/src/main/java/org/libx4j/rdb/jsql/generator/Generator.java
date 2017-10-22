@@ -40,7 +40,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_char;
 import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
+import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
 import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
@@ -234,14 +234,14 @@ public class Generator {
       return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
     }
 
-    if (column instanceof $ddlx_dateTime) {
-      final $ddlx_dateTime type = ($ddlx_dateTime)column;
+    if (column instanceof $ddlx_datetime) {
+      final $ddlx_datetime type = ($ddlx_datetime)column;
       if (!type.sqlx_generateOnInsert$().isNull())
-        if ($ddlx_dateTime.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
+        if ($ddlx_datetime.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
       if (!type.sqlx_generateOnUpdate$().isNull())
-        if ($ddlx_dateTime.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
+        if ($ddlx_datetime.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
       return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());

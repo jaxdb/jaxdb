@@ -40,7 +40,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
+import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
 import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
@@ -161,8 +161,8 @@ abstract class Compiler {
       final $ddlx_time type = ($ddlx_time)column;
       ddl.append(getVendor().getDialect().declareTime(type._precision$().text()));
     }
-    else if (column instanceof $ddlx_dateTime) {
-      final $ddlx_dateTime type = ($ddlx_dateTime)column;
+    else if (column instanceof $ddlx_datetime) {
+      final $ddlx_datetime type = ($ddlx_datetime)column;
       ddl.append(getVendor().getDialect().declareDateTime(type._precision$().text()));
     }
     else if (column instanceof $ddlx_boolean) {
@@ -689,8 +689,8 @@ abstract class Compiler {
       return "'" + type._default$().text().toString() + "'";
     }
 
-    if (column instanceof $ddlx_dateTime) {
-      final $ddlx_dateTime type = ($ddlx_dateTime)column;
+    if (column instanceof $ddlx_datetime) {
+      final $ddlx_datetime type = ($ddlx_datetime)column;
       if (type._default$().isNull())
         return null;
 
@@ -798,8 +798,8 @@ abstract class Compiler {
         }
       };
 
-    if (type == $ddlx_dateTime.class)
-      return (T)new $ddlx_dateTime() {
+    if (type == $ddlx_datetime.class)
+      return (T)new $ddlx_datetime() {
         private static final long serialVersionUID = -8962376436200133621L;
 
         @Override

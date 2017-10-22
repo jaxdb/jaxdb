@@ -27,7 +27,7 @@
     <column name="char_type" xsi:type="char" varying="true" length="255"/>
     <column name="clob_type" xsi:type="clob" length="255"/>
     <column name="date_type" xsi:type="date"/>
-    <column name="datetime_type" xsi:type="dateTime"/>
+    <column name="datetime_type" xsi:type="datetime"/>
     <column name="decimal_type" xsi:type="decimal" precision="31" scale="10"/>
     <column name="double_type" xsi:type="double"/>
     <column name="enum_type" xsi:type="enum" values="ZERO ONE TWO THREE FOUR FIVE SIX SEVEN EIGHT NINE"/>

@@ -150,10 +150,10 @@
     </xs:complexContent>
   </xs:complexType>
   
-  <xs:complexType name="dateTime">
+  <xs:complexType name="datetime">
     <xs:complexContent>
-      <xs:extension base="sqlx:dateTime">
-        <xs:attributeGroup ref="ddlx:dateTime"/>
+      <xs:extension base="sqlx:datetime">
+        <xs:attributeGroup ref="ddlx:datetime"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

@@ -169,8 +169,8 @@
                   <xsl:if test="@xsi:type='date'">
                     <xsl:attribute name="type">dt:date</xsl:attribute>
                   </xsl:if>
-                  <xsl:if test="@xsi:type='dateTime'">
-                    <xsl:attribute name="type">dt:dateTime</xsl:attribute>
+                  <xsl:if test="@xsi:type='datetime'">
+                    <xsl:attribute name="type">dt:datetime</xsl:attribute>
                   </xsl:if>
                   <xsl:if test="@xsi:type='time'">
                     <xsl:attribute name="type">dt:time</xsl:attribute>

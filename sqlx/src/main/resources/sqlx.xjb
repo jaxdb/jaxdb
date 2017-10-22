@@ -15,7 +15,7 @@
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.CHAR" xmlType="dt:char"/>
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.CLOB" xmlType="dt:clob"/>
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DATE" xmlType="dt:date"/>
-      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DATETIME" xmlType="dt:dateTime"/>
+      <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DATETIME" xmlType="dt:datetime"/>
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DECIMAL" xmlType="dt:decimal"/>
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.DOUBLE" xmlType="dt:double"/>
       <jxb:javaType name="org.libx4j.rdb.sqlx.dt.ENUM" xmlType="dt:enum"/>

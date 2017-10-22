@@ -32,7 +32,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_dateTime;
+import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
 import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
 import org.libx4j.rdb.ddlx.xe.$ddlx_double;
 import org.libx4j.rdb.ddlx.xe.$ddlx_float;
@@ -202,12 +202,12 @@ final class SQLiteCompiler extends Compiler {
       column = type;
     }
     else if ("DATETIME".equals(typeName)) {
-      final $ddlx_dateTime type = newColumn($ddlx_dateTime.class);
+      final $ddlx_datetime type = newColumn($ddlx_datetime.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_dateTime._precision$((byte)size));
+        type._precision$(new $ddlx_datetime._precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_dateTime._default$(_default.substring(1, _default.length() - 1)));
+        type._default$(new $ddlx_datetime._default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }

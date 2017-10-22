@@ -64,7 +64,7 @@
     <xs:attributeGroup ref="sqlx:generateOnTimestamp"/>
   </xs:attributeGroup>
   
-  <xs:attributeGroup name="dateTime">
+  <xs:attributeGroup name="datetime">
     <xs:attributeGroup ref="sqlx:generateOnTimestamp"/>
   </xs:attributeGroup>
     

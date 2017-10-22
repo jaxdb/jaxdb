@@ -24,7 +24,7 @@ import org.libx4j.rdb.jsql.xe.$jsql_boolean;
 import org.libx4j.rdb.jsql.xe.$jsql_char;
 import org.libx4j.rdb.jsql.xe.$jsql_clob;
 import org.libx4j.rdb.jsql.xe.$jsql_date;
-import org.libx4j.rdb.jsql.xe.$jsql_dateTime;
+import org.libx4j.rdb.jsql.xe.$jsql_datetime;
 import org.libx4j.rdb.jsql.xe.$jsql_decimal;
 import org.libx4j.rdb.jsql.xe.$jsql_enum;
 import org.libx4j.rdb.jsql.xe.$jsql_float;
@@ -64,8 +64,8 @@ public class JSQLAudit extends DDLxAudit {
     if (column instanceof $jsql_time)
       return (($jsql_time)column).jsql_keyForUpdate$().text();
 
-    if (column instanceof $jsql_dateTime)
-      return (($jsql_dateTime)column).jsql_keyForUpdate$().text();
+    if (column instanceof $jsql_datetime)
+      return (($jsql_datetime)column).jsql_keyForUpdate$().text();
 
     if (column instanceof $jsql_boolean)
       return (($jsql_boolean)column).jsql_keyForUpdate$().text();

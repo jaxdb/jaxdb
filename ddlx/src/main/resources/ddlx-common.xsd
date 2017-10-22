@@ -172,12 +172,12 @@
   </xs:complexType>
 
   <xs:complexType name="indexes">
-    <xs:sequence>
+    <xs:sequence maxOccurs="unbounded">
       <xs:element name="index">
         <xs:complexType>
           <xs:complexContent>
             <xs:extension base="ddlx:index">
-              <xs:sequence minOccurs="2" maxOccurs="unbounded">
+              <xs:sequence minOccurs="1" maxOccurs="unbounded">
                 <xs:element name="column" type="ddlx:named"/>
               </xs:sequence>
             </xs:extension>
@@ -417,7 +417,6 @@
   
   <xs:attributeGroup name="double">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
-    <xs:attribute name="double" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="dt:double"/>
     <xs:attribute name="min" type="dt:double"/>
     <xs:attribute name="max" type="dt:double"/>
@@ -485,7 +484,7 @@
     <xs:attribute name="default" type="dt:time"/>
   </xs:attributeGroup>
 
-  <xs:attributeGroup name="dateTime">
+  <xs:attributeGroup name="datetime">
     <xs:attribute name="precision" default="6">
       <xs:simpleType>
         <xs:restriction base="xs:byte">
@@ -493,7 +492,7 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:dateTime"/>
+    <xs:attribute name="default" type="dt:datetime"/>
   </xs:attributeGroup>
 
   <xs:attributeGroup name="boolean">
@@ -515,7 +514,6 @@
     <xs:complexContent>
       <xs:extension base="ddlx:named">
         <xs:sequence minOccurs="0">
-          <xs:element name="documentation" type="xs:string" minOccurs="0"/>
           <xs:element name="foreignKey" minOccurs="0" type="ddlx:foreignKey">
             <xs:annotation>
               <xs:documentation>
