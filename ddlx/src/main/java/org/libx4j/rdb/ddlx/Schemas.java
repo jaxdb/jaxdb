@@ -16,23 +16,30 @@
 
 package org.libx4j.rdb.ddlx;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.lib4j.util.Collections;
-import org.lib4j.util.Digraph;
+import org.lib4j.util.RefDigraph;
+import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
-import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
+import org.libx4j.xsb.runtime.Bindings;
 
 public final class Schemas {
   public static int[] drop(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
@@ -121,51 +128,123 @@ public final class Schemas {
     return counts;
   }
 
-  public static List<$ddlx_table> tables(final ddlx_schema schema) {
+  private static final Comparator<$ddlx_table> tableNameComparator = new Comparator<$ddlx_table>() {
+    @Override
+    public int compare(final $ddlx_table o1, final $ddlx_table o2) {
+      return o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1._name$().text().compareTo(o2._name$().text());
+    }
+  };
+
+  private static ddlx_schema topologicalSort(final ddlx_schema schema) {
+    final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(schema._table());
+
+    tables.sort(tableNameComparator);
+    final RefDigraph<$ddlx_table,String> digraph = new RefDigraph<$ddlx_table,String>(table -> table._name$().text().toLowerCase());
+    for (final $ddlx_table table : tables) {
+      digraph.addVertex(table);
+      for (final $ddlx_column column : table._column())
+        if (column._foreignKey() != null && column._foreignKey().size() > 0)
+          digraph.addEdgeRef(table, column._foreignKey(0)._references$().text().toLowerCase());
+    }
+
+    if (digraph.hasCycle())
+      throw new IllegalStateException("Cycle exists in relational model: " + Collections.toString(digraph.getCycle(), " -> "));
+
+    final List<$ddlx_table> topological = digraph.getTopologicalOrder();
+    for (final $ddlx_table table : topological)
+      schema._table().add(table);
+
+    // FIXME: WOW! Wtf is going on here? I need to fix XSB!
+    // FIXME: Short story: I was removing the tables up above, and letting the tables list turn to null.
+    // FIXME: Then, when trying to add tables in proper order, I was getting NoSuchMethodException!?!?!
+    // FIXME: It must be due to the _ and $ names. Fucking shit!
+    final Iterator<$ddlx_table> iterator = schema._table().iterator();
+    for (int i = 0; i < tables.size(); i++) {
+      iterator.next();
+      iterator.remove();
+    }
+
+    return schema;
+  }
+
+  public static ddlx_schema flatten(final ddlx_schema schema) {
+    final ddlx_schema flat;
+    try {
+      flat = (ddlx_schema)Bindings.clone(schema);
+    }
+    catch (final IOException | XMLException e) {
+      throw new UnsupportedOperationException(e);
+    }
+
     final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
-    final Digraph<String> digraph = new Digraph<String>();
-    for (final $ddlx_table table : schema._table()) {
-      if (table._abstract$().text() || table._skip$().text())
-        continue;
+    // First, register the table names to be referenceable by the @extends attribute
+    for (final $ddlx_table table : flat._table())
+      tableNameToTable.put(table._name$().text(), table);
 
-      final String tableName = table._name$().text();
-      digraph.addVertex(tableName);
-      tableNameToTable.put(tableName, table);
-      if (table._constraints() != null) {
-        final $ddlx_constraints constraints = table._constraints(0);
-        final List<$ddlx_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
-        if (foreignKeys != null)
-          for (final $ddlx_table._constraints._foreignKey foreignKey : foreignKeys)
-            digraph.addEdge(tableName, foreignKey._references$().text());
-      }
+    final Set<String> flatTables = new HashSet<String>();
+    for (final $ddlx_table table : flat._table())
+      flattenTable(table, tableNameToTable, flatTables);
 
+    final Iterator<$ddlx_table> iterator = flat._table().iterator();
+    while (iterator.hasNext())
+      if (iterator.next()._abstract$().text())
+        iterator.remove();
+
+    return Schemas.topologicalSort(flat);
+  }
+
+  private static void flattenTable(final $ddlx_table table, final Map<String,$ddlx_table> tableNameToTable, final Set<String> flatTables) {
+    if (flatTables.contains(table._name$().text()))
+      return;
+
+    flatTables.add(table._name$().text());
+    if (table._extends$().isNull())
+      return;
+
+    final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
+    flattenTable(superTable, tableNameToTable, flatTables);
+    if (superTable._column() != null) {
       if (table._column() != null) {
-        for (final $ddlx_column column : table._column()) {
-          if (column._foreignKey() != null) {
-            final $ddlx_foreignKey foreignKey = column._foreignKey(0);
-            digraph.addEdge(tableName, foreignKey._references$().text());
-          }
-        }
+        table._column().addAll(0, superTable._column());
+      }
+      else {
+        for (final $ddlx_column column : superTable._column())
+          table._column(column);
       }
     }
 
-    // FIXME: There should be a better exception thrown here
-    if (digraph.hasCycle())
-      throw new IllegalArgumentException("Cycle detected in foreign key dependency graph: " + Collections.toString(digraph.getCycle(), " -> "));
+    if (superTable._constraints() != null) {
+      final $ddlx_constraints parentConstraints = superTable._constraints(0);
+      if (table._constraints() == null) {
+        table._constraints(parentConstraints);
+      }
+      else {
+        if (parentConstraints._primaryKey() != null)
+          for (final $ddlx_columns columns : parentConstraints._primaryKey())
+            table._constraints(0)._primaryKey(columns);
 
-    final List<String> sortedNames = digraph.getTopologicalOrder();
-    final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(sortedNames.size());
-    for (final String tableName : sortedNames)
-      tables.add(tableNameToTable.get(tableName));
+        if (parentConstraints._unique() != null)
+          for (final $ddlx_columns columns : parentConstraints._unique())
+            table._constraints(0)._unique(columns);
+      }
+    }
 
-    return tables;
+    if (superTable._indexes() != null) {
+      if (table._indexes() == null) {
+        table._indexes(superTable._indexes(0));
+      }
+      else {
+        for (final $ddlx_table._indexes._index index : superTable._indexes(0)._index())
+          table._indexes(0)._index(index);
+      }
+    }
   }
 
   public static int[] truncate(final Connection connection, final $ddlx_table ... tables) throws SQLException {
     return truncate(connection, Arrays.asList(tables));
   }
 
-  public static int[] truncate(final Connection connection, final Collection<$ddlx_table> tables) throws SQLException {
+  public static int[] truncate(final Connection connection, final Collection<? extends $ddlx_table> tables) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Compiler compiler = Compiler.getCompiler(vendor);
     final java.sql.Statement statement = connection.createStatement();

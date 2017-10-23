@@ -84,7 +84,7 @@ public abstract class SQLxTest {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.truncate(connection, Schemas.tables(schema));
+    Schemas.truncate(connection, Schemas.flatten(schema)._table());
 
     final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
     final Database database;

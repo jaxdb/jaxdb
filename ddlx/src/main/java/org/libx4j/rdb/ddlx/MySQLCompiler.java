@@ -20,12 +20,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints._unique;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public final class MySQLCompiler extends Compiler {
@@ -102,6 +104,11 @@ public final class MySQLCompiler extends Compiler {
 
   @Override
   protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,List<_unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 }

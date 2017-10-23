@@ -19,8 +19,11 @@ package org.libx4j.rdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
+import java.util.Map;
 
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints._unique;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
@@ -86,6 +89,11 @@ class DB2Compiler extends Compiler {
 
   @Override
   protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,List<_unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 }

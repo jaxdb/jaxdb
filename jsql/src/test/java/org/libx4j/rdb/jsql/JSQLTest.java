@@ -67,7 +67,8 @@ public abstract class JSQLTest {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.truncate(connection, Schemas.tables(schema));
+    Schemas.flatten(schema);
+    Schemas.truncate(connection, Schemas.flatten(schema)._table());
     return INSERT(database).execute();
   }
 }

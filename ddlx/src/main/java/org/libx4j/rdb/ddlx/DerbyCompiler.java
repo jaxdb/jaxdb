@@ -22,9 +22,13 @@ import java.math.BigInteger;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.lib4j.io.Readers;
@@ -324,5 +328,79 @@ final class DerbyCompiler extends Compiler {
       column._null$(new $ddlx_column._null$(false));
 
     return column;
+  }
+
+  private static final String tables = new StringBuilder()
+    .append("SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname ")
+    .append("FROM sys.syscolumns c ")
+    .append("JOIN sys.systables t ON t.tableid = c.referenceid ")
+    .append("JOIN sys.sysschemas s ON t.schemaid = s.schemaid ")
+    .append("WHERE s.schemaname = CURRENT SCHEMA ")
+    .append("ORDER BY s.schemaname, t.tablename, c.columnnumber").toString();
+
+  private static Map<String,List<String>> getTables(final Connection connection) throws SQLException {
+    final PreparedStatement statement = connection.prepareStatement(tables);
+    final ResultSet rows = statement.executeQuery();
+    final Map<String,List<String>> tableNameToColumns = new HashMap<String,List<String>>();
+    String lastTable = null;
+    List<String> columns = null;
+    while (rows.next()) {
+      final String tableName = rows.getString(2);
+      if (!tableName.equals(lastTable)) {
+        lastTable = tableName;
+        tableNameToColumns.put(tableName, columns = new ArrayList<String>());
+      }
+
+      final String columnName = rows.getString(4);
+      columns.add(columnName);
+    }
+
+    return tableNameToColumns;
+  }
+
+  private static final String constraints = new StringBuilder()
+    .append("SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
+    .append("FROM sys.sysconstraints c ")
+    .append("JOIN sys.systables t ON c.tableid = t.tableid ")
+    .append("JOIN sys.sysschemas s ON s.schemaid = c.schemaid ")
+    .append("JOIN sys.syskeys k ON k.constraintid = c.constraintid ")
+    .append("JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid ")
+    .append("WHERE c.state = 'E' ")
+    .append("AND c.type = 'U' ")
+    .append("AND s.schemaname = CURRENT SCHEMA ")
+    .append("ORDER BY s.schemaname, t.tablename").toString();
+
+  @Override
+  protected Map<String,List<$ddlx_table._constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+    final Map<String,List<String>> tableNameToColumns = getTables(connection);
+    final PreparedStatement statement = connection.prepareStatement(constraints);
+    final ResultSet rows = statement.executeQuery();
+    final Map<String,List<$ddlx_table._constraints._unique>> tableNameToUniques = new HashMap<String,List<$ddlx_table._constraints._unique>>();
+    String lastTable = null;
+    List<$ddlx_table._constraints._unique> uniques = null;
+    while (rows.next()) {
+      final String tableName = rows.getString(2);
+      if (!tableName.equals(lastTable)) {
+        lastTable = tableName;
+        tableNameToUniques.put(tableName, uniques = new ArrayList<$ddlx_table._constraints._unique>());
+      }
+
+      final List<String> columns = tableNameToColumns.get(tableName);
+      final String descriptor = rows.getString(3);
+      final int close = descriptor.lastIndexOf(')');
+      final int open = descriptor.lastIndexOf('(', close - 1);
+      final String[] colRefs = descriptor.substring(open + 1, close).split(",");
+
+      final $ddlx_table._constraints._unique unique = new $ddlx_table._constraints._unique();
+      uniques.add(unique);
+      for (int i = 0; i < colRefs.length; i++) {
+        colRefs[i] = columns.get(Integer.parseInt(colRefs[i].trim()) - 1);
+        final $ddlx_table._constraints._unique._column column = new $ddlx_table._constraints._unique._column();
+        column._name$(new $ddlx_table._constraints._unique._column._name$(colRefs[i].toLowerCase()));
+        unique._column(column);
+      }
+    }
+
+    return tableNameToUniques;
   }
 }

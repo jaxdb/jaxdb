@@ -32,7 +32,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
 import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_boolean;
-import org.libx4j.rdb.ddlx.xe.$ddlx_changeAction;
+import org.libx4j.rdb.ddlx.xe.$ddlx_changeRule;
 import org.libx4j.rdb.ddlx.xe.$ddlx_char;
 import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
@@ -252,34 +252,6 @@ abstract class Compiler {
       final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
         contraintsBuffer.append(primaryKeyConstraint);
-
-      // foreign key constraint
-      final List<$ddlx_table._constraints._foreignKey> foreignKeys = constraints._foreignKey();
-      if (foreignKeys != null) {
-        for (final $ddlx_table._constraints._foreignKey foreignKey : foreignKeys) {
-          String columns = "";
-          String referencedColumns = "";
-          for (final $ddlx_table._constraints._foreignKey._column column : foreignKey._column()) {
-            columns += ", " + column._name$().text();
-            referencedColumns += ", " + column._column$().text();
-          }
-
-          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(columns.substring(2));
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
-          contraintsBuffer.append(" (").append(referencedColumns.substring(2)).append(")");
-          if (!foreignKey._onDelete$().isNull()) {
-            final String onDelete = onDelete(foreignKey._onDelete$());
-            if (onDelete != null)
-              contraintsBuffer.append(" ").append(onDelete);
-          }
-
-          if (!foreignKey._onUpdate$().isNull()) {
-            final String onUpdate = onUpdate(foreignKey._onUpdate$());
-            if (onUpdate != null)
-              contraintsBuffer.append(" ").append(onUpdate);
-          }
-        }
-      }
     }
 
     if (table._column() != null) {
@@ -471,15 +443,15 @@ abstract class Compiler {
   }
 
   protected String onDelete(final $ddlx_foreignKey._onDelete$ onDelete) {
-    return "ON DELETE " + changeAction(onDelete);
+    return "ON DELETE " + changeRule(onDelete);
   }
 
   protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
-    return "ON UPDATE " + changeAction(onUpdate);
+    return "ON UPDATE " + changeRule(onUpdate);
   }
 
-  protected String changeAction(final $ddlx_changeAction changeAction) {
-    return changeAction.text();
+  protected String changeRule(final $ddlx_changeRule changeRule) {
+    return changeRule.text();
   }
 
   private static String recurseCheckRule(final $ddlx_check check) {
@@ -896,4 +868,5 @@ abstract class Compiler {
   }
 
   protected abstract $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement);
+  protected abstract Map<String,List<$ddlx_table._constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException;
 }

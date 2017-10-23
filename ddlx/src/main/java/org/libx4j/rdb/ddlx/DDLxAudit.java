@@ -16,14 +16,12 @@
 
 package org.libx4j.rdb.ddlx;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lib4j.net.URLs;
 import org.lib4j.xml.XMLException;
 import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;

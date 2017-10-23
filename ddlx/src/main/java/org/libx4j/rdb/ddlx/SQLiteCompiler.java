@@ -20,6 +20,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 
 import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
@@ -44,6 +45,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.$ddlx_time;
 import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints._unique;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -316,5 +318,10 @@ final class SQLiteCompiler extends Compiler {
       column._null$(new $ddlx_column._null$(false));
 
     return column;
+  }
+
+  @Override
+  protected Map<String,List<_unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+    throw new UnsupportedOperationException();
   }
 }
