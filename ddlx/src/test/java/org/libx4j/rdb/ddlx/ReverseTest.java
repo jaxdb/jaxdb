@@ -34,6 +34,7 @@ import org.lib4j.test.MixedTest;
 import org.lib4j.xml.dom.DOMStyle;
 import org.lib4j.xml.dom.DOMs;
 import org.lib4j.xml.validate.ValidationException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
@@ -43,8 +44,8 @@ import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
 import org.libx4j.rdb.ddlx.runner.PostgreSQL;
-import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
+import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.MarshalException;
 import org.libx4j.xsb.runtime.ParseException;
 import org.slf4j.Logger;
@@ -77,14 +78,19 @@ public class ReverseTest extends DDLxTest {
     }
   }
 
-  private static void assertSize(final String label, final $ddlx_named named, final List<?> expected, final List<?> actual) {
+  private static void assertSize(final String label, final $ddlx_named named, final List<? extends Binding> expected, final List<? extends Binding> actual) {
     if (expected == null ? actual != null : actual == null || actual.size() != expected.size())
       Assert.fail("Expected " + (expected == null ? "null" : expected.size()) + " " + label + " in " + named._name$().text() + ", but got " + (actual == null ? "null" : actual.size()) + " in actual");
   }
 
-  private static final Comparator<$ddlx_columns> columnsComparator = new Comparator<$ddlx_columns>() {
+  private static void assertEqual(final String label, final $ddlx_named named, final Binding expected, final Binding actual) {
+    if (expected == null ? actual != null : actual == null || !actual.equals(expected))
+      Assert.fail("Expected " + label + " in " + named._name$().text() + " not equal to actual " + (actual == null ? "null" : actual));
+  }
+
+  private static final Comparator<Binding> columnsComparator = new Comparator<Binding>() {
     @Override
-    public int compare(final $ddlx_columns o1, final $ddlx_columns o2) {
+    public int compare(final Binding o1, final Binding o2) {
       return Long.compare(o1.hashCode(), o2.hashCode());
     }
   };
@@ -116,13 +122,26 @@ public class ReverseTest extends DDLxTest {
           expectedUniques.sort(columnsComparator);
           final List<$ddlx_columns> actualUniques = new ArrayList<$ddlx_columns>(actualConstraints._unique());
           actualUniques.sort(columnsComparator);
-          for (int j = 0; j < expectedConstraints._unique().size(); j++) {
+          for (int j = 0; j < expectedUniques.size(); j++) {
             final $ddlx_columns expectedUnique = expectedUniques.get(j);
             final $ddlx_columns actualUnique = actualUniques.get(j);
             if (expectedUnique._column() != null && expectedUnique._column().size() > 0) {
               assertSize("unique constraint columns", expectedTable, expectedUnique._column(), actualUnique._column());
               checkNamesEqual("unique constraint column", expectedTable, expectedUnique._column(), actualUnique._column());
             }
+          }
+        }
+
+        if (expectedConstraints._check() != null && expectedConstraints._check().size() > 0) {
+          assertSize("check constraints", expectedTable, expectedConstraints._check(), actualConstraints._check());
+          final List<$ddlx_check> expectedChecks = new ArrayList<$ddlx_check>(expectedConstraints._check());
+          expectedChecks.sort(columnsComparator);
+          final List<$ddlx_check> actualChecks = new ArrayList<$ddlx_check>(actualConstraints._check());
+          actualChecks.sort(columnsComparator);
+          for (int j = 0; j < expectedConstraints._check().size(); j++) {
+            final $ddlx_check expectedCheck = expectedChecks.get(j);
+            final $ddlx_check actualCheck = actualChecks.get(j);
+            assertEqual("check", expectedTable, expectedCheck, actualCheck);
           }
         }
       }

@@ -68,5 +68,11 @@
       <groupId>org.libx4j.xsb</groupId>
       <artifactId>xsb-runtime</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-core</artifactId>
+      <version>2.5.0</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>

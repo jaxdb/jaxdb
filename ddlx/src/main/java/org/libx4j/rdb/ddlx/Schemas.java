@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.lib4j.util.Collections;
 import org.lib4j.util.RefDigraph;
-import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
@@ -137,7 +136,7 @@ public final class Schemas {
 
   private static ddlx_schema topologicalSort(final ddlx_schema schema) {
     final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(schema._table());
-
+    schema._table().clear();
     tables.sort(tableNameComparator);
     final RefDigraph<$ddlx_table,String> digraph = new RefDigraph<$ddlx_table,String>(table -> table._name$().text().toLowerCase());
     for (final $ddlx_table table : tables) {
@@ -154,16 +153,6 @@ public final class Schemas {
     for (final $ddlx_table table : topological)
       schema._table().add(table);
 
-    // FIXME: WOW! Wtf is going on here? I need to fix XSB!
-    // FIXME: Short story: I was removing the tables up above, and letting the tables list turn to null.
-    // FIXME: Then, when trying to add tables in proper order, I was getting NoSuchMethodException!?!?!
-    // FIXME: It must be due to the _ and $ names. Fucking shit!
-    final Iterator<$ddlx_table> iterator = schema._table().iterator();
-    for (int i = 0; i < tables.size(); i++) {
-      iterator.next();
-      iterator.remove();
-    }
-
     return schema;
   }
 
@@ -172,7 +161,7 @@ public final class Schemas {
     try {
       flat = (ddlx_schema)Bindings.clone(schema);
     }
-    catch (final IOException | XMLException e) {
+    catch (final IOException e) {
       throw new UnsupportedOperationException(e);
     }
 
