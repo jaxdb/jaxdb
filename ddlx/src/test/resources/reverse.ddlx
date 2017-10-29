@@ -142,7 +142,7 @@
         <column name="c_null"/>
       </index>
       <index>
-        <column name="c_default"/>
+        <column name="c_null"/>
       </index>
     </indexes>
   </table>
@@ -321,6 +321,9 @@
         <column name="c_default"/>
         <column name="c_null"/>
       </unique>
+      <unique>
+        <column name="c_default"/>
+      </unique>
     </constraints>
     <indexes>
       <index>
@@ -386,43 +389,43 @@
   </table>
   <table name="t_foreign">
     <column name="c_bigint" xsi:type="bigint" precision="14">
-      <foreignKey references="t_bigint" column="c_auto"/>
+      <foreignKey references="t_bigint" column="c_auto" onDelete="CASCADE"/>
     </column>
     <column name="c_binary" xsi:type="binary" varying="true" length="218" null="false">
-      <foreignKey references="t_binary" column="c_not_null"/>
+      <foreignKey references="t_binary" column="c_not_null" onDelete="RESTRICT"/>
     </column>
     <column name="c_boolean" xsi:type="boolean" null="false">
-      <foreignKey references="t_boolean" column="c_not_null"/>
+      <foreignKey references="t_boolean" column="c_not_null" onDelete="SET DEFAULT"/>
     </column>
     <column name="c_char" xsi:type="char" varying="true" length="18" null="false">
-      <foreignKey references="t_char" column="c_not_null"/>
+      <foreignKey references="t_char" column="c_not_null" onDelete="CASCADE"/>
     </column>
     <column name="c_date" xsi:type="date" null="false">
-      <foreignKey references="t_date" column="c_not_null"/>
+      <foreignKey references="t_date" column="c_not_null" onDelete="RESTRICT"/>
     </column>
-    <column name="c_datetime" xsi:type="datetime" precision="12" null="false">
-      <foreignKey references="t_datetime" column="c_not_null"/>
+    <column name="c_datetime" xsi:type="datetime" precision="9">
+      <foreignKey references="t_datetime" column="c_default" onDelete="SET NULL"/>
     </column>
     <column name="c_decimal" xsi:type="decimal" precision="14" scale="2">
-      <foreignKey references="t_decimal" column="c_auto"/>
+      <foreignKey references="t_decimal" column="c_auto" onUpdate="CASCADE"/>
     </column>
     <column name="c_double" xsi:type="double" null="false">
-      <foreignKey references="t_double" column="c_not_null"/>
+      <foreignKey references="t_double" column="c_not_null" onUpdate="RESTRICT"/>
     </column>
     <column name="c_enum" xsi:type="enum" values="SEVEN EIGHT NINE" null="false">
-      <foreignKey references="t_enum" column="c_not_null"/>
+      <foreignKey references="t_enum" column="c_not_null" onUpdate="SET DEFAULT"/>
     </column>
-    <column name="c_float" xsi:type="float" null="false">
-      <foreignKey references="t_float" column="c_not_null"/>
+    <column name="c_float" xsi:type="float">
+      <foreignKey references="t_float" column="c_default" onUpdate="SET NULL"/>
     </column>
     <column name="c_int" xsi:type="int" precision="5">
-      <foreignKey references="t_int" column="c_auto"/>
+      <foreignKey references="t_int" column="c_auto" onDelete="RESTRICT" onUpdate="RESTRICT"/>
     </column>
-    <column name="c_smallint" xsi:type="smallint" precision="5">
-      <foreignKey references="t_smallint" column="c_auto"/>
+    <column name="c_smallint" xsi:type="smallint" precision="3">
+      <foreignKey references="t_smallint" column="c_default" onDelete="CASCADE" onUpdate="SET NULL"/>
     </column>
-    <column name="c_time" xsi:type="time" precision="12" null="false">
-      <foreignKey references="t_time" column="c_not_null"/>
+    <column name="c_time" xsi:type="time" precision="9">
+      <foreignKey references="t_time" column="c_default" onDelete="SET NULL" onUpdate="SET DEFAULT"/>
     </column>
     <column name="c_tinyint" xsi:type="tinyint" precision="3">
       <foreignKey references="t_tinyint" column="c_auto"/>

@@ -31,6 +31,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -43,9 +44,6 @@ import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.ddlx.runner.Derby;
-import org.libx4j.rdb.ddlx.runner.MySQL;
-import org.libx4j.rdb.ddlx.runner.Oracle;
-import org.libx4j.rdb.ddlx.runner.PostgreSQL;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Binding;
@@ -116,20 +114,95 @@ public class ReverseTest extends DDLxTest {
     }
   }
 
+  public static void addAttribute(final Element element, final String xpath, final String name, final String value) throws XPathExpressionException {
+    final XPathExpression expr = newXPath().compile(xpath);
+    final NodeList nodes2 = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
+    for (int i = 0; i < nodes2.getLength(); ++i) {
+      final Node node = nodes2.item(i);
+      if (!(node instanceof Element))
+        throw new UnsupportedOperationException("Only support addition of attributes to elements");
+
+      final Element target = (Element)node;
+      final int colon = name.indexOf(':');
+      final String namespaceURI = colon == -1 ? node.getNamespaceURI() : node.getOwnerDocument().lookupNamespaceURI(name.substring(0, colon));
+      target.setAttributeNS(namespaceURI, name, value);
+    }
+  }
+
+  public static void replace(final Element element, final String xpath, final String name, final String value) throws XPathExpressionException {
+    final XPathExpression expr = newXPath().compile(xpath);
+    final NodeList nodes2 = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
+    for (int i = 0; i < nodes2.getLength(); ++i) {
+      final Node node = nodes2.item(i);
+      if (node instanceof Attr) {
+        final Attr attr = (Attr)node;
+        if (name == null) {
+          attr.setValue(value);
+        }
+        else {
+          final int colon = name.indexOf(':');
+          final String namespaceURI = colon == -1 ? attr.getNamespaceURI() : attr.getOwnerDocument().lookupNamespaceURI(name.substring(0, colon));
+          final Element owner = attr.getOwnerElement();
+          owner.removeAttributeNode(attr);
+          owner.setAttributeNS(namespaceURI, name, value);
+        }
+      }
+      else {
+        throw new UnsupportedOperationException("Only support replacement of attribute values");
+      }
+    }
+  }
+
+  public static void replace(final Element element, final String xpath, final String value) throws XPathExpressionException {
+    replace(element, xpath, null, value);
+  }
+
   private static void assertEqual(final DBVendor vendor, final Binding expected, final Binding actual) throws XPathExpressionException {
     final Element controlElement = expected.toDOM();
+    final Element testElement = actual.toDOM();
     if (vendor == DBVendor.DERBY) {
-      final String[] remove = {
+      remove(controlElement,
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary']/@default",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@precision",
-        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@unsigned"
-      };
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:datetime']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:double']/@unsigned",
+        "//ddlx:schema/ddlx:table[@name='t_enum']",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:int']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:int']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:smallint']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:smallint']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:time']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@unsigned",
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onDelete='SET DEFAULT']/@onDelete",
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='SET DEFAULT']/@onUpdate",
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='SET NULL']/@onUpdate",
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='RESTRICT']/@onUpdate",
+        "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='CASCADE']/@onUpdate"
+      );
 
-      remove(controlElement, remove);
+      replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@xsi:type", "ddlx:double");
+      replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@xsi:type", "ddlx:smallint");
+      replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum' and @values='SEVEN EIGHT NINE']/@values", "length", "5");
+      addAttribute(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']", "varying", "true");
+      replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']/@xsi:type", "ddlx:char");
+
+      remove(testElement,
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary' and @length='2147483647']/@length",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:blob' and @length='2147483647']/@length",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:clob' and @length='2147483647']/@length",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and not(@length)]/@length",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@precision",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:decimal' and @name='c_implicit']/@scale",
+        "//ddlx:schema/ddlx:table[@name='t_enum']",
+        "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:time']/@precision"
+      );
     }
 
     final String controlXML = DOMs.domToString(controlElement, DOMStyle.INDENT);
-
-    final Element testElement = actual.toDOM();
     final String testXML = DOMs.domToString(testElement, DOMStyle.INDENT);
 
     final Source controlSource = Input.fromString(controlXML).build();
@@ -147,42 +220,36 @@ public class ReverseTest extends DDLxTest {
 
         final String testXPath = comparison.getTestDetails().getXPath() == null ? null : comparison.getTestDetails().getXPath().replaceAll("/([^@])", "/ddlx:$1");
         final String testEval = testXPath == null ? null : evalXPath(testElement, testXPath);
-        System.err.println(Strings.printColumns("Expected: " + controlXPath + "\n" + controlEval, "Actual: " + testXPath + "\n" + testEval));
-//        Assert.fail("found a difference: " + comparison);
+        logger.info(Strings.printColumns("Expected: " + controlXPath + "\n" + controlEval, "Actual: " + testXPath + "\n" + testEval));
+        Assert.fail("Found a difference: " + comparison);
       }
     });
     diffEngine.compare(controlSource, testSource);
   }
 
-  public static boolean go = false;
   private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {
     @Override
     public int compare(final Binding o1, final Binding o2) {
-      if (go)
-        System.err.println(o1.hashCode() + " " + o2.hashCode());
       return Long.compare(o1.hashCode(), o2.hashCode());
     }
   };
 
   private static void sort(final ddlx_schema schema) {
     for (final $ddlx_table table : schema._table()) {
-      if (table._name$().text().equals("t_bigint")) {
-        go = true;
-      }
-
       if (table._indexes() != null && table._indexes().size() > 0 && table._indexes(0)._index() != null && table._indexes(0)._index().size() > 0)
         table._indexes(0)._index().sort(hashCodeComparator);
 
-      go = false;
+      if (table._constraints() != null && table._constraints().size() > 0 && table._constraints(0)._unique() != null && table._constraints(0)._unique().size() > 0)
+        table._constraints(0)._unique().sort(hashCodeComparator);
     }
   }
 
   @Test
   public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, ParseException, SQLException, ValidationException, XPathExpressionException {
-    final ddlx_schema expected = Schemas.flatten(recreateSchema(connection, "reverse"));
+    final ddlx_schema expected = Schemas.flatten(recreateSchema(connection, "reverse", true));
     sort(expected);
-//    System.out.println(expected);
-    ddlx_schema actual = Generator.createDDL(connection);
+//    logger.info(expected);
+    ddlx_schema actual = Decompiler.createDDL(connection);
     // FIXME: Need to restrict which database/schema/tablespace we're looking at.
     final Iterator<$ddlx_table> iterator = actual._table().iterator();
     while (iterator.hasNext())
@@ -192,7 +259,7 @@ public class ReverseTest extends DDLxTest {
     actual = Schemas.flatten(actual);
 
     sort(actual);
-//    System.out.println(actual);
+//    logger.info(actual);
 
     assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
     final Map<String,String> schemaLocations = new HashMap<String,String>();

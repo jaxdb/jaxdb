@@ -1869,7 +1869,7 @@ public final class type {
   }
 
   public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
-    public static final ENUM<?> NULL = new ENUM();
+    public static final ENUM<?> NULL = new ENUM<>();
 
     private final Class<T> enumType;
 

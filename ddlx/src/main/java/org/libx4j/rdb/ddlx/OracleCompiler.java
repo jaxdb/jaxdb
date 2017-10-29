@@ -20,11 +20,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey._onDelete$;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
@@ -175,25 +172,5 @@ public final class OracleCompiler extends Compiler {
   @Override
   protected String compileTime(final String value) {
     return "INTERVAL '" + value + "' HOUR TO SECOND";
-  }
-
-  @Override
-  protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,List<$ddlx_constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
   }
 }

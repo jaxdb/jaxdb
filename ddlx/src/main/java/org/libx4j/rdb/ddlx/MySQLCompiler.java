@@ -20,11 +20,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
@@ -101,25 +98,5 @@ public final class MySQLCompiler extends Compiler {
   @Override
   protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
-  }
-
-  @Override
-  protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,List<$ddlx_constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
-    throw new UnsupportedOperationException();
   }
 }

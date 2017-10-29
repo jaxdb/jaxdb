@@ -35,17 +35,23 @@ import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {
   public static ddlx_schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    return recreateSchema(connection, ddlx, false);
+  }
+
+  public static ddlx_schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     final ddlx_schema schema;
     try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
       schema = (ddlx_schema)Bindings.parse(new InputSource(in));
     }
 
-    final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
-    for (final $ddlx_table table : schema._table())
-      if (table._column() != null)
-        for (final $ddlx_column column : table._column())
-          if (column instanceof $ddlx_decimal)
-            (($ddlx_decimal)column)._precision$(new $ddlx_decimal._precision$(dialect.decimalMaxPrecision()));
+    if (!unaltered) {
+      final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
+      for (final $ddlx_table table : schema._table())
+        if (table._column() != null)
+          for (final $ddlx_column column : table._column())
+            if (column instanceof $ddlx_decimal)
+              (($ddlx_decimal)column)._precision$(new $ddlx_decimal._precision$(dialect.decimalMaxPrecision()));
+    }
 
     Schemas.recreate(connection, schema);
     return schema;
