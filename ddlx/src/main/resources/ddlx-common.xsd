@@ -69,7 +69,7 @@
       <xs:element name="operator" type="ddlx:rangeOperator"/>
       <xs:choice>
         <xs:element name="column" type="ddlx:name"/>
-        <xs:element name="value" type="xs:string"/>
+        <xs:element name="value" type="xs:string" nillable="true"/>
       </xs:choice>
       <xs:choice minOccurs="0">
         <xs:element name="and" type="ddlx:check"/>
