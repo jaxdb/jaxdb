@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.sqlx;
+package org.libx4j.rdb.ddlx;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,6 +26,17 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+
+import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
+import org.libx4j.rdb.ddlx.xe.$ddlx_char;
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
+import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
+import org.libx4j.rdb.ddlx.xe.$ddlx_double;
+import org.libx4j.rdb.ddlx.xe.$ddlx_float;
+import org.libx4j.rdb.ddlx.xe.$ddlx_int;
+import org.libx4j.rdb.ddlx.xe.$ddlx_rangeOperator;
+import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
+import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
 
 public class dt {
   public static abstract class DataType<T> implements Serializable {
@@ -68,6 +79,25 @@ public class dt {
 
   public static class BIGINT extends DataType<BigInteger> {
     private static final long serialVersionUID = -7869441789524610043L;
+
+    protected static $ddlx_bigint addCheck(final $ddlx_bigint column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_bigint._max$(new BigInteger(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_bigint._min$(new BigInteger(check._value(0).text())));
+      else {
+        final $ddlx_bigint._check typedCheck = new $ddlx_bigint._check();
+        typedCheck._condition$(new $ddlx_bigint._check._condition$(new BigInteger(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_bigint._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
 
     public static String print(final BIGINT binding) {
       return binding == null ? null : binding.toString();
@@ -120,6 +150,19 @@ public class dt {
 
   public static class CHAR extends DataType<String> {
     private static final long serialVersionUID = 4342711843352764121L;
+
+    protected static $ddlx_char addCheck(final $ddlx_char column, final $ddlx_check check) {
+      final $ddlx_char._check typedCheck = new $ddlx_char._check();
+      typedCheck._condition$(new $ddlx_char._check._condition$(check._value(0).text()));
+      typedCheck._operator$(new $ddlx_char._check._operator$(check._operator(0).text()));
+      column._check(typedCheck);
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
 
     public static String print(final CHAR binding) {
       return binding == null ? null : binding.toString();
@@ -209,6 +252,25 @@ public class dt {
   public static class DECIMAL extends DataType<BigDecimal> {
     private static final long serialVersionUID = -7880579934877572719L;
 
+    protected static $ddlx_decimal addCheck(final $ddlx_decimal column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_decimal._max$(new BigDecimal(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_decimal._min$(new BigDecimal(check._value(0).text())));
+      else {
+        final $ddlx_decimal._check typedCheck = new $ddlx_decimal._check();
+        typedCheck._condition$(new $ddlx_decimal._check._condition$(new BigDecimal(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_decimal._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
+
     public static String print(final DECIMAL binding) {
       return binding == null ? null : binding.toString();
     }
@@ -233,6 +295,25 @@ public class dt {
 
   public static class DOUBLE extends DataType<java.lang.Double> {
     private static final long serialVersionUID = 8510411838107614004L;
+
+    protected static $ddlx_double addCheck(final $ddlx_double column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_double._max$(Double.valueOf(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_double._min$(Double.valueOf(check._value(0).text())));
+      else {
+        final $ddlx_double._check typedCheck = new $ddlx_double._check();
+        typedCheck._condition$(new $ddlx_double._check._condition$(Double.valueOf(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_double._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
 
     public static String print(final DOUBLE binding) {
       return binding == null ? null : binding.toString();
@@ -270,6 +351,25 @@ public class dt {
   public static class FLOAT extends DataType<java.lang.Float> {
     private static final long serialVersionUID = 8510411838107614004L;
 
+    protected static $ddlx_float addCheck(final $ddlx_float column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_float._max$(Float.valueOf(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_float._min$(Float.valueOf(check._value(0).text())));
+      else {
+        final $ddlx_float._check typedCheck = new $ddlx_float._check();
+        typedCheck._condition$(new $ddlx_float._check._condition$(Float.valueOf(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_float._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
+
     public static String print(final FLOAT binding) {
       return binding == null ? null : binding.toString();
     }
@@ -290,6 +390,25 @@ public class dt {
   public static class INT extends DataType<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
+    protected static $ddlx_int addCheck(final $ddlx_int column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_int._max$(new BigInteger(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_int._min$(new BigInteger(check._value(0).text())));
+      else {
+        final $ddlx_int._check typedCheck = new $ddlx_int._check();
+        typedCheck._condition$(new $ddlx_int._check._condition$(new BigInteger(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_int._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
+
     public static String print(final INT binding) {
       return binding == null ? null : binding.toString();
     }
@@ -309,6 +428,25 @@ public class dt {
 
   public static class SMALLINT extends DataType<java.lang.Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
+
+    protected static $ddlx_smallint addCheck(final $ddlx_smallint column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_smallint._max$(new BigInteger(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_smallint._min$(new BigInteger(check._value(0).text())));
+      else {
+        final $ddlx_smallint._check typedCheck = new $ddlx_smallint._check();
+        typedCheck._condition$(new $ddlx_smallint._check._condition$(new BigInteger(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_smallint._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
 
     public static String print(final SMALLINT binding) {
       return binding == null ? null : binding.toString();
@@ -355,6 +493,25 @@ public class dt {
 
   public static class TINYINT extends DataType<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
+
+    protected static $ddlx_tinyint addCheck(final $ddlx_tinyint column, final $ddlx_check check) {
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
+        column._max$(new $ddlx_tinyint._max$(new BigInteger(check._value(0).text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
+        column._min$(new $ddlx_tinyint._min$(new BigInteger(check._value(0).text())));
+      else {
+        final $ddlx_tinyint._check typedCheck = new $ddlx_tinyint._check();
+        typedCheck._condition$(new $ddlx_tinyint._check._condition$(new BigInteger(check._value(0).text())));
+        typedCheck._operator$(new $ddlx_tinyint._check._operator$(check._operator(0).text()));
+        column._check(typedCheck);
+      }
+
+      // TODO: Implement OR.
+      if (check._and() != null && check._and().size() > 0)
+        addCheck(column, check._and(0));
+
+      return column;
+    }
 
     public static String print(final TINYINT binding) {
       return binding == null ? null : binding.toString();

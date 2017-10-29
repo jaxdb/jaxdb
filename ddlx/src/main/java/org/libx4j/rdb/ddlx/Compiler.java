@@ -650,7 +650,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return "'" + type._default$().text().toString() + "'";
+      return compileDate(type._default$().text());
     }
 
     if (column instanceof $ddlx_time) {
@@ -658,7 +658,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return "'" + type._default$().text().toString() + "'";
+      return compileTime(type._default$().text());
     }
 
     if (column instanceof $ddlx_datetime) {
@@ -666,7 +666,7 @@ abstract class Compiler {
       if (type._default$().isNull())
         return null;
 
-      return "'" + type._default$().text().toString() + "'";
+      return compileDateTime(type._default$().text());
     }
 
     if (column instanceof $ddlx_boolean) {
@@ -867,6 +867,20 @@ abstract class Compiler {
     return "X'" + value + "'";
   }
 
+  protected String compileDate(final String value) {
+    return "'" + value + "'";
+  }
+
+  protected String compileDateTime(final String value) {
+    return "'" + value + "'";
+  }
+
+  protected String compileTime(final String value) {
+    return "'" + value + "'";
+  }
+
   protected abstract $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement);
+  protected abstract Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException;
   protected abstract Map<String,List<$ddlx_table._constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException;
+  protected abstract Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException;
 }

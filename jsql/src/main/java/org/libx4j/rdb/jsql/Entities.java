@@ -30,13 +30,13 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
 import org.lib4j.lang.Strings;
+import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
 import org.libx4j.rdb.ddlx.annotation.Schema;
 import org.libx4j.rdb.ddlx.annotation.Table;
 import org.libx4j.rdb.sqlx.Database;
 import org.libx4j.rdb.sqlx.Insert;
 import org.libx4j.rdb.sqlx.Row;
-import org.libx4j.rdb.sqlx.dt;
 
 public final class Entities {
   @SuppressWarnings({"rawtypes", "unchecked"})

@@ -23,27 +23,33 @@ import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.lib4j.lang.Arrays;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
-import org.lib4j.xml.XMLException;
+import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_changeRule;
+import org.libx4j.rdb.ddlx.xe.$ddlx_char;
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
+import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
+import org.libx4j.rdb.ddlx.xe.$ddlx_double;
+import org.libx4j.rdb.ddlx.xe.$ddlx_float;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
+import org.libx4j.rdb.ddlx.xe.$ddlx_int;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
@@ -60,13 +66,6 @@ public final class Generator {
       throw new ExceptionInInitializerError(e);
     }
   }
-
-  private static final Comparator<AbstractMap.SimpleEntry<Integer,$ddlx_column>> comparator = new Comparator<AbstractMap.SimpleEntry<Integer,$ddlx_column>>() {
-    @Override
-    public int compare(final SimpleEntry<Integer,$ddlx_column> o1, final SimpleEntry<Integer,$ddlx_column> o2) {
-      return Integer.compare(o1.getKey(), o2.getKey());
-    }
-  };
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
@@ -96,13 +95,19 @@ public final class Generator {
     throw new UnsupportedOperationException("Unsupported rule: " + rule);
   }
 
+  private static String getType(final short type) {
+    return type != 3 ? "HASH" : "BTREE";
+  }
+
   public static ddlx_schema createDDL(final Connection connection) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Compiler compiler = Compiler.getCompiler(vendor);
     final DatabaseMetaData metaData = connection.getMetaData();
     final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"});
     final ddlx_schema schema = new ddlx_schema();
+    final Map<String,List<$ddlx_check>> tableNameToChecks = compiler.getCheckConstraints(connection);
     final Map<String,List<$ddlx_table._constraints._unique>> tableNameToUniques = compiler.getUniqueConstraints(connection);
+    final Map<String,$ddlx_table._indexes> tableNameToIndexes = compiler.getIndexes(connection);
     while (tableRows.next()) {
       final String tableName = tableRows.getString(3);
       final $ddlx_table table = new ddlx_schema._table();
@@ -111,7 +116,8 @@ public final class Generator {
 
       final ResultSet columnRows = metaData.getColumns(null, null, tableName, null);
       final Map<String,$ddlx_column> nameToColumn = new HashMap<String,$ddlx_column>();
-      final List<AbstractMap.SimpleEntry<Integer,$ddlx_column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$ddlx_column>>();
+      final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
+      final Map<Integer,$ddlx_column> columnNumberToColumn = new TreeMap<Integer,$ddlx_column>();
       while (columnRows.next()) {
         final String columnName = columnRows.getString("COLUMN_NAME").toLowerCase();
         final String typeName = columnRows.getString("TYPE_NAME");
@@ -122,39 +128,12 @@ public final class Generator {
         final String autoIncrement = columnRows.getString("IS_AUTOINCREMENT");
         final int decimalDigits = columnRows.getInt("DECIMAL_DIGITS");
         final $ddlx_column column = compiler.makeColumn(columnName.toLowerCase(), typeName, columnSize, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
-        columns.add(new AbstractMap.SimpleEntry<Integer,$ddlx_column>(index, column));
+        columnNameToColumn.put(columnName, column);
+        columnNumberToColumn.put(index, column);
         nameToColumn.put(columnName, column);
       }
 
-//      final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true);
-//      while (indexRows.next()) {
-//        final String columnName = columnRows.getString("COLUMN_NAME").toLowerCase();
-//        if (columnName == null)
-//          continue;
-//
-//        final boolean nonUnique = indexRows.getBoolean("NON_UNIQUE");
-//        final short type = indexRows.getShort("TYPE");
-//
-//        if (table._constraints() == null)
-//          table._constraints(new $ddlx_table._constraints());
-//
-//        if (table._constraints(0)._unique() == null)
-//          table._constraints(0)._unique(new $ddlx_table._constraints._unique());
-//
-//        final $ddlx_table._constraints._unique._column column = new $ddlx_table._constraints._unique._column();
-//        column._name$(new $ddlx_table._constraints._unique._column._name$(columnName));
-//        table._constraints(0)._unique(0)._column(column);
-//      }
-
-      if (tableNameToUniques != null && tableNameToUniques.size() > 0) {
-        if (table._constraints() == null)
-          table._constraints(new $ddlx_table._constraints());
-
-        final List<$ddlx_table._constraints._unique> uniques = tableNameToUniques.get(tableName);
-        if (uniques != null)
-          for (final $ddlx_table._constraints._unique unique : tableNameToUniques.get(tableName))
-            table._constraints(0)._unique(unique);
-      }
+      columnNumberToColumn.values().stream().forEach(c -> table._column(c));
 
       final ResultSet primaryKeyRows = metaData.getPrimaryKeys(null, null, tableName);
       while (primaryKeyRows.next()) {
@@ -169,6 +148,58 @@ public final class Generator {
         column._name$(new $ddlx_table._constraints._primaryKey._column._name$(columnName));
         table._constraints(0)._primaryKey(0)._column(column);
       }
+
+      final List<$ddlx_table._constraints._unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
+      if (uniques != null && uniques.size() > 0) {
+        if (table._constraints() == null)
+          table._constraints(new $ddlx_table._constraints());
+
+        for (final $ddlx_table._constraints._unique unique : uniques)
+          table._constraints(0)._unique(unique);
+      }
+
+      final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true);
+      final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<String,TreeMap<Short,String>>();
+      final Map<String,String> indexNameToType = new HashMap<String,String>();
+      final Map<String,Boolean> indexNameToUnique = new HashMap<String,Boolean>();
+      while (indexRows.next()) {
+        final String columnName = indexRows.getString("COLUMN_NAME").toLowerCase();
+        if (columnName == null)
+          continue;
+
+        final String indexName = indexRows.getString("INDEX_NAME").toLowerCase();
+        TreeMap<Short,String> indexes = indexNameToIndex.get(indexName);
+        if (indexes == null)
+          indexNameToIndex.put(indexName, indexes = new TreeMap<Short,String>());
+
+        final short ordinalPosition = indexRows.getShort("ORDINAL_POSITION");
+        indexes.put(ordinalPosition, columnName);
+
+        final String type = getType(indexRows.getShort("TYPE"));
+        final String currentType = indexNameToType.get(indexName);
+        if (currentType == null)
+          indexNameToType.put(indexName, type);
+        else if (!type.equals(currentType))
+          throw new IllegalStateException("Expected " + type + " = " + currentType);
+
+        final boolean unique = !indexRows.getBoolean("NON_UNIQUE");
+        final Boolean currentUnique = indexNameToUnique.get(indexName);
+        if (currentUnique == null)
+          indexNameToUnique.put(indexName, unique);
+        else if (unique != currentUnique)
+          throw new IllegalStateException("Expected " + unique + " = " + currentType);
+      }
+
+      if (tableNameToIndexes != null && tableNameToIndexes.size() > 0) {
+        final $ddlx_table._indexes indexes = tableNameToIndexes.get(tableName);
+        if (indexes != null)
+          table._indexes(indexes);
+      }
+
+      final List<$ddlx_check> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
+      if (checks != null && checks.size() > 0)
+        for (final $ddlx_check check : checks)
+          addCheck(columnNameToColumn.get(check._column(0).text()), check);
 
       final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, tableName);
       while (foreignKeyRows.next()) {
@@ -191,15 +222,33 @@ public final class Generator {
 
         nameToColumn.get(columnName)._foreignKey(foreignKey);
       }
-
-      columns.sort(comparator);
-      columns.stream().forEach(c -> table._column(c.getValue()));
     }
 
     return schema;
   }
 
-  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, XMLException {
+  private static void addCheck(final $ddlx_column column, final $ddlx_check check) {
+    if (column instanceof $ddlx_char)
+      dt.CHAR.addCheck(($ddlx_char)column, check);
+    else if (column instanceof $ddlx_tinyint)
+      dt.TINYINT.addCheck(($ddlx_tinyint)column, check);
+    else if (column instanceof $ddlx_smallint)
+      dt.SMALLINT.addCheck(($ddlx_smallint)column, check);
+    else if (column instanceof $ddlx_int)
+      dt.INT.addCheck(($ddlx_int)column, check);
+    else if (column instanceof $ddlx_bigint)
+      dt.BIGINT.addCheck(($ddlx_bigint)column, check);
+    else if (column instanceof $ddlx_float)
+      dt.FLOAT.addCheck(($ddlx_float)column, check);
+    else if (column instanceof $ddlx_double)
+      dt.DOUBLE.addCheck(($ddlx_double)column, check);
+    else if (column instanceof $ddlx_decimal)
+      dt.DECIMAL.addCheck(($ddlx_decimal)column, check);
+    else
+      throw new UnsupportedOperationException("Unsupported check for column type: " + column.getClass().getName());
+  }
+
+  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException {
     return Generator.createDDL(DDLxAudit.makeAudit(url), vendor);
   }
 
@@ -233,12 +282,9 @@ public final class Generator {
     this.schema = Schemas.flatten(audit.schema());
 
     final List<String> errors = getErrors();
-    if (errors != null && errors.size() > 0) {
+    if (errors != null && errors.size() > 0)
       for (final String error : errors)
         logger.warn(error);
-
-      // System.exit(1);
-    }
   }
 
   private List<String> getErrors() {
@@ -330,7 +376,9 @@ public final class Generator {
     final Map<String,List<CreateStatement>> createTableStatements = new HashMap<String,List<CreateStatement>>();
 
     final Set<String> skipTables = new HashSet<String>();
-    for (final $ddlx_table table : schema._table()) {
+    final ListIterator<$ddlx_table> listIterator = schema._table().listIterator(schema._table().size());
+    while (listIterator.hasPrevious()) {
+      final $ddlx_table table = listIterator.previous();
       if (table._skip$().text()) {
         skipTables.add(table._name$().text());
       }
@@ -350,9 +398,7 @@ public final class Generator {
     if (createSchema != null)
       statements.add(createSchema);
 
-    final ListIterator<$ddlx_table> listIterator = schema._table().listIterator(schema._table().size());
-    while (listIterator.hasPrevious()) {
-      final $ddlx_table table = listIterator.previous();
+    for (final $ddlx_table table : schema._table()) {
       final String tableName = table._name$().text();
       if (!skipTables.contains(tableName)) {
         statements.addAll(0, dropStatements.get(tableName));

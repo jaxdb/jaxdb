@@ -28,6 +28,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
 import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_boolean;
 import org.libx4j.rdb.ddlx.xe.$ddlx_char;
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
@@ -45,7 +46,6 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.$ddlx_time;
 import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints._unique;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -321,7 +321,17 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected Map<String,List<_unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  protected Map<String,List<$ddlx_constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 }

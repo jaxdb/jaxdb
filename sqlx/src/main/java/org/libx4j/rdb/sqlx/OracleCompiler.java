@@ -17,6 +17,7 @@
 package org.libx4j.rdb.sqlx;
 
 import org.lib4j.util.Hexadecimal;
+import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class OracleCompiler extends Compiler {

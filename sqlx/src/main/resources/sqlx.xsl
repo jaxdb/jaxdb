@@ -207,13 +207,13 @@
                         <xsl:attribute name="base">dt:<xsl:value-of select="@xsi:type"/></xsl:attribute>
                         <xs:maxLength>
                           <xsl:attribute name="value">
-                            <xsl:value-of select="@length * 2"/>
+                            <xsl:value-of select="@length"/>
                           </xsl:attribute>
                         </xs:maxLength>
                         <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
                           <xs:minLength>
                             <xsl:attribute name="value">
-                              <xsl:value-of select="@length * 2"/>
+                              <xsl:value-of select="@length"/>
                             </xsl:attribute>
                           </xs:minLength>
                         </xsl:if>
@@ -475,7 +475,7 @@
                   <xsl:value-of select="concat('ns:key', function:instance-case(ddlx:foreignKey/@references))"/>
                 </xsl:attribute>
                 <xsl:attribute name="name">
-                  <xsl:value-of select="concat('keyRef', function:instance-case(../@name), function:instance-case(ddlx:foreignKey/@references), function:instance-case(ddlx:foreignKey/@column))"/>
+                  <xsl:value-of select="concat('keyRef', function:instance-case(../@name), function:camel-case(ddlx:foreignKey/@references), function:camel-case(ddlx:foreignKey/@column), function:camel-case(@name))"/>
                 </xsl:attribute>
                 <xs:selector>
                   <xsl:attribute name="xpath">

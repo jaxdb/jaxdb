@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -149,9 +150,9 @@ public final class Schemas {
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + Collections.toString(digraph.getCycle(), " -> "));
 
-    final List<$ddlx_table> topological = digraph.getTopologicalOrder();
-    for (final $ddlx_table table : topological)
-      schema._table().add(table);
+    final ListIterator<$ddlx_table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
+    while (topological.hasPrevious())
+      schema._table().add(topological.previous());
 
     return schema;
   }

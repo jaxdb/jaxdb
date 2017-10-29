@@ -22,8 +22,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints._unique;
+import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
 import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
 import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
@@ -93,7 +94,17 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  protected Map<String,List<_unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  protected Map<String,List<$ddlx_constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 }

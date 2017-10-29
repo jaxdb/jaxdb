@@ -22,7 +22,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lib4j.xml.XMLException;
 import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
@@ -32,7 +31,7 @@ import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
 
 public class DDLxAudit {
-  protected static DDLxAudit makeAudit(final URL url) throws IOException, XMLException {
+  protected static DDLxAudit makeAudit(final URL url) throws IOException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 

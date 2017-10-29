@@ -37,6 +37,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
 import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_boolean;
 import org.libx4j.rdb.ddlx.xe.$ddlx_char;
+import org.libx4j.rdb.ddlx.xe.$ddlx_check;
 import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
 import org.libx4j.rdb.ddlx.xe.$ddlx_column;
 import org.libx4j.rdb.ddlx.xe.$ddlx_date;
@@ -49,6 +50,7 @@ import org.libx4j.rdb.ddlx.xe.$ddlx_index;
 import org.libx4j.rdb.ddlx.xe.$ddlx_int;
 import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
+import org.libx4j.rdb.ddlx.xe.$ddlx_rangeOperator;
 import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.$ddlx_time;
@@ -188,7 +190,7 @@ final class DerbyCompiler extends Compiler {
     final $ddlx_column column;
     if ("BIGINT".equals(typeName)) {
       final $ddlx_bigint type = newColumn($ddlx_bigint.class);
-      type._precision$(new $ddlx_bigint._precision$((byte)size));
+//      type._precision$(new $ddlx_bigint._precision$((byte)size));
       if (_default != null && !"GENERATED_BY_DEFAULT".equals(_default))
         type._default$(new $ddlx_bigint._default$(new BigInteger(_default)));
 
@@ -358,7 +360,35 @@ final class DerbyCompiler extends Compiler {
     return tableNameToColumns;
   }
 
-  private static final String constraints = new StringBuilder()
+//  private static final String tablesSql = new StringBuilder()
+//    .append("SELECT s.schemaname, t.tablename, c.columnnumber, c.columnname, CAST(c.columndatatype AS VARCHAR(255)) ")
+//    .append("FROM sys.syscolumns c ")
+//    .append("JOIN sys.systables t ON t.tableid = c.referenceid ")
+//    .append("JOIN sys.sysschemas s ON s.schemaid = t.schemaid ")
+//    .append("WHERE t.tabletype = 'T' ")
+//    .append("ORDER BY s.schemaname, t.tablename, c.columnnumber ").toString();
+//
+//  protected Map<String,List<$ddlx_column>> getColumns(final Connection connection) throws SQLException {
+//    final Map<String,List<$ddlx_column>> nameToColumn = new HashMap<String,List<$ddlx_column>>();
+//    final PreparedStatement statement = connection.prepareStatement(tablesSql);
+//    final ResultSet rows = statement.executeQuery();
+//    final List<AbstractMap.SimpleEntry<Integer,$ddlx_column>> columns = new ArrayList<AbstractMap.SimpleEntry<Integer,$ddlx_column>>();
+//    while (rows.next()) {
+//      final String schemaName = rows.getString(1).toLowerCase();
+//      final String tableName = rows.getString(2).toLowerCase();
+//      final String columnName = rows.getString(4).toLowerCase();
+//      final String columnType = rows.getString(5).toLowerCase();
+//      final int notNull = columnType.indexOf("not null");
+//      final boolean nullable = notNull == -1;
+//      final String typeName = nullable ? columnType : columnType.substring(0, notNull - 1);
+//
+//      final $ddlx_column column = makeColumn(columnName.toLowerCase(), typeName, null, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
+//      columns.add(new AbstractMap.SimpleEntry<Integer,$ddlx_column>(columnNumber, column));
+//
+//    }
+//  }
+
+  private static final String constraintsSql = new StringBuilder()
     .append("SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
     .append("FROM sys.sysconstraints c ")
     .append("JOIN sys.systables t ON c.tableid = t.tableid ")
@@ -367,13 +397,14 @@ final class DerbyCompiler extends Compiler {
     .append("JOIN sys.sysconglomerates cg ON k.conglomerateid = cg.conglomerateid ")
     .append("WHERE c.state = 'E' ")
     .append("AND c.type = 'U' ")
+    .append("AND cg.isconstraint = true ")
     .append("AND s.schemaname = CURRENT SCHEMA ")
     .append("ORDER BY s.schemaname, t.tablename").toString();
 
   @Override
   protected Map<String,List<$ddlx_table._constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
-    final PreparedStatement statement = connection.prepareStatement(constraints);
+    final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
     final Map<String,List<$ddlx_table._constraints._unique>> tableNameToUniques = new HashMap<String,List<$ddlx_table._constraints._unique>>();
     String lastTable = null;
@@ -402,5 +433,140 @@ final class DerbyCompiler extends Compiler {
     }
 
     return tableNameToUniques;
+  }
+
+  private static $ddlx_check makeCheck(final String andOr, final String columnName, final String operator, final String value) {
+    final $ddlx_check check = andOr == null ? new $ddlx_table._constraints._check() : "AND".equals(andOr) ? new $ddlx_table._constraints._check._and() : new $ddlx_table._constraints._check._or();
+    check._column(new $ddlx_table._constraints._check._column(columnName));
+    final $ddlx_rangeOperator.Enum operatorEnum;
+    if ("!=".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.ne;
+    else if ("<".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.lt;
+    else if ("<=".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.lte;
+    else if ("=".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.eq;
+    else if (">".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.gt;
+    else if (">=".equals(operator))
+      operatorEnum = $ddlx_rangeOperator.gte;
+    else
+      throw new UnsupportedOperationException("Unsupported check operator: " + operator);
+
+    check._operator(new $ddlx_table._constraints._check._operator(operatorEnum));
+    check._value(new $ddlx_table._constraints._check._value(value));
+    return check;
+  }
+
+  // TODO: This only supports single-column constraints
+  private static $ddlx_check makeCheck(final String checkDefinition) {
+    final String[] terms = checkDefinition.substring(1, checkDefinition.length() - 1).split(" ");
+    $ddlx_check check = null;
+    $ddlx_check previousCheck = null;
+    for (int i = 0; i < terms.length; i += 3) {
+      final $ddlx_check nextCheck = makeCheck(i == 0 ? null : terms[i++], terms[i + 0], terms[i + 1], terms[i + 2]);
+      if (previousCheck == null)
+        check = previousCheck = nextCheck;
+      else {
+        if (nextCheck instanceof $ddlx_table._constraints._check._and)
+          previousCheck._and(nextCheck);
+        else if (nextCheck instanceof $ddlx_table._constraints._check._or)
+          previousCheck._or(nextCheck);
+        else
+          throw new UnsupportedOperationException("Unsupported check type: " + nextCheck.getClass().getName());
+
+        previousCheck = nextCheck;
+      }
+    }
+
+    return check;
+  }
+
+  private static final String checkSql = new StringBuilder()
+    .append("SELECT s.schemaname, t.tablename, ch.checkdefinition, ch.referencedcolumns ")
+    .append("FROM sys.syschecks ch ")
+    .append("JOIN sys.sysconstraints co ON ch.constraintid = co.constraintid ")
+    .append("JOIN sys.sysschemas s ON s.schemaid = co.schemaid ")
+    .append("JOIN sys.systables t ON t.tableid = co.tableid ")
+    .append("WHERE co.state = 'E' ")
+    .append("AND co.type = 'C' ")
+    .append("AND s.schemaname = CURRENT SCHEMA ")
+    .append("ORDER BY s.schemaname, t.tablename ").toString();
+
+  @Override
+  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
+    final PreparedStatement statement = connection.prepareStatement(checkSql);
+    final ResultSet rows = statement.executeQuery();
+    final Map<String,List<$ddlx_check>> tableNameToChecks = new HashMap<String,List<$ddlx_check>>();
+    String lastTable = null;
+    List<$ddlx_check> checks = null;
+    while (rows.next()) {
+      final String tableName = rows.getString(2);
+      if (!tableName.equals(lastTable)) {
+        lastTable = tableName;
+        tableNameToChecks.put(tableName, checks = new ArrayList<$ddlx_check>());
+      }
+
+      final String checkDefinition = rows.getString(3);
+      final String referencedColumns = rows.getString(4);
+      if (referencedColumns.contains(","))
+        throw new UnsupportedOperationException("Only support single-column check constraints");
+
+      checks.add(makeCheck(checkDefinition));
+    }
+
+    return tableNameToChecks;
+  }
+
+  private static final String indexSql = new StringBuilder()
+    .append("SELECT s.schemaname, t.tablename, CAST(cg.descriptor AS VARCHAR(255)) ")
+    .append("FROM sys.sysconglomerates cg ")
+    .append("JOIN sys.sysschemas s ON s.schemaid = cg.schemaid ")
+    .append("JOIN sys.systables t ON t.tableid = cg.tableid ")
+    .append("WHERE cg.isindex = true ")
+    .append("AND cg.isconstraint = false ")
+    .append("AND s.schemaname = CURRENT SCHEMA ")
+    .append("ORDER BY s.schemaname, t.tablename ").toString();
+
+  @Override
+  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
+    final Map<String,List<String>> tableNameToColumns = getTables(connection);
+    final PreparedStatement statement = connection.prepareStatement(indexSql);
+    final ResultSet rows = statement.executeQuery();
+    final Map<String,$ddlx_table._indexes> tableNameToIndexes = new HashMap<String,$ddlx_table._indexes>();
+    String lastTable = null;
+    $ddlx_table._indexes indexes = null;
+    while (rows.next()) {
+      final String tableName = rows.getString(2);
+      final List<String> columnNames = tableNameToColumns.get(tableName);
+      if (!tableName.equals(lastTable)) {
+        lastTable = tableName;
+        tableNameToIndexes.put(tableName, indexes = new $ddlx_table._indexes());
+      }
+
+      final String descriptor = rows.getString(3);
+
+      final boolean unique = descriptor.startsWith("UNIQUE");
+      final String type = descriptor.startsWith("HASH") ? "HASH" : "BTREE";
+
+      final $ddlx_table._indexes._index index = new $ddlx_table._indexes._index();
+      indexes._index(index);
+      if (!"BTREE".equals(type))
+        index._type$(new $ddlx_index._type$(type));
+
+      if (unique)
+        index._unique$(new $ddlx_index._unique$(unique));
+
+      final String columnNumbers[] = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
+      for (final String columnNumber : columnNumbers) {
+        final String columnName = columnNames.get(Integer.parseInt(columnNumber.trim()) - 1);
+        final $ddlx_table._indexes._index._column column = new $ddlx_table._indexes._index._column();
+        column._name$(new $ddlx_table._indexes._index._column._name$(columnName.toLowerCase()));
+        index._column(column);
+      }
+    }
+
+    return tableNameToIndexes;
   }
 }

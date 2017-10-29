@@ -16,6 +16,7 @@
 
 package org.libx4j.rdb.sqlx;
 
+import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class SQLiteCompiler extends Compiler {
