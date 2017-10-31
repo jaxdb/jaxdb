@@ -46,7 +46,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return !column._null$().isNull() && !column._null$().text() ? "NOT NULL" : "";
+    return column._null$() != null && !column._null$().text() ? "NOT NULL" : "";
   }
 
   @Override
@@ -54,7 +54,7 @@ final class SQLiteCompiler extends Compiler {
     if (!isAutoIncrement(column))
       return null;
 
-    final $ddlx_columns primaryKey = table._constraints(0)._primaryKey(0);
+    final $ddlx_columns primaryKey = table._constraints()._primaryKey();
     if (primaryKey.isNull()) {
       logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
       return null;
@@ -87,7 +87,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
-    final $ddlx_columns primaryKey = constraints._primaryKey(0);
+    final $ddlx_columns primaryKey = constraints._primaryKey();
     if (!primaryKey.isNull() && primaryKey._column().size() == 1) {
       final $ddlx_column column = columnNameToColumn.get(primaryKey._column().get(0)._name$().text());
       if (column instanceof $ddlx_integer && isAutoIncrement(($ddlx_integer)column))

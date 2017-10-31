@@ -44,7 +44,7 @@ public final class MySQLCompiler extends Compiler {
       return super.triggers(table);
 
     final String tableName = table._name$().text();
-    final List<$ddlx_table._triggers._trigger> triggers = table._triggers().get(0)._trigger();
+    final List<$ddlx_table._triggers._trigger> triggers = table._triggers()._trigger();
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     for (final $ddlx_table._triggers._trigger trigger : triggers) {
       String buffer = "";
@@ -82,7 +82,7 @@ public final class MySQLCompiler extends Compiler {
 
   @Override
   protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override

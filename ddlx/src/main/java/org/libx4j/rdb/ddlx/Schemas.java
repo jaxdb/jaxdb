@@ -143,8 +143,8 @@ public final class Schemas {
     for (final $ddlx_table table : tables) {
       digraph.addVertex(table);
       for (final $ddlx_column column : table._column())
-        if (column._foreignKey() != null && column._foreignKey().size() > 0)
-          digraph.addEdgeRef(table, column._foreignKey(0)._references$().text().toLowerCase());
+        if (column._foreignKey() != null)
+          digraph.addEdgeRef(table, column._foreignKey()._references$().text().toLowerCase());
     }
 
     if (digraph.hasCycle())
@@ -188,7 +188,7 @@ public final class Schemas {
       return;
 
     flatTables.add(table._name$().text());
-    if (table._extends$().isNull())
+    if (table._extends$() == null)
       return;
 
     final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
@@ -204,28 +204,27 @@ public final class Schemas {
     }
 
     if (superTable._constraints() != null) {
-      final $ddlx_constraints parentConstraints = superTable._constraints(0);
+      final $ddlx_constraints parentConstraints = superTable._constraints();
       if (table._constraints() == null) {
         table._constraints(parentConstraints);
       }
       else {
         if (parentConstraints._primaryKey() != null)
-          for (final $ddlx_columns columns : parentConstraints._primaryKey())
-            table._constraints(0)._primaryKey(columns);
+          table._constraints()._primaryKey(parentConstraints._primaryKey());
 
         if (parentConstraints._unique() != null)
           for (final $ddlx_columns columns : parentConstraints._unique())
-            table._constraints(0)._unique(columns);
+            table._constraints()._unique(columns);
       }
     }
 
     if (superTable._indexes() != null) {
       if (table._indexes() == null) {
-        table._indexes(superTable._indexes(0));
+        table._indexes(superTable._indexes());
       }
       else {
-        for (final $ddlx_table._indexes._index index : superTable._indexes(0)._index())
-          table._indexes(0)._index(index);
+        for (final $ddlx_table._indexes._index index : superTable._indexes()._index())
+          table._indexes()._index(index);
       }
     }
   }

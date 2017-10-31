@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
+import org.libx4j.rdb.ddlx.xe.$ddlx_indexes;
 import org.libx4j.rdb.ddlx.xe.$ddlx_named;
 import org.libx4j.rdb.ddlx.xe.$ddlx_table;
 import org.libx4j.rdb.ddlx.xe.ddlx_schema;
@@ -61,25 +62,26 @@ public class DDLxAudit {
 
   public boolean isPrimary($ddlx_table table, final $ddlx_named column) {
     do {
-      final $ddlx_columns constraint = table._constraints(0)._primaryKey(0);
-      if (!constraint.isNull())
-        for (final $ddlx_named col : constraint._column())
+      if (table._constraints() != null && table._constraints()._primaryKey() != null)
+        for (final $ddlx_named col : table._constraints()._primaryKey()._column())
           if (column._name$().text().equals(col._name$().text()))
             return true;
     }
-    while (!table._extends$().isNull() && (table = tableNameToTable.get(table._extends$().text())) != null);
+    while (table._extends$() != null && (table = tableNameToTable.get(table._extends$().text())) != null);
 
     return false;
   }
 
   public boolean isUnique(final $ddlx_table table, final $ddlx_named column) {
-    final $ddlx_columns constraint = table._constraints(0)._unique(0);
-    if (constraint.isNull())
-      return false;
+    if (table._constraints() != null && table._constraints()._unique() != null)
+      for (final $ddlx_columns unique : table._constraints()._unique())
+        if (unique._column().size() == 1 && column._name$().text().equals(unique._column(0)._name$().text()))
+          return true;
 
-    for (final $ddlx_named col : constraint._column())
-      if (column._name$().text().equals(col._name$().text()))
-        return true;
+    if (table._indexes() != null && table._indexes()._index() != null)
+      for (final $ddlx_indexes._index index : table._indexes()._index())
+        if (index._unique$() != null && index._unique$().text() && index._column().size() == 1 && column._name$().text().equals(index._column(0)._name$().text()))
+          return true;
 
     return false;
   }

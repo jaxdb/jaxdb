@@ -81,20 +81,20 @@ public class dt {
     private static final long serialVersionUID = -7869441789524610043L;
 
     protected static $ddlx_bigint addCheck(final $ddlx_bigint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_bigint._max$(new BigInteger(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_bigint._min$(new BigInteger(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_bigint._max$(new BigInteger(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_bigint._min$(new BigInteger(check._value().text())));
       else {
         final $ddlx_bigint._check typedCheck = new $ddlx_bigint._check();
-        typedCheck._condition$(new $ddlx_bigint._check._condition$(new BigInteger(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_bigint._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_bigint._check._condition$(new BigInteger(check._value().text())));
+        typedCheck._operator$(new $ddlx_bigint._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -153,13 +153,13 @@ public class dt {
 
     protected static $ddlx_char addCheck(final $ddlx_char column, final $ddlx_check check) {
       final $ddlx_char._check typedCheck = new $ddlx_char._check();
-      typedCheck._condition$(new $ddlx_char._check._condition$(check._value(0).text()));
-      typedCheck._operator$(new $ddlx_char._check._operator$(check._operator(0).text()));
+      typedCheck._condition$(new $ddlx_char._check._condition$(check._value().text()));
+      typedCheck._operator$(new $ddlx_char._check._operator$(check._operator().text()));
       column._check(typedCheck);
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -253,20 +253,20 @@ public class dt {
     private static final long serialVersionUID = -7880579934877572719L;
 
     protected static $ddlx_decimal addCheck(final $ddlx_decimal column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_decimal._max$(new BigDecimal(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_decimal._min$(new BigDecimal(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_decimal._max$(new BigDecimal(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_decimal._min$(new BigDecimal(check._value().text())));
       else {
         final $ddlx_decimal._check typedCheck = new $ddlx_decimal._check();
-        typedCheck._condition$(new $ddlx_decimal._check._condition$(new BigDecimal(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_decimal._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_decimal._check._condition$(new BigDecimal(check._value().text())));
+        typedCheck._operator$(new $ddlx_decimal._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -297,20 +297,20 @@ public class dt {
     private static final long serialVersionUID = 8510411838107614004L;
 
     protected static $ddlx_double addCheck(final $ddlx_double column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_double._max$(Double.valueOf(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_double._min$(Double.valueOf(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_double._max$(Double.valueOf(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_double._min$(Double.valueOf(check._value().text())));
       else {
         final $ddlx_double._check typedCheck = new $ddlx_double._check();
-        typedCheck._condition$(new $ddlx_double._check._condition$(Double.valueOf(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_double._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_double._check._condition$(Double.valueOf(check._value().text())));
+        typedCheck._operator$(new $ddlx_double._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -352,20 +352,20 @@ public class dt {
     private static final long serialVersionUID = 8510411838107614004L;
 
     protected static $ddlx_float addCheck(final $ddlx_float column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_float._max$(Float.valueOf(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_float._min$(Float.valueOf(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_float._max$(Float.valueOf(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_float._min$(Float.valueOf(check._value().text())));
       else {
         final $ddlx_float._check typedCheck = new $ddlx_float._check();
-        typedCheck._condition$(new $ddlx_float._check._condition$(Float.valueOf(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_float._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_float._check._condition$(Float.valueOf(check._value().text())));
+        typedCheck._operator$(new $ddlx_float._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -391,20 +391,20 @@ public class dt {
     private static final long serialVersionUID = -7869441789524610043L;
 
     protected static $ddlx_int addCheck(final $ddlx_int column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_int._max$(new BigInteger(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_int._min$(new BigInteger(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_int._max$(new BigInteger(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_int._min$(new BigInteger(check._value().text())));
       else {
         final $ddlx_int._check typedCheck = new $ddlx_int._check();
-        typedCheck._condition$(new $ddlx_int._check._condition$(new BigInteger(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_int._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_int._check._condition$(new BigInteger(check._value().text())));
+        typedCheck._operator$(new $ddlx_int._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -430,20 +430,20 @@ public class dt {
     private static final long serialVersionUID = -7869441789524610043L;
 
     protected static $ddlx_smallint addCheck(final $ddlx_smallint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_smallint._max$(new BigInteger(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_smallint._min$(new BigInteger(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_smallint._max$(new BigInteger(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_smallint._min$(new BigInteger(check._value().text())));
       else {
         final $ddlx_smallint._check typedCheck = new $ddlx_smallint._check();
-        typedCheck._condition$(new $ddlx_smallint._check._condition$(new BigInteger(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_smallint._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_smallint._check._condition$(new BigInteger(check._value().text())));
+        typedCheck._operator$(new $ddlx_smallint._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }
@@ -495,20 +495,20 @@ public class dt {
     private static final long serialVersionUID = -7869441789524610043L;
 
     protected static $ddlx_tinyint addCheck(final $ddlx_tinyint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator(0).text()))
-        column._max$(new $ddlx_tinyint._max$(new BigInteger(check._value(0).text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator(0).text()))
-        column._min$(new $ddlx_tinyint._min$(new BigInteger(check._value(0).text())));
+      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
+        column._max$(new $ddlx_tinyint._max$(new BigInteger(check._value().text())));
+      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
+        column._min$(new $ddlx_tinyint._min$(new BigInteger(check._value().text())));
       else {
         final $ddlx_tinyint._check typedCheck = new $ddlx_tinyint._check();
-        typedCheck._condition$(new $ddlx_tinyint._check._condition$(new BigInteger(check._value(0).text())));
-        typedCheck._operator$(new $ddlx_tinyint._check._operator$(check._operator(0).text()));
+        typedCheck._condition$(new $ddlx_tinyint._check._condition$(new BigInteger(check._value().text())));
+        typedCheck._operator$(new $ddlx_tinyint._check._operator$(check._operator().text()));
         column._check(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null && check._and().size() > 0)
-        addCheck(column, check._and(0));
+      if (check._and() != null)
+        addCheck(column, check._and());
 
       return column;
     }

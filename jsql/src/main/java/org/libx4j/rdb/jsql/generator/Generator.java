@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lib4j.io.Files;
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Strings;
 import org.lib4j.xml.validate.ValidationException;
@@ -126,52 +125,52 @@ public class Generator {
     final Object[] params = new Object[] {THIS, column._name$().text(), _default, audit.isUnique(table, column), audit.isPrimary(table, column), column._null$().text()};
     if (column instanceof $ddlx_char) {
       final $ddlx_char type = ($ddlx_char)column;
-      if (!type.sqlx_generateOnInsert$().isNull() && $ddlx_char.sqlx_generateOnInsert$.UUID.text().equals(type.sqlx_generateOnInsert$().text()))
+      if (type.sqlx_generateOnInsert$() != null && $ddlx_char.sqlx_generateOnInsert$.UUID.text().equals(type.sqlx_generateOnInsert$().text()))
         generateOnInsert = GenerateOn.UUID;
 
-      return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text(), type._varying$().text());
+      return new Type(column, type.CHAR.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._length$() == null ? null : type._length$().text(), type._varying$().text());
     }
 
     if (column instanceof $ddlx_clob) {
       final $ddlx_clob type = ($ddlx_clob)column;
-      return new Type(column, type.CLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text());
+      return new Type(column, type.CLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._length$() == null ? null : type._length$().text());
     }
 
     if (column instanceof $ddlx_binary) {
       final $ddlx_binary type = ($ddlx_binary)column;
-      return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text(), type._varying$().text());
+      return new Type(column, type.BINARY.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._length$() == null ? null : type._length$().text(), type._varying$().text());
     }
 
     if (column instanceof $ddlx_blob) {
       final $ddlx_blob type = ($ddlx_blob)column;
-      return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._length$().text());
+      return new Type(column, type.BLOB.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._length$() == null ? null : type._length$().text());
     }
 
     if (column instanceof $jsql_integer) {
       final $jsql_integer type = ($jsql_integer)column;
       // no autogenerator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
-      if (!type.sqlx_generateOnUpdate$().isNull())
+      if (type.sqlx_generateOnUpdate$() != null)
         if ($jsql_integer.sqlx_generateOnUpdate$.INCREMENT.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.INCREMENT;
 
       if (column instanceof $ddlx_tinyint) {
         final $ddlx_tinyint integer = ($ddlx_tinyint)column;
-        return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Short(integer._min$().text().shortValue()), integer._max$().isNull() ? null : new Short(integer._max$().text().shortValue()));
+        return new Type(column, integer._unsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), integer._precision$() == null ? null : integer._precision$().text().intValue(), integer._min$() == null ? null : new Short(integer._min$().text().shortValue()), integer._max$() == null ? null : new Short(integer._max$().text().shortValue()));
       }
 
       if (column instanceof $ddlx_smallint) {
         final $ddlx_smallint integer = ($ddlx_smallint)column;
-        return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Integer(integer._min$().text().intValue()), integer._max$().isNull() ? null : new Integer(integer._max$().text().intValue()));
+        return new Type(column, integer._unsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), integer._precision$() == null ? null : integer._precision$().text().intValue(), integer._min$() == null ? null : new Integer(integer._min$().text().intValue()), integer._max$() == null ? null : new Integer(integer._max$().text().intValue()));
       }
 
       if (column instanceof $ddlx_int) {
         final $ddlx_int integer = ($ddlx_int)column;
-        return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : new Long(integer._min$().text().longValue()), integer._max$().isNull() ? null : new Long(integer._max$().text().longValue()));
+        return new Type(column, integer._unsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), integer._precision$() == null ? null : integer._precision$().text().intValue(), integer._min$() == null ? null : new Long(integer._min$().text().longValue()), integer._max$() == null ? null : new Long(integer._max$().text().longValue()));
       }
 
       if (column instanceof $ddlx_bigint) {
         final $ddlx_bigint integer = ($ddlx_bigint)column;
-        return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), integer._precision$().text().intValue(), integer._min$().isNull() ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$().isNull() ? null : BigInteger.valueOf(integer._max$().text().longValue()));
+        return new Type(column, integer._unsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), integer._precision$() == null ? null : integer._precision$().text().intValue(), integer._min$() == null ? null : BigInteger.valueOf(integer._min$().text().longValue()), integer._max$() == null ? null : BigInteger.valueOf(integer._max$().text().longValue()));
       }
 
       throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -180,71 +179,71 @@ public class Generator {
     if (column instanceof $ddlx_float) {
       final $ddlx_float type = ($ddlx_float)column;
       final Class<? extends type.DataType<?>> javaType = type._unsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
-      final Number min = type._min$().text() != null ? type._min$().text().floatValue() : null;
-      final Number max = type._max$().text() != null ? type._max$().text().floatValue() : null;
-      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), min, max);
+      final Number min = type._min$() != null ? type._min$().text().floatValue() : null;
+      final Number max = type._max$() != null ? type._max$().text().floatValue() : null;
+      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $ddlx_double) {
       final $ddlx_double type = ($ddlx_double)column;
       final Class<? extends type.DataType<?>> javaType = type._unsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
-      final Number min = type._min$().text() != null ? type._min$().text().doubleValue() : null;
-      final Number max = type._max$().text() != null ? type._max$().text().doubleValue() : null;
-      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), min, max);
+      final Number min = type._min$() != null ? type._min$().text().doubleValue() : null;
+      final Number max = type._max$() != null ? type._max$().text().doubleValue() : null;
+      return new Type(column, javaType, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $ddlx_decimal) {
       final $ddlx_decimal type = ($ddlx_decimal)column;
-      return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text().intValue(), type._scale$().text().intValue(), type._min$().text(), type._max$().text());
+      return new Type(column, type._unsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._precision$() == null ? null : type._precision$().text().intValue(), type._scale$() == null ? null : type._scale$().text().intValue(), type._min$() == null ? null : type._min$().text(), type._max$() == null ? null : type._max$().text());
     }
 
     if (column instanceof $ddlx_date) {
       final $ddlx_date type = ($ddlx_date)column;
-      if (!type.sqlx_generateOnInsert$().isNull())
+      if (type.sqlx_generateOnInsert$() != null)
         if ($ddlx_date.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.sqlx_generateOnUpdate$().isNull())
+      if (type.sqlx_generateOnUpdate$() != null)
         if ($ddlx_date.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
+      return new Type(column, type.DATE.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text());
     }
 
     if (column instanceof $ddlx_time) {
       final $ddlx_time type = ($ddlx_time)column;
-      if (!type.sqlx_generateOnInsert$().isNull())
+      if (type.sqlx_generateOnInsert$() != null)
         if ($ddlx_time.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.sqlx_generateOnUpdate$().isNull())
+      if (type.sqlx_generateOnUpdate$() != null)
         if ($ddlx_time.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
+      return new Type(column, type.TIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._precision$().text());
     }
 
     if (column instanceof $ddlx_datetime) {
       final $ddlx_datetime type = ($ddlx_datetime)column;
-      if (!type.sqlx_generateOnInsert$().isNull())
+      if (type.sqlx_generateOnInsert$() != null)
         if ($ddlx_datetime.sqlx_generateOnInsert$.TIMESTAMP.text().equals(type.sqlx_generateOnInsert$().text()))
           generateOnInsert = GenerateOn.TIMESTAMP;
 
-      if (!type.sqlx_generateOnUpdate$().isNull())
+      if (type.sqlx_generateOnUpdate$() != null)
         if ($ddlx_datetime.sqlx_generateOnUpdate$.TIMESTAMP.text().equals(type.sqlx_generateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text(), type._precision$().text());
+      return new Type(column, type.DATETIME.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text(), type._precision$().text());
     }
 
     if (column instanceof $ddlx_boolean) {
       final $ddlx_boolean type = ($ddlx_boolean)column;
-      return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
+      return new Type(column, type.BOOLEAN.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text());
     }
 
     if (column instanceof $ddlx_enum) {
       final $ddlx_enum type = ($ddlx_enum)column;
-      return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$().text());
+      return new Type(column, type.ENUM.class, params, generateOnInsert, generateOnUpdate, type.jsql_keyForUpdate$() == null ? null : type.jsql_keyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
@@ -303,7 +302,7 @@ public class Generator {
         return null;
 
       final $xs_anySimpleType value = ($xs_anySimpleType)method.invoke(column);
-      if (value.isNull() || "null".equals(value.text()))
+      if (value == null || "null".equals(value.text()))
         return null;
 
       if (column instanceof $ddlx_enum)
@@ -331,22 +330,22 @@ public class Generator {
     do {
       count += table._column() != null ? table._column().size() : 0;
     }
-    while (deep && (table = audit.tableNameToTable.get(table._extends$().text())) != null);
+    while (deep && table._extends$() != null && (table = audit.tableNameToTable.get(table._extends$().text())) != null);
     return count;
   }
 
   private int getPrimaryColumnCount($ddlx_table table, final boolean deep) {
     int count = 0;
     do {
-      if (!table._constraints(0)._primaryKey(0).isNull())
-        count += table._constraints(0)._primaryKey(0)._column().size();
+      if (table._constraints() != null && table._constraints()._primaryKey() != null)
+        count += table._constraints()._primaryKey()._column().size();
     }
-    while (deep && (table = audit.tableNameToTable.get(table._extends$().text())) != null);
+    while (deep && table._extends$() != null && (table = audit.tableNameToTable.get(table._extends$().text())) != null);
     return count;
   }
 
   public String makeTable(final $jsql_table table) {
-    final String ext = !table._extends$().isNull() ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(type.Entity.class);
+    final String ext = table._extends$() != null ? Strings.toTitleCase(table._extends$().text()) : Classes.getStrictName(type.Entity.class);
     String out = "";
     String abs = "";
     if (table._abstract$().text())
@@ -391,7 +390,7 @@ public class Generator {
             }
           }
         }
-        while (!t._extends$().isNull() && (t = audit.tableNameToTable.get(t._extends$().text())) != null);
+        while (t._extends$() != null && (t = audit.tableNameToTable.get(t._extends$().text())) != null);
         out += params.substring(2) + ") {\n";
         out += "      this();\n";
         out += set.substring(1) + "\n    }\n\n";
@@ -460,7 +459,7 @@ public class Generator {
     out += "    @" + Classes.getStrictName(Override.class) + "\n";
     out += "    public boolean equals(final " + Classes.getStrictName(Object.class) + " obj) {\n";
     out += "      if (obj == this)\n        return true;\n\n";
-    out += "      if (!(obj instanceof " + entityName + ")" + (!table._extends$().isNull() ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
+    out += "      if (!(obj instanceof " + entityName + ")" + (table._extends$() != null ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
     final List<$ddlx_column> primaryColumns = new ArrayList<$ddlx_column>();

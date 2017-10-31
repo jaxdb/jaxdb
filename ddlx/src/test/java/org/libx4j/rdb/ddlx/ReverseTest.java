@@ -236,11 +236,11 @@ public class ReverseTest extends DDLxTest {
 
   private static void sort(final ddlx_schema schema) {
     for (final $ddlx_table table : schema._table()) {
-      if (table._indexes() != null && table._indexes().size() > 0 && table._indexes(0)._index() != null && table._indexes(0)._index().size() > 0)
-        table._indexes(0)._index().sort(hashCodeComparator);
+      if (table._indexes() != null && table._indexes()._index() != null && table._indexes()._index().size() > 0)
+        table._indexes()._index().sort(hashCodeComparator);
 
-      if (table._constraints() != null && table._constraints().size() > 0 && table._constraints(0)._unique() != null && table._constraints(0)._unique().size() > 0)
-        table._constraints(0)._unique().sort(hashCodeComparator);
+      if (table._constraints() != null && table._constraints()._unique() != null && table._constraints()._unique().size() > 0)
+        table._constraints()._unique().sort(hashCodeComparator);
     }
   }
 

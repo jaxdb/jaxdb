@@ -152,7 +152,7 @@ public class SQLiteDialect extends Dialect {
 
   @Override
   public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
-    if (type._values$().isNull())
+    if (type._values$() == null)
       return "VARCHAR(0)";
 
     final List<String> enums = Dialect.parseEnum(type._values$().text());

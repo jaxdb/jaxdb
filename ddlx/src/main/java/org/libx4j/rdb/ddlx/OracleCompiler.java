@@ -64,7 +64,7 @@ public final class OracleCompiler extends Compiler {
 
   @Override
   protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override

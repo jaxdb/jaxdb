@@ -102,7 +102,7 @@ public final class Generator {
     final List<String> errors = new ArrayList<String>();
     for (final $ddlx_table table : schema._table()) {
       if (!table._abstract$().text()) {
-        if (table._constraints(0)._primaryKey(0).isNull()) {
+        if (table._constraints() == null || table._constraints()._primaryKey() == null) {
           errors.add("Table `" + table._name$().text() + "` does not have a primary key.");
         }
         else {

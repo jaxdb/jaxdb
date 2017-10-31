@@ -120,12 +120,12 @@ abstract class Decompiler {
         if (table._constraints() == null)
           table._constraints(new $ddlx_table._constraints());
 
-        if (table._constraints(0)._primaryKey() == null)
-          table._constraints(0)._primaryKey(new $ddlx_table._constraints._primaryKey());
+        if (table._constraints()._primaryKey() == null)
+          table._constraints()._primaryKey(new $ddlx_table._constraints._primaryKey());
 
         final $ddlx_table._constraints._primaryKey._column column = new $ddlx_table._constraints._primaryKey._column();
         column._name$(new $ddlx_table._constraints._primaryKey._column._name$(columnName));
-        table._constraints(0)._primaryKey(0)._column(column);
+        table._constraints()._primaryKey()._column(column);
       }
 
       final List<$ddlx_table._constraints._unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
@@ -134,7 +134,7 @@ abstract class Decompiler {
           table._constraints(new $ddlx_table._constraints());
 
         for (final $ddlx_table._constraints._unique unique : uniques)
-          table._constraints(0)._unique(unique);
+          table._constraints()._unique(unique);
       }
 
       final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true);

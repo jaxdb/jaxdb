@@ -71,7 +71,7 @@ public final class PostgreSQLCompiler extends Compiler {
         if (column instanceof $ddlx_enum) {
           final $ddlx_enum type = ($ddlx_enum)column;
           final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(table._name$().text(), type._name$().text())).append(" AS ENUM (");
-          if (!type._values$().isNull()) {
+          if (type._values$() != null) {
             final List<String> enums = Dialect.parseEnum(type._values$().text());
             final StringBuilder builder = new StringBuilder();
             for (final String value : enums)
@@ -96,7 +96,7 @@ public final class PostgreSQLCompiler extends Compiler {
 
   @Override
   protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return !column._null$().isNull() ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
