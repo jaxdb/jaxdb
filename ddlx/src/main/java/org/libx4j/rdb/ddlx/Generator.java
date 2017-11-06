@@ -30,10 +30,10 @@ import java.util.Set;
 import org.lib4j.lang.Arrays;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_compliant;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Compliant;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,7 +43,7 @@ public final class Generator {
 
   static {
     try {
-      PackageLoader.getSystemContextPackageLoader().loadPackage(ddlx_schema.class.getPackage().getName());
+      PackageLoader.getSystemContextPackageLoader().loadPackage(Schema.class.getPackage().getName());
     }
     catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
@@ -86,7 +86,7 @@ public final class Generator {
   }
 
   protected final DDLxAudit audit;
-  protected final ddlx_schema schema;
+  protected final Schema schema;
 
   protected Generator(final DDLxAudit audit) {
     this.audit = audit;
@@ -100,15 +100,15 @@ public final class Generator {
 
   private List<String> getErrors() {
     final List<String> errors = new ArrayList<String>();
-    for (final $ddlx_table table : schema._table()) {
-      if (!table._abstract$().text()) {
-        if (table._constraints() == null || table._constraints()._primaryKey() == null) {
-          errors.add("Table `" + table._name$().text() + "` does not have a primary key.");
+    for (final $Table table : schema.getTable()) {
+      if (!table.getAbstract$().text()) {
+        if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
+          errors.add("Table `" + table.getName$().text() + "` does not have a primary key.");
         }
         else {
-          for (final $ddlx_column column : table._column()) {
-            if (audit.isPrimary(table, column) && column._null$().text())
-              errors.add("Primary key column `" + column._name$().text() + "` on table `" + table._name$().text() + "` is NULL.");
+          for (final $Column column : table.getColumn()) {
+            if (audit.isPrimary(table, column) && column.getNull$().text())
+              errors.add("Primary key column `" + column.getName$().text() + "` on table `" + table.getName$().text() + "` is NULL.");
           }
         }
       }
@@ -123,9 +123,9 @@ public final class Generator {
     return columnCount;
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table, final ddlx_schema schema) throws GeneratorExecutionException {
-    final boolean strict = $ddlx_compliant._compliance$.strict.text().equals(schema._compliance$().text());
-    final String tableName = table._name$().text();
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table, final Schema schema) throws GeneratorExecutionException {
+    final boolean strict = $Compliant.Compliance$.strict.text().equals(schema.getCompliance$().text());
+    final String tableName = table.getName$().text();
     final List<String> violations = new ArrayList<String>();
     String violation = checkNameViolation(tableName, strict);
     if (violation != null)
@@ -135,14 +135,14 @@ public final class Generator {
       throw new GeneratorExecutionException("Circular table dependency detected: " + tableName);
 
     tableNames.add(tableName);
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        final String columnName = column._name$().text();
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        final String columnName = column.getName$().text();
         violation = checkNameViolation(columnName, strict);
         if (violation != null)
           violations.add(violation);
 
-        final $ddlx_column existing = columnNameToColumn.get(columnName);
+        final $Column existing = columnNameToColumn.get(columnName);
         if (existing != null)
           throw new GeneratorExecutionException("Duplicate column definition: " + tableName + "." + columnName);
 
@@ -163,16 +163,16 @@ public final class Generator {
     }
   }
 
-  private List<CreateStatement> parseTable(final DBVendor vendor, final $ddlx_table table, final Set<String> tableNames) throws GeneratorExecutionException {
+  private List<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,$ddlx_column> columnNameToColumn = new HashMap<String,$ddlx_column>();
+    final Map<String,$Column> columnNameToColumn = new HashMap<String,$Column>();
     registerColumns(tableNames, columnNameToColumn, table, schema);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
     statements.addAll(compiler.types(table));
 
-    columnCount.put(table._name$().text(), table._column() != null ? table._column().size() : 0);
+    columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
     final CreateStatement createTable = compiler.createTableIfNotExists(table, columnNameToColumn);
 
     statements.add(createTable);
@@ -187,30 +187,30 @@ public final class Generator {
     final Map<String,List<CreateStatement>> createTableStatements = new HashMap<String,List<CreateStatement>>();
 
     final Set<String> skipTables = new HashSet<String>();
-    final ListIterator<$ddlx_table> listIterator = schema._table().listIterator(schema._table().size());
+    final ListIterator<$Table> listIterator = schema.getTable().listIterator(schema.getTable().size());
     while (listIterator.hasPrevious()) {
-      final $ddlx_table table = listIterator.previous();
-      if (table._skip$().text()) {
-        skipTables.add(table._name$().text());
+      final $Table table = listIterator.previous();
+      if (table.getSkip$().text()) {
+        skipTables.add(table.getName$().text());
       }
-      else if (!table._abstract$().text()) {
+      else if (!table.getAbstract$().text()) {
         final List<DropStatement> drops = Compiler.getCompiler(vendor).drops(table);
-        dropStatements.put(table._name$().text(), drops);
+        dropStatements.put(table.getName$().text(), drops);
       }
     }
 
     final Set<String> tableNames = new HashSet<String>();
-    for (final $ddlx_table table : schema._table())
-      if (!table._abstract$().text())
-        createTableStatements.put(table._name$().text(), parseTable(vendor, table, tableNames));
+    for (final $Table table : schema.getTable())
+      if (!table.getAbstract$().text())
+        createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
     final List<Statement> statements = new ArrayList<Statement>();
     final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(audit.schema());
     if (createSchema != null)
       statements.add(createSchema);
 
-    for (final $ddlx_table table : schema._table()) {
-      final String tableName = table._name$().text();
+    for (final $Table table : schema.getTable()) {
+      final String tableName = table.getName$().text();
       if (!skipTables.contains(tableName)) {
         statements.addAll(0, dropStatements.get(tableName));
         statements.addAll(createTableStatements.get(tableName));

@@ -27,16 +27,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_char;
-import org.libx4j.rdb.ddlx.xe.$ddlx_check;
-import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
-import org.libx4j.rdb.ddlx.xe.$ddlx_double;
-import org.libx4j.rdb.ddlx.xe.$ddlx_float;
-import org.libx4j.rdb.ddlx.xe.$ddlx_int;
-import org.libx4j.rdb.ddlx.xe.$ddlx_rangeOperator;
-import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Bigint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Char;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Check;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Decimal;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Double;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Float;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Int;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$RangeOperator;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Smallint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Tinyint;
 
 public class dt {
   public static abstract class DataType<T> implements Serializable {
@@ -80,21 +80,21 @@ public class dt {
   public static class BIGINT extends DataType<BigInteger> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $ddlx_bigint addCheck(final $ddlx_bigint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_bigint._max$(new BigInteger(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_bigint._min$(new BigInteger(check._value().text())));
+    protected static $Bigint addCheck(final $Bigint column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Bigint.Max$(new BigInteger(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Bigint.Min$(new BigInteger(check.getValue().text())));
       else {
-        final $ddlx_bigint._check typedCheck = new $ddlx_bigint._check();
-        typedCheck._condition$(new $ddlx_bigint._check._condition$(new BigInteger(check._value().text())));
-        typedCheck._operator$(new $ddlx_bigint._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Bigint.Check typedCheck = new $Bigint.Check();
+        typedCheck.setCondition$(new $Bigint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setOperator$(new $Bigint.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -151,15 +151,15 @@ public class dt {
   public static class CHAR extends DataType<String> {
     private static final long serialVersionUID = 4342711843352764121L;
 
-    protected static $ddlx_char addCheck(final $ddlx_char column, final $ddlx_check check) {
-      final $ddlx_char._check typedCheck = new $ddlx_char._check();
-      typedCheck._condition$(new $ddlx_char._check._condition$(check._value().text()));
-      typedCheck._operator$(new $ddlx_char._check._operator$(check._operator().text()));
-      column._check(typedCheck);
+    protected static $Char addCheck(final $Char column, final $Check check) {
+      final $Char.Check typedCheck = new $Char.Check();
+      typedCheck.setCondition$(new $Char.Check.Condition$(check.getValue().text()));
+      typedCheck.setOperator$(new $Char.Check.Operator$(check.getOperator().text()));
+      column.setCheck(typedCheck);
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -252,21 +252,21 @@ public class dt {
   public static class DECIMAL extends DataType<BigDecimal> {
     private static final long serialVersionUID = -7880579934877572719L;
 
-    protected static $ddlx_decimal addCheck(final $ddlx_decimal column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_decimal._max$(new BigDecimal(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_decimal._min$(new BigDecimal(check._value().text())));
+    protected static $Decimal addCheck(final $Decimal column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Decimal.Max$(new BigDecimal(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Decimal.Min$(new BigDecimal(check.getValue().text())));
       else {
-        final $ddlx_decimal._check typedCheck = new $ddlx_decimal._check();
-        typedCheck._condition$(new $ddlx_decimal._check._condition$(new BigDecimal(check._value().text())));
-        typedCheck._operator$(new $ddlx_decimal._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Decimal.Check typedCheck = new $Decimal.Check();
+        typedCheck.setCondition$(new $Decimal.Check.Condition$(new BigDecimal(check.getValue().text())));
+        typedCheck.setOperator$(new $Decimal.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -296,21 +296,21 @@ public class dt {
   public static class DOUBLE extends DataType<java.lang.Double> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    protected static $ddlx_double addCheck(final $ddlx_double column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_double._max$(Double.valueOf(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_double._min$(Double.valueOf(check._value().text())));
+    protected static $Double addCheck(final $Double column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Double.Max$(Double.valueOf(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Double.Min$(Double.valueOf(check.getValue().text())));
       else {
-        final $ddlx_double._check typedCheck = new $ddlx_double._check();
-        typedCheck._condition$(new $ddlx_double._check._condition$(Double.valueOf(check._value().text())));
-        typedCheck._operator$(new $ddlx_double._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Double.Check typedCheck = new $Double.Check();
+        typedCheck.setCondition$(new $Double.Check.Condition$(Double.valueOf(check.getValue().text())));
+        typedCheck.setOperator$(new $Double.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -351,21 +351,21 @@ public class dt {
   public static class FLOAT extends DataType<java.lang.Float> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    protected static $ddlx_float addCheck(final $ddlx_float column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_float._max$(Float.valueOf(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_float._min$(Float.valueOf(check._value().text())));
+    protected static $Float addCheck(final $Float column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Float.Max$(Float.valueOf(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Float.Min$(Float.valueOf(check.getValue().text())));
       else {
-        final $ddlx_float._check typedCheck = new $ddlx_float._check();
-        typedCheck._condition$(new $ddlx_float._check._condition$(Float.valueOf(check._value().text())));
-        typedCheck._operator$(new $ddlx_float._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Float.Check typedCheck = new $Float.Check();
+        typedCheck.setCondition$(new $Float.Check.Condition$(Float.valueOf(check.getValue().text())));
+        typedCheck.setOperator$(new $Float.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -390,21 +390,21 @@ public class dt {
   public static class INT extends DataType<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $ddlx_int addCheck(final $ddlx_int column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_int._max$(new BigInteger(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_int._min$(new BigInteger(check._value().text())));
+    protected static $Int addCheck(final $Int column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Int.Max$(new BigInteger(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Int.Min$(new BigInteger(check.getValue().text())));
       else {
-        final $ddlx_int._check typedCheck = new $ddlx_int._check();
-        typedCheck._condition$(new $ddlx_int._check._condition$(new BigInteger(check._value().text())));
-        typedCheck._operator$(new $ddlx_int._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Int.Check typedCheck = new $Int.Check();
+        typedCheck.setCondition$(new $Int.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setOperator$(new $Int.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -429,21 +429,21 @@ public class dt {
   public static class SMALLINT extends DataType<java.lang.Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $ddlx_smallint addCheck(final $ddlx_smallint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_smallint._max$(new BigInteger(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_smallint._min$(new BigInteger(check._value().text())));
+    protected static $Smallint addCheck(final $Smallint column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Smallint.Max$(new BigInteger(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Smallint.Min$(new BigInteger(check.getValue().text())));
       else {
-        final $ddlx_smallint._check typedCheck = new $ddlx_smallint._check();
-        typedCheck._condition$(new $ddlx_smallint._check._condition$(new BigInteger(check._value().text())));
-        typedCheck._operator$(new $ddlx_smallint._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Smallint.Check typedCheck = new $Smallint.Check();
+        typedCheck.setCondition$(new $Smallint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setOperator$(new $Smallint.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }
@@ -494,21 +494,21 @@ public class dt {
   public static class TINYINT extends DataType<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $ddlx_tinyint addCheck(final $ddlx_tinyint column, final $ddlx_check check) {
-      if ($ddlx_rangeOperator.lte.text().equals(check._operator().text()))
-        column._max$(new $ddlx_tinyint._max$(new BigInteger(check._value().text())));
-      else if ($ddlx_rangeOperator.gte.text().equals(check._operator().text()))
-        column._min$(new $ddlx_tinyint._min$(new BigInteger(check._value().text())));
+    protected static $Tinyint addCheck(final $Tinyint column, final $Check check) {
+      if ($RangeOperator.lte.text().equals(check.getOperator().text()))
+        column.setMax$(new $Tinyint.Max$(new BigInteger(check.getValue().text())));
+      else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
+        column.setMin$(new $Tinyint.Min$(new BigInteger(check.getValue().text())));
       else {
-        final $ddlx_tinyint._check typedCheck = new $ddlx_tinyint._check();
-        typedCheck._condition$(new $ddlx_tinyint._check._condition$(new BigInteger(check._value().text())));
-        typedCheck._operator$(new $ddlx_tinyint._check._operator$(check._operator().text()));
-        column._check(typedCheck);
+        final $Tinyint.Check typedCheck = new $Tinyint.Check();
+        typedCheck.setCondition$(new $Tinyint.Check.Condition$(new BigInteger(check.getValue().text())));
+        typedCheck.setOperator$(new $Tinyint.Check.Operator$(check.getOperator().text()));
+        column.setCheck(typedCheck);
       }
 
       // TODO: Implement OR.
-      if (check._and() != null)
-        addCheck(column, check._and());
+      if (check.getAnd() != null)
+        addCheck(column, check.getAnd());
 
       return column;
     }

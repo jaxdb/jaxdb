@@ -23,10 +23,10 @@ import java.sql.SQLException;
 
 import org.lib4j.lang.Resources;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Decimal;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.Bindings;
@@ -34,23 +34,23 @@ import org.libx4j.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {
-  public static ddlx_schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
     return recreateSchema(connection, ddlx, false);
   }
 
-  public static ddlx_schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
-    final ddlx_schema schema;
+  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+    final Schema schema;
     try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
-      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
+      schema = (Schema)Bindings.parse(new InputSource(in));
     }
 
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
-      for (final $ddlx_table table : schema._table())
-        if (table._column() != null)
-          for (final $ddlx_column column : table._column())
-            if (column instanceof $ddlx_decimal)
-              (($ddlx_decimal)column)._precision$(new $ddlx_decimal._precision$(dialect.decimalMaxPrecision()));
+      for (final $Table table : schema.getTable())
+        if (table.getColumn() != null)
+          for (final $Column column : table.getColumn())
+            if (column instanceof $Decimal)
+              (($Decimal)column).setPrecision$(new $Decimal.Precision$(dialect.decimalMaxPrecision()));
     }
 
     Schemas.recreate(connection, schema);

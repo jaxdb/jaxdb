@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
-import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -40,7 +39,7 @@ import org.xml.sax.SAXException;
 @Category(MixedTest.class)
 public class TypesDataTest extends SQLxTest {
   @Test
-  public void testLoadData(final Connection connection) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
+  public void testLoadData(final Connection connection) throws ClassNotFoundException, IOException, SAXException, SQLException {
     Assert.assertEquals(1000, loadData(connection, "types").length);
   }
 }

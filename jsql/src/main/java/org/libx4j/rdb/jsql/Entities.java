@@ -30,6 +30,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlType;
 
 import org.lib4j.lang.Strings;
+import org.lib4j.util.JavaIdentifiers;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
 import org.libx4j.rdb.ddlx.annotation.Schema;
@@ -44,7 +45,7 @@ public final class Entities {
     final Schema schema = database.getClass().getAnnotation(Schema.class);
     final Table table = row.getClass().getAnnotation(Table.class);
     // FIXME: This is brittle... Need to modularize it and make it clearer:
-    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Strings.toInstanceCase(schema.name()) + "$" + Strings.toTitleCase(table.name()));
+    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + JavaIdentifiers.toInstanceCase(schema.name()) + "$" + JavaIdentifiers.toClassCase(table.name()));
     final type.Entity entity = (type.Entity)binding.newInstance();
     for (final Method method : row.getClass().getMethods()) {
       if (method.getName().startsWith("get") && dt.DataType.class.isAssignableFrom(method.getReturnType())) {
@@ -52,7 +53,7 @@ public final class Entities {
         if (column == null)
           continue;
 
-        final Field field = binding.getField(Strings.toCamelCase(method.getAnnotation(Column.class).name()));
+        final Field field = binding.getField(JavaIdentifiers.toCamelCase(method.getAnnotation(Column.class).name()));
         final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
         final Object value = column.get();
@@ -96,7 +97,7 @@ public final class Entities {
       final Insert insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
       final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
       for (final String tableName : xmlType.propOrder())
-        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert))
+        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableName)).invoke(insert))
           entities.add(toEntity(database, row));
 
       return (T[])entities.toArray(new type.Entity[entities.size()]);

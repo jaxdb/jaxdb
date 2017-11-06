@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
-import org.libx4j.rdb.ddlx.xe.$ddlx_indexes;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Columns;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Indexes;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
 
@@ -41,18 +41,18 @@ public class DDLxAudit {
     }
   }
 
-  public final Map<String,$ddlx_table> tableNameToTable;
-  private final ddlx_schema schema;
+  public final Map<String,$Table> tableNameToTable;
+  private final Schema schema;
 
-  protected DDLxAudit(final ddlx_schema schema) {
+  protected DDLxAudit(final Schema schema) {
     this.schema = schema;
-    this.tableNameToTable = new HashMap<String,$ddlx_table>();
-    for (final $ddlx_table table : schema._table())
-      tableNameToTable.put(table._name$().text(), table);
+    this.tableNameToTable = new HashMap<String,$Table>();
+    for (final $Table table : schema.getTable())
+      tableNameToTable.put(table.getName$().text(), table);
   }
 
   public DDLxAudit(final URL url) throws IOException, ParseException, ValidationException {
-    this((ddlx_schema)Bindings.parse(url));
+    this((Schema)Bindings.parse(url));
   }
 
   protected DDLxAudit(final DDLxAudit copy) {
@@ -60,33 +60,33 @@ public class DDLxAudit {
     this.tableNameToTable = copy.tableNameToTable;
   }
 
-  public boolean isPrimary($ddlx_table table, final $ddlx_named column) {
+  public boolean isPrimary($Table table, final $Named column) {
     do {
-      if (table._constraints() != null && table._constraints()._primaryKey() != null)
-        for (final $ddlx_named col : table._constraints()._primaryKey()._column())
-          if (column._name$().text().equals(col._name$().text()))
+      if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null)
+        for (final $Named col : table.getConstraints().getPrimaryKey().getColumn())
+          if (column.getName$().text().equals(col.getName$().text()))
             return true;
     }
-    while (table._extends$() != null && (table = tableNameToTable.get(table._extends$().text())) != null);
+    while (table.getExtends$() != null && (table = tableNameToTable.get(table.getExtends$().text())) != null);
 
     return false;
   }
 
-  public boolean isUnique(final $ddlx_table table, final $ddlx_named column) {
-    if (table._constraints() != null && table._constraints()._unique() != null)
-      for (final $ddlx_columns unique : table._constraints()._unique())
-        if (unique._column().size() == 1 && column._name$().text().equals(unique._column(0)._name$().text()))
+  public boolean isUnique(final $Table table, final $Named column) {
+    if (table.getConstraints() != null && table.getConstraints().getUnique() != null)
+      for (final $Columns unique : table.getConstraints().getUnique())
+        if (unique.getColumn().size() == 1 && column.getName$().text().equals(unique.getColumn(0).getName$().text()))
           return true;
 
-    if (table._indexes() != null && table._indexes()._index() != null)
-      for (final $ddlx_indexes._index index : table._indexes()._index())
-        if (index._unique$() != null && index._unique$().text() && index._column().size() == 1 && column._name$().text().equals(index._column(0)._name$().text()))
+    if (table.getIndexes() != null && table.getIndexes().getIndex() != null)
+      for (final $Indexes.Index index : table.getIndexes().getIndex())
+        if (index.getUnique$() != null && index.getUnique$().text() && index.getColumn().size() == 1 && column.getName$().text().equals(index.getColumn(0).getName$().text()))
           return true;
 
     return false;
   }
 
-  public ddlx_schema schema() {
+  public Schema schema() {
     return this.schema;
   }
 }

@@ -7,26 +7,26 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
-import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
-import org.libx4j.rdb.ddlx.xe.$ddlx_boolean;
-import org.libx4j.rdb.ddlx.xe.$ddlx_char;
-import org.libx4j.rdb.ddlx.xe.$ddlx_check;
-import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
-import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
-import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
-import org.libx4j.rdb.ddlx.xe.$ddlx_double;
-import org.libx4j.rdb.ddlx.xe.$ddlx_float;
-import org.libx4j.rdb.ddlx.xe.$ddlx_int;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.$ddlx_time;
-import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Bigint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Binary;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Blob;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Boolean;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Char;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Check;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Clob;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Constraints;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Date;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Datetime;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Decimal;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Double;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Float;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Int;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Smallint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Time;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Tinyint;
 import org.libx4j.rdb.vendor.DBVendor;
 
 class SQLiteDecompiler extends Decompiler {
@@ -45,88 +45,88 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  protected $ddlx_column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
-    final $ddlx_column column;
+  protected $Column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+    final $Column column;
     if (typeName.startsWith("BIGINT")) {
-      final $ddlx_bigint type = newColumn($ddlx_bigint.class);
+      final $Bigint type = newColumn($Bigint.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_bigint._precision$((byte)size));
+        type.setPrecision$(new $Bigint.Precision$((byte)size));
 
       if (typeName.endsWith("UNSIGNED"))
-        type._unsigned$(new $ddlx_integer._unsigned$(true));
+        type.setUnsigned$(new $Integer.Unsigned$(true));
 
       if (_default != null)
-        type._default$(new $ddlx_bigint._default$(new BigInteger(_default)));
+        type.setDefault$(new $Bigint.Default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type._generateOnInsert$(new $ddlx_integer._generateOnInsert$($ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
     else if (typeName.startsWith("BINARY")) {
-      final $ddlx_binary type = newColumn($ddlx_binary.class);
+      final $Binary type = newColumn($Binary.class);
       final Long length = getLength(typeName);
       if (length != null)
-        type._length$(new $ddlx_binary._length$(length.intValue()));
+        type.setLength$(new $Binary.Length$(length.intValue()));
 
       column = type;
     }
     else if (typeName.startsWith("BLOB")) {
-      final $ddlx_blob type = newColumn($ddlx_blob.class);
+      final $Blob type = newColumn($Blob.class);
       final Long length = getLength(typeName);
       if (length != null)
-        type._length$(new $ddlx_blob._length$(length));
+        type.setLength$(new $Blob.Length$(length));
 
       column = type;
     }
     else if ("BOOLEAN".equals(typeName)) {
-      final $ddlx_boolean type = newColumn($ddlx_boolean.class);
+      final $Boolean type = newColumn($Boolean.class);
       if (_default != null)
-        type._default$(new $ddlx_boolean._default$(Boolean.parseBoolean(_default)));
+        type.setDefault$(new $Boolean.Default$(Boolean.parseBoolean(_default)));
 
       column = type;
     }
     else if (typeName.startsWith("VARCHAR") || typeName.startsWith("CHARACTER")) {
-      final $ddlx_char type = newColumn($ddlx_char.class);
+      final $Char type = newColumn($Char.class);
       if (typeName.startsWith("VARCHAR"))
-        type._varying$(new $ddlx_char._varying$(true));
+        type.setVarying$(new $Char.Varying$(true));
 
       final Long length = getLength(typeName);
       if (length != null)
-        type._length$(new $ddlx_char._length$(length.intValue()));
+        type.setLength$(new $Char.Length$(length.intValue()));
 
       if (_default != null)
-        type._default$(new $ddlx_char._default$(_default.substring(1, _default.length() - 1)));
+        type.setDefault$(new $Char.Default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }
     else if (typeName.startsWith("TEXT")) {
-      final $ddlx_clob type = newColumn($ddlx_clob.class);
+      final $Clob type = newColumn($Clob.class);
       final Long length = getLength(typeName);
       if (length != null)
-        type._length$(new $ddlx_clob._length$(length));
+        type.setLength$(new $Clob.Length$(length));
 
       column = type;
     }
     else if ("DATE".equals(typeName)) {
-      final $ddlx_date type = newColumn($ddlx_date.class);
+      final $Date type = newColumn($Date.class);
       if (_default != null)
-        type._default$(new $ddlx_date._default$(_default.substring(1, _default.length() - 1)));
+        type.setDefault$(new $Date.Default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }
     else if ("DATETIME".equals(typeName)) {
-      final $ddlx_datetime type = newColumn($ddlx_datetime.class);
+      final $Datetime type = newColumn($Datetime.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_datetime._precision$((byte)size));
+        type.setPrecision$(new $Datetime.Precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_datetime._default$(_default.substring(1, _default.length() - 1)));
+        type.setDefault$(new $Datetime.Default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }
     else if (typeName.startsWith("DECIMAL")) {
-      final $ddlx_decimal type = newColumn($ddlx_decimal.class);
+      final $Decimal type = newColumn($Decimal.class);
       if (!typeName.equals("DECIMAL(15, 0)")) {
         final int open = typeName.indexOf('(');
         if (open > 0) {
@@ -134,85 +134,85 @@ class SQLiteDecompiler extends Decompiler {
           if (comma > open) {
             final int close = typeName.indexOf(')', comma + 1);
             if (close > comma) {
-              type._precision$(new $ddlx_decimal._precision$(Short.parseShort(typeName.substring(open + 1, comma).trim())));
-              type._scale$(new $ddlx_decimal._scale$(Short.parseShort(typeName.substring(comma + 1, close).trim())));
+              type.setPrecision$(new $Decimal.Precision$(Short.parseShort(typeName.substring(open + 1, comma).trim())));
+              type.setScale$(new $Decimal.Scale$(Short.parseShort(typeName.substring(comma + 1, close).trim())));
             }
           }
         }
       }
 
       if (_default != null)
-        type._default$(new $ddlx_decimal._default$(new BigDecimal(_default)));
+        type.setDefault$(new $Decimal.Default$(new BigDecimal(_default)));
 
       column = type;
     }
     else if ("DOUBLE".equals(typeName)) {
-      final $ddlx_double type = newColumn($ddlx_double.class);
+      final $Double type = newColumn($Double.class);
       if (_default != null)
-        type._default$(new $ddlx_double._default$(Double.valueOf(_default)));
+        type.setDefault$(new $Double.Default$(Double.valueOf(_default)));
 
       column = type;
     }
 //    else if ("ENUM".equals(typeName)) {
-//      final $ddlx_enum type = newColumn($ddlx_enum.class);
+//      final $Enum type = newColumn($Enum.class);
 //      if (_default != null)
-//        type._default$(new $ddlx_enum._default$(_default));
+//        type.Default$(new $Enum.Default$(_default));
 //
 //      column = type;
 //    }
     else if ("FLOAT".equals(typeName)) {
-      final $ddlx_float type = newColumn($ddlx_float.class);
+      final $Float type = newColumn($Float.class);
       if (_default != null)
-        type._default$(new $ddlx_float._default$(Float.valueOf(_default)));
+        type.setDefault$(new $Float.Default$(Float.valueOf(_default)));
 
       column = type;
     }
     else if (typeName.startsWith("INT") || typeName.startsWith("MEDIUMINT")) {
-      final $ddlx_int type = newColumn($ddlx_int.class);
+      final $Int type = newColumn($Int.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_int._precision$((byte)size));
+        type.setPrecision$(new $Int.Precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_int._default$(new BigInteger(_default)));
+        type.setDefault$(new $Int.Default$(new BigInteger(_default)));
 
       if ("INTEGER".equals(typeName))
-        type._generateOnInsert$(new $ddlx_integer._generateOnInsert$($ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
     else if ("SMALLINT".equals(typeName)) {
-      final $ddlx_smallint type = newColumn($ddlx_smallint.class);
+      final $Smallint type = newColumn($Smallint.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_smallint._precision$((byte)size));
+        type.setPrecision$(new $Smallint.Precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_smallint._default$(new BigInteger(_default)));
+        type.setDefault$(new $Smallint.Default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type._generateOnInsert$(new $ddlx_integer._generateOnInsert$($ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
     else if ("TIME".equals(typeName)) {
-      final $ddlx_time type = newColumn($ddlx_time.class);
+      final $Time type = newColumn($Time.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_time._precision$((byte)size));
+        type.setPrecision$(new $Time.Precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_time._default$(_default.substring(1, _default.length() - 1)));
+        type.setDefault$(new $Time.Default$(_default.substring(1, _default.length() - 1)));
 
       column = type;
     }
     else if ("TINYINT".equals(typeName)) {
-      final $ddlx_tinyint type = newColumn($ddlx_tinyint.class);
+      final $Tinyint type = newColumn($Tinyint.class);
       if (size != 2000000000)
-        type._precision$(new $ddlx_tinyint._precision$((byte)size));
+        type.setPrecision$(new $Tinyint.Precision$((byte)size));
 
       if (_default != null)
-        type._default$(new $ddlx_tinyint._default$(new BigInteger(_default)));
+        type.setDefault$(new $Tinyint.Default$(new BigInteger(_default)));
 
       if (autoIncrement != null && autoIncrement)
-        type._generateOnInsert$(new $ddlx_integer._generateOnInsert$($ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT));
+        type.setGenerateOnInsert$(new $Integer.GenerateOnInsert$($Integer.GenerateOnInsert$.AUTO_5FINCREMENT));
 
       column = type;
     }
@@ -220,25 +220,25 @@ class SQLiteDecompiler extends Decompiler {
       throw new UnsupportedOperationException("Unsupported column type: " + typeName);
     }
 
-    column._name$(new $ddlx_column._name$(columnName));
+    column.setName$(new $Column.Name$(columnName));
     if (nullable != null && !nullable)
-      column._null$(new $ddlx_column._null$(false));
+      column.setNull$(new $Column.Null$(false));
 
     return column;
   }
 
   @Override
-  protected Map<String,List<$ddlx_constraints._unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  protected Map<String,List<$Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected Map<String,List<$ddlx_check>> getCheckConstraints(final Connection connection) throws SQLException {
+  protected Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected Map<String,$ddlx_table._indexes> getIndexes(final Connection connection) throws SQLException {
+  protected Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
     throw new UnsupportedOperationException();
   }
 }

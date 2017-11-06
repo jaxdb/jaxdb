@@ -28,11 +28,10 @@ import java.sql.SQLException;
 import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
 import org.lib4j.lang.Resources;
-import org.lib4j.lang.Strings;
-import org.lib4j.xml.XMLException;
+import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg;
 import org.libx4j.rdb.jsql.generator.Generator;
 import org.libx4j.rdb.sqlx.Database;
 import org.libx4j.xsb.runtime.Bindings;
@@ -40,7 +39,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
-  protected static void createEntities(final String name) throws CompilationException, IOException, XMLException {
+  protected static void createEntities(final String name) throws CompilationException, IOException {
     final URL url = Resources.getResource(name + ".ddlx").getURL();
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);
@@ -48,7 +47,7 @@ public abstract class JSQLTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
+  protected static int[] loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
@@ -59,16 +58,16 @@ public abstract class JSQLTest {
     final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Strings.toTitleCase(name)), sqlx, false);
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
-    final ddlx_schema schema;
+    final xIEcGGcJdtCXcCFzw5sg.Schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
-      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
+      schema = (xIEcGGcJdtCXcCFzw5sg.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);
-    Schemas.truncate(connection, Schemas.flatten(schema)._table());
+    Schemas.truncate(connection, Schemas.flatten(schema).getTable());
     return INSERT(database).execute();
   }
 }

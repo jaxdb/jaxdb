@@ -20,12 +20,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$ForeignKey;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +39,13 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 
   @Override
-  protected DropStatement dropTableIfExists(final $ddlx_table table) {
-    return new DropStatement("CALL db2perf_quiet_drop('TABLE " + table._name$().text() + "')");
+  protected DropStatement dropTableIfExists(final $Table table) {
+    return new DropStatement("CALL db2perf_quiet_drop('TABLE " + table.getName$().text() + "')");
   }
 
   @Override
@@ -60,23 +60,23 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  protected String dropIndexOnClause(final $ddlx_table table) {
+  protected String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return column._null$() != null && !column._null$().text() ? "NOT NULL" : "";
+  protected String $null(final $Table table, final $Column column) {
+    return column.getNull$() != null && !column.getNull$().text() ? "NOT NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+  protected String $autoIncrement(final $Table table, final $Integer column) {
     return isAutoIncrement(column) ? "GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1)" : "";
   }
 
   @Override
-  protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
-    if ($ddlx_foreignKey._onUpdate$.CASCADE.text().equals(onUpdate.text())) {
+  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+    if ($ForeignKey.OnUpdate$.CASCADE.text().equals(onUpdate.text())) {
       logger.warn("ON UPDATE CASCADE is not supported");
       return null;
     }

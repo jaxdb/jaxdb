@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lib4j.util.NumberFormatter;
-import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 
 public abstract class Dialect {
   protected void assertValidDecimal(final Short precision, final Short scale) {
@@ -182,5 +182,5 @@ public abstract class Dialect {
 
   public abstract String declareTime(final byte precision);
   public abstract String declareInterval();
-  public abstract String declareEnum(final $ddlx_table table, final $ddlx_enum type);
+  public abstract String declareEnum(final $Table table, final $Enum type);
 }

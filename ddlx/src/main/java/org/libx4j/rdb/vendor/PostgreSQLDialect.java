@@ -16,8 +16,8 @@
 
 package org.libx4j.rdb.vendor;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +153,7 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $ddlx_table table, final $ddlx_enum type) {
-    return Dialect.getTypeName(table._name$().text(), type._name$().text());
+  public String declareEnum(final $Table table, final $Enum type) {
+    return Dialect.getTypeName(table.getName$().text(), type.getName$().text());
   }
 }

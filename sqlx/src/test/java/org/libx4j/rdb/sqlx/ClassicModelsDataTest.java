@@ -25,7 +25,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
-import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.ddlx.DDLxTest;
 import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
@@ -43,7 +42,7 @@ import org.xml.sax.SAXException;
 public class ClassicModelsDataTest extends SQLxTest {
   private static final String name = "classicmodels";
   @Test
-  public void testLoadData(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException, XMLException {
+  public void testLoadData(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     Assert.assertEquals(3864, loadData(connection, name).length);
   }

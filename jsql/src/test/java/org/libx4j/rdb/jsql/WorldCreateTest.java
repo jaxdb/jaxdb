@@ -23,14 +23,13 @@ import javax.xml.transform.TransformerException;
 
 import org.junit.Test;
 import org.lib4j.jci.CompilationException;
-import org.lib4j.xml.XMLException;
 import org.libx4j.rdb.sqlx.SQLxTest;
 
 public class WorldCreateTest extends JSQLTest {
   private static final String name = "world";
 
   @Test
-  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, XMLException {
+  public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException {
     createEntities(name);
     SQLxTest.createSchemas(name);
   }

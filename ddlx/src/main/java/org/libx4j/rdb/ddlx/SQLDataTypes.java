@@ -19,53 +19,53 @@ package org.libx4j.rdb.ddlx;
 import java.math.BigInteger;
 
 import org.lib4j.lang.Arrays;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.xsb.runtime.BindingList;
 
 final class SQLDataTypes {
-  protected static String csvNames(final BindingList<$ddlx_named> names) {
-    return names.size() == 0 ? "" : csvNames(names.toArray(new $ddlx_named[names.size()]));
+  protected static String csvNames(final BindingList<$Named> names) {
+    return names.size() == 0 ? "" : csvNames(names.toArray(new $Named[names.size()]));
   }
 
-  protected static String csvNames(final $ddlx_named ... names) {
+  protected static String csvNames(final $Named ... names) {
     if (names.length == 0)
       return "";
 
     String csv = "";
-    for (final $ddlx_named name : names)
-      csv += ", " + name._name$().text();
+    for (final $Named name : names)
+      csv += ", " + name.getName$().text();
 
     return csv.length() > 0 ? csv.substring(2) : csv;
   }
 
-  protected static String getSequenceName(final $ddlx_table table, final $ddlx_integer column) {
-    return "seq_" + table._name$().text() + "_" + column._name$().text();
+  protected static String getSequenceName(final $Table table, final $Integer column) {
+    return "seq_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
-  protected static String getTriggerName(final $ddlx_table table, final $ddlx_integer column) {
-    return "trg_" + table._name$().text() + "_" + column._name$().text();
+  protected static String getTriggerName(final $Table table, final $Integer column) {
+    return "trg_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
-  protected static String getIndexName(final $ddlx_table table, final $ddlx_index index, final $ddlx_named ... column) {
+  protected static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
     if (index == null || column.length == 0)
       return null;
 
     String name = "";
-    for (final $ddlx_named c : column)
-      name += "_" + c._name$().text();
+    for (final $Named c : column)
+      name += "_" + c.getName$().text();
 
-    return "idx_" + table._name$().text() + name;
+    return "idx_" + table.getName$().text() + name;
   }
 
-  protected static String getIndexName(final $ddlx_table table, final $ddlx_table._indexes._index index) {
-    return getIndexName(table, index, index._column().toArray(new $ddlx_named[index._column().size()]));
+  protected static String getIndexName(final $Table table, final $Table.Indexes.Index index) {
+    return getIndexName(table, index, index.getColumn().toArray(new $Named[index.getColumn().size()]));
   }
 
-  protected static String getTriggerName(final String tableName, final $ddlx_table._triggers._trigger trigger, final String action) {
-    return tableName + "_" + trigger._time$().text().toLowerCase() + "_" + action.toLowerCase();
+  protected static String getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
+    return tableName + "_" + trigger.getTime$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
   protected static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {

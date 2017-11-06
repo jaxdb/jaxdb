@@ -31,14 +31,11 @@ import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
 import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resources;
-import org.lib4j.lang.Strings;
-import org.lib4j.xml.XMLException;
+import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.lib4j.xml.jaxb.XJCompiler;
 import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
-import org.libx4j.rdb.sqlx.Database;
-import org.libx4j.rdb.sqlx.SQL;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -78,18 +75,18 @@ public abstract class SQLxTest {
     new JavaCompiler(testClassesDir, classpath).compile(command.getDestDir());
   }
 
-  public static int[] loadData(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, XMLException {
-    final ddlx_schema schema;
+  public static int[] loadData(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+    final Schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
-      schema = (ddlx_schema)Bindings.parse(new InputSource(in));
+      schema = (Schema)Bindings.parse(new InputSource(in));
     }
 
-    Schemas.truncate(connection, Schemas.flatten(schema)._table());
+    Schemas.truncate(connection, Schemas.flatten(schema).getTable());
 
     final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Strings.toTitleCase(name)), sqlx, false);
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
     return SQL.INSERT(connection, database);

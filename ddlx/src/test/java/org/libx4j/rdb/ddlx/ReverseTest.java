@@ -41,8 +41,8 @@ import org.lib4j.xml.SimpleNamespaceContext;
 import org.lib4j.xml.dom.DOMStyle;
 import org.lib4j.xml.dom.DOMs;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.rdb.vendor.DBVendor;
@@ -234,26 +234,26 @@ public class ReverseTest extends DDLxTest {
     }
   };
 
-  private static void sort(final ddlx_schema schema) {
-    for (final $ddlx_table table : schema._table()) {
-      if (table._indexes() != null && table._indexes()._index() != null && table._indexes()._index().size() > 0)
-        table._indexes()._index().sort(hashCodeComparator);
+  private static void sort(final Schema schema) {
+    for (final $Table table : schema.getTable()) {
+      if (table.getIndexes() != null && table.getIndexes().getIndex() != null && table.getIndexes().getIndex().size() > 0)
+        table.getIndexes().getIndex().sort(hashCodeComparator);
 
-      if (table._constraints() != null && table._constraints()._unique() != null && table._constraints()._unique().size() > 0)
-        table._constraints()._unique().sort(hashCodeComparator);
+      if (table.getConstraints() != null && table.getConstraints().getUnique() != null && table.getConstraints().getUnique().size() > 0)
+        table.getConstraints().getUnique().sort(hashCodeComparator);
     }
   }
 
   @Test
   public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, ParseException, SQLException, ValidationException, XPathExpressionException {
-    final ddlx_schema expected = Schemas.flatten(recreateSchema(connection, "reverse", true));
+    final Schema expected = Schemas.flatten(recreateSchema(connection, "reverse", true));
     sort(expected);
 //    logger.info(expected);
-    ddlx_schema actual = Decompiler.createDDL(connection);
+    Schema actual = Decompiler.createDDL(connection);
     // FIXME: Need to restrict which database/schema/tablespace we're looking at.
-    final Iterator<$ddlx_table> iterator = actual._table().iterator();
+    final Iterator<$Table> iterator = actual.getTable().iterator();
     while (iterator.hasNext())
-      if (!iterator.next()._name$().text().startsWith("t_"))
+      if (!iterator.next().getName$().text().startsWith("t_"))
         iterator.remove();
 
     actual = Schemas.flatten(actual);

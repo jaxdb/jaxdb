@@ -21,12 +21,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 import org.slf4j.Logger;
@@ -45,15 +45,15 @@ public final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected List<DropStatement> drops(final $ddlx_table table) {
+  protected List<DropStatement> drops(final $Table table) {
     final List<DropStatement> statements = super.drops(table);
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column instanceof $ddlx_enum) {
-          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(table._name$().text(), (($ddlx_enum)column)._name$().text())));
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Enum) {
+          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(table.getName$().text(), (($Enum)column).getName$().text())));
         }
-        else if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+        else if (column instanceof $Integer) {
+          final $Integer type = ($Integer)column;
           if (isAutoIncrement(type))
             statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type)));
         }
@@ -64,15 +64,15 @@ public final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected List<CreateStatement> types(final $ddlx_table table) {
+  protected List<CreateStatement> types(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column instanceof $ddlx_enum) {
-          final $ddlx_enum type = ($ddlx_enum)column;
-          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(table._name$().text(), type._name$().text())).append(" AS ENUM (");
-          if (type._values$() != null) {
-            final List<String> enums = Dialect.parseEnum(type._values$().text());
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Enum) {
+          final $Enum type = ($Enum)column;
+          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(table.getName$().text(), type.getName$().text())).append(" AS ENUM (");
+          if (type.getValues$() != null) {
+            final List<String> enums = Dialect.parseEnum(type.getValues$().text());
             final StringBuilder builder = new StringBuilder();
             for (final String value : enums)
               builder.append(", '").append(value).append("'");
@@ -82,8 +82,8 @@ public final class PostgreSQLCompiler extends Compiler {
 
           statements.add(0, new CreateStatement(sql.append(")").toString()));
         }
-        else if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+        else if (column instanceof $Integer) {
+          final $Integer type = ($Integer)column;
           if (isAutoIncrement(type))
             statements.add(0, new CreateStatement("CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type)));
         }
@@ -95,24 +95,24 @@ public final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+  protected String $null(final $Table table, final $Column column) {
+    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+  protected String $autoIncrement(final $Table table, final $Integer column) {
     return isAutoIncrement(column) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $ddlx_table table) {
+  protected String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     final String uniqueClause;
-    if ($ddlx_index._type$.HASH.text().equals(type.text())) {
+    if ($Index.Type$.HASH.text().equals(type.text())) {
       if (columns.length > 1) {
         logger.warn("Composite HASH indexes are not supported by PostgreSQL. Skipping index definition.");
         return null;

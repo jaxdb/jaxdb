@@ -28,33 +28,33 @@ import java.util.Set;
 
 import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
-import org.libx4j.rdb.ddlx.xe.$ddlx_bigint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_binary;
-import org.libx4j.rdb.ddlx.xe.$ddlx_blob;
-import org.libx4j.rdb.ddlx.xe.$ddlx_boolean;
-import org.libx4j.rdb.ddlx.xe.$ddlx_changeRule;
-import org.libx4j.rdb.ddlx.xe.$ddlx_char;
-import org.libx4j.rdb.ddlx.xe.$ddlx_check;
-import org.libx4j.rdb.ddlx.xe.$ddlx_clob;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
-import org.libx4j.rdb.ddlx.xe.$ddlx_date;
-import org.libx4j.rdb.ddlx.xe.$ddlx_datetime;
-import org.libx4j.rdb.ddlx.xe.$ddlx_decimal;
-import org.libx4j.rdb.ddlx.xe.$ddlx_double;
-import org.libx4j.rdb.ddlx.xe.$ddlx_enum;
-import org.libx4j.rdb.ddlx.xe.$ddlx_float;
-import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_int;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_smallint;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.$ddlx_time;
-import org.libx4j.rdb.ddlx.xe.$ddlx_tinyint;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Bigint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Binary;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Blob;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Boolean;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$ChangeRule;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Char;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Check;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Clob;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Columns;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Constraints;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Date;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Datetime;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Decimal;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Double;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Float;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$ForeignKey;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Int;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Smallint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Time;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Tinyint;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 
 abstract class Compiler {
@@ -83,25 +83,25 @@ abstract class Compiler {
     return compiler;
   }
 
-  protected static boolean isAutoIncrement(final $ddlx_integer column) {
-    return column._generateOnInsert$() != null && $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text().equals(column._generateOnInsert$().text());
+  protected static boolean isAutoIncrement(final $Integer column) {
+    return column.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(column.getGenerateOnInsert$().text());
   }
 
   protected abstract DBVendor getVendor();
 
-  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns);
+  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns);
 
   protected abstract void init(final Connection connection) throws SQLException;
 
-  protected CreateStatement createSchemaIfNotExists(final ddlx_schema schema) {
+  protected CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
   }
 
-  protected CreateStatement createTableIfNotExists(final $ddlx_table table, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
+  protected CreateStatement createTableIfNotExists(final $Table table, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
-    final String tableName = table._name$().text();
+    final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(tableName).append(" (\n");
-    if (table._column() != null)
+    if (table.getColumn() != null)
       builder.append(createColumns(table));
 
     final CreateStatement constraints = createConstraints(columnNameToColumn, table);
@@ -112,64 +112,64 @@ abstract class Compiler {
     return new CreateStatement(builder.toString());
   }
 
-  private String createColumns(final $ddlx_table table) {
+  private String createColumns(final $Table table) {
     final StringBuilder ddl = new StringBuilder();
-    for (final $ddlx_column column : table._column())
+    for (final $Column column : table.getColumn())
       ddl.append(",\n  ").append(createColumn(table, column));
 
     return ddl.substring(2);
   }
 
-  private CreateStatement createColumn(final $ddlx_table table, final $ddlx_column column) {
+  private CreateStatement createColumn(final $Table table, final $Column column) {
     final StringBuilder ddl = new StringBuilder();
-    ddl.append(column._name$().text()).append(" ");
-    if (column instanceof $ddlx_char) {
-      final $ddlx_char type = ($ddlx_char)column;
-      ddl.append(getVendor().getDialect().compileChar(type._varying$().text(), type._length$() == null ? null : type._length$().text()));
+    ddl.append(column.getName$().text()).append(" ");
+    if (column instanceof $Char) {
+      final $Char type = ($Char)column;
+      ddl.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
-    else if (column instanceof $ddlx_binary) {
-      final $ddlx_binary type = ($ddlx_binary)column;
-      ddl.append(getVendor().getDialect().compileBinary(type._varying$().text(), type._length$() == null ? null : type._length$().text()));
+    else if (column instanceof $Binary) {
+      final $Binary type = ($Binary)column;
+      ddl.append(getVendor().getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
-    else if (column instanceof $ddlx_blob) {
-      final $ddlx_blob type = ($ddlx_blob)column;
-      ddl.append(getVendor().getDialect().compileBlob(type._length$() == null ? null : type._length$().text()));
+    else if (column instanceof $Blob) {
+      final $Blob type = ($Blob)column;
+      ddl.append(getVendor().getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
     }
-    else if (column instanceof $ddlx_clob) {
-      final $ddlx_clob type = ($ddlx_clob)column;
-      ddl.append(getVendor().getDialect().compileClob(type._length$() == null ? null : type._length$().text()));
+    else if (column instanceof $Clob) {
+      final $Clob type = ($Clob)column;
+      ddl.append(getVendor().getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
     }
-    else if (column instanceof $ddlx_integer) {
-      ddl.append(createIntegerColumn(($ddlx_integer)column));
+    else if (column instanceof $Integer) {
+      ddl.append(createIntegerColumn(($Integer)column));
     }
-    else if (column instanceof $ddlx_float) {
-      final $ddlx_float type = ($ddlx_float)column;
-      ddl.append(getVendor().getDialect().declareFloat(type._unsigned$().text()));
+    else if (column instanceof $Float) {
+      final $Float type = ($Float)column;
+      ddl.append(getVendor().getDialect().declareFloat(type.getUnsigned$().text()));
     }
-    else if (column instanceof $ddlx_double) {
-      final $ddlx_double type = ($ddlx_double)column;
-      ddl.append(getVendor().getDialect().declareDouble(type._unsigned$().text()));
+    else if (column instanceof $Double) {
+      final $Double type = ($Double)column;
+      ddl.append(getVendor().getDialect().declareDouble(type.getUnsigned$().text()));
     }
-    else if (column instanceof $ddlx_decimal) {
-      final $ddlx_decimal type = ($ddlx_decimal)column;
-      ddl.append(getVendor().getDialect().declareDecimal(type._precision$() == null ? null : type._precision$().text(), type._scale$() == null ? null : type._scale$().text(), type._unsigned$().text()));
+    else if (column instanceof $Decimal) {
+      final $Decimal type = ($Decimal)column;
+      ddl.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getUnsigned$().text()));
     }
-    else if (column instanceof $ddlx_date) {
+    else if (column instanceof $Date) {
       ddl.append(getVendor().getDialect().declareDate());
     }
-    else if (column instanceof $ddlx_time) {
-      final $ddlx_time type = ($ddlx_time)column;
-      ddl.append(getVendor().getDialect().declareTime(type._precision$() == null ? null : type._precision$().text()));
+    else if (column instanceof $Time) {
+      final $Time type = ($Time)column;
+      ddl.append(getVendor().getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
-    else if (column instanceof $ddlx_datetime) {
-      final $ddlx_datetime type = ($ddlx_datetime)column;
-      ddl.append(getVendor().getDialect().declareDateTime(type._precision$() == null ? null : type._precision$().text()));
+    else if (column instanceof $Datetime) {
+      final $Datetime type = ($Datetime)column;
+      ddl.append(getVendor().getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
-    else if (column instanceof $ddlx_boolean) {
+    else if (column instanceof $Boolean) {
       ddl.append(getVendor().getDialect().declareBoolean());
     }
-    else if (column instanceof $ddlx_enum) {
-      final $ddlx_enum type = ($ddlx_enum)column;
+    else if (column instanceof $Enum) {
+      final $Enum type = ($Enum)column;
       ddl.append(getVendor().getDialect().declareEnum(table, type));
     }
 
@@ -181,8 +181,8 @@ abstract class Compiler {
     if (nullFragment != null && nullFragment.length() > 0)
       ddl.append(" ").append(nullFragment);
 
-    if (column instanceof $ddlx_integer) {
-      final String autoIncrementFragment = $autoIncrement(table, ($ddlx_integer)column);
+    if (column instanceof $Integer) {
+      final String autoIncrementFragment = $autoIncrement(table, ($Integer)column);
       if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
         ddl.append(" ").append(autoIncrementFragment);
     }
@@ -190,57 +190,57 @@ abstract class Compiler {
     return new CreateStatement(ddl.toString());
   }
 
-  protected String createIntegerColumn(final $ddlx_integer column) {
-    if (column instanceof $ddlx_tinyint) {
-      final $ddlx_tinyint type = ($ddlx_tinyint)column;
-      return getVendor().getDialect().compileInt8(type._precision$() == null ? null : type._precision$().text(), type._unsigned$().text());
+  protected String createIntegerColumn(final $Integer column) {
+    if (column instanceof $Tinyint) {
+      final $Tinyint type = ($Tinyint)column;
+      return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
     }
 
-    if (column instanceof $ddlx_smallint) {
-      final $ddlx_smallint type = ($ddlx_smallint)column;
-      return getVendor().getDialect().compileInt16(type._precision$() == null ? null : type._precision$().text(), type._unsigned$().text());
+    if (column instanceof $Smallint) {
+      final $Smallint type = ($Smallint)column;
+      return getVendor().getDialect().compileInt16(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
     }
 
-    if (column instanceof $ddlx_int) {
-      final $ddlx_int type = ($ddlx_int)column;
-      return getVendor().getDialect().compileInt32(type._precision$() == null ? null : type._precision$().text(), type._unsigned$().text());
+    if (column instanceof $Int) {
+      final $Int type = ($Int)column;
+      return getVendor().getDialect().compileInt32(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
     }
 
-    if (column instanceof $ddlx_bigint) {
-      final $ddlx_bigint type = ($ddlx_bigint)column;
-      return getVendor().getDialect().compileInt64(type._precision$() == null ? null : type._precision$().text(), type._unsigned$().text());
+    if (column instanceof $Bigint) {
+      final $Bigint type = ($Bigint)column;
+      return getVendor().getDialect().compileInt64(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
     }
 
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
-  private CreateStatement createConstraints(final Map<String,$ddlx_column> columnNameToColumn, final $ddlx_table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuffer contraintsBuffer = new StringBuffer();
-    if (table._constraints() != null) {
-      final $ddlx_constraints constraints = table._constraints();
+    if (table.getConstraints() != null) {
+      final $Constraints constraints = table.getConstraints();
 
       // unique constraint
-      final List<$ddlx_columns> uniques = constraints._unique();
+      final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
         String uniqueString = "";
         int uniqueIndex = 1;
-        for (final $ddlx_columns unique : uniques) {
-          final List<$ddlx_named> columns = unique._column();
+        for (final $Columns unique : uniques) {
+          final List<$Named> columns = unique.getColumn();
           String columnsString = "";
-          for (final $ddlx_named column : columns)
-            columnsString += ", " + column._name$().text();
+          for (final $Named column : columns)
+            columnsString += ", " + column.getName$().text();
 
-          uniqueString += ",\n  CONSTRAINT " + table._name$().text() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
+          uniqueString += ",\n  CONSTRAINT " + table.getName$().text() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
         }
 
         contraintsBuffer.append(uniqueString);
       }
 
       // check constraint
-      final List<$ddlx_check> checks = constraints._check();
+      final List<$Check> checks = constraints.getCheck();
       if (checks != null) {
         String checkString = "";
-        for (final $ddlx_check check : checks) {
+        for (final $Check check : checks) {
           final String checkClause = recurseCheckRule(check);
           checkString += ",\n  CHECK " + (checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
         }
@@ -254,21 +254,21 @@ abstract class Compiler {
         contraintsBuffer.append(primaryKeyConstraint);
     }
 
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column._foreignKey() != null) {
-          final $ddlx_foreignKey foreignKey = column._foreignKey();
-          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(column._name$().text());
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey._references$().text());
-          contraintsBuffer.append(" (").append(foreignKey._column$().text()).append(")");
-          if (foreignKey._onDelete$() != null) {
-            final String onDelete = onDelete(foreignKey._onDelete$());
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column.getForeignKey() != null) {
+          final $ForeignKey foreignKey = column.getForeignKey();
+          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(column.getName$().text());
+          contraintsBuffer.append(") REFERENCES ").append(foreignKey.getReferences$().text());
+          contraintsBuffer.append(" (").append(foreignKey.getColumn$().text()).append(")");
+          if (foreignKey.getOnDelete$() != null) {
+            final String onDelete = onDelete(foreignKey.getOnDelete$());
             if (onDelete != null)
               contraintsBuffer.append(" ").append(onDelete);
           }
 
-          if (foreignKey._onUpdate$() != null) {
-            final String onUpdate = onUpdate(foreignKey._onUpdate$());
+          if (foreignKey.getOnUpdate$() != null) {
+            final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
             if (onUpdate != null)
               contraintsBuffer.append(" ").append(onUpdate);
           }
@@ -276,55 +276,55 @@ abstract class Compiler {
       }
 
       // Parse the min & max constraints of numeric types
-      for (final $ddlx_column column : table._column()) {
+      for (final $Column column : table.getColumn()) {
         String minCheck = null;
         String maxCheck = null;
-        if (column instanceof $ddlx_integer) {
-          if (column instanceof $ddlx_tinyint) {
-            final $ddlx_tinyint type = ($ddlx_tinyint)column;
-            minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-            maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+        if (column instanceof $Integer) {
+          if (column instanceof $Tinyint) {
+            final $Tinyint type = ($Tinyint)column;
+            minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+            maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
           }
-          else if (column instanceof $ddlx_smallint) {
-            final $ddlx_smallint type = ($ddlx_smallint)column;
-            minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-            maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+          else if (column instanceof $Smallint) {
+            final $Smallint type = ($Smallint)column;
+            minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+            maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
           }
-          else if (column instanceof $ddlx_int) {
-            final $ddlx_int type = ($ddlx_int)column;
-            minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-            maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+          else if (column instanceof $Int) {
+            final $Int type = ($Int)column;
+            minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+            maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
           }
-          else if (column instanceof $ddlx_bigint) {
-            final $ddlx_bigint type = ($ddlx_bigint)column;
-            minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-            maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+          else if (column instanceof $Bigint) {
+            final $Bigint type = ($Bigint)column;
+            minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+            maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
           }
           else {
             throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
           }
         }
-        else if (column instanceof $ddlx_float) {
-          final $ddlx_float type = ($ddlx_float)column;
-          minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-          maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+        else if (column instanceof $Float) {
+          final $Float type = ($Float)column;
+          minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+          maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
         }
-        else if (column instanceof $ddlx_double) {
-          final $ddlx_double type = ($ddlx_double)column;
-          minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-          maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+        else if (column instanceof $Double) {
+          final $Double type = ($Double)column;
+          minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+          maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
         }
-        else if (column instanceof $ddlx_decimal) {
-          final $ddlx_decimal type = ($ddlx_decimal)column;
-          minCheck = type._min$() != null ? String.valueOf(type._min$().text()) : null;
-          maxCheck = type._max$() != null ? String.valueOf(type._max$().text()) : null;
+        else if (column instanceof $Decimal) {
+          final $Decimal type = ($Decimal)column;
+          minCheck = type.getMin$() != null ? String.valueOf(type.getMin$().text()) : null;
+          maxCheck = type.getMax$() != null ? String.valueOf(type.getMax$().text()) : null;
         }
 
         if (minCheck != null)
-          minCheck = column._name$().text() + " >= " + minCheck;
+          minCheck = column.getName$().text() + " >= " + minCheck;
 
         if (maxCheck != null)
-          maxCheck = column._name$().text() + " <= " + maxCheck;
+          maxCheck = column.getName$().text() + " <= " + maxCheck;
 
         if (minCheck != null) {
           if (maxCheck != null)
@@ -338,94 +338,94 @@ abstract class Compiler {
       }
 
       // parse the <check/> element per type
-      for (final $ddlx_column column : table._column()) {
+      for (final $Column column : table.getColumn()) {
         String operator = null;
         String condition = null;
-        if (column instanceof $ddlx_char) {
-          final $ddlx_char type = ($ddlx_char)column;
-          if (type._check() != null) {
-            operator = $ddlx_char._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_char._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : null;
-            condition = "'" + type._check()._condition$().text() + "'";
+        if (column instanceof $Char) {
+          final $Char type = ($Char)column;
+          if (type.getCheck() != null) {
+            operator = $Char.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Char.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : null;
+            condition = "'" + type.getCheck().getCondition$().text() + "'";
           }
         }
-        else if (column instanceof $ddlx_tinyint) {
-          final $ddlx_tinyint type = ($ddlx_tinyint)column;
-          if (type._check() != null) {
-            operator = $ddlx_tinyint._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_tinyint._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_tinyint._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_tinyint._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_tinyint._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_tinyint._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Tinyint) {
+          final $Tinyint type = ($Tinyint)column;
+          if (type.getCheck() != null) {
+            operator = $Tinyint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Tinyint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Tinyint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Tinyint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Tinyint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Tinyint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_smallint) {
-          final $ddlx_smallint type = ($ddlx_smallint)column;
-          if (type._check() != null) {
-            operator = $ddlx_smallint._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_smallint._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_smallint._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_smallint._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_smallint._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_smallint._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Smallint) {
+          final $Smallint type = ($Smallint)column;
+          if (type.getCheck() != null) {
+            operator = $Smallint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Smallint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Smallint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Smallint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Smallint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Smallint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_int) {
-          final $ddlx_int type = ($ddlx_int)column;
-          if (type._check() != null) {
-            operator = $ddlx_int._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_int._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_int._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_int._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_int._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_int._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Int) {
+          final $Int type = ($Int)column;
+          if (type.getCheck() != null) {
+            operator = $Int.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Int.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Int.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Int.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Int.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Int.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_bigint) {
-          final $ddlx_bigint type = ($ddlx_bigint)column;
-          if (type._check() != null) {
-            operator = $ddlx_bigint._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_bigint._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_bigint._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_bigint._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_bigint._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_bigint._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Bigint) {
+          final $Bigint type = ($Bigint)column;
+          if (type.getCheck() != null) {
+            operator = $Bigint.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Bigint.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Bigint.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Bigint.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Bigint.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Bigint.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_float) {
-          final $ddlx_float type = ($ddlx_float)column;
-          if (type._check() != null) {
-            operator = $ddlx_float._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_float._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_float._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_float._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_float._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_float._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Float) {
+          final $Float type = ($Float)column;
+          if (type.getCheck() != null) {
+            operator = $Float.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Float.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Float.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Float.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Float.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Float.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_double) {
-          final $ddlx_double type = ($ddlx_double)column;
-          if (type._check() != null) {
-            operator = $ddlx_double._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_double._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_double._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_double._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_double._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_double._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Double) {
+          final $Double type = ($Double)column;
+          if (type.getCheck() != null) {
+            operator = $Double.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Double.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Double.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Double.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Double.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Double.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
-        else if (column instanceof $ddlx_decimal) {
-          final $ddlx_decimal type = ($ddlx_decimal)column;
-          if (type._check() != null) {
-            operator = $ddlx_decimal._check._operator$.eq.text().equals(type._check()._operator$().text()) ? "=" : $ddlx_decimal._check._operator$.ne.text().equals(type._check()._operator$().text()) ? "!=" : $ddlx_decimal._check._operator$.gt.text().equals(type._check()._operator$().text()) ? ">" : $ddlx_decimal._check._operator$.gte.text().equals(type._check()._operator$().text()) ? ">=" : $ddlx_decimal._check._operator$.lt.text().equals(type._check()._operator$().text()) ? "<" : $ddlx_decimal._check._operator$.lte.text().equals(type._check()._operator$().text()) ? "<=" : null;
-            condition = String.valueOf(type._check()._condition$().text());
+        else if (column instanceof $Decimal) {
+          final $Decimal type = ($Decimal)column;
+          if (type.getCheck() != null) {
+            operator = $Decimal.Check.Operator$.eq.text().equals(type.getCheck().getOperator$().text()) ? "=" : $Decimal.Check.Operator$.ne.text().equals(type.getCheck().getOperator$().text()) ? "!=" : $Decimal.Check.Operator$.gt.text().equals(type.getCheck().getOperator$().text()) ? ">" : $Decimal.Check.Operator$.gte.text().equals(type.getCheck().getOperator$().text()) ? ">=" : $Decimal.Check.Operator$.lt.text().equals(type.getCheck().getOperator$().text()) ? "<" : $Decimal.Check.Operator$.lte.text().equals(type.getCheck().getOperator$().text()) ? "<=" : null;
+            condition = String.valueOf(type.getCheck().getCondition$().text());
           }
         }
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + column._name$().text() + " " + operator + " " + condition + ")");
+            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + column.getName$().text() + " " + operator + " " + condition + ")");
           else
-            throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column._name$().text());
+            throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
         else if (condition != null)
-          throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + column._name$().text());
+          throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + column.getName$().text());
       }
     }
 
     return new CreateStatement(contraintsBuffer.toString());
   }
 
-  protected String check(final $ddlx_table table) {
+  protected String check(final $Table table) {
     return "CHECK";
   }
 
-  protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
-    if (constraints._primaryKey() == null)
+  protected String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
+    if (constraints.getPrimaryKey() == null)
       return "";
 
     final StringBuffer primaryKeyBuffer = new StringBuffer();
-    for (final $ddlx_named primaryColumn : constraints._primaryKey()._column()) {
-      final String primaryKeyColumn = primaryColumn._name$().text();
-      final $ddlx_column column = columnNameToColumn.get(primaryKeyColumn);
-      if (column._null$().text())
-        throw new GeneratorExecutionException("Column " + column._name$() + " must be NOT NULL to be a PRIMARY KEY.");
+    for (final $Named primaryColumn : constraints.getPrimaryKey().getColumn()) {
+      final String primaryKeyColumn = primaryColumn.getName$().text();
+      final $Column column = columnNameToColumn.get(primaryKeyColumn);
+      if (column.getNull$().text())
+        throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY.");
 
       primaryKeyBuffer.append(", ").append(primaryKeyColumn);
     }
@@ -433,63 +433,63 @@ abstract class Compiler {
     return ",\n  " + primaryKey(table) + " (" + primaryKeyBuffer.substring(2) + ")";
   }
 
-  protected String foreignKey(final $ddlx_table table) {
+  protected String foreignKey(final $Table table) {
     return "FOREIGN KEY";
   }
 
-  protected String primaryKey(final $ddlx_table table) {
+  protected String primaryKey(final $Table table) {
     return "PRIMARY KEY";
   }
 
-  protected String onDelete(final $ddlx_foreignKey._onDelete$ onDelete) {
+  protected String onDelete(final $ForeignKey.OnDelete$ onDelete) {
     return "ON DELETE " + changeRule(onDelete);
   }
 
-  protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
+  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     return "ON UPDATE " + changeRule(onUpdate);
   }
 
-  protected String changeRule(final $ddlx_changeRule changeRule) {
+  protected String changeRule(final $ChangeRule changeRule) {
     return changeRule.text();
   }
 
-  private static String recurseCheckRule(final $ddlx_check check) {
+  private static String recurseCheckRule(final $Check check) {
     final String condition;
-    if (check._column().size() == 2)
-      condition = check._column(0).text();
-    else if (check._value() != null)
-      condition = Numbers.isNumber(check._value().text()) ? Numbers.roundInsignificant(check._value().text()) : "'" + check._value().text() + "'";
+    if (check.getColumn().size() == 2)
+      condition = check.getColumn(0).text();
+    else if (check.getValue() != null)
+      condition = Numbers.isNumber(check.getValue().text()) ? Numbers.roundInsignificant(check.getValue().text()) : "'" + check.getValue().text() + "'";
     else
-      throw new UnsupportedOperationException("Unsupported condition on column '" + check._column(0).text() + "'");
+      throw new UnsupportedOperationException("Unsupported condition on column '" + check.getColumn(0).text() + "'");
 
-    final String clause = check._column(0).text() + " " + check._operator().text() + " " + condition;
-    if (check._and() != null)
-      return "(" + clause + " AND " + recurseCheckRule(check._and()) + ")";
+    final String clause = check.getColumn(0).text() + " " + check.getOperator().text() + " " + condition;
+    if (check.getAnd() != null)
+      return "(" + clause + " AND " + recurseCheckRule(check.getAnd()) + ")";
 
-    if (check._or() != null)
-      return "(" + clause + " OR " + recurseCheckRule(check._or()) + ")";
+    if (check.getOr() != null)
+      return "(" + clause + " OR " + recurseCheckRule(check.getOr()) + ")";
 
     return clause;
   }
 
-  protected List<CreateStatement> triggers(final $ddlx_table table) {
+  protected List<CreateStatement> triggers(final $Table table) {
     return new ArrayList<CreateStatement>();
   }
 
-  protected List<CreateStatement> indexes(final $ddlx_table table) {
+  protected List<CreateStatement> indexes(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    if (table._indexes() != null) {
-      for (final $ddlx_table._indexes._index index : table._indexes()._index()) {
-        final CreateStatement createIndex = createIndex(index._unique$() != null && index._unique$().text(), SQLDataTypes.getIndexName(table, index), index._type$(), table._name$().text(), index._column().toArray(new $ddlx_named[index._column().size()]));
+    if (table.getIndexes() != null) {
+      for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
+        final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), SQLDataTypes.getIndexName(table, index), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
         if (createIndex != null)
           statements.add(createIndex);
       }
     }
 
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column._index() != null) {
-          final CreateStatement createIndex = createIndex(column._index()._unique$() != null && column._index()._unique$().text(), SQLDataTypes.getIndexName(table, column._index(), column), column._index()._type$(), table._name$().text(), column);
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column.getIndex() != null) {
+          final CreateStatement createIndex = createIndex(column.getIndex().getUnique$() != null && column.getIndex().getUnique$().text(), SQLDataTypes.getIndexName(table, column.getIndex(), column), column.getIndex().getType$(), table.getName$().text(), column);
           if (createIndex != null)
             statements.add(createIndex);
         }
@@ -499,28 +499,28 @@ abstract class Compiler {
     return statements;
   }
 
-  protected List<CreateStatement> types(final $ddlx_table table) {
+  protected List<CreateStatement> types(final $Table table) {
     return new ArrayList<CreateStatement>();
   }
 
-  protected abstract String dropIndexOnClause(final $ddlx_table table);
+  protected abstract String dropIndexOnClause(final $Table table);
 
-  protected List<DropStatement> drops(final $ddlx_table table) {
+  protected List<DropStatement> drops(final $Table table) {
     final List<DropStatement> statements = new ArrayList<DropStatement>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
-//    if (table._indexes() != null)
-//      for (final $ddlx_table._indexes._index index : table._indexes(0)._index())
+//    if (table.getIndexes() != null)
+//      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())
 //        statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, index) + dropIndexOnClause(table)));
 
-//    if (table._column() != null)
-//      for (final $ddlx_column column : table._column())
-//        if (column._index() != null)
-//          statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, column._index(0), column) + dropIndexOnClause(table)));
+//    if (table.getColumn() != null)
+//      for (final $Column column : table.getColumn())
+//        if (column.getIndex() != null)
+//          statements.add(dropIndexIfExists(SQLDataTypes.getIndexName(table, column.getIndex(0), column) + dropIndexOnClause(table)));
 
-    if (table._triggers() != null)
-      for (final $ddlx_table._triggers._trigger trigger : table._triggers()._trigger())
-        for (final String action : trigger._actions$().text())
-          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + SQLDataTypes.getTriggerName(table._name$().text(), trigger, action)));
+    if (table.getTriggers() != null)
+      for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
+        for (final String action : trigger.getActions$().text())
+          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + SQLDataTypes.getTriggerName(table.getName$().text(), trigger, action)));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)
@@ -529,80 +529,80 @@ abstract class Compiler {
     return statements;
   }
 
-  protected DropStatement dropTableIfExists(final $ddlx_table table) {
-    return new DropStatement("DROP TABLE IF EXISTS " + table._name$().text());
+  protected DropStatement dropTableIfExists(final $Table table) {
+    return new DropStatement("DROP TABLE IF EXISTS " + table.getName$().text());
   }
 
   protected DropStatement dropIndexIfExists(final String indexName) {
     return new DropStatement("DROP INDEX IF EXISTS " + indexName);
   }
 
-  private static void checkNumericDefault(final DBVendor vendor, final $ddlx_column type, final Number defaultValue, final boolean positive, final Short precision, final boolean unsigned) {
+  private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Short precision, final boolean unsigned) {
     if (!positive && unsigned)
-      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
+      throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is negative, but type is declared UNSIGNED");
 
-    if (type instanceof $ddlx_bigint) {
+    if (type instanceof $Bigint) {
       final BigInteger maxValue = vendor.getDialect().allowsUnsignedNumeric() ? BigInteger.valueOf(2).pow(8 * 8) : BigInteger.valueOf(2).pow(8 * 8).divide(BigInteger.valueOf(2));
       if (((BigInteger)defaultValue).compareTo(maxValue) >= 0)
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is larger than the maximum value of " + maxValue.subtract(BigInteger.ONE) + " allowed by " + vendor);
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is larger than the maximum value of " + maxValue.subtract(BigInteger.ONE) + " allowed by " + vendor);
     }
-    else if (type instanceof $ddlx_decimal) {
+    else if (type instanceof $Decimal) {
       final BigDecimal defaultDecimal = (BigDecimal)defaultValue;
       if (defaultDecimal.precision() > precision)
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type._name$().text() + "' DEFAULT " + defaultValue + " is longer than declared PRECISION " + precision);
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + type.getName$().text() + "' DEFAULT " + defaultValue + " is longer than declared PRECISION " + precision);
     }
   }
 
-  protected String $default(final $ddlx_table table, final $ddlx_column column) {
-    if (column instanceof $ddlx_char) {
-      final $ddlx_char type = ($ddlx_char)column;
-      if (type._default$() == null)
+  protected String $default(final $Table table, final $Column column) {
+    if (column instanceof $Char) {
+      final $Char type = ($Char)column;
+      if (type.getDefault$() == null)
         return null;
 
-      if (type._default$().text().length() > type._length$().text())
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH(" + type._length$().text() + ")");
+      if (type.getDefault$().text().length() > type.getLength$().text())
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column.getName$().text() + "' DEFAULT '" + type.getDefault$().text() + "' is longer than declared LENGTH(" + type.getLength$().text() + ")");
 
-      return "'" + type._default$().text() + "'";
+      return "'" + type.getDefault$().text() + "'";
     }
 
-    if (column instanceof $ddlx_binary) {
-      final $ddlx_binary type = ($ddlx_binary)column;
-      if (type._default$() == null)
+    if (column instanceof $Binary) {
+      final $Binary type = ($Binary)column;
+      if (type.getDefault$() == null)
         return null;
 
-      if (type._default$().text().getBytes().length > type._length$().text())
-        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column._name$().text() + "' DEFAULT '" + type._default$().text() + "' is longer than declared LENGTH " + type._length$().text());
+      if (type.getDefault$().text().getBytes().length > type.getLength$().text())
+        throw new IllegalArgumentException(type.name().getPrefix() + ":" + type.name().getLocalPart() + " column '" + column.getName$().text() + "' DEFAULT '" + type.getDefault$().text() + "' is longer than declared LENGTH " + type.getLength$().text());
 
-      return compileBinary(type._default$().text().toString());
+      return compileBinary(type.getDefault$().text().toString());
     }
 
-    if (column instanceof $ddlx_integer) {
+    if (column instanceof $Integer) {
       final BigInteger _default;
       final Byte precision;
       final boolean unsigned;
-      if (column instanceof $ddlx_tinyint) {
-        final $ddlx_tinyint type = ($ddlx_tinyint)column;
-        _default = type._default$() == null ? null : type._default$().text();
-        precision = type._precision$() == null ? null : type._precision$().text();
-        unsigned = type._unsigned$() != null && type._unsigned$().text();
+      if (column instanceof $Tinyint) {
+        final $Tinyint type = ($Tinyint)column;
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
+        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
-      else if (column instanceof $ddlx_smallint) {
-        final $ddlx_smallint type = ($ddlx_smallint)column;
-        _default = type._default$() == null ? null : type._default$().text();
-        precision = type._precision$() == null ? null : type._precision$().text();
-        unsigned = type._unsigned$() != null && type._unsigned$().text();
+      else if (column instanceof $Smallint) {
+        final $Smallint type = ($Smallint)column;
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
+        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
-      else if (column instanceof $ddlx_int) {
-        final $ddlx_int type = ($ddlx_int)column;
-        _default = type._default$() == null ? null : type._default$().text();
-        precision = type._precision$() == null ? null : type._precision$().text();
-        unsigned = type._unsigned$() != null && type._unsigned$().text();
+      else if (column instanceof $Int) {
+        final $Int type = ($Int)column;
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
+        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
-      else if (column instanceof $ddlx_bigint) {
-        final $ddlx_bigint type = ($ddlx_bigint)column;
-        _default = type._default$() == null ? null : type._default$().text();
-        precision = type._precision$() == null ? null : type._precision$().text();
-        unsigned = type._unsigned$() != null && type._unsigned$().text();
+      else if (column instanceof $Bigint) {
+        final $Bigint type = ($Bigint)column;
+        _default = type.getDefault$() == null ? null : type.getDefault$().text();
+        precision = type.getPrecision$() == null ? null : type.getPrecision$().text();
+        unsigned = type.getUnsigned$() != null && type.getUnsigned$().text();
       }
       else {
         throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -617,74 +617,74 @@ abstract class Compiler {
       return String.valueOf(_default);
     }
 
-    if (column instanceof $ddlx_float) {
-      final $ddlx_float type = ($ddlx_float)column;
-      if (type._default$() == null)
+    if (column instanceof $Float) {
+      final $Float type = ($Float)column;
+      if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text() > 0, null, type._unsigned$().text());
-      return type._default$().text().toString();
+      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      return type.getDefault$().text().toString();
     }
 
-    if (column instanceof $ddlx_double) {
-      final $ddlx_double type = ($ddlx_double)column;
-      if (type._default$() == null)
+    if (column instanceof $Double) {
+      final $Double type = ($Double)column;
+      if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text() > 0, null, type._unsigned$().text());
-      return type._default$().text().toString();
+      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text() > 0, null, type.getUnsigned$().text());
+      return type.getDefault$().text().toString();
     }
 
-    if (column instanceof $ddlx_decimal) {
-      final $ddlx_decimal type = ($ddlx_decimal)column;
-      if (type._default$() == null)
+    if (column instanceof $Decimal) {
+      final $Decimal type = ($Decimal)column;
+      if (type.getDefault$() == null)
         return null;
 
-      checkNumericDefault(getVendor(), type, type._default$().text(), type._default$().text().doubleValue() > 0, type._precision$() == null ? null : type._precision$().text(), type._unsigned$().text());
-      return type._default$().text().toString();
+      checkNumericDefault(getVendor(), type, type.getDefault$().text(), type.getDefault$().text().doubleValue() > 0, type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
+      return type.getDefault$().text().toString();
     }
 
-    if (column instanceof $ddlx_date) {
-      final $ddlx_date type = ($ddlx_date)column;
-      if (type._default$() == null)
+    if (column instanceof $Date) {
+      final $Date type = ($Date)column;
+      if (type.getDefault$() == null)
         return null;
 
-      return compileDate(type._default$().text());
+      return compileDate(type.getDefault$().text());
     }
 
-    if (column instanceof $ddlx_time) {
-      final $ddlx_time type = ($ddlx_time)column;
-      if (type._default$() == null)
+    if (column instanceof $Time) {
+      final $Time type = ($Time)column;
+      if (type.getDefault$() == null)
         return null;
 
-      return compileTime(type._default$().text());
+      return compileTime(type.getDefault$().text());
     }
 
-    if (column instanceof $ddlx_datetime) {
-      final $ddlx_datetime type = ($ddlx_datetime)column;
-      if (type._default$() == null)
+    if (column instanceof $Datetime) {
+      final $Datetime type = ($Datetime)column;
+      if (type.getDefault$() == null)
         return null;
 
-      return compileDateTime(type._default$().text());
+      return compileDateTime(type.getDefault$().text());
     }
 
-    if (column instanceof $ddlx_boolean) {
-      final $ddlx_boolean type = ($ddlx_boolean)column;
-      if (type._default$() == null)
+    if (column instanceof $Boolean) {
+      final $Boolean type = ($Boolean)column;
+      if (type.getDefault$() == null)
         return null;
 
-      return type._default$().text().toString();
+      return type.getDefault$().text().toString();
     }
 
-    if (column instanceof $ddlx_enum) {
-      final $ddlx_enum type = ($ddlx_enum)column;
-      if (type._default$() == null)
+    if (column instanceof $Enum) {
+      final $Enum type = ($Enum)column;
+      if (type.getDefault$() == null)
         return null;
 
-      return "'" + type._default$().text() + "'";
+      return "'" + type.getDefault$().text() + "'";
     }
 
-    if (column instanceof $ddlx_clob || column instanceof $ddlx_blob)
+    if (column instanceof $Clob || column instanceof $Blob)
       return null;
 
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
@@ -694,8 +694,8 @@ abstract class Compiler {
     return "DELETE FROM " + tableName;
   }
 
-  protected abstract String $null(final $ddlx_table table, final $ddlx_column column);
-  protected abstract String $autoIncrement(final $ddlx_table table, final $ddlx_integer column);
+  protected abstract String $null(final $Table table, final $Column column);
+  protected abstract String $autoIncrement(final $Table table, final $Integer column);
 
   protected String compileBinary(final String value) {
     return "X'" + value + "'";

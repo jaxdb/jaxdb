@@ -20,14 +20,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_int;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Columns;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Constraints;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Int;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,28 +45,28 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return column._null$() != null && !column._null$().text() ? "NOT NULL" : "";
+  protected String $null(final $Table table, final $Column column) {
+    return column.getNull$() != null && !column.getNull$().text() ? "NOT NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+  protected String $autoIncrement(final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return null;
 
-    final $ddlx_columns primaryKey = table._constraints()._primaryKey();
+    final $Columns primaryKey = table.getConstraints().getPrimaryKey();
     if (primaryKey.isNull()) {
       logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
 
-    if (primaryKey._column().size() > 1) {
+    if (primaryKey.getColumn().size() > 1) {
       logger.warn("AUTOINCREMENT is not allowed for tables with composite primary keys -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
 
-    for (final $ddlx_named primaryColumn : primaryKey._column())
-      if (primaryColumn._name$().text().equals(column._name$().text()))
+    for (final $Named primaryColumn : primaryKey.getColumn())
+      if (primaryColumn.getName$().text().equals(column.getName$().text()))
         return "PRIMARY KEY";
 
     logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
@@ -74,9 +74,9 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String createIntegerColumn(final $ddlx_integer column) {
+  protected String createIntegerColumn(final $Integer column) {
     if (isAutoIncrement(column)) {
-      if (!(column instanceof $ddlx_int))
+      if (!(column instanceof $Int))
         logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
 
       return "INTEGER";
@@ -86,11 +86,11 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String blockPrimaryKey(final $ddlx_table table, final $ddlx_constraints constraints, final Map<String,$ddlx_column> columnNameToColumn) throws GeneratorExecutionException {
-    final $ddlx_columns primaryKey = constraints._primaryKey();
-    if (!primaryKey.isNull() && primaryKey._column().size() == 1) {
-      final $ddlx_column column = columnNameToColumn.get(primaryKey._column().get(0)._name$().text());
-      if (column instanceof $ddlx_integer && isAutoIncrement(($ddlx_integer)column))
+  protected String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
+    final $Columns primaryKey = constraints.getPrimaryKey();
+    if (!primaryKey.isNull() && primaryKey.getColumn().size() == 1) {
+      final $Column column = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
+      if (column instanceof $Integer && isAutoIncrement(($Integer)column))
         return null;
     }
 
@@ -98,13 +98,13 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String dropIndexOnClause(final $ddlx_table table) {
-    return " ON " + table._name$().text();
+  protected String dropIndexOnClause(final $Table table) {
+    return " ON " + table.getName$().text();
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
-    if ($ddlx_index._type$.HASH.text().equals(type.text()))
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+    if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");

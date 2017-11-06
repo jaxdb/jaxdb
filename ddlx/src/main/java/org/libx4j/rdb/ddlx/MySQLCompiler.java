@@ -21,11 +21,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public final class MySQLCompiler extends Compiler {
@@ -39,18 +39,18 @@ public final class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected List<CreateStatement> triggers(final $ddlx_table table) {
-    if (table._triggers() == null)
+  protected List<CreateStatement> triggers(final $Table table) {
+    if (table.getTriggers() == null)
       return super.triggers(table);
 
-    final String tableName = table._name$().text();
-    final List<$ddlx_table._triggers._trigger> triggers = table._triggers()._trigger();
+    final String tableName = table.getName$().text();
+    final List<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    for (final $ddlx_table._triggers._trigger trigger : triggers) {
+    for (final $Table.Triggers.Trigger trigger : triggers) {
       String buffer = "";
-      for (final String action : trigger._actions$().text()) {
+      for (final String action : trigger.getActions$().text()) {
         buffer += "DELIMITER |\n";
-        buffer += "CREATE TRIGGER " + SQLDataTypes.getTriggerName(tableName, trigger, action) + " " + trigger._time$().text() + " " + action + " ON " + tableName + "\n";
+        buffer += "CREATE TRIGGER " + SQLDataTypes.getTriggerName(tableName, trigger, action) + " " + trigger.getTime$().text() + " " + action + " ON " + tableName + "\n";
         buffer += "  FOR EACH ROW\n";
         buffer += "  BEGIN\n";
 
@@ -81,22 +81,22 @@ public final class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+  protected String $null(final $Table table, final $Column column) {
+    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
-    return isAutoIncrement(column) ? $ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT.text() : "";
+  protected String $autoIncrement(final $Table table, final $Integer column) {
+    return isAutoIncrement(column) ? $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $ddlx_table table) {
-    return " ON " + table._name$().text();
+  protected String dropIndexOnClause(final $Table table) {
+    return " ON " + table.getName$().text();
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
   }
 }

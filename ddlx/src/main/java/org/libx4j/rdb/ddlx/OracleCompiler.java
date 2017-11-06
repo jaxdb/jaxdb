@@ -21,13 +21,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey;
-import org.libx4j.rdb.ddlx.xe.$ddlx_foreignKey._onDelete$;
-import org.libx4j.rdb.ddlx.xe.$ddlx_index;
-import org.libx4j.rdb.ddlx.xe.$ddlx_integer;
-import org.libx4j.rdb.ddlx.xe.$ddlx_named;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$ForeignKey;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$ForeignKey.OnDelete$;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +45,12 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected List<DropStatement> drops(final $ddlx_table table) {
+  protected List<DropStatement> drops(final $Table table) {
     final List<DropStatement> statements = super.drops(table);
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Integer) {
+          final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
             statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + SQLDataTypes.getTriggerName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
@@ -63,23 +63,23 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $ddlx_table table, final $ddlx_column column) {
-    return column._null$() != null ? !column._null$().text() ? "NOT NULL" : "NULL" : "";
+  protected String $null(final $Table table, final $Column column) {
+    return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $ddlx_table table, final $ddlx_integer column) {
+  protected String $autoIncrement(final $Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
     return null;
   }
 
   @Override
-  protected List<CreateStatement> types(final $ddlx_table table) {
+  protected List<CreateStatement> types(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Integer) {
+          final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
             statements.add(0, new CreateStatement("CREATE SEQUENCE " + sequenceName + " START WITH 1"));
@@ -93,15 +93,15 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected List<CreateStatement> triggers(final $ddlx_table table) {
+  protected List<CreateStatement> triggers(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<CreateStatement>();
-    if (table._column() != null) {
-      for (final $ddlx_column column : table._column()) {
-        if (column instanceof $ddlx_integer) {
-          final $ddlx_integer type = ($ddlx_integer)column;
+    if (table.getColumn() != null) {
+      for (final $Column column : table.getColumn()) {
+        if (column instanceof $Integer) {
+          final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table._name$().text() + " FOR EACH ROW when (new." + column._name$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column._name$().text() + " FROM dual; END;"));
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table.getName$().text() + " FOR EACH ROW when (new." + column.getName$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column.getName$().text() + " FROM dual; END;"));
           }
         }
       }
@@ -112,18 +112,18 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected DropStatement dropTableIfExists(final $ddlx_table table) {
-    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + table._name$().text() + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
+  protected DropStatement dropTableIfExists(final $Table table) {
+    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + table.getName$().text() + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
   }
 
   @Override
-  protected String dropIndexOnClause(final $ddlx_table table) {
+  protected String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $ddlx_index._type$ type, final String tableName, final $ddlx_named ... columns) {
-    if ($ddlx_index._type$.HASH.text().equals(type.text()))
+  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+    if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
@@ -134,27 +134,27 @@ public final class OracleCompiler extends Compiler {
   private int checkConstraints = 0;
 
   @Override
-  protected String check(final $ddlx_table table) {
-    return "CONSTRAINT " + table._name$().text() + "_ck" + ++checkConstraints + " CHECK";
+  protected String check(final $Table table) {
+    return "CONSTRAINT " + table.getName$().text() + "_ck" + ++checkConstraints + " CHECK";
   }
 
   @Override
-  protected String primaryKey(final $ddlx_table table) {
-    return "CONSTRAINT " + table._name$().text() + "_pk" + ++primaryKeys + " PRIMARY KEY";
+  protected String primaryKey(final $Table table) {
+    return "CONSTRAINT " + table.getName$().text() + "_pk" + ++primaryKeys + " PRIMARY KEY";
   }
 
   @Override
-  protected String foreignKey(final $ddlx_table table) {
-    return "CONSTRAINT " + table._name$().text() + "_fk" + ++foreignKeys + " FOREIGN KEY";
+  protected String foreignKey(final $Table table) {
+    return "CONSTRAINT " + table.getName$().text() + "_fk" + ++foreignKeys + " FOREIGN KEY";
   }
 
   @Override
-  protected String onDelete(final _onDelete$ onDelete) {
+  protected String onDelete(final OnDelete$ onDelete) {
     return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);
   }
 
   @Override
-  protected String onUpdate(final $ddlx_foreignKey._onUpdate$ onUpdate) {
+  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     logger.warn("ON UPDATE is not supported");
     return null;
   }

@@ -33,64 +33,64 @@ import java.util.Set;
 
 import org.lib4j.util.Collections;
 import org.lib4j.util.RefDigraph;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.ddlx.xe.$ddlx_columns;
-import org.libx4j.rdb.ddlx.xe.$ddlx_constraints;
-import org.libx4j.rdb.ddlx.xe.$ddlx_table;
-import org.libx4j.rdb.ddlx.xe.ddlx_schema;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Columns;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Constraints;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Bindings;
 
 public final class Schemas {
-  public static int[] drop(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] drop(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), true, false, false);
   }
 
-  public static int[] drop(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] drop(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, false, false);
   }
 
-  public static int[] dropBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] dropBatched(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), true, false, true);
   }
 
-  public static int[] dropBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] dropBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, false, true);
   }
 
-  public static int[] create(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] create(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), false, true, false);
   }
 
-  public static int[] create(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] create(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, false, true, false);
   }
 
-  public static int[] createBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] createBatched(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), false, true, true);
   }
 
-  public static int[] createBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] createBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, false, true, true);
   }
 
-  public static int[] recreate(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreate(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), true, true, false);
   }
 
-  public static int[] recreate(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreate(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, true, false);
   }
 
-  public static int[] recreateBatched(final Connection connection, final ddlx_schema ... schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreateBatched(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, Arrays.asList(schemas), true, true, true);
   }
 
-  public static int[] recreateBatched(final Connection connection, final Collection<ddlx_schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreateBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, true, true);
   }
 
-  private static int[] exec(final Connection connection, final Collection<ddlx_schema> schemas, final boolean drop, final boolean create, final boolean batched) throws GeneratorExecutionException, SQLException {
+  private static int[] exec(final Connection connection, final Collection<Schema> schemas, final boolean drop, final boolean create, final boolean batched) throws GeneratorExecutionException, SQLException {
     if (!drop && !create)
       return null;
 
@@ -100,7 +100,7 @@ public final class Schemas {
     final int[] counts = new int[schemas.size()];
     int i = 0;
     if (batched) {
-      for (final ddlx_schema schema : schemas) {
+      for (final Schema schema : schemas) {
         final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
         for (final Statement statement : statements)
           if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
@@ -114,7 +114,7 @@ public final class Schemas {
       }
     }
     else {
-      for (final ddlx_schema schema : schemas) {
+      for (final Schema schema : schemas) {
         final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
         int count = 0;
         for (final Statement statement : statements)
@@ -128,117 +128,117 @@ public final class Schemas {
     return counts;
   }
 
-  private static final Comparator<$ddlx_table> tableNameComparator = new Comparator<$ddlx_table>() {
+  private static final Comparator<$Table> tableNameComparator = new Comparator<$Table>() {
     @Override
-    public int compare(final $ddlx_table o1, final $ddlx_table o2) {
-      return o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1._name$().text().compareTo(o2._name$().text());
+    public int compare(final $Table o1, final $Table o2) {
+      return o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
     }
   };
 
-  private static ddlx_schema topologicalSort(final ddlx_schema schema) {
-    final List<$ddlx_table> tables = new ArrayList<$ddlx_table>(schema._table());
-    schema._table().clear();
+  private static Schema topologicalSort(final Schema schema) {
+    final List<$Table> tables = new ArrayList<$Table>(schema.getTable());
+    schema.getTable().clear();
     tables.sort(tableNameComparator);
-    final RefDigraph<$ddlx_table,String> digraph = new RefDigraph<$ddlx_table,String>(table -> table._name$().text().toLowerCase());
-    for (final $ddlx_table table : tables) {
+    final RefDigraph<$Table,String> digraph = new RefDigraph<$Table,String>(table -> table.getName$().text().toLowerCase());
+    for (final $Table table : tables) {
       digraph.addVertex(table);
-      for (final $ddlx_column column : table._column())
-        if (column._foreignKey() != null)
-          digraph.addEdgeRef(table, column._foreignKey()._references$().text().toLowerCase());
+      for (final $Column column : table.getColumn())
+        if (column.getForeignKey() != null)
+          digraph.addEdgeRef(table, column.getForeignKey().getReferences$().text().toLowerCase());
     }
 
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + Collections.toString(digraph.getCycle(), " -> "));
 
-    final ListIterator<$ddlx_table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
+    final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
     while (topological.hasPrevious())
-      schema._table().add(topological.previous());
+      schema.getTable().add(topological.previous());
 
     return schema;
   }
 
-  public static ddlx_schema flatten(final ddlx_schema schema) {
-    final ddlx_schema flat;
+  public static Schema flatten(final Schema schema) {
+    final Schema flat;
     try {
-      flat = (ddlx_schema)Bindings.clone(schema);
+      flat = (Schema)Bindings.clone(schema);
     }
     catch (final IOException e) {
       throw new UnsupportedOperationException(e);
     }
 
-    final Map<String,$ddlx_table> tableNameToTable = new HashMap<String,$ddlx_table>();
+    final Map<String,$Table> tableNameToTable = new HashMap<String,$Table>();
     // First, register the table names to be referenceable by the @extends attribute
-    for (final $ddlx_table table : flat._table())
-      tableNameToTable.put(table._name$().text(), table);
+    for (final $Table table : flat.getTable())
+      tableNameToTable.put(table.getName$().text(), table);
 
     final Set<String> flatTables = new HashSet<String>();
-    for (final $ddlx_table table : flat._table())
+    for (final $Table table : flat.getTable())
       flattenTable(table, tableNameToTable, flatTables);
 
-    final Iterator<$ddlx_table> iterator = flat._table().iterator();
+    final Iterator<$Table> iterator = flat.getTable().iterator();
     while (iterator.hasNext())
-      if (iterator.next()._abstract$().text())
+      if (iterator.next().getAbstract$().text())
         iterator.remove();
 
     return Schemas.topologicalSort(flat);
   }
 
-  private static void flattenTable(final $ddlx_table table, final Map<String,$ddlx_table> tableNameToTable, final Set<String> flatTables) {
-    if (flatTables.contains(table._name$().text()))
+  private static void flattenTable(final $Table table, final Map<String,$Table> tableNameToTable, final Set<String> flatTables) {
+    if (flatTables.contains(table.getName$().text()))
       return;
 
-    flatTables.add(table._name$().text());
-    if (table._extends$() == null)
+    flatTables.add(table.getName$().text());
+    if (table.getExtends$() == null)
       return;
 
-    final $ddlx_table superTable = tableNameToTable.get(table._extends$().text());
+    final $Table superTable = tableNameToTable.get(table.getExtends$().text());
     flattenTable(superTable, tableNameToTable, flatTables);
-    if (superTable._column() != null) {
-      if (table._column() != null) {
-        table._column().addAll(0, superTable._column());
+    if (superTable.getColumn() != null) {
+      if (table.getColumn() != null) {
+        table.getColumn().addAll(0, superTable.getColumn());
       }
       else {
-        for (final $ddlx_column column : superTable._column())
-          table._column(column);
+        for (final $Column column : superTable.getColumn())
+          table.addColumn(column);
       }
     }
 
-    if (superTable._constraints() != null) {
-      final $ddlx_constraints parentConstraints = superTable._constraints();
-      if (table._constraints() == null) {
-        table._constraints(parentConstraints);
+    if (superTable.getConstraints() != null) {
+      final $Constraints parentConstraints = superTable.getConstraints();
+      if (table.getConstraints() == null) {
+        table.setConstraints(parentConstraints);
       }
       else {
-        if (parentConstraints._primaryKey() != null)
-          table._constraints()._primaryKey(parentConstraints._primaryKey());
+        if (parentConstraints.getPrimaryKey() != null)
+          table.getConstraints().setPrimaryKey(parentConstraints.getPrimaryKey());
 
-        if (parentConstraints._unique() != null)
-          for (final $ddlx_columns columns : parentConstraints._unique())
-            table._constraints()._unique(columns);
+        if (parentConstraints.getUnique() != null)
+          for (final $Columns columns : parentConstraints.getUnique())
+            table.getConstraints().addUnique(columns);
       }
     }
 
-    if (superTable._indexes() != null) {
-      if (table._indexes() == null) {
-        table._indexes(superTable._indexes());
+    if (superTable.getIndexes() != null) {
+      if (table.getIndexes() == null) {
+        table.setIndexes(superTable.getIndexes());
       }
       else {
-        for (final $ddlx_table._indexes._index index : superTable._indexes()._index())
-          table._indexes()._index(index);
+        for (final $Table.Indexes.Index index : superTable.getIndexes().getIndex())
+          table.getIndexes().addIndex(index);
       }
     }
   }
 
-  public static int[] truncate(final Connection connection, final $ddlx_table ... tables) throws SQLException {
+  public static int[] truncate(final Connection connection, final $Table ... tables) throws SQLException {
     return truncate(connection, Arrays.asList(tables));
   }
 
-  public static int[] truncate(final Connection connection, final Collection<? extends $ddlx_table> tables) throws SQLException {
+  public static int[] truncate(final Connection connection, final Collection<? extends $Table> tables) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Compiler compiler = Compiler.getCompiler(vendor);
     final java.sql.Statement statement = connection.createStatement();
-    for (final $ddlx_table table : tables)
-      statement.addBatch(compiler.truncate(table._name$().text()));
+    for (final $Table table : tables)
+      statement.addBatch(compiler.truncate(table.getName$().text()));
 
     return statement.executeBatch();
   }

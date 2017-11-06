@@ -12366,7 +12366,7 @@ public final class DML {
     return new type.INT(10).wrapper(new expression.Count(dataType, false));
   }
 
-  public final static class COUNT {
+  public static final class COUNT {
     public static type.INT DISTINCT(final type.DataType<?> dataType) {
       return new type.INT(10).wrapper(new expression.Count(dataType, true));
     }

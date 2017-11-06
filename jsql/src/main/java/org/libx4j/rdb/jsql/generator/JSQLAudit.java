@@ -17,61 +17,61 @@
 package org.libx4j.rdb.jsql.generator;
 
 import org.libx4j.rdb.ddlx.DDLxAudit;
-import org.libx4j.rdb.ddlx.xe.$ddlx_column;
-import org.libx4j.rdb.jsql.xe.$jsql_binary;
-import org.libx4j.rdb.jsql.xe.$jsql_blob;
-import org.libx4j.rdb.jsql.xe.$jsql_boolean;
-import org.libx4j.rdb.jsql.xe.$jsql_char;
-import org.libx4j.rdb.jsql.xe.$jsql_clob;
-import org.libx4j.rdb.jsql.xe.$jsql_date;
-import org.libx4j.rdb.jsql.xe.$jsql_datetime;
-import org.libx4j.rdb.jsql.xe.$jsql_decimal;
-import org.libx4j.rdb.jsql.xe.$jsql_enum;
-import org.libx4j.rdb.jsql.xe.$jsql_float;
-import org.libx4j.rdb.jsql.xe.$jsql_integer;
-import org.libx4j.rdb.jsql.xe.$jsql_time;
+import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Binary;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Blob;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Boolean;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Char;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Clob;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Date;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Datetime;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Decimal;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Enum;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Float;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Integer;
+import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Time;
 
 public class JSQLAudit extends DDLxAudit {
   protected JSQLAudit(final DDLxAudit copy) {
     super(copy);
   }
 
-  public boolean isKeyForUpdate(final $ddlx_column column) {
-    if (column instanceof $jsql_char)
-      return (($jsql_char)column).jsql_keyForUpdate$().text();
+  public boolean isKeyForUpdate(final xIEcGGcJdtCXcCFzw5sg.$Column column) {
+    if (column instanceof $Char)
+      return (($Char)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_clob)
-      return (($jsql_clob)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Clob)
+      return (($Clob)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_binary)
-      return (($jsql_binary)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Binary)
+      return (($Binary)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_blob)
-      return (($jsql_blob)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Blob)
+      return (($Blob)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_integer)
-      return (($jsql_integer)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Integer)
+      return (($Integer)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_float)
-      return (($jsql_float)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Float)
+      return (($Float)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_decimal)
-      return (($jsql_decimal)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Decimal)
+      return (($Decimal)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_date)
-      return (($jsql_date)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Date)
+      return (($Date)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_time)
-      return (($jsql_time)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Time)
+      return (($Time)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_datetime)
-      return (($jsql_datetime)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Datetime)
+      return (($Datetime)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_boolean)
-      return (($jsql_boolean)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Boolean)
+      return (($Boolean)column).getJsqlKeyForUpdate$().text();
 
-    if (column instanceof $jsql_enum)
-      return (($jsql_enum)column).jsql_keyForUpdate$().text();
+    if (column instanceof $Enum)
+      return (($Enum)column).getJsqlKeyForUpdate$().text();
 
     throw new UnsupportedOperationException("Unsupported column type: " + column.getClass().getName());
   }

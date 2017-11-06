@@ -36,7 +36,7 @@ import javax.xml.transform.TransformerException;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Resources;
-import org.lib4j.lang.Strings;
+import org.lib4j.util.JavaIdentifiers;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
 import org.libx4j.rdb.ddlx.annotation.Table;
@@ -125,7 +125,7 @@ public final class SQL {
       final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
       final List<Row> rows = new ArrayList<Row>();
       for (final String tableName : xmlType.propOrder()) {
-        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Strings.toClassCase(tableName)).invoke(insert)) {
+        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableName)).invoke(insert)) {
           rows.add(row);
         }
       }
