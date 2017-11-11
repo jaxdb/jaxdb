@@ -18,8 +18,8 @@ package org.libx4j.rdb.vendor;
 
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Enum;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
 
 public class DerbyDialect extends Dialect {
   @Override

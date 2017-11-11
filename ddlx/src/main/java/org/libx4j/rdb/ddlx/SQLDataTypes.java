@@ -19,10 +19,10 @@ package org.libx4j.rdb.ddlx;
 import java.math.BigInteger;
 
 import org.lib4j.lang.Arrays;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Index;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Integer;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Named;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
 import org.libx4j.xsb.runtime.BindingList;
 
 final class SQLDataTypes {

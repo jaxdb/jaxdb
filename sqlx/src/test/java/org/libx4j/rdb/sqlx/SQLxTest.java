@@ -35,7 +35,7 @@ import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.lib4j.xml.jaxb.XJCompiler;
 import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.Schema;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

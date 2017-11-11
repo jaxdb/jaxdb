@@ -17,26 +17,26 @@
 package org.libx4j.rdb.jsql.generator;
 
 import org.libx4j.rdb.ddlx.DDLxAudit;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Binary;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Blob;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Boolean;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Char;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Clob;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Date;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Datetime;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Decimal;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Enum;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Float;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Integer;
-import org.libx4j.rdb.jsql.xIEcGGcJdtCXcCFzw5sg.$Time;
+import org.libx4j.rdb.ddlx.HHuJd6JcA;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Binary;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Blob;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Boolean;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Char;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Clob;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Date;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Datetime;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Decimal;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Enum;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Float;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Integer;
+import org.libx4j.rdb.jsql.HHuJd6JcA.$Time;
 
 public class JSQLAudit extends DDLxAudit {
   protected JSQLAudit(final DDLxAudit copy) {
     super(copy);
   }
 
-  public boolean isKeyForUpdate(final xIEcGGcJdtCXcCFzw5sg.$Column column) {
+  public boolean isKeyForUpdate(final HHuJd6JcA.$Column column) {
     if (column instanceof $Char)
       return (($Char)column).getJsqlKeyForUpdate$().text();
 

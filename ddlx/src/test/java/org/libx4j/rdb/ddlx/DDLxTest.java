@@ -23,10 +23,10 @@ import java.sql.SQLException;
 
 import org.lib4j.lang.Resources;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Decimal;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.Schema;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Column;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Decimal;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.Bindings;

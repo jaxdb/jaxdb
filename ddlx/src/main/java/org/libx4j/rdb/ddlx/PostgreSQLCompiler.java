@@ -21,12 +21,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Column;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Enum;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Index;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Integer;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Named;
-import org.libx4j.rdb.ddlx.xIEcGGcJdtCXcCFzw5sg.$Table;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Column;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Enum;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Index;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Integer;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Named;
+import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 import org.slf4j.Logger;
