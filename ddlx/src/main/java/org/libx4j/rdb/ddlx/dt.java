@@ -461,7 +461,7 @@ public class dt {
     }
 
     public SMALLINT(final String value) {
-      super(value == null ? null : new java.lang.Integer(value));
+      super(value == null ? null : java.lang.Integer.valueOf(value));
     }
   }
 

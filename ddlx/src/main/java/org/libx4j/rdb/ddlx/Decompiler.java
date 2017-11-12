@@ -16,6 +16,7 @@
 
 package org.libx4j.rdb.ddlx;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -28,6 +29,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.lib4j.lang.PackageLoader;
+import org.lib4j.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx.HHuJd6JcA.$Bigint;
 import org.libx4j.rdb.ddlx.HHuJd6JcA.$Binary;
 import org.libx4j.rdb.ddlx.HHuJd6JcA.$Blob;
@@ -61,12 +63,12 @@ abstract class Decompiler {
       final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Decompiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Decompiler decompiler = (Decompiler)cls.newInstance();
+          final Decompiler decompiler = (Decompiler)cls.getDeclaredConstructor().newInstance();
           decompilers[decompiler.getVendor().ordinal()] = decompiler;
         }
       }
     }
-    catch (final ReflectiveOperationException e) {
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

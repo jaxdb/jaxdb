@@ -84,9 +84,9 @@ public final class type {
     protected ARRAY(final Entity owner, final String name, final T[] _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       try {
-        this.dataType = type.newInstance();
+        this.dataType = type.getDeclaredConstructor().newInstance();
       }
-      catch (final ReflectiveOperationException e) {
+      catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
         throw new UnsupportedOperationException(e);
       }
     }

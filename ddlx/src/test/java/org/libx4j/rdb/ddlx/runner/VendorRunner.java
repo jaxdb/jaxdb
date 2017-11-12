@@ -22,6 +22,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -108,10 +109,10 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<Class<? extends Vendor>,Vendor>();
 
-  protected Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IllegalAccessException, InstantiationException, IOException, SQLException {
+  protected Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
     Vendor vendor = vendors.get(vendorClass);
     if (vendor == null) {
-      vendors.put(vendorClass, vendor = vendorClass.newInstance());
+      vendors.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
       vendor.init();
     }
 

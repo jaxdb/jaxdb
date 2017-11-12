@@ -16,10 +16,12 @@
 
 package org.libx4j.rdb.sqlx;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
 import org.lib4j.lang.PackageLoader;
+import org.lib4j.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 
@@ -31,12 +33,12 @@ abstract class Compiler {
       final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Compiler compiler = (Compiler)cls.newInstance();
+          final Compiler compiler = (Compiler)cls.getDeclaredConstructor().newInstance();
           compilers[compiler.getVendor().ordinal()] = compiler;
         }
       }
     }
-    catch (final ReflectiveOperationException e) {
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

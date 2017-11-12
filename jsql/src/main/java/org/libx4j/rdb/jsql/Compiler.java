@@ -19,6 +19,7 @@ package org.libx4j.rdb.jsql;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.sql.Clob;
 import java.sql.Connection;
@@ -44,6 +45,7 @@ import org.lib4j.io.Readers;
 import org.lib4j.io.Streams;
 import org.lib4j.lang.Numbers;
 import org.lib4j.lang.PackageLoader;
+import org.lib4j.lang.PackageNotFoundException;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.IdentityHashSet;
 import org.libx4j.rdb.ddlx.dt;
@@ -58,12 +60,12 @@ abstract class Compiler {
       final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Compiler compiler = (Compiler)cls.newInstance();
+          final Compiler compiler = (Compiler)cls.getDeclaredConstructor().newInstance();
           compilers[compiler.getVendor().ordinal()] = compiler;
         }
       }
     }
-    catch (final ReflectiveOperationException e) {
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

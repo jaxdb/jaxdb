@@ -29,7 +29,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
 
-import org.lib4j.lang.Strings;
 import org.lib4j.util.JavaIdentifiers;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
@@ -41,12 +40,12 @@ import org.libx4j.rdb.sqlx.Row;
 
 public final class Entities {
   @SuppressWarnings({"rawtypes", "unchecked"})
-  private static type.Entity toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException {
+  private static type.Entity toEntity(final Database database, final Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     final Schema schema = database.getClass().getAnnotation(Schema.class);
     final Table table = row.getClass().getAnnotation(Table.class);
     // FIXME: This is brittle... Need to modularize it and make it clearer:
     final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + JavaIdentifiers.toInstanceCase(schema.name()) + "$" + JavaIdentifiers.toClassCase(table.name()));
-    final type.Entity entity = (type.Entity)binding.newInstance();
+    final type.Entity entity = (type.Entity)binding.getDeclaredConstructor().newInstance();
     for (final Method method : row.getClass().getMethods()) {
       if (method.getName().startsWith("get") && dt.DataType.class.isAssignableFrom(method.getReturnType())) {
         final dt.DataType<?> column = (dt.DataType<?>)method.invoke(row);
