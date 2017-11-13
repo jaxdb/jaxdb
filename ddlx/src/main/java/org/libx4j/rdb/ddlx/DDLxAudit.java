@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Columns;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Indexes;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Named;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.Schema;
+import org.libx4j.rdb.ddlx.xAA.$Columns;
+import org.libx4j.rdb.ddlx.xAA.$Indexes;
+import org.libx4j.rdb.ddlx.xAA.$Named;
+import org.libx4j.rdb.ddlx.xAA.$Table;
+import org.libx4j.rdb.ddlx.xAA.Schema;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
 

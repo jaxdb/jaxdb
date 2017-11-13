@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lib4j.util.NumberFormatter;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Enum;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
+import org.libx4j.rdb.ddlx.xAA.$Enum;
+import org.libx4j.rdb.ddlx.xAA.$Table;
 
 public abstract class Dialect {
   protected void assertValidDecimal(final Short precision, final Short scale) {

@@ -33,11 +33,11 @@ import java.util.Set;
 
 import org.lib4j.util.Collections;
 import org.lib4j.util.RefDigraph;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Column;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Columns;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Constraints;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.$Table;
-import org.libx4j.rdb.ddlx.HHuJd6JcA.Schema;
+import org.libx4j.rdb.ddlx.xAA.$Column;
+import org.libx4j.rdb.ddlx.xAA.$Columns;
+import org.libx4j.rdb.ddlx.xAA.$Constraints;
+import org.libx4j.rdb.ddlx.xAA.$Table;
+import org.libx4j.rdb.ddlx.xAA.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Bindings;
 
