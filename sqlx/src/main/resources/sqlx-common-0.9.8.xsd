@@ -17,8 +17,8 @@
 <xs:schema
   attributeFormDefault="qualified"
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/sqlx.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
+  targetNamespace="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
   <xs:simpleType name="uuid">

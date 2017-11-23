@@ -16,11 +16,11 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
+  targetNamespace="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:include schemaLocation="ddlx-common.xsd"/>
+  <xs:include schemaLocation="ddlx-common-0.9.8.xsd"/>
   
   <!-- text data -->
   

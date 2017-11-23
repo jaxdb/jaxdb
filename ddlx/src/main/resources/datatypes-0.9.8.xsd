@@ -13,11 +13,11 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/datatypes.xsd"
-  xmlns:dt="http://xml.lib4j.org/datatypes.xsd"
+  targetNamespace="http://rdb.libx4j.org/datatypes-0.9.8.xsd"
+  xmlns:dt="http://xml.lib4j.org/datatypes-1.0.3.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://xml.lib4j.org/datatypes.xsd" schemaLocation="http://xml.lib4j.org/datatypes.xsd"/>
+  <xs:import namespace="http://xml.lib4j.org/datatypes-1.0.3.xsd" schemaLocation="http://xml.lib4j.org/datatypes-1.0.3.xsd"/>
   
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">

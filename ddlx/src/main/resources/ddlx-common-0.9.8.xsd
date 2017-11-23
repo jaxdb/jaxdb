@@ -16,12 +16,12 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:dt="http://rdb.libx4j.org/datatypes.xsd"
+  targetNamespace="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns:dt="http://rdb.libx4j.org/datatypes-0.9.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://rdb.libx4j.org/datatypes.xsd" schemaLocation="http://rdb.libx4j.org/datatypes.xsd"/>
+  <xs:import namespace="http://rdb.libx4j.org/datatypes-0.9.8.xsd" schemaLocation="http://rdb.libx4j.org/datatypes-0.9.8.xsd"/>
   
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
