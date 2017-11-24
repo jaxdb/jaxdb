@@ -15,7 +15,7 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://rdb.libx4j.org/ddlx.xsd"
+  xmlns="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="implicit">

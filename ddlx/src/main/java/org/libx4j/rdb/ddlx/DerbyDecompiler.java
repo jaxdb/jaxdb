@@ -27,28 +27,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.libx4j.rdb.ddlx.xAA.$Bigint;
-import org.libx4j.rdb.ddlx.xAA.$Binary;
-import org.libx4j.rdb.ddlx.xAA.$Blob;
-import org.libx4j.rdb.ddlx.xAA.$Boolean;
-import org.libx4j.rdb.ddlx.xAA.$ChangeRule;
-import org.libx4j.rdb.ddlx.xAA.$Char;
-import org.libx4j.rdb.ddlx.xAA.$Check;
-import org.libx4j.rdb.ddlx.xAA.$Clob;
-import org.libx4j.rdb.ddlx.xAA.$Column;
-import org.libx4j.rdb.ddlx.xAA.$Date;
-import org.libx4j.rdb.ddlx.xAA.$Datetime;
-import org.libx4j.rdb.ddlx.xAA.$Decimal;
-import org.libx4j.rdb.ddlx.xAA.$Double;
-import org.libx4j.rdb.ddlx.xAA.$Float;
-import org.libx4j.rdb.ddlx.xAA.$ForeignKey;
-import org.libx4j.rdb.ddlx.xAA.$Index;
-import org.libx4j.rdb.ddlx.xAA.$Int;
-import org.libx4j.rdb.ddlx.xAA.$Integer;
-import org.libx4j.rdb.ddlx.xAA.$RangeOperator;
-import org.libx4j.rdb.ddlx.xAA.$Smallint;
-import org.libx4j.rdb.ddlx.xAA.$Table;
-import org.libx4j.rdb.ddlx.xAA.$Time;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Bigint;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Binary;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Blob;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Boolean;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$ChangeRule;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Char;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Check;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Clob;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Column;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Date;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Datetime;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Decimal;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Double;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Float;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$ForeignKey;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Index;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Int;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Integer;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$RangeOperator;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Smallint;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Table;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Time;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class DerbyDecompiler extends Decompiler {
@@ -420,11 +420,11 @@ final class DerbyDecompiler extends Decompiler {
       final String descriptor = rows.getString(3);
 
       final boolean unique = descriptor.startsWith("UNIQUE");
-      final String type = descriptor.startsWith("HASH") ? "HASH" : "BTREE";
+      final $Index.Type$.Enum type = descriptor.startsWith("HASH") ? $Index.Type$.HASH : $Index.Type$.BTREE;
 
       final $Table.Indexes.Index index = new $Table.Indexes.Index();
       indexes.addIndex(index);
-      if (!"BTREE".equals(type))
+      if (!$Index.Type$.BTREE.equals(type))
         index.setType$(new $Index.Type$(type));
 
       if (unique)

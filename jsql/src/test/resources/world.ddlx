@@ -1,7 +1,7 @@
 <schema
-  xmlns="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
-  xmlns:jsql="http://rdb.libx4j.org/jsql.xsd"
+  xmlns="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
+  xmlns:jsql="http://rdb.libx4j.org/jsql-0.9.8.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://rdb.libx4j.org/jsql.xsd http://rdb.libx4j.org/jsql.xsd">
   

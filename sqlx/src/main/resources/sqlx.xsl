@@ -18,9 +18,9 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:dt="http://rdb.libx4j.org/datatypes.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx.xsd"
+  xmlns:dt="http://rdb.libx4j.org/datatypes-0.9.8.xsd"
+  xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
   xmlns:function="http://rdb.libx4j.org/sqlx.xsl"
   xmlns:ext="http://exslt.org/common" 
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
@@ -123,7 +123,7 @@
   <xsl:template match="/ddlx:schema">
     <xs:schema
       elementFormDefault="qualified"
-      xmlns:ddlx="http://rdb.libx4j.org/ddlx.xsd"
+      xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
       
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
@@ -135,8 +135,8 @@
       <xsl:attribute name="jaxb:version">2.1</xsl:attribute>
       <xsl:attribute name="jaxb:extensionBindingPrefixes">annox</xsl:attribute>
       
-      <xs:import namespace="http://rdb.libx4j.org/sqlx.xsd" schemaLocation="http://rdb.libx4j.org/sqlx.xsd"/>
-      <xs:import namespace="http://rdb.libx4j.org/datatypes.xsd" schemaLocation="http://rdb.libx4j.org/datatypes.xsd"/>
+      <xs:import namespace="http://rdb.libx4j.org/sqlx-0.9.8.xsd" schemaLocation="http://rdb.libx4j.org/sqlx-0.9.8.xsd"/>
+      <xs:import namespace="http://rdb.libx4j.org/datatypes-0.9.8.xsd" schemaLocation="http://rdb.libx4j.org/datatypes-0.9.8.xsd"/>
       
       <xsl:for-each select="ddlx:table">
         <xs:complexType>

@@ -41,8 +41,8 @@ import org.lib4j.xml.SimpleNamespaceContext;
 import org.lib4j.xml.dom.DOMStyle;
 import org.lib4j.xml.dom.DOMs;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx.xAA.$Table;
-import org.libx4j.rdb.ddlx.xAA.Schema;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Table;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.Schema;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.rdb.vendor.DBVendor;
@@ -71,7 +71,7 @@ public class ReverseTest extends DDLxTest {
   private static final Map<String,String> prefixToNamespaceURI = new HashMap<String,String>();
 
   static {
-    prefixToNamespaceURI.put("ddlx", "http://rdb.libx4j.org/ddlx.xsd");
+    prefixToNamespaceURI.put("ddlx", "http://rdb.libx4j.org/ddlx-0.9.8.xsd");
     prefixToNamespaceURI.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
   }
 

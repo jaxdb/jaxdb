@@ -27,16 +27,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.libx4j.rdb.ddlx.xAA.$Bigint;
-import org.libx4j.rdb.ddlx.xAA.$Char;
-import org.libx4j.rdb.ddlx.xAA.$Check;
-import org.libx4j.rdb.ddlx.xAA.$Decimal;
-import org.libx4j.rdb.ddlx.xAA.$Double;
-import org.libx4j.rdb.ddlx.xAA.$Float;
-import org.libx4j.rdb.ddlx.xAA.$Int;
-import org.libx4j.rdb.ddlx.xAA.$RangeOperator;
-import org.libx4j.rdb.ddlx.xAA.$Smallint;
-import org.libx4j.rdb.ddlx.xAA.$Tinyint;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Bigint;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Char;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Check;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Decimal;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Double;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Float;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Int;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$RangeOperator;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Smallint;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Tinyint;
 
 public class dt {
   public static abstract class DataType<T> implements Serializable {
@@ -88,7 +88,7 @@ public class dt {
       else {
         final $Bigint.Check typedCheck = new $Bigint.Check();
         typedCheck.setCondition$(new $Bigint.Check.Condition$(new BigInteger(check.getValue().text())));
-        typedCheck.setOperator$(new $Bigint.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Bigint.Check.Operator$($Bigint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -154,7 +154,7 @@ public class dt {
     protected static $Char addCheck(final $Char column, final $Check check) {
       final $Char.Check typedCheck = new $Char.Check();
       typedCheck.setCondition$(new $Char.Check.Condition$(check.getValue().text()));
-      typedCheck.setOperator$(new $Char.Check.Operator$(check.getOperator().text()));
+      typedCheck.setOperator$(new $Char.Check.Operator$($Char.Check.Operator$.Enum.valueOf(check.getOperator().text())));
       column.setCheck(typedCheck);
 
       // TODO: Implement OR.
@@ -260,7 +260,7 @@ public class dt {
       else {
         final $Decimal.Check typedCheck = new $Decimal.Check();
         typedCheck.setCondition$(new $Decimal.Check.Condition$(new BigDecimal(check.getValue().text())));
-        typedCheck.setOperator$(new $Decimal.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Decimal.Check.Operator$($Decimal.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -304,7 +304,7 @@ public class dt {
       else {
         final $Double.Check typedCheck = new $Double.Check();
         typedCheck.setCondition$(new $Double.Check.Condition$(Double.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Double.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Double.Check.Operator$($Double.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -359,7 +359,7 @@ public class dt {
       else {
         final $Float.Check typedCheck = new $Float.Check();
         typedCheck.setCondition$(new $Float.Check.Condition$(Float.valueOf(check.getValue().text())));
-        typedCheck.setOperator$(new $Float.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Float.Check.Operator$($Float.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -398,7 +398,7 @@ public class dt {
       else {
         final $Int.Check typedCheck = new $Int.Check();
         typedCheck.setCondition$(new $Int.Check.Condition$(new BigInteger(check.getValue().text())));
-        typedCheck.setOperator$(new $Int.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Int.Check.Operator$($Int.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -437,7 +437,7 @@ public class dt {
       else {
         final $Smallint.Check typedCheck = new $Smallint.Check();
         typedCheck.setCondition$(new $Smallint.Check.Condition$(new BigInteger(check.getValue().text())));
-        typedCheck.setOperator$(new $Smallint.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Smallint.Check.Operator$($Smallint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 
@@ -502,7 +502,7 @@ public class dt {
       else {
         final $Tinyint.Check typedCheck = new $Tinyint.Check();
         typedCheck.setCondition$(new $Tinyint.Check.Condition$(new BigInteger(check.getValue().text())));
-        typedCheck.setOperator$(new $Tinyint.Check.Operator$(check.getOperator().text()));
+        typedCheck.setOperator$(new $Tinyint.Check.Operator$($Tinyint.Check.Operator$.Enum.valueOf(check.getOperator().text())));
         column.setCheck(typedCheck);
       }
 

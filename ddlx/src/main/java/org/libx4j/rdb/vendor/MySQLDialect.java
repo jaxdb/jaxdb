@@ -18,8 +18,8 @@ package org.libx4j.rdb.vendor;
 
 import java.util.List;
 
-import org.libx4j.rdb.ddlx.xAA.$Enum;
-import org.libx4j.rdb.ddlx.xAA.$Table;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Enum;
+import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Table;
 
 public class MySQLDialect extends Dialect {
   @Override
