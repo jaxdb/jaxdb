@@ -16,8 +16,8 @@
 
 package org.libx4j.rdb.vendor;
 
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Enum;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Table;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 
 public class DB2Dialect extends Dialect {
   @Override

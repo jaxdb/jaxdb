@@ -21,11 +21,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Column;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Index;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Integer;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Named;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.$Table;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Column;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Index;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Integer;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Named;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public final class MySQLCompiler extends Compiler {

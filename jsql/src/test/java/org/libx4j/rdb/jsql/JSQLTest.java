@@ -31,7 +31,7 @@ import org.lib4j.lang.Resources;
 import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc;
 import org.libx4j.rdb.jsql.generator.Generator;
 import org.libx4j.rdb.sqlx_0_9_8.Database;
 import org.libx4j.xsb.runtime.Bindings;
@@ -61,9 +61,9 @@ public abstract class JSQLTest {
       database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
-    final xLzAluECXYQJdhA.Schema schema;
+    final xLzgluGCXYYJc.Schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
-      schema = (xLzAluECXYQJdhA.Schema)Bindings.parse(new InputSource(in));
+      schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);

@@ -35,7 +35,7 @@ import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.lib4j.xml.jaxb.XJCompiler;
 import org.libx4j.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx098.xLzAluECXYQJdhA.Schema;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.sqlx_0_9_8.Database;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
