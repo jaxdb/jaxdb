@@ -103,7 +103,7 @@
             <configuration>
               <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
               <schemas>
-                <schema>src/main/resources/sqlx.xsd</schema>
+                <schema>src/main/resources/sqlx-0.9.8.xsd</schema>
               </schemas>
             </configuration>
           </execution>
