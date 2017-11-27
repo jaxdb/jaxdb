@@ -1,1 +1,71 @@
-sqlx-common-0.9.8.xsd
+<!--
+  Copyright (c) 2016 lib4j
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<xs:schema
+  attributeFormDefault="qualified"
+  elementFormDefault="qualified"
+  targetNamespace="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
+  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:simpleType name="uuid">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UUID"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:attributeGroup name="generateOnUuid">
+    <xs:attribute name="generateOnInsert" type="sqlx:uuid"/>
+  </xs:attributeGroup>
+  
+  <xs:simpleType name="timestamp">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="TIMESTAMP"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:attributeGroup name="generateOnTimestamp">
+    <xs:attribute name="generateOnInsert" type="sqlx:timestamp"/>
+    <xs:attribute name="generateOnUpdate" type="sqlx:timestamp"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="char">
+    <xs:attributeGroup ref="sqlx:generateOnUuid"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="integer">
+    <xs:attribute name="generateOnUpdate">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="INCREMENT"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="date">
+    <xs:attributeGroup ref="sqlx:generateOnTimestamp"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="time">
+    <xs:attributeGroup ref="sqlx:generateOnTimestamp"/>
+  </xs:attributeGroup>
+  
+  <xs:attributeGroup name="datetime">
+    <xs:attributeGroup ref="sqlx:generateOnTimestamp"/>
+  </xs:attributeGroup>
+    
+</xs:schema>
