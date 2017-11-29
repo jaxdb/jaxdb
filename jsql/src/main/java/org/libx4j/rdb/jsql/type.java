@@ -2212,7 +2212,7 @@ public final class type {
   public static abstract class LargeObject<T extends Closeable> extends DataType<T> implements kind.LargeObject<T> {
     private final Long length;
 
-    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
+    protected LargeObject(final Entity owner, final String name, final T _default, final boolean unique, final boolean primary, final boolean nullable, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final Long length) {
       super(owner, name, _default, unique, primary, nullable, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
