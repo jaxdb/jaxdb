@@ -536,7 +536,7 @@ public class Generator {
         enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
-      builder.append("      private final " + String.class.getName() + " table = \"" + table.getName$().text() + "\";\n      private final " + String.class.getName() + " column = \"" + column.getName$().text() + "\";\n      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " table() {\n        return table;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " column() {\n        return column;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
+      builder.append("      private final " + String.class.getName() + " table = \"" + table.getName$().text() + "\";\n      private final " + String.class.getName() + " column = \"" + column.getName$().text() + "\";\n      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
     return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();

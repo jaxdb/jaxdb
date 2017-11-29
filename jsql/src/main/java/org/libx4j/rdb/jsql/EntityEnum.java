@@ -17,6 +17,4 @@
 package org.libx4j.rdb.jsql;
 
 public interface EntityEnum {
-  public String table();
-  public String column();
 }
