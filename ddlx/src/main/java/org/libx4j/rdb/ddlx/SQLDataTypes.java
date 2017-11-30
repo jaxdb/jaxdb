@@ -17,6 +17,8 @@
 package org.libx4j.rdb.ddlx;
 
 import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.lib4j.lang.Arrays;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Index;
@@ -49,15 +51,20 @@ final class SQLDataTypes {
     return "trg_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
+  private static final Map<String,Integer> indexNameToCount = new HashMap<String,Integer>();
+
   protected static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
     if (index == null || column.length == 0)
       return null;
 
-    String name = "";
-    for (final $Named c : column)
-      name += "_" + c.getName$().text();
+    final StringBuilder builder = new StringBuilder("idx_").append(table.getName$().text());
+    for (final $Named col : column)
+      builder.append("_").append(col.getName$().text());
 
-    return "idx_" + table.getName$().text() + name;
+    final String name = builder.toString();
+    int count = indexNameToCount.getOrDefault(name, 0);
+    indexNameToCount.put(name, ++count);
+    return builder.append(count).toString();
   }
 
   protected static String getIndexName(final $Table table, final $Table.Indexes.Index index) {
