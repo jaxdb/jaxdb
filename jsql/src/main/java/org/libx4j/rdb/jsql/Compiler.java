@@ -303,10 +303,10 @@ abstract class Compiler {
     for (int j = 0; j < columns.length; j++) {
       final type.DataType column = columns[j];
       if (!column.wasSet()) {
-        if (column.generateOnInsert == null)
+        if (column.generateOnInsert != null)
+          column.generateOnInsert.generate(column);
+        else if (column.get() == null)
           continue;
-
-        column.generateOnInsert.generate(column);
       }
 
       if (builder.length() > 0)
@@ -319,14 +319,15 @@ abstract class Compiler {
 
     boolean paramAdded = false;
     for (int j = 0; j < entity.column.length; j++) {
-      final type.DataType dataType = entity.column[j];
-      if (dataType.wasSet() || dataType.generateOnInsert != null) {
-        if (paramAdded)
-          compilation.append(", ");
+      final type.DataType column = entity.column[j];
+      if (!column.wasSet() && column.generateOnInsert == null && column.get() == null)
+        continue;
 
-        compilation.addParameter(dataType, false);
-        paramAdded = true;
-      }
+      if (paramAdded)
+        compilation.append(", ");
+
+      compilation.addParameter(column, false);
+      paramAdded = true;
     }
 
     compilation.append(")");
