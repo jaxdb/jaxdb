@@ -584,15 +584,15 @@ abstract class Compiler {
     else {
       if (dataType.owner != null) {
         final Alias alias = compilation.getAlias(dataType.owner);
-        if (alias != null) {
-          if (compilation.command.peek() instanceof SelectCommand) {
-            alias.compile(compilation);
-            compilation.append(".");
-          }
+        if (alias == null)
+          throw new IllegalArgumentException("Missing alias for table `" + dataType.owner.name() + "` needed for column `" + dataType.name + "`");
 
-          compilation.append(dataType.name);
-          return;
+        if (compilation.command.peek() instanceof SelectCommand) {
+          alias.compile(compilation);
+          compilation.append(".");
         }
+
+        compilation.append(dataType.name);
       }
       else {
         compilation.addParameter(dataType, false);
