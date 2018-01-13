@@ -302,10 +302,10 @@ abstract class Compiler {
     entity.compile(compilation);
     for (int j = 0; j < columns.length; j++) {
       final type.DataType column = columns[j];
-      if (!column.wasSet()) {
-        if (column.generateOnInsert != null)
+      if (column.get() == null) {
+        if (!column.wasSet() && column.generateOnInsert != null)
           column.generateOnInsert.generate(column);
-        else if (column.get() == null)
+        else
           continue;
       }
 
@@ -320,7 +320,7 @@ abstract class Compiler {
     boolean paramAdded = false;
     for (int j = 0; j < entity.column.length; j++) {
       final type.DataType column = entity.column[j];
-      if (!column.wasSet() && column.generateOnInsert == null && column.get() == null)
+      if (column.get() == null && (column.wasSet() || column.generateOnInsert == null))
         continue;
 
       if (paramAdded)
