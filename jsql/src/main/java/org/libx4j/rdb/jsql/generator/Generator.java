@@ -50,10 +50,10 @@ import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Time;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Tinyint;
 import org.libx4j.rdb.jsql.EntityEnum;
 import org.libx4j.rdb.jsql.GenerateOn;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Integer;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.jsql.Schema;
 import org.libx4j.rdb.jsql.type;
+import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Integer;
+import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.ParseException;
 import org.slf4j.Logger;
@@ -536,7 +536,9 @@ public class Generator {
         enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
-      builder.append("      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
+      builder.append("      public static " + typeName + " fromString(final " + String.class.getName() + " string) {\n        if (string == null)\n          return null;\n\n        for (final " + typeName + " value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
+      builder.append("      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n");
+      builder.append("      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
     return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();
