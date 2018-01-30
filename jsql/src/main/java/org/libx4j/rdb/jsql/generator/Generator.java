@@ -538,6 +538,8 @@ public class Generator {
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
       builder.append("      public static " + typeName + " fromString(final " + String.class.getName() + " string) {\n        if (string == null)\n          return null;\n\n        for (final " + typeName + " value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
       builder.append("      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n");
+      builder.append("      @" + Override.class.getName() + "\n      public String table() {\n        return \"" + table.getName$().text() + "\";\n      }\n\n");
+      builder.append("      @" + Override.class.getName() + "\n      public String column() {\n        return \"" + column.getName$().text() + "\";\n      }\n\n");
       builder.append("      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 

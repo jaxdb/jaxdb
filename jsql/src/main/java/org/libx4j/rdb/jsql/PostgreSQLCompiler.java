@@ -181,8 +181,9 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
-    return dataType instanceof ENUM ? "?::" + Dialect.getTypeName(dataType.owner.name(), dataType.name) : "?";
+    return dataType instanceof ENUM ? "?::" + Dialect.getTypeName(((ENUM<? extends EntityEnum>)dataType).get().table(), ((ENUM<? extends EntityEnum>)dataType).get().column()) : "?";
   }
 
   @Override
