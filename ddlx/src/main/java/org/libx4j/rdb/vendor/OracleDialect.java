@@ -19,7 +19,6 @@ package org.libx4j.rdb.vendor;
 import java.util.List;
 
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 
 public class OracleDialect extends Dialect {
   @Override
@@ -155,7 +154,7 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Table table, final $Enum type) {
+  public String declareEnum(final $Enum type) {
     if (type.getValues$() == null)
       return "VARCHAR2(0)";
 

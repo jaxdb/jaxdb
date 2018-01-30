@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -60,13 +61,7 @@ public final class Generator {
   }
 
   public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException {
-    return Generator.createDDL(DDLxAudit.makeAudit(url), vendor);
-  }
-
-  private static StatementBatch createDDL(final DDLxAudit audit, final DBVendor vendor) throws GeneratorExecutionException {
-    final Generator generator = new Generator(audit);
-    final StatementBatch statementBatch = new StatementBatch(generator.parse(vendor));
-    return statementBatch;
+    return new StatementBatch(new Generator(DDLxAudit.makeAudit(url)).parse(vendor));
   }
 
   private static String checkNameViolation(String string, final boolean strict) {
@@ -163,13 +158,13 @@ public final class Generator {
     }
   }
 
-  private List<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$Column> columnNameToColumn = new HashMap<String,$Column>();
     registerColumns(tableNames, columnNameToColumn, table, schema);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
+    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<CreateStatement>();
     statements.addAll(compiler.types(table));
 
     columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
@@ -183,8 +178,8 @@ public final class Generator {
   }
 
   public List<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
-    final Map<String,List<DropStatement>> dropStatements = new HashMap<String,List<DropStatement>>();
-    final Map<String,List<CreateStatement>> createTableStatements = new HashMap<String,List<CreateStatement>>();
+    final Map<String,LinkedHashSet<DropStatement>> dropStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
+    final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<String,LinkedHashSet<CreateStatement>>();
 
     final Set<String> skipTables = new HashSet<String>();
     final ListIterator<$Table> listIterator = schema.getTable().listIterator(schema.getTable().size());
@@ -194,8 +189,7 @@ public final class Generator {
         skipTables.add(table.getName$().text());
       }
       else if (!table.getAbstract$().text()) {
-        final List<DropStatement> drops = Compiler.getCompiler(vendor).drops(table);
-        dropStatements.put(table.getName$().text(), drops);
+        dropStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).drops(table));
       }
     }
 

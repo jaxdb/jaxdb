@@ -19,6 +19,7 @@ package org.libx4j.rdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Column;
@@ -45,8 +46,8 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected List<DropStatement> drops(final $Table table) {
-    final List<DropStatement> statements = super.drops(table);
+  protected LinkedHashSet<DropStatement> drops(final $Table table) {
+    final LinkedHashSet<DropStatement> statements = super.drops(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {

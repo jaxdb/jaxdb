@@ -19,6 +19,7 @@ package org.libx4j.rdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Column;
@@ -45,12 +46,12 @@ public final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected List<DropStatement> drops(final $Table table) {
-    final List<DropStatement> statements = super.drops(table);
+  protected LinkedHashSet<DropStatement> drops(final $Table table) {
+    final LinkedHashSet<DropStatement> statements = super.drops(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {
-          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(table.getName$().text(), (($Enum)column).getName$().text())));
+          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(($Enum)column)));
         }
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
@@ -70,7 +71,7 @@ public final class PostgreSQLCompiler extends Compiler {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {
           final $Enum type = ($Enum)column;
-          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(table.getName$().text(), type.getName$().text())).append(" AS ENUM (");
+          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(type)).append(" AS ENUM (");
           if (type.getValues$() != null) {
             final List<String> enums = Dialect.parseEnum(type.getValues$().text());
             final StringBuilder builder = new StringBuilder();

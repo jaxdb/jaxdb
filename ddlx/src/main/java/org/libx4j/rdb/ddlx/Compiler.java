@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -171,8 +172,7 @@ abstract class Compiler {
       ddl.append(getVendor().getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      final $Enum type = ($Enum)column;
-      ddl.append(getVendor().getDialect().declareEnum(table, type));
+      ddl.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
     final String defaultFragement = $default(table, column);
@@ -507,8 +507,8 @@ abstract class Compiler {
 
   protected abstract String dropIndexOnClause(final $Table table);
 
-  protected List<DropStatement> drops(final $Table table) {
-    final List<DropStatement> statements = new ArrayList<DropStatement>();
+  protected LinkedHashSet<DropStatement> drops(final $Table table) {
+    final LinkedHashSet<DropStatement> statements = new LinkedHashSet<DropStatement>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
 //      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())

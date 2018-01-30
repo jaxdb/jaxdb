@@ -17,7 +17,6 @@
 package org.libx4j.rdb.vendor;
 
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 
 public class DB2Dialect extends Dialect {
   @Override
@@ -154,7 +153,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  public String declareEnum(final $Table table, final $Enum type) {
+  public String declareEnum(final $Enum type) {
     throw new UnsupportedOperationException();
   }
 }

@@ -26,8 +26,18 @@ import java.util.List;
 import org.lib4j.util.NumberFormatter;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
+import org.libx4j.xsb.runtime.Binding;
+import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 public abstract class Dialect {
+  private static abstract class BindingProxy extends Binding {
+    private static final long serialVersionUID = -5727439225507675790L;
+
+    public static $AnySimpleType owner(final Binding binding) {
+      return Binding.owner(binding);
+    }
+  }
+
   protected void assertValidDecimal(final Short precision, final Short scale) {
     if (precision != null && precision > decimalMaxPrecision())
       throw new IllegalArgumentException("DECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
@@ -37,6 +47,10 @@ public abstract class Dialect {
 
     if (precision != null && scale != null && precision < scale)
       throw new IllegalArgumentException("Illegal DECIMAL(M,S) declaration: M [" + precision + "] must be >= S [" + scale + "]");
+  }
+
+  public static String getTypeName(final $Enum column) {
+    return getTypeName((($Table)BindingProxy.owner(column)).getName$().text(), column.getName$().text());
   }
 
   public static String getTypeName(final String tableName, final String columnName) {
@@ -182,5 +196,5 @@ public abstract class Dialect {
 
   public abstract String declareTime(final byte precision);
   public abstract String declareInterval();
-  public abstract String declareEnum(final $Table table, final $Enum type);
+  public abstract String declareEnum(final $Enum type);
 }
