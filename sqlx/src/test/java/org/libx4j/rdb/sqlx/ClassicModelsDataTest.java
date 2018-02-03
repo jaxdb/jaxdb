@@ -41,9 +41,15 @@ import org.xml.sax.SAXException;
 @Category(MixedTest.class)
 public class ClassicModelsDataTest extends SQLxTest {
   private static final String name = "classicmodels";
+
   @Test
   public void testLoadData(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     Assert.assertEquals(3864, loadData(connection, name).length);
+  }
+
+  @Test
+  public void testSql(final Connection connection) throws IOException, SAXException, SQLException {
+    createSql(connection, name);
   }
 }

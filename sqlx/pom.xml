@@ -38,6 +38,9 @@
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>**/*.sqlx</exclude>
+        </excludes>
       </testResource>
     </testResources>
     <plugins>
@@ -51,6 +54,24 @@
               <goal>testResources</goal>
             </goals>
             <phase>prepare-package</phase>
+          </execution>
+          <execution>
+            <id>copy-resources</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/test-classes/rdb</outputDirectory>
+              <resources>          
+                <resource>
+                  <directory>src/test/resources</directory>
+                  <includes>
+                    <include>**/*.sqlx</include>
+                  </includes>
+                </resource>
+              </resources>              
+            </configuration>            
           </execution>
         </executions>
       </plugin>
@@ -163,7 +184,6 @@
     <dependency>
       <groupId>org.lib4j</groupId>
       <artifactId>lib4j-jci</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.libx4j.rdb</groupId>

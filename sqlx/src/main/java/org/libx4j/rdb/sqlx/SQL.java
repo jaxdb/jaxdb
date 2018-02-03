@@ -17,10 +17,12 @@
 package org.libx4j.rdb.sqlx;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,15 +30,29 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.io.Files;
+import org.lib4j.jci.CompilationException;
+import org.lib4j.jci.JavaCompiler;
+import org.lib4j.lang.Arrays;
+import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.Resources;
 import org.lib4j.util.JavaIdentifiers;
+import org.lib4j.xml.jaxb.JaxbUtil;
+import org.lib4j.xml.jaxb.XJCompiler;
+import org.lib4j.xml.sax.XMLDocument;
+import org.lib4j.xml.sax.XMLDocuments;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
 import org.libx4j.rdb.ddlx.annotation.Table;
@@ -44,6 +60,7 @@ import org.libx4j.rdb.sqlx_0_9_8.Database;
 import org.libx4j.rdb.sqlx_0_9_8.Insert;
 import org.libx4j.rdb.sqlx_0_9_8.Row;
 import org.libx4j.rdb.vendor.DBVendor;
+import org.xml.sax.SAXException;
 
 public final class SQL {
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
@@ -119,30 +136,84 @@ public final class SQL {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + Classes.getStrictName(dataType));
   }
 
-  @SuppressWarnings("unchecked")
+  private static class RowIterator implements Iterator<Row> {
+    private final Insert insert;
+    private final String[] tableNames;
+    private Iterator<Row> rows;
+    private int index = 0;
+
+    public RowIterator(final Insert insert) {
+      this.insert = insert;
+      this.tableNames = insert.getClass().getAnnotation(XmlType.class).propOrder();
+      nextRows();
+    }
+
+    public RowIterator(final Database database) {
+      try {
+        this.insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
+        this.tableNames = insert.getClass().getAnnotation(XmlType.class).propOrder();
+        nextRows();
+      }
+      catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        throw new UnsupportedOperationException(e);
+      }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void nextRows() {
+      if (index >= tableNames.length)
+        return;
+
+      try {
+        this.rows = ((List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
+      }
+      catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+        throw new UnsupportedOperationException(e);
+      }
+    }
+
+    @Override
+    public boolean hasNext() {
+      return rows != null && rows.hasNext();
+    }
+
+    @Override
+    public Row next() {
+      if (rows == null)
+        throw new NoSuchElementException();
+
+      final Row row = rows.next();
+      if (!rows.hasNext())
+        nextRows();
+
+      return row;
+    }
+  };
+
+  public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
+    return INSERT(connection, new RowIterator(database));
+  }
+
   public static int[] INSERT(final Connection connection, final Insert insert) throws SQLException {
+    return INSERT(connection, new RowIterator(insert));
+  };
+
+  private static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final List<java.lang.Integer> counts = new ArrayList<java.lang.Integer>();
+    final List<Integer> counts = new ArrayList<Integer>();
 
     try {
-      final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
-      final List<Row> rows = new ArrayList<Row>();
-      for (final String tableName : xmlType.propOrder()) {
-        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableName)).invoke(insert)) {
-          rows.add(row);
-        }
-      }
-
-      if (rows.size() == 0)
+      if (!iterator.hasNext())
         return new int[0];
 
       // TODO: Implement batch.
-      try (final Statement statement = connection.createStatement()) {
-        for (final Row row : rows)
-          counts.add(statement.executeUpdate(loadRow(vendor, row)));
+      while (iterator.hasNext()) {
+        try (final Statement statement = connection.createStatement()) {
+          counts.add(statement.executeUpdate(loadRow(vendor, iterator.next())));
+        }
       }
     }
-    catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+    catch (final IllegalAccessException | InvocationTargetException e) {
       throw new UnsupportedOperationException(e);
     }
 
@@ -151,15 +222,6 @@ public final class SQL {
       array[i] = counts.get(i);
 
     return array;
-  }
-
-  public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
-    try {
-      return INSERT(connection, (Insert)database.getClass().getMethod("getInsert").invoke(database));
-    }
-    catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-      throw new UnsupportedOperationException(e);
-    }
   }
 
   private static String loadRow(final DBVendor vendor, final Row row) throws IllegalAccessException, InvocationTargetException {
@@ -199,9 +261,73 @@ public final class SQL {
     return builder.toString();
   }
 
-  public static void ddl2xsd(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
+  public static void ddlx2sqlx(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
     org.lib4j.xml.transform.Transformer.transform(Resources.getResource("sqlx.xsl").getURL(), ddlxFile, xsdFile);
+  }
+
+  private static Class<?> getBindingClass(final URL schemaLocation, final String name, final File[] classpathFiles) throws IOException {
+    try {
+      return Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name));
+    }
+    catch (final ClassNotFoundException e) {
+      final File sqlxTempDir = new File(Files.getTempDir(), "sqlx");
+      Files.deleteAllOnExit(sqlxTempDir.toPath());
+      sqlxTempDir.deleteOnExit();
+      final File tempDir = new File(sqlxTempDir, name);
+      try {
+        createJaxBindings(schemaLocation, tempDir, tempDir, classpathFiles);
+        final URLClassLoader classLoader = new URLClassLoader(Arrays.concat(ClassLoaders.getClassPath(), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+        return Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name), true, classLoader);
+      }
+      catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
+        throw new UnsupportedOperationException(e1);
+      }
+    }
+  }
+
+  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile, final File[] classpathFiles) throws IOException, SAXException {
+    sqlFile.getParentFile().mkdirs();
+
+    final XMLDocument xmlDocument = XMLDocuments.parse(sqlxFile, false, true);
+    final QName rootElement = xmlDocument.getRootElement();
+
+    @SuppressWarnings("unchecked")
+    final Class<Database> bindingClass = (Class<Database>)getBindingClass(xmlDocument.getSchemaLocation(), rootElement.getLocalPart(), classpathFiles);
+
+    try (final FileOutputStream fos = new FileOutputStream(sqlFile)) {
+      final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
+      final RowIterator iterator = new RowIterator(database);
+      boolean firstLine = true;
+      while (iterator.hasNext()) {
+        if (firstLine)
+          firstLine = false;
+        else
+          fos.write('\n');
+
+        fos.write((loadRow(vendor, iterator.next()) + ";").getBytes());
+      }
+    }
+    catch (final IllegalAccessException | InvocationTargetException | SAXException e) {
+      throw new UnsupportedOperationException(e);
+    }
+  }
+
+  protected static void createJaxBindings(final URL schema, final File sourcesDestDir, final File classedDestDir, final File[] classpathFiles) throws CompilationException, IOException, JAXBException {
+    final XJCompiler.Command command = new XJCompiler.Command();
+    command.setExtension(true);
+    command.setDestDir(sourcesDestDir);
+
+    final LinkedHashSet<URL> xjbs = new LinkedHashSet<URL>();
+    xjbs.add(Resources.getResource("sqlx.xjb").getURL());
+    command.setXJBs(xjbs);
+
+    final LinkedHashSet<URL> schemas = new LinkedHashSet<URL>();
+    schemas.add(schema);
+    command.setSchemas(schemas);
+
+    XJCompiler.compile(command, classpathFiles);
+    new JavaCompiler(classedDestDir, classpathFiles).compile(command.getDestDir());
   }
 
   private SQL() {

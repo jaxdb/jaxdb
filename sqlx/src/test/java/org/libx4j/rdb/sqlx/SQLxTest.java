@@ -22,21 +22,20 @@ import java.io.InputStream;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.LinkedHashSet;
 
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.lib4j.jci.CompilationException;
-import org.lib4j.jci.JavaCompiler;
 import org.lib4j.lang.ClassLoaders;
+import org.lib4j.lang.Resource;
 import org.lib4j.lang.Resources;
 import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.jaxb.JaxbUtil;
-import org.lib4j.xml.jaxb.XJCompiler;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.sqlx_0_9_8.Database;
+import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -45,35 +44,30 @@ public abstract class SQLxTest {
   private static final File sourcesDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
   protected static final File testClassesDir = new File("target/test-classes");
+  private static final File[] classpath;
 
-  public static void createSchemas(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
-    final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
-    final File destFile = new File(resourcesDestDir, name + ".xsd");
-    SQL.ddl2xsd(ddlx, destFile);
-
-    final XJCompiler.Command command = new XJCompiler.Command();
-    command.setExtension(true);
-    command.setDestDir(sourcesDestDir);
-
-    final LinkedHashSet<URL> xjbs = new LinkedHashSet<URL>();
-    xjbs.add(Resources.getResource("sqlx.xjb").getURL());
-    command.setXJBs(xjbs);
-
-    final LinkedHashSet<URL> schemas = new LinkedHashSet<URL>();
-    schemas.add(destFile.toURI().toURL());
-    command.setSchemas(schemas);
-
+  static {
     final URL[] mainClasspath = ClassLoaders.getClassPath();
     final URL[] testClasspath = ClassLoaders.getTestClassPath();
-    final File[] classpath = new File[mainClasspath.length + testClasspath.length];
+    classpath = new File[mainClasspath.length + testClasspath.length];
     for (int i = 0; i < mainClasspath.length; i++)
       classpath[i] = new File(mainClasspath[i].getFile());
 
     for (int i = 0; i < testClasspath.length; i++)
       classpath[i + mainClasspath.length] = new File(testClasspath[i].getFile());
+  }
 
-    XJCompiler.compile(command, classpath);
-    new JavaCompiler(testClassesDir, classpath).compile(command.getDestDir());
+  public static void createSchemas(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
+    final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
+    final File destFile = new File(resourcesDestDir, name + ".xsd");
+    SQL.ddlx2sqlx(ddlx, destFile);
+    SQL.createJaxBindings(destFile.toURI().toURL(), sourcesDestDir, testClassesDir, classpath);
+  }
+
+  public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
+    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
+    final URL sqlx = Resources.getResource("rdb/" + name + ".sqlx").getURL();
+    SQL.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
   public static int[] loadData(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
@@ -84,11 +78,12 @@ public abstract class SQLxTest {
 
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
 
-    final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
-    final Database database;
-    try (final InputStream in = sqlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
-    }
+    Resource resource = Resources.getResource("rdb/" + name + ".sqlx");
+    if (resource == null)
+      resource = Resources.getResource(name + ".sqlx");
+
+    final URL sqlx = resource.getURL();
+    final Database database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
 
     return SQL.INSERT(connection, database);
   }
