@@ -272,7 +272,18 @@ public final class SQL {
     }
     catch (final ClassNotFoundException e) {
       final File sqlxTempDir = new File(Files.getTempDir(), "sqlx");
-      Files.deleteAllOnExit(sqlxTempDir.toPath());
+      // FIXME: Files.deleteAllOnExit() is not working!
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          try {
+            Files.deleteAll(sqlxTempDir.toPath());
+          }
+          catch (final IOException e) {
+            throw new UnsupportedOperationException(e);
+          }
+        }
+      });
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, name);
       try {
