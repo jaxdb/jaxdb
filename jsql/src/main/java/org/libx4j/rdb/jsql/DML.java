@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.lib4j.lang.Arrays;
-import org.libx4j.rdb.sqlx_0_9_8.Database;
+import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
 
 @SuppressWarnings("hiding")
 public final class DML {
@@ -1100,7 +1100,7 @@ public final class DML {
     return new InsertImpl.INSERT<DataType>(kind.DataType.class, Arrays.splice(columns, 0, 0, column));
   }
 
-  public static Insert.INSERT<?> INSERT(final Database database) {
+  public static Insert.INSERT<?> INSERT(final $Database database) {
     return new InsertImpl.INSERT<type.Subject<?>>(kind.Subject.class, Entities.toEntities(database));
   }
 

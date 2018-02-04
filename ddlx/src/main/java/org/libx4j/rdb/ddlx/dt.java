@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
+import org.lib4j.xml.binding.HexBinary;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Bigint;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Char;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Check;
@@ -127,6 +128,10 @@ public class dt {
       return string == null ? null : new BINARY(string);
     }
 
+    public BINARY(final HexBinary value) {
+      super(value == null ? null : value.toString());
+    }
+
     public BINARY(final String value) {
       super(value);
     }
@@ -141,6 +146,10 @@ public class dt {
 
     public static BLOB parse(final String string) {
       return string == null ? null : new BLOB(string);
+    }
+
+    public BLOB(final HexBinary value) {
+      super(value == null ? null : value.toString());
     }
 
     public BLOB(final String value) {

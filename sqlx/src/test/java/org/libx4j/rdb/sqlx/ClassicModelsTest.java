@@ -20,11 +20,16 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.transform.TransformerException;
+
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
+import org.libx4j.rdb.ddlx.DDLxTest;
+import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -37,9 +42,27 @@ import org.xml.sax.SAXException;
 @VendorRunner.Test({Derby.class, SQLite.class})
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
-public class TypesDataTest extends SQLxTest {
+public class ClassicModelsTest extends SQLxTest {
+  private static final String name = "classicmodels";
+
+  static {
+    try {
+      createSchemas("classicmodels");
+    }
+    catch (final IOException | TransformerException e) {
+      throw new ExceptionInInitializerError(e);
+    }
+  }
+
   @Test
-  public void testLoadData(final Connection connection) throws ClassNotFoundException, IOException, SAXException, SQLException {
-    Assert.assertEquals(1000, loadData(connection, "types").length);
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException {
+    DDLxTest.recreateSchema(connection, name);
+    Assert.assertEquals(3864, loadData(connection, name).length);
+  }
+
+  @Test
+  @Ignore
+  public void testSql(final Connection connection) throws IOException, SAXException, SQLException {
+    createSql(connection, name);
   }
 }

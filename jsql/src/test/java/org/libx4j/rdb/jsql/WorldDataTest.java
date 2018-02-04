@@ -32,7 +32,6 @@ import org.libx4j.rdb.ddlx.runner.Oracle;
 import org.libx4j.rdb.ddlx.runner.PostgreSQL;
 import org.libx4j.rdb.ddlx.runner.SQLite;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
-import org.xml.sax.SAXException;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
@@ -42,7 +41,7 @@ public class WorldDataTest extends JSQLTest {
   private static final String name = "world";
 
   @Test
-  public void testReload(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException {
+  public void testReload(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     JSQLTest.loadEntities(connection, name);
   }

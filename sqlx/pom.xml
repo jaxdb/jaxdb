@@ -34,7 +34,7 @@
         <directory>${project.build.directory}/generated-test-resources/rdb</directory>
       </testResource>
       <testResource>
-        <directory>${project.build.directory}/generated-test-sources/jaxb</directory>
+        <directory>${project.build.directory}/generated-test-sources/xsb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -82,7 +82,7 @@
           <reuseForks>false</reuseForks>
           <additionalClasspathElements>
             <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-            <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
       </plugin>
@@ -116,13 +116,13 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.lib4j.maven.plugin</groupId>
-        <artifactId>xjc-maven-plugin</artifactId>
+        <groupId>org.libx4j.maven.plugin</groupId>
+        <artifactId>xsb-maven-plugin</artifactId>
         <executions>
           <execution>
             <id>default</id>
             <configuration>
-              <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
+              <destDir>${project.build.directory}/generated-sources/xsb</destDir>
               <schemas>
                 <schema>src/main/resources/sqlx-0.9.8.xsd</schema>
               </schemas>
@@ -131,18 +131,15 @@
           <execution>
             <id>test-resources</id>
             <goals>
-              <goal>xjc</goal>
+              <goal>generate</goal>
             </goals>
             <phase>generate-test-resources</phase>
             <configuration>
-              <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
+              <destDir>${project.build.directory}/generated-test-sources/xsb</destDir>
               <schemas>
                 <schema>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</schema>
                 <schema>${project.build.directory}/generated-test-resources/rdb/types.xsd</schema>
               </schemas>
-              <bindings>
-                <binding>src/main/resources/sqlx.xjb</binding>
-              </bindings>
             </configuration>
           </execution>
         </executions>
@@ -180,6 +177,10 @@
     <dependency>
       <groupId>org.lib4j</groupId>
       <artifactId>lib4j-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.libx4j.xsb</groupId>
+      <artifactId>xsb-generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.lib4j</groupId>

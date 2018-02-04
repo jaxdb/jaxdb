@@ -22,21 +22,35 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.junit.Assert;
 import org.junit.Test;
-import org.lib4j.jci.CompilationException;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 import org.lib4j.lang.Strings;
+import org.lib4j.test.MixedTest;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.Random;
+import org.libx4j.rdb.ddlx.runner.Derby;
+import org.libx4j.rdb.ddlx.runner.MySQL;
+import org.libx4j.rdb.ddlx.runner.Oracle;
+import org.libx4j.rdb.ddlx.runner.PostgreSQL;
+import org.libx4j.rdb.ddlx.runner.SQLite;
+import org.libx4j.rdb.ddlx.runner.VendorRunner;
 
-public class TypesCreateTest extends SQLxTest {
+@RunWith(VendorRunner.class)
+@VendorRunner.Test({Derby.class, SQLite.class})
+@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
+@Category(MixedTest.class)
+public class TypesTest extends SQLxTest {
   private static void createTypeData(final OutputStream out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n".getBytes());
@@ -98,16 +112,21 @@ public class TypesCreateTest extends SQLxTest {
     out.flush();
   }
 
-  @Test
-  public void testCreateSchema() throws CompilationException, IOException, JAXBException, TransformerException {
-    createSchemas("types");
+  static {
+    try {
+      createSchemas("types");
+      resourcesDestDir.mkdirs();
+      try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.sqlx"))) {
+        createTypeData(out);
+      }
+    }
+    catch (final IOException | TransformerException e) {
+      throw new ExceptionInInitializerError(e);
+    }
   }
 
   @Test
-  public void testCreateData() throws IOException {
-    resourcesDestDir.mkdirs();
-    try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.sqlx"))) {
-      createTypeData(out);
-    }
+  public void testLoadData(final Connection connection) throws IOException, SQLException {
+    Assert.assertEquals(1000, loadData(connection, "types").length);
   }
 }

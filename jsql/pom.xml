@@ -88,7 +88,6 @@
             <runOrder>alphabetical</runOrder>
             <additionalClasspathElements>
               <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
             </additionalClasspathElements>
@@ -102,7 +101,6 @@
             <runOrder>alphabetical</runOrder>
             <additionalClasspathElements>
               <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
             </additionalClasspathElements>

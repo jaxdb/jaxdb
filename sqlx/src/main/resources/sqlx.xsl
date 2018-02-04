@@ -167,6 +167,18 @@
               <xsl:variable name="tableName" select="@name"/>
               <xsl:for-each select="ddlx:column">
                 <xs:attribute>
+                  <xsl:choose>
+                    <xsl:when test="@sqlx:generateOnInsert">
+                      <xsl:attribute name="id">
+                        <xsl:value-of select="concat($tableName, '-', @name, '-', @sqlx:generateOnInsert)"/>
+                      </xsl:attribute>
+                    </xsl:when>
+                    <xsl:otherwise>
+                      <xsl:attribute name="id">
+                        <xsl:value-of select="concat($tableName, '-', @name)"/>
+                      </xsl:attribute>
+                    </xsl:otherwise>
+                  </xsl:choose>
                   <xsl:attribute name="name">
                     <xsl:value-of select="function:instance-case(@name)"/>
                   </xsl:attribute>
@@ -406,6 +418,9 @@
                 <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
                 <xsl:if test="not(@abstract='true')">
                   <xs:element minOccurs="0" maxOccurs="unbounded">
+                    <xsl:attribute name="id">
+                      <xsl:value-of select="@name"/>
+                    </xsl:attribute>
                     <xsl:attribute name="name">
                       <xsl:value-of select="function:instance-case(@name)"/>
                     </xsl:attribute>
@@ -441,6 +456,9 @@
       </xs:complexType>
       
       <xs:element>
+        <xsl:attribute name="id">
+          <xsl:value-of select="$database"/>
+        </xsl:attribute>
         <xsl:attribute name="name">
           <xsl:value-of select="$database"/>
         </xsl:attribute>
