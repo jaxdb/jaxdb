@@ -165,7 +165,10 @@ public final class SQL {
         return;
 
       try {
-        this.rows = ((List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
+        do {
+          this.rows = ((List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
+        }
+        while (!this.rows.hasNext() && index < tableNames.length);
       }
       catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
         throw new UnsupportedOperationException(e);
