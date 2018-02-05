@@ -529,6 +529,7 @@ public class Generator {
     final StringBuilder builder = new StringBuilder();
     final Type type = getType(table, column);
     if (column instanceof $Enum) {
+      builder.append("\n    @").append(Classes.getStrictName(EntityEnum.Spec.class)).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
       builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
@@ -538,8 +539,6 @@ public class Generator {
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
       builder.append("      public static " + typeName + " fromString(final " + String.class.getName() + " string) {\n        if (string == null)\n          return null;\n\n        for (final " + typeName + " value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
       builder.append("      private final " + String.class.getName() + " value;\n\n      " + typeName + "(final " + String.class.getName() + " value) {\n        this.value = value;\n      }\n\n");
-      builder.append("      @" + Override.class.getName() + "\n      public String table() {\n        return \"" + table.getName$().text() + "\";\n      }\n\n");
-      builder.append("      @" + Override.class.getName() + "\n      public String column() {\n        return \"" + column.getName$().text() + "\";\n      }\n\n");
       builder.append("      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 

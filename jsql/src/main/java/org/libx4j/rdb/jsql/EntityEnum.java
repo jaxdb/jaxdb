@@ -16,7 +16,16 @@
 
 package org.libx4j.rdb.jsql;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
 public interface EntityEnum {
-  public String table();
-  public String column();
+  @Target({ElementType.TYPE})
+  @Retention(RetentionPolicy.RUNTIME)
+  public @interface Spec {
+    public String table();
+    public String column();
+  }
 }
