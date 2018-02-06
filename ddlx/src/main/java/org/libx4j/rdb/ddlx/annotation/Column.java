@@ -14,17 +14,16 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.jsql;
+package org.libx4j.rdb.ddlx.annotation;
 
-import org.libx4j.rdb.sqlx_0_9_8.Database;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class Entities {
-  public static <T extends type.Entity>T[] toEntities(final Database database) {
-    return EntitiesJaxb.toEntities(database);
-  }
-
-  public static <T extends type.Entity>T[] toEntities(final $Database database) {
-    return EntitiesXsb.toEntities(database);
-  }
+@Target({ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Column {
+  String name();
+  String generateOnInsert() default "";
 }

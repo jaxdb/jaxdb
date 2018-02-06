@@ -20,13 +20,14 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.lib4j.jci.CompilationException;
 import org.lib4j.test.MixedTest;
 import org.libx4j.rdb.ddlx.DDLxTest;
 import org.libx4j.rdb.ddlx.GeneratorExecutionException;
@@ -49,7 +50,7 @@ public class ClassicModelsTest extends SQLxTest {
     try {
       createSchemas("classicmodels");
     }
-    catch (final IOException | TransformerException e) {
+    catch (final CompilationException | IOException | JAXBException | TransformerException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
@@ -61,7 +62,6 @@ public class ClassicModelsTest extends SQLxTest {
   }
 
   @Test
-  @Ignore
   public void testSql(final Connection connection) throws IOException, SAXException, SQLException {
     createSql(connection, name);
   }

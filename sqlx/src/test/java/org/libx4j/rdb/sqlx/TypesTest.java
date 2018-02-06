@@ -29,12 +29,14 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.Strings;
 import org.lib4j.test.MixedTest;
 import org.lib4j.util.Hexadecimal;
@@ -120,7 +122,7 @@ public class TypesTest extends SQLxTest {
         createTypeData(out);
       }
     }
-    catch (final IOException | TransformerException e) {
+    catch (final CompilationException | IOException | JAXBException | TransformerException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

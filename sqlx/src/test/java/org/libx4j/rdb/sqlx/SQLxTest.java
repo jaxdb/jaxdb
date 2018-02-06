@@ -23,8 +23,10 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resource;
 import org.lib4j.lang.Resources;
@@ -53,17 +55,18 @@ public abstract class SQLxTest {
       classpath[i + mainClasspath.length] = new File(testClasspath[i].getFile());
   }
 
-  public static void createSchemas(final String name) throws IOException, TransformerException {
+  public static void createSchemas(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlx(ddlx, destFile);
     SQL.xsd2xsb(sourcesDestDir, testClassesDir, destFile.toURI().toURL());
+    SQL.xsd2jaxb(sourcesDestDir, testClassesDir, destFile.toURI().toURL());
   }
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final URL sqlx = Resources.getResource("rdb/" + name + ".sqlx").getURL();
-    SQL.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
+    SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException {
@@ -79,6 +82,6 @@ public abstract class SQLxTest {
       resource = Resources.getResource(name + ".sqlx");
 
     final URL sqlx = resource.getURL();
-    return SQL.INSERT(connection, ($Database)Bindings.parse(sqlx));
+    return SqlXsb.INSERT(connection, ($Database)Bindings.parse(sqlx));
   }
 }

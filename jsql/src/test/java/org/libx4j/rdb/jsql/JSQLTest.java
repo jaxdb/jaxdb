@@ -28,12 +28,16 @@ import java.sql.SQLException;
 import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
 import org.lib4j.lang.Resources;
+import org.lib4j.util.JavaIdentifiers;
+import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc;
 import org.libx4j.rdb.jsql.generator.Generator;
+import org.libx4j.rdb.sqlx_0_9_8.Database;
 import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException {
@@ -44,7 +48,7 @@ public abstract class JSQLTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntities(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException {
+  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
@@ -54,6 +58,31 @@ public abstract class JSQLTest {
 
     final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
     final $Database database = ($Database)Bindings.parse(sqlx);
+
+    final xLzgluGCXYYJc.Schema schema;
+    try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
+      schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
+    }
+
+    Schemas.flatten(schema);
+    Schemas.truncate(connection, Schemas.flatten(schema).getTable());
+    return INSERT(database).execute();
+  }
+
+  @SuppressWarnings("unchecked")
+  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
+      @Override
+      public Connection getConnection() throws SQLException {
+        return connection;
+      }
+    });
+
+    final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
+    final Database database;
+    try (final InputStream in = sqlx.openStream()) {
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
+    }
 
     final xLzgluGCXYYJc.Schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
