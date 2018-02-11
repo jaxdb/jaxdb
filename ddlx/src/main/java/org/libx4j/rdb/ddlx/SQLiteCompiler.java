@@ -99,7 +99,7 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected String dropIndexOnClause(final $Table table) {
-    return " ON " + table.getName$().text();
+    return " ON " + q(table.getName$().text());
   }
 
   @Override
@@ -107,6 +107,6 @@ final class SQLiteCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 }

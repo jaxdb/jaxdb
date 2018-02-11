@@ -46,23 +46,24 @@ public final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected LinkedHashSet<DropStatement> drops(final $Table table) {
-    final LinkedHashSet<DropStatement> statements = super.drops(table);
+  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+    final LinkedHashSet<DropStatement> statements = super.dropTypes(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {
-          statements.add(new DropStatement("DROP TYPE IF EXISTS " + Dialect.getTypeName(($Enum)column)));
+          statements.add(new DropStatement("DROP TYPE IF EXISTS " + q(Dialect.getTypeName(($Enum)column))));
         }
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type))
-            statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + SQLDataTypes.getSequenceName(table, type)));
+            statements.add(new DropStatement("DROP SEQUENCE IF EXISTS " + q(SQLDataTypes.getSequenceName(table, type))));
         }
       }
     }
 
     return statements;
   }
+
 
   @Override
   protected List<CreateStatement> types(final $Table table) {
@@ -71,7 +72,7 @@ public final class PostgreSQLCompiler extends Compiler {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {
           final $Enum type = ($Enum)column;
-          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(Dialect.getTypeName(type)).append(" AS ENUM (");
+          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(q(Dialect.getTypeName(type))).append(" AS ENUM (");
           if (type.getValues$() != null) {
             final List<String> enums = Dialect.parseEnum(type.getValues$().text());
             final StringBuilder builder = new StringBuilder();
@@ -86,7 +87,7 @@ public final class PostgreSQLCompiler extends Compiler {
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type))
-            statements.add(0, new CreateStatement("CREATE SEQUENCE " + SQLDataTypes.getSequenceName(table, type)));
+            statements.add(0, new CreateStatement("CREATE SEQUENCE " + q(SQLDataTypes.getSequenceName(table, type))));
         }
       }
     }
@@ -128,6 +129,6 @@ public final class PostgreSQLCompiler extends Compiler {
       uniqueClause = unique ? "UNIQUE " : "";
     }
 
-    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + indexName + " ON " + tableName + " USING " + type.text() + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + uniqueClause + "INDEX " + q(indexName) + " ON " + q(tableName) + " USING " + type.text() + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 }

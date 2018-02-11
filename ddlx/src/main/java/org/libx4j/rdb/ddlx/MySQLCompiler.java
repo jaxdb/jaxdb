@@ -50,7 +50,7 @@ public final class MySQLCompiler extends Compiler {
       String buffer = "";
       for (final String action : trigger.getActions$().text()) {
         buffer += "DELIMITER |\n";
-        buffer += "CREATE TRIGGER " + SQLDataTypes.getTriggerName(tableName, trigger, action) + " " + trigger.getTime$().text() + " " + action + " ON " + tableName + "\n";
+        buffer += "CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(tableName, trigger, action)) + " " + trigger.getTime$().text() + " " + action + " ON " + q(tableName) + "\n";
         buffer += "  FOR EACH ROW\n";
         buffer += "  BEGIN\n";
 
@@ -92,11 +92,11 @@ public final class MySQLCompiler extends Compiler {
 
   @Override
   protected String dropIndexOnClause(final $Table table) {
-    return " ON " + table.getName$().text();
+    return " ON " + q(table.getName$().text());
   }
 
   @Override
   protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 }

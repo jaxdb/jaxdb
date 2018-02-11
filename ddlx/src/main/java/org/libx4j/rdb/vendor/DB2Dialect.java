@@ -25,6 +25,11 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
+  public String quoteIdentifier(final String name) {
+    return "\"" + name + "\"";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

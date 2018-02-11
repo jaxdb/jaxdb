@@ -265,7 +265,7 @@ final class operator {
         else if (b instanceof BigInteger)
           bigDecimal = new BigDecimal((BigInteger)b);
         else
-          throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+          throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
         return evaluate(BigDecimal.valueOf(a.floatValue()), bigDecimal);
       }
@@ -280,7 +280,7 @@ final class operator {
         else if (b instanceof BigInteger)
           bigDecimal = new BigDecimal((BigInteger)b);
         else
-          throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+          throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
 
         return evaluate(BigDecimal.valueOf(a.doubleValue()), bigDecimal);
       }
@@ -310,7 +310,7 @@ final class operator {
         if (b instanceof BigInteger)
           return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof Short) {
@@ -335,7 +335,7 @@ final class operator {
         if (b instanceof BigInteger)
           return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof Integer) {
@@ -354,7 +354,7 @@ final class operator {
         if (b instanceof BigInteger)
           return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof Long) {
@@ -370,7 +370,7 @@ final class operator {
         if (b instanceof BigInteger)
           return evaluate(BigInteger.valueOf(a.longValue()), (BigInteger)b);
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof BigDecimal) {
@@ -386,7 +386,7 @@ final class operator {
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate((BigDecimal)a, BigDecimal.valueOf(b.longValue()));
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
       if (a instanceof BigInteger) {
@@ -402,10 +402,10 @@ final class operator {
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate((BigInteger)a, BigInteger.valueOf(b.longValue()));
 
-        throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+        throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
       }
 
-      throw new UnsupportedOperationException(b.getClass().getName() + " is not a supported Number type");
+      throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
     }
 
     protected abstract float evaluate(final float a, final float b);

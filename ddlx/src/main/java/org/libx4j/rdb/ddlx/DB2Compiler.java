@@ -40,12 +40,12 @@ class DB2Compiler extends Compiler {
 
   @Override
   protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " USING " + type.text() + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 
   @Override
   protected DropStatement dropTableIfExists(final $Table table) {
-    return new DropStatement("CALL db2perf_quiet_drop('TABLE " + table.getName$().text() + "')");
+    return new DropStatement("CALL db2perf_quiet_drop('TABLE " + q(table.getName$().text()) + "')");
   }
 
   @Override

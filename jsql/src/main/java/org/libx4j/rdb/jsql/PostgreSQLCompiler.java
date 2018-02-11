@@ -86,7 +86,8 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   protected String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
-    return "::text::" + Dialect.getTypeName(to.owner.name(), to.name);
+    final EntityEnum.Spec spec = to.type().getAnnotation(EntityEnum.Spec.class);
+    return "::text::" + Dialect.getTypeName(spec.table(), spec.column());
   }
 
   @Override

@@ -111,7 +111,7 @@ abstract class Compiler {
           compilation.append(", ");
 
         alias.compile(compilation);
-        compilation.append(".").append(column.name);
+        compilation.append(".").append(compilation.vendor.getDialect().quoteIdentifier(column.name));
         checkTranslateType(translateTypes, column, c, compilation);
       }
     }
@@ -140,7 +140,7 @@ abstract class Compiler {
   }
 
   protected String tableName(final type.Entity entity, final Compilation compilation) {
-    return entity.name();
+    return compilation.vendor.getDialect().quoteIdentifier(entity.name());
   }
 
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
@@ -312,7 +312,7 @@ abstract class Compiler {
       if (builder.length() > 0)
         builder.append(", ");
 
-      builder.append(column.name);
+      builder.append(compilation.vendor.getDialect().quoteIdentifier(column.name));
     }
 
     compilation.append(" (").append(builder).append(") VALUES (");
@@ -436,7 +436,7 @@ abstract class Compiler {
           if (paramAdded)
             compilation.append(", ");
 
-          compilation.append(column.name).append(" = ");
+          compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name)).append(" = ");
           compilation.addParameter(column, true);
           paramAdded = true;
         }
@@ -475,7 +475,7 @@ abstract class Compiler {
       if (i > 0)
         compilation.append(", ");
 
-      compilation.append(set.column.name).append(" = ");
+      compilation.append(compilation.vendor.getDialect().quoteIdentifier(set.column.name)).append(" = ");
       set.to.compile(compilation);
     }
 
@@ -585,14 +585,14 @@ abstract class Compiler {
       if (dataType.owner != null) {
         final Alias alias = compilation.getAlias(dataType.owner);
         if (alias == null)
-          throw new IllegalArgumentException("Missing alias for table `" + dataType.owner.name() + "` needed for column `" + dataType.name + "`");
+          throw new IllegalArgumentException("Missing alias for table " + compilation.vendor.getDialect().quoteIdentifier(dataType.owner.name()) + " needed for column " + compilation.vendor.getDialect().quoteIdentifier(dataType.name) + "`");
 
         if (compilation.command.peek() instanceof SelectCommand) {
           alias.compile(compilation);
           compilation.append(".");
         }
 
-        compilation.append(dataType.name);
+        compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
       }
       else {
         compilation.addParameter(dataType, false);

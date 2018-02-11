@@ -27,6 +27,11 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
+  public String quoteIdentifier(final String name) {
+    return "`" + name + "`";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return true;
   }

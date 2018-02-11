@@ -220,13 +220,13 @@ final class SqlJaxb {
         values.append(", ");
       }
 
-      columns.append(column.name());
+      columns.append(vendor.getDialect().quoteIdentifier(column.name()));
       values.append(value);
       hasValues = true;
     }
 
     final Table table = row.getClass().getAnnotation(Table.class);
-    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(table.name());
+    final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(table.name()));
     builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
     return builder.toString();
   }

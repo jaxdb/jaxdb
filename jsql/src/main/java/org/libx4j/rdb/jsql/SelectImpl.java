@@ -408,22 +408,24 @@ class SelectImpl {
         if (entities.size() == 1) {
           final Compilable subject = entities.iterator().next();
           if (subject instanceof type.Entity) {
-            final type.Entity entity = (type.Entity)subject;
-            final type.Entity out = entity.newInstance();
-            String sql = "SELECT ";
-            String select = "";
-            String where = "";
-            for (final type.DataType<?> dataType : entity.column) {
-              if (dataType.primary)
-                where += " AND " + dataType.name + " = ?";
-              else
-                select += ", " + dataType.name;
-            }
-
-            sql += select.substring(2) + " FROM " + entity.name() + " WHERE " + where.substring(5);
             try {
+              final type.Entity entity = (type.Entity)subject;
               final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
-              final PreparedStatement statement = connection.prepareStatement(sql);
+              final DBVendor vendor = Schema.getDBVendor(connection);
+
+              final StringBuilder sql = new StringBuilder("SELECT ");
+              final StringBuilder select = new StringBuilder();
+              final StringBuilder where = new StringBuilder();
+              for (final type.DataType<?> dataType : entity.column) {
+                if (dataType.primary)
+                  where.append(" AND ").append(vendor.getDialect().quoteIdentifier(dataType.name)).append(" = ?");
+                else
+                  select.append(", ").append(vendor.getDialect().quoteIdentifier(dataType.name));
+              }
+
+              final type.Entity out = entity.newInstance();
+              sql.append(select.substring(2)).append(" FROM ").append(vendor.getDialect().quoteIdentifier(entity.name())).append(" WHERE ").append(where.substring(5));
+              final PreparedStatement statement = connection.prepareStatement(sql.toString());
               int index = 0;
               for (final type.DataType<?> dataType : entity.column)
                 if (dataType.primary)

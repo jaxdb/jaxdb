@@ -123,8 +123,10 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   protected void validatePublicVoidNoArgMethods(final Class<? extends Annotation> annotation, final boolean isStatic, final List<Throwable> errors) {
     final List<FrameworkMethod> methods = getTestClass().getAnnotatedMethods(annotation);
     for (final FrameworkMethod method : methods) {
-      method.validatePublicVoid(isStatic, errors);
-      checkParameters(method, errors);
+      if (!isIgnored(method)) {
+        method.validatePublicVoid(isStatic, errors);
+        checkParameters(method, errors);
+      }
     }
   }
 
@@ -136,6 +138,9 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
   private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<FrameworkMethod>();
 
   protected void run(final Class<? extends Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
+    if (isIgnored(method))
+      return;
+
     final RunIn runIn = method.getMethod().getAnnotation(RunIn.class);
     if (runIn == null || Arrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
       if (method.getMethod().getParameterTypes().length > 0) {

@@ -46,15 +46,15 @@ public final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected LinkedHashSet<DropStatement> drops(final $Table table) {
-    final LinkedHashSet<DropStatement> statements = super.drops(table);
+  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+    final LinkedHashSet<DropStatement> statements = super.dropTypes(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + SQLDataTypes.getSequenceName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
-            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + SQLDataTypes.getTriggerName(table, type) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP SEQUENCE " + q(SQLDataTypes.getSequenceName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -2289 THEN RAISE; END IF; END;"));
+            statements.add(new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -4080 THEN RAISE; END IF; END;"));
           }
         }
       }
@@ -83,7 +83,7 @@ public final class OracleCompiler extends Compiler {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE SEQUENCE " + sequenceName + " START WITH 1"));
+            statements.add(0, new CreateStatement("CREATE SEQUENCE " + q(sequenceName) + " START WITH 1"));
           }
         }
       }
@@ -102,7 +102,7 @@ public final class OracleCompiler extends Compiler {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + SQLDataTypes.getTriggerName(table, type) + " BEFORE INSERT ON " + table.getName$().text() + " FOR EACH ROW when (new." + column.getName$().text() + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO :new." + column.getName$().text() + " FROM dual; END;"));
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
           }
         }
       }
@@ -114,7 +114,7 @@ public final class OracleCompiler extends Compiler {
 
   @Override
   protected DropStatement dropTableIfExists(final $Table table) {
-    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + table.getName$().text() + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
+    return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + q(table.getName$().text()) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
   }
 
   @Override
@@ -127,7 +127,7 @@ public final class OracleCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 
   private int foreignKeys = 0;
@@ -136,17 +136,17 @@ public final class OracleCompiler extends Compiler {
 
   @Override
   protected String check(final $Table table) {
-    return "CONSTRAINT " + table.getName$().text() + "_ck" + ++checkConstraints + " CHECK";
+    return "CONSTRAINT " + q(table.getName$().text() + "_ck" + ++checkConstraints) + " CHECK";
   }
 
   @Override
   protected String primaryKey(final $Table table) {
-    return "CONSTRAINT " + table.getName$().text() + "_pk" + ++primaryKeys + " PRIMARY KEY";
+    return "CONSTRAINT " + q(table.getName$().text() + "_pk" + ++primaryKeys) + " PRIMARY KEY";
   }
 
   @Override
   protected String foreignKey(final $Table table) {
-    return "CONSTRAINT " + table.getName$().text() + "_fk" + ++foreignKeys + " FOREIGN KEY";
+    return "CONSTRAINT " + q(table.getName$().text() + "_fk" + ++foreignKeys) + " FOREIGN KEY";
   }
 
   @Override

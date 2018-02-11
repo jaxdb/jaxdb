@@ -96,6 +96,10 @@ abstract class Compiler {
 
   protected abstract void init(final Connection connection) throws SQLException;
 
+  protected final String q(final String name) {
+    return getVendor().getDialect().quoteIdentifier(name);
+  }
+
   protected CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
   }
@@ -103,7 +107,7 @@ abstract class Compiler {
   protected CreateStatement createTableIfNotExists(final $Table table, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
-    builder.append("CREATE TABLE ").append(tableName).append(" (\n");
+    builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
     if (table.getColumn() != null)
       builder.append(createColumns(table));
 
@@ -125,7 +129,7 @@ abstract class Compiler {
 
   private CreateStatement createColumn(final $Table table, final $Column column) {
     final StringBuilder ddl = new StringBuilder();
-    ddl.append(column.getName$().text()).append(" ");
+    ddl.append(q(column.getName$().text())).append(" ");
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       ddl.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
@@ -224,15 +228,15 @@ abstract class Compiler {
       // unique constraint
       final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
-        String uniqueString = "";
+        StringBuilder uniqueString = new StringBuilder();
         int uniqueIndex = 1;
         for (final $Columns unique : uniques) {
           final List<$Named> columns = unique.getColumn();
-          String columnsString = "";
+          StringBuilder columnsString = new StringBuilder();
           for (final $Named column : columns)
-            columnsString += ", " + column.getName$().text();
+            columnsString.append(", ").append(q(column.getName$().text()));
 
-          uniqueString += ",\n  CONSTRAINT " + table.getName$().text() + "_unique_" + uniqueIndex++ + " UNIQUE (" + columnsString.substring(2) + ")";
+          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(columnsString.substring(2)).append(")");
         }
 
         contraintsBuffer.append(uniqueString);
@@ -260,9 +264,9 @@ abstract class Compiler {
       for (final $Column column : table.getColumn()) {
         if (column.getForeignKey() != null) {
           final $ForeignKey foreignKey = column.getForeignKey();
-          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(column.getName$().text());
-          contraintsBuffer.append(") REFERENCES ").append(foreignKey.getReferences$().text());
-          contraintsBuffer.append(" (").append(foreignKey.getColumn$().text()).append(")");
+          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
+          contraintsBuffer.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
+          contraintsBuffer.append(" (").append(q(foreignKey.getColumn$().text())).append(")");
           if (foreignKey.getOnDelete$() != null) {
             final String onDelete = onDelete(foreignKey.getOnDelete$());
             if (onDelete != null)
@@ -323,10 +327,10 @@ abstract class Compiler {
         }
 
         if (minCheck != null)
-          minCheck = column.getName$().text() + " >= " + minCheck;
+          minCheck = q(column.getName$().text()) + " >= " + minCheck;
 
         if (maxCheck != null)
-          maxCheck = column.getName$().text() + " <= " + maxCheck;
+          maxCheck = q(column.getName$().text()) + " <= " + maxCheck;
 
         if (minCheck != null) {
           if (maxCheck != null)
@@ -402,7 +406,7 @@ abstract class Compiler {
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + column.getName$().text() + " " + operator + " " + condition + ")");
+            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + q(column.getName$().text()) + " " + operator + " " + condition + ")");
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -429,7 +433,7 @@ abstract class Compiler {
       if (column.getNull$().text())
         throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY.");
 
-      primaryKeyBuffer.append(", ").append(primaryKeyColumn);
+      primaryKeyBuffer.append(", ").append(q(primaryKeyColumn));
     }
 
     return ",\n  " + primaryKey(table) + " (" + primaryKeyBuffer.substring(2) + ")";
@@ -507,7 +511,7 @@ abstract class Compiler {
 
   protected abstract String dropIndexOnClause(final $Table table);
 
-  protected LinkedHashSet<DropStatement> drops(final $Table table) {
+  protected final LinkedHashSet<DropStatement> dropTable(final $Table table) {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<DropStatement>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
@@ -522,7 +526,7 @@ abstract class Compiler {
     if (table.getTriggers() != null)
       for (final $Table.Triggers.Trigger trigger : table.getTriggers().getTrigger())
         for (final String action : trigger.getActions$().text())
-          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + SQLDataTypes.getTriggerName(table.getName$().text(), trigger, action)));
+          statements.add(new DropStatement("DROP TRIGGER IF EXISTS " + q(SQLDataTypes.getTriggerName(table.getName$().text(), trigger, action))));
 
     final DropStatement dropTable = dropTableIfExists(table);
     if (dropTable != null)
@@ -531,12 +535,16 @@ abstract class Compiler {
     return statements;
   }
 
+  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+    return new LinkedHashSet<DropStatement>();
+  }
+
   protected DropStatement dropTableIfExists(final $Table table) {
-    return new DropStatement("DROP TABLE IF EXISTS " + table.getName$().text());
+    return new DropStatement("DROP TABLE IF EXISTS " + q(table.getName$().text()));
   }
 
   protected DropStatement dropIndexIfExists(final String indexName) {
-    return new DropStatement("DROP INDEX IF EXISTS " + indexName);
+    return new DropStatement("DROP INDEX IF EXISTS " + q(indexName));
   }
 
   private static void checkNumericDefault(final DBVendor vendor, final $Column type, final Number defaultValue, final boolean positive, final Short precision, final boolean unsigned) {
@@ -693,7 +701,7 @@ abstract class Compiler {
   }
 
   protected String truncate(final String tableName) {
-    return "DELETE FROM " + tableName;
+    return "DELETE FROM " + q(tableName);
   }
 
   protected abstract String $null(final $Table table, final $Column column);

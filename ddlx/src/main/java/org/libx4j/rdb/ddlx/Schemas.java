@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -36,9 +37,12 @@ import org.lib4j.util.RefDigraph;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Columns;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Constraints;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Named;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
+import org.libx4j.xsb.runtime.BindingProxy;
 import org.libx4j.xsb.runtime.Bindings;
 
 public final class Schemas {
@@ -101,7 +105,7 @@ public final class Schemas {
     int i = 0;
     if (batched) {
       for (final Schema schema : schemas) {
-        final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
+        final LinkedHashSet<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
         for (final Statement statement : statements)
           if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
             sqlStatement.addBatch(statement.getSql());
@@ -115,7 +119,7 @@ public final class Schemas {
     }
     else {
       for (final Schema schema : schemas) {
-        final List<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
+        final LinkedHashSet<Statement> statements = new Generator(new DDLxAudit(schema)).parse(vendor);
         int count = 0;
         for (final Statement statement : statements)
           if (drop && statement instanceof DropStatement || create && statement instanceof CreateStatement)
@@ -183,6 +187,24 @@ public final class Schemas {
     return Schemas.topologicalSort(flat);
   }
 
+  private static $Column clone(final $Column column) {
+    return column instanceof $Enum ? new $Enum(($Enum)column.clone()) {
+      private static final long serialVersionUID = -8441464393229662197L;
+
+      private final String declaringTableName = (($Table)BindingProxy.owner(column)).getName$().text();
+
+      @Override
+      public String id() {
+        return declaringTableName;
+      }
+
+      @Override
+      protected $Named inherits() {
+        return column;
+      }
+    } : column.clone();
+  }
+
   private static void flattenTable(final $Table table, final Map<String,$Table> tableNameToTable, final Set<String> flatTables) {
     if (flatTables.contains(table.getName$().text()))
       return;
@@ -195,36 +217,37 @@ public final class Schemas {
     flattenTable(superTable, tableNameToTable, flatTables);
     if (superTable.getColumn() != null) {
       if (table.getColumn() != null) {
-        table.getColumn().addAll(0, superTable.getColumn());
+        for (int i = 0; i < superTable.getColumn().size(); i++)
+          table.getColumn().add(i, clone(superTable.getColumn().get(i)));
       }
       else {
         for (final $Column column : superTable.getColumn())
-          table.addColumn(column);
+          table.addColumn(clone(column));
       }
     }
 
     if (superTable.getConstraints() != null) {
       final $Constraints parentConstraints = superTable.getConstraints();
       if (table.getConstraints() == null) {
-        table.setConstraints(parentConstraints);
+        table.setConstraints(parentConstraints.clone());
       }
       else {
         if (parentConstraints.getPrimaryKey() != null)
-          table.getConstraints().setPrimaryKey(parentConstraints.getPrimaryKey());
+          table.getConstraints().setPrimaryKey(parentConstraints.getPrimaryKey().clone());
 
         if (parentConstraints.getUnique() != null)
           for (final $Columns columns : parentConstraints.getUnique())
-            table.getConstraints().addUnique(columns);
+            table.getConstraints().addUnique(columns.clone());
       }
     }
 
     if (superTable.getIndexes() != null) {
       if (table.getIndexes() == null) {
-        table.setIndexes(superTable.getIndexes());
+        table.setIndexes(superTable.getIndexes().clone());
       }
       else {
         for (final $Table.Indexes.Index index : superTable.getIndexes().getIndex())
-          table.getIndexes().addIndex(index);
+          table.getIndexes().addIndex(index.clone());
       }
     }
   }

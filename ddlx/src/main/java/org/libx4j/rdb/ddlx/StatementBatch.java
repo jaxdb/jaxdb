@@ -19,12 +19,13 @@ package org.libx4j.rdb.ddlx;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 public class StatementBatch {
-  private final List<Statement> statements;
+  private final LinkedHashSet<Statement> statements;
 
-  public StatementBatch(final List<Statement> statements) {
+  public StatementBatch(final LinkedHashSet<Statement> statements) {
     this.statements = statements;
   }
 
@@ -50,7 +51,7 @@ public class StatementBatch {
     }
   }
 
-  public List<Statement> getStatements() {
+  public LinkedHashSet<Statement> getStatements() {
     return this.statements;
   }
 }

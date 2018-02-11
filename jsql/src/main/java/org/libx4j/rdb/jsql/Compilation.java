@@ -93,7 +93,7 @@ final class Compilation {
   }
 
   protected void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
-    append(dataType.name);
+    append(vendor.getDialect().quoteIdentifier(dataType.name));
     if (dataType.get() == null) {
       append(" IS NULL");
     }

@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lib4j.lang.Strings;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Bigint;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Binary;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Blob;
@@ -337,7 +338,7 @@ final class DerbyDecompiler extends Decompiler {
     $Check check = null;
     $Check previousCheck = null;
     for (int i = 0; i < terms.length; i += 3) {
-      final $Check nextCheck = makeCheck(i == 0 ? null : terms[i++], terms[i + 0], terms[i + 1], terms[i + 2]);
+      final $Check nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i + 0], '"'), terms[i + 1], terms[i + 2]);
       if (previousCheck == null)
         check = previousCheck = nextCheck;
       else {

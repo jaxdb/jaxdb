@@ -25,20 +25,21 @@ import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Index;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Integer;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Named;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
+import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.BindingList;
 
 final class SQLDataTypes {
-  protected static String csvNames(final BindingList<$Named> names) {
-    return names.size() == 0 ? "" : csvNames(names.toArray(new $Named[names.size()]));
+  protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {
+    return names.size() == 0 ? "" : csvNames(dialect, names.toArray(new $Named[names.size()]));
   }
 
-  protected static String csvNames(final $Named ... names) {
+  protected static String csvNames(final Dialect dialect, final $Named ... names) {
     if (names.length == 0)
       return "";
 
     String csv = "";
     for (final $Named name : names)
-      csv += ", " + name.getName$().text();
+      csv += ", " + dialect.quoteIdentifier(name.getName$().text());
 
     return csv.length() > 0 ? csv.substring(2) : csv;
   }

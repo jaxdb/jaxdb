@@ -50,7 +50,7 @@ public abstract class Dialect {
   }
 
   public static String getTypeName(final $Enum column) {
-    return getTypeName((($Table)BindingProxy.owner(column)).getName$().text(), column.getName$().text());
+    return getTypeName(column.id() != null ? column.id() : (($Table)BindingProxy.owner(column)).getName$().text(), column.getName$().text());
   }
 
   public static String getTypeName(final String tableName, final String columnName) {
@@ -87,6 +87,8 @@ public abstract class Dialect {
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
   protected abstract DBVendor getVendor();
+
+  public abstract String quoteIdentifier(final String name);
 
   public abstract boolean allowsUnsignedNumeric();
 

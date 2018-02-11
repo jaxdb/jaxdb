@@ -177,19 +177,20 @@ public final class Generator {
     return statements;
   }
 
-  public List<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
-    final Map<String,LinkedHashSet<DropStatement>> dropStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
+  public LinkedHashSet<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
+    final Map<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
+    final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
     final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<String,LinkedHashSet<CreateStatement>>();
 
     final Set<String> skipTables = new HashSet<String>();
-    final ListIterator<$Table> listIterator = schema.getTable().listIterator(schema.getTable().size());
-    while (listIterator.hasPrevious()) {
-      final $Table table = listIterator.previous();
+
+    for (final $Table table : schema.getTable()) {
       if (table.getSkip$().text()) {
         skipTables.add(table.getName$().text());
       }
       else if (!table.getAbstract$().text()) {
-        dropStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).drops(table));
+        dropTableStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTable(table));
+        dropTypeStatements.put(table.getName$().text(), Compiler.getCompiler(vendor).dropTypes(table));
       }
     }
 
@@ -198,17 +199,29 @@ public final class Generator {
       if (!table.getAbstract$().text())
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
-    final List<Statement> statements = new ArrayList<Statement>();
+    final LinkedHashSet<Statement> statements = new LinkedHashSet<Statement>();
     final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(audit.schema());
     if (createSchema != null)
       statements.add(createSchema);
 
+    final ListIterator<$Table> listIterator = schema.getTable().listIterator(schema.getTable().size());
+    while (listIterator.hasPrevious()) {
+      final $Table table = listIterator.previous();
+      final String tableName = table.getName$().text();
+      if (!skipTables.contains(tableName))
+        statements.addAll(dropTableStatements.get(tableName));
+    }
+
     for (final $Table table : schema.getTable()) {
       final String tableName = table.getName$().text();
-      if (!skipTables.contains(tableName)) {
-        statements.addAll(0, dropStatements.get(tableName));
+      if (!skipTables.contains(tableName))
+        statements.addAll(dropTypeStatements.get(tableName));
+    }
+
+    for (final $Table table : schema.getTable()) {
+      final String tableName = table.getName$().text();
+      if (!skipTables.contains(tableName))
         statements.addAll(createTableStatements.get(tableName));
-      }
     }
 
     return statements;

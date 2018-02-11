@@ -230,12 +230,12 @@ final class SqlXsb {
           values.append(", ");
         }
 
-        columns.append(columnName);
+        columns.append(vendor.getDialect().quoteIdentifier(columnName));
         values.append(value);
         hasValues = true;
       }
 
-      final StringBuilder builder = new StringBuilder("INSERT INTO ").append(row.id());
+      final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(row.id()));
       builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
       return builder.toString();
     }

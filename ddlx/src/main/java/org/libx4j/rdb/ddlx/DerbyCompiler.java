@@ -44,16 +44,16 @@ final class DerbyCompiler extends Compiler {
     public static void createSchemaIfNotExists(final String schemaName) throws SQLException {
       try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE schemaname = '" + schemaName.toUpperCase() + "'");
+        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE schemaname = '" + schemaName + "'");
         if (!resultSet.next() || resultSet.getInt(1) < 1)
-          statement.execute("CREATE SCHEMA " + schemaName);
+          statement.execute("CREATE SCHEMA \"" + schemaName + "\"");
       }
     }
 
     public static void createTableIfNotExists(final String tableName, final Clob createClause) throws IOException, SQLException {
       try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName.toUpperCase() + "'");
+        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName + "'");
         if (!resultSet.next() || resultSet.getInt(1) < 1)
           statement.execute(Readers.readFully(createClause.getCharacterStream()));
       }
@@ -62,27 +62,27 @@ final class DerbyCompiler extends Compiler {
     public static void dropSchemaIfExists(final String schemaName) throws SQLException {
       try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE sysschemas = '" + schemaName.toUpperCase() + "'");
+        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysschemas WHERE sysschemas = '" + schemaName + "'");
         if (resultSet.next() && resultSet.getInt(1) > 0)
-          statement.execute("DROP SCHEMA " + schemaName);
+          statement.execute("DROP SCHEMA \"" + schemaName + "\"");
       }
     }
 
     public static void dropTableIfExists(final String tableName) throws SQLException {
       try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName.toUpperCase() + "'");
+        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.systables WHERE tablename = '" + tableName + "'");
         if (resultSet.next() && resultSet.getInt(1) > 0)
-          statement.execute("DROP TABLE " + tableName);
+          statement.execute("DROP TABLE \"" + tableName + "\"");
       }
     }
 
     public static void dropIndexIfExists(final String indexName) throws SQLException {
       try (final Connection connection = DriverManager.getConnection("jdbc:default:connection")) {
         final Statement statement = connection.createStatement();
-        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysconglomerates WHERE conglomeratename = '" + indexName.toUpperCase() + "'");
+        final ResultSet resultSet = statement.executeQuery("SELECT COUNT(*) FROM sys.sysconglomerates WHERE conglomeratename = '" + indexName + "'");
         if (resultSet.next() && resultSet.getInt(1) > 0)
-          statement.execute("DROP INDEX " + indexName);
+          statement.execute("DROP INDEX \"" + indexName + "\"");
       }
     }
   }
@@ -152,7 +152,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   protected String dropIndexOnClause(final $Table table) {
-    return " ON " + table.getName$().text();
+    return " ON " + q(table.getName$().text());
   }
 
   @Override
@@ -160,6 +160,6 @@ final class DerbyCompiler extends Compiler {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Derby's CREATE INDEX syntax. Creating index with default type.");
 
-    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + indexName + " ON " + tableName + " (" + SQLDataTypes.csvNames(columns) + ")");
+    return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 }
