@@ -32,7 +32,6 @@ import org.lib4j.lang.Arrays;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Column;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Compliant;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
@@ -64,7 +63,7 @@ public final class Generator {
     return new StatementBatch(new Generator(DDLxAudit.makeAudit(url)).parse(vendor));
   }
 
-  private static String checkNameViolation(String string, final boolean strict) {
+  private static String checkNameViolation(String string) {
     string = string.toUpperCase();
 
     final SQLStandard[] enums = ReservedWords.get(string);
@@ -119,12 +118,11 @@ public final class Generator {
   }
 
   private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table, final Schema schema) throws GeneratorExecutionException {
-    final boolean strict = $Compliant.Compliance$.strict.text().equals(schema.getCompliance$().text());
     final String tableName = table.getName$().text();
     final List<String> violations = new ArrayList<String>();
-    String violation = checkNameViolation(tableName, strict);
-    if (violation != null)
-      violations.add(violation);
+    String nameViolation = checkNameViolation(tableName);
+    if (nameViolation != null)
+      violations.add(nameViolation);
 
     if (tableNames.contains(tableName))
       throw new GeneratorExecutionException("Circular table dependency detected: " + tableName);
@@ -133,9 +131,9 @@ public final class Generator {
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         final String columnName = column.getName$().text();
-        violation = checkNameViolation(columnName, strict);
-        if (violation != null)
-          violations.add(violation);
+        nameViolation = checkNameViolation(columnName);
+        if (nameViolation != null)
+          violations.add(nameViolation);
 
         final $Column existing = columnNameToColumn.get(columnName);
         if (existing != null)
@@ -145,17 +143,8 @@ public final class Generator {
       }
     }
 
-    if (violations.size() > 0) {
-      if (strict) {
-        final StringBuilder builder = new StringBuilder();
-        for (final String v : violations)
-          builder.append(" ").append(v);
-
-        throw new GeneratorExecutionException(builder.substring(1));
-      }
-
+    if (violations.size() > 0)
       violations.stream().forEach(v -> logger.warn(v));
-    }
   }
 
   private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {

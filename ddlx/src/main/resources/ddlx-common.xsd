@@ -25,7 +25,7 @@
   
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
-      <xs:maxLength value="64"/> <!-- http://dev.mysql.com/doc/refman/5.7/en/identifiers.html -->
+      <xs:maxLength value="64"/> <!-- http://wiki.ispirer.com/sqlways/postgresql/identifiers -->
       <xs:pattern value="[a-zA-Z_][a-zA-Z0-9_]*"/> <!-- https://www.postgresql.org/docs/current/static/sql-syntax-lexical.html#SQL-SYNTAX-IDENTIFIERS -->
     </xs:restriction>
   </xs:simpleType>
@@ -168,17 +168,6 @@
         </xs:unique>
       </xs:element>
     </xs:sequence>
-  </xs:complexType>
-
-  <xs:complexType name="compliant">
-    <xs:attribute name="compliance" default="strict">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="lax"/>
-          <xs:enumeration value="strict"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
   </xs:complexType>
 
   <!-- text data -->
