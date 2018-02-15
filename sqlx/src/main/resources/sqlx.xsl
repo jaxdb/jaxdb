@@ -467,14 +467,15 @@
         </xsl:attribute>
         <xsl:for-each select="ddlx:table[not(@abstract='true')]">
           <xsl:variable name="primaryKey" select="function:getPrimaryKey(current())"/>
+          <xsl:variable name="tableName" select="@name"/>
           <xsl:if test="$primaryKey">
             <xs:key>
               <xsl:attribute name="name">
-                <xsl:value-of select="concat('key', function:instance-case(@name))"/>
+                <xsl:value-of select="concat('key', function:instance-case($tableName))"/>
               </xsl:attribute>
               <xs:selector>
                 <xsl:attribute name="xpath">
-                  <xsl:value-of select="concat('ns:insert/ns:', function:instance-case(@name))"/>
+                  <xsl:value-of select="concat('ns:insert/ns:', function:instance-case($tableName))"/>
                 </xsl:attribute>
               </xs:selector>
               <xsl:for-each select="$primaryKey/ddlx:column">
@@ -486,6 +487,26 @@
               </xsl:for-each>
             </xs:key>
           </xsl:if>
+          <xsl:for-each select="ddlx:constraints/ddlx:unique">
+            <xsl:variable name="index" select="position()"/>
+            <xs:unique>
+              <xsl:attribute name="name">
+                <xsl:value-of select="concat('unique', function:instance-case($tableName), $index)"/>
+              </xsl:attribute>
+              <xs:selector>
+                <xsl:attribute name="xpath">
+                  <xsl:value-of select="concat('ns:insert/ns:', function:instance-case($tableName))"/>
+                </xsl:attribute>
+              </xs:selector>
+              <xsl:for-each select="ddlx:column">
+                <xs:field>
+                  <xsl:attribute name="xpath">
+                    <xsl:value-of select="concat('@', function:instance-case(@name))"/>
+                  </xsl:attribute>
+                </xs:field>
+              </xsl:for-each>
+            </xs:unique>
+          </xsl:for-each>
           <xsl:for-each select="ddlx:column">
             <xsl:if test="ddlx:foreignKey">
               <xs:keyref>
