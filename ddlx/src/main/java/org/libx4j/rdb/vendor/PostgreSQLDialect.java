@@ -39,6 +39,21 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
+  public String currentTimeFunction() {
+    return "CURRENT_TIME";
+  }
+
+  @Override
+  public String currentDateFunction() {
+    return "CURRENT_DATE";
+  }
+
+  @Override
+  public String currentDateTimeFunction() {
+    return "CURRENT_TIMESTAMP";
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

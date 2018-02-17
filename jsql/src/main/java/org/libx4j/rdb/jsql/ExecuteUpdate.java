@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public interface ExecuteUpdate {
-  public int[] execute(final Transaction transaction) throws IOException, SQLException;
-  public int[] execute() throws IOException, SQLException;
+  public int execute(final Transaction transaction) throws IOException, SQLException;
+  default public int execute() throws IOException, SQLException {
+    return execute(null);
+  }
 }

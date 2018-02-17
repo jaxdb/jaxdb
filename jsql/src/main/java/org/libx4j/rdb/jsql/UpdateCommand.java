@@ -57,6 +57,11 @@ final class UpdateCommand extends Command {
   }
 
   @Override
+  protected Class<? extends Schema> getSchema() {
+    return update.entity.schema();
+  }
+
+  @Override
   protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (set() != null)

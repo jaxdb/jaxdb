@@ -19,6 +19,7 @@ package org.libx4j.rdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -67,5 +68,10 @@ public class TestTest {
   @Test
   public void test2(final Connection connection) throws SQLException {
     System.out.println("test2: " + DBVendor.valueOf(connection.getMetaData()));
+  }
+
+  @Ignore
+  public void testIgnore(final Connection connection) {
+    Assert.fail("Should have been ignored");
   }
 }

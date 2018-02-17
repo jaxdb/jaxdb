@@ -335,26 +335,15 @@ abstract class Compiler {
 
   @SuppressWarnings("rawtypes")
   protected void compile(final InsertImpl.INSERT insert, final Compilation compilation) throws IOException {
-    if (insert.entities != null && insert.entities.length > 1) {
-      for (int i = 0; i < insert.entities.length; i++) {
-        compileInsert(insert.entities[i].column, compilation);
-        compilation.addBatch();
-      }
-    }
-    else {
-      compileInsert(insert.entities != null ? insert.entities[0].column : insert.columns, compilation);
-    }
+    compileInsert(insert.entity != null ? insert.entity.column : insert.columns, compilation);
   }
 
   @SuppressWarnings("rawtypes")
   protected void compile(final InsertImpl.INSERT insert, final InsertImpl.VALUES<?> values, final Compilation compilation) throws IOException {
     final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<Integer,type.ENUM<?>>();
-    if (insert.entities != null) {
-      if (insert.entities.length > 1)
-        throw new UnsupportedOperationException("This is not supported, and should not be!");
-
+    if (insert.entity != null) {
       compilation.append("INSERT INTO ");
-      final type.Entity entity = insert.entities[0];
+      final type.Entity entity = insert.entity;
       entity.compile(compilation);
       compilation.append(" (");
       for (int i = 0; i < entity.column.length; i++) {
@@ -395,80 +384,75 @@ abstract class Compiler {
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   protected void compile(final UpdateImpl.UPDATE update, final Compilation compilation) throws IOException {
-    for (int i = 0; i < update.entities.length; i++) {
-      final type.Entity entity = update.entities[i];
-      compilation.append("UPDATE ");
-      update.entities[i].compile(compilation);
-      compilation.append(" SET ");
-      boolean paramAdded = false;
-      for (int c = 0; c < entity.column.length; c++) {
-        final type.DataType column = entity.column[c];
-        if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
-          if (column.generateOnUpdate != null)
-            column.generateOnUpdate.generate(column);
+    final type.Entity entity = update.entity;
+    compilation.append("UPDATE ");
+    update.entity.compile(compilation);
+    compilation.append(" SET ");
+    boolean paramAdded = false;
+    for (int c = 0; c < entity.column.length; c++) {
+      final type.DataType column = entity.column[c];
+      if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
+        if (column.generateOnUpdate != null)
+          column.generateOnUpdate.generate(column);
 
-          if (column.indirection != null) {
-            compilation.afterExecute(new Consumer<Boolean>() {
-              @Override
-              public void accept(final Boolean success) {
-                if (success) {
-                  final Object evaluated = column.evaluate(new IdentityHashSet<Evaluable>());
-                  if (evaluated == null) {
-                    column.value = null;
-                  }
-                  else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
-                    throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
-                  }
-                  else if (column.type() != evaluated.getClass()) {
-                    if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-                      column.value = Numbers.valueOf((Class<? extends Number>)column.type(), (Number)evaluated);
-                    else
-                      throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
-                  }
-                  else {
-                    column.value = evaluated;
-                  }
+        if (column.indirection != null) {
+          compilation.afterExecute(new Consumer<Boolean>() {
+            @Override
+            public void accept(final Boolean success) {
+              if (success) {
+                final Object evaluated = column.evaluate(new IdentityHashSet<Evaluable>());
+                if (evaluated == null) {
+                  column.value = null;
+                }
+                else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
+                  throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                }
+                else if (column.type() != evaluated.getClass()) {
+                  if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+                    column.value = Numbers.valueOf((Class<? extends Number>)column.type(), (Number)evaluated);
+                  else
+                    throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+                }
+                else {
+                  column.value = evaluated;
                 }
               }
-            });
-          }
-
-          if (paramAdded)
-            compilation.append(", ");
-
-          compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name)).append(" = ");
-          compilation.addParameter(column, true);
-          paramAdded = true;
+            }
+          });
         }
+
+        if (paramAdded)
+          compilation.append(", ");
+
+        compilation.append(compilation.vendor.getDialect().quoteIdentifier(column.name)).append(" = ");
+        compilation.addParameter(column, true);
+        paramAdded = true;
       }
-
-      // No changes were found
-      if (!paramAdded)
-        return;
-
-      paramAdded = false;
-      for (final type.DataType column : entity.column) {
-        if (column.primary || column.keyForUpdate) {
-          if (paramAdded)
-            compilation.append(" AND ");
-          else
-            compilation.append(" WHERE ");
-
-          compilation.addCondition(column, false);
-          paramAdded = true;
-        }
-      }
-
-      compilation.addBatch();
     }
+
+    // No changes were found
+    if (!paramAdded)
+      return;
+
+    paramAdded = false;
+    for (final type.DataType column : entity.column) {
+      if (column.primary || column.keyForUpdate) {
+        if (paramAdded)
+          compilation.append(" AND ");
+        else
+          compilation.append(" WHERE ");
+
+        compilation.addCondition(column, false);
+        paramAdded = true;
+      }
+    }
+
+    compilation.close();
   }
 
   protected void compile(final UpdateImpl.UPDATE update, final List<UpdateImpl.SET> sets, final UpdateImpl.WHERE where, final Compilation compilation) throws IOException {
-    if (update.entities.length > 1)
-      throw new UnsupportedOperationException("This is not supported, and should not be!");
-
     compilation.append("UPDATE ");
-    update.entities[0].compile(compilation);
+    update.entity.compile(compilation);
     compilation.append(" SET ");
     for (int i = 0; i < sets.size(); i++) {
       final UpdateImpl.SET set = sets.get(i);
@@ -486,33 +470,28 @@ abstract class Compiler {
   }
 
   protected void compile(final DeleteImpl.DELETE delete, final Compilation compilation) throws IOException {
-    for (int i = 0; i < delete.entities.length; i++) {
-      compilation.append("DELETE FROM ");
-      delete.entities[i].compile(compilation);
-      boolean paramAdded = false;
-      for (int j = 0; j < delete.entities[i].column.length; j++) {
-        final type.DataType<?> column = delete.entities[i].column[j];
-        if (column.wasSet()) {
-          if (paramAdded)
-            compilation.append(" AND ");
-          else
-            compilation.append(" WHERE ");
+    compilation.append("DELETE FROM ");
+    delete.entity.compile(compilation);
+    boolean paramAdded = false;
+    for (int j = 0; j < delete.entity.column.length; j++) {
+      final type.DataType<?> column = delete.entity.column[j];
+      if (column.wasSet()) {
+        if (paramAdded)
+          compilation.append(" AND ");
+        else
+          compilation.append(" WHERE ");
 
-          compilation.addCondition(column, false);
-          paramAdded = true;
-        }
+        compilation.addCondition(column, false);
+        paramAdded = true;
       }
-
-      compilation.addBatch();
     }
+
+    compilation.close();
   }
 
   protected void compile(final DeleteImpl.DELETE delete, final DeleteImpl.WHERE where, final Compilation compilation) throws IOException {
-    if (delete.entities.length > 1)
-      throw new UnsupportedOperationException("This is not supported, and should not be!");
-
     compilation.append("DELETE FROM ");
-    delete.entities[0].compile(compilation);
+    delete.entity.compile(compilation);
     compilation.append(" WHERE ");
 
     where.condition.compile(compilation);

@@ -16,51 +16,11 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import org.lib4j.sql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.vendor.DBVendor;
-
 final class DeleteImpl {
-  private static abstract class Execute extends Keyword<type.DataType<?>> implements Delete.DELETE {
-    protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent);
-    }
-
-    @Override
-    public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final DeleteCommand command = (DeleteCommand)normalize();
-
-      final Class<? extends Schema> schema = command.delete().entities[0].schema();
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        final DBVendor vendor = Schema.getDBVendor(connection);
-
-        final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
-        command.compile(compilation);
-        final int[] count = compilation.execute(connection);
-        if (transaction == null)
-          connection.close();
-
-        return count;
-      }
-      catch (final SQLException e) {
-        throw SQLExceptionCatalog.lookup(e);
-      }
-    }
-
-    @Override
-    public int[] execute() throws IOException, SQLException {
-      return execute(null);
-    }
-  }
-
-  protected static final class WHERE extends Execute implements Delete.DELETE {
+  protected static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Delete.DELETE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }
@@ -73,12 +33,12 @@ final class DeleteImpl {
     }
   }
 
-  protected static final class DELETE extends Execute implements Delete._DELETE {
-    protected final type.Entity[] entities;
+  protected static final class DELETE extends BatchableKeyword<type.DataType<?>> implements Delete._DELETE {
+    protected final type.Entity entity;
 
-    protected DELETE(final type.Entity ... entities) {
+    protected DELETE(final type.Entity entity) {
       super(null);
-      this.entities = entities;
+      this.entity = entity;
     }
 
     @Override

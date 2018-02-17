@@ -21,7 +21,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -29,28 +28,14 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.function.Consumer;
 
-import org.lib4j.lang.IntArrayList;
-import org.libx4j.rdb.jsql.type.DataType;
 import org.libx4j.rdb.vendor.DBVendor;
 
 final class Compilation {
-  private static final class Batch {
-    protected final String sql;
-    protected final List<type.DataType<?>> parameters;
-
-    public Batch(final String sql, final List<DataType<?>> parameters) {
-      this.sql = sql;
-      this.parameters = parameters;
-    }
-  }
-
-  private List<Batch> batches;
-
   private final StringBuilder builder = new StringBuilder();
   private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
   private final boolean prepared;
-  private final boolean batching;
   private Consumer<Boolean> afterExecute;
+  private boolean closed = false;
 
   protected final Stack<Command> command = new Stack<Command>();
   protected final DBVendor vendor;
@@ -58,12 +43,27 @@ final class Compilation {
 
   private boolean skipFirstColumn = false;
 
-  protected Compilation(final Command command, final DBVendor vendor, final boolean prepared, final boolean batching) {
+  protected Compilation(final Command command, final DBVendor vendor, final boolean prepared) {
     this.command.add(command);
     this.vendor = vendor;
     this.prepared = prepared;
-    this.batching = batching;
     this.compiler = Compiler.getCompiler(vendor);
+  }
+
+  protected void close() {
+    closed = true;
+  }
+
+  protected boolean isPrepared() {
+    return this.prepared;
+  }
+
+  protected String getSQL() {
+    return builder.toString();
+  }
+
+  protected List<type.DataType<?>> getParameters() {
+    return this.parameters;
   }
 
   protected boolean skipFirstColumn() {
@@ -89,6 +89,9 @@ final class Compilation {
   }
 
   protected StringBuilder append(final CharSequence seq) {
+    if (closed)
+      throw new IllegalStateException("Compilation closed");
+
     return builder.append(seq);
   }
 
@@ -104,6 +107,9 @@ final class Compilation {
   }
 
   protected void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+    if (closed)
+      throw new IllegalStateException("Compilation closed");
+
     if (considerIndirection && !dataType.wasSet() && dataType.indirection != null) {
       dataType.indirection.compile(this);
     }
@@ -114,15 +120,6 @@ final class Compilation {
     else {
       builder.append(dataType.compile(vendor));
     }
-  }
-
-  protected void addBatch() {
-    if (batches == null)
-      batches = new ArrayList<Batch>();
-
-    batches.add(new Batch(builder.toString(), new ArrayList<type.DataType<?>>(parameters)));
-    builder.setLength(0);
-    parameters.clear();
   }
 
   protected void afterExecute(final Consumer<Boolean> consumer) {
@@ -143,71 +140,60 @@ final class Compilation {
       return statement.executeQuery();
     }
 
-    final Statement statement = connection.createStatement();
+    final java.sql.Statement statement = connection.createStatement();
     return statement.executeQuery(builder.toString());
   }
 
-  protected int[] execute(final Connection connection) throws IOException, SQLException {
-    if (builder.length() > 0)
-      addBatch();
-
+  protected int execute(final Connection connection) throws IOException, SQLException {
     if (prepared) {
-      if (batching) {
-        final IntArrayList results = new IntArrayList(batches.size());
-        PreparedStatement statement = null;
-        String last = null;
-        for (int i = 0; i < batches.size(); i++) {
-          final Batch batch = batches.get(i);
-          if (!batch.sql.equals(last)) {
-            if (statement != null)
-              results.addAll(statement.executeBatch());
+//      if (batching) {
+//        final IntArrayList results = new IntArrayList(statements.size());
+//        PreparedStatement jdbcStatement = null;
+//        String last = null;
+//        for (int i = 0; i < statements.size(); i++) {
+//          final Statement statement = statements.get(i);
+//          if (!statement.sql.equals(last)) {
+//            if (jdbcStatement != null)
+//              results.addAll(jdbcStatement.executeBatch());
+//
+//            jdbcStatement = connection.prepareStatement(statement.sql);
+//            last = statement.sql;
+//          }
+//
+//          for (int j = 0; j < statement.parameters.size(); j++)
+//            statement.parameters.get(j).get(jdbcStatement, j + 1);
+//
+//          jdbcStatement.addBatch();
+//        }
+//
+//        if (jdbcStatement != null)
+//          results.addAll(jdbcStatement.executeBatch());
+//
+//        return results.toArray();
+//      }
 
-            statement = connection.prepareStatement(batch.sql);
-            last = batch.sql;
-          }
+        final PreparedStatement jdbcStatement = connection.prepareStatement(builder.toString());
+        for (int j = 0; j < parameters.size(); j++)
+          parameters.get(j).get(jdbcStatement, j + 1);
 
-          for (int j = 0; j < batch.parameters.size(); j++)
-            batch.parameters.get(j).get(statement, j + 1);
-
-          statement.addBatch();
-        }
-
-        if (statement != null)
-          results.addAll(statement.executeBatch());
-
-        return results.toArray();
-      }
-
-      final int[] results = new int[batches.size()];
-      for (int i = 0; i < batches.size(); i++) {
-        final Batch batch = batches.get(i);
-        final PreparedStatement statement = connection.prepareStatement(batch.sql);
-        for (int j = 0; j < batch.parameters.size(); j++)
-          batch.parameters.get(j).get(statement, j + 1);
-
-        results[i] = statement.executeUpdate();
-      }
-
-      return results;
+      return jdbcStatement.executeUpdate();
     }
 
-    if (batching) {
-      final Statement statement = connection.createStatement();
-      for (int i = 0; i < batches.size(); i++) {
-        final Batch batch = batches.get(i);
-        statement.addBatch(batch.sql.toString());
-      }
+//    if (batching) {
+//      final java.sql.Statement jdbcStatement = connection.createStatement();
+//      for (int i = 0; i < statements.size(); i++) {
+//        final Statement statement = statements.get(i);
+//        jdbcStatement.addBatch(statement.sql.toString());
+//      }
+//
+//      return jdbcStatement.executeBatch();
+//    }
 
-      return statement.executeBatch();
-    }
-
-    final int[] results = new int[batches.size()];
-    for (int i = 0; i < batches.size(); i++) {
-      final Batch batch = batches.get(i);
-      final Statement statement = connection.createStatement();
-      results[i] = statement.executeUpdate(batch.sql.toString());
-    }
-
-    return results;
+//    final Statement batch = statements.get(i);
+    final java.sql.Statement statement = connection.createStatement();
+    return statement.executeUpdate(builder.toString());
+//    }
+//
+//    return results;
   }
 }

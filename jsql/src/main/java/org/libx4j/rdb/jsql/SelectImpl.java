@@ -70,14 +70,12 @@ class SelectImpl {
   }
 
   protected static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final Keyword<T> keyword) throws IOException, SQLException {
-    final SelectCommand command = (SelectCommand)keyword.normalize();
-
-    final Class<? extends Schema> schema = command.from() != null ? command.from().tables.iterator().next().schema() : null;
     try {
-      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
+      final SelectCommand command = (SelectCommand)keyword.normalize();
+      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema());
       final DBVendor vendor = Schema.getDBVendor(connection);
 
-      final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
+      final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()));
       command.compile(compilation);
 
       final ResultSet resultSet = compilation.executeQuery(connection);
@@ -198,11 +196,6 @@ class SelectImpl {
       public final T AS(final T as) {
         as.wrapper(new As<T>(this, as, true));
         return as;
-      }
-
-      @Override
-      public final RowIterator<T> execute() throws IOException, SQLException {
-        return execute(null);
       }
 
       @Override
@@ -396,11 +389,6 @@ class SelectImpl {
         final Collection<Compilable> clone = Collections.clone(entities);
         clone.removeIf(entitiesWithOwnerPredicate);
         return clone;
-      }
-
-      @Override
-      public final RowIterator<T> execute() throws IOException, SQLException {
-        return execute(null);
       }
 
       @Override

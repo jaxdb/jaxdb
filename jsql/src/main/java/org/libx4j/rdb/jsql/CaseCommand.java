@@ -28,7 +28,7 @@ import org.libx4j.rdb.jsql.CaseImpl.THEN;
 final class CaseCommand extends Command {
   private final Simple.CASE<?,?> simpleCase;
   private final Search.WHEN<?> searchCase;
-  private List<THEN<?,?>> then = new ArrayList<THEN<?,?>>();
+  private final List<THEN<?,?>> then = new ArrayList<THEN<?,?>>();
   private ELSE<?> _else;
 
   protected CaseCommand(final Simple.CASE<?,?> simpleCase) {
@@ -41,25 +41,33 @@ final class CaseCommand extends Command {
     this.simpleCase = null;
   }
 
-  protected final List<THEN<?,?>> then() {
+  protected List<THEN<?,?>> then() {
     return then;
   }
 
-  protected final void add(final THEN<?,?> then) {
+  protected void add(final THEN<?,?> then) {
     this.then.add(then);
   }
 
-  protected final ELSE<?> else_() {
+  protected ELSE<?> else_() {
     return _else;
   }
 
-  protected final void add(final ELSE<?> _else) {
+  protected void add(final ELSE<?> _else) {
+    if (this._else != null)
+      throw new IllegalStateException("Attempted to reassign ELSE");
+
     this._else = _else;
   }
 
   @Override
+  protected Class<? extends Schema> getSchema() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   @SuppressWarnings("rawtypes")
-  protected final void compile(final Compilation compilation) throws IOException {
+  protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (simpleCase != null)
       compiler.compile(simpleCase, else_(), compilation);

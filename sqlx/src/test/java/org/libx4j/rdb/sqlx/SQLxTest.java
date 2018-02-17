@@ -55,7 +55,7 @@ public abstract class SQLxTest {
       classpath[i + mainClasspath.length] = new File(testClasspath[i].getFile());
   }
 
-  public static void createSchemas(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
+  public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlx(ddlx, destFile);

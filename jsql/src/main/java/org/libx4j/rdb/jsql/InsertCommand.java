@@ -41,6 +41,22 @@ final class InsertCommand extends Command {
     return values;
   }
 
+  private Class<? extends Schema> schema;
+
+  @Override
+  protected Class<? extends Schema> getSchema() {
+    if (schema != null)
+      return schema;
+
+    if (insert().entity != null)
+      return schema = insert.entity.schema();
+
+    if (insert().columns != null)
+      return schema = insert.columns[0].owner.schema();
+
+    throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
+  }
+
   @Override
   protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);

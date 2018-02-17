@@ -18,14 +18,12 @@ package org.libx4j.rdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.IdentityHashMap;
 
 import javax.sql.DataSource;
 
 import org.lib4j.sql.ConnectionProxy;
+import org.lib4j.util.IdentityHashSet;
 
 public final class Registry {
   private static Connector makeConnector(final DataSource dataSource) {
@@ -37,52 +35,32 @@ public final class Registry {
     };
   }
 
-  private static final Map<Class<? extends Schema>,Connector> dataSources = new HashMap<Class<? extends Schema>,Connector>();
-  private static final Set<Class<? extends Schema>> prepared = new HashSet<Class<? extends Schema>>();
-  private static final Set<Class<? extends Schema>> batching = new HashSet<Class<? extends Schema>>();
+  private static final IdentityHashMap<Class<? extends Schema>,Connector> dataSources = new IdentityHashMap<Class<? extends Schema>,Connector>();
+  private static final IdentityHashSet<Class<? extends Schema>> prepared = new IdentityHashSet<Class<? extends Schema>>();
 
   public static void register(final Class<? extends Schema> schema, final Connector dataSource) {
-    register(schema, dataSource, false, false);
+    register(schema, dataSource, false);
   }
 
   public static void register(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), false, false);
+    register(schema, makeConnector(dataSource), false);
   }
 
   public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector) {
-    register(schema, connector, true, false);
+    register(schema, connector, true);
   }
 
   public static void registerPrepared(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), true, false);
+    register(schema, makeConnector(dataSource), true);
   }
 
-  public static void registerBatching(final Class<? extends Schema> schema, final Connector connector) {
-    register(schema, connector, false, true);
-  }
-
-  public static void registerBatching(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), false, true);
-  }
-
-  public static void registerPreparedBatching(final Class<? extends Schema> schema, final Connector connector) {
-    register(schema, connector, true, true);
-  }
-
-  public static void registerPreparedBatching(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), true, true);
-  }
-
-  private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final boolean batching) {
+  private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared) {
     if (dataSource == null)
       throw new NullPointerException("dataSource == null");
 
     dataSources.put(schema, dataSource);
     if (prepared)
       Registry.prepared.add(schema);
-
-    if (batching)
-      Registry.batching.add(schema);
   }
 
   protected static Connector getDataSource(final Class<? extends Schema> schema) {
@@ -91,10 +69,6 @@ public final class Registry {
 
   protected static boolean isPrepared(final Class<? extends Schema> schema) {
     return prepared.contains(schema);
-  }
-
-  protected static boolean isBatching(final Class<? extends Schema> schema) {
-    return batching.contains(schema);
   }
 
   private Registry() {

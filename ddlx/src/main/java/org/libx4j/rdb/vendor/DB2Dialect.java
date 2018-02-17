@@ -30,6 +30,21 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
+  public String currentTimeFunction() {
+    return "CURRENT TIME";
+  }
+
+  @Override
+  public String currentDateFunction() {
+    return "CURRENT DATE";
+  }
+
+  @Override
+  public String currentDateTimeFunction() {
+    return "CURRENT TIMESTAMP";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }

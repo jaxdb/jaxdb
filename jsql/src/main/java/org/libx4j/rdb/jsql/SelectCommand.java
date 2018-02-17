@@ -157,6 +157,13 @@ final class SelectCommand extends Command {
     this.translateTypes = translateTypes;
   }
 
+  private Class<? extends Schema> schema;
+
+  @Override
+  protected Class<? extends Schema> getSchema() {
+    return schema == null ? schema = (from != null ? from.tables.iterator().next().schema() : null) : schema;
+  }
+
   @Override
   protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);

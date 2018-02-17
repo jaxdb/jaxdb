@@ -17,4 +17,5 @@
 package org.libx4j.rdb.jsql;
 
 abstract class Command extends Compilable {
+  protected abstract Class<? extends Schema> getSchema();
 }

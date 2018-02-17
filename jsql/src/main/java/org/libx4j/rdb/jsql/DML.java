@@ -23,12 +23,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.Temporal;
 import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 import org.lib4j.lang.Arrays;
-import org.libx4j.rdb.sqlx_0_9_8.Database;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
 
 @SuppressWarnings("hiding")
 public final class DML {
@@ -1055,28 +1052,8 @@ public final class DML {
     return new UpdateImpl.UPDATE(entity);
   }
 
-  public static Update.UPDATE UPDATE(final type.Entity entity, final type.Entity ... entities) {
-    return new UpdateImpl.UPDATE(Arrays.splice(entities, 0, 0, entity));
-  }
-
-  public static Update.UPDATE UPDATE(final Collection<? extends type.Entity> entities) {
-    return new UpdateImpl.UPDATE(entities.toArray(new type.Entity[entities.size()]));
-  }
-
   public static Delete._DELETE DELETE(final type.Entity entity) {
     return new DeleteImpl.DELETE(entity);
-  }
-
-  public static Delete.DELETE DELETE(final type.Entity entity, final type.Entity ... entities) {
-    return new DeleteImpl.DELETE(Arrays.splice(entities, 0, 0, entity));
-  }
-
-  public static Delete.DELETE DELETE(final Collection<? extends type.Entity> entities) {
-    return new DeleteImpl.DELETE(entities.toArray(new type.Entity[entities.size()]));
-  }
-
-  public static Delete.DELETE DELETE(final type.Entity entity, final List<type.Entity> entities) {
-    return new DeleteImpl.DELETE(entities.toArray(new type.Entity[entities.size()]));
   }
 
   /** INSERT **/
@@ -1087,26 +1064,8 @@ public final class DML {
 
   @SafeVarargs
   @SuppressWarnings("unchecked")
-  public static <E extends type.Entity>Insert.INSERT<E> INSERT(final E entity, final E ... entities) {
-    return new InsertImpl.INSERT<E>(kind.Entity.class, Arrays.splice(entities, 0, 0, entity));
-  }
-
-  public static <E extends type.Entity>Insert.INSERT<E> INSERT(final List<E> entities) {
-    return new InsertImpl.INSERT<E>(kind.Entity.class, entities.toArray(new type.Entity[entities.size()]));
-  }
-
-  @SafeVarargs
-  @SuppressWarnings("unchecked")
   public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) {
     return new InsertImpl.INSERT<DataType>(kind.DataType.class, Arrays.splice(columns, 0, 0, column));
-  }
-
-  public static Insert.INSERT<?> INSERT(final Database database) {
-    return new InsertImpl.INSERT<type.Subject<?>>(kind.Subject.class, Entities.toEntities(database));
-  }
-
-  public static Insert.INSERT<?> INSERT(final $Database database) {
-    return new InsertImpl.INSERT<type.Subject<?>>(kind.Subject.class, Entities.toEntities(database));
   }
 
   /** String Functions **/

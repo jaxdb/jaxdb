@@ -21,5 +21,7 @@ import java.sql.SQLException;
 
 public interface ExecuteQuery<T extends type.Subject<?>> {
   public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  default public RowIterator<T> execute() throws IOException, SQLException {
+    return execute(null);
+  }
 }

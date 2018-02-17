@@ -32,6 +32,21 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
+  public String currentTimeFunction() {
+    return "(SYSTIMESTAMP - SYSDATE) DAY(9) TO SECOND";
+  }
+
+  @Override
+  public String currentDateFunction() {
+    return "SYSDATE";
+  }
+
+  @Override
+  public String currentDateTimeFunction() {
+    return "SYSTIMESTAMP";
+  }
+
+  @Override
   public boolean allowsUnsignedNumeric() {
     return false;
   }
@@ -150,7 +165,7 @@ public class OracleDialect extends Dialect {
 
   @Override
   public String declareTime(final byte precision) {
-    return "INTERVAL DAY(0) TO SECOND(" + precision + ")";
+    return "INTERVAL DAY(9) TO SECOND(" + precision + ")";
   }
 
   @Override

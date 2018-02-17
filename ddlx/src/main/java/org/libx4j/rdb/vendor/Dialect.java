@@ -90,6 +90,10 @@ public abstract class Dialect {
 
   public abstract String quoteIdentifier(final String name);
 
+  public abstract String currentTimeFunction();
+  public abstract String currentDateFunction();
+  public abstract String currentDateTimeFunction();
+
   public abstract boolean allowsUnsignedNumeric();
 
   protected abstract String declareBinary(final boolean varying, final int length);

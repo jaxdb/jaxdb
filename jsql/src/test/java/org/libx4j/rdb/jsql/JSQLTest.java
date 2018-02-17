@@ -66,7 +66,11 @@ public abstract class JSQLTest {
 
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    return INSERT(database).execute();
+    final Batch batch = new Batch();
+    for (final type.Entity entity : Entities.toEntities(database))
+      batch.addStatement(INSERT(entity));
+
+    return batch.execute();
   }
 
   @SuppressWarnings("unchecked")
@@ -91,6 +95,10 @@ public abstract class JSQLTest {
 
     Schemas.flatten(schema);
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    return INSERT(database).execute();
+    final Batch batch = new Batch();
+    for (final type.Entity entity : Entities.toEntities(database))
+      batch.addStatement(INSERT(entity));
+
+    return batch.execute();
   }
 }

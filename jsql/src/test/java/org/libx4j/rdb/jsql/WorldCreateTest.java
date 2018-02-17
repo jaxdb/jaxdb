@@ -31,6 +31,6 @@ public class WorldCreateTest extends JSQLTest {
   @Test
   public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException {
     createEntities(name);
-    SQLxTest.createSchemas(name);
+    SQLxTest.createXSDs(name);
   }
 }

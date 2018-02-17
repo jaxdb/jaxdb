@@ -138,14 +138,15 @@ final class SqlXsb {
 
     if ("TIMESTAMP".equals(generateOnInsert)) {
       if ($Date.class.isAssignableFrom(type))
-        return compiler.compile(new dt.DATE(LocalDate.now()));
+        return compiler.getVendor().getDialect().currentDateFunction();
 
       if ($Datetime.class.isAssignableFrom(type))
-        return compiler.compile(new dt.DATETIME(LocalDateTime.now()));
+        return compiler.getVendor().getDialect().currentDateTimeFunction();
 
       if ($Time.class.isAssignableFrom(type))
-        return compiler.compile(new dt.TIME(LocalTime.now()));
+        return compiler.getVendor().getDialect().currentTimeFunction();
     }
+
 
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + Classes.getStrictName(type));
   }

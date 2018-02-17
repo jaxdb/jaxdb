@@ -24,6 +24,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -48,7 +49,7 @@ public class ClassicModelsTest extends SQLxTest {
 
   static {
     try {
-      createSchemas("classicmodels");
+      createXSDs(name);
     }
     catch (final CompilationException | IOException | JAXBException | TransformerException e) {
       throw new ExceptionInInitializerError(e);

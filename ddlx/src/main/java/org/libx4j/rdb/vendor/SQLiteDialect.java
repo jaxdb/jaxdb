@@ -37,6 +37,21 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
+  public String currentTimeFunction() {
+    return "TIME('now')";
+  }
+
+  @Override
+  public String currentDateFunction() {
+    return "DATE('now')";
+  }
+
+  @Override
+  public String currentDateTimeFunction() {
+    return "DATETIME('now')";
+  }
+
+  @Override
   public String declareBoolean() {
     return "BOOLEAN";
   }

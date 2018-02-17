@@ -16,59 +16,11 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import org.lib4j.sql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.jsql.Select;
-import org.libx4j.rdb.vendor.DBVendor;
-
 final class InsertImpl {
-  protected static abstract class Execute<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
-    protected Execute(final Keyword<T> parent) {
-      super(parent);
-    }
-
-    @Override
-    public final int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final InsertCommand command = (InsertCommand)normalize();
-
-      final Class<? extends Schema> schema;
-      if (command.insert().entities != null)
-        schema = command.insert().entities[0].schema();
-      else if (command.insert().columns != null)
-        schema = command.insert().columns[0].owner.schema();
-      else
-        throw new UnsupportedOperationException("Expected insert.entities != null || insert.select != null");
-
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        final DBVendor vendor = Schema.getDBVendor(connection);
-
-        final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
-        command.compile(compilation);
-        final int[] count = compilation.execute(connection);
-        if (transaction == null)
-          connection.close();
-
-        return count;
-      }
-      catch (final SQLException e) {
-        throw SQLExceptionCatalog.lookup(e);
-      }
-    }
-
-    @Override
-    public final int[] execute() throws IOException, SQLException {
-      return execute(null);
-    }
-  }
-
-  protected static final class VALUES<T extends type.Subject<?>> extends Execute<T> implements Insert.VALUES<T> {
+  protected static final class VALUES<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert.VALUES<T> {
     protected final Select.untyped.SELECT<?> select;
 
-    protected VALUES(final Keyword<T> parent, final Select.untyped.SELECT<?> select) {
+    protected VALUES(final BatchableKeyword<T> parent, final Select.untyped.SELECT<?> select) {
       super(parent);
       this.select = select;
     }
@@ -81,21 +33,20 @@ final class InsertImpl {
     }
   }
 
-  protected static final class INSERT<T extends type.Subject<?>> extends Execute<T> implements Insert._INSERT<T> {
-    protected final type.Entity[] entities;
+  protected static final class INSERT<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert._INSERT<T> {
+    protected final type.Entity entity;
     protected final type.DataType<?>[] columns;
 
-    @SafeVarargs
-    protected INSERT(final Class<?> kind, final type.Entity ... entities) {
+    protected INSERT(final Class<?> kind, final type.Entity entity) {
       super(null);
-      this.entities = entities;
+      this.entity = entity;
       this.columns = null;
     }
 
     @SafeVarargs
     protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
       super(null);
-      this.entities = null;
+      this.entity = null;
       this.columns = columns;
       type.Entity entity = columns[0].owner;
       if (entity == null)

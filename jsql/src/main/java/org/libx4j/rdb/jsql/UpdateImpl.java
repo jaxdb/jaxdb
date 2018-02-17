@@ -16,59 +16,9 @@
 
 package org.libx4j.rdb.jsql;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import org.lib4j.sql.exception.SQLExceptionCatalog;
-import org.libx4j.rdb.vendor.DBVendor;
-
 final class UpdateImpl {
-  private static abstract class Execute extends Keyword<type.DataType<?>> implements Update.UPDATE {
-    protected Execute(final Keyword<type.DataType<?>> parent) {
-      super(parent);
-    }
-
-    /**
-     * Executes the SQL statement in this <code>XDE</code> object.
-     *
-     * @return the row modification count
-     * @exception SQLException if a database access error occurs
-     */
-    @Override
-    public int[] execute(final Transaction transaction) throws IOException, SQLException {
-      final UpdateCommand command = (UpdateCommand)normalize();
-      final Class<? extends Schema> schema = command.update().entities[0].schema();
-      Compilation compilation = null;
-      try {
-        final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema);
-        final DBVendor vendor = Schema.getDBVendor(connection);
-
-        compilation = new Compilation(command, vendor, Registry.isPrepared(schema), Registry.isBatching(schema));
-        command.compile(compilation);
-        final int[] count = compilation.execute(connection);
-        compilation.afterExecute(true);
-        if (transaction == null)
-          connection.close();
-
-        return count;
-      }
-      catch (final SQLException e) {
-        if (compilation != null)
-          compilation.afterExecute(false);
-
-        throw SQLExceptionCatalog.lookup(e);
-      }
-    }
-
-    @Override
-    public int[] execute() throws IOException, SQLException {
-      return execute(null);
-    }
-  }
-
-  private static abstract class UPDATE_SET extends Execute implements Update._SET {
-    protected UPDATE_SET(final Keyword<type.DataType<?>> parent) {
+  private static abstract class UPDATE_SET extends BatchableKeyword<type.DataType<?>> implements Update._SET {
+    protected UPDATE_SET(final BatchableKeyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -85,11 +35,11 @@ final class UpdateImpl {
   }
 
   protected static final class UPDATE extends UPDATE_SET implements Update._SET {
-    protected final type.Entity[] entities;
+    protected final type.Entity entity;
 
-    protected UPDATE(final type.Entity ... entities) {
+    protected UPDATE(final type.Entity entity) {
       super(null);
-      this.entities = entities;
+      this.entity = entity;
     }
 
     @Override
@@ -102,13 +52,13 @@ final class UpdateImpl {
     protected final type.DataType<?> column;
     protected final Compilable to;
 
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+    protected <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = (Provision)to;
     }
 
-    protected <T>SET(final Keyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+    protected <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = to;
@@ -127,10 +77,10 @@ final class UpdateImpl {
     }
   }
 
-  protected static final class WHERE extends Execute implements Update.UPDATE {
+  protected static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Update.UPDATE {
     protected final Condition<?> condition;
 
-    protected WHERE(final Keyword<type.DataType<?>> parent, final Condition<?> condition) {
+    protected WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }

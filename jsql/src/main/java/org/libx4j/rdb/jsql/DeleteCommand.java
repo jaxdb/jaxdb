@@ -42,6 +42,11 @@ final class DeleteCommand extends Command {
   }
 
   @Override
+  protected Class<? extends Schema> getSchema() {
+    return delete().entity.schema();
+  }
+
+  @Override
   protected void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (where() != null)

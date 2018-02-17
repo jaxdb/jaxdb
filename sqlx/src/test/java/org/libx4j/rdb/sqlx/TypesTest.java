@@ -116,7 +116,7 @@ public class TypesTest extends SQLxTest {
 
   static {
     try {
-      createSchemas("types");
+      createXSDs("types");
       resourcesDestDir.mkdirs();
       try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.sqlx"))) {
         createTypeData(out);
