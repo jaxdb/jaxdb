@@ -28,7 +28,7 @@ public final class DBVendor {
 
   public static final DBVendor DB2 = new DBVendor("DB2", new DB2Dialect());
   public static final DBVendor DERBY = new DBVendor("Derby", new DerbyDialect());
-  public static final DBVendor MARIA_DB = new DBVendor("MariaDB", new MySQLDialect());
+  public static final DBVendor MARIA_DB = new DBVendor("MariaDB", new MariaDBDialect());
   public static final DBVendor MY_SQL = new DBVendor("MySQL", new MySQLDialect());
   public static final DBVendor ORACLE = new DBVendor("Oracle", new OracleDialect());
   public static final DBVendor POSTGRE_SQL = new DBVendor("PostgreSQL", new PostgreSQLDialect());

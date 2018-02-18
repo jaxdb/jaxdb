@@ -33,7 +33,7 @@ import org.libx4j.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class OracleCompiler extends Compiler {
+final class OracleCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
   @Override

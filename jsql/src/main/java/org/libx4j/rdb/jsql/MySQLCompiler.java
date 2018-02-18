@@ -28,7 +28,7 @@ import java.util.List;
 import org.lib4j.util.Temporals;
 import org.libx4j.rdb.vendor.DBVendor;
 
-final class MySQLCompiler extends Compiler {
+class MySQLCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;

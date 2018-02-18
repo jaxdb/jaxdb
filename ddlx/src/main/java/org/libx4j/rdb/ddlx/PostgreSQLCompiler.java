@@ -33,7 +33,7 @@ import org.libx4j.rdb.vendor.Dialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class PostgreSQLCompiler extends Compiler {
+final class PostgreSQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
   @Override

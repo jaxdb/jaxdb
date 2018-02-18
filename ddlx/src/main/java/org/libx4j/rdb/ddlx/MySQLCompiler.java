@@ -28,7 +28,7 @@ import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Named;
 import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.vendor.DBVendor;
 
-public final class MySQLCompiler extends Compiler {
+class MySQLCompiler extends Compiler {
   @Override
   protected DBVendor getVendor() {
     return DBVendor.MY_SQL;

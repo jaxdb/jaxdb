@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 lib4j
+/* Copyright (c) 2015 lib4j
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,13 +14,13 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.sqlx;
+package org.libx4j.rdb.ddlx;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
-class MySQLCompiler extends Compiler {
+final class MariaDBCompiler extends MySQLCompiler {
   @Override
   protected DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+    return DBVendor.MARIA_DB;
   }
 }

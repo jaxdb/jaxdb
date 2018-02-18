@@ -14,13 +14,13 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.libx4j.rdb.sqlx;
+package org.libx4j.rdb.jsql;
 
 import org.libx4j.rdb.vendor.DBVendor;
 
-class MySQLCompiler extends Compiler {
+final class MariaDBCompiler extends MySQLCompiler {
   @Override
   protected DBVendor getVendor() {
-    return DBVendor.MY_SQL;
+    return DBVendor.MARIA_DB;
   }
 }
