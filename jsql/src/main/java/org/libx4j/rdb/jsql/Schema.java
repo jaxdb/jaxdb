@@ -40,6 +40,9 @@ public abstract class Schema {
       if (url.contains("jdbc:derby"))
         return DBVendor.DERBY;
 
+      if (url.contains("jdbc:mariadb"))
+        return DBVendor.MARIA_DB;
+
       if (url.contains("jdbc:mysql"))
         return DBVendor.MY_SQL;
 
