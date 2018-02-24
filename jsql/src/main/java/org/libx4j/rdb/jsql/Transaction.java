@@ -18,12 +18,13 @@ package org.libx4j.rdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.lib4j.sql.exception.SQLExceptionCatalog;
 
 public final class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
-  private volatile Boolean inited = false;
+  private final AtomicBoolean inited = new AtomicBoolean(false);
 
   private Connection connection;
 
@@ -32,11 +33,11 @@ public final class Transaction implements AutoCloseable {
   }
 
   protected Connection getConnection() throws SQLException {
-    if (inited)
+    if (inited.get())
       return connection;
 
     synchronized (inited) {
-      if (inited)
+      if (inited.get())
         return connection;
 
       this.connection = Schema.getConnection(schema);
@@ -47,30 +48,32 @@ public final class Transaction implements AutoCloseable {
         throw SQLExceptionCatalog.lookup(e);
       }
 
-      inited = true;
+      inited.set(true);
     }
 
     return connection;
   }
 
-  public void commit() throws SQLException {
+  public boolean commit() throws SQLException {
     if (connection == null)
-      return;
+      return false;
 
     try {
       connection.commit();
+      return true;
     }
     catch (final SQLException e) {
       throw SQLExceptionCatalog.lookup(e);
     }
   }
 
-  public void rollback() throws SQLException {
+  public boolean rollback() throws SQLException {
     if (connection == null)
-      return;
+      return false;
 
     try {
       connection.rollback();
+      return true;
     }
     catch (final SQLException e) {
       throw SQLExceptionCatalog.lookup(e);
