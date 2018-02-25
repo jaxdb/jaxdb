@@ -69,10 +69,10 @@ class SelectImpl {
     }
   }
 
-  protected static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final Keyword<T> keyword) throws IOException, SQLException {
+  protected static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final Keyword<T> keyword) throws IOException, SQLException {
     try {
       final SelectCommand command = (SelectCommand)keyword.normalize();
-      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema());
+      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId);
       final DBVendor vendor = Schema.getDBVendor(connection);
 
       final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()));
@@ -199,8 +199,18 @@ class SelectImpl {
       }
 
       @Override
+      public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
+        return SelectImpl.execute(null, dataSourceId, this);
+      }
+
+      @Override
       public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
-        return SelectImpl.execute(transaction, this);
+        return SelectImpl.execute(transaction, transaction.getDataSourceId(), this);
+      }
+
+      @Override
+      public RowIterator<T> execute() throws IOException, SQLException {
+        return SelectImpl.execute(null, null, this);
       }
     }
 
@@ -391,14 +401,13 @@ class SelectImpl {
         return clone;
       }
 
-      @Override
-      public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
+      private final RowIterator<T> execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
         if (entities.size() == 1) {
           final Compilable subject = entities.iterator().next();
           if (subject instanceof type.Entity) {
             try {
               final type.Entity entity = (type.Entity)subject;
-              final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema());
+              final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema(), dataSourceId);
               final DBVendor vendor = Schema.getDBVendor(connection);
 
               final StringBuilder sql = new StringBuilder("SELECT ");
@@ -470,7 +479,22 @@ class SelectImpl {
           }
         }
 
-        return SelectImpl.execute(transaction, this);
+        return SelectImpl.execute(transaction, dataSourceId, this);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
+        return execute(null, dataSourceId);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
+        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
+      }
+
+      @Override
+      public RowIterator<T> execute() throws IOException, SQLException {
+        return execute(null, null);
       }
     }
 

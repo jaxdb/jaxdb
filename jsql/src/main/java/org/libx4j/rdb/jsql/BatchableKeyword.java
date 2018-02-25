@@ -27,12 +27,11 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
     super(parent);
   }
 
-  @Override
-  public final int execute(final Transaction transaction) throws IOException, SQLException {
+  private final int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     Compilation compilation = null;
     try {
       final Command command = normalize();
-      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema());
+      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId);
       compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema()));
       command.compile(compilation);
       final int count = compilation.execute(connection);
@@ -48,5 +47,20 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
 
       throw SQLExceptionCatalog.lookup(e);
     }
+  }
+
+  @Override
+  public final int execute(final String dataSourceId) throws IOException, SQLException {
+    return execute(null, dataSourceId);
+  }
+
+  @Override
+  public final int execute(final Transaction transaction) throws IOException, SQLException {
+    return execute(transaction, transaction == null ? null : transaction.getDataSourceId());
+  }
+
+  @Override
+  public final int execute() throws IOException, SQLException {
+    return execute(null, null);
   }
 }

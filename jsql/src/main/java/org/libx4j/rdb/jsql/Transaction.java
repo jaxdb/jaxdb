@@ -24,12 +24,18 @@ import org.lib4j.sql.exception.SQLExceptionCatalog;
 
 public final class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
+  private final String dataSourceId;
   private final AtomicBoolean inited = new AtomicBoolean(false);
 
   private Connection connection;
 
   public Transaction(final Class<? extends Schema> schema) {
+    this(schema, null);
+  }
+
+  public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
     this.schema = schema;
+    this.dataSourceId = dataSourceId;
   }
 
   protected Connection getConnection() throws SQLException {
@@ -40,7 +46,7 @@ public final class Transaction implements AutoCloseable {
       if (inited.get())
         return connection;
 
-      this.connection = Schema.getConnection(schema);
+      this.connection = Schema.getConnection(schema, dataSourceId);
       try {
         this.connection.setAutoCommit(false);
       }
@@ -52,6 +58,10 @@ public final class Transaction implements AutoCloseable {
     }
 
     return connection;
+  }
+
+  protected String getDataSourceId() {
+    return this.dataSourceId;
   }
 
   public boolean commit() throws SQLException {

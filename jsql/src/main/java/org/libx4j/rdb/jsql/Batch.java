@@ -65,7 +65,7 @@ public class Batch {
   }
 
   @SuppressWarnings("resource")
-  public int[] execute(final Transaction transaction) throws IOException, SQLException {
+  private int[] execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     try {
       if (executeUpdates.size() == 0)
         return null;
@@ -80,7 +80,7 @@ public class Batch {
         final Command command = keyword.normalize();
 
         if (connection == null)
-          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema());
+          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId);
         else if (schema != null && schema != command.getSchema())
           throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
 
@@ -130,8 +130,16 @@ public class Batch {
     }
   }
 
+  public final int[] execute(final String dataSourceId) throws IOException, SQLException {
+    return execute(null, dataSourceId);
+  }
+
+  public final int[] execute(final Transaction transaction) throws IOException, SQLException {
+    return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
+  }
+
   public int[] execute() throws IOException, SQLException {
-    return execute(null);
+    return execute(null, null);
   }
 
   @Override

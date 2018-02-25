@@ -59,10 +59,10 @@ public abstract class Schema {
     return null;
   }
 
-  protected static Connection getConnection(final Class<? extends Schema> schema) throws SQLException {
-    final Connector dataSource = Registry.getDataSource(schema);
+  protected static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId) throws SQLException {
+    final Connector dataSource = Registry.getDataSource(schema, dataSourceId);
     if (dataSource == null)
-      throw new SQLInvalidSchemaNameException("No " + Connector.class.getSimpleName() + " has been registered for " + (schema == null ? null : schema.getName()));
+      throw new SQLInvalidSchemaNameException("No " + Connector.class.getSimpleName() + " has been registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
 
     try {
       final Connection connection = dataSource.getConnection();

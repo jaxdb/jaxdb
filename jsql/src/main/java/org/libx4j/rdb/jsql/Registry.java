@@ -18,7 +18,9 @@ package org.libx4j.rdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -35,36 +37,57 @@ public final class Registry {
     };
   }
 
-  private static final IdentityHashMap<Class<? extends Schema>,Connector> dataSources = new IdentityHashMap<Class<? extends Schema>,Connector>();
+  private static final IdentityHashMap<Class<? extends Schema>,Map<String,Connector>> dataSources = new IdentityHashMap<Class<? extends Schema>,Map<String,Connector>>();
   private static final IdentityHashSet<Class<? extends Schema>> prepared = new IdentityHashSet<Class<? extends Schema>>();
 
   public static void register(final Class<? extends Schema> schema, final Connector dataSource) {
-    register(schema, dataSource, false);
+    register(schema, dataSource, false, null);
+  }
+
+  public static void register(final Class<? extends Schema> schema, final Connector dataSource, final String id) {
+    register(schema, dataSource, false, id);
   }
 
   public static void register(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), false);
+    register(schema, makeConnector(dataSource), false, null);
+  }
+
+  public static void register(final Class<? extends Schema> schema, final DataSource dataSource, final String id) {
+    register(schema, makeConnector(dataSource), false, id);
   }
 
   public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector) {
-    register(schema, connector, true);
+    register(schema, connector, true, null);
+  }
+
+  public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector, final String id) {
+    register(schema, connector, true, id);
   }
 
   public static void registerPrepared(final Class<? extends Schema> schema, final DataSource dataSource) {
-    register(schema, makeConnector(dataSource), true);
+    register(schema, makeConnector(dataSource), true, null);
   }
 
-  private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared) {
+  public static void registerPrepared(final Class<? extends Schema> schema, final DataSource dataSource, final String id) {
+    register(schema, makeConnector(dataSource), true, id);
+  }
+
+  private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final String id) {
     if (dataSource == null)
       throw new NullPointerException("dataSource == null");
 
-    dataSources.put(schema, dataSource);
+    Map<String,Connector> idToDataSource = dataSources.get(schema);
+    if (idToDataSource == null)
+      dataSources.put(schema, idToDataSource = new HashMap<String,Connector>());
+
+    idToDataSource.put(id, dataSource);
     if (prepared)
       Registry.prepared.add(schema);
   }
 
-  protected static Connector getDataSource(final Class<? extends Schema> schema) {
-    return dataSources.get(schema);
+  protected static Connector getDataSource(final Class<? extends Schema> schema, final String id) {
+    final Map<String,Connector> idToDataSource = dataSources.get(schema);
+    return idToDataSource == null ? null : idToDataSource.get(id);
   }
 
   protected static boolean isPrepared(final Class<? extends Schema> schema) {
