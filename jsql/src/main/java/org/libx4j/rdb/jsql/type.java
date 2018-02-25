@@ -1131,10 +1131,11 @@ public final class type {
     protected DataType<T> indirection;
     protected boolean wasSet;
 
-    public DataType<T> set(final T value) {
+    public boolean set(final T value) {
       this.wasSet = true;
+      final boolean changed = this.value != value && (this.value == null || !this.value.equals(value));
       this.value = value;
-      return this;
+      return changed;
     }
 
     protected final void set(final DataType<T> indirection) {
@@ -2962,12 +2963,11 @@ public final class type {
     }
 
     @Override
-    public final ExactNumeric<T> set(final T value) {
+    public final boolean set(final T value) {
       if (value != null)
         checkValue(value.doubleValue());
 
-      super.set(value);
-      return this;
+      return super.set(value);
     }
   }
 
