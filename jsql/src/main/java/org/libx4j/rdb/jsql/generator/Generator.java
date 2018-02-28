@@ -24,7 +24,9 @@ import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.util.JavaIdentifiers;
@@ -523,6 +525,8 @@ public class Generator {
     return "final " + rawType + " " + columnName;
   }
 
+  private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
+
   public String makeColumn(final $Table table, final $Column column, final boolean isLast) {
     final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
     final String typeName = JavaIdentifiers.toClassCase(column.getName$().text());
@@ -534,7 +538,7 @@ public class Generator {
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
       for (final String value : values)
-        enums.append(", ").append(value.toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
+        enums.append(", ").append(JavaIdentifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
       builder.append("      public static " + typeName + " fromString(final " + String.class.getName() + " string) {\n        if (string == null)\n          return null;\n\n        for (final " + typeName + " value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
