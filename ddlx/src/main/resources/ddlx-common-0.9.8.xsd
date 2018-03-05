@@ -466,6 +466,7 @@
   <xs:attributeGroup name="enum">
     <xs:attribute name="values" use="required">
       <xs:simpleType>
+        <!-- Is there a way to ensure no duplicates occur? -->
         <xs:restriction base="xs:string">
           <xs:pattern value="(\S+(\\ )? )*\S+"/>
         </xs:restriction>
