@@ -29,13 +29,13 @@ public final class Transaction implements AutoCloseable {
 
   private Connection connection;
 
-  public Transaction(final Class<? extends Schema> schema) {
-    this(schema, null);
-  }
-
   public Transaction(final Class<? extends Schema> schema, final String dataSourceId) {
     this.schema = schema;
     this.dataSourceId = dataSourceId;
+  }
+
+  public Transaction(final Class<? extends Schema> schema) {
+    this(schema, null);
   }
 
   protected Connection getConnection() throws SQLException {
