@@ -117,9 +117,6 @@ public class Generator {
 
   private Type getType(final xLzgluGCXYYJc.$Table table, final $Column column) {
     final Class<?> cls = column.getClass().getSuperclass();
-    if ("version".equals(column.getName$().text())) {
-      int i = 0;
-    }
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
     final Object[] params = new Object[] {THIS, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
