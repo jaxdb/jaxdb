@@ -298,7 +298,7 @@ public class dt {
 
     @Override
     public String toString() {
-      return value == null ? null : value.stripTrailingZeros().toString();
+      return value == null ? null : value.stripTrailingZeros().toPlainString();
     }
   }
 
