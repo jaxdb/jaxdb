@@ -18,15 +18,14 @@ package org.libx4j.rdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.lib4j.sql.exception.SQLExceptionCatalog;
 import org.lib4j.sql.exception.SQLInvalidSchemaNameException;
+import org.lib4j.util.ConcurrentHashSet;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public abstract class Schema {
-  private static final Set<Class<? extends Schema>> inited = new HashSet<Class<? extends Schema>>();
+  private static final ConcurrentHashSet<Class<? extends Schema>> inited = new ConcurrentHashSet<Class<? extends Schema>>();
 
   protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
@@ -62,16 +61,16 @@ public abstract class Schema {
   protected static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId) throws SQLException {
     final Connector dataSource = Registry.getDataSource(schema, dataSourceId);
     if (dataSource == null)
-      throw new SQLInvalidSchemaNameException("No " + Connector.class.getSimpleName() + " has been registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
+      throw new SQLInvalidSchemaNameException("A " + Connector.class.getSimpleName() + " has not been registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
 
     try {
       final Connection connection = dataSource.getConnection();
       if (!inited.contains(schema)) {
         synchronized (schema != null ? schema : inited) {
-         if (!inited.contains(schema)) {
-           Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
-           inited.add(schema);
-         }
+          if (!inited.contains(schema)) {
+            Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
+            inited.add(schema);
+          }
         }
       }
 
