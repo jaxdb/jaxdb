@@ -195,8 +195,8 @@ public class MySQLDialect extends Dialect {
     final List<String> enums = Dialect.parseEnum(type.getValues$().text());
     final StringBuilder builder = new StringBuilder();
     for (final String value : enums)
-      builder.append(", '").append(value).append("'");
+      builder.append(", '").append(value).append('\'');
 
-    return "ENUM(" + builder.append(")").substring(2);
+    return "ENUM(" + builder.append(')').substring(2);
   }
 }

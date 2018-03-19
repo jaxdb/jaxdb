@@ -75,7 +75,7 @@ public final class Generator {
     for (int i = 1; i < enums.length; i++)
       message.append(", ").append(enums[i]);
 
-    message.append(".");
+    message.append('.');
     return message.toString();
   }
 

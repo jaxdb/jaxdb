@@ -31,7 +31,7 @@ public class StatementBatch {
   public void writeOutput(final File file) {
     final StringBuilder builder = new StringBuilder();
     for (final Statement statement : statements)
-      builder.append("\n\n").append(statement).append(";");
+      builder.append("\n\n").append(statement).append(';');
 
     try {
       if (file.getParentFile().isFile())

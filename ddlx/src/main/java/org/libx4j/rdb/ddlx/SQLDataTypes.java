@@ -60,7 +60,7 @@ final class SQLDataTypes {
 
     final StringBuilder builder = new StringBuilder("idx_").append(table.getName$().text());
     for (final $Named col : column)
-      builder.append("_").append(col.getName$().text());
+      builder.append('_').append(col.getName$().text());
 
     final String name = builder.toString();
     int count = indexNameToCount.getOrDefault(name, 0);

@@ -227,7 +227,7 @@ final class SqlJaxb {
 
     final Table table = row.getClass().getAnnotation(Table.class);
     final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(table.name()));
-    builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
+    builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
     return builder.toString();
   }
 

@@ -48,7 +48,7 @@ class MySQLCompiler extends Compiler {
 
       arg.compile(compilation);
     }
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
@@ -61,11 +61,11 @@ class MySQLCompiler extends Compiler {
     else
       throw new UnsupportedOperationException("Supported operators for TemporalExpression are only + and -, and this should have been not allowed via strong type semantics " + expression.operator);
 
-    compilation.append(function).append("(");
+    compilation.append(function).append('(');
     expression.a.compile(compilation);
     compilation.append(", ");
     expression.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
@@ -103,7 +103,7 @@ class MySQLCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
       }
 
-      clause.append(" ").append(component).append(" " + unitString);
+      clause.append(' ').append(component).append(" " + unitString);
     }
 
     compilation.append("INTERVAL ").append(clause.substring(1));
@@ -118,7 +118,7 @@ class MySQLCompiler extends Compiler {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation);
       final String declaration = as.cast.declare(compilation.vendor);
-      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(")");
+      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(')');
     }
     else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");
@@ -126,9 +126,9 @@ class MySQLCompiler extends Compiler {
       compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? "UNSIGNED" : "SIGNED").append(" INTEGER)");
     }
     else {
-      compilation.append("(");
+      compilation.append('(');
       compilable(as.dataType).compile(compilation);
-      compilation.append(")");
+      compilation.append(')');
     }
   }
 

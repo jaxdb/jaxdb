@@ -41,10 +41,10 @@ import org.lib4j.xml.SimpleNamespaceContext;
 import org.lib4j.xml.dom.DOMStyle;
 import org.lib4j.xml.dom.DOMs;
 import org.lib4j.xml.validate.ValidationException;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
+import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.MarshalException;
@@ -81,20 +81,15 @@ public class ReverseTest extends DDLxTest {
     return xPath;
   }
 
-  private static String evalXPath(final Element element, final String xpath) {
-    try {
-      final NodeList nodes = (NodeList)newXPath().evaluate(xpath, element, XPathConstants.NODESET);
-      final StringBuilder builder = new StringBuilder();
-      for (int i = 0; i < nodes.getLength(); ++i) {
-        final Node node = nodes.item(i);
-        builder.append('\n').append(DOMs.domToString(node, DOMStyle.INDENT));
-      }
+  private static String evalXPath(final Element element, final String xpath) throws XPathExpressionException {
+    final NodeList nodes = (NodeList)newXPath().evaluate(xpath, element, XPathConstants.NODESET);
+    final StringBuilder builder = new StringBuilder();
+    for (int i = 0; i < nodes.getLength(); ++i) {
+      final Node node = nodes.item(i);
+      builder.append('\n').append(DOMs.domToString(node, DOMStyle.INDENT));
+    }
 
-      return builder.length() == 0 ? null : builder.substring(1);
-    }
-    catch (final XPathExpressionException e) {
-      throw new RuntimeException(e);
-    }
+    return builder.length() == 0 ? null : builder.substring(1);
   }
 
   public static void remove(final Element element, final String ... xpaths) throws XPathExpressionException {
@@ -116,9 +111,9 @@ public class ReverseTest extends DDLxTest {
 
   public static void addAttribute(final Element element, final String xpath, final String name, final String value) throws XPathExpressionException {
     final XPathExpression expr = newXPath().compile(xpath);
-    final NodeList nodes2 = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
-    for (int i = 0; i < nodes2.getLength(); ++i) {
-      final Node node = nodes2.item(i);
+    final NodeList nodes = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
+    for (int i = 0; i < nodes.getLength(); ++i) {
+      final Node node = nodes.item(i);
       if (!(node instanceof Element))
         throw new UnsupportedOperationException("Only support addition of attributes to elements");
 
@@ -131,9 +126,9 @@ public class ReverseTest extends DDLxTest {
 
   public static void replace(final Element element, final String xpath, final String name, final String value) throws XPathExpressionException {
     final XPathExpression expr = newXPath().compile(xpath);
-    final NodeList nodes2 = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
-    for (int i = 0; i < nodes2.getLength(); ++i) {
-      final Node node = nodes2.item(i);
+    final NodeList nodes = (NodeList)expr.evaluate(element, XPathConstants.NODESET);
+    for (int i = 0; i < nodes.getLength(); ++i) {
+      final Node node = nodes.item(i);
       if (node instanceof Attr) {
         final Attr attr = (Attr)node;
         if (name == null) {
@@ -202,29 +197,44 @@ public class ReverseTest extends DDLxTest {
       );
     }
 
-    final String controlXML = DOMs.domToString(controlElement, DOMStyle.INDENT);
-    final String testXML = DOMs.domToString(testElement, DOMStyle.INDENT);
+    final String controlXml = DOMs.domToString(controlElement, DOMStyle.INDENT);
+    final String testXml = DOMs.domToString(testElement, DOMStyle.INDENT);
 
-    final Source controlSource = Input.fromString(controlXML).build();
-    final Source testSource = Input.fromString(testXML).build();
+    final Source controlSource = Input.fromString(controlXml).build();
+    final Source testSource = Input.fromString(testXml).build();
 
     final DifferenceEngine diffEngine = new DOMDifferenceEngine();
     diffEngine.addDifferenceListener(new ComparisonListener() {
       @Override
-      public void comparisonPerformed(final Comparison comparison, final ComparisonResult outcome) {
+      public void comparisonPerformed(final Comparison comparison, final ComparisonResult result) {
         final String controlXPath = comparison.getControlDetails().getXPath() == null ? null : comparison.getControlDetails().getXPath().replaceAll("/([^@])", "/ddlx:$1");
         if (controlXPath == null || controlXPath.matches("^.*\\/@[:a-z]+$") || controlXPath.contains("text()"))
           return;
 
-        final String controlEval = evalXPath(controlElement, controlXPath);
+        try {
+          final String controlEval = evalXPath(controlElement, controlXPath);
 
-        final String testXPath = comparison.getTestDetails().getXPath() == null ? null : comparison.getTestDetails().getXPath().replaceAll("/([^@])", "/ddlx:$1");
-        final String testEval = testXPath == null ? null : evalXPath(testElement, testXPath);
-        logger.info(Strings.printColumns("Expected: " + controlXPath + "\n" + controlEval, "Actual: " + testXPath + "\n" + testEval));
+          final String testXPath = comparison.getTestDetails().getXPath() == null ? null : comparison.getTestDetails().getXPath().replaceAll("/([^@])", "/ddlx:$1");
+          final String testEval = testXPath == null ? null : evalXPath(testElement, testXPath);
+          logger.info(Strings.printColumns("Expected: " + controlXPath + "\n" + controlEval, "Actual: " + testXPath + "\n" + testEval));
+        }
+        catch (final XPathExpressionException e) {
+          throw new RuntimeException(e);
+        }
+
         Assert.fail("Found a difference: " + comparison);
       }
     });
-    diffEngine.compare(controlSource, testSource);
+
+    try {
+      diffEngine.compare(controlSource, testSource);
+    }
+    catch (final RuntimeException e) {
+      if (e.getCause() instanceof XPathExpressionException)
+        throw (XPathExpressionException)e.getCause();
+
+      throw e;
+    }
   }
 
   private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {

@@ -58,6 +58,8 @@ public abstract class Schema {
     return null;
   }
 
+  private static final Class<? extends Schema> NULL = Schema.class;
+
   protected static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId) throws SQLException {
     final Connector dataSource = Registry.getDataSource(schema, dataSourceId);
     if (dataSource == null)
@@ -65,11 +67,12 @@ public abstract class Schema {
 
     try {
       final Connection connection = dataSource.getConnection();
-      if (!inited.contains(schema)) {
-        synchronized (schema != null ? schema : inited) {
-          if (!inited.contains(schema)) {
+      final Class<? extends Schema> key = schema != null ? schema : NULL;
+      if (!inited.contains(key)) {
+        synchronized (key) {
+          if (!inited.contains(key)) {
             Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
-            inited.add(schema);
+            inited.add(key);
           }
         }
       }

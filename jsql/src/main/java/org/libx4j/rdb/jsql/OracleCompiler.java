@@ -102,30 +102,30 @@ final class OracleCompiler extends Compiler {
   protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(2, ");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
   protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(10, ");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
   protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     expression.a.compile(compilation);
-    compilation.append(" ");
+    compilation.append(' ');
     final Interval interval = expression.b;
     if (interval.getUnits().size() == 1) {
       compilation.append(expression.operator.toString());
-      compilation.append(" ");
+      compilation.append(' ');
       interval.compile(compilation);
     }
     else {
       for (final TemporalUnit unit : interval.getUnits()) {
         compilation.append(expression.operator.toString());
-        compilation.append(" ");
+        compilation.append(' ');
         new Interval(interval.get(unit), (Interval.Unit)unit).compile(compilation);
       }
     }
@@ -206,7 +206,7 @@ final class OracleCompiler extends Compiler {
       compilation.append(") IS NULL THEN NULL ELSE '+0 ' || TO_CHAR((");
       compilable(as.dataType).compile(compilation);
       compilation.append("), 'HH24:MI:SS.FF') END");
-      compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(")");
+      compilation.append(" AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
     else if (as.cast instanceof kind.CHAR && as.dataType instanceof kind.TIME) {
       compilation.append("SUBSTR(CAST((");
@@ -218,9 +218,9 @@ final class OracleCompiler extends Compiler {
       if (as.cast instanceof kind.TIME && !(as.dataType instanceof kind.TIME))
         compilation.append("'+0 ' || ");
 
-      compilation.append("(");
+      compilation.append('(');
       compilable(as.dataType).compile(compilation);
-      compilation.append(")) AS ").append(as.cast.declare(compilation.vendor)).append(")");
+      compilation.append(")) AS ").append(as.cast.declare(compilation.vendor)).append(')');
     }
   }
 

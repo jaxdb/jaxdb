@@ -122,7 +122,7 @@ final class SQLiteCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      clause.append(" ").append(component).append(" " + unitString);
+      clause.append(' ').append(component).append(" " + unitString);
     }
 
     compilation.append(clause.substring(1));
@@ -130,18 +130,18 @@ final class SQLiteCompiler extends Compiler {
 
   @Override
   protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
-    compilation.append("(");
+    compilation.append('(');
     function.a.compile(compilation);
     compilation.append(" % ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
   protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
@@ -150,7 +150,7 @@ final class SQLiteCompiler extends Compiler {
     function.b.compile(compilation);
     compilation.append(") / LOG(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override

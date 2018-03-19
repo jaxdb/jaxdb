@@ -217,11 +217,13 @@
                     <xs:simpleType>
                       <xs:restriction>
                         <xsl:attribute name="base">dt:<xsl:value-of select="@xsi:type"/></xsl:attribute>
-                        <xs:maxLength>
-                          <xsl:attribute name="value">
-                            <xsl:value-of select="@length"/>
-                          </xsl:attribute>
-                        </xs:maxLength>
+                        <xsl:if test="@length">
+                          <xs:maxLength>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="@length"/>
+                            </xsl:attribute>
+                          </xs:maxLength>
+                        </xsl:if>
                         <xsl:if test="not(@varying='true') and not(@xsi:type='blob')">
                           <xs:minLength>
                             <xsl:attribute name="value">
@@ -236,11 +238,13 @@
                     <xs:simpleType>
                       <xs:restriction>
                         <xsl:attribute name="base">dt:<xsl:value-of select="@xsi:type"/></xsl:attribute>
-                        <xs:maxLength>
-                          <xsl:attribute name="value">
-                            <xsl:value-of select="@length"/>
-                          </xsl:attribute>
-                        </xs:maxLength>
+                        <xsl:if test="@length">
+                          <xs:maxLength>
+                            <xsl:attribute name="value">
+                              <xsl:value-of select="@length"/>
+                            </xsl:attribute>
+                          </xs:maxLength>
+                        </xsl:if>
                         <xsl:if test="not(@varying='true') and not(@xsi:type='clob')">
                           <xs:minLength>
                             <xsl:attribute name="value">

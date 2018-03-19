@@ -140,7 +140,7 @@ final class PostgreSQLCompiler extends Compiler {
 
       arg.compile(compilation);
     }
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
@@ -175,10 +175,10 @@ final class PostgreSQLCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      clause.append(" ").append(component).append(" " + unitString);
+      clause.append(' ').append(component).append(" " + unitString);
     }
 
-    compilation.append("INTERVAL '").append(clause.substring(1)).append("'");
+    compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');
   }
 
   @Override
@@ -216,7 +216,7 @@ final class PostgreSQLCompiler extends Compiler {
       else
         predicate.a.compile(compilation);
 
-      compilation.append(" ").append(predicate.operator).append(" ");
+      compilation.append(' ').append(predicate.operator).append(' ');
       if (predicate.b instanceof type.ENUM)
         toChar((type.ENUM<?>)predicate.b, compilation);
       else
@@ -230,7 +230,7 @@ final class PostgreSQLCompiler extends Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   private static void compileCastNumeric(final Compilable dateType, final Compilation compilation) throws IOException {
@@ -245,7 +245,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static void compileLog(final String sqlFunction, final function.Generic function, final Compilation compilation) throws IOException {
-    compilation.append(sqlFunction).append("(");
+    compilation.append(sqlFunction).append('(');
     compileCastNumeric(function.a, compilation);
 
     if (function.b != null) {
@@ -253,7 +253,7 @@ final class PostgreSQLCompiler extends Compiler {
       compileCastNumeric(function.b, compilation);
     }
 
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override
@@ -287,7 +287,7 @@ final class PostgreSQLCompiler extends Compiler {
       compilation.append(", ");
       function.b.compile(compilation);
     }
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @Override

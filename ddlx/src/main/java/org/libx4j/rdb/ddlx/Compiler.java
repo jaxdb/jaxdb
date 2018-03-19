@@ -129,7 +129,7 @@ abstract class Compiler {
 
   private CreateStatement createColumn(final $Table table, final $Column column) {
     final StringBuilder ddl = new StringBuilder();
-    ddl.append(q(column.getName$().text())).append(" ");
+    ddl.append(q(column.getName$().text())).append(' ');
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       ddl.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
@@ -185,12 +185,12 @@ abstract class Compiler {
 
     final String nullFragment = $null(table, column);
     if (nullFragment != null && nullFragment.length() > 0)
-      ddl.append(" ").append(nullFragment);
+      ddl.append(' ').append(nullFragment);
 
     if (column instanceof $Integer) {
       final String autoIncrementFragment = $autoIncrement(table, ($Integer)column);
       if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
-        ddl.append(" ").append(autoIncrementFragment);
+        ddl.append(' ').append(autoIncrementFragment);
     }
 
     return new CreateStatement(ddl.toString());
@@ -236,7 +236,7 @@ abstract class Compiler {
           for (final $Named column : columns)
             columnsString.append(", ").append(q(column.getName$().text()));
 
-          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(columnsString.substring(2)).append(")");
+          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(columnsString.substring(2)).append(')');
         }
 
         contraintsBuffer.append(uniqueString);
@@ -266,17 +266,17 @@ abstract class Compiler {
           final $ForeignKey foreignKey = column.getForeignKey();
           contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
           contraintsBuffer.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
-          contraintsBuffer.append(" (").append(q(foreignKey.getColumn$().text())).append(")");
+          contraintsBuffer.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
           if (foreignKey.getOnDelete$() != null) {
             final String onDelete = onDelete(foreignKey.getOnDelete$());
             if (onDelete != null)
-              contraintsBuffer.append(" ").append(onDelete);
+              contraintsBuffer.append(' ').append(onDelete);
           }
 
           if (foreignKey.getOnUpdate$() != null) {
             final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
             if (onUpdate != null)
-              contraintsBuffer.append(" ").append(onUpdate);
+              contraintsBuffer.append(' ').append(onUpdate);
           }
         }
       }

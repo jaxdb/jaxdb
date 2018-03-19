@@ -234,7 +234,7 @@ final class SqlXsb {
       }
 
       final StringBuilder builder = new StringBuilder("INSERT INTO ").append(vendor.getDialect().quoteIdentifier(row.id()));
-      builder.append(" (").append(columns).append(") VALUES (").append(values).append(")");
+      builder.append(" (").append(columns).append(") VALUES (").append(values).append(')');
       return builder.toString();
     }
     catch (final IllegalAccessException | InvocationTargetException e) {

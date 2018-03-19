@@ -111,7 +111,7 @@ abstract class Compiler {
           compilation.append(", ");
 
         alias.compile(compilation);
-        compilation.append(".").append(compilation.vendor.getDialect().quoteIdentifier(column.name));
+        compilation.append('.').append(compilation.vendor.getDialect().quoteIdentifier(column.name));
         checkTranslateType(translateTypes, column, c, compilation);
       }
     }
@@ -122,9 +122,9 @@ abstract class Compiler {
       checkTranslateType(translateTypes, column, index, compilation);
     }
     else if (subject instanceof Keyword) {
-      compilation.append("(");
+      compilation.append('(');
       subject.compile(compilation);
-      compilation.append(")");
+      compilation.append(')');
     }
     else {
       throw new UnsupportedOperationException("Unsupported subject type: " + subject.getClass().getName());
@@ -192,7 +192,7 @@ abstract class Compiler {
         table.wrapper().compile(compilation);
       }
       else {
-        compilation.append(tableName(table, compilation)).append(" ");
+        compilation.append(tableName(table, compilation)).append(' ');
         compilation.getAlias(table).compile(compilation);
       }
 
@@ -218,12 +218,12 @@ abstract class Compiler {
       else if (join.right)
         compilation.append(" RIGHT OUTER");
 
-      compilation.append(" JOIN ").append(tableName(join.table, compilation)).append(" ");
+      compilation.append(" JOIN ").append(tableName(join.table, compilation)).append(' ');
       compilation.registerAlias(join.table).compile(compilation);
       if (on != null) {
         compilation.append(" ON (");
         on.condition.compile(compilation);
-        compilation.append(")");
+        compilation.append(')');
       }
     }
   }
@@ -330,7 +330,7 @@ abstract class Compiler {
       paramAdded = true;
     }
 
-    compilation.append(")");
+    compilation.append(')');
   }
 
   @SuppressWarnings("rawtypes")
@@ -505,20 +505,20 @@ abstract class Compiler {
       compilation.append(tableName(entity, compilation));
       final Alias alias = compilation.registerAlias(entity);
       if (compilation.command.peek() instanceof SelectCommand) {
-        compilation.append(" ");
+        compilation.append(' ');
         alias.compile(compilation);
       }
     }
   }
 
   protected void compile(final expression.ChangeCase expression, final Compilation compilation) throws IOException {
-    compilation.append(expression.operator.toString()).append("(");
+    compilation.append(expression.operator.toString()).append('(');
     compilable(expression.arg).compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
-    compilation.append("(");
+    compilation.append('(');
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
@@ -526,16 +526,16 @@ abstract class Compiler {
 
       arg.compile(compilation);
     }
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final TemporalUnit unit : units)
-      clause.append(" ").append(interval.get(unit)).append(" " + unit);
+      clause.append(' ').append(interval.get(unit)).append(" " + unit);
 
-    compilation.append("INTERVAL '").append(clause.substring(1)).append("'");
+    compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');
   }
 
   protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
@@ -568,7 +568,7 @@ abstract class Compiler {
 
         if (compilation.command.peek() instanceof SelectCommand) {
           alias.compile(compilation);
-          compilation.append(".");
+          compilation.append('.');
         }
 
         compilation.append(compilation.vendor.getDialect().quoteIdentifier(dataType.name));
@@ -589,14 +589,14 @@ abstract class Compiler {
 
   protected void compile(final As<?> as, final Compilation compilation) throws IOException {
     final Alias alias = compilation.registerAlias(as.getVariable());
-    compilation.append("(");
+    compilation.append('(');
     as.parent().compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
     if (as.isExplicit()) {
       final String string = compile(as);
-      compilation.append(" ");
+      compilation.append(' ');
       if (string != null && string.length() != 0)
-        compilation.append(string).append(" ");
+        compilation.append(string).append(' ');
 
       alias.compile(compilation);
     }
@@ -609,9 +609,9 @@ abstract class Compiler {
         condition.compile(compilation);
       }
       else {
-        compilation.append("(");
+        compilation.append('(');
         condition.compile(compilation);
-        compilation.append(")");
+        compilation.append(')');
       }
     }
     else {
@@ -621,10 +621,10 @@ abstract class Compiler {
 
   protected void compile(final BooleanTerm condition, final Compilation compilation) throws IOException {
     formatBraces(condition.operator, condition.a, compilation);
-    compilation.append(" ").append(condition.operator).append(" ");
+    compilation.append(' ').append(condition.operator).append(' ');
     formatBraces(condition.operator, condition.b, compilation);
     for (int i = 0; i < condition.conditions.length; i++) {
-      compilation.append(" ").append(condition.operator).append(" ");
+      compilation.append(' ').append(condition.operator).append(' ');
       formatBraces(condition.operator, condition.conditions[i], compilation);
     }
   }
@@ -642,13 +642,13 @@ abstract class Compiler {
 
   protected void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
     unwrapAlias(predicate.a).compile(compilation);
-    compilation.append(" ").append(predicate.operator).append(" ");
+    compilation.append(' ').append(predicate.operator).append(' ');
     unwrapAlias(predicate.b).compile(compilation);
   }
 
   protected void compile(final InPredicate predicate, final Compilation compilation) throws IOException {
     compilable(predicate.dataType).compile(compilation);
-    compilation.append(" ");
+    compilation.append(' ');
     if (!predicate.positive)
       compilation.append("NOT ");
 
@@ -660,35 +660,35 @@ abstract class Compiler {
       predicate.values[i].compile(compilation);
     }
 
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final ExistsPredicate predicate, final Compilation compilation) throws IOException {
     compilation.append("EXISTS").append(" (");
     predicate.subQuery.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final LikePredicate predicate, final Compilation compilation) throws IOException {
-    compilation.append("(");
+    compilation.append('(');
     compilable(predicate.dataType).compile(compilation);
     compilation.append(") ");
     if (!predicate.positive)
       compilation.append("NOT ");
 
-    compilation.append("LIKE").append(" '").append(predicate.pattern).append("'");
+    compilation.append("LIKE").append(" '").append(predicate.pattern).append('\'');
   }
 
   protected void compile(final QuantifiedComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
     compilation.append(predicate.qualifier).append(" (");
     predicate.subQuery.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final BetweenPredicates.BetweenPredicate predicate, final Compilation compilation) throws IOException {
-    compilation.append("(");
+    compilation.append('(');
     compilable(predicate.dataType).compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
     if (!predicate.positive)
       compilation.append(" NOT");
 
@@ -714,13 +714,13 @@ abstract class Compiler {
   protected void compile(final function.Abs function, final Compilation compilation) throws IOException {
     compilation.append("ABS(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Sign function, final Compilation compilation) throws IOException {
     compilation.append("SIGN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
@@ -728,25 +728,25 @@ abstract class Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Floor function, final Compilation compilation) throws IOException {
     compilation.append("FLOOR(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Ceil function, final Compilation compilation) throws IOException {
     compilation.append("CEIL(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Pow function, final Compilation compilation) throws IOException {
@@ -754,7 +754,7 @@ abstract class Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
@@ -762,43 +762,43 @@ abstract class Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Sin function, final Compilation compilation) throws IOException {
     compilation.append("SIN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Asin function, final Compilation compilation) throws IOException {
     compilation.append("ASIN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Cos function, final Compilation compilation) throws IOException {
     compilation.append("COS(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Acos function, final Compilation compilation) throws IOException {
     compilation.append("ACOS(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Tan function, final Compilation compilation) throws IOException {
     compilation.append("TAN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Atan function, final Compilation compilation) throws IOException {
     compilation.append("ATAN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
@@ -806,19 +806,19 @@ abstract class Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Exp function, final Compilation compilation) throws IOException {
     compilation.append("EXP(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LN(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Log function, final Compilation compilation) throws IOException {
@@ -826,25 +826,25 @@ abstract class Compiler {
     function.a.compile(compilation);
     compilation.append(", ");
     function.b.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG2(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG10(");
     function.a.compile(compilation);
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final expression.Count expression, final Compilation compilation) throws IOException {
-    compilation.append(expression.function).append("(");
+    compilation.append(expression.function).append('(');
     if (expression.column == null) {
-      compilation.append("*");
+      compilation.append('*');
     }
     else {
       if (expression.distinct)
@@ -853,11 +853,11 @@ abstract class Compiler {
       compilable(expression.column).compile(compilation);
     }
 
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final expression.Set expression, final Compilation compilation) throws IOException {
-    compilation.append(expression.function).append("(");
+    compilation.append(expression.function).append('(');
     if (expression.a != null) {
       if (expression.distinct)
         compilation.append("DISTINCT ");
@@ -870,12 +870,12 @@ abstract class Compiler {
 //      }
     }
 
-    compilation.append(")");
+    compilation.append(')');
   }
 
   protected void compile(final OrderingSpec spec, final Compilation compilation) throws IOException {
     unwrapAlias(spec.dataType).compile(compilation);
-    compilation.append(" ").append(spec.operator);
+    compilation.append(' ').append(spec.operator);
   }
 
   protected void compile(final function.Temporal function, final Compilation compilation) {
@@ -896,7 +896,7 @@ abstract class Compiler {
   protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     compilation.append("CAST((");
     compilable(as.dataType).compile(compilation);
-    compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(")");
+    compilation.append(") AS ").append(as.cast.declare(compilation.vendor)).append(')');
   }
 
   protected String cast(final type.DataType<?> dataType, final Compilation compilation) {

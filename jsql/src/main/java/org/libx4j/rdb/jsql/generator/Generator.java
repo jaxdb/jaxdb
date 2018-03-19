@@ -515,6 +515,6 @@ public class Generator {
       builder.append("      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
-    return builder.append("\n    public final ").append(type.getType()).append(" ").append(columnName).append(" = ").append(type).append(";").toString();
+    return builder.append("\n    public final ").append(type.getType()).append(' ').append(columnName).append(" = ").append(type).append(';').toString();
   }
 }

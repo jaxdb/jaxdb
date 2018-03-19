@@ -95,6 +95,13 @@ final class Compilation {
     return builder.append(seq);
   }
 
+  protected StringBuilder append(final char ch) {
+    if (closed)
+      throw new IllegalStateException("Compilation closed");
+
+    return builder.append(ch);
+  }
+
   protected void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(vendor.getDialect().quoteIdentifier(dataType.name));
     if (dataType.get() == null) {

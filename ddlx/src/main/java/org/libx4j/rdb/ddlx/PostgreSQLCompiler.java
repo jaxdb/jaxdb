@@ -77,12 +77,12 @@ final class PostgreSQLCompiler extends Compiler {
             final List<String> enums = Dialect.parseEnum(type.getValues$().text());
             final StringBuilder builder = new StringBuilder();
             for (final String value : enums)
-              builder.append(", '").append(value).append("'");
+              builder.append(", '").append(value).append('\'');
 
             sql.append(builder.substring(2));
           }
 
-          statements.add(0, new CreateStatement(sql.append(")").toString()));
+          statements.add(0, new CreateStatement(sql.append(')').toString()));
         }
         else if (column instanceof $Integer) {
           final $Integer type = ($Integer)column;
