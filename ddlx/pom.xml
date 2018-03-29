@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.libx4j</groupId>
     <artifactId>rdb</artifactId>
-    <version>0.9.8-SNAPSHOT</version>
+    <version>0.9.8</version>
   </parent>
   <groupId>org.libx4j.rdb</groupId>
   <artifactId>rdb-ddlx</artifactId>
-  <version>0.9.8-SNAPSHOT</version>
+  <version>0.9.8</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>

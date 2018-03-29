@@ -283,7 +283,7 @@ public final class type {
         else if (value instanceof Double)
           this.value = BigInteger.valueOf(((Double)value).longValue());
         else
-          throw new UnsupportedOperationException("Unsupported class for BigInt data type: " + value.getClass().getName());
+          throw new UnsupportedOperationException("Unsupported class for BIGINT.UNSIGNED data type: " + value.getClass().getName());
       }
 
       @Override
