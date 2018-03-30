@@ -34,9 +34,9 @@ import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.ddlx.annotation.Column;
 import org.libx4j.rdb.ddlx.annotation.Schema;
 import org.libx4j.rdb.ddlx.annotation.Table;
-import org.libx4j.rdb.sqlx_0_9_8.Database;
-import org.libx4j.rdb.sqlx_0_9_8.Insert;
-import org.libx4j.rdb.sqlx_0_9_8.Row;
+import org.libx4j.rdb.sqlx_0_9_9.Database;
+import org.libx4j.rdb.sqlx_0_9_9.Insert;
+import org.libx4j.rdb.sqlx_0_9_9.Row;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})

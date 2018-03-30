@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.lib4j.util.NumberFormatter;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Enum;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc.$Table;
+import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Enum;
+import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
 import org.libx4j.xsb.runtime.Binding;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 

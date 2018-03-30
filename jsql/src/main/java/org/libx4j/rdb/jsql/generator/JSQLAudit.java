@@ -17,19 +17,19 @@
 package org.libx4j.rdb.jsql.generator;
 
 import org.libx4j.rdb.ddlx.DDLxAudit;
-import org.libx4j.rdb.ddlx_0_9_8.xLzgluGCXYYJc;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Binary;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Blob;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Boolean;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Char;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Clob;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Date;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Datetime;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Decimal;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Enum;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Float;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Integer;
-import org.libx4j.rdb.jsql_0_9_8.xLzgluGCXYYJc.$Time;
+import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Binary;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Blob;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Boolean;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Char;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Clob;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Date;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Datetime;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Decimal;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Enum;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Float;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Integer;
+import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Time;
 
 public class JSQLAudit extends DDLxAudit {
   protected JSQLAudit(final DDLxAudit copy) {

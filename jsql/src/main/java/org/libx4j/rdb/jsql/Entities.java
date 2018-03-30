@@ -16,8 +16,8 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.libx4j.rdb.sqlx_0_9_8.Database;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
+import org.libx4j.rdb.sqlx_0_9_9.Database;
+import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Database;
 
 public class Entities {
   public static <T extends type.Entity>T[] toEntities(final Database database) {

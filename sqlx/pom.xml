@@ -22,11 +22,11 @@
   <parent>
     <groupId>org.libx4j</groupId>
     <artifactId>rdb</artifactId>
-    <version>0.9.8</version>
+    <version>0.9.9-SNAPSHOT</version>
   </parent>
   <groupId>org.libx4j.rdb</groupId>
   <artifactId>rdb-sqlx</artifactId>
-  <version>0.9.8</version>
+  <version>0.9.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>
@@ -124,7 +124,7 @@
             <configuration>
               <destDir>${project.build.directory}/generated-sources/xsb</destDir>
               <schemas>
-                <schema>src/main/resources/sqlx-0.9.8.xsd</schema>
+                <schema>src/main/resources/sqlx.xsd</schema>
               </schemas>
             </configuration>
           </execution>
@@ -153,7 +153,7 @@
             <configuration>
               <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
               <schemas>
-                <schema>src/main/resources/sqlx-0.9.8.xsd</schema>
+                <schema>src/main/resources/sqlx-0.9.9.xsd</schema>
               </schemas>
             </configuration>
           </execution>

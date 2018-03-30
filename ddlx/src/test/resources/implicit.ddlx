@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
+  xmlns="http://rdb.libx4j.org/ddlx-0.9.9.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.libx4j.org/ddlx.xsd http://rdb.libx4j.org/ddlx.xsd">
+  xsi:schemaLocation="http://rdb.libx4j.org/ddlx-0.9.9.xsd http://rdb.libx4j.org/ddlx.xsd">
   <table name="implicit">
     <column name="id" xsi:type="int" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="bigint_type" xsi:type="bigint" default="100"/>

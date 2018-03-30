@@ -30,12 +30,12 @@ import javax.xml.transform.TransformerException;
 import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.Resources;
 import org.libx4j.rdb.sqlx.SqlJaxb.RowIterator;
-import org.libx4j.rdb.sqlx_0_9_8.Database;
-import org.libx4j.rdb.sqlx_0_9_8.Insert;
-import org.libx4j.rdb.sqlx_0_9_8.Row;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Database;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Insert;
-import org.libx4j.rdb.sqlx_0_9_8.xLzgluGCXYYJc.$Row;
+import org.libx4j.rdb.sqlx_0_9_9.Database;
+import org.libx4j.rdb.sqlx_0_9_9.Insert;
+import org.libx4j.rdb.sqlx_0_9_9.Row;
+import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Database;
+import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Insert;
+import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Row;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.xml.sax.SAXException;
 
