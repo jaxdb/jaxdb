@@ -16,16 +16,6 @@
 
 package org.libx4j.rdb.sqlx;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
-
 import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resource;
@@ -38,8 +28,18 @@ import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+
 public abstract class SQLxTest {
-  private static final File sourcesDestDir = new File("target/generated-test-sources/xsb");
+  private static final File sourcesXsbDestDir = new File("target/generated-test-sources/xsb");
+  private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
   protected static final File testClassesDir = new File("target/test-classes");
   private static final File[] classpath;
@@ -59,8 +59,8 @@ public abstract class SQLxTest {
     final URL ddlx = Resources.getResource(name + ".ddlx").getURL();
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlx(ddlx, destFile);
-    SQL.xsd2xsb(sourcesDestDir, testClassesDir, destFile.toURI().toURL());
-    SQL.xsd2jaxb(sourcesDestDir, testClassesDir, destFile.toURI().toURL());
+    SQL.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI().toURL());
+    SQL.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI().toURL());
   }
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
