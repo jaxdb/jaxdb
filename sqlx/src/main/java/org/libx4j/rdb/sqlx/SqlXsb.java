@@ -274,7 +274,7 @@ final class SqlXsb {
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
     final Set<SchemaReference> schemas = new HashSet<SchemaReference>();
     for (final URL xsd : xsds)
-      schemas.add(new SchemaReference(xsd));
+      schemas.add(new SchemaReference(xsd, false));
 
     new Generator(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null).generate();
   }
@@ -282,7 +282,7 @@ final class SqlXsb {
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
     final Set<SchemaReference> schemas = new HashSet<SchemaReference>();
     for (final URL xsd : xsds)
-      schemas.add(new SchemaReference(xsd));
+      schemas.add(new SchemaReference(xsd, false));
 
     new Generator(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null).generate();
   }
