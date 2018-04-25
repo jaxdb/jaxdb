@@ -100,7 +100,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   <plugin>
     <groupId>org.libx4j.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
-    <version>0.9.8-SNAPSHOT</version>
+    <version>0.9.9-SNAPSHOT</version>
     <executions>
       <execution>
         <goals>

@@ -63,7 +63,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <dependency>
     <groupId>org.libx4j.rdb</groupId>
     <artifactId>rdb-jsql</artifactId>
-    <version>0.9.8-SNAPSHOT</version>
+    <version>0.9.9-SNAPSHOT</version>
   </dependency>
   ```
 
@@ -73,7 +73,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <plugin>
     <groupId>org.libx4j.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
-    <version>0.9.8-SNAPSHOT</version>
+    <version>0.9.9-SNAPSHOT</version>
     <executions>
       <!-- [...] the ddlx <execution> is here -->
       <execution>
@@ -173,7 +173,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <dependency>
     <groupId>org.lib4j</groupId>
     <artifactId>libx4j-dbcp</artifactId>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.4-SNAPSHOT</version>
   </dependency>
   ```
   
