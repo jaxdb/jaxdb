@@ -31,6 +31,7 @@ import java.util.Set;
 import org.lib4j.lang.Arrays;
 import org.lib4j.lang.PackageLoader;
 import org.lib4j.lang.PackageNotFoundException;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
@@ -59,7 +60,7 @@ public final class Generator {
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]));
   }
 
-  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException {
+  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, ValidationException {
     return new StatementBatch(new Generator(DDLxAudit.makeAudit(url)).parse(vendor));
   }
 

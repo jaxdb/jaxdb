@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.lib4j.lang.Classes;
 import org.lib4j.util.JavaIdentifiers;
-import org.lib4j.xml.validate.ValidationException;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxAudit;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;

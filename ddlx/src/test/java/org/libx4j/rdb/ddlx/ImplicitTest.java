@@ -24,7 +24,6 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
-import org.lib4j.xml.validate.ValidationException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -39,7 +38,7 @@ import org.libx4j.xsb.runtime.ParseException;
 @Category(MixedTest.class)
 public class ImplicitTest extends DDLxTest {
   @Test
-  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException, ValidationException {
+  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, ParseException, SQLException {
     recreateSchema(connection, "implicit");
   }
 }

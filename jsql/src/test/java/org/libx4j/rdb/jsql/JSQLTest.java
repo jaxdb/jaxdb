@@ -29,6 +29,7 @@ import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
 import org.lib4j.lang.Resources;
 import org.lib4j.util.JavaIdentifiers;
+import org.lib4j.xml.ValidationException;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
@@ -40,7 +41,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
-  protected static void createEntities(final String name) throws CompilationException, IOException {
+  protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
     final URL url = Resources.getResource(name + ".ddlx").getURL();
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);

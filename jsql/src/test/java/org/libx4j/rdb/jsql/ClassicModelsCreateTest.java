@@ -20,10 +20,11 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.lib4j.jci.CompilationException;
+import org.lib4j.xml.ValidationException;
 
 public class ClassicModelsCreateTest extends JSQLTest {
   @Test
-  public void testCreate() throws CompilationException, IOException {
+  public void testCreate() throws CompilationException, IOException, ValidationException {
     createEntities("classicmodels");
   }
 }

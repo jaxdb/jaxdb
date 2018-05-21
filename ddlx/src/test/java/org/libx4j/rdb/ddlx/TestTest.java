@@ -71,6 +71,7 @@ public class TestTest {
   }
 
   @Ignore
+  @SuppressWarnings("unused")
   public void testIgnore(final Connection connection) {
     Assert.fail("Should have been ignored");
   }

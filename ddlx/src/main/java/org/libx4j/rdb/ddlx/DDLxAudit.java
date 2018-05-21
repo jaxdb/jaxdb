@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lib4j.xml.validate.ValidationException;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Columns;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Indexes;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;
@@ -32,7 +32,7 @@ import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.ParseException;
 
 public class DDLxAudit {
-  protected static DDLxAudit makeAudit(final URL url) throws IOException {
+  protected static DDLxAudit makeAudit(final URL url) throws IOException, ValidationException {
     if (url == null)
       throw new IllegalArgumentException("url == null");
 
