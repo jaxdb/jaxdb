@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.MixedTest;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxTest;
 import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
@@ -48,7 +49,7 @@ public class WorldDataTest extends JSQLTest {
   }
 
   @Test
-  public void testReloadXsb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException {
+  public void testReloadXsb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
     JSQLTest.loadEntitiesXsb(connection, name);
   }

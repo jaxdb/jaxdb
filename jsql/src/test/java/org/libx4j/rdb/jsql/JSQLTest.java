@@ -49,7 +49,7 @@ public abstract class JSQLTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException {
+  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, ValidationException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {

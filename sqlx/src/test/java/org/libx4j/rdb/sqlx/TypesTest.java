@@ -41,6 +41,7 @@ import org.lib4j.lang.Strings;
 import org.lib4j.test.MixedTest;
 import org.lib4j.util.Hexadecimal;
 import org.lib4j.util.Random;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;
@@ -128,7 +129,7 @@ public class TypesTest extends SQLxTest {
   }
 
   @Test
-  public void testLoadData(final Connection connection) throws IOException, SQLException {
+  public void testLoadData(final Connection connection) throws IOException, SQLException, ValidationException {
     Assert.assertEquals(1000, loadData(connection, "types").length);
   }
 }

@@ -16,7 +16,6 @@
 
 package org.libx4j.rdb.ddlx;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -162,14 +161,7 @@ public final class Schemas {
   }
 
   public static Schema flatten(final Schema schema) {
-    final Schema flat;
-    try {
-      flat = (Schema)Bindings.clone(schema);
-    }
-    catch (final IOException e) {
-      throw new UnsupportedOperationException(e);
-    }
-
+    final Schema flat = (Schema)Bindings.clone(schema);
     final Map<String,$Table> tableNameToTable = new HashMap<String,$Table>();
     // First, register the table names to be referenceable by the @extends attribute
     for (final $Table table : flat.getTable())

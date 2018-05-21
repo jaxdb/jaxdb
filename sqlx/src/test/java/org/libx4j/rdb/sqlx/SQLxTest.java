@@ -16,10 +16,21 @@
 
 package org.libx4j.rdb.sqlx;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+
 import org.lib4j.jci.CompilationException;
 import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Resource;
 import org.lib4j.lang.Resources;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.Schemas;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Database;
@@ -27,15 +38,6 @@ import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public abstract class SQLxTest {
   private static final File sourcesXsbDestDir = new File("target/generated-test-sources/xsb");
@@ -69,7 +71,7 @@ public abstract class SQLxTest {
     SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
-  public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException {
+  public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException, ValidationException {
     final Schema schema;
     try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
       schema = (Schema)Bindings.parse(new InputSource(in));

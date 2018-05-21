@@ -31,6 +31,7 @@ import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.test.AssertXml;
 import org.lib4j.test.MixedTest;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.VendorRunner;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
@@ -38,7 +39,6 @@ import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.MarshalException;
-import org.libx4j.xsb.runtime.ParseException;
 import org.w3c.dom.Element;
 
 @RunWith(VendorRunner.class)
@@ -113,7 +113,7 @@ public class ReverseTest extends DDLxTest {
   }
 
   @Test
-  public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, ParseException, SQLException, XPathExpressionException {
+  public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, SQLException, XPathExpressionException, ValidationException {
     final Schema expected = Schemas.flatten(recreateSchema(connection, "reverse", true));
     sort(expected);
 //    logger.info(expected);

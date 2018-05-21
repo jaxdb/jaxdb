@@ -261,10 +261,6 @@ abstract class Decompiler {
       foreignKey.setReferences$(new $ForeignKey.References$(primaryTable));
       foreignKey.setColumn$(new $ForeignKey.Column$(primaryColumn));
 
-      if (primaryTable.equalsIgnoreCase("t_bigint") && primaryColumn.equalsIgnoreCase("c_auto")) {
-        System.out.println();
-      }
-
       final $ChangeRule.Enum onUpdate = toBinding(updateRule);
       if (onUpdate != null)
         foreignKey.setOnUpdate$(new $ForeignKey.OnUpdate$(onUpdate));

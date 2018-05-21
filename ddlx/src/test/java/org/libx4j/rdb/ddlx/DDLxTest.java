@@ -22,6 +22,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.lib4j.lang.Resources;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Decimal;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
@@ -29,15 +30,14 @@ import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 import org.libx4j.xsb.runtime.Bindings;
-import org.libx4j.xsb.runtime.ParseException;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {
-  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, ParseException, SQLException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     return recreateSchema(connection, ddlx, false);
   }
 
-  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, ParseException, SQLException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     final Schema schema;
     try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
       schema = (Schema)Bindings.parse(new InputSource(in));

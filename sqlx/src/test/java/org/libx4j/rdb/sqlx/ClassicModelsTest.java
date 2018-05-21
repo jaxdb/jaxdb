@@ -24,12 +24,12 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.jci.CompilationException;
 import org.lib4j.test.MixedTest;
+import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxTest;
 import org.libx4j.rdb.ddlx.GeneratorExecutionException;
 import org.libx4j.rdb.ddlx.runner.Derby;
@@ -57,7 +57,7 @@ public class ClassicModelsTest extends SQLxTest {
   }
 
   @Test
-  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException {
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
     Assert.assertEquals(3864, loadData(connection, name).length);
   }
