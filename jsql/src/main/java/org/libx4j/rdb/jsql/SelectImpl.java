@@ -79,14 +79,14 @@ class SelectImpl {
       command.compile(compilation);
 
       final ResultSet resultSet = compilation.executeQuery(connection);
-      return parseResultSet(vendor, connection, resultSet, command.select(), compilation.skipFirstColumn());
+      return parseResultSet(connection, resultSet, command.select(), compilation.skipFirstColumn());
     }
     catch (final SQLException e) {
       throw SQLExceptionCatalog.lookup(e);
     }
   }
 
-  private static <B extends type.Subject<?>>RowIterator<B> parseResultSet(final DBVendor vendor, final Connection connection, final ResultSet resultSet, final untyped.SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
+  private static <B extends type.Subject<?>>RowIterator<B> parseResultSet(final Connection connection, final ResultSet resultSet, final untyped.SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
     final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<AbstractMap.SimpleEntry<type.DataType<?>,Integer>>();
     for (final Compilable entity : select.entities)
       compile(dataTypes, entity);
@@ -514,7 +514,7 @@ class SelectImpl {
       }
     }
 
-    protected static abstract class UNION<T extends type.Subject<?>> extends Execute<T> implements Select.untyped.UNION<T> {
+    protected static abstract class UNION<T extends type.Subject<?>> extends Execute<T> {
       protected final Compilable select;
       protected final boolean all;
 
@@ -995,7 +995,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ARRAY.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -1480,7 +1480,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -1963,7 +1963,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BIGINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -2447,7 +2447,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BINARY.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -2931,7 +2931,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BLOB.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -3415,7 +3415,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.BOOLEAN.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -3899,7 +3899,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CHAR.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -4383,7 +4383,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.CLOB.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -4867,7 +4867,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DataType.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -5351,7 +5351,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATE.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -5835,7 +5835,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DATETIME.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -6320,7 +6320,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -6803,7 +6803,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DECIMAL.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -7288,7 +7288,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -7771,7 +7771,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.DOUBLE.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -8255,7 +8255,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Entity.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -8739,7 +8739,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.ENUM.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -9224,7 +9224,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -9707,7 +9707,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.FLOAT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -10192,7 +10192,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -10675,7 +10675,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.INT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -11159,7 +11159,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.LargeObject.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -11643,7 +11643,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Numeric.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -12128,7 +12128,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -12611,7 +12611,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.SMALLINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -13095,7 +13095,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Temporal.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -13579,7 +13579,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.Textual.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -14063,7 +14063,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TIME.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }
@@ -14548,7 +14548,7 @@ class SelectImpl {
         }
       }
 
-      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNSIGNED.UNION<T> {
+      protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
         protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
           super(parent, all, select);
         }
@@ -15031,7 +15031,7 @@ class SelectImpl {
       }
     }
 
-    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T>, Select.TINYINT.UNION<T> {
+    protected static final class UNION<T extends type.Subject<?>> extends untyped.UNION<T> implements Execute<T> {
       protected UNION(final Keyword<T> parent, final boolean all, final Select.untyped.SELECT<T> select) {
         super(parent, all, select);
       }

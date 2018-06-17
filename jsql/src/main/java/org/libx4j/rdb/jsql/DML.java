@@ -1059,13 +1059,13 @@ public final class DML {
   /** INSERT **/
 
   public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) {
-    return new InsertImpl.INSERT<E>(kind.Entity.class, entity);
+    return new InsertImpl.INSERT<E>(entity);
   }
 
   @SafeVarargs
   @SuppressWarnings("unchecked")
   public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) {
-    return new InsertImpl.INSERT<DataType>(kind.DataType.class, Arrays.splice(columns, 0, 0, column));
+    return new InsertImpl.INSERT<DataType>(Arrays.splice(columns, 0, 0, column));
   }
 
   /** String Functions **/

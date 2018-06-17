@@ -34,7 +34,7 @@ final class UpdateImpl {
     }
   }
 
-  protected static final class UPDATE extends UPDATE_SET implements Update._SET {
+  protected static final class UPDATE extends UPDATE_SET {
     protected final type.Entity entity;
 
     protected UPDATE(final type.Entity entity) {

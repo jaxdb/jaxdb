@@ -89,6 +89,13 @@ abstract class Compiler {
     }
   }
 
+  /**
+   * Default no-op implementation of method to compile an enum translation phrase.
+   *
+   * @param from The source enum.
+   * @param to The target enum.
+   * @return Enum translation phrase.
+   */
   protected String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
     return "";
   }

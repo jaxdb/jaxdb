@@ -37,14 +37,14 @@ final class InsertImpl {
     protected final type.Entity entity;
     protected final type.DataType<?>[] columns;
 
-    protected INSERT(final Class<?> kind, final type.Entity entity) {
+    protected INSERT(final type.Entity entity) {
       super(null);
       this.entity = entity;
       this.columns = null;
     }
 
     @SafeVarargs
-    protected INSERT(final Class<?> kind, final type.DataType<?> ... columns) {
+    protected INSERT(final type.DataType<?> ... columns) {
       super(null);
       this.entity = null;
       this.columns = columns;
