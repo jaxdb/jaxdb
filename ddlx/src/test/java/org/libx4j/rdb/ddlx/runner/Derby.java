@@ -18,6 +18,7 @@ package org.libx4j.rdb.ddlx.runner;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,8 +27,6 @@ import java.util.jar.JarFile;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.lib4j.io.Files;
 import org.lib4j.io.JarFiles;
-import org.lib4j.lang.Resource;
-import org.lib4j.lang.Resources;
 import org.lib4j.net.URLs;
 import org.lib4j.sql.ConnectionProxy;
 import org.libx4j.rdb.vendor.DBVendor;
@@ -55,16 +54,16 @@ public class Derby implements Vendor {
     if (db.exists())
       return;
 
-    final Resource resource = Resources.getResource("derby.db");
-    if (resource != null) {
+    final URL url = Thread.currentThread().getContextClassLoader().getResource("derby.db");
+    if (url != null) {
       db.getParentFile().mkdirs();
-      if (URLs.isJar(resource.getURL())) {
-        final JarFile jarFile = new JarFile(URLs.getParentJar(resource.getURL()).getPath());
-        final String path = URLs.getPathInJar(resource.getURL());
+      if (URLs.isJar(url)) {
+        final JarFile jarFile = new JarFile(URLs.getParentJar(url).getPath());
+        final String path = URLs.getPathInJar(url);
         JarFiles.extract(jarFile, path, db.getParentFile());
       }
       else {
-        Files.copy(new File(resource.getURL().getPath()), db);
+        Files.copy(new File(url.getPath()), db);
       }
     }
     else {

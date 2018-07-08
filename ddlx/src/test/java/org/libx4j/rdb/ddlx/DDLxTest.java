@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.lib4j.lang.Resources;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Decimal;
@@ -39,7 +38,7 @@ public abstract class DDLxTest {
 
   public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     final Schema schema;
-    try (final InputStream in = Resources.getResource(ddlx + ".ddlx").getURL().openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(ddlx + ".ddlx").openStream()) {
       schema = (Schema)Bindings.parse(new InputSource(in));
     }
 

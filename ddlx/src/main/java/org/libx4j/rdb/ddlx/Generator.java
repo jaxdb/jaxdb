@@ -44,7 +44,7 @@ public final class Generator {
 
   static {
     try {
-      PackageLoader.getSystemContextPackageLoader().loadPackage(Schema.class.getPackage().getName());
+      PackageLoader.getContextPackageLoader().loadPackage(Schema.class.getPackage().getName());
     }
     catch (final PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);

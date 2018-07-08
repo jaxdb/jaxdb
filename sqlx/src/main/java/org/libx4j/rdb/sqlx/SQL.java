@@ -28,7 +28,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.lib4j.jci.CompilationException;
-import org.lib4j.lang.Resources;
+import org.lib4j.xml.transform.Transformer;
 import org.libx4j.rdb.sqlx.SqlJaxb.RowIterator;
 import org.libx4j.rdb.sqlx_0_9_9.Database;
 import org.libx4j.rdb.sqlx_0_9_9.Insert;
@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 public final class SQL {
   public static void ddlx2sqlx(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    org.lib4j.xml.transform.Transformer.transform(Resources.getResource("sqlx.xsl").getURL(), ddlxFile, xsdFile);
+    Transformer.transform(Thread.currentThread().getContextClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
   }
 
   public static int[] INSERT(final Connection connection, final Database database) throws SQLException {

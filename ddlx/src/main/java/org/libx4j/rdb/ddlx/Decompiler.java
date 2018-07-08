@@ -60,7 +60,7 @@ abstract class Decompiler {
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Decompiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
           final Decompiler decompiler = (Decompiler)cls.getDeclaredConstructor().newInstance();

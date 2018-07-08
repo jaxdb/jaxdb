@@ -30,7 +30,7 @@ abstract class Compiler {
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getSystemContextPackageLoader().loadPackage(Compiler.class.getPackage());
+      final Set<Class<?>> classes = PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage());
       for (final Class<?> cls : classes) {
         if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
           final Compiler compiler = (Compiler)cls.getDeclaredConstructor().newInstance();

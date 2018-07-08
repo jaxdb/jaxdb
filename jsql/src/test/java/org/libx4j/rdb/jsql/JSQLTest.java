@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
-    final URL url = Resources.getResource(name + ".ddlx").getURL();
+    final URL url = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);
     new JavaCompiler(destDir).compile(destDir);
@@ -57,11 +57,11 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
+    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
     final $Database database = ($Database)Bindings.parse(sqlx);
 
     final xLzgluGCXYYJc.Schema schema;
-    try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
       schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
@@ -83,14 +83,14 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Resources.getResource(name + ".sqlx").getURL();
+    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
       database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
     final xLzgluGCXYYJc.Schema schema;
-    try (final InputStream in = Resources.getResource(name + ".ddlx").getURL().openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
       schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 

@@ -318,7 +318,7 @@ final class SqlJaxb {
     command.setDestDir(sourcesDestDir);
 
     final LinkedHashSet<URL> xjbs = new LinkedHashSet<URL>();
-    xjbs.add(Resources.getResource("sqlx.xjb").getURL());
+    xjbs.add(Thread.currentThread().getContextClassLoader().getResource("sqlx.xjb"));
     command.setXJBs(xjbs);
 
     final LinkedHashSet<URL> schemas = new LinkedHashSet<URL>();
