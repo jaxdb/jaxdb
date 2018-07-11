@@ -27,8 +27,8 @@ import java.sql.SQLException;
 
 import org.lib4j.jci.CompilationException;
 import org.lib4j.jci.JavaCompiler;
+import org.lib4j.lang.JavaIdentifiers;
 import org.lib4j.lang.Resources;
-import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.ValidationException;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.libx4j.rdb.ddlx.Schemas;

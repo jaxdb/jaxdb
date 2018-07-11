@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.lib4j.lang.Classes;
-import org.lib4j.util.JavaIdentifiers;
+import org.lib4j.lang.JavaIdentifiers;
 import org.lib4j.xml.binding.HexBinary;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Bigint;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Binary;
