@@ -25,7 +25,7 @@ import org.lib4j.util.ConcurrentHashSet;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public abstract class Schema {
-  private static final ConcurrentHashSet<Class<? extends Schema>> inited = new ConcurrentHashSet<Class<? extends Schema>>();
+  private static final ConcurrentHashSet<Class<? extends Schema>> inited = new ConcurrentHashSet<>();
 
   protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)

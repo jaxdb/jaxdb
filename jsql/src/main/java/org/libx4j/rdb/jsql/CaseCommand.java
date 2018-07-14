@@ -28,7 +28,7 @@ import org.libx4j.rdb.jsql.CaseImpl.THEN;
 final class CaseCommand extends Command {
   private final Simple.CASE<?,?> simpleCase;
   private final Search.WHEN<?> searchCase;
-  private final List<THEN<?,?>> then = new ArrayList<THEN<?,?>>();
+  private final List<THEN<?,?>> then = new ArrayList<>();
   private ELSE<?> _else;
 
   protected CaseCommand(final Simple.CASE<?,?> simpleCase) {

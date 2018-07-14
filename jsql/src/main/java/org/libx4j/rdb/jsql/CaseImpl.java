@@ -134,212 +134,212 @@ final class CaseImpl implements Case {
 
       @Override
       public final Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool) {
-        return new BOOLEAN.Simple.THEN<T>(this, bool);
+        return new BOOLEAN.Simple.THEN<>(this, bool);
       }
 
       @Override
       public final Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-        return new FLOAT.Simple.THEN<T>(this, numeric);
+        return new FLOAT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-        return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new FLOAT.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-        return new DOUBLE.Simple.THEN<T>(this, numeric);
+        return new DOUBLE.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-        return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-        return new DECIMAL.Simple.THEN<T>(this, numeric);
+        return new DECIMAL.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-        return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-        return new TINYINT.Simple.THEN<T>(this, numeric);
+        return new TINYINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-        return new TINYINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new TINYINT.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-        return new SMALLINT.Simple.THEN<T>(this, numeric);
+        return new SMALLINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-        return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new SMALLINT.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-        return new INT.Simple.THEN<T>(this, numeric);
+        return new INT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-        return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-        return new BIGINT.Simple.THEN<T>(this, numeric);
+        return new BIGINT.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-        return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+        return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BOOLEAN.simple.THEN THEN(final boolean bool) {
-        return new BOOLEAN.Simple.THEN<T>(this, type.DataType.wrap(bool));
+        return new BOOLEAN.Simple.THEN<>(this, type.DataType.wrap(bool));
       }
 
       @Override
       public final Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-        return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-        return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-        return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-        return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-        return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-        return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.simple.THEN<T> THEN(final byte numeric) {
-        return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-        return new TINYINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-        return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-        return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.INT.simple.THEN<T> THEN(final int numeric) {
-        return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-        return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-        return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-        return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary) {
-        return new BINARY.Simple.THEN<T>(this, binary);
+        return new BINARY.Simple.THEN<>(this, binary);
       }
 
       @Override
       public final Case.DATE.simple.THEN<T> THEN(final type.DATE date) {
-        return new DATE.Simple.THEN<T>(this, date);
+        return new DATE.Simple.THEN<>(this, date);
       }
 
       @Override
       public final Case.TIME.simple.THEN<T> THEN(final type.TIME time) {
-        return new TIME.Simple.THEN<T>(this, time);
+        return new TIME.Simple.THEN<>(this, time);
       }
 
       @Override
       public final Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime) {
-        return new DATETIME.Simple.THEN<T>(this, dateTime);
+        return new DATETIME.Simple.THEN<>(this, dateTime);
       }
 
       @Override
       public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
-        return new CHAR.Simple.THEN<T>(this, text);
+        return new CHAR.Simple.THEN<>(this, text);
       }
 
       @Override
       public final Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text) {
-        return new ENUM.Simple.THEN<T>(this, text);
+        return new ENUM.Simple.THEN<>(this, text);
       }
 
       @Override
       public final Case.BINARY.simple.THEN<T> THEN(final byte[] binary) {
-        return new BINARY.Simple.THEN<T>(this, type.DataType.wrap(binary));
+        return new BINARY.Simple.THEN<>(this, type.DataType.wrap(binary));
       }
 
       @Override
       public final Case.DATE.simple.THEN<T> THEN(final LocalDate date) {
-        return new DATE.Simple.THEN<T>(this, type.DataType.wrap(date));
+        return new DATE.Simple.THEN<>(this, type.DataType.wrap(date));
       }
 
       @Override
       public final Case.TIME.simple.THEN<T> THEN(final LocalTime time) {
-        return new TIME.Simple.THEN<T>(this, type.DataType.wrap(time));
+        return new TIME.Simple.THEN<>(this, type.DataType.wrap(time));
       }
 
       @Override
       public final Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime) {
-        return new DATETIME.Simple.THEN<T>(this, type.DataType.wrap(dateTime));
+        return new DATETIME.Simple.THEN<>(this, type.DataType.wrap(dateTime));
       }
 
       @Override
       public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-        return new CHAR.Simple.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+        return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
       }
 
       @Override
       public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
-        return new ENUM.Simple.THEN<T>(this, (type.ENUM<?>)type.DataType.wrap(text));
+        return new ENUM.Simple.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
       }
 
       @Override
@@ -360,212 +360,212 @@ final class CaseImpl implements Case {
 
       @Override
       public final Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool) {
-        return new BOOLEAN.Search.THEN<T>(this, bool);
+        return new BOOLEAN.Search.THEN<>(this, bool);
       }
 
       @Override
       public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-        return new FLOAT.Search.THEN<T>(this, numeric);
+        return new FLOAT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-        return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new FLOAT.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-        return new DOUBLE.Search.THEN<T>(this, numeric);
+        return new DOUBLE.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-        return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-        return new DECIMAL.Search.THEN<T>(this, numeric);
+        return new DECIMAL.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-        return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-        return new TINYINT.Search.THEN<T>(this, numeric);
+        return new TINYINT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-        return new TINYINT.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new TINYINT.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-        return new SMALLINT.Search.THEN<T>(this, numeric);
+        return new SMALLINT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-        return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new SMALLINT.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-        return new INT.Search.THEN<T>(this, numeric);
+        return new INT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-        return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new INT.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-        return new BIGINT.Search.THEN<T>(this, numeric);
+        return new BIGINT.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-        return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+        return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
       }
 
       @Override
       public final Case.BOOLEAN.search.THEN<T> THEN(final boolean bool) {
-        return new BOOLEAN.Search.THEN<T>(this, type.DataType.wrap(bool));
+        return new BOOLEAN.Search.THEN<>(this, type.DataType.wrap(bool));
       }
 
       @Override
       public final Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-        return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-        return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new FLOAT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-        return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-        return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-        return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-        return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.search.THEN<T> THEN(final byte numeric) {
-        return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-        return new TINYINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new TINYINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-        return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-        return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new SMALLINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.INT.search.THEN<T> THEN(final int numeric) {
-        return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-        return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-        return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-        return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+        return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
       }
 
       @Override
       public final Case.BINARY.search.THEN<T> THEN(final type.BINARY binary) {
-        return new BINARY.Search.THEN<T>(this, binary);
+        return new BINARY.Search.THEN<>(this, binary);
       }
 
       @Override
       public final Case.DATE.search.THEN<T> THEN(final type.DATE date) {
-        return new DATE.Search.THEN<T>(this, date);
+        return new DATE.Search.THEN<>(this, date);
       }
 
       @Override
       public final Case.TIME.search.THEN<T> THEN(final type.TIME time) {
-        return new TIME.Search.THEN<T>(this, time);
+        return new TIME.Search.THEN<>(this, time);
       }
 
       @Override
       public final Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime) {
-        return new DATETIME.Search.THEN<T>(this, dateTime);
+        return new DATETIME.Search.THEN<>(this, dateTime);
       }
 
       @Override
       public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
-        return new CHAR.Search.THEN<T>(this, text);
+        return new CHAR.Search.THEN<>(this, text);
       }
 
       @Override
       public final Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> text) {
-        return new ENUM.Search.THEN<T>(this, text);
+        return new ENUM.Search.THEN<>(this, text);
       }
 
       @Override
       public final Case.BINARY.search.THEN<T> THEN(final byte[] binary) {
-        return new BINARY.Search.THEN<T>(this, type.DataType.wrap(binary));
+        return new BINARY.Search.THEN<>(this, type.DataType.wrap(binary));
       }
 
       @Override
       public final Case.DATE.search.THEN<T> THEN(final LocalDate date) {
-        return new DATE.Search.THEN<T>(this, type.DataType.wrap(date));
+        return new DATE.Search.THEN<>(this, type.DataType.wrap(date));
       }
 
       @Override
       public final Case.TIME.search.THEN<T> THEN(final LocalTime time) {
-        return new TIME.Search.THEN<T>(this, type.DataType.wrap(time));
+        return new TIME.Search.THEN<>(this, type.DataType.wrap(time));
       }
 
       @Override
       public final Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime) {
-        return new DATETIME.Search.THEN<T>(this, type.DataType.wrap(dateTime));
+        return new DATETIME.Search.THEN<>(this, type.DataType.wrap(dateTime));
       }
 
       @Override
       public final Case.CHAR.search.THEN<T> THEN(final String text) {
-        return new CHAR.Search.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+        return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
       }
 
       @Override
       public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
-        return new ENUM.Search.THEN<T>(this, (type.ENUM<?>)type.DataType.wrap(text));
+        return new ENUM.Search.THEN<>(this, (type.ENUM<?>)type.DataType.wrap(text));
       }
 
       @Override
@@ -587,12 +587,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BOOLEAN.simple.THEN THEN(final type.BOOLEAN bool) {
-          return new BOOLEAN.Simple.THEN<T>(this, bool);
+          return new BOOLEAN.Simple.THEN<>(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.simple.THEN THEN(final boolean bool) {
-          return new BOOLEAN.Simple.THEN<T>(this, type.DataType.wrap(bool));
+          return new BOOLEAN.Simple.THEN<>(this, type.DataType.wrap(bool));
         }
       }
 
@@ -614,7 +614,7 @@ final class CaseImpl implements Case {
         @Override
         @SuppressWarnings("unchecked")
         public final Case.BOOLEAN.simple.WHEN WHEN(final boolean condition) {
-          return new BOOLEAN.Simple.WHEN<T>(this, (type.DataType<T>)type.DataType.wrap(condition));
+          return new BOOLEAN.Simple.WHEN<>(this, (type.DataType<T>)type.DataType.wrap(condition));
         }
       }
     }
@@ -627,12 +627,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BOOLEAN.search.THEN<T> THEN(final type.BOOLEAN bool) {
-          return new BOOLEAN.Search.THEN<T>(this, bool);
+          return new BOOLEAN.Search.THEN<>(this, bool);
         }
 
         @Override
         public final Case.BOOLEAN.search.THEN<T> THEN(final boolean bool) {
-          return new BOOLEAN.Search.THEN<T>(this, type.DataType.wrap(bool));
+          return new BOOLEAN.Search.THEN<>(this, type.DataType.wrap(bool));
         }
       }
 
@@ -653,7 +653,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BOOLEAN.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new BOOLEAN.Search.WHEN<T>(this, condition);
+          return new BOOLEAN.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -683,142 +683,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Simple.THEN<T>(this, numeric);
+            return new FLOAT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new FLOAT.Simple.THEN<T>(this, numeric);
+            return new FLOAT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final byte numeric) {
-            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -969,7 +969,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.FLOAT.simple.WHEN<T> WHEN(final T condition) {
-            return new FLOAT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new FLOAT.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -982,142 +982,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Search.THEN<T>(this, numeric);
+            return new FLOAT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new FLOAT.Search.THEN<T>(this, numeric);
+            return new FLOAT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.search.THEN<T> THEN(final byte numeric) {
-            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -1268,7 +1268,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new FLOAT.Search.WHEN<T>(this, condition);
+            return new FLOAT.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -1295,92 +1295,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
+          return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
+          return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
+          return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final byte numeric) {
-          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -1481,7 +1481,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.FLOAT.simple.WHEN<T> WHEN(final T condition) {
-          return new FLOAT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new FLOAT.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -1494,92 +1494,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
+          return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
+          return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
+          return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final byte numeric) {
-          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -1680,7 +1680,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.FLOAT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new FLOAT.Search.WHEN<T>(this, condition);
+          return new FLOAT.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -1709,142 +1709,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final byte numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -1995,7 +1995,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DOUBLE.simple.WHEN<T> WHEN(final T condition) {
-            return new DOUBLE.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new DOUBLE.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -2008,142 +2008,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final byte numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -2294,7 +2294,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new DOUBLE.Search.WHEN<T>(this, condition);
+            return new DOUBLE.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -2321,92 +2321,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.INT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final byte numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -2507,7 +2507,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DOUBLE.simple.WHEN<T> WHEN(final T condition) {
-          return new DOUBLE.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new DOUBLE.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -2520,92 +2520,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.INT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final byte numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final short numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final int numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final long numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -2706,7 +2706,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DOUBLE.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new DOUBLE.Search.WHEN<T>(this, condition);
+          return new DOUBLE.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -2735,142 +2735,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Simple.THEN<T>(this, numeric);
+            return new FLOAT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new TINYINT.Simple.THEN<T>(this, numeric);
+            return new TINYINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new TINYINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new TINYINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
+            return new INT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.TINYINT.simple.THEN<T> THEN(final byte numeric) {
-            return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new TINYINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.TINYINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new TINYINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new TINYINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final int numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -3021,7 +3021,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.TINYINT.simple.WHEN<T> WHEN(final T condition) {
-            return new TINYINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new TINYINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -3034,142 +3034,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Search.THEN<T>(this, numeric);
+            return new FLOAT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new TINYINT.Search.THEN<T>(this, numeric);
+            return new TINYINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new TINYINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new TINYINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new SMALLINT.Search.THEN<T>(this, numeric);
+            return new SMALLINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
+            return new INT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.TINYINT.search.THEN<T> THEN(final byte numeric) {
-            return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new TINYINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.TINYINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new TINYINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new TINYINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-            return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final int numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -3320,7 +3320,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new TINYINT.Search.WHEN<T>(this, condition);
+            return new TINYINT.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -3347,92 +3347,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
+          return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new TINYINT.Simple.THEN<T>(this, numeric);
+          return new TINYINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.TINYINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new TINYINT.Simple.THEN<T>(this, numeric);
+          return new TINYINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.simple.THEN<T> THEN(final byte numeric) {
-          return new TINYINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -3533,7 +3533,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.TINYINT.simple.WHEN<T> WHEN(final T condition) {
-          return new TINYINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new TINYINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -3546,92 +3546,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
+          return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new TINYINT.Search.THEN<T>(this, numeric);
+          return new TINYINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.TINYINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new TINYINT.Search.THEN<T>(this, numeric);
+          return new TINYINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.TINYINT.search.THEN<T> THEN(final byte numeric) {
-          return new TINYINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new TINYINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -3732,7 +3732,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.TINYINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new TINYINT.Search.WHEN<T>(this, condition);
+          return new TINYINT.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -3761,142 +3761,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Simple.THEN<T>(this, numeric);
+            return new FLOAT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
+            return new INT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final byte numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-            return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new SMALLINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final int numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -4047,7 +4047,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.SMALLINT.simple.WHEN<T> WHEN(final T condition) {
-            return new SMALLINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new SMALLINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -4060,142 +4060,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new FLOAT.Search.THEN<T>(this, numeric);
+            return new FLOAT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new SMALLINT.Search.THEN<T>(this, numeric);
+            return new SMALLINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new SMALLINT.Search.THEN<T>(this, numeric);
+            return new SMALLINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
+            return new INT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-            return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.FLOAT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new FLOAT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new FLOAT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final byte numeric) {
-            return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-            return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.SMALLINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new SMALLINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new SMALLINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final int numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -4346,7 +4346,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new SMALLINT.Search.WHEN<T>(this, condition);
+            return new SMALLINT.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -4373,92 +4373,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Simple.THEN<T>(this, numeric);
+          return new FLOAT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, numeric);
+          return new SMALLINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.simple.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final byte numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.simple.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -4559,7 +4559,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.SMALLINT.simple.WHEN<T> WHEN(final T condition) {
-          return new SMALLINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new SMALLINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -4572,92 +4572,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.FLOAT.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new FLOAT.Search.THEN<T>(this, numeric);
+          return new FLOAT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new SMALLINT.Search.THEN<T>(this, numeric);
+          return new SMALLINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.FLOAT.search.THEN<T> THEN(final float numeric) {
-          return new FLOAT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new FLOAT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final byte numeric) {
-          return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.SMALLINT.search.THEN<T> THEN(final short numeric) {
-          return new SMALLINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new SMALLINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -4758,7 +4758,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.SMALLINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new SMALLINT.Search.WHEN<T>(this, condition);
+          return new SMALLINT.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -4788,142 +4788,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
+            return new INT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
+            return new INT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Simple.THEN<T>(this, numeric);
+            return new INT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final byte numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final short numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.simple.THEN<T> THEN(final int numeric) {
-            return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -5074,7 +5074,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.INT.simple.WHEN<T> WHEN(final T condition) {
-            return new INT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new INT.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -5087,142 +5087,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
+            return new INT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
+            return new INT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-            return new INT.Search.THEN<T>(this, numeric);
+            return new INT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new INT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final byte numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final short numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.search.THEN<T> THEN(final int numeric) {
-            return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.INT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new INT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new INT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -5373,7 +5373,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.INT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new INT.Search.WHEN<T>(this, condition);
+            return new INT.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -5400,92 +5400,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Simple.THEN<T>(this, numeric);
+          return new INT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final byte numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final short numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.simple.THEN<T> THEN(final int numeric) {
-          return new INT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -5586,7 +5586,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.INT.simple.WHEN<T> WHEN(final T condition) {
-          return new INT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new INT.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -5599,92 +5599,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new INT.Search.THEN<T>(this, numeric);
+          return new INT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final byte numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final short numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.INT.search.THEN<T> THEN(final int numeric) {
-          return new INT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new INT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -5785,7 +5785,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.INT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new INT.Search.WHEN<T>(this, condition);
+          return new INT.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -5815,142 +5815,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.INT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Simple.THEN<T>(this, numeric);
+            return new BIGINT.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final byte numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final short numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final int numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -6101,7 +6101,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.BIGINT.simple.WHEN<T> WHEN(final T condition) {
-            return new BIGINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new BIGINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -6114,142 +6114,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DOUBLE.Search.THEN<T>(this, numeric);
+            return new DOUBLE.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.INT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new BIGINT.Search.THEN<T>(this, numeric);
+            return new BIGINT.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-            return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DOUBLE.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DOUBLE.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DOUBLE.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final byte numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final short numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final int numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-            return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.BIGINT.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new BIGINT.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new BIGINT.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -6400,7 +6400,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new BIGINT.Search.WHEN<T>(this, condition);
+            return new BIGINT.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -6427,92 +6427,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, numeric);
+          return new DOUBLE.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.INT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Simple.THEN<T>(this, numeric);
+          return new BIGINT.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.simple.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final byte numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final short numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final int numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.simple.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -6613,7 +6613,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BIGINT.simple.WHEN<T> WHEN(final T condition) {
-          return new BIGINT.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new BIGINT.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -6626,92 +6626,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DOUBLE.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DOUBLE.Search.THEN<T>(this, numeric);
+          return new DOUBLE.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.INT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new BIGINT.Search.THEN<T>(this, numeric);
+          return new BIGINT.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final float numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DOUBLE.search.THEN<T> THEN(final double numeric) {
-          return new DOUBLE.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DOUBLE.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final byte numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final short numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final int numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.BIGINT.search.THEN<T> THEN(final long numeric) {
-          return new BIGINT.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new BIGINT.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -6812,7 +6812,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BIGINT.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new BIGINT.Search.WHEN<T>(this, condition);
+          return new BIGINT.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -6842,142 +6842,142 @@ final class CaseImpl implements Case {
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.INT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final float numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final double numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final byte numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final short numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final int numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.simple.THEN<T> THEN(final long numeric) {
-            return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.simple.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DECIMAL.UNSIGNED.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -7128,7 +7128,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DECIMAL.simple.WHEN<T> WHEN(final T condition) {
-            return new DECIMAL.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+            return new DECIMAL.Simple.WHEN<>(this, type.DataType.wrap(condition));
           }
         }
       }
@@ -7141,142 +7141,142 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public final Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.FLOAT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DOUBLE.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.DECIMAL.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.INT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric) {
-            return new DECIMAL.Search.THEN<T>(this, numeric);
+            return new DECIMAL.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, numeric);
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, numeric);
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final float numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Float numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final double numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Double numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.BigDecimal numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final byte numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Byte numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final short numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Short numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final int numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Integer numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.search.THEN<T> THEN(final long numeric) {
-            return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
 
           @Override
           public Case.DECIMAL.UNSIGNED.search.THEN<T> THEN(final org.libx4j.rdb.jsql.UNSIGNED.Long numeric) {
-            return new DECIMAL.UNSIGNED.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+            return new DECIMAL.UNSIGNED.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
           }
         }
 
@@ -7427,7 +7427,7 @@ final class CaseImpl implements Case {
 
           @Override
           public final Case.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition) {
-            return new DECIMAL.Search.WHEN<T>(this, condition);
+            return new DECIMAL.Search.WHEN<>(this, condition);
           }
         }
       }
@@ -7455,92 +7455,92 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.INT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, numeric);
+          return new DECIMAL.Simple.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final float numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final double numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final byte numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final short numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final int numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.simple.THEN<T> THEN(final long numeric) {
-          return new DECIMAL.Simple.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Simple.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -7641,7 +7641,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DECIMAL.simple.WHEN<T> WHEN(final T condition) {
-          return new DECIMAL.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new DECIMAL.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -7654,92 +7654,92 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DECIMAL.search.THEN<T> THEN(final type.FLOAT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DOUBLE numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.DECIMAL numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.TINYINT.UNSIGNED numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.SMALLINT.UNSIGNED numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.INT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.INT.UNSIGNED numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final type.BIGINT.UNSIGNED numeric) {
-          return new DECIMAL.Search.THEN<T>(this, numeric);
+          return new DECIMAL.Search.THEN<>(this, numeric);
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final float numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final double numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final BigDecimal numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final byte numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final short numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final int numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
 
         @Override
         public Case.DECIMAL.search.THEN<T> THEN(final long numeric) {
-          return new DECIMAL.Search.THEN<T>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
+          return new DECIMAL.Search.THEN<>(this, (type.Numeric<?>)type.DataType.wrap(numeric));
         }
       }
 
@@ -7840,7 +7840,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DECIMAL.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new DECIMAL.Search.WHEN<T>(this, condition);
+          return new DECIMAL.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -7869,12 +7869,12 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.BINARY.simple.THEN<T> THEN(final type.BINARY binary) {
-          return new BINARY.Simple.THEN<T>(this, binary);
+          return new BINARY.Simple.THEN<>(this, binary);
         }
 
         @Override
         public Case.BINARY.simple.THEN<T> THEN(final byte[] binary) {
-          return new BINARY.Simple.THEN<T>(this, type.DataType.wrap(binary));
+          return new BINARY.Simple.THEN<>(this, type.DataType.wrap(binary));
         }
       }
 
@@ -7895,7 +7895,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BINARY.simple.WHEN<T> WHEN(final T condition) {
-          return new BINARY.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new BINARY.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -7908,12 +7908,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BINARY.search.THEN<T> THEN(final type.BINARY binary) {
-          return new BINARY.Search.THEN<T>(this, binary);
+          return new BINARY.Search.THEN<>(this, binary);
         }
 
         @Override
         public final Case.BINARY.search.THEN<T> THEN(final byte[] binary) {
-          return new BINARY.Search.THEN<T>(this, type.DataType.wrap(binary));
+          return new BINARY.Search.THEN<>(this, type.DataType.wrap(binary));
         }
       }
 
@@ -7934,7 +7934,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.BINARY.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new BINARY.Search.WHEN<T>(this, condition);
+          return new BINARY.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -7962,12 +7962,12 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DATE.simple.THEN<T> THEN(final type.DATE date) {
-          return new DATE.Simple.THEN<T>(this, date);
+          return new DATE.Simple.THEN<>(this, date);
         }
 
         @Override
         public Case.DATE.simple.THEN<T> THEN(final LocalDate date) {
-          return new DATE.Simple.THEN<T>(this, type.DataType.wrap(date));
+          return new DATE.Simple.THEN<>(this, type.DataType.wrap(date));
         }
       }
 
@@ -7988,7 +7988,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATE.simple.WHEN<T> WHEN(final T condition) {
-          return new DATE.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new DATE.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -8001,12 +8001,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATE.search.THEN<T> THEN(final type.DATE date) {
-          return new DATE.Search.THEN<T>(this, date);
+          return new DATE.Search.THEN<>(this, date);
         }
 
         @Override
         public final Case.DATE.search.THEN<T> THEN(final LocalDate date) {
-          return new DATE.Search.THEN<T>(this, type.DataType.wrap(date));
+          return new DATE.Search.THEN<>(this, type.DataType.wrap(date));
         }
       }
 
@@ -8027,7 +8027,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATE.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new DATE.Search.WHEN<T>(this, condition);
+          return new DATE.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -8055,12 +8055,12 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.TIME.simple.THEN<T> THEN(final type.TIME time) {
-          return new TIME.Simple.THEN<T>(this, time);
+          return new TIME.Simple.THEN<>(this, time);
         }
 
         @Override
         public Case.TIME.simple.THEN<T> THEN(final LocalTime time) {
-          return new TIME.Simple.THEN<T>(this, type.DataType.wrap(time));
+          return new TIME.Simple.THEN<>(this, type.DataType.wrap(time));
         }
       }
 
@@ -8081,7 +8081,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.TIME.simple.WHEN<T> WHEN(final T condition) {
-          return new TIME.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new TIME.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -8094,12 +8094,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.TIME.search.THEN<T> THEN(final type.TIME time) {
-          return new TIME.Search.THEN<T>(this, time);
+          return new TIME.Search.THEN<>(this, time);
         }
 
         @Override
         public final Case.TIME.search.THEN<T> THEN(final LocalTime time) {
-          return new TIME.Search.THEN<T>(this, type.DataType.wrap(time));
+          return new TIME.Search.THEN<>(this, type.DataType.wrap(time));
         }
       }
 
@@ -8120,7 +8120,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.TIME.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new TIME.Search.WHEN<T>(this, condition);
+          return new TIME.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -8148,12 +8148,12 @@ final class CaseImpl implements Case {
 
         @Override
         public Case.DATETIME.simple.THEN<T> THEN(final type.DATETIME dateTime) {
-          return new DATETIME.Simple.THEN<T>(this, dateTime);
+          return new DATETIME.Simple.THEN<>(this, dateTime);
         }
 
         @Override
         public Case.DATETIME.simple.THEN<T> THEN(final LocalDateTime dateTime) {
-          return new DATETIME.Simple.THEN<T>(this, type.DataType.wrap(dateTime));
+          return new DATETIME.Simple.THEN<>(this, type.DataType.wrap(dateTime));
         }
       }
 
@@ -8174,7 +8174,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATETIME.simple.WHEN<T> WHEN(final T condition) {
-          return new DATETIME.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new DATETIME.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -8187,12 +8187,12 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATETIME.search.THEN<T> THEN(final type.DATETIME dateTime) {
-          return new DATETIME.Search.THEN<T>(this, dateTime);
+          return new DATETIME.Search.THEN<>(this, dateTime);
         }
 
         @Override
         public final Case.DATETIME.search.THEN<T> THEN(final LocalDateTime dateTime) {
-          return new DATETIME.Search.THEN<T>(this, type.DataType.wrap(dateTime));
+          return new DATETIME.Search.THEN<>(this, type.DataType.wrap(dateTime));
         }
       }
 
@@ -8213,7 +8213,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.DATETIME.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new DATETIME.Search.WHEN<T>(this, condition);
+          return new DATETIME.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -8241,22 +8241,22 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final type.ENUM<?> text) {
-          return new CHAR.Simple.THEN<T>(this, text);
+          return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
-          return new CHAR.Simple.THEN<T>(this, text);
+          return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final Enum<?> text) {
-          return new CHAR.Simple.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-          return new CHAR.Simple.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
       }
 
@@ -8287,7 +8287,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.CHAR.simple.WHEN<T> WHEN(final T condition) {
-          return new CHAR.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new CHAR.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -8300,22 +8300,22 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final type.ENUM<?> text) {
-          return new CHAR.Search.THEN<T>(this, text);
+          return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
-          return new CHAR.Search.THEN<T>(this, text);
+          return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final String text) {
-          return new CHAR.Search.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final Enum<?> text) {
-          return new CHAR.Search.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
       }
 
@@ -8346,7 +8346,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.CHAR.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new CHAR.Search.WHEN<T>(this, condition);
+          return new CHAR.Search.WHEN<>(this, condition);
         }
       }
     }
@@ -8375,22 +8375,22 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.ENUM.simple.THEN<T> THEN(final type.ENUM<?> text) {
-          return new ENUM.Simple.THEN<T>(this, text);
+          return new ENUM.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final type.CHAR text) {
-          return new CHAR.Simple.THEN<T>(this, text);
+          return new CHAR.Simple.THEN<>(this, text);
         }
 
         @Override
         public final Case.ENUM.simple.THEN<T> THEN(final Enum<?> text) {
-          return new ENUM.Simple.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new ENUM.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
 
         @Override
         public final Case.CHAR.simple.THEN<T> THEN(final String text) {
-          return new CHAR.Simple.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Simple.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
       }
 
@@ -8421,7 +8421,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.ENUM.simple.WHEN<T> WHEN(final T condition) {
-          return new ENUM.Simple.WHEN<T>(this, type.DataType.wrap(condition));
+          return new ENUM.Simple.WHEN<>(this, type.DataType.wrap(condition));
         }
       }
     }
@@ -8434,22 +8434,22 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.ENUM.search.THEN<T> THEN(final type.ENUM<?> text) {
-          return new ENUM.Search.THEN<T>(this, text);
+          return new ENUM.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final type.CHAR text) {
-          return new CHAR.Search.THEN<T>(this, text);
+          return new CHAR.Search.THEN<>(this, text);
         }
 
         @Override
         public final Case.CHAR.search.THEN<T> THEN(final String text) {
-          return new CHAR.Search.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new CHAR.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
 
         @Override
         public final Case.ENUM.search.THEN<T> THEN(final Enum<?> text) {
-          return new ENUM.Search.THEN<T>(this, (type.Textual<?>)type.DataType.wrap(text));
+          return new ENUM.Search.THEN<>(this, (type.Textual<?>)type.DataType.wrap(text));
         }
       }
 
@@ -8480,7 +8480,7 @@ final class CaseImpl implements Case {
 
         @Override
         public final Case.ENUM.search.WHEN<T> WHEN(final Condition<T> condition) {
-          return new ENUM.Search.WHEN<T>(this, condition);
+          return new ENUM.Search.WHEN<>(this, condition);
         }
       }
     }

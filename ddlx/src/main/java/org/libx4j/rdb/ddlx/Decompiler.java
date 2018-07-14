@@ -98,8 +98,8 @@ abstract class Decompiler {
       schema.addTable(table);
 
       final ResultSet columnRows = metaData.getColumns(null, null, tableName, null);
-      final Map<String,$Column> columnNameToColumn = new HashMap<String,$Column>();
-      final Map<Integer,$Column> columnNumberToColumn = new TreeMap<Integer,$Column>();
+      final Map<String,$Column> columnNameToColumn = new HashMap<>();
+      final Map<Integer,$Column> columnNumberToColumn = new TreeMap<>();
       while (columnRows.next()) {
         final String columnName = columnRows.getString("COLUMN_NAME").toLowerCase();
         final String typeName = columnRows.getString("TYPE_NAME");
@@ -140,9 +140,9 @@ abstract class Decompiler {
       }
 
       final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true);
-      final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<String,TreeMap<Short,String>>();
-      final Map<String,String> indexNameToType = new HashMap<String,String>();
-      final Map<String,Boolean> indexNameToUnique = new HashMap<String,Boolean>();
+      final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<>();
+      final Map<String,String> indexNameToType = new HashMap<>();
+      final Map<String,Boolean> indexNameToUnique = new HashMap<>();
       while (indexRows.next()) {
         final String columnName = indexRows.getString("COLUMN_NAME").toLowerCase();
         if (columnName == null)
@@ -151,7 +151,7 @@ abstract class Decompiler {
         final String indexName = indexRows.getString("INDEX_NAME").toLowerCase();
         TreeMap<Short,String> indexes = indexNameToIndex.get(indexName);
         if (indexes == null)
-          indexNameToIndex.put(indexName, indexes = new TreeMap<Short,String>());
+          indexNameToIndex.put(indexName, indexes = new TreeMap<>());
 
         final short ordinalPosition = indexRows.getShort("ORDINAL_POSITION");
         indexes.put(ordinalPosition, columnName);
@@ -242,14 +242,14 @@ abstract class Decompiler {
   protected Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
     final DatabaseMetaData metaData = connection.getMetaData();
     final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null);
-    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<String,Map<String,$ForeignKey>>();
+    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
     String lastTable = null;
     Map<String,$ForeignKey> columnNameToForeignKey = null;
     while (foreignKeyRows.next()) {
       final String tableName = foreignKeyRows.getString("FKTABLE_NAME").toLowerCase();
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<String,$ForeignKey>());
+        tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<>());
       }
 
       final String primaryTable = foreignKeyRows.getString("PKTABLE_NAME").toLowerCase();

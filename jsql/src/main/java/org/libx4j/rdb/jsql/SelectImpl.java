@@ -35,7 +35,7 @@ import org.lib4j.util.Collections;
 import org.libx4j.rdb.vendor.DBVendor;
 
 class SelectImpl {
-  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<Compilable>() {
+  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<>() {
     @Override
     public boolean test(final Compilable t) {
       return (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
@@ -87,15 +87,15 @@ class SelectImpl {
   }
 
   private static <B extends type.Subject<?>>RowIterator<B> parseResultSet(final Connection connection, final ResultSet resultSet, final untyped.SELECT<?> select, final boolean skipFirstColumn) throws SQLException {
-    final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<AbstractMap.SimpleEntry<type.DataType<?>,Integer>>();
+    final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes = new ArrayList<>();
     for (final Compilable entity : select.entities)
       compile(dataTypes, entity);
 
     final int columnOffset = skipFirstColumn ? 2 : 1;
     final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-    return new RowIterator<B>() {
-      private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<Class<? extends type.Entity>,type.Entity>();
-      private final Map<type.Entity,type.Entity> cache = new HashMap<type.Entity,type.Entity>();
+    return new RowIterator<>() {
+      private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
+      private final Map<type.Entity,type.Entity> cache = new HashMap<>();
       private type.Entity currentTable = null;
 
       @Override
@@ -429,7 +429,7 @@ class SelectImpl {
                   dataType.get(statement, ++index);
 
               try (final ResultSet resultSet = statement.executeQuery()) {
-                return new RowIterator<T>() {
+                return new RowIterator<>() {
                   @Override
                   @SuppressWarnings({"rawtypes", "unchecked"})
                   public boolean nextRow() throws SQLException {
@@ -548,72 +548,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -628,27 +628,27 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -659,27 +659,27 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -690,77 +690,77 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -771,72 +771,72 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ARRAY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ARRAY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.ARRAY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -851,22 +851,22 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -877,22 +877,22 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -903,15 +903,15 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -929,17 +929,17 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -950,10 +950,10 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -966,32 +966,32 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ARRAY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ARRAY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ARRAY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -1002,15 +1002,15 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY.UNION<T> UNION(final Select.ARRAY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<T>() {
+        return new Select.ARRAY._UNION.ALL<>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -1033,72 +1033,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -1113,27 +1113,27 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -1144,27 +1144,27 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -1175,77 +1175,77 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -1256,72 +1256,72 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -1336,22 +1336,22 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -1362,22 +1362,22 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -1388,15 +1388,15 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -1414,17 +1414,17 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -1435,10 +1435,10 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -1451,32 +1451,32 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -1487,15 +1487,15 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED.UNION<T> UNION(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -1516,72 +1516,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -1596,27 +1596,27 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -1627,27 +1627,27 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -1658,77 +1658,77 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -1739,72 +1739,72 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BIGINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BIGINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BIGINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -1819,22 +1819,22 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -1845,22 +1845,22 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -1871,15 +1871,15 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -1897,17 +1897,17 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -1918,10 +1918,10 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -1934,32 +1934,32 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BIGINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BIGINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BIGINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -1970,15 +1970,15 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT.UNION<T> UNION(final Select.BIGINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<T>() {
+        return new Select.BIGINT._UNION.ALL<>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -2000,72 +2000,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -2080,27 +2080,27 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -2111,27 +2111,27 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -2142,77 +2142,77 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -2223,72 +2223,72 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BINARY.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BINARY.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BINARY.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BINARY.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -2303,22 +2303,22 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -2329,22 +2329,22 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -2355,15 +2355,15 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -2381,17 +2381,17 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -2402,10 +2402,10 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -2418,32 +2418,32 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BINARY.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BINARY.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BINARY.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -2454,15 +2454,15 @@ class SelectImpl {
 
       @Override
       public Select.BINARY.UNION<T> UNION(final Select.BINARY.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<T>() {
+        return new Select.BINARY._UNION.ALL<>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -2484,72 +2484,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -2564,27 +2564,27 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -2595,27 +2595,27 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -2626,77 +2626,77 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -2707,72 +2707,72 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -2787,22 +2787,22 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -2813,22 +2813,22 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -2839,15 +2839,15 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -2865,17 +2865,17 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -2886,10 +2886,10 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -2902,32 +2902,32 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -2938,15 +2938,15 @@ class SelectImpl {
 
       @Override
       public Select.BLOB.UNION<T> UNION(final Select.BLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<T>() {
+        return new Select.BLOB._UNION.ALL<>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -2968,72 +2968,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -3048,27 +3048,27 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -3079,27 +3079,27 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -3110,77 +3110,77 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -3191,72 +3191,72 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.BOOLEAN.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.BOOLEAN.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -3271,22 +3271,22 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -3297,22 +3297,22 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -3323,15 +3323,15 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -3349,17 +3349,17 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -3370,10 +3370,10 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -3386,32 +3386,32 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.BOOLEAN.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.BOOLEAN.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.BOOLEAN.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -3422,15 +3422,15 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN.UNION<T> UNION(final Select.BOOLEAN.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<T>() {
+        return new Select.BOOLEAN._UNION.ALL<>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -3452,72 +3452,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -3532,27 +3532,27 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -3563,27 +3563,27 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -3594,77 +3594,77 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -3675,72 +3675,72 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CHAR.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CHAR.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CHAR.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.CHAR.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -3755,22 +3755,22 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -3781,22 +3781,22 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -3807,15 +3807,15 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -3833,17 +3833,17 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -3854,10 +3854,10 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -3870,32 +3870,32 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CHAR.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CHAR.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CHAR.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -3906,15 +3906,15 @@ class SelectImpl {
 
       @Override
       public Select.CHAR.UNION<T> UNION(final Select.CHAR.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<T>() {
+        return new Select.CHAR._UNION.ALL<>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -3936,72 +3936,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -4016,27 +4016,27 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -4047,27 +4047,27 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -4078,77 +4078,77 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -4159,72 +4159,72 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.CLOB.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.CLOB.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.CLOB.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.CLOB.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -4239,22 +4239,22 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -4265,22 +4265,22 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -4291,15 +4291,15 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -4317,17 +4317,17 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -4338,10 +4338,10 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -4354,32 +4354,32 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.CLOB.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.CLOB.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.CLOB.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -4390,15 +4390,15 @@ class SelectImpl {
 
       @Override
       public Select.CLOB.UNION<T> UNION(final Select.CLOB.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<T>() {
+        return new Select.CLOB._UNION.ALL<>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -4420,72 +4420,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -4500,27 +4500,27 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -4531,27 +4531,27 @@ class SelectImpl {
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -4562,77 +4562,77 @@ class SelectImpl {
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -4643,72 +4643,72 @@ class SelectImpl {
 
       @Override
       public Select.DataType.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DataType.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DataType.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DataType.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DataType.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -4723,22 +4723,22 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -4749,22 +4749,22 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -4775,15 +4775,15 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -4801,17 +4801,17 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -4822,10 +4822,10 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -4838,32 +4838,32 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DataType.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DataType.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DataType.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -4874,15 +4874,15 @@ class SelectImpl {
 
       @Override
       public Select.DataType.UNION<T> UNION(final Select.DataType.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<T>() {
+        return new Select.DataType._UNION.ALL<>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -4904,72 +4904,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -4984,27 +4984,27 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -5015,27 +5015,27 @@ class SelectImpl {
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -5046,77 +5046,77 @@ class SelectImpl {
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -5127,72 +5127,72 @@ class SelectImpl {
 
       @Override
       public Select.DATE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DATE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -5207,22 +5207,22 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -5233,22 +5233,22 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -5259,15 +5259,15 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -5285,17 +5285,17 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -5306,10 +5306,10 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -5322,32 +5322,32 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -5358,15 +5358,15 @@ class SelectImpl {
 
       @Override
       public Select.DATE.UNION<T> UNION(final Select.DATE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<T>() {
+        return new Select.DATE._UNION.ALL<>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -5388,72 +5388,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -5468,27 +5468,27 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -5499,27 +5499,27 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -5530,77 +5530,77 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -5611,72 +5611,72 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DATETIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DATETIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DATETIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -5691,22 +5691,22 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -5717,22 +5717,22 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -5743,15 +5743,15 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -5769,17 +5769,17 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -5790,10 +5790,10 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -5806,32 +5806,32 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DATETIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DATETIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DATETIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -5842,15 +5842,15 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME.UNION<T> UNION(final Select.DATETIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<T>() {
+        return new Select.DATETIME._UNION.ALL<>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -5873,72 +5873,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -5953,27 +5953,27 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -5984,27 +5984,27 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -6015,77 +6015,77 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -6096,72 +6096,72 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -6176,22 +6176,22 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -6202,22 +6202,22 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -6228,15 +6228,15 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -6254,17 +6254,17 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -6275,10 +6275,10 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -6291,32 +6291,32 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -6327,15 +6327,15 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED.UNION<T> UNION(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -6356,72 +6356,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -6436,27 +6436,27 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -6467,27 +6467,27 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -6498,77 +6498,77 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -6579,72 +6579,72 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DECIMAL.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DECIMAL.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -6659,22 +6659,22 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -6685,22 +6685,22 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -6711,15 +6711,15 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -6737,17 +6737,17 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -6758,10 +6758,10 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -6774,32 +6774,32 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DECIMAL.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DECIMAL.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DECIMAL.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -6810,15 +6810,15 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL.UNION<T> UNION(final Select.DECIMAL.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<T>() {
+        return new Select.DECIMAL._UNION.ALL<>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -6841,72 +6841,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -6921,27 +6921,27 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -6952,27 +6952,27 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -6983,77 +6983,77 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -7064,72 +7064,72 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -7144,22 +7144,22 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -7170,22 +7170,22 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -7196,15 +7196,15 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -7222,17 +7222,17 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -7243,10 +7243,10 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -7259,32 +7259,32 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -7295,15 +7295,15 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED.UNION<T> UNION(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -7324,72 +7324,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -7404,27 +7404,27 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -7435,27 +7435,27 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -7466,77 +7466,77 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -7547,72 +7547,72 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.DOUBLE.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.DOUBLE.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -7627,22 +7627,22 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -7653,22 +7653,22 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -7679,15 +7679,15 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -7705,17 +7705,17 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -7726,10 +7726,10 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -7742,32 +7742,32 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.DOUBLE.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.DOUBLE.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.DOUBLE.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -7778,15 +7778,15 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE.UNION<T> UNION(final Select.DOUBLE.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<T>() {
+        return new Select.DOUBLE._UNION.ALL<>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -7808,72 +7808,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -7888,27 +7888,27 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -7919,27 +7919,27 @@ class SelectImpl {
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -7950,77 +7950,77 @@ class SelectImpl {
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -8031,72 +8031,72 @@ class SelectImpl {
 
       @Override
       public Select.Entity.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Entity.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Entity.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Entity.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Entity.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -8111,22 +8111,22 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -8137,22 +8137,22 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -8163,15 +8163,15 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -8189,17 +8189,17 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -8210,10 +8210,10 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -8226,32 +8226,32 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Entity.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Entity.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Entity.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -8262,15 +8262,15 @@ class SelectImpl {
 
       @Override
       public Select.Entity.UNION<T> UNION(final Select.Entity.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<T>() {
+        return new Select.Entity._UNION.ALL<>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -8292,72 +8292,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -8372,27 +8372,27 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -8403,27 +8403,27 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -8434,77 +8434,77 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -8515,72 +8515,72 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.ENUM.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.ENUM.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.ENUM.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.ENUM.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -8595,22 +8595,22 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -8621,22 +8621,22 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -8647,15 +8647,15 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -8673,17 +8673,17 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -8694,10 +8694,10 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -8710,32 +8710,32 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.ENUM.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.ENUM.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.ENUM.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -8746,15 +8746,15 @@ class SelectImpl {
 
       @Override
       public Select.ENUM.UNION<T> UNION(final Select.ENUM.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<T>() {
+        return new Select.ENUM._UNION.ALL<>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -8777,72 +8777,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -8857,27 +8857,27 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -8888,27 +8888,27 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -8919,77 +8919,77 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -9000,72 +9000,72 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -9080,22 +9080,22 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -9106,22 +9106,22 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -9132,15 +9132,15 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -9158,17 +9158,17 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -9179,10 +9179,10 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -9195,32 +9195,32 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -9231,15 +9231,15 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED.UNION<T> UNION(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -9260,72 +9260,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -9340,27 +9340,27 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -9371,27 +9371,27 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -9402,77 +9402,77 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -9483,72 +9483,72 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.FLOAT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.FLOAT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.FLOAT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -9563,22 +9563,22 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -9589,22 +9589,22 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -9615,15 +9615,15 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -9641,17 +9641,17 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -9662,10 +9662,10 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -9678,32 +9678,32 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.FLOAT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.FLOAT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.FLOAT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -9714,15 +9714,15 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT.UNION<T> UNION(final Select.FLOAT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<T>() {
+        return new Select.FLOAT._UNION.ALL<>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -9745,72 +9745,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -9825,27 +9825,27 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -9856,27 +9856,27 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -9887,77 +9887,77 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -9968,72 +9968,72 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.INT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.INT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -10048,22 +10048,22 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -10074,22 +10074,22 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -10100,15 +10100,15 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -10126,17 +10126,17 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -10147,10 +10147,10 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -10163,32 +10163,32 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.INT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.INT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.INT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -10199,15 +10199,15 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED.UNION<T> UNION(final Select.INT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -10228,72 +10228,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -10308,27 +10308,27 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -10339,27 +10339,27 @@ class SelectImpl {
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -10370,77 +10370,77 @@ class SelectImpl {
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -10451,72 +10451,72 @@ class SelectImpl {
 
       @Override
       public Select.INT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.INT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.INT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.INT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.INT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.INT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.INT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -10531,22 +10531,22 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -10557,22 +10557,22 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -10583,15 +10583,15 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -10609,17 +10609,17 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -10630,10 +10630,10 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -10646,32 +10646,32 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.INT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.INT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.INT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -10682,15 +10682,15 @@ class SelectImpl {
 
       @Override
       public Select.INT.UNION<T> UNION(final Select.INT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<T>() {
+        return new Select.INT._UNION.ALL<>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -10712,72 +10712,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -10792,27 +10792,27 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -10823,27 +10823,27 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -10854,77 +10854,77 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -10935,72 +10935,72 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.LargeObject.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.LargeObject.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.LargeObject.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -11015,22 +11015,22 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -11041,22 +11041,22 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -11067,15 +11067,15 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -11093,17 +11093,17 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -11114,10 +11114,10 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -11130,32 +11130,32 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.LargeObject.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.LargeObject.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.LargeObject.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -11166,15 +11166,15 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject.UNION<T> UNION(final Select.LargeObject.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<T>() {
+        return new Select.LargeObject._UNION.ALL<>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -11196,72 +11196,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -11276,27 +11276,27 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -11307,27 +11307,27 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -11338,77 +11338,77 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -11419,72 +11419,72 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Numeric.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Numeric.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Numeric.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Numeric.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -11499,22 +11499,22 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -11525,22 +11525,22 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -11551,15 +11551,15 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -11577,17 +11577,17 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -11598,10 +11598,10 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -11614,32 +11614,32 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Numeric.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Numeric.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Numeric.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -11650,15 +11650,15 @@ class SelectImpl {
 
       @Override
       public Select.Numeric.UNION<T> UNION(final Select.Numeric.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<T>() {
+        return new Select.Numeric._UNION.ALL<>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -11681,72 +11681,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -11761,27 +11761,27 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -11792,27 +11792,27 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -11823,77 +11823,77 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -11904,72 +11904,72 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -11984,22 +11984,22 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -12010,22 +12010,22 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -12036,15 +12036,15 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -12062,17 +12062,17 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -12083,10 +12083,10 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -12099,32 +12099,32 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -12135,15 +12135,15 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED.UNION<T> UNION(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -12164,72 +12164,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -12244,27 +12244,27 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -12275,27 +12275,27 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -12306,77 +12306,77 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -12387,72 +12387,72 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.SMALLINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.SMALLINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -12467,22 +12467,22 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -12493,22 +12493,22 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -12519,15 +12519,15 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -12545,17 +12545,17 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -12566,10 +12566,10 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -12582,32 +12582,32 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.SMALLINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.SMALLINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.SMALLINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -12618,15 +12618,15 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT.UNION<T> UNION(final Select.SMALLINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<T>() {
+        return new Select.SMALLINT._UNION.ALL<>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -12648,72 +12648,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -12728,27 +12728,27 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -12759,27 +12759,27 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -12790,77 +12790,77 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -12871,72 +12871,72 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Temporal.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Temporal.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Temporal.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Temporal.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -12951,22 +12951,22 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -12977,22 +12977,22 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -13003,15 +13003,15 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -13029,17 +13029,17 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -13050,10 +13050,10 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -13066,32 +13066,32 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Temporal.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Temporal.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Temporal.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -13102,15 +13102,15 @@ class SelectImpl {
 
       @Override
       public Select.Temporal.UNION<T> UNION(final Select.Temporal.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<T>() {
+        return new Select.Temporal._UNION.ALL<>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -13132,72 +13132,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -13212,27 +13212,27 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -13243,27 +13243,27 @@ class SelectImpl {
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -13274,77 +13274,77 @@ class SelectImpl {
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -13355,72 +13355,72 @@ class SelectImpl {
 
       @Override
       public Select.Textual.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.Textual.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.Textual.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.Textual.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.Textual.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -13435,22 +13435,22 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -13461,22 +13461,22 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -13487,15 +13487,15 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -13513,17 +13513,17 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -13534,10 +13534,10 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -13550,32 +13550,32 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.Textual.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.Textual.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.Textual.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -13586,15 +13586,15 @@ class SelectImpl {
 
       @Override
       public Select.Textual.UNION<T> UNION(final Select.Textual.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<T>() {
+        return new Select.Textual._UNION.ALL<>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -13616,72 +13616,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -13696,27 +13696,27 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -13727,27 +13727,27 @@ class SelectImpl {
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -13758,77 +13758,77 @@ class SelectImpl {
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -13839,72 +13839,72 @@ class SelectImpl {
 
       @Override
       public Select.TIME.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TIME.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TIME.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TIME.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.TIME.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -13919,22 +13919,22 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -13945,22 +13945,22 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -13971,15 +13971,15 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -13997,17 +13997,17 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -14018,10 +14018,10 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -14034,32 +14034,32 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TIME.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TIME.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TIME.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -14070,15 +14070,15 @@ class SelectImpl {
 
       @Override
       public Select.TIME.UNION<T> UNION(final Select.TIME.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<T>() {
+        return new Select.TIME._UNION.ALL<>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }
@@ -14101,72 +14101,72 @@ class SelectImpl {
 
         @Override
         public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-          return new GROUP_BY<T>(this, columns);
+          return new GROUP_BY<>(this, columns);
         }
 
         @Override
         public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(FROM.this, true, union);
+              return new UNION<>(FROM.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -14181,27 +14181,27 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(GROUP_BY.this, true, union);
+              return new UNION<>(GROUP_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -14212,27 +14212,27 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(HAVING.this, true, union);
+              return new UNION<>(HAVING.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
       }
 
@@ -14243,77 +14243,77 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(JOIN.this, true, union);
+              return new UNION<>(JOIN.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ON<T> ON(final Condition<?> condition) {
-          return new ON<T>(this, condition);
+          return new ON<>(this, condition);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
       }
 
@@ -14324,72 +14324,72 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, true, false, false, false);
+          return new JOIN<>(this, table, true, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, true, false, false);
+          return new JOIN<>(this, table, false, true, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> LEFT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, false);
+          return new JOIN<>(this, table, false, false, true, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, true);
+          return new JOIN<>(this, table, false, false, false, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> FULL_JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, true, true);
+          return new JOIN<>(this, table, false, false, true, true);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.JOIN<T> JOIN(final type.Entity table) {
-          return new JOIN<T>(this, table, false, false, false, false);
+          return new JOIN<>(this, table, false, false, false, false);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.WHERE<T> WHERE(final Condition<?> condition) {
-          return new WHERE<T>(this, condition);
+          return new WHERE<>(this, condition);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ON.this, true, union);
+              return new UNION<>(ON.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.HAVING<T> HAVING(final Condition<?> condition) {
-          return new HAVING<T>(this, condition);
+          return new HAVING<>(this, condition);
         }
       }
 
@@ -14404,22 +14404,22 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(ORDER_BY.this, true, union);
+              return new UNION<>(ORDER_BY.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
       }
 
@@ -14430,22 +14430,22 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(LIMIT.this, true, union);
+              return new UNION<>(LIMIT.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.OFFSET<T> OFFSET(final int rows) {
-          return new OFFSET<T>(this, rows);
+          return new OFFSET<>(this, rows);
         }
       }
 
@@ -14456,15 +14456,15 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(OFFSET.this, true, union);
+              return new UNION<>(OFFSET.this, true, union);
             }
           };
         }
@@ -14482,17 +14482,17 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.FROM<T> FROM(final type.Entity ... tables) {
-          return new FROM<T>(this, tables);
+          return new FROM<>(this, tables);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
@@ -14503,10 +14503,10 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(SELECT.this, true, union);
+              return new UNION<>(SELECT.this, true, union);
             }
           };
         }
@@ -14519,32 +14519,32 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(WHERE.this, true, union);
+              return new UNION<>(WHERE.this, true, union);
             }
           };
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.LIMIT<T> LIMIT(final int rows) {
-          return new LIMIT<T>(this, rows);
+          return new LIMIT<>(this, rows);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-          return new ORDER_BY<T>(this, columns);
+          return new ORDER_BY<>(this, columns);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-          return new GROUP_BY<T>(this, subjects);
+          return new GROUP_BY<>(this, subjects);
         }
       }
 
@@ -14555,15 +14555,15 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED.UNION<T> UNION(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-          return new UNION<T>(this, false, union);
+          return new UNION<>(this, false, union);
         }
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
-              return new UNION<T>(UNION.this, true, union);
+              return new UNION<>(UNION.this, true, union);
             }
           };
         }
@@ -14584,72 +14584,72 @@ class SelectImpl {
 
       @Override
       public GROUP_BY<T> GROUP_BY(final type.Subject<?> ... columns) {
-        return new GROUP_BY<T>(this, columns);
+        return new GROUP_BY<>(this, columns);
       }
 
       @Override
       public ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(FROM.this, true, union);
+            return new UNION<>(FROM.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -14664,27 +14664,27 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(GROUP_BY.this, true, union);
+            return new UNION<>(GROUP_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -14695,27 +14695,27 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(HAVING.this, true, union);
+            return new UNION<>(HAVING.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
     }
 
@@ -14726,77 +14726,77 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(JOIN.this, true, union);
+            return new UNION<>(JOIN.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.ON<T> ON(final Condition<?> condition) {
-        return new ON<T>(this, condition);
+        return new ON<>(this, condition);
       }
 
       @Override
       public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
     }
 
@@ -14807,72 +14807,72 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> CROSS_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, true, false, false, false);
+        return new JOIN<>(this, table, true, false, false, false);
       }
 
       @Override
       public Select.TINYINT.ADV_JOIN<T> NATURAL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, true, false, false);
+        return new JOIN<>(this, table, false, true, false, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> LEFT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, false);
+        return new JOIN<>(this, table, false, false, true, false);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> RIGHT_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, true);
+        return new JOIN<>(this, table, false, false, false, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> FULL_JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, true, true);
+        return new JOIN<>(this, table, false, false, true, true);
       }
 
       @Override
       public Select.TINYINT.JOIN<T> JOIN(final type.Entity table) {
-        return new JOIN<T>(this, table, false, false, false, false);
+        return new JOIN<>(this, table, false, false, false, false);
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
 
       @Override
       public Select.TINYINT.WHERE<T> WHERE(final Condition<?> condition) {
-        return new WHERE<T>(this, condition);
+        return new WHERE<>(this, condition);
       }
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(ON.this, true, union);
+            return new UNION<>(ON.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.HAVING<T> HAVING(final Condition<?> condition) {
-        return new HAVING<T>(this, condition);
+        return new HAVING<>(this, condition);
       }
     }
 
@@ -14887,22 +14887,22 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(ORDER_BY.this, true, union);
+            return new UNION<>(ORDER_BY.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
     }
 
@@ -14913,22 +14913,22 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(LIMIT.this, true, union);
+            return new UNION<>(LIMIT.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.OFFSET<T> OFFSET(final int rows) {
-        return new OFFSET<T>(this, rows);
+        return new OFFSET<>(this, rows);
       }
     }
 
@@ -14939,15 +14939,15 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(OFFSET.this, true, union);
+            return new UNION<>(OFFSET.this, true, union);
           }
         };
       }
@@ -14965,17 +14965,17 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT.FROM<T> FROM(final type.Entity ... tables) {
-        return new FROM<T>(this, tables);
+        return new FROM<>(this, tables);
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
@@ -14986,10 +14986,10 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(SELECT.this, true, union);
+            return new UNION<>(SELECT.this, true, union);
           }
         };
       }
@@ -15002,32 +15002,32 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(WHERE.this, true, union);
+            return new UNION<>(WHERE.this, true, union);
           }
         };
       }
 
       @Override
       public Select.TINYINT.LIMIT<T> LIMIT(final int rows) {
-        return new LIMIT<T>(this, rows);
+        return new LIMIT<>(this, rows);
       }
 
       @Override
       public Select.TINYINT.ORDER_BY<T> ORDER_BY(final type.DataType<?> ... columns) {
-        return new ORDER_BY<T>(this, columns);
+        return new ORDER_BY<>(this, columns);
       }
 
       @Override
       public Select.TINYINT.GROUP_BY<T> GROUP_BY(final type.Subject<?> ... subjects) {
-        return new GROUP_BY<T>(this, subjects);
+        return new GROUP_BY<>(this, subjects);
       }
     }
 
@@ -15038,15 +15038,15 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT.UNION<T> UNION(final Select.TINYINT.SELECT<T> union) {
-        return new UNION<T>(this, false, union);
+        return new UNION<>(this, false, union);
       }
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<T>() {
+        return new Select.TINYINT._UNION.ALL<>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
-            return new UNION<T>(UNION.this, true, union);
+            return new UNION<>(UNION.this, true, union);
           }
         };
       }

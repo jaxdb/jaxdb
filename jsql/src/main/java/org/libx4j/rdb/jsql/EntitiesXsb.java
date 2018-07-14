@@ -98,7 +98,7 @@ final class EntitiesXsb {
   @SuppressWarnings("unchecked")
   public static <T extends type.Entity>T[] toEntities(final $Database database) {
     try {
-      final List<type.Entity> entities = new ArrayList<type.Entity>();
+      final List<type.Entity> entities = new ArrayList<>();
       final Iterator<$Row> rowIterator = SQL.newRowIterator(database);
       if (!rowIterator.hasNext())
         return (T[])new type.Entity[0];

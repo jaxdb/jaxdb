@@ -46,7 +46,7 @@ public class DDLxAudit {
 
   protected DDLxAudit(final Schema schema) {
     this.schema = schema;
-    this.tableNameToTable = new HashMap<String,$Table>();
+    this.tableNameToTable = new HashMap<>();
     for (final $Table table : schema.getTable())
       tableNameToTable.put(table.getName$().text(), table);
   }

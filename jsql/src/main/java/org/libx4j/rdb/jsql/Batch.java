@@ -32,7 +32,7 @@ import org.libx4j.rdb.jsql.Insert.INSERT;
 import org.libx4j.rdb.jsql.Update.UPDATE;
 
 public class Batch {
-  private final List<ExecuteUpdate> executeUpdates = new ArrayList<ExecuteUpdate>();
+  private final List<ExecuteUpdate> executeUpdates = new ArrayList<>();
 
   public Batch(final ExecuteUpdate ... statements) {
     addStatements(statements);

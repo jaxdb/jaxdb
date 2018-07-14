@@ -95,7 +95,7 @@ public class ReverseTest extends DDLxTest {
     builder.assertEqual();
   }
 
-  private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {
+  private static final Comparator<Binding> hashCodeComparator = new Comparator<>() {
     @Override
     public int compare(final Binding o1, final Binding o2) {
       return Long.compare(o1.hashCode(), o2.hashCode());
@@ -130,7 +130,7 @@ public class ReverseTest extends DDLxTest {
 //    logger.info(actual);
 
     assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
-    final Map<String,String> schemaLocations = new HashMap<String,String>();
+    final Map<String,String> schemaLocations = new HashMap<>();
     schemaLocations.put("http://rdb.libx4j.org/ddlx.xsd", "http://rdb.libx4j.org/ddlx.xsd");
 //    logger.info(DOMs.domToString(actual.marshal(), schemaLocations, DOMStyle.INDENT));
   }

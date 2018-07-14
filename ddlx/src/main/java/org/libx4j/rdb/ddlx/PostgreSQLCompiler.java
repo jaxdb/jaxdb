@@ -67,7 +67,7 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   protected List<CreateStatement> types(final $Table table) {
-    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
+    final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {

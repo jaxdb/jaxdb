@@ -107,7 +107,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     this.integrationTest = Boolean.parseBoolean(System.getProperty("integrationTest"));
   }
 
-  private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<Class<? extends Vendor>,Vendor>();
+  private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<>();
 
   protected Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
     Vendor vendor = vendors.get(vendorClass);
@@ -135,7 +135,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       errors.add(new Exception("Method " + method.getName() + " should have no parameters or a " + Connection.class.getName() + " parameter"));
   }
 
-  private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<FrameworkMethod>();
+  private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<>();
 
   protected void run(final Class<? extends Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
     if (isIgnored(method))
@@ -170,7 +170,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     }
   }
 
-  private static final Comparator<FrameworkMethod> orderComparator = new Comparator<FrameworkMethod>() {
+  private static final Comparator<FrameworkMethod> orderComparator = new Comparator<>() {
     @Override
     public int compare(final FrameworkMethod o1, final FrameworkMethod o2) {
       final Order a1 = o1.getAnnotation(Order.class);
@@ -187,7 +187,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Override
   protected List<FrameworkMethod> computeTestMethods() {
-    final List<FrameworkMethod> methods = new ArrayList<FrameworkMethod>(super.computeTestMethods());
+    final List<FrameworkMethod> methods = new ArrayList<>(super.computeTestMethods());
     methods.sort(orderComparator);
     return methods;
   }
@@ -224,7 +224,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     };
   }
 
-  private ThreadLocal<Class<? extends Vendor>> localVendor = new ThreadLocal<Class<? extends Vendor>>();
+  private ThreadLocal<Class<? extends Vendor>> localVendor = new ThreadLocal<>();
 
   private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement, final boolean transverse) {
     final Statement vendorStatement = new Statement() {

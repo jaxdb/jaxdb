@@ -48,7 +48,6 @@ import org.lib4j.lang.Arrays;
 import org.lib4j.lang.ClassLoaders;
 import org.lib4j.lang.Classes;
 import org.lib4j.lang.JavaIdentifiers;
-import org.lib4j.lang.Resources;
 import org.lib4j.util.Collections;
 import org.lib4j.xml.jaxb.JaxbUtil;
 import org.lib4j.xml.jaxb.XJCompiler;
@@ -233,7 +232,7 @@ final class SqlJaxb {
 
   protected static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final List<Integer> counts = new ArrayList<Integer>();
+    final List<Integer> counts = new ArrayList<>();
 
     try {
       if (!iterator.hasNext())
@@ -317,11 +316,11 @@ final class SqlJaxb {
     command.setExtension(true);
     command.setDestDir(sourcesDestDir);
 
-    final LinkedHashSet<URL> xjbs = new LinkedHashSet<URL>();
+    final LinkedHashSet<URL> xjbs = new LinkedHashSet<>();
     xjbs.add(Thread.currentThread().getContextClassLoader().getResource("sqlx.xjb"));
     command.setXJBs(xjbs);
 
-    final LinkedHashSet<URL> schemas = new LinkedHashSet<URL>();
+    final LinkedHashSet<URL> schemas = new LinkedHashSet<>();
     for (final URL xsd : xsds)
       schemas.add(xsd);
 
@@ -332,7 +331,7 @@ final class SqlJaxb {
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, classedDestDir, new LinkedHashSet<URL>(xsds));
+    xsd2jaxb(sourcesDestDir, classedDestDir, new LinkedHashSet<>(xsds));
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {

@@ -32,12 +32,12 @@ import org.libx4j.rdb.vendor.DBVendor;
 
 final class Compilation {
   private final StringBuilder builder = new StringBuilder();
-  private final List<type.DataType<?>> parameters = new ArrayList<type.DataType<?>>();
+  private final List<type.DataType<?>> parameters = new ArrayList<>();
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
   private boolean closed = false;
 
-  protected final Stack<Command> command = new Stack<Command>();
+  protected final Stack<Command> command = new Stack<>();
   protected final DBVendor vendor;
   protected final Compiler compiler;
 
@@ -74,7 +74,7 @@ final class Compilation {
     this.skipFirstColumn = skipFirstColumn;
   }
 
-  private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<type.Subject<?>,Alias>();
+  private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<>();
 
   protected Alias registerAlias(final type.Subject<?> subject) {
     Alias alias = aliases.get(subject);

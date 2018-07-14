@@ -52,7 +52,7 @@ final class SQLDataTypes {
     return "trg_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
-  private static final Map<String,Integer> indexNameToCount = new HashMap<String,Integer>();
+  private static final Map<String,Integer> indexNameToCount = new HashMap<>();
 
   protected static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
     if (index == null || column.length == 0)

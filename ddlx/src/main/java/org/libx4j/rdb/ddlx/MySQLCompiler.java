@@ -45,7 +45,7 @@ class MySQLCompiler extends Compiler {
 
     final String tableName = table.getName$().text();
     final List<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
-    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
+    final List<CreateStatement> statements = new ArrayList<>();
     for (final $Table.Triggers.Trigger trigger : triggers) {
       String buffer = "";
       for (final String action : trigger.getActions$().text()) {

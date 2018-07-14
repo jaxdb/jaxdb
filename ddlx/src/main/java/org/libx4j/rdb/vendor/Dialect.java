@@ -58,7 +58,7 @@ public abstract class Dialect {
   }
 
   public static List<String> parseEnum(final String value) {
-    final List<String> enums = new ArrayList<String>();
+    final List<String> enums = new ArrayList<>();
     final char[] chars = value.replace("\\\\", "\\").toCharArray();
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;

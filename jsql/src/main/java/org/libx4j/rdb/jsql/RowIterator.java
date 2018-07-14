@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class RowIterator<T extends type.Subject<?>> implements AutoCloseable {
-  protected final List<T[]> rows = new ArrayList<T[]>();
+  protected final List<T[]> rows = new ArrayList<>();
   protected int rowIndex = -1;
 
   private T[] entities;

@@ -285,13 +285,22 @@ public class Generator {
       return builder.substring(2);
     }
 
-    public String getType() {
-      return Classes.getStrictName(type) + (type == type.ENUM.class ? "<" + JavaIdentifiers.toClassCase(column.getName$().text()) + ">" : "");
+    public String getType(final boolean withGeneric) {
+      final StringBuilder builder = new StringBuilder(Classes.getStrictName(type));
+      if (type != type.ENUM.class)
+        return builder.toString();
+
+      builder.append('<');
+      if (withGeneric)
+        builder.append(JavaIdentifiers.toClassCase(column.getName$().text()));
+
+      builder.append('>');
+      return builder.toString();
     }
 
     @Override
     public String toString() {
-      return "new " + getType() + "(" + compileParams() + (type == type.ENUM.class ? ", " + JavaIdentifiers.toClassCase(column.getName$().text()) + ".class" : "") + ")";
+      return "new " + getType(false) + "(" + compileParams() + (type == type.ENUM.class ? ", " + JavaIdentifiers.toClassCase(column.getName$().text()) + ".class" : "") + ")";
     }
   }
 
@@ -367,6 +376,9 @@ public class Generator {
       }
 
       // Copy constructor
+      if (table.getColumn() == null || table.getColumn().size() == 0)
+        out += "    @" + SuppressWarnings.class.getName() + "(\"unused\")\n";
+
       out += "    public " + entityName + "(final " + entityName + " copy) {\n";
       out += "      this();\n";
       set = "";
@@ -432,7 +444,7 @@ public class Generator {
     out += "      if (!(obj instanceof " + entityName + ")" + (table.getExtends$() != null ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
     String eq = "";
-    final List<$Column> primaryColumns = new ArrayList<$Column>();
+    final List<$Column> primaryColumns = new ArrayList<>();
     final List<$Column> equalsColumns;
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn())
@@ -515,6 +527,6 @@ public class Generator {
       builder.append("      @" + Override.class.getName() + "\n      public " + String.class.getName() + " toString() {\n        return value;\n      }\n    }");
     }
 
-    return builder.append("\n    public final ").append(type.getType()).append(' ').append(columnName).append(" = ").append(type).append(';').toString();
+    return builder.append("\n    public final ").append(type.getType(true)).append(' ').append(columnName).append(" = ").append(type).append(';').toString();
   }
 }

@@ -141,11 +141,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN EQ(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN EQ(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN EQ(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -157,11 +157,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN EQ(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN EQ(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN EQ(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -173,19 +173,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN EQ(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static type.BOOLEAN EQ(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -193,11 +193,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -209,11 +209,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN EQ(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN EQ(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -225,11 +225,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN EQ(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static type.BOOLEAN EQ(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.EQ, a, b);
+    return new ComparisonPredicate<>(operator.Logical.EQ, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN NE(final kind.Numeric<?> a, final kind.Numeric<?> b) {
@@ -237,11 +237,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN NE(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN NE(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN NE(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -253,11 +253,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN NE(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN NE(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN NE(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -269,19 +269,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN NE(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static type.BOOLEAN NE(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -289,11 +289,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -305,11 +305,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN NE(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN NE(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -321,11 +321,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN NE(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static type.BOOLEAN NE(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.NE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.NE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LT(final kind.Numeric<?> a, final kind.Numeric<?> b) {
@@ -333,11 +333,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LT(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LT(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LT(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -349,11 +349,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LT(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LT(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LT(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -365,19 +365,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN LT(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static type.BOOLEAN LT(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -385,11 +385,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -401,11 +401,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LT(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN LT(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -417,11 +417,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN LT(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static type.BOOLEAN LT(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.LT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GT(final kind.Numeric<?> a, final kind.Numeric<?> b) {
@@ -429,11 +429,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GT(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GT(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GT(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -445,11 +445,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GT(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GT(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GT(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -461,19 +461,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN GT(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static type.BOOLEAN GT(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -481,11 +481,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -497,11 +497,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GT(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN GT(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -513,11 +513,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN GT(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static type.BOOLEAN GT(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.GT, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GT, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LTE(final kind.Numeric<?> a, final kind.Numeric<?> b) {
@@ -525,11 +525,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LTE(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LTE(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN LTE(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -541,11 +541,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LTE(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LTE(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN LTE(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -557,19 +557,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN LTE(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static type.BOOLEAN LTE(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -577,11 +577,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -593,11 +593,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN LTE(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN LTE(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -609,11 +609,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN LTE(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static type.BOOLEAN LTE(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.LTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.LTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GTE(final kind.Numeric<?> a, final kind.Numeric<?> b) {
@@ -621,11 +621,11 @@ public final class DML {
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GTE(final kind.Numeric<?> a, final Number b) {
-    return new ComparisonPredicate<Number>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GTE(final Number a, final kind.Numeric<?> b) {
-    return new ComparisonPredicate<Number>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <Number extends java.lang.Number>type.BOOLEAN GTE(final kind.Numeric<?> a, final QuantifiedComparisonPredicate<? extends Number> b) {
@@ -637,11 +637,11 @@ public final class DML {
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GTE(final kind.Temporal<Temporal> a, final Temporal b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GTE(final Temporal a, final kind.Temporal<Temporal> b) {
-    return new ComparisonPredicate<Temporal>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <Temporal extends java.time.temporal.Temporal>type.BOOLEAN GTE(final kind.Temporal<Temporal> a, final QuantifiedComparisonPredicate<? extends Temporal> b) {
@@ -653,19 +653,19 @@ public final class DML {
   }
 
   public static type.BOOLEAN GTE(final kind.CHAR a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static type.BOOLEAN GTE(final String a, final kind.CHAR b) {
-    return new ComparisonPredicate<String>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final kind.CHAR a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final E a, final kind.CHAR b) {
-    return new ComparisonPredicate<E>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final kind.ENUM<E> a, final kind.ENUM<E> b) {
@@ -673,11 +673,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final kind.ENUM<E> a, final E b) {
-    return new ComparisonPredicate<E>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final E a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<E>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final kind.ENUM<E> a, final kind.CHAR b) {
@@ -689,11 +689,11 @@ public final class DML {
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final kind.ENUM<E> a, final String b) {
-    return new ComparisonPredicate<String>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <E extends Enum<?> & EntityEnum>type.BOOLEAN GTE(final String a, final kind.ENUM<E> b) {
-    return new ComparisonPredicate<String>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static <Textual extends Comparable<?>>type.BOOLEAN GTE(final kind.Textual<Textual> a, final QuantifiedComparisonPredicate<? extends Textual> b) {
@@ -705,11 +705,11 @@ public final class DML {
   }
 
   public static type.BOOLEAN GTE(final kind.BOOLEAN a, final boolean b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   public static type.BOOLEAN GTE(final boolean a, final kind.BOOLEAN b) {
-    return new ComparisonPredicate<Boolean>(operator.Logical.GTE, a, b);
+    return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
   /** END ComparisonPredicate **/
@@ -718,303 +718,303 @@ public final class DML {
 
   @SafeVarargs
   public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> SELECT(final kind.ARRAY<? extends T> ... entities) {
-    return new SelectImpl.ARRAY.SELECT<type.ARRAY<T>>(false, entities);
+    return new SelectImpl.ARRAY.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.BIGINT._SELECT<type.BIGINT> SELECT(final kind.BIGINT ... entities) {
-    return new SelectImpl.BIGINT.SELECT<type.BIGINT>(false, entities);
+    return new SelectImpl.BIGINT.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.BIGINT.UNSIGNED._SELECT<type.BIGINT.UNSIGNED> SELECT(final kind.BIGINT.UNSIGNED ... entities) {
-    return new SelectImpl.BIGINT.UNSIGNED.SELECT<type.BIGINT.UNSIGNED>(false, entities);
+    return new SelectImpl.BIGINT.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.BINARY._SELECT<type.BINARY> SELECT(final kind.BINARY ... entities) {
-    return new SelectImpl.BINARY.SELECT<type.BINARY>(false, entities);
+    return new SelectImpl.BINARY.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.BLOB._SELECT<type.BLOB> SELECT(final kind.BLOB ... entities) {
-    return new SelectImpl.BLOB.SELECT<type.BLOB>(false, entities);
+    return new SelectImpl.BLOB.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.BOOLEAN._SELECT<type.BOOLEAN> SELECT(final kind.BOOLEAN ... entities) {
-    return new SelectImpl.BOOLEAN.SELECT<type.BOOLEAN>(false, entities);
+    return new SelectImpl.BOOLEAN.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.CHAR._SELECT<type.CHAR> SELECT(final kind.CHAR ... entities) {
-    return new SelectImpl.CHAR.SELECT<type.CHAR>(false, entities);
+    return new SelectImpl.CHAR.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.CLOB._SELECT<type.CLOB> SELECT(final kind.CLOB ... entities) {
-    return new SelectImpl.CLOB.SELECT<type.CLOB>(false, entities);
+    return new SelectImpl.CLOB.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T>Select.DataType._SELECT<type.DataType<T>> SELECT(final kind.DataType<? extends T> ... entities) {
-    return new SelectImpl.DataType.SELECT<type.DataType<T>>(false, entities);
+    return new SelectImpl.DataType.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DATE._SELECT<type.DATE> SELECT(final kind.DATE ... entities) {
-    return new SelectImpl.DATE.SELECT<type.DATE>(false, entities);
+    return new SelectImpl.DATE.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DATETIME._SELECT<type.DATETIME> SELECT(final kind.DATETIME ... entities) {
-    return new SelectImpl.DATETIME.SELECT<type.DATETIME>(false, entities);
+    return new SelectImpl.DATETIME.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DECIMAL._SELECT<type.DECIMAL> SELECT(final kind.DECIMAL ... entities) {
-    return new SelectImpl.DECIMAL.SELECT<type.DECIMAL>(false, entities);
+    return new SelectImpl.DECIMAL.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DECIMAL.UNSIGNED._SELECT<type.DECIMAL.UNSIGNED> SELECT(final kind.DECIMAL.UNSIGNED ... entities) {
-    return new SelectImpl.DECIMAL.UNSIGNED.SELECT<type.DECIMAL.UNSIGNED>(false, entities);
+    return new SelectImpl.DECIMAL.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DOUBLE._SELECT<type.DOUBLE> SELECT(final kind.DOUBLE ... entities) {
-    return new SelectImpl.DOUBLE.SELECT<type.DOUBLE>(false, entities);
+    return new SelectImpl.DOUBLE.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.DOUBLE.UNSIGNED._SELECT<type.DOUBLE.UNSIGNED> SELECT(final kind.DOUBLE.UNSIGNED ... entities) {
-    return new SelectImpl.DOUBLE.UNSIGNED.SELECT<type.DOUBLE.UNSIGNED>(false, entities);
+    return new SelectImpl.DOUBLE.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T extends type.Entity>Select.Entity._SELECT<T> SELECT(final T ... entities) {
-    return new SelectImpl.Entity.SELECT<T>(false, entities);
+    return new SelectImpl.Entity.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T extends Enum<?> & EntityEnum>Select.ENUM._SELECT<type.ENUM<T>> SELECT(final kind.ENUM<? extends T> ... entities) {
-    return new SelectImpl.ENUM.SELECT<type.ENUM<T>>(false, entities);
+    return new SelectImpl.ENUM.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.FLOAT._SELECT<type.FLOAT> SELECT(final kind.FLOAT ... entities) {
-    return new SelectImpl.FLOAT.SELECT<type.FLOAT>(false, entities);
+    return new SelectImpl.FLOAT.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.FLOAT.UNSIGNED._SELECT<type.FLOAT.UNSIGNED> SELECT(final kind.FLOAT.UNSIGNED ... entities) {
-    return new SelectImpl.FLOAT.UNSIGNED.SELECT<type.FLOAT.UNSIGNED>(false, entities);
+    return new SelectImpl.FLOAT.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.INT._SELECT<type.INT> SELECT(final kind.INT ... entities) {
-    return new SelectImpl.INT.SELECT<type.INT>(false, entities);
+    return new SelectImpl.INT.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.INT.UNSIGNED._SELECT<type.INT.UNSIGNED> SELECT(final kind.INT.UNSIGNED ... entities) {
-    return new SelectImpl.INT.UNSIGNED.SELECT<type.INT.UNSIGNED>(false, entities);
+    return new SelectImpl.INT.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> SELECT(final kind.Numeric<? extends T> ... entities) {
-    return new SelectImpl.Numeric.SELECT<type.Numeric<T>>(false, entities);
+    return new SelectImpl.Numeric.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.SMALLINT._SELECT<type.SMALLINT> SELECT(final kind.SMALLINT ... entities) {
-    return new SelectImpl.SMALLINT.SELECT<type.SMALLINT>(false, entities);
+    return new SelectImpl.SMALLINT.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.SMALLINT.UNSIGNED._SELECT<type.SMALLINT.UNSIGNED> SELECT(final kind.SMALLINT.UNSIGNED ... entities) {
-    return new SelectImpl.SMALLINT.UNSIGNED.SELECT<type.SMALLINT.UNSIGNED>(false, entities);
+    return new SelectImpl.SMALLINT.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> SELECT(final kind.Temporal<? extends T> ... entities) {
-    return new SelectImpl.Temporal.SELECT<type.Temporal<T>>(false, entities);
+    return new SelectImpl.Temporal.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static <T extends Comparable<?>>Select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) {
-    return new SelectImpl.Textual.SELECT<type.Textual<T>>(false, entities);
+    return new SelectImpl.Textual.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.TIME._SELECT<type.TIME> SELECT(final kind.TIME ... entities) {
-    return new SelectImpl.TIME.SELECT<type.TIME>(false, entities);
+    return new SelectImpl.TIME.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.TINYINT._SELECT<type.TINYINT> SELECT(final kind.TINYINT ... entities) {
-    return new SelectImpl.TINYINT.SELECT<type.TINYINT>(false, entities);
+    return new SelectImpl.TINYINT.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.TINYINT.UNSIGNED._SELECT<type.TINYINT.UNSIGNED> SELECT(final kind.TINYINT.UNSIGNED ... entities) {
-    return new SelectImpl.TINYINT.UNSIGNED.SELECT<type.TINYINT.UNSIGNED>(false, entities);
+    return new SelectImpl.TINYINT.UNSIGNED.SELECT<>(false, entities);
   }
 
   @SafeVarargs
   public static Select.Entity._SELECT<type.Subject<?>> SELECT(final kind.Subject<?> ... entities) {
-    return new SelectImpl.Entity.SELECT<type.Subject<?>>(false, entities);
+    return new SelectImpl.Entity.SELECT<>(false, entities);
   }
 
   public static final class SELECT {
     @SafeVarargs
     public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> DISTINCT(final kind.ARRAY<? extends T> ... entities) {
-      return new SelectImpl.ARRAY.SELECT<type.ARRAY<T>>(true, entities);
+      return new SelectImpl.ARRAY.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.BIGINT._SELECT<type.BIGINT> DISTINCT(final kind.BIGINT ... entities) {
-      return new SelectImpl.BIGINT.SELECT<type.BIGINT>(true, entities);
+      return new SelectImpl.BIGINT.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.BIGINT.UNSIGNED._SELECT<type.BIGINT.UNSIGNED> DISTINCT(final kind.BIGINT.UNSIGNED ... entities) {
-      return new SelectImpl.BIGINT.UNSIGNED.SELECT<type.BIGINT.UNSIGNED>(true, entities);
+      return new SelectImpl.BIGINT.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.BINARY._SELECT<type.BINARY> DISTINCT(final kind.BINARY ... entities) {
-      return new SelectImpl.BINARY.SELECT<type.BINARY>(true, entities);
+      return new SelectImpl.BINARY.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.BLOB._SELECT<type.BLOB> DISTINCT(final kind.BLOB ... entities) {
-      return new SelectImpl.BLOB.SELECT<type.BLOB>(true, entities);
+      return new SelectImpl.BLOB.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.BOOLEAN._SELECT<type.BOOLEAN> DISTINCT(final kind.BOOLEAN ... entities) {
-      return new SelectImpl.BOOLEAN.SELECT<type.BOOLEAN>(true, entities);
+      return new SelectImpl.BOOLEAN.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.CHAR._SELECT<type.CHAR> DISTINCT(final kind.CHAR ... entities) {
-      return new SelectImpl.CHAR.SELECT<type.CHAR>(true, entities);
+      return new SelectImpl.CHAR.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.CLOB._SELECT<type.CLOB> DISTINCT(final kind.CLOB ... entities) {
-      return new SelectImpl.CLOB.SELECT<type.CLOB>(true, entities);
+      return new SelectImpl.CLOB.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T>Select.DataType._SELECT<type.DataType<T>> DISTINCT(final kind.DataType<? extends T> ... entities) {
-      return new SelectImpl.DataType.SELECT<type.DataType<T>>(true, entities);
+      return new SelectImpl.DataType.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DATE._SELECT<type.DATE> DISTINCT(final kind.DATE ... entities) {
-      return new SelectImpl.DATE.SELECT<type.DATE>(true, entities);
+      return new SelectImpl.DATE.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DATETIME._SELECT<type.DATETIME> DISTINCT(final kind.DATETIME ... entities) {
-      return new SelectImpl.DATETIME.SELECT<type.DATETIME>(true, entities);
+      return new SelectImpl.DATETIME.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DECIMAL._SELECT<type.DECIMAL> DISTINCT(final kind.DECIMAL ... entities) {
-      return new SelectImpl.DECIMAL.SELECT<type.DECIMAL>(true, entities);
+      return new SelectImpl.DECIMAL.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DECIMAL.UNSIGNED._SELECT<type.DECIMAL.UNSIGNED> DISTINCT(final kind.DECIMAL.UNSIGNED ... entities) {
-      return new SelectImpl.DECIMAL.UNSIGNED.SELECT<type.DECIMAL.UNSIGNED>(true, entities);
+      return new SelectImpl.DECIMAL.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DOUBLE._SELECT<type.DOUBLE> DISTINCT(final kind.DOUBLE ... entities) {
-      return new SelectImpl.DOUBLE.SELECT<type.DOUBLE>(true, entities);
+      return new SelectImpl.DOUBLE.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.DOUBLE.UNSIGNED._SELECT<type.DOUBLE.UNSIGNED> DISTINCT(final kind.DOUBLE.UNSIGNED ... entities) {
-      return new SelectImpl.DOUBLE.UNSIGNED.SELECT<type.DOUBLE.UNSIGNED>(true, entities);
+      return new SelectImpl.DOUBLE.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T extends type.Entity>Select.Entity._SELECT<T> DISTINCT(final T ... entities) {
-      return new SelectImpl.Entity.SELECT<T>(true, entities);
+      return new SelectImpl.Entity.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T extends Enum<?> & EntityEnum>Select.ENUM._SELECT<type.ENUM<T>> DISTINCT(final kind.ENUM<? extends T> ... entities) {
-      return new SelectImpl.ENUM.SELECT<type.ENUM<T>>(true, entities);
+      return new SelectImpl.ENUM.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.FLOAT._SELECT<type.FLOAT> DISTINCT(final kind.FLOAT ... entities) {
-      return new SelectImpl.FLOAT.SELECT<type.FLOAT>(true, entities);
+      return new SelectImpl.FLOAT.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.FLOAT.UNSIGNED._SELECT<type.FLOAT.UNSIGNED> DISTINCT(final kind.FLOAT.UNSIGNED ... entities) {
-      return new SelectImpl.FLOAT.UNSIGNED.SELECT<type.FLOAT.UNSIGNED>(true, entities);
+      return new SelectImpl.FLOAT.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.INT._SELECT<type.INT> DISTINCT(final kind.INT ... entities) {
-      return new SelectImpl.INT.SELECT<type.INT>(true, entities);
+      return new SelectImpl.INT.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.INT.UNSIGNED._SELECT<type.INT.UNSIGNED> DISTINCT(final kind.INT.UNSIGNED ... entities) {
-      return new SelectImpl.INT.UNSIGNED.SELECT<type.INT.UNSIGNED>(true, entities);
+      return new SelectImpl.INT.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T extends Number>Select.Numeric._SELECT<type.Numeric<T>> DISTINCT(final kind.Numeric<? extends T> ... entities) {
-      return new SelectImpl.Numeric.SELECT<type.Numeric<T>>(true, entities);
+      return new SelectImpl.Numeric.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.SMALLINT._SELECT<type.SMALLINT> DISTINCT(final kind.SMALLINT ... entities) {
-      return new SelectImpl.SMALLINT.SELECT<type.SMALLINT>(true, entities);
+      return new SelectImpl.SMALLINT.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.SMALLINT.UNSIGNED._SELECT<type.SMALLINT.UNSIGNED> DISTINCT(final kind.SMALLINT.UNSIGNED ... entities) {
-      return new SelectImpl.SMALLINT.UNSIGNED.SELECT<type.SMALLINT.UNSIGNED>(true, entities);
+      return new SelectImpl.SMALLINT.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T extends java.time.temporal.Temporal>Select.Temporal._SELECT<type.Temporal<T>> DISTINCT(final kind.Temporal<? extends T> ... entities) {
-      return new SelectImpl.Temporal.SELECT<type.Temporal<T>>(true, entities);
+      return new SelectImpl.Temporal.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static <T extends Comparable<?>>Select.Textual._SELECT<type.Textual<T>> DISTINCT(final kind.Textual<? extends T> ... entities) {
-      return new SelectImpl.Textual.SELECT<type.Textual<T>>(true, entities);
+      return new SelectImpl.Textual.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.TIME._SELECT<type.TIME> DISTINCT(final kind.TIME ... entities) {
-      return new SelectImpl.TIME.SELECT<type.TIME>(true, entities);
+      return new SelectImpl.TIME.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.TINYINT._SELECT<type.TINYINT> DISTINCT(final kind.TINYINT ... entities) {
-      return new SelectImpl.TINYINT.SELECT<type.TINYINT>(true, entities);
+      return new SelectImpl.TINYINT.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.TINYINT.UNSIGNED._SELECT<type.TINYINT.UNSIGNED> DISTINCT(final kind.TINYINT.UNSIGNED ... entities) {
-      return new SelectImpl.TINYINT.UNSIGNED.SELECT<type.TINYINT.UNSIGNED>(true, entities);
+      return new SelectImpl.TINYINT.UNSIGNED.SELECT<>(true, entities);
     }
 
     @SafeVarargs
     public static Select.Entity._SELECT<type.Subject<?>> DISTINCT(final kind.Subject<?> ... entities) {
-      return new SelectImpl.Entity.SELECT<type.Subject<?>>(true, entities);
+      return new SelectImpl.Entity.SELECT<>(true, entities);
     }
   }
 
@@ -1022,7 +1022,7 @@ public final class DML {
 
   public static final class CASE {
     public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) {
-      return new CaseImpl.Search.WHEN<T>(null, condition);
+      return new CaseImpl.Search.WHEN<>(null, condition);
     }
   }
 
@@ -1059,13 +1059,13 @@ public final class DML {
   /** INSERT **/
 
   public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) {
-    return new InsertImpl.INSERT<E>(entity);
+    return new InsertImpl.INSERT<>(entity);
   }
 
   @SafeVarargs
   @SuppressWarnings("unchecked")
   public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) {
-    return new InsertImpl.INSERT<DataType>(Arrays.splice(columns, 0, 0, column));
+    return new InsertImpl.INSERT<>(Arrays.splice(columns, 0, 0, column));
   }
 
   /** String Functions **/
@@ -12506,15 +12506,15 @@ public final class DML {
   }
 
   public static <T>ALL<T> ALL(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) {
-    return new ALL<T>(subQuery);
+    return new ALL<>(subQuery);
   }
 
   public static <T>ANY<T> ANY(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) {
-    return new ANY<T>(subQuery);
+    return new ANY<>(subQuery);
   }
 
   public static <T>SOME<T> SOME(final Select.untyped.SELECT<? extends type.Subject<T>> subQuery) {
-    return new SOME<T>(subQuery);
+    return new SOME<>(subQuery);
   }
 
   public static Predicate BETWEEN(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b) {

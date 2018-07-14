@@ -131,7 +131,7 @@ public final class Schemas {
     return counts;
   }
 
-  private static final Comparator<$Table> tableNameComparator = new Comparator<$Table>() {
+  private static final Comparator<$Table> tableNameComparator = new Comparator<>() {
     @Override
     public int compare(final $Table o1, final $Table o2) {
       return o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
@@ -139,10 +139,10 @@ public final class Schemas {
   };
 
   private static Schema topologicalSort(final Schema schema) {
-    final List<$Table> tables = new ArrayList<$Table>(schema.getTable());
+    final List<$Table> tables = new ArrayList<>(schema.getTable());
     schema.getTable().clear();
     tables.sort(tableNameComparator);
-    final RefDigraph<$Table,String> digraph = new RefDigraph<$Table,String>(table -> table.getName$().text().toLowerCase());
+    final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text().toLowerCase());
     for (final $Table table : tables) {
       digraph.addVertex(table);
       for (final $Column column : table.getColumn())
@@ -162,12 +162,12 @@ public final class Schemas {
 
   public static Schema flatten(final Schema schema) {
     final Schema flat = (Schema)Bindings.clone(schema);
-    final Map<String,$Table> tableNameToTable = new HashMap<String,$Table>();
+    final Map<String,$Table> tableNameToTable = new HashMap<>();
     // First, register the table names to be referenceable by the @extends attribute
     for (final $Table table : flat.getTable())
       tableNameToTable.put(table.getName$().text(), table);
 
-    final Set<String> flatTables = new HashSet<String>();
+    final Set<String> flatTables = new HashSet<>();
     for (final $Table table : flat.getTable())
       flattenTable(table, tableNameToTable, flatTables);
 

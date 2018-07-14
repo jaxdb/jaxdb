@@ -216,14 +216,14 @@ final class DerbyDecompiler extends Decompiler {
   private static Map<String,List<String>> getTables(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(tablesSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<String>> tableNameToColumns = new HashMap<String,List<String>>();
+    final Map<String,List<String>> tableNameToColumns = new HashMap<>();
     String lastTable = null;
     List<String> columns = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToColumns.put(tableName, columns = new ArrayList<String>());
+        tableNameToColumns.put(tableName, columns = new ArrayList<>());
       }
 
       final String columnName = rows.getString(4);
@@ -279,14 +279,14 @@ final class DerbyDecompiler extends Decompiler {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = new HashMap<String,List<$Table.Constraints.Unique>>();
+    final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = new HashMap<>();
     String lastTable = null;
     List<$Table.Constraints.Unique> uniques = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToUniques.put(tableName, uniques = new ArrayList<$Table.Constraints.Unique>());
+        tableNameToUniques.put(tableName, uniques = new ArrayList<>());
       }
 
       final List<String> columns = tableNameToColumns.get(tableName);
@@ -371,14 +371,14 @@ final class DerbyDecompiler extends Decompiler {
   protected Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(checkSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,List<$Check>> tableNameToChecks = new HashMap<String,List<$Check>>();
+    final Map<String,List<$Check>> tableNameToChecks = new HashMap<>();
     String lastTable = null;
     List<$Check> checks = null;
     while (rows.next()) {
       final String tableName = rows.getString(2);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToChecks.put(tableName, checks = new ArrayList<$Check>());
+        tableNameToChecks.put(tableName, checks = new ArrayList<>());
       }
 
       final String checkDefinition = rows.getString(3);
@@ -407,7 +407,7 @@ final class DerbyDecompiler extends Decompiler {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(indexSql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,$Table.Indexes> tableNameToIndexes = new HashMap<String,$Table.Indexes>();
+    final Map<String,$Table.Indexes> tableNameToIndexes = new HashMap<>();
     String lastTable = null;
     $Table.Indexes indexes = null;
     while (rows.next()) {
@@ -465,7 +465,7 @@ final class DerbyDecompiler extends Decompiler {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(foreignKeySql);
     final ResultSet rows = statement.executeQuery();
-    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<String,Map<String,$ForeignKey>>();
+    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
     String lastTable = null;
     Map<String,$ForeignKey> columnNameToForeignKey = null;
     while (rows.next()) {
@@ -473,7 +473,7 @@ final class DerbyDecompiler extends Decompiler {
       final List<String> columnNames = tableNameToColumns.get(tableName);
       if (!tableName.equals(lastTable)) {
         lastTable = tableName;
-        tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<String,$ForeignKey>());
+        tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<>());
       }
 
       final String primaryTable = rows.getString(6);

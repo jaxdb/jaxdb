@@ -64,7 +64,7 @@ final class InsertImpl {
 
     @Override
     public Insert.VALUES<T> VALUES(final Select.untyped.SELECT<?> select) {
-      return new VALUES<T>(this, select);
+      return new VALUES<>(this, select);
     }
   }
 }

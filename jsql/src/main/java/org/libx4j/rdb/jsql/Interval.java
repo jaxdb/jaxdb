@@ -37,7 +37,7 @@ import org.lib4j.util.Temporals;
 
 public final class Interval extends Compilable implements TemporalAmount {
   public static final class Unit implements TemporalUnit {
-    private static final Map<String,Unit> units = new HashMap<String,Unit>();
+    private static final Map<String,Unit> units = new HashMap<>();
 
     protected static Unit valueOf(final String string) {
       return units.get(string.toLowerCase());
@@ -121,7 +121,7 @@ public final class Interval extends Compilable implements TemporalAmount {
     return new Interval(Integer.parseInt(string.substring(0, index)), Unit.valueOf(string.substring(index + 1)));
   }
 
-  private final Map<TemporalUnit,Long> intervals = new LinkedHashMap<TemporalUnit,Long>();
+  private final Map<TemporalUnit,Long> intervals = new LinkedHashMap<>();
 
   public Interval(final long value, final Unit unit) {
     if (value != 0)
@@ -176,7 +176,7 @@ public final class Interval extends Compilable implements TemporalAmount {
 
   @Override
   public List<TemporalUnit> getUnits() {
-    return new ArrayList<TemporalUnit>(intervals.keySet());
+    return new ArrayList<>(intervals.keySet());
   }
 
   public Interval toDateInterval() {

@@ -43,7 +43,7 @@ final class UpdateCommand extends Command {
 
   protected void add(final SET set) {
     if (this.set == null)
-      this.set = new ArrayList<SET>();
+      this.set = new ArrayList<>();
 
     this.set.add(set);
   }

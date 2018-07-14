@@ -92,7 +92,7 @@ final class EntitiesJaxb {
   @SuppressWarnings("unchecked")
   public static <T extends type.Entity>T[] toEntities(final Database database) {
     try {
-      final List<type.Entity> entities = new ArrayList<type.Entity>();
+      final List<type.Entity> entities = new ArrayList<>();
       final Insert insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
       final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
       for (final String tableName : xmlType.propOrder())

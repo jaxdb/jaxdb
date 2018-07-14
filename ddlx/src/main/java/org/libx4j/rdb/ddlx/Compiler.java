@@ -479,11 +479,11 @@ abstract class Compiler {
   }
 
   protected List<CreateStatement> triggers(final $Table table) {
-    return new ArrayList<CreateStatement>();
+    return new ArrayList<>();
   }
 
   protected List<CreateStatement> indexes(final $Table table) {
-    final List<CreateStatement> statements = new ArrayList<CreateStatement>();
+    final List<CreateStatement> statements = new ArrayList<>();
     if (table.getIndexes() != null) {
       for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
         final CreateStatement createIndex = createIndex(index.getUnique$() != null && index.getUnique$().text(), SQLDataTypes.getIndexName(table, index), index.getType$(), table.getName$().text(), index.getColumn().toArray(new $Named[index.getColumn().size()]));
@@ -506,13 +506,13 @@ abstract class Compiler {
   }
 
   protected List<CreateStatement> types(final $Table table) {
-    return new ArrayList<CreateStatement>();
+    return new ArrayList<>();
   }
 
   protected abstract String dropIndexOnClause(final $Table table);
 
   protected final LinkedHashSet<DropStatement> dropTable(final $Table table) {
-    final LinkedHashSet<DropStatement> statements = new LinkedHashSet<DropStatement>();
+    final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
 //      for (final $Table.getIndexes.getIndex index : table.getIndexes(0).getIndex())
@@ -536,7 +536,7 @@ abstract class Compiler {
   }
 
   protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
-    return new LinkedHashSet<DropStatement>();
+    return new LinkedHashSet<>();
   }
 
   protected DropStatement dropTableIfExists(final $Table table) {

@@ -347,7 +347,7 @@ abstract class Compiler {
 
   @SuppressWarnings("rawtypes")
   protected void compile(final InsertImpl.INSERT insert, final InsertImpl.VALUES<?> values, final Compilation compilation) throws IOException {
-    final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<Integer,type.ENUM<?>>();
+    final Map<Integer,type.ENUM<?>> translateTypes = new HashMap<>();
     if (insert.entity != null) {
       compilation.append("INSERT INTO ");
       final type.Entity entity = insert.entity;

@@ -94,7 +94,7 @@ public final class Generator {
   }
 
   private List<String> getErrors() {
-    final List<String> errors = new ArrayList<String>();
+    final List<String> errors = new ArrayList<>();
     for (final $Table table : schema.getTable()) {
       if (!table.getAbstract$().text()) {
         if (table.getConstraints() == null || table.getConstraints().getPrimaryKey() == null) {
@@ -112,7 +112,7 @@ public final class Generator {
     return errors;
   }
 
-  private final Map<String,Integer> columnCount = new HashMap<String,Integer>();
+  private final Map<String,Integer> columnCount = new HashMap<>();
 
   public Map<String,Integer> getColumnCount() {
     return columnCount;
@@ -120,7 +120,7 @@ public final class Generator {
 
   private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table, final Schema schema) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
-    final List<String> violations = new ArrayList<String>();
+    final List<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
     if (nameViolation != null)
       violations.add(nameViolation);
@@ -150,11 +150,11 @@ public final class Generator {
 
   private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
-    final Map<String,$Column> columnNameToColumn = new HashMap<String,$Column>();
+    final Map<String,$Column> columnNameToColumn = new HashMap<>();
     registerColumns(tableNames, columnNameToColumn, table, schema);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<CreateStatement>();
+    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>();
     statements.addAll(compiler.types(table));
 
     columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
@@ -168,11 +168,11 @@ public final class Generator {
   }
 
   public LinkedHashSet<Statement> parse(final DBVendor vendor) throws GeneratorExecutionException {
-    final Map<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
-    final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<String,LinkedHashSet<DropStatement>>();
-    final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<String,LinkedHashSet<CreateStatement>>();
+    final Map<String,LinkedHashSet<DropStatement>> dropTableStatements = new HashMap<>();
+    final Map<String,LinkedHashSet<DropStatement>> dropTypeStatements = new HashMap<>();
+    final Map<String,LinkedHashSet<CreateStatement>> createTableStatements = new HashMap<>();
 
-    final Set<String> skipTables = new HashSet<String>();
+    final Set<String> skipTables = new HashSet<>();
 
     for (final $Table table : schema.getTable()) {
       if (table.getSkip$().text()) {
@@ -184,12 +184,12 @@ public final class Generator {
       }
     }
 
-    final Set<String> tableNames = new HashSet<String>();
+    final Set<String> tableNames = new HashSet<>();
     for (final $Table table : schema.getTable())
       if (!table.getAbstract$().text())
         createTableStatements.put(table.getName$().text(), parseTable(vendor, table, tableNames));
 
-    final LinkedHashSet<Statement> statements = new LinkedHashSet<Statement>();
+    final LinkedHashSet<Statement> statements = new LinkedHashSet<>();
     final CreateStatement createSchema = Compiler.getCompiler(vendor).createSchemaIfNotExists(audit.schema());
     if (createSchema != null)
       statements.add(createSchema);

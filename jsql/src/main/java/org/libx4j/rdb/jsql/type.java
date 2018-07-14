@@ -44,7 +44,7 @@ import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
 public final class type {
-  private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<Class<?>,Class<?>>();
+  private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<>();
 
   static {
     typeToClass.put(null, ENUM.class);
@@ -132,7 +132,7 @@ public final class type {
     @Override
     protected final void get(final PreparedStatement statement, final int parameterIndex) throws SQLException {
       if (value != null)
-        statement.setArray(parameterIndex, new SQLArray<T>(this));
+        statement.setArray(parameterIndex, new SQLArray<>(this));
       else
         statement.setNull(parameterIndex, sqlType());
     }
@@ -162,7 +162,7 @@ public final class type {
     @Override
     @SuppressWarnings("unchecked")
     public final ARRAY<T> clone() {
-      return new ARRAY<T>((Class<? extends DataType<T>>)dataType.getClass());
+      return new ARRAY<>((Class<? extends DataType<T>>)dataType.getClass());
     }
   }
 
@@ -1077,9 +1077,9 @@ public final class type {
     protected static <T>ARRAY<T> wrap(final T[] value) {
       final ARRAY<T> array;
       if (value.getClass().getComponentType().isEnum())
-        array = new ARRAY<T>((Class<? extends DataType<T>>)value.getClass().getComponentType());
+        array = new ARRAY<>((Class<? extends DataType<T>>)value.getClass().getComponentType());
       else
-        array = new ARRAY<T>((Class<? extends DataType<T>>)org.libx4j.rdb.jsql.type.typeToClass.get(value.getClass().getComponentType()));
+        array = new ARRAY<>((Class<? extends DataType<T>>)org.libx4j.rdb.jsql.type.typeToClass.get(value.getClass().getComponentType()));
 
       array.set(value);
       return array;
@@ -1152,12 +1152,12 @@ public final class type {
     }
 
     public final <V extends DataType<T>>V AS(final V dataType) {
-      dataType.wrapper(new As<T>(this, dataType));
+      dataType.wrapper(new As<>(this, dataType));
       return dataType;
     }
 
     public final <E extends Enum<?> & EntityEnum>ENUM<E> AS(final ENUM<E> dataType) {
-      dataType.wrapper(new As<T>(this, dataType));
+      dataType.wrapper(new As<>(this, dataType));
       return dataType;
     }
 
@@ -1966,7 +1966,7 @@ public final class type {
 
     @Override
     public final ENUM<T> clone() {
-      return new ENUM<T>(this);
+      return new ENUM<>(this);
     }
 
     @Override

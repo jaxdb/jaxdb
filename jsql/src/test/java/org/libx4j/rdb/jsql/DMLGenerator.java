@@ -70,9 +70,9 @@ public class DMLGenerator {
     type.DECIMAL.class
   };
 
-  private static final Map<Args,Class<?>> scaledMap = new HashMap<Args,Class<?>>();
-  private static final Map<Args,Class<?>> directMap = new HashMap<Args,Class<?>>();
-  private static final Map<Class<?>,Class<?>> singleMap = new LinkedHashMap<Class<?>,Class<?>>();
+  private static final Map<Args,Class<?>> scaledMap = new HashMap<>();
+  private static final Map<Args,Class<?>> directMap = new HashMap<>();
+  private static final Map<Class<?>,Class<?>> singleMap = new LinkedHashMap<>();
 
   private static final void put(final Map<Args,Class<?>> map, final Class<?> r, final Class<?> a, final Class<?> b) {
     final Args args = new Args(a, b);
@@ -329,7 +329,7 @@ public class DMLGenerator {
   }
 
   private static void filter(final Map<Args,Class<?>> map) {
-    final Set<Args> removes = new HashSet<Args>();
+    final Set<Args> removes = new HashSet<>();
     for (final Map.Entry<Args,Class<?>> entry : map.entrySet()) {
       final Args args = entry.getKey();
       if (!type.Numeric.class.isAssignableFrom(args.b)) {
@@ -369,7 +369,7 @@ public class DMLGenerator {
   }
 
   private static void trans(final Map<Args,Class<?>> map) {
-    final Map<Args,Class<?>> trans = new HashMap<Args,Class<?>>();
+    final Map<Args,Class<?>> trans = new HashMap<>();
     for (final Map.Entry<Args,Class<?>> entry : map.entrySet()) {
       final Args args = entry.getKey();
       trans.put(new Args(args.b, args.a), entry.getValue());

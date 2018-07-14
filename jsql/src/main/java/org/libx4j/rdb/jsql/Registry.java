@@ -40,8 +40,8 @@ public final class Registry {
     };
   }
 
-  private static final IdentityHashMap<Class<? extends Schema>,Map<String,Connector>> connectors = new IdentityHashMap<Class<? extends Schema>,Map<String,Connector>>();
-  private static final IdentityHashSet<Class<? extends Schema>> prepared = new IdentityHashSet<Class<? extends Schema>>();
+  private static final IdentityHashMap<Class<? extends Schema>,Map<String,Connector>> connectors = new IdentityHashMap<>();
+  private static final IdentityHashSet<Class<? extends Schema>> prepared = new IdentityHashSet<>();
 
   public static void register(final Class<? extends Schema> schema, final Connector connector) {
     if (connector == null)
@@ -90,7 +90,7 @@ public final class Registry {
   private static void register(final Class<? extends Schema> schema, final Connector dataSource, final boolean prepared, final String id) {
     Map<String,Connector> idToConnector = connectors.get(schema);
     if (idToConnector == null)
-      connectors.put(schema, idToConnector = new HashMap<String,Connector>());
+      connectors.put(schema, idToConnector = new HashMap<>());
 
     idToConnector.put(id, dataSource);
     if (prepared)

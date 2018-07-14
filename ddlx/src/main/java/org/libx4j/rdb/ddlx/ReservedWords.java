@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 class ReservedWords {
-  private static final Map<String,Integer> reservedWords = new HashMap<String,Integer>();
+  private static final Map<String,Integer> reservedWords = new HashMap<>();
 
   static {
     // reserved words per SQL spec (SQL-92, SQL-99, SQL-2003)

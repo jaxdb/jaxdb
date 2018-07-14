@@ -74,7 +74,7 @@ final class SelectCommand extends Command {
 
   protected void add(final JOIN<?> join) {
     if (this.join == null)
-      this.join = new ArrayList<JOIN<?>>();
+      this.join = new ArrayList<>();
 
     this.join.add(join);
   }
@@ -85,7 +85,7 @@ final class SelectCommand extends Command {
 
   protected void add(final ON<?> on) {
     if (this.on == null)
-      this.on = new ArrayList<ON<?>>();
+      this.on = new ArrayList<>();
 
     // Since ON is optional, for each JOIN without ON, add a null to this.on
     for (int i = 0; i < this.join.size() - this.on.size() - 1; i++)
@@ -140,7 +140,7 @@ final class SelectCommand extends Command {
 
   protected void add(final UNION<?> union) {
     if (this.union == null)
-      this.union = new ArrayList<UNION<?>>();
+      this.union = new ArrayList<>();
 
     this.union.add(union);
   }
