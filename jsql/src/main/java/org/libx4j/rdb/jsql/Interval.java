@@ -112,7 +112,7 @@ public final class Interval extends Compilable implements TemporalAmount {
 
   public static Interval valueOf(final String string) {
     if (string == null)
-      throw new NullPointerException("interval == null");
+      throw new IllegalArgumentException("interval == null");
 
     final int index = string.indexOf(' ');
     if (index < 0)

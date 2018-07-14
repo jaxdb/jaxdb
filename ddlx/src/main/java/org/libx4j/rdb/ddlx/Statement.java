@@ -22,7 +22,7 @@ public abstract class Statement {
   public Statement(final String sql) {
     this.sql = sql;
     if (sql == null)
-      throw new NullPointerException("sql == null");
+      throw new IllegalArgumentException("sql == null");
   }
 
   public String getSql() {

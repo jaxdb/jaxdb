@@ -30,7 +30,7 @@ import org.lib4j.util.IdentityHashSet;
 public final class Registry {
   private static Connector makeConnector(final DataSource dataSource) {
     if (dataSource == null)
-      throw new NullPointerException("dataSource == null");
+      throw new IllegalArgumentException("dataSource == null");
 
     return new Connector() {
       @Override
@@ -45,14 +45,14 @@ public final class Registry {
 
   public static void register(final Class<? extends Schema> schema, final Connector connector) {
     if (connector == null)
-      throw new NullPointerException("connector == null");
+      throw new IllegalArgumentException("connector == null");
 
     register(schema, connector, false, null);
   }
 
   public static void register(final Class<? extends Schema> schema, final Connector connector, final String id) {
     if (connector == null)
-      throw new NullPointerException("connector == null");
+      throw new IllegalArgumentException("connector == null");
 
     register(schema, connector, false, id);
   }
@@ -67,14 +67,14 @@ public final class Registry {
 
   public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector) {
     if (connector == null)
-      throw new NullPointerException("connector == null");
+      throw new IllegalArgumentException("connector == null");
 
     register(schema, connector, true, null);
   }
 
   public static void registerPrepared(final Class<? extends Schema> schema, final Connector connector, final String id) {
     if (connector == null)
-      throw new NullPointerException("connector == null");
+      throw new IllegalArgumentException("connector == null");
 
     register(schema, connector, true, id);
   }
