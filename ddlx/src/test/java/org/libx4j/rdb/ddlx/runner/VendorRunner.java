@@ -145,13 +145,13 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     if (runIn == null || Arrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
       if (method.getMethod().getParameterTypes().length > 0) {
         try (final Connection connection = getVendor(vendorClass).getConnection()) {
-          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
           method.invokeExplosively(test, connection);
         }
       }
       else {
         if (test != null) {
-          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
           method.invokeExplosively(test);
           return;
         }
@@ -163,7 +163,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
             return;
 
           beforeClassMethodsRun.add(method);
-          logger.info(VendorRunner.class.getSimpleName() + "::" + (integrationTest ? "Integration" : "Test") + "::" + vendorClass.getSimpleName());
+          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
           method.invokeExplosively(test);
         }
       }
