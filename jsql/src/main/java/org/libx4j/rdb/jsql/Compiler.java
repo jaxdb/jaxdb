@@ -150,6 +150,11 @@ abstract class Compiler {
     return compilation.vendor.getDialect().quoteIdentifier(entity.name());
   }
 
+  /**
+   * Get the parameter mark for <code>PreparedStatement</code>s.
+   * @param dataType The <code>type.DataType</code> for the requested mark.
+   * @return The mark.
+   */
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
     return "?";
   }
