@@ -17,9 +17,10 @@
 package org.libx4j.rdb.sqlx;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -318,16 +319,16 @@ final class SqlXsb {
       }
     }
 
-    try (final FileOutputStream fos = new FileOutputStream(sqlFile)) {
+    try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       final RowIterator iterator = new RowIterator(database);
       boolean firstLine = true;
       while (iterator.hasNext()) {
         if (firstLine)
           firstLine = false;
         else
-          fos.write('\n');
+          out.write('\n');
 
-        fos.write((loadRow(vendor, iterator.next()) + ";").getBytes());
+        out.write((loadRow(vendor, iterator.next()) + ";"));
       }
     }
   }

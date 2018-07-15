@@ -17,8 +17,9 @@
 package org.libx4j.rdb.jsql.generator;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -108,8 +109,8 @@ public class Generator {
     code += "  private " + classSimpleName + "() {\n  }\n}";
 
     final File javaFile = new File(dir, classSimpleName + ".java");
-    try (final FileOutputStream out = new FileOutputStream(javaFile)) {
-      out.write(code.getBytes());
+    try (final OutputStreamWriter out = new FileWriter(javaFile)) {
+      out.write(code);
     }
   }
 

@@ -17,8 +17,9 @@
 package org.libx4j.rdb.ddlx;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.LinkedHashSet;
 
 public class StatementBatch {
@@ -41,8 +42,8 @@ public class StatementBatch {
         if (!file.getParentFile().mkdirs())
           throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
-      try (final FileOutputStream out = new FileOutputStream(file)) {
-        out.write(builder.substring(2).getBytes());
+      try (final OutputStreamWriter out = new FileWriter(file)) {
+        out.write(builder.substring(2));
       }
     }
     catch (final IOException e) {

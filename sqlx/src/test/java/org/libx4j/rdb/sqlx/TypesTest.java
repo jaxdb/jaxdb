@@ -17,9 +17,9 @@
 package org.libx4j.rdb.sqlx;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
@@ -54,9 +54,9 @@ import org.libx4j.rdb.ddlx.runner.VendorRunner;
 @VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
 @Category(MixedTest.class)
 public class TypesTest extends SQLxTest {
-  private static void createTypeData(final OutputStream out) throws IOException {
+  private static void createTypeData(final OutputStreamWriter out) throws IOException {
     final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
-    out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n".getBytes());
+    out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n");
     for (int i = 0; i < 1000; i++) {
       final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
       final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
@@ -75,43 +75,43 @@ public class TypesTest extends SQLxTest {
       final String tinyintType = String.valueOf((int)((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 8) - 1))));
       final String enumType = values[(int)(Math.random() * values.length)];
 
-      out.write("    <type".getBytes());
+      out.write("    <type");
       if (Math.random() < .9)
-        out.write(("\n      bigintType=\"" + bigintType + "\"").getBytes());
+        out.write(("\n      bigintType=\"" + bigintType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      binaryType=\"" + binaryType + "\"").getBytes());
+        out.write(("\n      binaryType=\"" + binaryType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      blobType=\"" + blobType + "\"").getBytes());
+        out.write(("\n      blobType=\"" + blobType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      booleanType=\"" + booleanType + "\"").getBytes());
+        out.write(("\n      booleanType=\"" + booleanType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      charType=\"" + charType + "\"").getBytes());
+        out.write(("\n      charType=\"" + charType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      clobType=\"" + clobType + "\"").getBytes());
+        out.write(("\n      clobType=\"" + clobType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      dateType=\"" + dateType + "\"").getBytes());
+        out.write(("\n      dateType=\"" + dateType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      datetimeType=\"" + datetimeType + "\"").getBytes());
+        out.write(("\n      datetimeType=\"" + datetimeType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      doubleType=\"" + doubleType + "\"").getBytes());
+        out.write(("\n      doubleType=\"" + doubleType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      decimalType=\"" + decimalType + "\"").getBytes());
+        out.write(("\n      decimalType=\"" + decimalType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      enumType=\"" + enumType + "\"").getBytes());
+        out.write(("\n      enumType=\"" + enumType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      floatType=\"" + floatType + "\"").getBytes());
+        out.write(("\n      floatType=\"" + floatType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      intType=\"" + intType + "\"").getBytes());
+        out.write(("\n      intType=\"" + intType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      smallintType=\"" + smallintType + "\"").getBytes());
+        out.write(("\n      smallintType=\"" + smallintType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      tinyintType=\"" + tinyintType + "\"").getBytes());
+        out.write(("\n      tinyintType=\"" + tinyintType + "\""));
       if (Math.random() < .9)
-        out.write(("\n      timeType=\"" + timeType + "\"").getBytes());
-      out.write(("/>\n").getBytes());
+        out.write(("\n      timeType=\"" + timeType + "\""));
+      out.write(("/>\n"));
     }
 
-    out.write("  </insert>\n</types>".getBytes());
+    out.write("  </insert>\n</types>");
     out.flush();
   }
 
@@ -119,7 +119,7 @@ public class TypesTest extends SQLxTest {
     try {
       createXSDs("types");
       resourcesDestDir.mkdirs();
-      try (final OutputStream out = new FileOutputStream(new File(resourcesDestDir, "types.sqlx"))) {
+      try (final OutputStreamWriter out = new FileWriter(new File(resourcesDestDir, "types.sqlx"))) {
         createTypeData(out);
       }
     }

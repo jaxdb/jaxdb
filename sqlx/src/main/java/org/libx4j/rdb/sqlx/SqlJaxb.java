@@ -17,8 +17,9 @@
 package org.libx4j.rdb.sqlx;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -293,7 +294,7 @@ final class SqlJaxb {
       }
     }
 
-    try (final FileOutputStream fos = new FileOutputStream(sqlFile)) {
+    try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
       final RowIterator iterator = new RowIterator(database);
       boolean firstLine = true;
@@ -301,9 +302,9 @@ final class SqlJaxb {
         if (firstLine)
           firstLine = false;
         else
-          fos.write('\n');
+          out.write('\n');
 
-        fos.write((loadRow(vendor, iterator.next()) + ";").getBytes());
+        out.write((loadRow(vendor, iterator.next()) + ";"));
       }
     }
     catch (final IllegalAccessException | InvocationTargetException | SAXException e) {
