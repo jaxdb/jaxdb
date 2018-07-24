@@ -321,14 +321,11 @@ final class SqlXsb {
 
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       final RowIterator iterator = new RowIterator(database);
-      boolean firstLine = true;
-      while (iterator.hasNext()) {
-        if (firstLine)
-          firstLine = false;
-        else
+      for (int i = 0; iterator.hasNext(); i++) {
+        if (i > 0)
           out.write('\n');
 
-        out.write((loadRow(vendor, iterator.next()) + ";"));
+        out.append(loadRow(vendor, iterator.next())).append(';');
       }
     }
   }
