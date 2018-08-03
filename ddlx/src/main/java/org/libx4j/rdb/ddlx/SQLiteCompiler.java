@@ -55,7 +55,7 @@ final class SQLiteCompiler extends Compiler {
       return null;
 
     final $Columns primaryKey = table.getConstraints().getPrimaryKey();
-    if (primaryKey.isNull()) {
+    if (primaryKey == null) {
       logger.warn("AUTOINCREMENT is only allowed on an INT PRIMARY KEY -- Ignoring AUTOINCREMENT spec.");
       return null;
     }
@@ -88,7 +88,7 @@ final class SQLiteCompiler extends Compiler {
   @Override
   protected String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
     final $Columns primaryKey = constraints.getPrimaryKey();
-    if (!primaryKey.isNull() && primaryKey.getColumn().size() == 1) {
+    if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final $Column column = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
       if (column instanceof $Integer && isAutoIncrement(($Integer)column))
         return null;
