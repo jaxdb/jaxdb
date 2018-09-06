@@ -29,13 +29,9 @@ import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
 import org.libx4j.xsb.runtime.Bindings;
-import org.libx4j.xsb.runtime.ParseException;
 
 public class DDLxAudit {
   protected static DDLxAudit makeAudit(final URL url) throws IOException, ValidationException {
-    if (url == null)
-      throw new IllegalArgumentException("url == null");
-
     try (final InputStream in = url.openStream()) {
       return new DDLxAudit(url);
     }
@@ -51,7 +47,7 @@ public class DDLxAudit {
       tableNameToTable.put(table.getName$().text(), table);
   }
 
-  public DDLxAudit(final URL url) throws IOException, ParseException, ValidationException {
+  public DDLxAudit(final URL url) throws IOException, ValidationException {
     this((Schema)Bindings.parse(url));
   }
 

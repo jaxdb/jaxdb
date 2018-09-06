@@ -16,7 +16,7 @@
 
 package org.libx4j.rdb.sqlx;
 
-import org.lib4j.lang.Bytes;
+import org.lib4j.util.Bytes;
 import org.lib4j.util.Hexadecimal;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;

@@ -24,8 +24,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lib4j.lang.IntArrayList;
 import org.lib4j.sql.exception.SQLExceptionCatalog;
+import org.lib4j.util.ArrayIntList;
 import org.lib4j.util.Collections;
 import org.libx4j.rdb.jsql.Delete.DELETE;
 import org.libx4j.rdb.jsql.Insert.INSERT;
@@ -72,7 +72,7 @@ public class Batch {
 
       String last = null;
       Statement statement = null;
-      final IntArrayList results = new IntArrayList(executeUpdates.size());
+      final ArrayIntList results = new ArrayIntList(executeUpdates.size());
       Class<? extends Schema> schema = null;
       Connection connection = null;
       for (final ExecuteUpdate executeUpdate : executeUpdates) {
@@ -123,7 +123,7 @@ public class Batch {
       if (transaction == null)
         connection.close();
 
-      return results.toArray();
+      return results.toArray(new int[results.size()]);
     }
     catch (final SQLException e) {
       throw SQLExceptionCatalog.lookup(e);

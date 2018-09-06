@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lib4j.lang.Arrays;
+import org.lib4j.util.Arrays;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Index;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Integer;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;

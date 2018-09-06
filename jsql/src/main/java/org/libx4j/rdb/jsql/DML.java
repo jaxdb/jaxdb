@@ -25,7 +25,7 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Set;
 
-import org.lib4j.lang.Arrays;
+import org.lib4j.util.Arrays;
 
 @SuppressWarnings("hiding")
 public final class DML {

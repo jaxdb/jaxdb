@@ -37,9 +37,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.lib4j.io.Files;
-import org.lib4j.lang.Arrays;
-import org.lib4j.lang.ClassLoaders;
-import org.lib4j.lang.Classes;
+import org.lib4j.util.Arrays;
+import org.lib4j.util.ClassLoaders;
+import org.lib4j.util.Classes;
 import org.lib4j.xml.sax.XMLDocument;
 import org.lib4j.xml.sax.XMLDocuments;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Bigint;
@@ -70,7 +70,6 @@ import org.libx4j.xsb.runtime.Attribute;
 import org.libx4j.xsb.runtime.Binding;
 import org.libx4j.xsb.runtime.Bindings;
 import org.libx4j.xsb.runtime.Id;
-import org.libx4j.xsb.runtime.ParseException;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.xml.sax.SAXException;
 
@@ -296,7 +295,7 @@ final class SqlXsb {
     try (final InputStream in = xmlDocument.getURL().openStream()) {
       database = ($Database)Bindings.parse(in);
     }
-    catch (final ParseException e) {
+    catch (final Throwable t) {
       final File sqlxTempDir = new File(Files.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
       Runtime.getRuntime().addShutdownHook(new Thread() {

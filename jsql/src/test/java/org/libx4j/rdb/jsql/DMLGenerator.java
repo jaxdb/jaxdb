@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.lang.Classes;
+import org.lib4j.util.Classes;
 
 public class DMLGenerator {
   public static class Args {

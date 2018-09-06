@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.lib4j.lang.Classes;
-import org.lib4j.lang.JavaIdentifiers;
+import org.lib4j.util.Classes;
+import org.lib4j.util.JavaIdentifiers;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxAudit;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
@@ -55,7 +55,6 @@ import org.libx4j.rdb.jsql.type;
 import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Integer;
 import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.vendor.Dialect;
-import org.libx4j.xsb.runtime.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +63,7 @@ public class Generator {
 
   private final JSQLAudit audit;
 
-  public Generator(final URL url) throws IOException, ParseException, ValidationException {
+  public Generator(final URL url) throws IOException, ValidationException {
     this.audit = new JSQLAudit(new DDLxAudit(url));
   }
 

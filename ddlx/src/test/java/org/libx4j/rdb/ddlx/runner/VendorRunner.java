@@ -43,9 +43,9 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.lib4j.lang.Arrays;
-import org.lib4j.lang.Throwables;
 import org.lib4j.logging.DeferredLogger;
+import org.lib4j.util.Arrays;
+import org.lib4j.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -226,7 +226,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   private ThreadLocal<Class<? extends Vendor>> localVendor = new ThreadLocal<>();
 
-  private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement, final boolean transverse) {
+  private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement) {
     final Statement vendorStatement = new Statement() {
       @Override
       public void evaluate() throws Throwable {
@@ -265,7 +265,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Override
   protected Statement withBefores(final FrameworkMethod method, final Object target, final Statement statement) {
-    return evaluate(getTestClass().getAnnotatedMethods(Before.class), target, statement, false);
+    return evaluate(getTestClass().getAnnotatedMethods(Before.class), target, statement);
   }
 
   @Override

@@ -38,8 +38,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.lang.Classes;
-import org.lib4j.lang.Numbers;
+import org.lib4j.util.Classes;
+import org.lib4j.util.Numbers;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;
 
