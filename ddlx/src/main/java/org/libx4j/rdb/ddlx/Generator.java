@@ -31,7 +31,7 @@ import java.util.Set;
 import org.fastjax.lang.PackageLoader;
 import org.fastjax.lang.PackageNotFoundException;
 import org.fastjax.util.Arrays;
-import org.lib4j.xml.ValidationException;
+import org.fastjax.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;

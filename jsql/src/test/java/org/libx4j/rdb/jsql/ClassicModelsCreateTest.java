@@ -20,7 +20,7 @@ import java.io.IOException;
 
 import org.fastjax.jci.CompilationException;
 import org.junit.Test;
-import org.lib4j.xml.ValidationException;
+import org.fastjax.xml.ValidationException;
 
 public class ClassicModelsCreateTest extends JSQLTest {
   @Test

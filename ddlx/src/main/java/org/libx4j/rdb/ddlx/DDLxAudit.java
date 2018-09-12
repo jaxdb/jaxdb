@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.lib4j.xml.ValidationException;
+import org.fastjax.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Columns;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Indexes;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;

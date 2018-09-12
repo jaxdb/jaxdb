@@ -15,7 +15,7 @@ import java.util.List;
 
 import org.fastjax.util.Classes;
 import org.fastjax.util.JavaIdentifiers;
-import org.lib4j.xml.datatype.HexBinary;
+import org.fastjax.xml.datatype.HexBinary;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Bigint;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Binary;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Blob;

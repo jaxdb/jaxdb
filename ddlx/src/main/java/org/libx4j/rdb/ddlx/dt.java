@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.lib4j.xml.datatype.HexBinary;
+import org.fastjax.xml.datatype.HexBinary;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Char;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Check;

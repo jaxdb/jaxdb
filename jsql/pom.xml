@@ -143,8 +143,9 @@
       <artifactId>fastjax-sql</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.lib4j.xml</groupId>
+      <groupId>org.fastjax.xml</groupId>
       <artifactId>xml-jaxb</artifactId>
+      <version>1.0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.libx4j.rdb</groupId>

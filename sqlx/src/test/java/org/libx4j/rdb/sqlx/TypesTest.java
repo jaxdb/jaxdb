@@ -41,7 +41,7 @@ import org.junit.runner.RunWith;
 import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.Random;
 import org.fastjax.util.Strings;
-import org.lib4j.xml.ValidationException;
+import org.fastjax.xml.ValidationException;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.Oracle;

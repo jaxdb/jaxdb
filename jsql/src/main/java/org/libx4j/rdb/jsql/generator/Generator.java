@@ -28,7 +28,7 @@ import java.util.Map;
 
 import org.fastjax.util.Classes;
 import org.fastjax.util.JavaIdentifiers;
-import org.lib4j.xml.ValidationException;
+import org.fastjax.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxAudit;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;
