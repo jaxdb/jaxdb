@@ -24,7 +24,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lib4j.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptionCatalog;
 import org.fastjax.util.ArrayIntList;
 import org.fastjax.util.Collections;
 import org.libx4j.rdb.jsql.Delete.DELETE;

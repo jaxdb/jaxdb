@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.lib4j.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptionCatalog;
 
 abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
   protected BatchableKeyword(final BatchableKeyword<T> parent) {

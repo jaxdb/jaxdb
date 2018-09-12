@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.lib4j.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptionCatalog;
 
 public final class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;

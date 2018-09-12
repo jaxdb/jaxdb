@@ -19,8 +19,8 @@ package org.libx4j.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.lib4j.sql.exception.SQLExceptionCatalog;
-import org.lib4j.sql.exception.SQLInvalidSchemaNameException;
+import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLInvalidSchemaNameException;
 import org.fastjax.util.ConcurrentHashSet;
 import org.libx4j.rdb.vendor.DBVendor;
 

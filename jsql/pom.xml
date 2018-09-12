@@ -138,8 +138,8 @@
       <artifactId>lib4j-math</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.lib4j</groupId>
-      <artifactId>lib4j-sql</artifactId>
+      <groupId>org.fastjax</groupId>
+      <artifactId>fastjax-sql</artifactId>
     </dependency>
     <dependency>
       <groupId>org.lib4j.xml</groupId>

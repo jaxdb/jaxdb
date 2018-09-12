@@ -24,10 +24,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
+import org.fastjax.sql.ConnectionProxy;
 import org.lib4j.io.Files;
 import org.lib4j.io.JarFiles;
 import org.lib4j.net.URLs;
-import org.lib4j.sql.ConnectionProxy;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public class SQLite implements Vendor {

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.lib4j.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptionCatalog;
 import org.fastjax.util.Collections;
 import org.libx4j.rdb.vendor.DBVendor;
 

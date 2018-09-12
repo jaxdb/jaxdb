@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.lib4j.sql.ConnectionProxy;
+import org.fastjax.sql.ConnectionProxy;
 import org.fastjax.util.IdentityHashSet;
 
 public final class Registry {

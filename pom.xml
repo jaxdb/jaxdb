@@ -41,8 +41,8 @@
   </modules>
   <dependencies>
     <dependency>
-      <groupId>org.lib4j</groupId>
-      <artifactId>lib4j-sql</artifactId>
+      <groupId>org.fastjax</groupId>
+      <artifactId>fastjax-sql</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
