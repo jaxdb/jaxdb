@@ -23,8 +23,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Set;
 
-import org.lib4j.math.BigDecimals;
-import org.lib4j.math.SafeMath;
+import org.fastjax.math.BigDecimals;
+import org.fastjax.math.SafeMath;
 import org.fastjax.util.Numbers;
 
 final class function {
