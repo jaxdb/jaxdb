@@ -43,8 +43,8 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
 import org.lib4j.io.Files;
-import org.lib4j.jci.CompilationException;
-import org.lib4j.jci.JavaCompiler;
+import org.fastjax.jci.CompilationException;
+import org.fastjax.jci.JavaCompiler;
 import org.fastjax.util.Arrays;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;

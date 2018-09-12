@@ -21,8 +21,8 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.fastjax.jci.CompilationException;
 import org.junit.Test;
-import org.lib4j.jci.CompilationException;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.sqlx.SQLxTest;
 

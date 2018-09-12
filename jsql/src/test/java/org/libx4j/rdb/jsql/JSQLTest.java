@@ -25,8 +25,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.lib4j.jci.CompilationException;
-import org.lib4j.jci.JavaCompiler;
+import org.fastjax.jci.CompilationException;
+import org.fastjax.jci.JavaCompiler;
 import org.fastjax.util.JavaIdentifiers;
 import org.lib4j.xml.ValidationException;
 import org.lib4j.xml.jaxb.JaxbUtil;

@@ -32,12 +32,12 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.fastjax.jci.CompilationException;
 import org.fastjax.test.MixedTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.lib4j.jci.CompilationException;
 import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.Random;
 import org.fastjax.util.Strings;

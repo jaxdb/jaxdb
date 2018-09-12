@@ -18,8 +18,8 @@ package org.libx4j.rdb.jsql;
 
 import java.io.IOException;
 
+import org.fastjax.jci.CompilationException;
 import org.junit.Test;
-import org.lib4j.jci.CompilationException;
 import org.lib4j.xml.ValidationException;
 
 public class TypesCreateTest extends JSQLTest {

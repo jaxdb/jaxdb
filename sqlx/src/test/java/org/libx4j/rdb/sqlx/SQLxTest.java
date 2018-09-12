@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.lib4j.jci.CompilationException;
+import org.fastjax.jci.CompilationException;
 import org.fastjax.util.ClassLoaders;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.Schemas;
