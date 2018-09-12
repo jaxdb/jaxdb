@@ -28,7 +28,7 @@ import org.apache.derby.jdbc.EmbeddedDriver;
 import org.fastjax.sql.ConnectionProxy;
 import org.lib4j.io.Files;
 import org.lib4j.io.JarFiles;
-import org.lib4j.net.URLs;
+import org.fastjax.net.URLs;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public class Derby implements Vendor {
