@@ -41,13 +41,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import org.fastjax.lang.PackageLoader;
+import org.fastjax.lang.PackageNotFoundException;
 import org.lib4j.io.Readers;
 import org.lib4j.io.Streams;
-import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
-import org.lib4j.util.Hexadecimal;
-import org.lib4j.util.IdentityHashSet;
-import org.lib4j.util.Numbers;
+import org.fastjax.util.Hexadecimal;
+import org.fastjax.util.IdentityHashSet;
+import org.fastjax.util.Numbers;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 import org.libx4j.rdb.vendor.Dialect;

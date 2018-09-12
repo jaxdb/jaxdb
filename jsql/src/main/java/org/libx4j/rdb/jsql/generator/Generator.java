@@ -26,8 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.lib4j.util.Classes;
-import org.lib4j.util.JavaIdentifiers;
+import org.fastjax.util.Classes;
+import org.fastjax.util.JavaIdentifiers;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxAudit;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;

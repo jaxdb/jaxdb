@@ -28,9 +28,9 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
-import org.lib4j.util.Arrays;
+import org.fastjax.lang.PackageLoader;
+import org.fastjax.lang.PackageNotFoundException;
+import org.fastjax.util.Arrays;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;

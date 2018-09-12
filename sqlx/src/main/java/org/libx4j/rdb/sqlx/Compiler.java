@@ -20,8 +20,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
+import org.fastjax.lang.PackageLoader;
+import org.fastjax.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx.dt;
 import org.libx4j.rdb.vendor.DBVendor;
 

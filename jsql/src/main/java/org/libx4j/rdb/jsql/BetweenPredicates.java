@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.Set;
 
-import org.lib4j.util.Numbers;
-import org.lib4j.util.Temporals;
+import org.fastjax.util.Numbers;
+import org.fastjax.util.Temporals;
 
 final class BetweenPredicates {
   protected static abstract class BetweenPredicate extends Predicate {

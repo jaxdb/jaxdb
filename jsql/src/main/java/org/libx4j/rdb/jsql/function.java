@@ -25,7 +25,7 @@ import java.util.Set;
 
 import org.lib4j.math.BigDecimals;
 import org.lib4j.math.SafeMath;
-import org.lib4j.util.Numbers;
+import org.fastjax.util.Numbers;
 
 final class function {
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);

@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.lib4j.sql.exception.SQLExceptionCatalog;
-import org.lib4j.util.Collections;
+import org.fastjax.util.Collections;
 import org.libx4j.rdb.vendor.DBVendor;
 
 class SelectImpl {

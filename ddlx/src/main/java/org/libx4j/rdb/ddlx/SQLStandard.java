@@ -16,7 +16,7 @@
 
 package org.libx4j.rdb.ddlx;
 
-import org.lib4j.util.MaskedEnum;
+import org.fastjax.util.MaskedEnum;
 
 class SQLStandard extends MaskedEnum {
   protected static final SQLStandard SQL92 = new SQLStandard(0, "SQL-92");

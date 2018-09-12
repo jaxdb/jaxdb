@@ -25,7 +25,7 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.lib4j.sql.ConnectionProxy;
-import org.lib4j.util.IdentityHashSet;
+import org.fastjax.util.IdentityHashSet;
 
 public final class Registry {
   private static Connector makeConnector(final DataSource dataSource) {

@@ -25,7 +25,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.lib4j.util.Temporals;
+import org.fastjax.util.Temporals;
 import org.libx4j.rdb.vendor.DBVendor;
 
 class MySQLCompiler extends Compiler {

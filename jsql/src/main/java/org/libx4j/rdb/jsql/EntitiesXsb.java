@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.lib4j.util.Classes;
-import org.lib4j.util.JavaIdentifiers;
+import org.fastjax.util.Classes;
+import org.fastjax.util.JavaIdentifiers;
 import org.lib4j.xml.datatype.HexBinary;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Bigint;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Binary;

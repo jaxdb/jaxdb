@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 import org.lib4j.sql.exception.SQLExceptionCatalog;
 import org.lib4j.sql.exception.SQLInvalidSchemaNameException;
-import org.lib4j.util.ConcurrentHashSet;
+import org.fastjax.util.ConcurrentHashSet;
 import org.libx4j.rdb.vendor.DBVendor;
 
 public abstract class Schema {

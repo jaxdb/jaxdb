@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lib4j.util.Strings;
+import org.fastjax.util.Strings;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Binary;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Blob;

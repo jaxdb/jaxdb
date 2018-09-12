@@ -16,7 +16,7 @@
 
 package org.libx4j.rdb.jsql;
 
-import org.lib4j.util.Strings;
+import org.fastjax.util.Strings;
 
 final class Alias extends Compilable {
   protected final String name;

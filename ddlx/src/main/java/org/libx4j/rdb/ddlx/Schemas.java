@@ -31,8 +31,8 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.lib4j.util.Collections;
-import org.lib4j.util.RefDigraph;
+import org.fastjax.util.Collections;
+import org.fastjax.util.RefDigraph;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Columns;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Constraints;

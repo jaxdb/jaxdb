@@ -23,12 +23,12 @@ import java.sql.SQLException;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.fastjax.test.MixedTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.lib4j.jci.CompilationException;
-import org.lib4j.test.MixedTest;
 import org.lib4j.xml.ValidationException;
 import org.libx4j.rdb.ddlx.DDLxTest;
 import org.libx4j.rdb.ddlx.GeneratorExecutionException;

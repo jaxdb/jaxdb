@@ -37,9 +37,9 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.lib4j.io.Files;
-import org.lib4j.util.Arrays;
-import org.lib4j.util.ClassLoaders;
-import org.lib4j.util.Classes;
+import org.fastjax.util.Arrays;
+import org.fastjax.util.ClassLoaders;
+import org.fastjax.util.Classes;
 import org.lib4j.xml.sax.XMLDocument;
 import org.lib4j.xml.sax.XMLDocuments;
 import org.libx4j.rdb.datatypes_0_9_9.xL4gluGCXYYJc.$Bigint;

@@ -44,8 +44,8 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.lib4j.logging.DeferredLogger;
-import org.lib4j.util.Arrays;
-import org.lib4j.util.Throwables;
+import org.fastjax.util.Arrays;
+import org.fastjax.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -19,6 +19,7 @@ package org.libx4j.rdb.ddlx;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.fastjax.test.MixedTest;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -26,7 +27,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.lib4j.test.MixedTest;
 import org.libx4j.rdb.ddlx.runner.Derby;
 import org.libx4j.rdb.ddlx.runner.MySQL;
 import org.libx4j.rdb.ddlx.runner.PostgreSQL;

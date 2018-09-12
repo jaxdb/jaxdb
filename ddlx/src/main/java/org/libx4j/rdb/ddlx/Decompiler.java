@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.lib4j.lang.PackageLoader;
-import org.lib4j.lang.PackageNotFoundException;
+import org.fastjax.lang.PackageLoader;
+import org.fastjax.lang.PackageNotFoundException;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Binary;
 import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Blob;
