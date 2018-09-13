@@ -55,7 +55,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.lib4j.maven.plugin</groupId>
+        <groupId>org.fastjax.maven.plugin</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
