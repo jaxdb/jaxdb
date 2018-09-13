@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2012 lib4j
+  Copyright (c) 2012 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.libx4j</groupId>
+    <groupId>org.openjax</groupId>
     <artifactId>rdb</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </parent>
-  <groupId>org.libx4j.rdb</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-ddlx</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
@@ -52,8 +52,9 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.libx4j.maven.plugin</groupId>
+        <groupId>org.openjax.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
+        <version>2.1.4-SNAPSHOT</version>
         <configuration>
           <destDir>${project.build.directory}/generated-sources/xsb</destDir>
           <schemas>
@@ -65,8 +66,9 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.libx4j.xsb</groupId>
+      <groupId>org.openjax.xsb</groupId>
       <artifactId>xsb-runtime</artifactId>
+      <version>2.1.4-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

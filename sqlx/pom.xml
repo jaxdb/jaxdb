@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 lib4j
+  Copyright (c) 2016 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.libx4j</groupId>
+    <groupId>org.openjax</groupId>
     <artifactId>rdb</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </parent>
-  <groupId>org.libx4j.rdb</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-sqlx</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
@@ -89,6 +89,7 @@
       <plugin>
         <groupId>org.fastjax.maven.plugin</groupId>
         <artifactId>xml-maven-plugin</artifactId>
+        <version>2.0.5-SNAPSHOT</version>
         <executions>
           <execution>
             <id>test-compile</id>
@@ -116,8 +117,9 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.libx4j.maven.plugin</groupId>
+        <groupId>org.openjax.maven.plugin</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
+        <version>2.1.4-SNAPSHOT</version>
         <executions>
           <execution>
             <id>default</id>
@@ -147,6 +149,7 @@
       <plugin>
         <groupId>org.fastjax.maven.plugin</groupId>
         <artifactId>xjc-maven-plugin</artifactId>
+        <version>0.8.1-SNAPSHOT</version>
         <executions>
           <execution>
             <id>default</id>
@@ -187,7 +190,7 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>org.libx4j.rdb</groupId>
+          <groupId>org.openjax.rdb</groupId>
           <artifactId>rdb-ddlx</artifactId>
           <type>test-jar</type>
           <scope>test</scope>
@@ -207,8 +210,9 @@
       <version>1.0.4-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.libx4j.xsb</groupId>
+      <groupId>org.openjax.xsb</groupId>
       <artifactId>xsb-generator</artifactId>
+      <version>2.1.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
@@ -216,8 +220,9 @@
       <version>1.2.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.libx4j.rdb</groupId>
+      <groupId>org.openjax.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>

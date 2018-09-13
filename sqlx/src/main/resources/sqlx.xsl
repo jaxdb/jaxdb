@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 lib4j
+  Copyright (c) 2016 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -147,7 +147,7 @@
             <xs:annotation>
               <xs:appinfo>
                 <annox:annotate>
-                  <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
+                  <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
                 </annox:annotate>
               </xs:appinfo>
             </xs:annotation>
@@ -205,7 +205,7 @@
                   <xs:annotation>
                     <xs:appinfo>
                       <annox:annotate>
-                        <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
+                        <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
                         <xsl:if test="@sqlx:generateOnInsert">
                           <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
                         </xsl:if>
@@ -446,7 +446,7 @@
         <xs:annotation>
           <xs:appinfo>
             <annox:annotate>
-              <xsl:value-of select="concat('@org.libx4j.rdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
+              <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
             </annox:annotate>
           </xs:appinfo>
         </xs:annotation>
