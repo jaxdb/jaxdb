@@ -152,7 +152,11 @@
         <version>0.8.1-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>default</id>
+            <id>generate-sources</id>
+            <goals>
+              <goal>xjc</goal>
+            </goals>
+            <phase>generate-sources</phase>
             <configuration>
               <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
               <schemas>
@@ -161,7 +165,7 @@
             </configuration>
           </execution>
           <execution>
-            <id>test-resources</id>
+            <id>generate-test-resources</id>
             <goals>
               <goal>xjc</goal>
             </goals>
@@ -178,6 +182,9 @@
             </configuration>
           </execution>
         </executions>
+        <configuration>
+          <extension>true</extension>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -192,6 +199,7 @@
         <dependency>
           <groupId>org.openjax.rdb</groupId>
           <artifactId>rdb-ddlx</artifactId>
+          <version>0.9.9-SNAPSHOT</version>
           <type>test-jar</type>
           <scope>test</scope>
         </dependency>
