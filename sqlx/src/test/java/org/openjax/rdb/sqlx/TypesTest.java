@@ -34,14 +34,14 @@ import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
-import org.junit.runner.RunWith;
 import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.Random;
 import org.fastjax.util.Strings;
 import org.fastjax.xml.ValidationException;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+import org.junit.runner.RunWith;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;

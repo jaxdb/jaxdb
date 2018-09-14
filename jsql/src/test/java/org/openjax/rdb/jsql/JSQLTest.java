@@ -31,11 +31,11 @@ import org.fastjax.util.JavaIdentifiers;
 import org.fastjax.xml.ValidationException;
 import org.fastjax.xml.jaxb.JaxbUtil;
 import org.openjax.rdb.ddlx.Schemas;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
-import org.libx4j.rdb.sqlx_0_9_9.Database;
-import org.libx4j.rdb.sqlx_0_9_9.xLzgluGCXYYJc.$Database;
-import org.openjax.xsb.runtime.Bindings;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.jsql.generator.Generator;
+import org.openjax.rdb.sqlx_0_9_9.Database;
+import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;
+import org.openjax.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -59,9 +59,9 @@ public abstract class JSQLTest {
     final URL sqlx = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
     final $Database database = ($Database)Bindings.parse(sqlx);
 
-    final xLzgluGCXYYJc.Schema schema;
+    final xL0gluGCXYYJc.Schema schema;
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
-      schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
+      schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);
@@ -88,9 +88,9 @@ public abstract class JSQLTest {
       database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
-    final xLzgluGCXYYJc.Schema schema;
+    final xL0gluGCXYYJc.Schema schema;
     try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
-      schema = (xLzgluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
+      schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);

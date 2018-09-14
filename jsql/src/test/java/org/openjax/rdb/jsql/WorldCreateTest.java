@@ -22,8 +22,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
-import org.junit.Test;
 import org.fastjax.xml.ValidationException;
+import org.junit.Test;
 import org.openjax.rdb.sqlx.SQLxTest;
 
 public class WorldCreateTest extends JSQLTest {

@@ -28,20 +28,17 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.fastjax.test.AssertXml;
 import org.fastjax.test.MixedTest;
+import org.fastjax.xml.ValidationException;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.fastjax.xml.ValidationException;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
-import org.openjax.xsb.runtime.Binding;
-import org.openjax.xsb.runtime.MarshalException;
-import org.openjax.rdb.ddlx.Decompiler;
-import org.openjax.rdb.ddlx.GeneratorExecutionException;
-import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.xsb.runtime.Binding;
+import org.openjax.xsb.runtime.MarshalException;
 import org.w3c.dom.Element;
 
 @RunWith(VendorRunner.class)
@@ -134,7 +131,7 @@ public class ReverseTest extends DDLxTest {
 
     assertEqual(DBVendor.valueOf(connection.getMetaData()), expected, actual);
     final Map<String,String> schemaLocations = new HashMap<>();
-    schemaLocations.put("http://rdb.libx4j.org/ddlx.xsd", "http://rdb.libx4j.org/ddlx.xsd");
+    schemaLocations.put("http://rdb.openjax.org/ddlx.xsd", "http://rdb.openjax.org/ddlx.xsd");
 //    logger.info(DOMs.domToString(actual.marshal(), schemaLocations, DOMStyle.INDENT));
   }
 }

@@ -22,15 +22,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.fastjax.xml.ValidationException;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Decimal;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
-import org.openjax.xsb.runtime.Bindings;
-import org.openjax.rdb.ddlx.GeneratorExecutionException;
-import org.openjax.rdb.ddlx.Schemas;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Decimal;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
+import org.openjax.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {

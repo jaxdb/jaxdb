@@ -21,12 +21,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.fastjax.util.Arrays;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Index;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Integer;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
-import org.openjax.xsb.runtime.BindingList;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Index;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Integer;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.Dialect;
+import org.openjax.xsb.runtime.BindingList;
 
 final class SQLDataTypes {
   protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {

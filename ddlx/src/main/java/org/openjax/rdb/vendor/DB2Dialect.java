@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.vendor;
 
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Enum;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
 
 public class DB2Dialect extends Dialect {
   @Override

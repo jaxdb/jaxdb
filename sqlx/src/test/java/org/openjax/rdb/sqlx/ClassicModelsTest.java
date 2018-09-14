@@ -25,11 +25,11 @@ import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.test.MixedTest;
+import org.fastjax.xml.ValidationException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
-import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;

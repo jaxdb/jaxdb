@@ -23,10 +23,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
-import org.junit.Assert;
-import org.junit.Test;
 import org.fastjax.util.Dates;
 import org.fastjax.util.Temporals;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class IntervalTest {
   private static final Date date = Date.from(LocalDateTime.parse("2000-01-01T00:00:00", DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());

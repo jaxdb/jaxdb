@@ -57,9 +57,9 @@ import org.fastjax.xml.sax.XMLDocuments;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Table;
-import org.libx4j.rdb.sqlx_0_9_9.Database;
-import org.libx4j.rdb.sqlx_0_9_9.Insert;
-import org.libx4j.rdb.sqlx_0_9_9.Row;
+import org.openjax.rdb.sqlx_0_9_9.Database;
+import org.openjax.rdb.sqlx_0_9_9.Insert;
+import org.openjax.rdb.sqlx_0_9_9.Row;
 import org.openjax.rdb.vendor.DBVendor;
 import org.xml.sax.SAXException;
 

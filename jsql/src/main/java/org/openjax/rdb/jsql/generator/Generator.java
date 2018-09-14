@@ -30,26 +30,26 @@ import org.fastjax.util.Classes;
 import org.fastjax.util.JavaIdentifiers;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx.DDLxAudit;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Bigint;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Binary;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Blob;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Boolean;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Char;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Clob;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Date;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Datetime;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Decimal;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Double;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Enum;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Float;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Int;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Smallint;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Time;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Tinyint;
-import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Integer;
-import org.libx4j.rdb.jsql_0_9_9.xLzgluGCXYYJc.$Table;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Binary;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Blob;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Boolean;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Char;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Clob;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Date;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Datetime;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Decimal;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Double;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Float;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Int;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Smallint;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Time;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Tinyint;
+import org.openjax.rdb.jsql_0_9_9.xL0gluGCXYYJc.$Integer;
+import org.openjax.rdb.jsql_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.Dialect;
 import org.openjax.rdb.jsql.EntityEnum;
 import org.openjax.rdb.jsql.GenerateOn;
@@ -112,7 +112,7 @@ public class Generator {
 
   private static final Object THIS = new Object();
 
-  private Type getType(final xLzgluGCXYYJc.$Table table, final $Column column) {
+  private Type getType(final xL0gluGCXYYJc.$Table table, final $Column column) {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
@@ -301,7 +301,7 @@ public class Generator {
     }
   }
 
-  private int getColumnCount(xLzgluGCXYYJc.$Table table, final boolean deep) {
+  private int getColumnCount(xL0gluGCXYYJc.$Table table, final boolean deep) {
     int count = 0;
     do {
       count += table.getColumn() != null ? table.getColumn().size() : 0;
@@ -310,7 +310,7 @@ public class Generator {
     return count;
   }
 
-  private int getPrimaryColumnCount(xLzgluGCXYYJc.$Table table, final boolean deep) {
+  private int getPrimaryColumnCount(xL0gluGCXYYJc.$Table table, final boolean deep) {
     int count = 0;
     do {
       if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null)
@@ -354,7 +354,7 @@ public class Generator {
       String set = "";
       if (table.getColumn() != null && totalPrimaryCount > 0) {
         out += "    public " + entityName + "(";
-        xLzgluGCXYYJc.$Table t = table;
+        xL0gluGCXYYJc.$Table t = table;
         String params = "";
         do {
           for (int i = 0; i < t.getColumn().size(); i++) {
@@ -491,7 +491,7 @@ public class Generator {
     return out;
   }
 
-  public String makeParam(final xLzgluGCXYYJc.$Table table, final $Column column) {
+  public String makeParam(final xL0gluGCXYYJc.$Table table, final $Column column) {
     final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     final String rawType;

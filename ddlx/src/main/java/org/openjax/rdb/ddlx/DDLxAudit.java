@@ -23,11 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.fastjax.xml.ValidationException;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Columns;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Indexes;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.Schema;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Columns;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Indexes;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.xsb.runtime.Bindings;
 
 public class DDLxAudit {

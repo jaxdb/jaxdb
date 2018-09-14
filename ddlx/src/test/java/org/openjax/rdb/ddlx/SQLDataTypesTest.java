@@ -18,7 +18,6 @@ package org.openjax.rdb.ddlx;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openjax.rdb.ddlx.SQLDataTypes;
 
 public class SQLDataTypesTest {
   @Test

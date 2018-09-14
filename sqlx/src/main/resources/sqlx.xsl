@@ -18,10 +18,10 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:dt="http://rdb.libx4j.org/datatypes-0.9.9.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.9.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.9.xsd"
-  xmlns:function="http://rdb.libx4j.org/sqlx.xsl"
+  xmlns:dt="http://rdb.openjax.org/datatypes-0.9.9.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.9.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.9.xsd"
+  xmlns:function="http://rdb.openjax.org/sqlx.xsl"
   xmlns:ext="http://exslt.org/common" 
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
   xmlns:saxon="http://saxon.sf.net/"
@@ -123,7 +123,7 @@
   <xsl:template match="/ddlx:schema">
     <xs:schema
       elementFormDefault="qualified"
-      xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.9.xsd"
+      xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.9.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
       
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
@@ -135,8 +135,8 @@
       <xsl:attribute name="jaxb:version">2.1</xsl:attribute>
       <xsl:attribute name="jaxb:extensionBindingPrefixes">annox</xsl:attribute>
       
-      <xs:import namespace="http://rdb.libx4j.org/sqlx-0.9.9.xsd" schemaLocation="http://rdb.libx4j.org/sqlx-0.9.9.xsd"/>
-      <xs:import namespace="http://rdb.libx4j.org/datatypes-0.9.9.xsd" schemaLocation="http://rdb.libx4j.org/datatypes-0.9.9.xsd"/>
+      <xs:import namespace="http://rdb.openjax.org/sqlx-0.9.9.xsd" schemaLocation="http://rdb.openjax.org/sqlx-0.9.9.xsd"/>
+      <xs:import namespace="http://rdb.openjax.org/datatypes-0.9.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.9.9.xsd"/>
       
       <xsl:for-each select="ddlx:table">
         <xs:complexType>

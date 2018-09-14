@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 lib4j
+  Copyright (c) 2016 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -15,10 +15,10 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://rdb.libx4j.org/ddlx-0.9.9.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.9.xsd"
+  xmlns="http://rdb.openjax.org/ddlx-0.9.9.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.9.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.libx4j.org/sqlx-0.9.9.xsd http://rdb.libx4j.org/sqlx.xsd">
+  xsi:schemaLocation="http://rdb.openjax.org/sqlx-0.9.9.xsd http://rdb.openjax.org/sqlx.xsd">
 
   <table name="timestamp" abstract="true">
     <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>

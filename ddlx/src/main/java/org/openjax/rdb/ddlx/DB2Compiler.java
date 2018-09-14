@@ -20,12 +20,12 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Column;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$ForeignKey;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Index;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Integer;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Named;
-import org.libx4j.rdb.ddlx_0_9_9.xLzgluGCXYYJc.$Table;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$ForeignKey;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Index;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Integer;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
+import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 lib4j
+  Copyright (c) 2016 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -17,14 +17,14 @@
 <xs:schema
   elementFormDefault="qualified"
   attributeFormDefault="qualified"
-  targetNamespace="http://rdb.libx4j.org/jsql-0.9.8.xsd"
-  xmlns:ddlx="http://rdb.libx4j.org/ddlx-0.9.8.xsd"
-  xmlns:sqlx="http://rdb.libx4j.org/sqlx-0.9.8.xsd"
-  xmlns:jsql="http://rdb.libx4j.org/jsql-0.9.8.xsd"
+  targetNamespace="http://rdb.openjax.org/jsql-0.9.8.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.8.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.8.xsd"
+  xmlns:jsql="http://rdb.openjax.org/jsql-0.9.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
   
-  <xs:import namespace="http://rdb.libx4j.org/ddlx-0.9.8.xsd" schemaLocation="jsql-ddlx-0.9.8.xsd"/>
-  <xs:import namespace="http://rdb.libx4j.org/sqlx-0.9.8.xsd" schemaLocation="http://rdb.libx4j.org/sqlx-0.9.8.xsd"/>
+  <xs:import namespace="http://rdb.openjax.org/ddlx-0.9.8.xsd" schemaLocation="jsql-ddlx-0.9.8.xsd"/>
+  <xs:import namespace="http://rdb.openjax.org/sqlx-0.9.8.xsd" schemaLocation="http://rdb.openjax.org/sqlx-0.9.8.xsd"/>
   
   <xs:attributeGroup name="keyForUpdate">
     <xs:attribute name="keyForUpdate" type="xs:boolean" default="false"/>
