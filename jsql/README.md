@@ -57,11 +57,11 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
-2. Next, add the `org.libx4j.rdb:rdb-jsql` dependency into the POM.
+2. Next, add the `org.openjax.rdb:rdb-jsql` dependency into the POM.
 
   ```xml
   <dependency>
-    <groupId>org.libx4j.rdb</groupId>
+    <groupId>org.openjax.rdb</groupId>
     <artifactId>rdb-jsql</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </dependency>
@@ -71,7 +71,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <plugin>
-    <groupId>org.libx4j.maven.plugin</groupId>
+    <groupId>org.openjax.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.9-SNAPSHOT</version>
     <executions>
@@ -125,13 +125,13 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`libx4j-dbcp`][libx4j-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`easyjax-dbcp`][easyjax-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://libx4j.org/dbcp.xsd"
+    xmlns="http://easyjax.org/dbcp-2.0.4.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://libx4j.org/dbcp.xsd http://libx4j.org/dbcp.xsd">
+    xsi:schemaLocation="http://easyjax.org/dbcp-2.0.4.xsd http://easyjax.org/dbcp.xsd">
     <jdbc>
       <url>jdbc:postgresql://localhost/basis</url>
       <driverClassName>org.postgresql.Driver</driverClassName>
@@ -167,12 +167,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.lib4j:libx4j-dbcp`][libx4j-dbcp] dependency to the POM.
+7. Add [`org.easyjax:easyjax-dbcp`][easyjax-dbcp] dependency to the POM.
 
   ```xml
   <dependency>
-    <groupId>org.lib4j</groupId>
-    <artifactId>libx4j-dbcp</artifactId>
+    <groupId>org.easyjax</groupId>
+    <artifactId>easyjax-dbcp</artifactId>
     <version>2.0.4-SNAPSHOT</version>
   </dependency>
   ```
@@ -554,16 +554,16 @@ Specification                                                                   
  
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details. 
 
-[dbcp.xsd]: https://github.com/libx4j/libx4j-dbcp/blob/master/src/main/resources/dbcp.xsd
-[ddlx-example]: https://github.com/libx4j/rdb/tree/master/ddlx#example
-[ddlx]: https://github.com/libx4j/rdb/tree/master/ddlx/
-[hospital.ddlx]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
+[dbcp.xsd]: https://github.com/easyjax/easyjax-dbcp/blob/master/src/main/resources/dbcp.xsd
+[ddlx-example]: https://github.com/openjax/rdb/tree/master/ddlx#example
+[ddlx]: https://github.com/openjax/rdb/tree/master/ddlx/
+[hospital.ddlx]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
-[libx4j-dbcp]: https://github.com/libx4j/libx4j-dbcp
+[easyjax-dbcp]: https://github.com/easyjax/easyjax-dbcp
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
+[rdb-maven-plugin]: https://github.com/openjax/rdb-maven-plugin
 
 [derby-decimal]: https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
 [sqltile-decial]: http://www.sqlite.org/datatype3.html
@@ -573,30 +573,30 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [db2-decimal]: https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
 [sqlserver-decimal]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql
 
-[BetweenPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BetweenPredicateTest.java
-[BooleanValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
-[CastTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/CastTest.java
-[ComparisonPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/ComparisonPredicateTest.java
-[CorrelatedSubQueryTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/CorrelatedSubQueryTest.java
-[CountFunctionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/CountFunctionTest.java
-[DateTimeValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/DateTimeValueExpressionTest.java
-[DeleteTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/DeleteTest.java
-[ExistsPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/ExistsPredicateTest.java
-[GroupClauseTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/GroupClauseTest.java
-[HavingClauseTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/HavingClauseTest.java
-[InPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/InPredicateTest.java
-[InsertTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/InsertTest.java
-[JoinedTableTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/JoinedTableTest.java
-[LikePredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/LikePredicateTest.java
-[LimitExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/LimitExpressionTest.java
-[NullPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/NullPredicateTest.java
-[NumericFunctionDynamicTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/NumericFunctionDynamicTest.java
-[NumericFunctionStaticTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/NumericFunctionStaticTest.java
-[NumericValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
-[OrderExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/OrderExpressionTest.java
-[QuantifiedComparisonPredicateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/QueryExpressionTest.java
-[SetFunctionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/SetFunctionTest.java
-[StringValueExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/StringValueExpressionTest.java
-[UnionExpressionTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/UnionExpressionTest.java
-[UpdateTest]: https://github.com/libx4j/rdb-maven-plugin/blob/master/src/test/java/org/libx4j/maven/plugin/rdb/jsql/UpdateTest.java
+[BetweenPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/BetweenPredicateTest.java
+[BooleanValueExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
+[CastTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/CastTest.java
+[ComparisonPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/ComparisonPredicateTest.java
+[CorrelatedSubQueryTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/CorrelatedSubQueryTest.java
+[CountFunctionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/CountFunctionTest.java
+[DateTimeValueExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/DateTimeValueExpressionTest.java
+[DeleteTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/DeleteTest.java
+[ExistsPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/ExistsPredicateTest.java
+[GroupClauseTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/GroupClauseTest.java
+[HavingClauseTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/HavingClauseTest.java
+[InPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/InPredicateTest.java
+[InsertTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/InsertTest.java
+[JoinedTableTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/JoinedTableTest.java
+[LikePredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/LikePredicateTest.java
+[LimitExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/LimitExpressionTest.java
+[NullPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NullPredicateTest.java
+[NumericFunctionDynamicTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericFunctionDynamicTest.java
+[NumericFunctionStaticTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericFunctionStaticTest.java
+[NumericValueExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
+[OrderExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/OrderExpressionTest.java
+[QuantifiedComparisonPredicateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
+[QueryExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
+[SetFunctionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/SetFunctionTest.java
+[StringValueExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/StringValueExpressionTest.java
+[UnionExpressionTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/UnionExpressionTest.java
+[UpdateTest]: https://github.com/openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/UpdateTest.java

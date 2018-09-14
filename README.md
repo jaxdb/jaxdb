@@ -37,11 +37,11 @@ Developed with the CohesionFirst™ approach, **RDB** is reliably designed, cons
 
 #### Modules
 
-[**rdb-ddlx**](https://github.com/libx4j/rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
+[**rdb-ddlx**](https://github.com/openjax/rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
 
-[**rdb-sqlx**](https://github.com/libx4j/rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
+[**rdb-sqlx**](https://github.com/openjax/rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
 
-[**rdb-jsql**](https://github.com/libx4j/rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
+[**rdb-jsql**](https://github.com/openjax/rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
 
 ### License
 

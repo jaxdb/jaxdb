@@ -38,7 +38,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
   ```xml
   <plugin>
-    <groupId>org.libx4j.maven.plugin</groupId>
+    <groupId>org.openjax.maven.plugin</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.9-SNAPSHOT</version>
     <executions>
@@ -85,13 +85,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[ddlx-example]: https://github.com/libx4j/rdb/tree/master/ddlx#example
-[ddlx.xsd]: https://github.com/libx4j/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
-[ddlx]: https://github.com/libx4j/rdb/blob/master/ddlx
-[sqlx.xsl]: https://github.com/libx4j/rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
+[ddlx-example]: https://github.com/openjax/rdb/tree/master/ddlx#example
+[ddlx.xsd]: https://github.com/openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx]: https://github.com/openjax/rdb/blob/master/ddlx
+[sqlx.xsl]: https://github.com/openjax/rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: https://github.com/libx4j/rdb/blob/master/jsql
+[jsql]: https://github.com/openjax/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/libx4j/rdb-maven-plugin
+[rdb-maven-plugin]: https://github.com/openjax/rdb-maven-plugin
