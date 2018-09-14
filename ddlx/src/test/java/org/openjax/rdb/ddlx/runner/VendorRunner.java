@@ -102,8 +102,8 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   private final boolean integrationTest;
 
-  public VendorRunner(final Class<?> klass) throws InitializationError {
-    super(klass);
+  public VendorRunner(final Class<?> cls) throws InitializationError {
+    super(cls);
     this.integrationTest = Boolean.parseBoolean(System.getProperty("integrationTest"));
   }
 

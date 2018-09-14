@@ -26,7 +26,6 @@
   </parent>
   <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-ddlx</artifactId>
-  <version>0.9.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>
