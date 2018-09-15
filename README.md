@@ -1,6 +1,6 @@
-<img src="https://www.cohesionfirst.org/logo.png" align="right">
+<img src="https://images.cooltext.com/5195722.png" align="right">
 
-## rdb<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## rdb<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
 > Relational Data Binding
 
 ### Introduction
@@ -31,20 +31,22 @@ The RDB framework is designed with one prime objective: To allow for the realiza
 
 ### Why **RDB**?
 
-#### CohesionFirst™
+#### CohesionFirst
 
-Developed with the CohesionFirst™ approach, **RDB** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **RDB** is a complete binding solution between the DB tier and the business tier. The **RDB** solution differentiates itself from the rest with the strength of its cohesion to the Java language and the SQL, DDL, and DML models.
+Developed with the CohesionFirst approach, **RDB** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **RDB** is a complete binding solution between the DB tier and the business tier. The **RDB** solution differentiates itself from the rest with the strength of its cohesion to the Java language and the SQL, DDL, and DML models.
 
 #### Modules
 
-[**rdb-ddlx**](https://github.com/openjax/rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
+[**rdb-ddlx**](/openjax/rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
 
-[**rdb-sqlx**](https://github.com/openjax/rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
+[**rdb-sqlx**](/openjax/rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
 
-[**rdb-jsql**](https://github.com/openjax/rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
+[**rdb-jsql**](/openjax/rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
 
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+<a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
 [java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg

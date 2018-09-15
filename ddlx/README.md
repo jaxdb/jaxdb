@@ -1,6 +1,6 @@
-<img src="https://www.cohesionfirst.org/logo.png" align="right">
+<img src="https://images.cooltext.com/5195722.png" align="right">
 
-## rdb-ddlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## rdb-ddlx<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
 > Relational Data Binding DDLx
 
 ### Introduction
@@ -11,9 +11,9 @@
 
 **DDLx** can also be used with [**jSQL**][jsql], an advanced, cohesive and lightweight ORM approach.
 
-#### CohesionFirst™
+#### CohesionFirst
 
-Developed with the CohesionFirst™ approach, **DDLx** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **DDLx** is a complete solution for the creation and management of a SQL Schema. The **DDLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
+Developed with the CohesionFirst approach, **DDLx** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **DDLx** is a complete solution for the creation and management of a SQL Schema. The **DDLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
 #### Vendor-Agnostic
 
@@ -132,10 +132,11 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[ddlx.xsd]: https://github.com/openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
-[java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
+<a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
+
+[ddlx.xsd]: /openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: https://github.com/openjax/rdb/blob/master/jsql
+[jsql]: /openjax/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/openjax/rdb-maven-plugin
+[rdb-maven-plugin]: /openjax/rdb-maven-plugin

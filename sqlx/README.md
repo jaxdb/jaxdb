@@ -1,6 +1,6 @@
-<img src="https://www.cohesionfirst.org/logo.png" align="right">
+<img src="https://images.cooltext.com/5195722.png" align="right">
 
-## rdb-sqlx<br>![java-enterprise][java-enterprise] <a href="https://www.cohesionfirst.org/"><img src="https://img.shields.io/badge/CohesionFirst%E2%84%A2--blue.svg"></a>
+## rdb-sqlx<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
 > Relational Data Binding SQLx
 
 ### Introduction
@@ -11,9 +11,9 @@
 
 **SQLx** is a natural extension of [**DDLx**][ddlx], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**jSQL**][jsql], ***SQLx*** is the last missing gap in rdb's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
 
-#### CohesionFirst™
+#### CohesionFirst
 
-Developed with the CohesionFirst™ approach, **SQLx** is the cohesive alternative to the creation of RDBMS static data that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **SQLx** is a complete solution for the creation and management of SQL static data. The **SQLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
+Developed with the CohesionFirst approach, **SQLx** is the cohesive alternative to the creation of RDBMS static data that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **SQLx** is a complete solution for the creation and management of SQL static data. The **SQLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
 #### Vendor-Agnostic
 
@@ -85,13 +85,14 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
-[ddlx-example]: https://github.com/openjax/rdb/tree/master/ddlx#example
-[ddlx.xsd]: https://github.com/openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
-[ddlx]: https://github.com/openjax/rdb/blob/master/ddlx
-[sqlx.xsl]: https://github.com/openjax/rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
-[java-enterprise]: https://img.shields.io/badge/java-enterprise-blue.svg
+<a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
+
+[ddlx-example]: /openjax/rdb/tree/master/ddlx#example
+[ddlx.xsd]: /openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx]: /openjax/rdb/blob/master/ddlx
+[sqlx.xsl]: /openjax/rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: https://github.com/openjax/rdb/blob/master/jsql
+[jsql]: /openjax/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: https://github.com/openjax/rdb-maven-plugin
+[rdb-maven-plugin]: /openjax/rdb-maven-plugin
