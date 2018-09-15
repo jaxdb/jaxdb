@@ -27,6 +27,11 @@
   <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-jsql</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
+  <properties>
+    <maven.compiler.source>9</maven.compiler.source>
+    <maven.compiler.target>9</maven.compiler.target>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
   <build>
     <testResources>
       <testResource>
@@ -137,17 +142,17 @@
     <dependency>
       <groupId>org.fastjax</groupId>
       <artifactId>fastjax-math</artifactId>
-      <version>1.4.4-SNAPSHOT</version>
+      <version>0.6.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
       <artifactId>fastjax-sql</artifactId>
-      <version>1.1.5-SNAPSHOT</version>
+      <version>0.4.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax.xml</groupId>
       <artifactId>xml-jaxb</artifactId>
-      <version>1.0.4-SNAPSHOT</version>
+      <version>0.9.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>

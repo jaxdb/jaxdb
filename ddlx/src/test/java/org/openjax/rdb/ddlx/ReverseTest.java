@@ -95,7 +95,7 @@ public class ReverseTest extends DDLxTest {
     builder.assertEqual();
   }
 
-  private static final Comparator<Binding> hashCodeComparator = new Comparator<>() {
+  private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {
     @Override
     public int compare(final Binding o1, final Binding o2) {
       return Long.compare(o1.hashCode(), o2.hashCode());

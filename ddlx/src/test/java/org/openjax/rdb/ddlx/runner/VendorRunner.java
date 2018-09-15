@@ -170,7 +170,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     }
   }
 
-  private static final Comparator<FrameworkMethod> orderComparator = new Comparator<>() {
+  private static final Comparator<FrameworkMethod> orderComparator = new Comparator<FrameworkMethod>() {
     @Override
     public int compare(final FrameworkMethod o1, final FrameworkMethod o2) {
       final Order a1 = o1.getAnnotation(Order.class);

@@ -29,11 +29,6 @@
   <version>0.9.9-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <properties>
-    <maven.compiler.source>9</maven.compiler.source>
-    <maven.compiler.target>9</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <modules>
     <module>ddlx</module>
     <module>sqlx</module>
@@ -61,7 +56,7 @@
     <dependency>
       <groupId>org.fastjax</groupId>
       <artifactId>fastjax-sql</artifactId>
-      <version>1.1.5-SNAPSHOT</version>
+      <version>0.4.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -97,12 +92,12 @@
     <dependency>
       <groupId>org.fastjax</groupId>
       <artifactId>fastjax-logging</artifactId>
-      <version>1.0.7-SNAPSHOT</version>
+      <version>0.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
       <artifactId>fastjax-test</artifactId>
-      <version>1.1.7-SNAPSHOT</version>
+      <version>0.6.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
