@@ -556,13 +556,13 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[dbcp.xsd]: /easyjax/easyjax-dbcp/blob/master/src/main/resources/dbcp.xsd
-[ddlx-example]: /../../../../openjax/rdb/tree/master/ddlx#example
-[ddlx]: /../../../../openjax/rdb/tree/master/ddlx/
+[dbcp.xsd]: /../../../../easyjax/easyjax-dbcp/blob/master/src/main/resources/dbcp.xsd
+[ddlx-example]: /../../../../openjax/openjax-rdb/tree/master/ddlx#example
+[ddlx]: /../../../../openjax/openjax-rdb/tree/master/ddlx
 [hospital.ddlx]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
-[easyjax-dbcp]: /easyjax/easyjax-dbcp
+[easyjax-dbcp]: /../../../../easyjax/easyjax-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /../../../../openjax/rdb-maven-plugin
 
