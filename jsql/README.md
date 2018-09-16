@@ -557,8 +557,8 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
 [dbcp.xsd]: /easyjax/easyjax-dbcp/blob/master/src/main/resources/dbcp.xsd
-[ddlx-example]: /tree/master/ddlx#example
-[ddlx]: /tree/master/ddlx
+[ddlx-example]: ../ddlx#example
+[ddlx]: ../ddlx
 [hospital.ddlx]: /openjax/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
@@ -574,7 +574,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [db2-decimal]: https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
 [sqlserver-decimal]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql
 
-[BetweenPredicateTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/BetweenPredicateTest.java
+[BetweenPredicateTest]: ../rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/BetweenPredicateTest.java
 [BooleanValueExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
 [CastTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/CastTest.java
 [ComparisonPredicateTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/ComparisonPredicateTest.java
@@ -596,7 +596,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [NumericValueExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
 [OrderExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/OrderExpressionTest.java
 [QuantifiedComparisonPredicateTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
+[QueryExpressionTest]: ../rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
 [SetFunctionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/SetFunctionTest.java
 [StringValueExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/StringValueExpressionTest.java
 [UnionExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/UnionExpressionTest.java
