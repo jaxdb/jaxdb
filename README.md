@@ -7,11 +7,11 @@
 
 #### What is RDB?
 
-In short, RDB (Relational Database Binding) is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-the-java-application-layer).
+In short, RDB (Relational Database Binding) is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
 
 #### What is Cohesive Binding?
 
-Binding is a high-level software pattern that represents a link between two different software components that do not necessarily share a common platform, language, or interface. Such a pattern can be used to bridge gaps of platform and/or language in application stacks, so as to provide a link that cohesively binds the components. The idea is simple: Tie the two components of different platforms or languages in a way where interface changes to one component would intrinsically direct the developer to respectively change the other component. Cohesive Binding distinguishes itself from non-Cohesive Binding by the strength of representative cohesion and type-safety. For example, consider the gap between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-the-java-application-layer). A non-Cohesive Binding solution would simply wrap the low-level JDBC API, providing the developer with a higher-layer interface that is more conveniet and less wordy, for instance. Such a binding approach is limited, because it only encompasses the JDBC API, which carries a very low risk of problematic changes in the future. A Cohesive Binding solution would provide an encompassing wrapper around the JDBC API and the business/project/solution-specific data model in its entirety. Such a solution would allow the developer to write code with classes and methods that directly bind to the business/project/solution-specific data model itself. As this type of binding soltion encompasses the business/project/solution-specific layer, it can be used to direct the developer to propogate changes made to the data model that would affect both the [Java Application Layer](#what-is-the-java-application-layer) and the [Vendor Agnostic RDBMS Layer](#what-is-the-java-application-layer).
+Binding is a high-level software pattern that represents a link between two different software components that do not necessarily share a common platform, language, or interface. Such a pattern can be used to bridge gaps of platform and/or language in application stacks, so as to provide a link that cohesively binds the components. The idea is simple: Tie the two components of different platforms or languages in a way where interface changes to one component would intrinsically direct the developer to respectively change the other component. Cohesive Binding distinguishes itself from non-Cohesive Binding by the strength of representative cohesion and type-safety. For example, consider the gap between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer). A non-Cohesive Binding solution would simply wrap the low-level JDBC API, providing the developer with a higher-layer interface that is more conveniet and less wordy, for instance. Such a binding approach is limited, because it only encompasses the JDBC API, which carries a very low risk of problematic changes in the future. A Cohesive Binding solution would provide an encompassing wrapper around the JDBC API and the business/project/solution-specific data model in its entirety. Such a solution would allow the developer to write code with classes and methods that directly bind to the business/project/solution-specific data model itself. As this type of binding soltion encompasses the business/project/solution-specific layer, it can be used to direct the developer to propogate changes made to the data model that would affect both the [Java Application Layer](#what-is-the-java-application-layer) and the [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
 
 #### What is the Java Application Layer?
 
@@ -23,7 +23,7 @@ This is the layer where data is retained in a Relational Database Management Sys
 
 #### What is so special about RDB?
 
-RDB is a highly cohesive binding framework that binds a business/project/solution-specific data model between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-the-java-application-layer). RDB is also a highly cohesive binding framework that binds the SQL language itself, which allows developers to efficiently implement SQL logic with the help of compile- and edit-time error checking. Such ability for error checking is powerful, because it allows errors to be caught earlier in the development lifecycle. With other frameworks, errors between the application and data layers are most always encountered in runtime. With RDB, an incredibly high percentage of possible errors has been pushed into the compile- and edit-time. This quality significantly reduces the software risk of an application, because it allows developers to spend less time and effort finding and fixing bugs -- instead, bugs are elucidated purely due to the construct of the RDB framework itself.
+RDB is a highly cohesive binding framework that binds a business/project/solution-specific data model between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer). RDB is also a highly cohesive binding framework that binds the SQL language itself, which allows developers to efficiently implement SQL logic with the help of compile- and edit-time error checking. Such ability for error checking is powerful, because it allows errors to be caught earlier in the development lifecycle. With other frameworks, errors between the application and data layers are most always encountered in runtime. With RDB, an incredibly high percentage of possible errors has been pushed into the compile- and edit-time. This quality significantly reduces the software risk of an application, because it allows developers to spend less time and effort finding and fixing bugs -- instead, bugs are elucidated purely due to the construct of the RDB framework itself.
 
 #### What is so special about the construct of the RDB framework?
 
@@ -37,11 +37,11 @@ Developed with the CohesionFirst approach, **RDB** is reliably designed, consist
 
 #### Modules
 
-[**rdb-ddlx**](/openjax/openjax-rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
+[**rdb-ddlx**](/../../../../openjax/openjax-rdb/tree/master/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
 
-[**rdb-sqlx**](/openjax/openjax-rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
+[**rdb-sqlx**](/../../../../openjax/openjax-rdb/tree/master/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
 
-[**rdb-jsql**](/openjax/openjax-rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
+[**rdb-jsql**](/../../../../openjax/openjax-rdb/tree/master/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
 
 ### License
 
