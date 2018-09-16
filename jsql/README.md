@@ -596,7 +596,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [NumericValueExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
 [OrderExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/OrderExpressionTest.java
 [QuantifiedComparisonPredicateTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: ../rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
+[QueryExpressionTest]: /../../rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
 [SetFunctionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/SetFunctionTest.java
 [StringValueExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/StringValueExpressionTest.java
 [UnionExpressionTest]: /openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/UnionExpressionTest.java
