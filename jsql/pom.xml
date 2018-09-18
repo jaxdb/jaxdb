@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2012 OpenJAX
+  Copyright (c) 2015 OpenJAX
   
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,10 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.openjax</groupId>
+    <groupId>org.openjax.rdb</groupId>
     <artifactId>rdb</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </parent>
-  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-jsql</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
   <properties>
@@ -59,7 +58,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.fastjax.maven.plugin</groupId>
+        <groupId>org.fastjax.xml</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -72,7 +71,7 @@
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.openjax.maven.plugin</groupId>
+        <groupId>org.openjax.xsb</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
         <configuration>
           <destDir>${project.build.directory}/generated-sources/xsb</destDir>
@@ -141,18 +140,18 @@
   <dependencies>
     <dependency>
       <groupId>org.fastjax</groupId>
-      <artifactId>fastjax-math</artifactId>
+      <artifactId>math</artifactId>
       <version>0.6.4-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
-      <artifactId>fastjax-sql</artifactId>
+      <artifactId>sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.fastjax.xml</groupId>
-      <artifactId>xml-jaxb</artifactId>
-      <version>0.9.2-SNAPSHOT</version>
+      <groupId>org.fastjax.jaxb</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>0.8.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2012 OpenJAX
+  Copyright (c) 2015 OpenJAX
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,11 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org</groupId>
+    <groupId>org.openjax</groupId>
     <artifactId>openjax</artifactId>
     <version>2.5.3-SNAPSHOT</version>
   </parent>
-  <groupId>org.openjax</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <packaging>pom</packaging>
@@ -33,12 +33,13 @@
     <module>ddlx</module>
     <module>sqlx</module>
     <module>jsql</module>
+    <module>maven-plugin</module>
   </modules>
   <build>
     <pluginManagement>
       <plugins>
         <plugin>
-          <groupId>org.openjax.maven.plugin</groupId>
+          <groupId>org.openjax.xsb</groupId>
           <artifactId>xsb-maven-plugin</artifactId>
           <version>2.1.4-SNAPSHOT</version>
           <executions>
@@ -55,7 +56,7 @@
   <dependencies>
     <dependency>
       <groupId>org.fastjax</groupId>
-      <artifactId>fastjax-sql</artifactId>
+      <artifactId>sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -91,12 +92,12 @@
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
-      <artifactId>fastjax-logging</artifactId>
+      <artifactId>logging</artifactId>
       <version>0.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>
-      <artifactId>fastjax-test</artifactId>
+      <artifactId>test</artifactId>
       <version>0.6.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>

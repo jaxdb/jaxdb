@@ -24,51 +24,11 @@
     <artifactId>rdb</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </parent>
-  <artifactId>rdb-ddlx</artifactId>
+  <groupId>org.openjax.rdb</groupId>
+  <artifactId>rdb-maven-archetype</artifactId>
+  <version>0.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <build>
-    <testResources>
-      <testResource>
-        <directory>${project.build.directory}/generated-test-resources/rdb</directory>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>package-testResources</id>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.openjax.xsb</groupId>
-        <artifactId>xsb-maven-plugin</artifactId>
-        <configuration>
-          <destDir>${project.build.directory}/generated-sources/xsb</destDir>
-          <schemas>
-            <schema>src/main/resources/ddlx.xsd</schema>
-          </schemas>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
-  <dependencies>
-    <dependency>
-      <groupId>org.openjax.xsb</groupId>
-      <artifactId>xsb-runtime</artifactId>
-      <version>2.1.4-SNAPSHOT</version>
-    </dependency>
-  </dependencies>
 </project>
