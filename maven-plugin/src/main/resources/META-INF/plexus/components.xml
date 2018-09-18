@@ -23,8 +23,8 @@
       <configuration>
         <id>rdb</id>
         <default-phases>
-          <generate-sources>org.openjax.jsonx:rdb-maven-plugin:ddlx2jsql,org.openjax.jsonx:rdb-maven-plugin:ddlx2sqlx,org.openjax.jsonx:rdb-maven-plugin:ddlx2xsd</generate-sources>
-          <generate-resources>org.openjax.jsonx:rdb-maven-plugin:ddlx2sql,org.openjax.jsonx:rdb-maven-plugin:sqlx2sql</generate-resources>
+          <generate-sources>org.openjax.rdb:rdb-maven-plugin:ddlx2jsql,org.openjax.rdb:rdb-maven-plugin:ddlx2sqlx,org.openjax.rdb:rdb-maven-plugin:ddlx2xsd</generate-sources>
+          <generate-resources>org.openjax.rdb:rdb-maven-plugin:ddlx2sql,org.openjax.rdb:rdb-maven-plugin:sqlx2sql</generate-resources>
         </default-phases>
       </configuration>
     </component>
@@ -42,11 +42,11 @@
           <phase>sqlx2sql</phase>
         </phases>
         <default-phases>
-          <ddlx2jsql>org.openjax.jsonx:rdb-maven-plugin:ddlx2jsql</ddlx2jsql>
-          <ddlx2sql>org.openjax.jsonx:rdb-maven-plugin:ddlx2sql</ddlx2sql>
-          <ddlx2sqlx>org.openjax.jsonx:rdb-maven-plugin:ddlx2sqlx</ddlx2sqlx>
-          <ddlx2xsd>org.openjax.jsonx:rdb-maven-plugin:ddlx2xsd</ddlx2xsd>
-          <sqlx2sql>org.openjax.jsonx:rdb-maven-plugin:sqlx2sql</sqlx2sql>
+          <ddlx2jsql>org.openjax.rdb:rdb-maven-plugin:ddlx2jsql</ddlx2jsql>
+          <ddlx2sql>org.openjax.rdb:rdb-maven-plugin:ddlx2sql</ddlx2sql>
+          <ddlx2sqlx>org.openjax.rdb:rdb-maven-plugin:ddlx2sqlx</ddlx2sqlx>
+          <ddlx2xsd>org.openjax.rdb:rdb-maven-plugin:ddlx2xsd</ddlx2xsd>
+          <sqlx2sql>org.openjax.rdb:rdb-maven-plugin:sqlx2sql</sqlx2sql>
         </default-phases>
       </configuration>
     </component>

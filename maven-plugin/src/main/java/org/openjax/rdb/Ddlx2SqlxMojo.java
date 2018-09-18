@@ -14,7 +14,7 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.openjax.maven.plugin.rdb;
+package org.openjax.rdb;
 
 import java.io.File;
 import java.io.IOException;
