@@ -134,9 +134,9 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[ddlx.xsd]: /../../../../openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx.xsd]: /ddlx/src/main/resources/ddlx.xsd
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: /../../../../openjax/rdb/blob/master/jsql
+[jsql]: /jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /../../../../openjax/rdb-maven-plugin
