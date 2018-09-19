@@ -22,9 +22,9 @@ Developed with the CohesionFirst approach, **jSQL** is reliably designed, consis
 In addition to generating Java classes that bind to a DDL, the **jSQL** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
 
 ```java
-public static basis.Account findAccount(final String email) throws SQLException {
-  final basis.Account a = new basis.Account();
-  try (final RowIterator<basis.Account> rows =
+public static basis.Account findAccount(String email) throws SQLException {
+  basis.Account a = new basis.Account();
+  try (RowIterator<basis.Account> rows =
     SELECT(a).
     FROM(a).
     WHERE(EQ(a.email, email)).
@@ -71,7 +71,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <plugin>
-    <groupId>org.openjax.maven.plugin</groupId>
+    <groupId>org.openjax.rdb</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.9-SNAPSHOT</version>
     <executions>
@@ -96,7 +96,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 5. In `App.java`, include:
 
   ```java
-  public static void main(final String[] args) throws SQLException {
+  public static void main(String[] args) throws SQLException {
     basis.Account account = new basis.Account();
     account.email.set("john@doe");
     account.firstName.set("John");
@@ -109,13 +109,13 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
     UPDATE(account).execute();
 
-    final basis.Account found = findAccount(account.email.get());
+    basis.Account found = findAccount(account.email.get());
     System.out.println(found != null ? found.firstName.get() : "null");
   }
   
-  public static basis.Account findAccount(final String email) throws SQLException {
-    final basis.Account a = new basis.Account();
-    try (final RowIterator<basis.Account> rows =
+  public static basis.Account findAccount(String email) throws SQLException {
+    basis.Account a = new basis.Account();
+    try (RowIterator<basis.Account> rows =
       SELECT(a).
       FROM(a).
       WHERE(EQ(a.email, email)).
@@ -125,7 +125,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   }
   ```
 
-6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`easyjax-dbcp`][easyjax-dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`dbcp`][dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
   ```xml
   <dbcp name="basis"
@@ -167,12 +167,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.easyjax:easyjax-dbcp`][easyjax-dbcp] dependency to the POM.
+7. Add [`org.easyjax:dbcp`][dbcp] dependency to the POM.
 
   ```xml
   <dependency>
     <groupId>org.easyjax</groupId>
-    <artifactId>easyjax-dbcp</artifactId>
+    <artifactId>dbcp</artifactId>
     <version>2.0.4-SNAPSHOT</version>
   </dependency>
   ```
@@ -180,8 +180,8 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `Registry`.
 
   ```java
-  final Dbcp dbcp = JaxbUtil.parse(Dbcp.class, Thread.currentThread().getContextClassLoader().getResource("dbcp.xml").openStream()));
-  final DataSource dataSource = DataSources.createDataSource(dbcp);
+  Dbcp dbcp = JaxbUtil.parse(Dbcp.class, Thread.currentThread().getContextClassLoader().getResource("dbcp.xml").openStream()));
+  DataSource dataSource = DataSources.createDataSource(dbcp);
   Registry.registerPreparedBatching(basis.class, new Connector() {
     @Override
     public Connection getConnection() throws SQLException {
@@ -556,13 +556,13 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[dbcp.xsd]: /../../../../easyjax/easyjax-dbcp/blob/master/src/main/resources/dbcp.xsd
-[ddlx-example]: /../../../../openjax/openjax-rdb/tree/master/ddlx#example
-[ddlx]: /../../../../openjax/openjax-rdb/tree/master/ddlx
+[dbcp.xsd]: /../../../../easyjax/dbcp/blob/master/src/main/resources/dbcp.xsd
+[ddlx-example]: /../../../../openjax/rdb/tree/master/ddlx#example
+[ddlx]: /../../../../openjax/rdb/tree/master/ddlx
 [hospital.ddlx]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
-[easyjax-dbcp]: /../../../../easyjax/easyjax-dbcp
+[dbcp]: /../../../../easyjax/dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /../../../../openjax/rdb-maven-plugin
 
@@ -596,7 +596,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [NumericValueExpressionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
 [OrderExpressionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/OrderExpressionTest.java
 [QuantifiedComparisonPredicateTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
+[QueryExpressionTest]: /blob/master/maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
 [SetFunctionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/SetFunctionTest.java
 [StringValueExpressionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/StringValueExpressionTest.java
 [UnionExpressionTest]: /../../../../openjax/rdb-maven-plugin/blob/master/src/test/java/org/openjax/maven/plugin/rdb/jsql/UnionExpressionTest.java

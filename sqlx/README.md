@@ -38,7 +38,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
   ```xml
   <plugin>
-    <groupId>org.openjax.maven.plugin</groupId>
+    <groupId>org.openjax.rdb</groupId>
     <artifactId>rdb-maven-plugin</artifactId>
     <version>0.9.9-SNAPSHOT</version>
     <executions>
@@ -87,12 +87,12 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[ddlx-example]: /../../../../openjax/openjax-rdb/tree/master/ddlx#example
-[ddlx.xsd]: /../../../../openjax/openjax-rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
-[ddlx]: /../../../../openjax/openjax-rdb/blob/master/ddlx
-[sqlx.xsl]: /../../../../openjax/openjax-rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
+[ddlx-example]: /../../../../openjax/rdb/tree/master/ddlx#example
+[ddlx.xsd]: /../../../../openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx]: /../../../../openjax/rdb/blob/master/ddlx
+[sqlx.xsl]: /../../../../openjax/rdb/blob/master/sqlx/src/main/resources/sqlx.xsl
 [jdk8-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
-[jsql]: /../../../../openjax/openjax-rdb/blob/master/jsql
+[jsql]: /../../../../openjax/rdb/blob/master/jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /../../../../openjax/rdb-maven-plugin

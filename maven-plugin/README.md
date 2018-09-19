@@ -23,7 +23,7 @@ The `rdb:ddlx` goal is bound to the `generate-resources` phase, and is used to g
 
 ```xml
 <plugin>
-  <groupId>org.openjax.maven.plugin</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-maven-plugin</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <executions>
@@ -60,7 +60,7 @@ The `rdb:sqlx` goal is bound to the `generate-resources` phase, and is used to g
 
 ```xml
 <plugin>
-  <groupId>org.openjax.maven.plugin</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-maven-plugin</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <executions>
@@ -96,7 +96,7 @@ The `rdb:jsql` goal is bound to the `generate-sources` phase, and is used to gen
 
 ```xml
 <plugin>
-  <groupId>org.openjax.maven.plugin</groupId>
+  <groupId>org.openjax.rdb</groupId>
   <artifactId>rdb-maven-plugin</artifactId>
   <version>0.9.9-SNAPSHOT</version>
   <executions>
@@ -130,6 +130,6 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[ddlx-schema]: /../../../../openjax/openjax-rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
+[ddlx-schema]: /../../../../openjax/rdb/blob/master/ddlx/src/main/resources/ddlx.xsd
 [mvn-plugin]: https://img.shields.io/badge/mvn-plugin-lightgrey.svg
-[rdb]: /../../../../openjax/openjax-rdb
+[rdb]: /../../../../openjax/rdb
