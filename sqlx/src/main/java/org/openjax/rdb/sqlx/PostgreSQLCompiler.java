@@ -28,7 +28,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   private static String toOctalString(final Hexadecimal hex) {
-    final short[] octals = Bytes.toOctal(hex.getBytes());
+    final short[] octals = Bytes.toOctal(hex.getData());
     final StringBuilder builder = new StringBuilder();
     for (final short octal : octals)
       builder.append("\\\\").append(octal);
