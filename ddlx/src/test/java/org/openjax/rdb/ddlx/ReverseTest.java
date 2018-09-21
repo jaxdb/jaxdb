@@ -39,7 +39,6 @@ import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.xsb.runtime.Binding;
 import org.openjax.xsb.runtime.MarshalException;
-import org.w3c.dom.Element;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class/*, SQLite.class*/})
@@ -47,11 +46,9 @@ import org.w3c.dom.Element;
 @Category(MixedTest.class)
 public class ReverseTest extends DDLxTest {
   private static void assertEqual(final DBVendor vendor, final Binding expected, final Binding actual) throws XPathExpressionException {
-    final Element controlElement = expected.toDOM();
-    final Element testElement = actual.toDOM();
-    final AssertXml builder = AssertXml.compare(controlElement, testElement);
+    final AssertXml builder = AssertXml.compare(expected.toDOM(), actual.toDOM());
     if (vendor == DBVendor.DERBY) {
-      builder.remove(controlElement,
+      builder.removeFromControl(
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary']/@default",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@precision",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:bigint']/@unsigned",
@@ -72,15 +69,15 @@ public class ReverseTest extends DDLxTest {
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='SET NULL']/@onUpdate",
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='RESTRICT']/@onUpdate",
         "//ddlx:schema/ddlx:table/ddlx:column/ddlx:foreignKey[@onUpdate='CASCADE']/@onUpdate"
-      );
+      )
 
-      builder.replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@xsi:type", "ddlx:double");
-      builder.replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@xsi:type", "ddlx:smallint");
-      builder.replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum' and @values='SEVEN EIGHT NINE']/@values", "length", "5");
-      builder.addAttribute(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']", "varying", "true");
-      builder.replace(controlElement, "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']/@xsi:type", "ddlx:char");
+      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:float']/@xsi:type", "ddlx:double")
+      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:tinyint']/@xsi:type", "ddlx:smallint")
+      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum' and @values='SEVEN EIGHT NINE']/@values", "length", "5")
+      .addAttrToControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']", "varying", "true")
+      .replaceAttrInControl("//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:enum']/@xsi:type", "ddlx:char")
 
-      builder.remove(testElement,
+      .removeFromTest(
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:binary' and @length='2147483647']/@length",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:blob' and @length='2147483647']/@length",
         "//ddlx:schema/ddlx:table/ddlx:column[@xsi:type='ddlx:clob' and @length='2147483647']/@length",
@@ -92,7 +89,7 @@ public class ReverseTest extends DDLxTest {
       );
     }
 
-    builder.assertEqual();
+    builder.assertEqual(true);
   }
 
   private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {
