@@ -221,7 +221,7 @@ abstract class Compiler {
   }
 
   private CreateStatement createConstraints(final Map<String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
-    final StringBuffer contraintsBuffer = new StringBuffer();
+    final StringBuilder contraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
 
@@ -239,7 +239,7 @@ abstract class Compiler {
           uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(columnsString.substring(2)).append(')');
         }
 
-        contraintsBuffer.append(uniqueString);
+        contraintsBuilder.append(uniqueString);
       }
 
       // check constraint
@@ -251,32 +251,32 @@ abstract class Compiler {
           checkString += ",\n  CHECK " + (checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
         }
 
-        contraintsBuffer.append(checkString);
+        contraintsBuilder.append(checkString);
       }
 
       // primary key constraint
       final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
-        contraintsBuffer.append(primaryKeyConstraint);
+        contraintsBuilder.append(primaryKeyConstraint);
     }
 
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column.getForeignKey() != null) {
           final $ForeignKey foreignKey = column.getForeignKey();
-          contraintsBuffer.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
-          contraintsBuffer.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
-          contraintsBuffer.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
+          contraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
+          contraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
+          contraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
           if (foreignKey.getOnDelete$() != null) {
             final String onDelete = onDelete(foreignKey.getOnDelete$());
             if (onDelete != null)
-              contraintsBuffer.append(' ').append(onDelete);
+              contraintsBuilder.append(' ').append(onDelete);
           }
 
           if (foreignKey.getOnUpdate$() != null) {
             final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
             if (onUpdate != null)
-              contraintsBuffer.append(' ').append(onUpdate);
+              contraintsBuilder.append(' ').append(onUpdate);
           }
         }
       }
@@ -334,12 +334,12 @@ abstract class Compiler {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + minCheck + " AND " + maxCheck + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + minCheck + " AND " + maxCheck + ")");
           else
-            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + minCheck + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + minCheck + ")");
         }
         else if (maxCheck != null) {
-          contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + maxCheck + ")");
+          contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + maxCheck + ")");
         }
       }
 
@@ -406,7 +406,7 @@ abstract class Compiler {
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuffer.append(",\n  ").append(check(table)).append(" (" + q(column.getName$().text()) + " " + operator + " " + condition + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + q(column.getName$().text()) + " " + operator + " " + condition + ")");
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -415,7 +415,7 @@ abstract class Compiler {
       }
     }
 
-    return new CreateStatement(contraintsBuffer.toString());
+    return new CreateStatement(contraintsBuilder.toString());
   }
 
   protected String check(final $Table table) {
@@ -426,17 +426,17 @@ abstract class Compiler {
     if (constraints.getPrimaryKey() == null)
       return "";
 
-    final StringBuffer primaryKeyBuffer = new StringBuffer();
+    final StringBuilder primaryKeyBuilder = new StringBuilder();
     for (final $Named primaryColumn : constraints.getPrimaryKey().getColumn()) {
       final String primaryKeyColumn = primaryColumn.getName$().text();
       final $Column column = columnNameToColumn.get(primaryKeyColumn);
       if (column.getNull$().text())
         throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY.");
 
-      primaryKeyBuffer.append(", ").append(q(primaryKeyColumn));
+      primaryKeyBuilder.append(", ").append(q(primaryKeyColumn));
     }
 
-    return ",\n  " + primaryKey(table) + " (" + primaryKeyBuffer.substring(2) + ")";
+    return ",\n  " + primaryKey(table) + " (" + primaryKeyBuilder.substring(2) + ")";
   }
 
   protected String foreignKey(final $Table table) {
