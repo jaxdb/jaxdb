@@ -96,8 +96,14 @@ abstract class Compiler {
 
   protected abstract void init(final Connection connection) throws SQLException;
 
-  protected final String q(final String name) {
-    return getVendor().getDialect().quoteIdentifier(name);
+  /**
+   * Quote a named identifier.
+   *
+   * @param identifier The identifier.
+   * @return The quoted identifier.
+   */
+  protected final String q(final String identifier) {
+    return getVendor().getDialect().quoteIdentifier(identifier);
   }
 
   protected CreateStatement createSchemaIfNotExists(final Schema schema) {

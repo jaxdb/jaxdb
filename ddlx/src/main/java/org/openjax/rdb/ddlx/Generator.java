@@ -118,7 +118,7 @@ public final class Generator {
     return columnCount;
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table, final Schema schema) throws GeneratorExecutionException {
+  private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
     final List<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
@@ -151,7 +151,7 @@ public final class Generator {
   private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$Column> columnNameToColumn = new HashMap<>();
-    registerColumns(tableNames, columnNameToColumn, table, schema);
+    registerColumns(tableNames, columnNameToColumn, table);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
     final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>();

@@ -88,7 +88,13 @@ public abstract class Dialect {
 
   protected abstract DBVendor getVendor();
 
-  public abstract String quoteIdentifier(final String name);
+  /**
+   * Quote a named identifier.
+   *
+   * @param identifier The identifier.
+   * @return The quoted identifier.
+   */
+  public abstract String quoteIdentifier(String identifier);
 
   public abstract String currentTimeFunction();
   public abstract String currentDateFunction();
