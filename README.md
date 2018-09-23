@@ -1,6 +1,6 @@
 <img src="https://images.cooltext.com/5195722.png" align="right">
 
-## rdb<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
+## RDB<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
 > Relational Data Binding
 
 ### Introduction

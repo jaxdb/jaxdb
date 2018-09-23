@@ -276,7 +276,7 @@ final class SqlXsb {
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
-    new Generator(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null).generate();
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null);
   }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
@@ -284,7 +284,7 @@ final class SqlXsb {
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
-    new Generator(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null).generate();
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null);
   }
 
   public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile, final File[] classpathFiles) throws IOException, SAXException {
