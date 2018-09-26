@@ -164,24 +164,6 @@
       </activation>
       <dependencies>
         <dependency>
-          <groupId>com.oracle.jdbc</groupId>
-          <artifactId>ojdbc7</artifactId>
-          <version>12.1.0.2</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.ibm.db2</groupId>
-          <artifactId>db2jcc</artifactId>
-          <version>8.1</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.ibm.db2</groupId>
-          <artifactId>db2jcc_license_cu</artifactId>
-          <version>8.1</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
           <groupId>org.openjax.rdb</groupId>
           <artifactId>rdb-jsql</artifactId>
           <version>0.9.9-SNAPSHOT</version>
@@ -203,16 +185,6 @@
           <scope>test</scope>
         </dependency>
       </dependencies>
-      <repositories>
-        <repository>
-          <id>maven.atlassian.com</id>
-          <url>https://maven.atlassian.com/3rdparty</url>
-        </repository>
-        <repository>
-          <id>maven.oracle.com</id>
-          <url>https://maven.oracle.com</url>
-        </repository>
-      </repositories>
     </profile>
   </profiles>
   <dependencies>
