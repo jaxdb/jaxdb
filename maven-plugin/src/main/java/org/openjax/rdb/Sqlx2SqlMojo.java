@@ -35,7 +35,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.fastjax.maven.mojo.GeneratorMojo;
 import org.fastjax.maven.mojo.MojoUtil;
-import org.fastjax.maven.mojo.ResourceLabel;
+import org.fastjax.maven.mojo.SourceInput;
 import org.fastjax.net.URLs;
 import org.openjax.rdb.sqlx.SQL;
 import org.openjax.rdb.vendor.DBVendor;
@@ -50,15 +50,9 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
   @Parameter(property="vendor", required=true)
   private String vendor;
 
+  @SourceInput
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
-
-  @Override
-  @SuppressWarnings("unchecked")
-  @ResourceLabel(label="schemas", nonEmpty=true)
-  protected List<String>[] getResources() {
-    return new List[] {schemas};
-  }
 
   @Parameter(defaultValue="${localRepository}")
   private ArtifactRepository localRepository;
@@ -68,8 +62,8 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
     try {
       final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
       final File[] classpathFiles = MojoUtil.getExecutionClasspash(execution, (PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), project, localRepository, artifactHandler);
-      for (final URL resource : configuration.getResources(0))
-        SQL.sqlx2sql(DBVendor.valueOf(vendor), resource, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(resource, rename) : URLs.getShortName(resource) + ".sql"), classpathFiles);
+      for (final URL schema : configuration.getSourceInputs("schemas"))
+        SQL.sqlx2sql(DBVendor.valueOf(vendor), schema, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"), classpathFiles);
     }
     catch (final DependencyResolutionRequiredException | IOException | SAXException e) {
       throw new MojoExecutionException(e.getMessage(), e);

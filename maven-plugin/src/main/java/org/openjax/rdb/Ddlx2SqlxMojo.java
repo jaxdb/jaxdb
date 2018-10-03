@@ -32,7 +32,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.fastjax.maven.mojo.GeneratorMojo;
-import org.fastjax.maven.mojo.ResourceLabel;
+import org.fastjax.maven.mojo.SourceInput;
 import org.fastjax.net.URLs;
 import org.openjax.rdb.sqlx.SQL;
 
@@ -42,22 +42,16 @@ public final class Ddlx2SqlxMojo extends GeneratorMojo {
   @Parameter(defaultValue="${localRepository}")
   private ArtifactRepository localRepository;
 
+  @SourceInput
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
   @Override
-  @SuppressWarnings("unchecked")
-  @ResourceLabel(label="schemas", nonEmpty=true)
-  protected List<String>[] getResources() {
-    return new List[] {schemas};
-  }
-
-  @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final URL resource : configuration.getResources(0)) {
-        final File xsd = new File(configuration.getDestDir(), URLs.getName(resource).replaceAll("\\.\\S+$", ".xsd"));
-        SQL.ddlx2sqlx(resource, xsd);
+      for (final URL schema : configuration.getSourceInputs("schemas")) {
+        final File xsd = new File(configuration.getDestDir(), URLs.getName(schema).replaceAll("\\.\\S+$", ".xsd"));
+        SQL.ddlx2sqlx(schema, xsd);
       }
     }
     catch (final IOException | TransformerException e) {

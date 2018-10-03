@@ -27,7 +27,7 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.fastjax.maven.mojo.GeneratorMojo;
-import org.fastjax.maven.mojo.ResourceLabel;
+import org.fastjax.maven.mojo.SourceInput;
 import org.fastjax.net.URLs;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.jsql.generator.Generator;
@@ -35,21 +35,15 @@ import org.openjax.rdb.jsql.generator.Generator;
 @Mojo(name="ddlx2jsql", defaultPhase=LifecyclePhase.GENERATE_SOURCES)
 @Execute(goal="ddlx2jsql")
 public final class Ddlx2JsqlMojo extends GeneratorMojo {
+  @SourceInput
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
   @Override
-  @SuppressWarnings("unchecked")
-  @ResourceLabel(label="schemas", nonEmpty=true)
-  protected List<String>[] getResources() {
-    return new List[] {schemas};
-  }
-
-  @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final URL resource : configuration.getResources(0))
-        new Generator(resource).generate(URLs.getShortName(resource), configuration.getDestDir());
+      for (final URL schema : configuration.getSourceInputs("schemas"))
+        new Generator(schema).generate(URLs.getShortName(schema), configuration.getDestDir());
     }
     catch (final IOException | ValidationException e) {
       throw new MojoExecutionException(e.getMessage(), e);

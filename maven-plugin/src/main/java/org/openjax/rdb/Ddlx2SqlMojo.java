@@ -29,7 +29,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.fastjax.maven.mojo.GeneratorMojo;
 import org.fastjax.maven.mojo.MojoUtil;
-import org.fastjax.maven.mojo.ResourceLabel;
+import org.fastjax.maven.mojo.SourceInput;
 import org.fastjax.net.URLs;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx.Generator;
@@ -46,22 +46,16 @@ public final class Ddlx2SqlMojo extends GeneratorMojo {
   @Parameter(property="vendor", required=true)
   private String vendor;
 
+  @SourceInput
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
   @Override
-  @SuppressWarnings("unchecked")
-  @ResourceLabel(label="schemas", nonEmpty=true)
-  protected List<String>[] getResources() {
-    return new List[] {schemas};
-  }
-
-  @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final URL resource : configuration.getResources(0)) {
-        final StatementBatch statementBatch = Generator.createDDL(resource, DBVendor.valueOf(vendor));
-        statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(resource, rename) : URLs.getShortName(resource) + ".sql"));
+      for (final URL schema : configuration.getSourceInputs("schemas")) {
+        final StatementBatch statementBatch = Generator.createDDL(schema, DBVendor.valueOf(vendor));
+        statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"));
       }
     }
     catch (final GeneratorExecutionException | IOException | ValidationException e) {
