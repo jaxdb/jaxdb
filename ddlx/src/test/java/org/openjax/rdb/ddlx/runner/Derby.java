@@ -19,17 +19,18 @@ package org.openjax.rdb.ddlx.runner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
+import org.fastjax.io.FileUtils;
+import org.fastjax.io.ZipFiles;
+import org.fastjax.net.URLs;
 import org.fastjax.sql.ConnectionProxy;
 import org.openjax.rdb.vendor.DBVendor;
-import org.fastjax.io.Files;
-import org.fastjax.io.JarFiles;
-import org.fastjax.net.URLs;
 
 public class Derby implements Vendor {
   private static final File db = new File("target/generated-test-resources/rdb/derby.db");
@@ -44,11 +45,11 @@ public class Derby implements Vendor {
   public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
     final File classes = new File("target/classes/derby.db");
-    if (classes.exists() && !Files.deleteAll(classes.toPath()))
+    if (classes.exists() && !FileUtils.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     final File testClasses = new File("target/test-classes/derby.db");
-    if (testClasses.exists() && !Files.deleteAll(testClasses.toPath()))
+    if (testClasses.exists() && !FileUtils.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     if (db.exists())
@@ -60,10 +61,10 @@ public class Derby implements Vendor {
       if (URLs.isJar(url)) {
         final JarFile jarFile = new JarFile(URLs.getParentJar(url).getPath());
         final String path = URLs.getPathInJar(url);
-        JarFiles.extract(jarFile, path, db.getParentFile());
+        ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
       }
       else {
-        Files.copy(new File(url.getPath()), db);
+        Files.copy(new File(url.getPath()).toPath(), db.toPath());
       }
     }
     else {

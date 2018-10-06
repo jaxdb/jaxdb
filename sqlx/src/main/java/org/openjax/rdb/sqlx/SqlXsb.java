@@ -36,7 +36,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.fastjax.io.Files;
+import org.fastjax.io.FileUtils;
 import org.fastjax.util.Arrays;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
@@ -296,13 +296,13 @@ final class SqlXsb {
       database = ($Database)Bindings.parse(in);
     }
     catch (final Throwable t) {
-      final File sqlxTempDir = new File(Files.getTempDir(), "sqlx");
+      final File sqlxTempDir = new File(FileUtils.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
           try {
-            Files.deleteAll(sqlxTempDir.toPath());
+            FileUtils.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
             throw new UnsupportedOperationException(e);
