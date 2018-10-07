@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.fastjax.sql.exception.SQLExceptionCatalog;
-import org.fastjax.util.Collections;
+import org.fastjax.util.FastCollections;
 import org.openjax.rdb.vendor.DBVendor;
 
 class SelectImpl {
@@ -223,7 +223,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -243,7 +243,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -387,7 +387,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -396,7 +396,7 @@ class SelectImpl {
       }
 
       protected Collection<Compilable> getEntitiesWithOwners() {
-        final Collection<Compilable> clone = Collections.clone(entities);
+        final Collection<Compilable> clone = FastCollections.clone(entities);
         clone.removeIf(entitiesWithOwnerPredicate);
         return clone;
       }
@@ -543,7 +543,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -623,7 +623,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -924,7 +924,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -1028,7 +1028,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -1108,7 +1108,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -1409,7 +1409,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -1511,7 +1511,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -1591,7 +1591,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -1892,7 +1892,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -1995,7 +1995,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -2075,7 +2075,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -2376,7 +2376,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -2479,7 +2479,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -2559,7 +2559,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -2860,7 +2860,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -2963,7 +2963,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -3043,7 +3043,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -3344,7 +3344,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -3447,7 +3447,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -3527,7 +3527,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -3828,7 +3828,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -3931,7 +3931,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -4011,7 +4011,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -4312,7 +4312,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -4415,7 +4415,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -4495,7 +4495,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -4796,7 +4796,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -4899,7 +4899,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -4979,7 +4979,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -5280,7 +5280,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -5383,7 +5383,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -5463,7 +5463,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -5764,7 +5764,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -5868,7 +5868,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -5948,7 +5948,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -6249,7 +6249,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -6351,7 +6351,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -6431,7 +6431,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -6732,7 +6732,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -6836,7 +6836,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -6916,7 +6916,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -7217,7 +7217,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -7319,7 +7319,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -7399,7 +7399,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -7700,7 +7700,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -7803,7 +7803,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -7883,7 +7883,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -8184,7 +8184,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -8287,7 +8287,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -8367,7 +8367,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -8668,7 +8668,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -8772,7 +8772,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -8852,7 +8852,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -9153,7 +9153,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -9255,7 +9255,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -9335,7 +9335,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -9636,7 +9636,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -9740,7 +9740,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -9820,7 +9820,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -10121,7 +10121,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -10223,7 +10223,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -10303,7 +10303,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -10604,7 +10604,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -10707,7 +10707,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -10787,7 +10787,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -11088,7 +11088,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -11191,7 +11191,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -11271,7 +11271,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -11572,7 +11572,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -11676,7 +11676,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -11756,7 +11756,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -12057,7 +12057,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -12159,7 +12159,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -12239,7 +12239,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -12540,7 +12540,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -12643,7 +12643,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -12723,7 +12723,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -13024,7 +13024,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -13127,7 +13127,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -13207,7 +13207,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -13508,7 +13508,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -13611,7 +13611,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -13691,7 +13691,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -13992,7 +13992,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override
@@ -14096,7 +14096,7 @@ class SelectImpl {
         }
 
         protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-          this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+          this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
         }
 
         @Override
@@ -14176,7 +14176,7 @@ class SelectImpl {
         }
 
         protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-          this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+          this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
         }
 
         @Override
@@ -14477,7 +14477,7 @@ class SelectImpl {
 
         @SuppressWarnings({"rawtypes", "unchecked"})
         public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-          this(distinct, Collections.asCollection(new ArrayList(), entities));
+          this(distinct, FastCollections.asCollection(new ArrayList(), entities));
         }
 
         @Override
@@ -14579,7 +14579,7 @@ class SelectImpl {
       }
 
       protected FROM(final Keyword<T> parent, final type.Entity ... tables) {
-        this(parent, Collections.asCollection(new ArrayList<type.Entity>(), tables));
+        this(parent, FastCollections.asCollection(new ArrayList<type.Entity>(), tables));
       }
 
       @Override
@@ -14659,7 +14659,7 @@ class SelectImpl {
       }
 
       protected GROUP_BY(final Keyword<T> parent, final type.Subject<?> ... subjects) {
-        this(parent, Collections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
+        this(parent, FastCollections.asCollection(new LinkedHashSet<type.Subject<?>>(), subjects));
       }
 
       @Override
@@ -14960,7 +14960,7 @@ class SelectImpl {
 
       @SuppressWarnings({"rawtypes", "unchecked"})
       public SELECT(final boolean distinct, final kind.Subject<?>[] entities) {
-        this(distinct, Collections.asCollection(new ArrayList(), entities));
+        this(distinct, FastCollections.asCollection(new ArrayList(), entities));
       }
 
       @Override

@@ -20,7 +20,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Index;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Integer;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
@@ -77,7 +77,7 @@ final class SQLDataTypes {
   }
 
   protected static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
-    final BigInteger maxForPrecision = new BigInteger(String.valueOf(Arrays.createRepeat('9', precision)));
+    final BigInteger maxForPrecision = new BigInteger(String.valueOf(FastArrays.createRepeat('9', precision)));
     if (max == null)
       max = maxForPrecision;
     else if (maxForPrecision.compareTo(max) == -1)

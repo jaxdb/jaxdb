@@ -44,7 +44,7 @@ import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.fastjax.logging.DeferredLogger;
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 import org.fastjax.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,7 +142,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       return;
 
     final RunIn runIn = method.getMethod().getAnnotation(RunIn.class);
-    if (runIn == null || Arrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
+    if (runIn == null || FastArrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
       if (method.getMethod().getParameterTypes().length > 0) {
         try (final Connection connection = getVendor(vendorClass).getConnection()) {
           logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());

@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.fastjax.sql.exception.SQLExceptionCatalog;
 import org.fastjax.util.ArrayIntList;
-import org.fastjax.util.Collections;
+import org.fastjax.util.FastCollections;
 import org.openjax.rdb.jsql.Delete.DELETE;
 import org.openjax.rdb.jsql.Insert.INSERT;
 import org.openjax.rdb.jsql.Update.UPDATE;
@@ -144,11 +144,11 @@ public class Batch {
 
   @Override
   public boolean equals(final Object obj) {
-    return obj == this || (obj instanceof Batch && Collections.equals(executeUpdates, ((Batch)obj).executeUpdates));
+    return obj == this || (obj instanceof Batch && FastCollections.equals(executeUpdates, ((Batch)obj).executeUpdates));
   }
 
   @Override
   public int hashCode() {
-    return Collections.hashCode(executeUpdates);
+    return FastCollections.hashCode(executeUpdates);
   }
 }

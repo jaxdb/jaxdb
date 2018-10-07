@@ -36,8 +36,8 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.fastjax.io.FileUtils;
-import org.fastjax.util.Arrays;
+import org.fastjax.io.FastFiles;
+import org.fastjax.util.FastArrays;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
 import org.fastjax.xml.sax.XMLDocument;
@@ -296,13 +296,13 @@ final class SqlXsb {
       database = ($Database)Bindings.parse(in);
     }
     catch (final Throwable t) {
-      final File sqlxTempDir = new File(FileUtils.getTempDir(), "sqlx");
+      final File sqlxTempDir = new File(FastFiles.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
           try {
-            FileUtils.deleteAll(sqlxTempDir.toPath());
+            FastFiles.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
             throw new UnsupportedOperationException(e);
@@ -312,7 +312,7 @@ final class SqlXsb {
 
       xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
 
-      final URLClassLoader classLoader = new URLClassLoader(Arrays.concat(ClassLoaders.getClassPath(), sqlxTempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(ClassLoaders.getClassPath(), sqlxTempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
       try (final InputStream in = xmlDocument.getURL().openStream()) {
         database = ($Database)Bindings.parse(in, classLoader);
       }

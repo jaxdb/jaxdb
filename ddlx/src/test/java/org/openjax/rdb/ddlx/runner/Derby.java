@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
-import org.fastjax.io.FileUtils;
+import org.fastjax.io.FastFiles;
 import org.fastjax.io.ZipFiles;
 import org.fastjax.net.URLs;
 import org.fastjax.sql.ConnectionProxy;
@@ -45,11 +45,11 @@ public class Derby implements Vendor {
   public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
     final File classes = new File("target/classes/derby.db");
-    if (classes.exists() && !FileUtils.deleteAll(classes.toPath()))
+    if (classes.exists() && !FastFiles.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     final File testClasses = new File("target/test-classes/derby.db");
-    if (testClasses.exists() && !FileUtils.deleteAll(testClasses.toPath()))
+    if (testClasses.exists() && !FastFiles.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     if (db.exists())

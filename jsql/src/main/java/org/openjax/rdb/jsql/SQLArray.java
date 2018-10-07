@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 
 final class SQLArray<T> implements Array {
   private final type.ARRAY<T> array;
@@ -52,7 +52,7 @@ final class SQLArray<T> implements Array {
 
   @Override
   public Object getArray(final long index, final int count) throws SQLException {
-    return Arrays.subArray(array.value, (int)(index - 1), (int)(index - 1 + count));
+    return FastArrays.subArray(array.value, (int)(index - 1), (int)(index - 1 + count));
   }
 
   @Override

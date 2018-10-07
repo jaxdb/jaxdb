@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 import org.openjax.rdb.ddlx.runner.Vendor;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.jsql.Connector;
@@ -59,7 +59,7 @@ public class VendorSchemaRunner extends VendorRunner {
 
     final Vendor vendor = getVendor(vendorClass);
     if (entityClass != null) {
-      for (final Class<? extends org.openjax.rdb.jsql.Schema> schemaClass : Arrays.concat(entityClass.value(), (Class<? extends org.openjax.rdb.jsql.Schema>)null)) {
+      for (final Class<? extends org.openjax.rdb.jsql.Schema> schemaClass : FastArrays.concat(entityClass.value(), (Class<? extends org.openjax.rdb.jsql.Schema>)null)) {
         Registry.registerPrepared(schemaClass, new Connector() {
           @Override
           public Connection getConnection() throws SQLException {

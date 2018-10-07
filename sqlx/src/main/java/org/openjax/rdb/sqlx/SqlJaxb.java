@@ -42,13 +42,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.fastjax.io.FileUtils;
+import org.fastjax.io.FastFiles;
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
-import org.fastjax.util.Collections;
+import org.fastjax.util.FastCollections;
 import org.fastjax.util.JavaIdentifiers;
 import org.fastjax.xml.jaxb.JaxbUtil;
 import org.fastjax.xml.jaxb.XJCompiler;
@@ -269,13 +269,13 @@ final class SqlJaxb {
       bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + JavaIdentifiers.toClassCase(rootElement.getLocalPart()));
     }
     catch (final ClassNotFoundException e) {
-      final File sqlxTempDir = new File(FileUtils.getTempDir(), "sqlx");
+      final File sqlxTempDir = new File(FastFiles.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
           try {
-            FileUtils.deleteAll(sqlxTempDir.toPath());
+            FastFiles.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
             throw new UnsupportedOperationException(e);
@@ -286,7 +286,7 @@ final class SqlJaxb {
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
         xsd2jaxb(tempDir, tempDir, xmlDocument.getSchemaLocation());
-        final URLClassLoader classLoader = new URLClassLoader(Arrays.concat(ClassLoaders.getClassPath(), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+        final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(ClassLoaders.getClassPath(), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + JavaIdentifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
       catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
@@ -333,7 +333,7 @@ final class SqlJaxb {
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, classedDestDir, Collections.asCollection(new LinkedHashSet<URL>(), xsds));
+    xsd2jaxb(sourcesDestDir, classedDestDir, FastCollections.asCollection(new LinkedHashSet<URL>(), xsds));
   }
 
   private SqlJaxb() {

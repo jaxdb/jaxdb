@@ -25,7 +25,7 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Set;
 
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 
 @SuppressWarnings("hiding")
 public final class DML {
@@ -1065,7 +1065,7 @@ public final class DML {
   @SafeVarargs
   @SuppressWarnings("unchecked")
   public static <DataType extends type.DataType<?>>Insert._INSERT<DataType> INSERT(final DataType column, final DataType ... columns) {
-    return new InsertImpl.INSERT<>(Arrays.splice(columns, 0, 0, column));
+    return new InsertImpl.INSERT<>(FastArrays.splice(columns, 0, 0, column));
   }
 
   /** String Functions **/
@@ -12440,14 +12440,14 @@ public final class DML {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(operator.Boolean.AND, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm(operator.Boolean.AND, a, conditions[0], FastArrays.subArray(conditions, 1));
   }
 
   public static type.BOOLEAN AND(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(operator.Boolean.AND, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm(operator.Boolean.AND, conditions[0], conditions[1], FastArrays.subArray(conditions, 2));
   }
 
   public static type.BOOLEAN AND(final Collection<Condition<?>> conditions) {
@@ -12455,7 +12455,7 @@ public final class DML {
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(operator.Boolean.AND, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm(operator.Boolean.AND, array[0], array[1], FastArrays.subArray(array, 2));
   }
 
   @SafeVarargs
@@ -12467,14 +12467,14 @@ public final class DML {
     if (conditions.length < 1)
       throw new IllegalArgumentException("conditions.length < 1");
 
-    return new BooleanTerm(operator.Boolean.OR, a, conditions[0], Arrays.subArray(conditions, 1));
+    return new BooleanTerm(operator.Boolean.OR, a, conditions[0], FastArrays.subArray(conditions, 1));
   }
 
   public static type.BOOLEAN OR(final Condition<?>[] conditions) {
     if (conditions.length < 2)
       throw new IllegalArgumentException("conditions.length < 2");
 
-    return new BooleanTerm(operator.Boolean.OR, conditions[0], conditions[1], Arrays.subArray(conditions, 2));
+    return new BooleanTerm(operator.Boolean.OR, conditions[0], conditions[1], FastArrays.subArray(conditions, 2));
   }
 
   public static type.BOOLEAN OR(final Collection<Condition<?>> conditions) {
@@ -12482,7 +12482,7 @@ public final class DML {
       throw new IllegalArgumentException("conditions.size() < 2");
 
     final Condition<?>[] array = conditions.toArray(new Condition<?>[conditions.size()]);
-    return new BooleanTerm(operator.Boolean.OR, array[0], array[1], Arrays.subArray(array, 2));
+    return new BooleanTerm(operator.Boolean.OR, array[0], array[1], FastArrays.subArray(array, 2));
   }
 
   /** Predicate **/

@@ -186,6 +186,13 @@
           <extension>true</extension>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <sourcepath>${basedir}/target/generated-sources/jaxb:${basedir}/target/generated-sources/xsb</sourcepath>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>

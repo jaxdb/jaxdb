@@ -31,7 +31,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.fastjax.util.Collections;
+import org.fastjax.util.FastCollections;
 import org.fastjax.util.RefDigraph;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Columns;
@@ -151,7 +151,7 @@ public final class Schemas {
     }
 
     if (digraph.hasCycle())
-      throw new IllegalStateException("Cycle exists in relational model: " + Collections.toString(digraph.getCycle(), " -> "));
+      throw new IllegalStateException("Cycle exists in relational model: " + FastCollections.toString(digraph.getCycle(), " -> "));
 
     final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
     while (topological.hasPrevious())

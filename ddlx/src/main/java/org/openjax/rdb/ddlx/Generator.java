@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.fastjax.lang.PackageLoader;
 import org.fastjax.lang.PackageNotFoundException;
-import org.fastjax.util.Arrays;
+import org.fastjax.util.FastArrays;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
@@ -53,7 +53,7 @@ public final class Generator {
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
-      final String vendors = Arrays.toString(DBVendor.values(), "|");
+      final String vendors = FastArrays.toString(DBVendor.values(), "|");
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 
