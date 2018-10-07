@@ -63,7 +63,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/test-classes/rdb</outputDirectory>
+              <outputDirectory>${project.build.directory}/test-classes/rdb</outputDirectory>
               <resources>          
                 <resource>
                   <directory>src/test/resources</directory>
@@ -190,7 +190,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
         <configuration>
-          <sourcepath>${basedir}/target/generated-sources/jaxb:${basedir}/target/generated-sources/xsb</sourcepath>
+          <sourcepath>${project.build.directory}/generated-sources/jaxb:${project.build.directory}/generated-sources/xsb</sourcepath>
         </configuration>
       </plugin>
     </plugins>

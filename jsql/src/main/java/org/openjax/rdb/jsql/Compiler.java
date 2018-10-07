@@ -41,10 +41,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.fastjax.lang.PackageLoader;
-import org.fastjax.lang.PackageNotFoundException;
 import org.fastjax.io.Readers;
 import org.fastjax.io.Streams;
+import org.fastjax.lang.PackageLoader;
+import org.fastjax.lang.PackageNotFoundException;
 import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.IdentityHashSet;
 import org.fastjax.util.Numbers;
@@ -90,7 +90,8 @@ abstract class Compiler {
   }
 
   /**
-   * Default no-op implementation of method to compile an enum translation phrase.
+   * Default no-op implementation of method to compile an enum translation
+   * phrase.
    *
    * @param from The source enum.
    * @param to The target enum.
@@ -142,7 +143,7 @@ abstract class Compiler {
 
   protected abstract void onRegister(final Connection connection) throws SQLException;
 
-  protected static <T extends kind.DataType<?>>Compilable compilable(final T kind) {
+  protected static <T extends kind.DataType<?>> Compilable compilable(final T kind) {
     return (Compilable)kind;
   }
 
@@ -151,8 +152,9 @@ abstract class Compiler {
   }
 
   /**
-   * Get the parameter mark for <code>PreparedStatement</code>s.
-   * @param dataType The <code>type.DataType</code> for the requested mark.
+   * Get the parameter mark for {@code PreparedStatement}s.
+   *
+   * @param dataType The {@code type.DataType} for the requested mark.
    * @return The mark.
    */
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
@@ -195,8 +197,10 @@ abstract class Compiler {
 
     compilation.append(" FROM ");
 
-    // FIXME: If FROM is followed by a JOIN, then we must see what table the ON clause is
-    // FIXME: referring to, because this table must be the last in the table order here
+    // FIXME: If FROM is followed by a JOIN, then we must see what table the ON
+    // clause is
+    // FIXME: referring to, because this table must be the last in the table
+    // order here
     final Iterator<type.Entity> iterator = from.tables.iterator();
     while (true) {
       final type.Entity table = iterator.next();
@@ -615,7 +619,7 @@ abstract class Compiler {
   }
 
   // FIXME: Move this to a Util class or something
-  protected static <T extends type.Subject<?>>void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
+  protected static <T extends type.Subject<?>> void formatBraces(final operator.Boolean operator, final Condition<?> condition, final Compilation compilation) throws IOException {
     if (condition instanceof BooleanTerm) {
       if (operator == ((BooleanTerm)condition).operator) {
         condition.compile(compilation);
@@ -710,7 +714,7 @@ abstract class Compiler {
     predicate.b().compile(compilation);
   }
 
-  protected <T>void compile(final NullPredicate predicate, final Compilation compilation) throws IOException {
+  protected <T> void compile(final NullPredicate predicate, final Compilation compilation) throws IOException {
     compilable(predicate.dataType).compile(compilation);
     compilation.append(" IS ");
     if (!predicate.positive)
@@ -876,10 +880,10 @@ abstract class Compiler {
 
       expression.a.compile(compilation);
 
-//      if (function.b != null) {
-//        compilation.append(", ");
-//        function.b.compile(compilation);
-//      }
+      // if (function.b != null) {
+      // compilation.append(", ");
+      // function.b.compile(compilation);
+      // }
     }
 
     compilation.append(')');

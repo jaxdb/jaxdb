@@ -340,7 +340,6 @@ final class function {
 
     @Override
     protected Number evaluate(final Number a, final Number b) {
-      final boolean neg = b.doubleValue() < 0;
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long) {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.pow(a.doubleValue(), b.doubleValue());
