@@ -59,7 +59,7 @@ public final class Ddlx2SqlMojo extends GeneratorMojo {
       }
     }
     catch (final GeneratorExecutionException | IOException | ValidationException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
+      throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
 }

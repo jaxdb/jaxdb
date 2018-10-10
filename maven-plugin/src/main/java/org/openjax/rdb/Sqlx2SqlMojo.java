@@ -66,7 +66,7 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
         SQL.sqlx2sql(DBVendor.valueOf(vendor), schema, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"), classpathFiles);
     }
     catch (final DependencyResolutionRequiredException | IOException | SAXException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
+      throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
 }

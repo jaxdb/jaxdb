@@ -45,9 +45,10 @@ import javax.xml.namespace.QName;
 import org.fastjax.io.FastFiles;
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
-import org.fastjax.util.FastArrays;
+import org.fastjax.net.URLs;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
+import org.fastjax.util.FastArrays;
 import org.fastjax.util.FastCollections;
 import org.fastjax.util.JavaIdentifiers;
 import org.fastjax.xml.jaxb.JaxbUtil;
@@ -286,7 +287,7 @@ final class SqlJaxb {
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
         xsd2jaxb(tempDir, tempDir, xmlDocument.getSchemaLocation());
-        final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(ClassLoaders.getClassPath(), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+        final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + JavaIdentifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
       catch (final ClassNotFoundException | CompilationException | JAXBException e1) {

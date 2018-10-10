@@ -55,7 +55,7 @@ public final class Ddlx2SqlxMojo extends GeneratorMojo {
       }
     }
     catch (final IOException | TransformerException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
+      throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
 }

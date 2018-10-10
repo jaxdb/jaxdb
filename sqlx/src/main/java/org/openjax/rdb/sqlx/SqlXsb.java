@@ -37,9 +37,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.fastjax.io.FastFiles;
-import org.fastjax.util.FastArrays;
+import org.fastjax.net.URLs;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
+import org.fastjax.util.FastArrays;
 import org.fastjax.xml.sax.XMLDocument;
 import org.fastjax.xml.sax.XMLDocuments;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
@@ -312,7 +313,7 @@ final class SqlXsb {
 
       xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
 
-      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(ClassLoaders.getClassPath(), sqlxTempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
       try (final InputStream in = xmlDocument.getURL().openStream()) {
         database = ($Database)Bindings.parse(in, classLoader);
       }

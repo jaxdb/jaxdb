@@ -46,7 +46,7 @@ public final class Ddlx2JsqlMojo extends GeneratorMojo {
         new Generator(schema).generate(URLs.getShortName(schema), configuration.getDestDir());
     }
     catch (final IOException | ValidationException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
+      throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
 }

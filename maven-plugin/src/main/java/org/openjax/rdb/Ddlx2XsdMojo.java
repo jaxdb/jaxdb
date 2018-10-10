@@ -57,7 +57,7 @@ public final class Ddlx2XsdMojo extends GeneratorMojo {
       SQL.xsd2xsb(configuration.getDestDir(), configuration.getDestDir(), xsds);
     }
     catch (final IOException e) {
-      throw new MojoExecutionException(e.getMessage(), e);
+      throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
 }

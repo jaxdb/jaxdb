@@ -28,6 +28,7 @@ import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.util.ClassLoaders;
+import org.fastjax.util.FastArrays;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
@@ -42,18 +43,7 @@ public abstract class SQLxTest {
   private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
   protected static final File testClassesDir = new File("target/test-classes");
-  private static final File[] classpath;
-
-  static {
-    final URL[] mainClasspath = ClassLoaders.getClassPath();
-    final URL[] testClasspath = ClassLoaders.getTestClassPath();
-    classpath = new File[mainClasspath.length + testClasspath.length];
-    for (int i = 0; i < mainClasspath.length; i++)
-      classpath[i] = new File(mainClasspath[i].getFile());
-
-    for (int i = 0; i < testClasspath.length; i++)
-      classpath[i + mainClasspath.length] = new File(testClasspath[i].getFile());
-  }
+  private static final File[] classpath = FastArrays.concat(ClassLoaders.getClassPath(), ClassLoaders.getTestClassPath());
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
