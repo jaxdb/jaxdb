@@ -28,7 +28,7 @@ import java.util.jar.JarFile;
 import org.fastjax.io.FastFiles;
 import org.fastjax.net.URLs;
 import org.fastjax.sql.ConnectionProxy;
-import org.fastjax.util.ZipFiles;
+import org.fastjax.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
 
 public class SQLite implements Vendor {
