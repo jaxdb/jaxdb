@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -24,10 +25,10 @@ import java.sql.Statement;
 import java.time.LocalDate;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -36,7 +37,6 @@ import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.Batch;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.classicmodels;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(classicmodels.class)
@@ -52,7 +52,7 @@ public class DeleteTest {
       p.customerNumber.set(181);
 
       final int results = DELETE(p).execute(transaction);
-      Assert.assertEquals(1, results);
+      assertEquals(1, results);
 
       transaction.rollback();
     }
@@ -75,8 +75,8 @@ public class DeleteTest {
       batch.addStatement(DELETE(pa));
       final int[] result = batch.execute(transaction);
 
-      Assert.assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
-      Assert.assertTrue(result[1] == 3 || result[1] == Statement.SUCCESS_NO_INFO);
+      assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
+      assertTrue(result[1] == 3 || result[1] == Statement.SUCCESS_NO_INFO);
 
       transaction.rollback();
     }
@@ -88,7 +88,7 @@ public class DeleteTest {
       final classicmodels.Purchase p = new classicmodels.Purchase();
 
       final int results = DELETE(p).WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09"))).execute(transaction);
-      Assert.assertEquals(1, results);
+      assertEquals(1, results);
 
       transaction.rollback();
     }
@@ -100,7 +100,7 @@ public class DeleteTest {
       final classicmodels.PurchaseDetail p = new classicmodels.PurchaseDetail();
 
       final int results = DELETE(p).execute(transaction);
-      Assert.assertTrue(results > 2985);
+      assertTrue(results > 2985);
 
       transaction.rollback();
     }

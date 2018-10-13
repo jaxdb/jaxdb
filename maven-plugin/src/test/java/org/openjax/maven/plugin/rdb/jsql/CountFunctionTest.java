@@ -16,23 +16,23 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.COUNT;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
@@ -54,11 +54,11 @@ public class CountFunctionTest {
         COUNT(o.territory)).
       FROM(o).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Integer.valueOf(7), rows.nextEntity().get());
-      Assert.assertEquals(Integer.valueOf(7), rows.nextEntity().get());
-      Assert.assertEquals(Integer.valueOf(4), rows.nextEntity().get());
-      Assert.assertEquals(Integer.valueOf(7), rows.nextEntity().get());
+      assertTrue(rows.nextRow());
+      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
+      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
+      assertEquals(Integer.valueOf(4), rows.nextEntity().get());
+      assertEquals(Integer.valueOf(7), rows.nextEntity().get());
     }
   }
 }

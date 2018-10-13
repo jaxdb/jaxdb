@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.ByteArrayInputStream;
@@ -28,10 +29,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -39,7 +40,6 @@ import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.types;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(types.class)
@@ -67,7 +67,7 @@ public class InsertTest {
       t.smallintType.set((short)32432);
       t.tinyintType.set((byte)127);
       t.timeType.set(LocalTime.now());
-      Assert.assertEquals(1, INSERT(t).execute(transaction));
+      assertEquals(1, INSERT(t).execute(transaction));
 
       transaction.rollback();
     }
@@ -114,8 +114,8 @@ public class InsertTest {
 
       // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
 
-      Assert.assertEquals(1, INSERT(t1).execute(transaction));
-      Assert.assertEquals(1, INSERT(t2).execute(transaction));
+      assertEquals(1, INSERT(t1).execute(transaction));
+      assertEquals(1, INSERT(t2).execute(transaction));
 
       transaction.rollback();
     }
@@ -132,7 +132,7 @@ public class InsertTest {
       t.timeType.set(LocalTime.now());
 
       final int results = INSERT(t.bigintType, t.charType, t.doubleType, t.tinyintType, t.timeType).execute(transaction);
-      Assert.assertEquals(1, results);
+      assertEquals(1, results);
 
       transaction.rollback();
     }
@@ -146,7 +146,7 @@ public class InsertTest {
 
       final types.Type t = new types.Type();
       final int results = INSERT(b).VALUES(SELECT(t).FROM(t)).execute(transaction);
-      Assert.assertTrue(results > 999);
+      assertTrue(results > 999);
 
       transaction.rollback();
     }
@@ -161,7 +161,7 @@ public class InsertTest {
       final types.Type t3 = new types.Type();
       DELETE(b).execute(transaction);
       final int results = INSERT(b.binaryType, b.charType, b.enumType).VALUES(SELECT(t1.binaryType, t2.charType, t3.enumType).FROM(t1, t2, t3).WHERE(AND(EQ(t1.charType, t2.charType), EQ(t2.tinyintType, t3.tinyintType), EQ(t3.booleanType, t1.booleanType)))).execute(transaction);
-      Assert.assertTrue(results > 999);
+      assertTrue(results > 999);
 
       transaction.rollback();
     }

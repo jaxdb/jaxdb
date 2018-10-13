@@ -16,23 +16,23 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.NOT;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
@@ -57,9 +57,9 @@ public class InPredicateTest {
       WHERE(IN(p.productLine, "Ships", "Planes", "Trains")).
       execute()) {
       for (int i = 0; i < 24; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertTrue(rows.nextEntity().get());
-        Assert.assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().get());
       }
     }
   }
@@ -78,9 +78,9 @@ public class InPredicateTest {
       WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
       execute()) {
       for (int i = 0; i < 86; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertTrue(rows.nextEntity().get());
-        Assert.assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().get());
       }
     }
   }
@@ -99,9 +99,9 @@ public class InPredicateTest {
       WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p))).
       execute()) {
       for (int i = 0; i < 110; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertTrue(rows.nextEntity().get());
-        Assert.assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().get());
       }
     }
   }
@@ -120,9 +120,9 @@ public class InPredicateTest {
       WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
       execute()) {
       for (int i = 0; i < 110; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertTrue(rows.nextEntity().get());
-        Assert.assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertTrue(rows.nextEntity().get());
+        assertTrue(rows.nextEntity().get());
       }
     }
   }

@@ -16,7 +16,8 @@
 
 package org.openjax.rdb.ddlx;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 public class SQLDataTypesTest {
@@ -24,6 +25,6 @@ public class SQLDataTypesTest {
   public void testGetNumericByteCount() {
     final int[] byteCounts = {1, 1, 2, 2, 3, 3, 3, 4, 4, 5, 5, 5, 6, 6, 7, 7, 8, 8, 8, 9};
     for (int i = 0; i < byteCounts.length; i++)
-      Assert.assertEquals(byteCounts[i], SQLDataTypes.getNumericByteCount(i + 1, true, null, null));
+      assertEquals(byteCounts[i], SQLDataTypes.getNumericByteCount(i + 1, true, null, null));
   }
 }

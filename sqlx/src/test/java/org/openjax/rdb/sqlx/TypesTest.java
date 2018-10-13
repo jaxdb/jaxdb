@@ -16,6 +16,8 @@
 
 package org.openjax.rdb.sqlx;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -38,7 +40,6 @@ import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.Random;
 import org.fastjax.util.Strings;
 import org.fastjax.xml.ValidationException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -130,6 +131,6 @@ public class TypesTest extends SQLxTest {
 
   @Test
   public void testLoadData(final Connection connection) throws IOException, SQLException, ValidationException {
-    Assert.assertEquals(1000, loadData(connection, "types").length);
+    assertEquals(1000, loadData(connection, "types").length);
   }
 }

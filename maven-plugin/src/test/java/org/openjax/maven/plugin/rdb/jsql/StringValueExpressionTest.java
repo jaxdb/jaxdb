@@ -16,23 +16,23 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.IS;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.classicmodels;
@@ -101,57 +101,57 @@ public class StringValueExpressionTest {
         CONCAT("-", o.country, "-")).
       FROM(o).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
 
       // Char/Enum
-      Assert.assertEquals("San FranciscoUS", rows.nextEntity().get());
-      Assert.assertEquals("-San FranciscoUS", rows.nextEntity().get());
-      Assert.assertEquals("San Francisco-US", rows.nextEntity().get());
-      Assert.assertEquals("San FranciscoUS-", rows.nextEntity().get());
-      Assert.assertEquals("-San FranciscoUS-", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco-US-", rows.nextEntity().get());
-      Assert.assertEquals("San Francisco-US-", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco-US", rows.nextEntity().get());
+      assertEquals("San FranciscoUS", rows.nextEntity().get());
+      assertEquals("-San FranciscoUS", rows.nextEntity().get());
+      assertEquals("San Francisco-US", rows.nextEntity().get());
+      assertEquals("San FranciscoUS-", rows.nextEntity().get());
+      assertEquals("-San FranciscoUS-", rows.nextEntity().get());
+      assertEquals("-San Francisco-US-", rows.nextEntity().get());
+      assertEquals("San Francisco-US-", rows.nextEntity().get());
+      assertEquals("-San Francisco-US", rows.nextEntity().get());
 
       // Enum/Char
-      Assert.assertEquals("USSan Francisco", rows.nextEntity().get());
-      Assert.assertEquals("-USSan Francisco", rows.nextEntity().get());
-      Assert.assertEquals("US-San Francisco", rows.nextEntity().get());
-      Assert.assertEquals("USSan Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-USSan Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-US-San Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("US-San Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-US-San Francisco", rows.nextEntity().get());
+      assertEquals("USSan Francisco", rows.nextEntity().get());
+      assertEquals("-USSan Francisco", rows.nextEntity().get());
+      assertEquals("US-San Francisco", rows.nextEntity().get());
+      assertEquals("USSan Francisco-", rows.nextEntity().get());
+      assertEquals("-USSan Francisco-", rows.nextEntity().get());
+      assertEquals("-US-San Francisco-", rows.nextEntity().get());
+      assertEquals("US-San Francisco-", rows.nextEntity().get());
+      assertEquals("-US-San Francisco", rows.nextEntity().get());
 
       // Char/Char
-      Assert.assertEquals("San FranciscoSan Francisco", rows.nextEntity().get());
-      Assert.assertEquals("-San FranciscoSan Francisco", rows.nextEntity().get());
-      Assert.assertEquals("San Francisco-San Francisco", rows.nextEntity().get());
-      Assert.assertEquals("San FranciscoSan Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-San FranciscoSan Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco-San Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("San Francisco-San Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco-San Francisco", rows.nextEntity().get());
+      assertEquals("San FranciscoSan Francisco", rows.nextEntity().get());
+      assertEquals("-San FranciscoSan Francisco", rows.nextEntity().get());
+      assertEquals("San Francisco-San Francisco", rows.nextEntity().get());
+      assertEquals("San FranciscoSan Francisco-", rows.nextEntity().get());
+      assertEquals("-San FranciscoSan Francisco-", rows.nextEntity().get());
+      assertEquals("-San Francisco-San Francisco-", rows.nextEntity().get());
+      assertEquals("San Francisco-San Francisco-", rows.nextEntity().get());
+      assertEquals("-San Francisco-San Francisco", rows.nextEntity().get());
 
       // Enum/Enum
-      Assert.assertEquals("USUS", rows.nextEntity().get());
-      Assert.assertEquals("-USUS", rows.nextEntity().get());
-      Assert.assertEquals("US-US", rows.nextEntity().get());
-      Assert.assertEquals("USUS-", rows.nextEntity().get());
-      Assert.assertEquals("-USUS-", rows.nextEntity().get());
-      Assert.assertEquals("-US-US-", rows.nextEntity().get());
-      Assert.assertEquals("US-US-", rows.nextEntity().get());
-      Assert.assertEquals("-US-US", rows.nextEntity().get());
+      assertEquals("USUS", rows.nextEntity().get());
+      assertEquals("-USUS", rows.nextEntity().get());
+      assertEquals("US-US", rows.nextEntity().get());
+      assertEquals("USUS-", rows.nextEntity().get());
+      assertEquals("-USUS-", rows.nextEntity().get());
+      assertEquals("-US-US-", rows.nextEntity().get());
+      assertEquals("US-US-", rows.nextEntity().get());
+      assertEquals("-US-US", rows.nextEntity().get());
 
       // Char
-      Assert.assertEquals("San Francisco-", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco", rows.nextEntity().get());
-      Assert.assertEquals("-San Francisco-", rows.nextEntity().get());
+      assertEquals("San Francisco-", rows.nextEntity().get());
+      assertEquals("-San Francisco", rows.nextEntity().get());
+      assertEquals("-San Francisco-", rows.nextEntity().get());
 
       // Enum
-      Assert.assertEquals("US-", rows.nextEntity().get());
-      Assert.assertEquals("-US", rows.nextEntity().get());
-      Assert.assertEquals("-US-", rows.nextEntity().get());
+      assertEquals("US-", rows.nextEntity().get());
+      assertEquals("-US", rows.nextEntity().get());
+      assertEquals("-US-", rows.nextEntity().get());
     }
   }
 
@@ -166,20 +166,20 @@ public class StringValueExpressionTest {
 
       t.charType.set(CONCAT(t.enumType, t.enumType));
 
-      Assert.assertEquals(1, UPDATE(t).execute(transaction));
-      Assert.assertEquals(clone.enumType.get().toString() + clone.enumType.get().toString(), t.charType.get());
+      assertEquals(1, UPDATE(t).execute(transaction));
+      assertEquals(clone.enumType.get().toString() + clone.enumType.get().toString(), t.charType.get());
       clone.charType.set(clone.enumType.get().toString() + clone.enumType.get().toString());
 
       t.charType.set(CONCAT(t.charType, t.charType));
 
-      Assert.assertEquals(1, UPDATE(t).execute(transaction));
-      Assert.assertEquals(clone.charType.get() + clone.charType.get(), t.charType.get());
+      assertEquals(1, UPDATE(t).execute(transaction));
+      assertEquals(clone.charType.get() + clone.charType.get(), t.charType.get());
       clone.charType.set(clone.charType.get() + clone.charType.get());
 
       t.charType.set(CONCAT(t.charType, t.enumType));
 
-      Assert.assertEquals(1, UPDATE(t).execute(transaction));
-      Assert.assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
+      assertEquals(1, UPDATE(t).execute(transaction));
+      assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
 
       transaction.rollback();
     }
@@ -196,12 +196,12 @@ public class StringValueExpressionTest {
         UPPER("city")).
       FROM(o).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
 
-      Assert.assertEquals("san francisco", rows.nextEntity().get());
-      Assert.assertEquals("SAN FRANCISCO", rows.nextEntity().get());
-      Assert.assertEquals("city", rows.nextEntity().get());
-      Assert.assertEquals("CITY", rows.nextEntity().get());
+      assertEquals("san francisco", rows.nextEntity().get());
+      assertEquals("SAN FRANCISCO", rows.nextEntity().get());
+      assertEquals("city", rows.nextEntity().get());
+      assertEquals("CITY", rows.nextEntity().get());
     }
   }
 
@@ -215,13 +215,13 @@ public class StringValueExpressionTest {
 
       t.charType.set(LOWER(t.charType));
 
-      Assert.assertEquals(1, UPDATE(t).execute(transaction));
-      Assert.assertEquals(clone.charType.get().toLowerCase(), t.charType.get());
+      assertEquals(1, UPDATE(t).execute(transaction));
+      assertEquals(clone.charType.get().toLowerCase(), t.charType.get());
 
       t.charType.set(UPPER(t.charType));
 
-      Assert.assertEquals(1, UPDATE(t).execute(transaction));
-      Assert.assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
+      assertEquals(1, UPDATE(t).execute(transaction));
+      assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
 
       transaction.rollback();
     }

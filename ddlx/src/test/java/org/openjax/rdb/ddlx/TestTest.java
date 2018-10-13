@@ -16,11 +16,12 @@
 
 package org.openjax.rdb.ddlx;
 
+import static org.junit.Assert.*;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -73,6 +74,6 @@ public class TestTest {
   @Ignore
   @SuppressWarnings("unused")
   public void testIgnore(final Connection connection) {
-    Assert.fail("Should have been ignored");
+    fail("Should have been ignored");
   }
 }

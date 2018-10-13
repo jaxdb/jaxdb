@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -23,10 +24,10 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -35,7 +36,6 @@ import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(classicmodels.class)
@@ -50,11 +50,11 @@ public class QueryExpressionTest {
       SELECT(o).
       FROM(o).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals("100 Market Street", rows.nextEntity().address1.get());
-      Assert.assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
-      Assert.assertEquals("25 Old Broad Street", rows.nextEntity().address1.get());
-      Assert.assertTrue(!rows.nextRow());
+      assertTrue(rows.nextRow());
+      assertEquals("100 Market Street", rows.nextEntity().address1.get());
+      assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
+      assertEquals("25 Old Broad Street", rows.nextEntity().address1.get());
+      assertTrue(!rows.nextRow());
     }
   }
 
@@ -66,9 +66,9 @@ public class QueryExpressionTest {
       SELECT(o, c).
       FROM(o, c).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals("100 Market Street", rows.nextEntity().address1.get());
-      Assert.assertEquals("54, rue Royale", rows.nextEntity().address1.get());
+      assertTrue(rows.nextRow());
+      assertEquals("100 Market Street", rows.nextEntity().address1.get());
+      assertEquals("54, rue Royale", rows.nextEntity().address1.get());
     }
   }
 
@@ -83,9 +83,9 @@ public class QueryExpressionTest {
         OR(GT(o.latitude, 20d),
           LT(o.longitude, 100d)))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals("4-1 Kioicho", rows.nextEntity().get());
-      Assert.assertEquals(35.6811759, ((BigDecimal)rows.nextEntity().get()).doubleValue(), 0.0000000001);
+      assertTrue(rows.nextRow());
+      assertEquals("4-1 Kioicho", rows.nextEntity().get());
+      assertEquals(35.6811759, ((BigDecimal)rows.nextEntity().get()).doubleValue(), 0.0000000001);
     }
   }
 }

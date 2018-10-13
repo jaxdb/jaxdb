@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -26,10 +27,10 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -40,7 +41,6 @@ import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.types;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema({types.class, classicmodels.class})
@@ -58,13 +58,13 @@ public class UpdateTest {
         LIMIT(1).
         execute(transaction);
 
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       p = rows.nextEntity();
 
       p.price.set(BigDecimal.valueOf(20l));
 
       final int results = UPDATE(p).execute(transaction);
-      Assert.assertEquals(1, results);
+      assertEquals(1, results);
 
       transaction.rollback();
     }
@@ -80,7 +80,7 @@ public class UpdateTest {
         LIMIT(1).
         execute(transaction);
 
-      Assert.assertTrue(rows1.nextRow());
+      assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
       classicmodels.ProductLine pl = new classicmodels.ProductLine();
@@ -90,7 +90,7 @@ public class UpdateTest {
         LIMIT(1).
         execute(transaction);
 
-      Assert.assertTrue(rows2.nextRow());
+      assertTrue(rows2.nextRow());
       pl = rows2.nextEntity();
 
       p.quantityInStock.set(300);
@@ -101,8 +101,8 @@ public class UpdateTest {
       batch.addStatement(UPDATE(pl));
 
       final int[] result = batch.execute(transaction);
-      Assert.assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
-      Assert.assertTrue(result[1] == 1 || result[1] == Statement.SUCCESS_NO_INFO);
+      assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
+      assertTrue(result[1] == 1 || result[1] == Statement.SUCCESS_NO_INFO);
 
       transaction.rollback();
     }
@@ -118,7 +118,7 @@ public class UpdateTest {
         LIMIT(1).
         execute(transaction);
 
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
       final int results =
@@ -127,7 +127,7 @@ public class UpdateTest {
         WHERE(EQ(t.enumType, types.Type.EnumType.ONE)).
         execute(transaction);
 
-      Assert.assertTrue(results > 0);
+      assertTrue(results > 0);
 
       transaction.rollback();
     }
@@ -143,7 +143,7 @@ public class UpdateTest {
         LIMIT(1).
         execute(transaction);
 
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
       final int results =
@@ -151,7 +151,7 @@ public class UpdateTest {
         SET(t.datetimeType, LocalDateTime.now()).
         execute(transaction);
 
-      Assert.assertTrue(results > 300);
+      assertTrue(results > 300);
 
       transaction.rollback();
     }

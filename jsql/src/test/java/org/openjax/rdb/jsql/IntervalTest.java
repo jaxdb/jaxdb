@@ -16,6 +16,8 @@
 
 package org.openjax.rdb.jsql;
 
+import static org.junit.Assert.*;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,7 +27,6 @@ import java.util.Date;
 
 import org.fastjax.util.Dates;
 import org.fastjax.util.Temporals;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class IntervalTest {
@@ -49,27 +50,27 @@ public class IntervalTest {
     for (int i = min; i < max; i++) {
       if (unit != Interval.Unit.MICROS) {
         // long
-        Assert.assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), i, unit)), new Interval(i, unit).addTo(date));
-        Assert.assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), -i, unit)), new Interval(i, unit).subtractFrom(date));
+        assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), i, unit)), new Interval(i, unit).addTo(date));
+        assertEquals(formatMessage(date, unit, i), Dates.newDate(add(date.getTime(), -i, unit)), new Interval(i, unit).subtractFrom(date));
 
         // Date
-        Assert.assertEquals(formatMessage(date.getTime(), unit, i), add(date.getTime(), i, unit), new Interval(i, unit).addTo(time));
-        Assert.assertEquals(formatMessage(date.getTime(), unit, i), add(date.getTime(), -i, unit), new Interval(i, unit).subtractFrom(time));
+        assertEquals(formatMessage(date.getTime(), unit, i), add(date.getTime(), i, unit), new Interval(i, unit).addTo(time));
+        assertEquals(formatMessage(date.getTime(), unit, i), add(date.getTime(), -i, unit), new Interval(i, unit).subtractFrom(time));
       }
 
       // LocalTime
-      Assert.assertEquals(formatMessage(localTime.toLocalTime(), unit, i), localTime.plus(i, unit).toLocalTime(), new Interval(i, unit).addTo(localTime.toLocalTime()));
-      Assert.assertEquals(formatMessage(localTime.toLocalTime(), unit, i), localTime.minus(i, unit).toLocalTime(), new Interval(i, unit).subtractFrom(localTime.toLocalTime()));
+      assertEquals(formatMessage(localTime.toLocalTime(), unit, i), localTime.plus(i, unit).toLocalTime(), new Interval(i, unit).addTo(localTime.toLocalTime()));
+      assertEquals(formatMessage(localTime.toLocalTime(), unit, i), localTime.minus(i, unit).toLocalTime(), new Interval(i, unit).subtractFrom(localTime.toLocalTime()));
 
       // LocalDate
       if (unit.isDateBased()) {
-        Assert.assertEquals(formatMessage(localDate, unit, i), localDate.plus(i, unit), new Interval(i, unit).addTo(localDate));
-        Assert.assertEquals(formatMessage(localDate, unit, i), localDate.minus(i, unit), new Interval(i, unit).subtractFrom(localDate));
+        assertEquals(formatMessage(localDate, unit, i), localDate.plus(i, unit), new Interval(i, unit).addTo(localDate));
+        assertEquals(formatMessage(localDate, unit, i), localDate.minus(i, unit), new Interval(i, unit).subtractFrom(localDate));
       }
 
       // LocalDateTime
-      Assert.assertEquals(formatMessage(localDateTime, unit, i), localDateTime.plus(i, unit), new Interval(i, unit).addTo(localDateTime));
-      Assert.assertEquals(formatMessage(localDateTime, unit, i), localDateTime.minus(i, unit), new Interval(i, unit).subtractFrom(localDateTime));
+      assertEquals(formatMessage(localDateTime, unit, i), localDateTime.plus(i, unit), new Interval(i, unit).addTo(localDateTime));
+      assertEquals(formatMessage(localDateTime, unit, i), localDateTime.minus(i, unit), new Interval(i, unit).subtractFrom(localDateTime));
     }
   }
 

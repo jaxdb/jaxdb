@@ -16,16 +16,17 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -34,7 +35,6 @@ import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(classicmodels.class)
@@ -58,9 +58,9 @@ public class CorrelatedSubQueryTest {
         LT(p.purchaseDate, p.requiredDate),
         EQ(p.customerNumber, c2.customerNumber))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
-      Assert.assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
+      assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
     }
   }
 
@@ -79,8 +79,8 @@ public class CorrelatedSubQueryTest {
       WHERE(
         LT(p.purchaseDate, p.requiredDate)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
+      assertTrue(rows.nextRow());
+      assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
     }
   }
 }

@@ -16,6 +16,8 @@
 
 package org.openjax.rdb.sqlx;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,7 +28,6 @@ import javax.xml.transform.TransformerException;
 import org.fastjax.jci.CompilationException;
 import org.fastjax.test.MixedTest;
 import org.fastjax.xml.ValidationException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -59,7 +60,7 @@ public class ClassicModelsTest extends SQLxTest {
   @Test
   public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
-    Assert.assertEquals(3864, loadData(connection, name).length);
+    assertEquals(3864, loadData(connection, name).length);
   }
 
   @Test

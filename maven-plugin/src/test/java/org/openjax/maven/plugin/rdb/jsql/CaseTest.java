@@ -26,7 +26,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -63,7 +63,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -100,7 +100,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -137,7 +137,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -174,7 +174,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -211,7 +211,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -248,7 +248,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -285,7 +285,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -322,7 +322,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -341,7 +341,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -360,7 +360,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -379,7 +379,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -398,7 +398,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -420,7 +420,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -442,7 +442,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -461,7 +461,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -498,7 +498,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -535,7 +535,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -572,7 +572,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -609,7 +609,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -646,7 +646,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -683,7 +683,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -720,7 +720,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -739,7 +739,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -758,7 +758,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -773,7 +773,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -792,7 +792,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -814,7 +814,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -836,7 +836,7 @@ public class CaseTest {
       ).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 }

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
@@ -53,7 +53,7 @@ public class CastTest {
         CAST(SELECT(t.booleanType).FROM(t).LIMIT(1)).AS.CHAR(5)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -66,7 +66,7 @@ public class CastTest {
         CAST(SELECT(t.booleanType).FROM(t).LIMIT(1)).AS.CLOB(5)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -79,7 +79,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.floatType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -93,7 +93,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -107,7 +107,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -120,7 +120,7 @@ public class CastTest {
         CAST(SELECT(t.floatType).FROM(t).LIMIT(1)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -134,7 +134,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -148,7 +148,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.floatType, Byte.MIN_VALUE), LTE(t.floatType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -162,7 +162,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.floatType, 0), LTE(t.floatType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -176,7 +176,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.floatType, Byte.MIN_VALUE), LTE(t.floatType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -190,7 +190,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -203,7 +203,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.floatType)).FROM(t)).AS.INT(10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -217,7 +217,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -230,7 +230,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.floatType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -244,7 +244,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.floatType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -257,7 +257,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.doubleType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -271,7 +271,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.doubleType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -285,7 +285,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.doubleType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -298,7 +298,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.doubleType)).FROM(t)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -312,7 +312,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.doubleType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -326,7 +326,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.doubleType, Byte.MIN_VALUE), LTE(t.doubleType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -340,7 +340,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.doubleType, 0), LTE(t.doubleType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -354,7 +354,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.doubleType, Short.MIN_VALUE), LTE(t.doubleType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -368,7 +368,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.doubleType, 0), LT(t.doubleType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -381,7 +381,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.doubleType)).FROM(t)).AS.INT(10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -395,7 +395,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.doubleType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -408,7 +408,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.doubleType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -422,7 +422,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.doubleType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -435,7 +435,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.decimalType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -449,7 +449,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.decimalType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -462,7 +462,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.decimalType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -476,7 +476,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.decimalType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -489,7 +489,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.decimalType)).FROM(t)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -503,7 +503,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.decimalType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -517,7 +517,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, Byte.MIN_VALUE), LTE(t.decimalType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -531,7 +531,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, 0), LTE(t.decimalType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -545,7 +545,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, Byte.MIN_VALUE), LTE(t.decimalType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -559,7 +559,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, 0), LT(t.decimalType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -573,7 +573,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LTE(t.decimalType, Integer.MAX_VALUE), GTE(t.decimalType, Integer.MIN_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -587,7 +587,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, 0), LTE(t.decimalType, 16777215))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -601,7 +601,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, 0), LTE(t.decimalType, Integer.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -615,7 +615,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.decimalType, 0), LTE(t.decimalType, Integer.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -628,7 +628,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.decimalType)).FROM(t)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -641,7 +641,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.tinyintType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -655,7 +655,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -668,7 +668,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.tinyintType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -682,7 +682,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -695,7 +695,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.tinyintType)).FROM(t)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -709,7 +709,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -723,7 +723,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.tinyintType, Byte.MIN_VALUE), LTE(t.tinyintType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -737,7 +737,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.tinyintType, 0), LTE(t.tinyintType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -751,7 +751,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.tinyintType, Byte.MIN_VALUE), LTE(t.tinyintType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -765,7 +765,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.tinyintType, 0), LTE(t.tinyintType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -778,7 +778,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.tinyintType)).FROM(t)).AS.INT(10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -792,7 +792,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -805,7 +805,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.tinyintType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -819,7 +819,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -832,7 +832,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.tinyintType)).FROM(t)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -845,7 +845,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.smallintType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -859,7 +859,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -872,7 +872,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.smallintType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -886,7 +886,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -899,7 +899,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.smallintType)).FROM(t)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -913,7 +913,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.tinyintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -927,7 +927,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.smallintType, Byte.MIN_VALUE), LTE(t.smallintType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -941,7 +941,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.smallintType, 0), LTE(t.smallintType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -955,7 +955,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.smallintType, Short.MIN_VALUE), LTE(t.smallintType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -969,7 +969,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.smallintType, 0), LTE(t.smallintType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -982,7 +982,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.smallintType)).FROM(t)).AS.INT(10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -996,7 +996,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.smallintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1009,7 +1009,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.smallintType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1023,7 +1023,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.smallintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1036,7 +1036,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.smallintType)).FROM(t)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1049,7 +1049,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.intType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1063,7 +1063,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.intType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1076,7 +1076,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.intType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1090,7 +1090,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.intType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1103,7 +1103,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.intType)).FROM(t)).AS.DECIMAL(vendor.getDialect().decimalMaxPrecision(), 10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1117,7 +1117,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.intType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1131,7 +1131,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.intType, Byte.MIN_VALUE), LTE(t.intType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1145,7 +1145,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.intType, 0), LTE(t.intType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1159,7 +1159,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.intType, Short.MIN_VALUE), LTE(t.intType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1173,7 +1173,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.intType, 0), LT(t.intType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1186,7 +1186,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.intType)).FROM(t)).AS.INT(10)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1200,7 +1200,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.intType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1213,7 +1213,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.intType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1227,7 +1227,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.intType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1240,7 +1240,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.intType)).FROM(t)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1253,7 +1253,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.bigintType)).FROM(t)).AS.FLOAT()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1267,7 +1267,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.bigintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1280,7 +1280,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.bigintType)).FROM(t)).AS.DOUBLE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1294,7 +1294,7 @@ public class CastTest {
       FROM(t).
       WHERE(GTE(t.bigintType, 0)).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1308,7 +1308,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LT(t.bigintType, Integer.MAX_VALUE), GT(t.bigintType, Integer.MIN_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1322,7 +1322,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LT(t.bigintType, Integer.MAX_VALUE), GTE(t.bigintType, 0))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1336,7 +1336,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.bigintType, Byte.MIN_VALUE), LTE(t.bigintType, Byte.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1350,7 +1350,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.bigintType, 0), LTE(t.bigintType, 255))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1364,7 +1364,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.bigintType, Short.MIN_VALUE), LTE(t.bigintType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1378,7 +1378,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(GTE(t.bigintType, 0), LT(t.bigintType, Short.MAX_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1392,7 +1392,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LT(t.bigintType, Integer.MAX_VALUE), GT(t.bigintType, Integer.MIN_VALUE))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1406,7 +1406,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LT(t.bigintType, Integer.MAX_VALUE), GTE(t.bigintType, 0))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1419,7 +1419,7 @@ public class CastTest {
         CAST(SELECT(MAX(t.bigintType)).FROM(t)).AS.BIGINT(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1432,7 +1432,7 @@ public class CastTest {
         CAST(SELECT(MIN(t.bigintType)).FROM(t)).AS.UNSIGNED(19)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1445,7 +1445,7 @@ public class CastTest {
         CAST(SELECT(AVG(t.bigintType)).FROM(t)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1459,7 +1459,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1473,7 +1473,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "-%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1487,7 +1487,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1501,7 +1501,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "-%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1515,7 +1515,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1529,7 +1529,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "-%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1543,7 +1543,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1557,7 +1557,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "-%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1571,7 +1571,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1585,7 +1585,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%1%"), NOT.LIKE(t.charType, "%.%"), NOT.LIKE(t.charType, "-%"), NOT.LIKE(t.charType, "%-%"), NOT.LIKE(t.charType, "%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1598,7 +1598,7 @@ public class CastTest {
         CAST(SELECT(t.charType).FROM(t).LIMIT(1)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1612,7 +1612,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%-%-%"), NOT.LIKE(t.charType, "%-%-% %"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1626,7 +1626,7 @@ public class CastTest {
       FROM(t).
       WHERE(AND(LIKE(t.charType, "%:%:%"), NOT.LIKE(t.charType, "% %:%:%"))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1640,7 +1640,7 @@ public class CastTest {
       FROM(t).
       WHERE(LIKE(t.charType, "%-%-% %:%:%")).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1653,7 +1653,7 @@ public class CastTest {
         CAST(SELECT(t.charType).FROM(t).LIMIT(1)).AS.CLOB(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1666,7 +1666,7 @@ public class CastTest {
         CAST(SELECT(t.dateType).FROM(t).LIMIT(1)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1679,7 +1679,7 @@ public class CastTest {
         CAST(SELECT(t.timeType).FROM(t).LIMIT(1)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1692,7 +1692,7 @@ public class CastTest {
         CAST(SELECT(t.timeType).FROM(t).LIMIT(1)).AS.TIME()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1705,7 +1705,7 @@ public class CastTest {
         CAST(SELECT(t.datetimeType).FROM(t).LIMIT(1)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1718,7 +1718,7 @@ public class CastTest {
         CAST(SELECT(t.datetimeType).FROM(t).LIMIT(1)).AS.DATE()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1731,7 +1731,7 @@ public class CastTest {
         CAST(SELECT(t.datetimeType).FROM(t).LIMIT(1)).AS.TIME()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1744,7 +1744,7 @@ public class CastTest {
         CAST(SELECT(t.datetimeType).FROM(t).LIMIT(1)).AS.DATETIME()).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1757,7 +1757,7 @@ public class CastTest {
         CAST(SELECT(t.clobType).FROM(t).LIMIT(1)).AS.CHAR(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1770,7 +1770,7 @@ public class CastTest {
         CAST(SELECT(t.clobType).FROM(t).LIMIT(1)).AS.CLOB(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1783,7 +1783,7 @@ public class CastTest {
         CAST(SELECT(t.blobType).FROM(t).LIMIT(1)).AS.BLOB(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1796,7 +1796,7 @@ public class CastTest {
         CAST(SELECT(t.binaryType).FROM(t).LIMIT(1)).AS.BLOB(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 
@@ -1809,7 +1809,7 @@ public class CastTest {
         CAST(SELECT(t.binaryType).FROM(t).LIMIT(1)).AS.BINARY(254)).
       FROM(t).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
     }
   }
 }

@@ -16,16 +16,17 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -34,7 +35,6 @@ import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 
 @RunWith(VendorSchemaRunner.class)
 @VendorSchemaRunner.Schema(classicmodels.class)
@@ -59,11 +59,11 @@ public class BooleanValueExpressionTest {
       FROM(p).
       WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(false, rows.nextEntity().get());
-      Assert.assertEquals(true, rows.nextEntity().get());
-      Assert.assertEquals(false, rows.nextEntity().get());
-      Assert.assertEquals(false, rows.nextEntity().get());
+      assertTrue(rows.nextRow());
+      assertEquals(false, rows.nextEntity().get());
+      assertEquals(true, rows.nextEntity().get());
+      assertEquals(false, rows.nextEntity().get());
+      assertEquals(false, rows.nextEntity().get());
     }
   }
 }

@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -26,13 +27,13 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.NOT;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
@@ -64,8 +65,8 @@ public class BetweenPredicateTest {
         FROM(p).
         WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Boolean.TRUE, rows.nextEntity().get());
+      assertTrue(rows.nextRow());
+      assertEquals(Boolean.TRUE, rows.nextEntity().get());
     }
   }
 
@@ -78,8 +79,8 @@ public class BetweenPredicateTest {
       WHERE(BETWEEN(p.msrp, p.price, 100)).
       execute()) {
       for (int i = 0; i < 59; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertEquals(Boolean.TRUE, rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertEquals(Boolean.TRUE, rows.nextEntity().get());
       }
     }
   }
@@ -92,7 +93,7 @@ public class BetweenPredicateTest {
       FROM(p).
       WHERE(BETWEEN(p.scale, "a", "b")).
       execute()) {
-      Assert.assertFalse(rows.nextRow());
+      assertFalse(rows.nextRow());
     }
   }
 
@@ -105,8 +106,8 @@ public class BetweenPredicateTest {
       WHERE(BETWEEN(p.quantityInStock, 500, 1000)).
       execute()) {
       for (int i = 0; i < 7; i++) {
-        Assert.assertTrue(rows.nextRow());
-        Assert.assertEquals(Boolean.TRUE, rows.nextEntity().get());
+        assertTrue(rows.nextRow());
+        assertEquals(Boolean.TRUE, rows.nextEntity().get());
       }
     }
   }

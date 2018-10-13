@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -23,17 +24,16 @@ import java.sql.SQLException;
 
 import org.fastjax.math.SafeMath;
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.IS;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.Select;
 import org.openjax.rdb.jsql.classicmodels;
@@ -80,9 +80,9 @@ public class NumericFunctionStaticTest {
     try (final RowIterator<? extends type.Subject<?>> rows = selectVicinity(37.78536811469731, -122.3931884765625, 10, 1).execute()) {
       while (rows.nextRow()) {
         final classicmodels.Customer c = (classicmodels.Customer)rows.nextEntity();
-        Assert.assertEquals("Mini Wheels Co.", c.companyName.get());
+        assertEquals("Mini Wheels Co.", c.companyName.get());
         final type.DECIMAL d = (type.DECIMAL)rows.nextEntity();
-        Assert.assertEquals(Double.valueOf(2.22069), d.get().doubleValue(), 0.00001);
+        assertEquals(Double.valueOf(2.22069), d.get().doubleValue(), 0.00001);
       }
     }
   }
@@ -98,9 +98,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.round(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -115,9 +115,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = SafeMath.round(rows.nextEntity().get().doubleValue(), 1);
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -132,8 +132,8 @@ public class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(Math.signum(rows.nextEntity().get().doubleValue()), rows.nextEntity().get().intValue(), 0);
+      assertTrue(rows.nextRow());
+      assertEquals(Math.signum(rows.nextEntity().get().doubleValue()), rows.nextEntity().get().intValue(), 0);
     }
   }
 
@@ -148,9 +148,9 @@ public class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.floor(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -165,9 +165,9 @@ public class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.doubleType)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.ceil(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -182,9 +182,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 10)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.sqrt(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -199,9 +199,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.sin(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -216,9 +216,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.asin(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -233,9 +233,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.cos(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -250,9 +250,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.acos(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -267,9 +267,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.tan(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -284,9 +284,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.atan(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -301,8 +301,8 @@ public class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(rows.nextEntity().get().intValue() % 3, rows.nextEntity().get().intValue());
+      assertTrue(rows.nextRow());
+      assertEquals(rows.nextEntity().get().intValue() % 3, rows.nextEntity().get().intValue());
     }
   }
 
@@ -317,8 +317,8 @@ public class NumericFunctionStaticTest {
       WHERE(IS.NOT.NULL(t.intType)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(rows.nextEntity().get().intValue() % -3, rows.nextEntity().get().intValue());
+      assertTrue(rows.nextRow());
+      assertEquals(rows.nextEntity().get().intValue() % -3, rows.nextEntity().get().intValue());
     }
   }
 
@@ -334,8 +334,8 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
+      assertTrue(rows.nextRow());
+      assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
     }
   }
 
@@ -352,9 +352,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % 1.2;
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
     }
   }
 
@@ -370,9 +370,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % -1.2;
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
     }
   }
 
@@ -389,14 +389,14 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), GT(ABS(t.floatType), 10), LT(ABS(t.floatType), 100), GT(ABS(t.doubleType), 10), LT(ABS(t.doubleType), 100))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       // FIXME: Is there something wrong with DMOD() for Derby?
       final double expected = rows.nextEntity().get().doubleValue() % rows.nextEntity().get().floatValue();
       final double actual = rows.nextEntity().get().doubleValue();
       if (Math.abs(expected - actual) > 0.000001)
         logger.warn("Math.abs(expected - actual) > 0.000001: " + Math.abs(expected - actual));
 
-      Assert.assertEquals(expected, actual, 0.003);
+      assertEquals(expected, actual, 0.003);
     }
   }
 
@@ -411,9 +411,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.exp(-rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -428,9 +428,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.pow(rows.nextEntity().get().doubleValue(), 3);
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -445,9 +445,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.pow(3, -rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -463,9 +463,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.pow(rows.nextEntity().get().doubleValue(), rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -480,9 +480,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log(rows.nextEntity().get().doubleValue()) / Math.log(3);
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -497,9 +497,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log(3) / Math.log(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -515,9 +515,9 @@ public class NumericFunctionStaticTest {
       WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log(rows.nextEntity().get().doubleValue()) / Math.log(rows.nextEntity().get().intValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -532,9 +532,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -549,9 +549,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log(rows.nextEntity().get().doubleValue()) / Math.log(2);
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 
@@ -566,9 +566,9 @@ public class NumericFunctionStaticTest {
       WHERE(GT(t.doubleType, 0)).
       LIMIT(1).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
+      assertTrue(rows.nextRow());
       final double expected = Math.log10(rows.nextEntity().get().doubleValue());
-      Assert.assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
+      assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
     }
   }
 }

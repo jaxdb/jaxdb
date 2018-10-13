@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -23,17 +24,16 @@ import java.math.BigInteger;
 import java.sql.SQLException;
 
 import org.fastjax.test.MixedTest;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.SUM;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
@@ -55,11 +55,11 @@ public class SetFunctionTest {
         SUM.DISTINCT(c.salesEmployeeNumber)).
       FROM(c).
       execute()) {
-      Assert.assertTrue(rows.nextRow());
-      Assert.assertEquals(BigInteger.valueOf(24367857008l), rows.nextEntity().get());
-      Assert.assertEquals("White Plains", rows.nextEntity().get());
-      Assert.assertEquals(classicmodels.Address.Country.AU, rows.nextEntity().get());
-      Assert.assertEquals(Long.valueOf(21003), rows.nextEntity().get());
+      assertTrue(rows.nextRow());
+      assertEquals(BigInteger.valueOf(24367857008l), rows.nextEntity().get());
+      assertEquals("White Plains", rows.nextEntity().get());
+      assertEquals(classicmodels.Address.Country.AU, rows.nextEntity().get());
+      assertEquals(Long.valueOf(21003), rows.nextEntity().get());
     }
   }
 }
