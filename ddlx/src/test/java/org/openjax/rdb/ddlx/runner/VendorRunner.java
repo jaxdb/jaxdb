@@ -33,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.fastjax.logging.DeferredLogger;
+import org.fastjax.util.FastArrays;
+import org.fastjax.util.Throwables;
 import org.junit.Before;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
@@ -43,21 +46,12 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.fastjax.logging.DeferredLogger;
-import org.fastjax.util.FastArrays;
-import org.fastjax.util.Throwables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Level;
+import org.slf4j.event.Level;
 
 public class VendorRunner extends BlockJUnit4ClassRunner {
-  protected static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
-
-  static {
-    final ch.qos.logback.classic.Logger logger = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-    DeferredLogger.defer(logger, logger.iteratorForAppenders().next(), Level.INFO);
-  }
+  protected static final Logger logger = DeferredLogger.defer(LoggerFactory.getLogger(VendorRunner.class), Level.DEBUG);
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
@@ -203,7 +197,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
           run(vendorClass, method, test);
         }
         catch (final Throwable e) {
-          DeferredLogger.flush(Level.DEBUG);
+          DeferredLogger.flush();
           final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
           if (unsupported != null) {
             for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
