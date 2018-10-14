@@ -23,7 +23,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fastjax.util.NumberFormatter;
+import org.fastjax.util.DecimalFormatter;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.xsb.runtime.Binding;
@@ -82,7 +82,7 @@ public abstract class Dialect {
   }
 
   public static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ISO_LOCAL_DATE;
-  public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = NumberFormatter.createDecimalFormat("################.################;-################.################");
+  public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = DecimalFormatter.createDecimalFormat("################.################;-################.################");
   public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
