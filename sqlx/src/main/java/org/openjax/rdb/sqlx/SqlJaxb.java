@@ -39,6 +39,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
@@ -259,7 +260,7 @@ final class SqlJaxb {
   }
 
   @SuppressWarnings("unchecked")
-  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, SAXException {
+  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, SAXException, UnmarshalException {
     sqlFile.getParentFile().mkdirs();
 
     final XMLDocument xmlDocument = XMLDocuments.parse(sqlxFile, false, true);
@@ -305,7 +306,7 @@ final class SqlJaxb {
         out.append(loadRow(vendor, iterator.next())).append(';');
       }
     }
-    catch (final IllegalAccessException | InvocationTargetException | SAXException e) {
+    catch (final IllegalAccessException | InvocationTargetException e) {
       throw new UnsupportedOperationException(e);
     }
   }

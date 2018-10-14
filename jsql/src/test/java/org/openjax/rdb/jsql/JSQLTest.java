@@ -25,6 +25,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.bind.UnmarshalException;
+
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
 import org.fastjax.util.JavaIdentifiers;
@@ -37,7 +39,6 @@ import org.openjax.rdb.sqlx_0_9_9.Database;
 import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;
 import org.openjax.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
@@ -74,7 +75,7 @@ public abstract class JSQLTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, UnmarshalException, ValidationException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {

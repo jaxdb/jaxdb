@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.bind.UnmarshalException;
+
 import org.fastjax.test.MixedTest;
 import org.fastjax.xml.ValidationException;
 import org.junit.Test;
@@ -33,7 +35,6 @@ import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
-import org.xml.sax.SAXException;
 
 @RunWith(VendorRunner.class)
 @VendorRunner.Test({Derby.class, SQLite.class})
@@ -43,7 +44,7 @@ public class WorldDataTest extends JSQLTest {
   private static final String name = "world";
 
   @Test
-  public void testReloadJaxb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SAXException, SQLException {
+  public void testReloadJaxb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, UnmarshalException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
     JSQLTest.loadEntitiesJaxb(connection, name);
   }
