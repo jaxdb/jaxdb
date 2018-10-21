@@ -61,8 +61,8 @@ public class SQLite implements Vendor {
     if (url != null) {
       db.getParentFile().mkdirs();
       if (URLs.isJar(url)) {
-        final JarFile jarFile = new JarFile(URLs.getParentJar(url).getPath());
-        final String path = URLs.getPathInJar(url);
+        final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
+        final String path = URLs.getJarPath(url);
         ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
       }
       else {
