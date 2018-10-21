@@ -19,7 +19,7 @@ package org.openjax.rdb.ddlx.runner;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -46,25 +46,25 @@ public class Derby implements Vendor {
     new EmbeddedDriver();
     final File classes = new File("target/classes/derby.db");
     if (classes.exists() && !FastFiles.deleteAll(classes.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
+      throw new IOException("Unable to delete " + classes.getPath());
 
     final File testClasses = new File("target/test-classes/derby.db");
     if (testClasses.exists() && !FastFiles.deleteAll(testClasses.toPath()))
-      throw new IOException("Unable to delete " + db.getPath());
+      throw new IOException("Unable to delete " + testClasses.getPath());
 
-    if (db.exists())
+    if (db.exists() && new File(db, "seg0").exists())
       return;
 
     final URL url = Thread.currentThread().getContextClassLoader().getResource("derby.db");
     if (url != null) {
       db.getParentFile().mkdirs();
       if (URLs.isJar(url)) {
-        final JarFile jarFile = new JarFile(URLs.getParentJar(url).getPath());
-        final String path = URLs.getPathInJar(url);
+        final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
+        final String path = URLs.getJarPath(url);
         ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
       }
       else {
-        Files.copy(new File(url.getPath()).toPath(), db.toPath());
+        FastFiles.copyAll(new File(url.getPath()).toPath(), db.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
     }
     else {
