@@ -56,9 +56,9 @@ import org.openjax.rdb.ddlx.runner.VendorRunner;
 @Category(MixedTest.class)
 public class TypesTest extends SQLxTest {
   private static void createTypeData(final OutputStreamWriter out) throws IOException {
-    final String[] values = new String[] {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
+    final String[] values = {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n");
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; ++i) {
       final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
       final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
       final String blobType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();

@@ -19,6 +19,7 @@ package org.openjax.rdb.ddlx;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 public class StatementBatch {
@@ -30,21 +31,26 @@ public class StatementBatch {
 
   public void writeOutput(final File file) {
     final StringBuilder builder = new StringBuilder();
-    for (final Statement statement : statements)
-      builder.append("\n\n").append(statement).append(';');
+    final Iterator<Statement> iterator = statements.iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      if (i > 0)
+        builder.append("\n\n");
+
+      builder.append(iterator.next()).append(';');
+    }
 
     try {
       if (file.getParentFile().isFile())
-        throw new IllegalArgumentException(file.getParent() + " is a file.");
+        throw new IllegalArgumentException(file.getParent() + " is a file");
 
       if (!file.getParentFile().exists())
         if (!file.getParentFile().mkdirs())
           throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
-      Files.write(file.toPath(), builder.substring(2).getBytes());
+      Files.write(file.toPath(), builder.toString().getBytes());
     }
     catch (final IOException e) {
-      throw new UnsupportedOperationException(e);
+      throw new IllegalStateException(e);
     }
   }
 

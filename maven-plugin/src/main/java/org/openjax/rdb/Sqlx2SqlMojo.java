@@ -61,7 +61,7 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
       final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
-      final File[] classpathFiles = MojoUtil.getExecutionClasspash(execution, (PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), project, localRepository, artifactHandler);
+      final File[] classpathFiles = MojoUtil.getExecutionClasspash(project, execution, (PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler);
       for (final URL schema : configuration.getSourceInputs("schemas"))
         SQL.sqlx2sql(DBVendor.valueOf(vendor), schema, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"), classpathFiles);
     }

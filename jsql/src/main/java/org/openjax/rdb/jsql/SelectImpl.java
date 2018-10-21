@@ -379,7 +379,7 @@ class SelectImpl {
 
         for (final Compilable entity : entities)
           if (entity == null)
-            throw new IllegalArgumentException("SELECT argument cannot be null. Use type.?.NULL instead.");
+            throw new IllegalArgumentException("Argument to SELECT cannot be null (use type.?.NULL instead)");
 
         this.entities = entities;
         this.distinct = distinct;

@@ -437,7 +437,7 @@ abstract class Compiler {
       final String primaryKeyColumn = primaryColumn.getName$().text();
       final $Column column = columnNameToColumn.get(primaryKeyColumn);
       if (column.getNull$().text())
-        throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY.");
+        throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 
       primaryKeyBuilder.append(", ").append(q(primaryKeyColumn));
     }
