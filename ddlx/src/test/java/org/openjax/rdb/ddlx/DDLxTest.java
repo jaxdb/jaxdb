@@ -38,7 +38,7 @@ public abstract class DDLxTest {
 
   public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     final Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(ddlx + ".ddlx").openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(ddlx + ".ddlx")) {
       schema = (Schema)Bindings.parse(new InputSource(in));
     }
 

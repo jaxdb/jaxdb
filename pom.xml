@@ -36,19 +36,45 @@
     <module>maven-plugin</module>
   </modules>
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <excludes>
+          <exclude>**/*.sqlx</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <executions>
+            <!-- Copy *.sqlx to "rdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
+            <execution>
+              <id>copy-resources</id>
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.directory}/test-classes/rdb</outputDirectory>
+                <resources>          
+                  <resource>
+                    <directory>src/test/resources</directory>
+                    <includes>
+                      <include>**/*.sqlx</include>
+                    </includes>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
         <plugin>
           <groupId>org.openjax.xsb</groupId>
           <artifactId>xsb-maven-plugin</artifactId>
           <version>2.1.4-SNAPSHOT</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -46,7 +46,7 @@ public final class Generator {
     try {
       PackageLoader.getContextPackageLoader().loadPackage(Schema.class.getPackage().getName());
     }
-    catch (final PackageNotFoundException e) {
+    catch (final IOException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

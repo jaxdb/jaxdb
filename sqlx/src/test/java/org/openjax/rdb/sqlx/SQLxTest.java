@@ -16,6 +16,8 @@
 
 package org.openjax.rdb.sqlx;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,6 +49,7 @@ public abstract class SQLxTest {
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
+    assertNotNull(ddlx);
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlx(ddlx, destFile);
     SQL.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI().toURL());
@@ -56,20 +59,19 @@ public abstract class SQLxTest {
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    assertNotNull(sqlx);
     SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException, ValidationException {
     final Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    URL url = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
-    if (url == null)
-      url = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
-
-    return SqlXsb.INSERT(connection, ($Database)Bindings.parse(url));
+    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    assertNotNull(sqlx);
+    return SqlXsb.INSERT(connection, ($Database)Bindings.parse(sqlx));
   }
 }

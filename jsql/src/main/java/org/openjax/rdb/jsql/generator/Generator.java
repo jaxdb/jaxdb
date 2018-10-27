@@ -73,9 +73,8 @@ public class Generator {
     final String pkg = type.class.getPackage().getName();
 
     final File dir = new File(destDir, pkg.replace('.', '/'));
-    if (!dir.exists())
-      if (!dir.mkdirs())
-        throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
+    if (!dir.exists() && !dir.mkdirs())
+      throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
     final String classSimpleName = JavaIdentifiers.toInstanceCase(name);
 
@@ -357,7 +356,7 @@ public class Generator {
         xL0gluGCXYYJc.$Table t = table;
         String params = "";
         do {
-          for (int i = 0; i < t.getColumn().size(); i++) {
+          for (int i = 0; i < t.getColumn().size(); ++i) {
             final $Column column = t.getColumn().get(i);
             if (audit.isPrimary(table, column)) {
               params += ", " + makeParam(t, column);
@@ -380,7 +379,7 @@ public class Generator {
       out += "      this();\n";
       set = "";
       if (table.getColumn() != null) {
-        for (int i = 0; i < table.getColumn().size(); i++) {
+        for (int i = 0; i < table.getColumn().size(); ++i) {
           final $Column column = table.getColumn().get(i);
           final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
           set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
@@ -399,7 +398,7 @@ public class Generator {
     defs = "";
     int primaryIndex = 0;
     if (table.getColumn() != null) {
-      for (int i = 0; i < table.getColumn().size(); i++) {
+      for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
         final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
         defs += "\n      column[" + (totalColumnCount - (table.getColumn().size() - i)) + "] = ";
@@ -413,9 +412,9 @@ public class Generator {
     out += "    }\n";
 
     if (table.getColumn() != null) {
-      for (int i = 0; i < table.getColumn().size(); i++) {
+      for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
-        out += makeColumn(table, column, i == table.getColumn().size());
+        out += makeColumn(table, column);
       }
 
       out += "\n";
@@ -505,7 +504,7 @@ public class Generator {
 
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
 
-  public String makeColumn(final $Table table, final $Column column, final boolean isLast) {
+  public String makeColumn(final $Table table, final $Column column) {
     final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
     final String typeName = JavaIdentifiers.toClassCase(column.getName$().text());
     final StringBuilder builder = new StringBuilder();

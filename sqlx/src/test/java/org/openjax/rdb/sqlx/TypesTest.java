@@ -35,14 +35,13 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
-import org.fastjax.test.MixedTest;
 import org.fastjax.util.Hexadecimal;
 import org.fastjax.util.Random;
 import org.fastjax.util.Strings;
 import org.fastjax.xml.ValidationException;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.rdb.ddlx.DDLxTest;
+import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -50,11 +49,31 @@ import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class TypesTest extends SQLxTest {
+public abstract class TypesTest extends SQLxTest {
+  private static final String name = "types";
+
+  public static class Test extends SQLxTest {
+    @org.junit.Test
+    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException {
+      createXSDs(name);
+      final File destDir = new File("target/test-classes/rdb");
+      destDir.mkdirs();
+      try (final OutputStreamWriter out = new FileWriter(new File(destDir, "types.sqlx"))) {
+        createTypeData(out);
+      }
+    }
+  }
+
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends TypesTest {
+  }
+
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends TypesTest {
+  }
+
   private static void createTypeData(final OutputStreamWriter out) throws IOException {
     final String[] values = {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n");
@@ -116,21 +135,9 @@ public class TypesTest extends SQLxTest {
     out.flush();
   }
 
-  static {
-    try {
-      createXSDs("types");
-      resourcesDestDir.mkdirs();
-      try (final OutputStreamWriter out = new FileWriter(new File(resourcesDestDir, "types.sqlx"))) {
-        createTypeData(out);
-      }
-    }
-    catch (final CompilationException | IOException | JAXBException | TransformerException e) {
-      throw new ExceptionInInitializerError(e);
-    }
-  }
-
-  @Test
-  public void testLoadData(final Connection connection) throws IOException, SQLException, ValidationException {
-    assertEquals(1000, loadData(connection, "types").length);
+  @org.junit.Test
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+    DDLxTest.recreateSchema(connection, name);
+    assertEquals(1000, loadData(connection, name).length);
   }
 }

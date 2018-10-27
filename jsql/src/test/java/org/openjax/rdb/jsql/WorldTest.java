@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
+import javax.xml.transform.TransformerException;
 
-import org.fastjax.test.MixedTest;
+import org.fastjax.jci.CompilationException;
 import org.fastjax.xml.ValidationException;
-import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
@@ -35,21 +35,38 @@ import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
+import org.openjax.rdb.sqlx.SQLxTest;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class WorldDataTest extends JSQLTest {
+public abstract class WorldTest extends JSQLTest {
   private static final String name = "world";
 
-  @Test
+  public static class Test extends JSQLTest {
+    @org.junit.Test
+    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, ValidationException {
+      // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
+      // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
+      createEntities(name);
+      SQLxTest.createXSDs("world");
+    }
+  }
+
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends WorldTest {
+  }
+
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends WorldTest {
+  }
+
+  @org.junit.Test
   public void testReloadJaxb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, UnmarshalException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
     JSQLTest.loadEntitiesJaxb(connection, name);
   }
 
-  @Test
+  @org.junit.Test
   public void testReloadXsb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
     JSQLTest.loadEntitiesXsb(connection, name);

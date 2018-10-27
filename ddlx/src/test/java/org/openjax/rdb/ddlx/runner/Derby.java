@@ -31,9 +31,13 @@ import org.fastjax.net.URLs;
 import org.fastjax.sql.ConnectionProxy;
 import org.fastjax.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Derby implements Vendor {
+  protected static final Logger logger = LoggerFactory.getLogger(Derby.class);
   private static final File db = new File("target/generated-test-resources/rdb/derby.db");
+  private static final File[] dbPaths = new File[] {new File("target/classes/derby.db"), new File("target/classes/derby.db")};
 
   @Override
   public DBVendor getDBVendor() {
@@ -44,19 +48,16 @@ public class Derby implements Vendor {
   @SuppressWarnings("unused")
   public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
-    final File classes = new File("target/classes/derby.db");
-    if (classes.exists() && !FastFiles.deleteAll(classes.toPath()))
-      throw new IOException("Unable to delete " + classes.getPath());
-
-    final File testClasses = new File("target/test-classes/derby.db");
-    if (testClasses.exists() && !FastFiles.deleteAll(testClasses.toPath()))
-      throw new IOException("Unable to delete " + testClasses.getPath());
+    for (final File dbPath : dbPaths)
+      if (dbPath.exists() && !FastFiles.deleteAll(dbPath.toPath()))
+        throw new IOException("Unable to delete " + dbPath.getPath());
 
     if (db.exists() && new File(db, "seg0").exists())
       return;
 
     final URL url = Thread.currentThread().getContextClassLoader().getResource("derby.db");
     if (url != null) {
+      logger.info("Copying Derby DB from: " + url);
       db.getParentFile().mkdirs();
       if (URLs.isJar(url)) {
         final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
@@ -68,6 +69,7 @@ public class Derby implements Vendor {
       }
     }
     else {
+      logger.info("Creating new Derby DB");
       new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
     }
 

@@ -24,9 +24,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
-import org.fastjax.test.MixedTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -38,12 +36,19 @@ import org.openjax.rdb.jsql.Batch;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.classicmodels;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class DeleteTest {
+public abstract class DeleteTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(classicmodels.class)
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends DeleteTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(classicmodels.class)
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends DeleteTest {
+  }
+
   @Test
   public void testDeleteEntity() throws IOException, SQLException {
     try (final Transaction transaction = new Transaction(classicmodels.class)) {

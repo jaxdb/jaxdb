@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.fastjax.logging.DeferredLogger;
-import org.fastjax.util.FastArrays;
 import org.fastjax.util.Throwables;
 import org.junit.Before;
 import org.junit.internal.runners.statements.RunBefores;
@@ -59,28 +58,16 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     int value();
   }
 
-  @Target(ElementType.METHOD)
-  @Retention(RetentionPolicy.RUNTIME)
-  public static @interface RunIn {
-    Class<? extends Annotation>[] value();
-  }
-
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Test {
-    Class<? extends Vendor>[] value();
-  }
-
-  @Target(ElementType.TYPE)
-  @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Integration {
-    Class<? extends Vendor>[] value();
+  public static @interface Vendor {
+    Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] value();
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
   public static @interface Unsupported {
-    Class<? extends Vendor>[] value();
+    Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] value();
   }
 
   private static Exception flatten(final SQLException e) {
@@ -94,17 +81,14 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     return exception;
   }
 
-  private final boolean integrationTest;
-
   public VendorRunner(final Class<?> cls) throws InitializationError {
     super(cls);
-    this.integrationTest = Boolean.parseBoolean(System.getProperty("integrationTest"));
   }
 
-  private final Map<Class<? extends Vendor>,Vendor> vendors = new HashMap<>();
+  private final Map<Class<? extends org.openjax.rdb.ddlx.runner.Vendor>,org.openjax.rdb.ddlx.runner.Vendor> vendors = new HashMap<>();
 
-  protected Vendor getVendor(final Class<? extends Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
-    Vendor vendor = vendors.get(vendorClass);
+  protected org.openjax.rdb.ddlx.runner.Vendor getVendor(final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
+    org.openjax.rdb.ddlx.runner.Vendor vendor = vendors.get(vendorClass);
     if (vendor == null) {
       vendors.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
       vendor.init();
@@ -126,40 +110,38 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   protected void checkParameters(final FrameworkMethod method, final List<Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
-      errors.add(new Exception("Method " + method.getName() + " should have no parameters or a " + Connection.class.getName() + " parameter"));
+      errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Connection.class.getName()));
   }
 
   private final Set<FrameworkMethod> beforeClassMethodsRun = new HashSet<>();
 
-  protected void run(final Class<? extends Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
+  protected void run(final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
     if (isIgnored(method))
       return;
 
-    final RunIn runIn = method.getMethod().getAnnotation(RunIn.class);
-    if (runIn == null || FastArrays.contains(runIn.value(), integrationTest ? Integration.class : Test.class)) {
-      if (method.getMethod().getParameterTypes().length > 0) {
-        try (final Connection connection = getVendor(vendorClass).getConnection()) {
-          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-          method.invokeExplosively(test, connection);
-        }
+    if (method.getMethod().getParameterTypes().length > 0) {
+      try (final Connection connection = getVendor(vendorClass).getConnection()) {
+        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
+        method.invokeExplosively(test, connection);
       }
-      else {
-        if (test != null) {
-          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-          method.invokeExplosively(test);
-          return;
-        }
-        else if (beforeClassMethodsRun.contains(method))
+    }
+    else {
+      if (test != null) {
+        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
+        method.invokeExplosively(test);
+        return;
+      }
+      else if (beforeClassMethodsRun.contains(method)) {
+        return;
+      }
+
+      synchronized (beforeClassMethodsRun) {
+        if (beforeClassMethodsRun.contains(method))
           return;
 
-        synchronized (beforeClassMethodsRun) {
-          if (beforeClassMethodsRun.contains(method))
-            return;
-
-          beforeClassMethodsRun.add(method);
-          logger.info((integrationTest ? "integration-test " : "test ") + method.getMethod().getName() + "() " + vendorClass.getSimpleName());
-          method.invokeExplosively(test);
-        }
+        beforeClassMethodsRun.add(method);
+        logger.info(method.getMethod().getName() + "() " + vendorClass.getSimpleName());
+        method.invokeExplosively(test);
       }
     }
   }
@@ -192,7 +174,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       @Override
       public void evaluate() throws Throwable {
         DeferredLogger.clear();
-        final Class<? extends Vendor> vendorClass = localVendor.get();
+        final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass = localVendor.get();
         try {
           run(vendorClass, method, test);
         }
@@ -200,7 +182,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
           DeferredLogger.flush();
           final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
           if (unsupported != null) {
-            for (final Class<? extends Vendor> unsupportedVendor : unsupported.value()) {
+            for (final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> unsupportedVendor : unsupported.value()) {
               if (unsupportedVendor == vendorClass) {
                 logger.warn(vendorClass.getSimpleName() + " does not support " + method.getMethod().getDeclaringClass().getSimpleName() + "." + method.getMethod().getName() + "()");
                 return;
@@ -209,32 +191,24 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
           }
 
           Throwables.set(e, "[" + vendorClass.getSimpleName() + "] " + (e.getMessage() != null ? e.getMessage() : ""));
-          if (e instanceof SQLException)
-            throw flatten((SQLException)e);
-
-          throw e;
+          throw e instanceof SQLException ? flatten((SQLException)e) : e;
         }
       }
     };
   }
 
-  private ThreadLocal<Class<? extends Vendor>> localVendor = new ThreadLocal<>();
+  private ThreadLocal<Class<? extends org.openjax.rdb.ddlx.runner.Vendor>> localVendor = new ThreadLocal<>();
 
   private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement) {
     final Statement vendorStatement = new Statement() {
       @Override
       public void evaluate() throws Throwable {
         final Class<?> testClass = getTestClass().getJavaClass();
-        final Test test = testClass.getAnnotation(Test.class);
-        final Integration integration = testClass.getAnnotation(Integration.class);
-        if (test == null && integration == null)
-          throw new Exception("@" + Test.class.getSimpleName() + " or @" + Integration.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
+        final Vendor vendor = testClass.getAnnotation(Vendor.class);
+        if (vendor == null)
+          throw new Exception("@" + Vendor.class.getSimpleName() + " annotation is required on class " + testClass.getSimpleName());
 
-        if (!integrationTest && test != null)
-          evaluateVendors(test.value(), befores, target, statement);
-
-        if (integrationTest && integration != null)
-          evaluateVendors(integration.value(), befores, target, statement);
+        evaluateVendors(vendor.value(), befores, target, statement);
       }
     };
 
@@ -246,8 +220,8 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     };
   }
 
-  private void evaluateVendors(final Class<? extends Vendor>[] vendorClasses, final List<FrameworkMethod> befores, final Object target, final Statement statement) throws Throwable {
-    for (final Class<? extends Vendor> vendorClass : vendorClasses) {
+  private void evaluateVendors(final Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] vendorClasses, final List<FrameworkMethod> befores, final Object target, final Statement statement) throws Throwable {
+    for (final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass : vendorClasses) {
       localVendor.set(vendorClass);
       if (!befores.isEmpty())
         for (final FrameworkMethod before : befores)
@@ -275,18 +249,10 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
       @Override
       public void testRunFinished(final Result result) throws Exception {
         if (testClass != null) {
-          final Class<? extends Vendor>[] vendorClasses;
-          if (integrationTest) {
-            final Integration vendorIntegration = testClass.getAnnotation(Integration.class);
-            vendorClasses = vendorIntegration != null ? vendorIntegration.value() : null;
-          }
-          else {
-            final Test vendorTest = testClass.getAnnotation(Test.class);
-            vendorClasses = vendorTest != null ? vendorTest.value() : null;
-          }
-
+          final Vendor vendorTest = testClass.getAnnotation(Vendor.class);
+          final Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] vendorClasses = vendorTest != null ? vendorTest.value() : null;
           if (vendorClasses != null)
-            for (final Class<? extends Vendor> vendorClass : vendorClasses)
+            for (final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass : vendorClasses)
               getVendor(vendorClass).destroy();
         }
       }

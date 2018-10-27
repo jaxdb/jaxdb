@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 
-import org.fastjax.test.MixedTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -37,12 +35,19 @@ import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(classicmodels.class)
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class QueryExpressionTest {
+public abstract class QueryExpressionTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(classicmodels.class)
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends QueryExpressionTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(classicmodels.class)
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends QueryExpressionTest {
+  }
+
   @Test
   public void testFrom() throws IOException, SQLException {
     final classicmodels.Office o = new classicmodels.Office();

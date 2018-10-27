@@ -65,7 +65,7 @@ abstract class Compiler {
         }
       }
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

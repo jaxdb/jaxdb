@@ -22,9 +22,7 @@ import static org.openjax.rdb.jsql.DML.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.fastjax.test.MixedTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -40,12 +38,19 @@ import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
 import org.openjax.rdb.jsql.world;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class NumericValueExpressionTest {
+public abstract class NumericValueExpressionTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends NumericValueExpressionTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends NumericValueExpressionTest {
+  }
+
   @Test
   public void test() throws IOException, SQLException {
     final classicmodels.Product p = new classicmodels.Product();

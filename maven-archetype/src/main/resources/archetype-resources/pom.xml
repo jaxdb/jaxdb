@@ -15,7 +15,7 @@
         <version>0.9.9-SNAPSHOT</version>
         <executions>
           <execution>
-            <id>default-ddl</id>
+            <id>default-ddlx</id>
             <configuration>
               <vendor>PostgreSQL</vendor>
               <destDir>${project.build.directory}/generated-resources/rdb</destDir>

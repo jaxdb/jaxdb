@@ -25,10 +25,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.fastjax.util.FastArrays;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.fastjax.util.FastArrays;
-import org.openjax.rdb.ddlx.runner.Vendor;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.jsql.Connector;
 import org.openjax.rdb.jsql.Registry;
@@ -52,12 +51,12 @@ public class VendorSchemaRunner extends VendorRunner {
   }
 
   @Override
-  protected void run(final Class<? extends Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
+  protected void run(final Class<? extends org.openjax.rdb.ddlx.runner.Vendor> vendorClass, final FrameworkMethod method, final Object test) throws Throwable {
     Schema entityClass = method.getMethod().getAnnotation(Schema.class);
     if (entityClass == null)
-      entityClass = method.getMethod().getDeclaringClass().getAnnotation(Schema.class);
+      entityClass = getTestClass().getJavaClass().getAnnotation(Schema.class);
 
-    final Vendor vendor = getVendor(vendorClass);
+    final org.openjax.rdb.ddlx.runner.Vendor vendor = getVendor(vendorClass);
     if (entityClass != null) {
       for (final Class<? extends org.openjax.rdb.jsql.Schema> schemaClass : FastArrays.concat(entityClass.value(), (Class<? extends org.openjax.rdb.jsql.Schema>)null)) {
         Registry.registerPrepared(schemaClass, new Connector() {
@@ -67,7 +66,7 @@ public class VendorSchemaRunner extends VendorRunner {
               return vendor.getConnection();
             }
             catch (final IOException e) {
-              throw new SQLException(e);
+              throw new IllegalStateException(e);
             }
           }
         });

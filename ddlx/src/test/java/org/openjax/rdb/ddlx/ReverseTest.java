@@ -27,12 +27,14 @@ import java.util.Map;
 import javax.xml.xpath.XPathExpressionException;
 
 import org.fastjax.test.AssertXml;
-import org.fastjax.test.MixedTest;
 import org.fastjax.xml.ValidationException;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.rdb.ddlx.runner.Derby;
+import org.openjax.rdb.ddlx.runner.MySQL;
+import org.openjax.rdb.ddlx.runner.Oracle;
+import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
@@ -40,11 +42,18 @@ import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.xsb.runtime.Binding;
 import org.openjax.xsb.runtime.MarshalException;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test({Derby.class/*, SQLite.class*/})
-//@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class ReverseTest extends DDLxTest {
+public abstract class ReverseTest extends DDLxTest {
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({Derby.class/*, SQLite.class*/})
+  public static class IntegrationTest extends ReverseTest {
+  }
+
+  @Ignore
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends ReverseTest {
+  }
+
   private static void assertEqual(final DBVendor vendor, final Binding expected, final Binding actual) throws XPathExpressionException {
     final AssertXml builder = AssertXml.compare(expected.toDOM(), actual.toDOM());
     if (vendor == DBVendor.DERBY) {

@@ -20,10 +20,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.fastjax.test.MixedTest;
 import org.fastjax.xml.ValidationException;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -32,13 +30,19 @@ import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 
-@RunWith(VendorRunner.class)
-@VendorRunner.Test({Derby.class, SQLite.class})
-@VendorRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class ImplicitTest extends DDLxTest {
+public abstract class ImplicitTest extends DDLxTest {
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends ImplicitTest {
+  }
+
+  @RunWith(VendorRunner.class)
+  @VendorRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends ImplicitTest {
+  }
+
   @Test
-  public void testTypes(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
     recreateSchema(connection, "implicit");
   }
 }

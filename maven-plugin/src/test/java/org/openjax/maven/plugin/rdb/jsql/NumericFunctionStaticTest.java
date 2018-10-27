@@ -23,9 +23,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 import org.fastjax.math.SafeMath;
-import org.fastjax.test.MixedTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -42,12 +40,19 @@ import org.openjax.rdb.jsql.types;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class})
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class NumericFunctionStaticTest {
+public abstract class NumericFunctionStaticTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends NumericFunctionStaticTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends NumericFunctionStaticTest {
+  }
+
   private static final Logger logger = LoggerFactory.getLogger(NumericFunctionStaticTest.class);
 
   private static Select.untyped.SELECT<type.Subject<?>> selectVicinity(final double latitude, final double longitude, final double distance, final int limit) {

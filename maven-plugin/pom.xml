@@ -30,42 +30,39 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <goalPrefix>rdb</goalPrefix>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+          <execution>
+            <id>help-descriptor</id>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
   <profiles>
     <profile>
-      <id>default</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-plugin-plugin</artifactId>
-            <configuration>
-              <goalPrefix>rdb</goalPrefix>
-            </configuration>
-            <executions>
-              <execution>
-                <id>default-descriptor</id>
-                <goals>
-                  <goal>descriptor</goal>
-                </goals>
-                <phase>process-classes</phase>
-              </execution>
-              <execution>
-                <id>help-descriptor</id>
-                <goals>
-                  <goal>helpmojo</goal>
-                </goals>
-                <phase>process-classes</phase>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>itest</id>
+      <id>maven-invoker-plugin</id>
       <activation>
         <property>
-          <name>maven.itest</name>
+          <name>!maven.test.skip</name>
         </property>
       </activation>
       <properties>
@@ -78,15 +75,11 @@
             <artifactId>maven-invoker-plugin</artifactId>
             <executions>
               <execution>
-                <phase>install</phase>
                 <configuration>
                   <profiles>
-                    <profile>!default</profile>
+                    <profile>!maven-invoker-plugin</profile>
                     <profile>plugin-test</profile>
                   </profiles>
-                  <goals>
-                    <goal>verify</goal>
-                  </goals>
                 </configuration>
               </execution>
             </executions>
@@ -98,10 +91,6 @@
       <id>plugin-test</id>
       <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-failsafe-plugin</artifactId>
-          </plugin>
           <plugin>
             <groupId>org.openjax.rdb</groupId>
             <artifactId>rdb-maven-plugin</artifactId>
@@ -153,37 +142,6 @@
         </plugins>
       </build>
     </profile>
-    <profile>
-      <id>!maven.test.skip</id>
-      <activation>
-        <property>
-          <name>!maven.test.skip</name>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.openjax.rdb</groupId>
-          <artifactId>rdb-jsql</artifactId>
-          <version>0.9.9-SNAPSHOT</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.openjax.rdb</groupId>
-          <artifactId>rdb-sqlx</artifactId>
-          <version>0.9.9-SNAPSHOT</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.openjax.rdb</groupId>
-          <artifactId>rdb-ddlx</artifactId>
-          <version>0.9.9-SNAPSHOT</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
   </profiles>
   <dependencies>
     <dependency>
@@ -213,13 +171,34 @@
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
+      <artifactId>rdb-jsql</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
       <artifactId>rdb-sqlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
+      <artifactId>rdb-sqlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
+      <artifactId>rdb-ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.fastjax</groupId>

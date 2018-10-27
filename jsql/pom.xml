@@ -46,16 +46,10 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>package-testResources</id>
-            <goals>
-              <goal>testResources</goal>
-            </goals>
-            <phase>prepare-package</phase>
-          </execution>
-        </executions>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <sourcepath>${project.build.directory}/generated-sources/xsb</sourcepath>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.fastjax.xml</groupId>
@@ -73,19 +67,21 @@
       <plugin>
         <groupId>org.openjax.xsb</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
-        <configuration>
-          <destDir>${project.build.directory}/generated-sources/xsb</destDir>
-          <schemas>
-            <schema>src/main/resources/jsql.xsd</schema>
-          </schemas>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <sourcepath>${project.build.directory}/generated-sources/xsb</sourcepath>
-        </configuration>
+        <executions>
+          <execution>
+            <id>xsb-generate</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>generate-resources</phase>
+            <configuration>
+              <destDir>${project.build.directory}/generated-sources/xsb</destDir>
+              <schemas>
+                <schema>src/main/resources/jsql.xsd</schema>
+              </schemas>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>
@@ -119,31 +115,6 @@
       </plugins>
     </pluginManagement>
   </build>
-  <profiles>
-    <profile>
-      <activation>
-        <property>
-          <name>!maven.test.skip</name>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.openjax.rdb</groupId>
-          <artifactId>rdb-sqlx</artifactId>
-          <version>0.9.9-SNAPSHOT</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>org.openjax.rdb</groupId>
-          <artifactId>rdb-ddlx</artifactId>
-          <version>0.9.9-SNAPSHOT</version>
-          <type>test-jar</type>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.fastjax</groupId>
@@ -166,8 +137,22 @@
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
+      <artifactId>rdb-sqlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
       <artifactId>rdb-ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
+      <artifactId>rdb-ddlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.openjax.xsb</groupId>

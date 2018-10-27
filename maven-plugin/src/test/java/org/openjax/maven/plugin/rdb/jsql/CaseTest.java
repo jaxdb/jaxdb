@@ -16,6 +16,7 @@
 
 package org.openjax.maven.plugin.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.IOException;
@@ -25,11 +26,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.fastjax.test.MixedTest;
-import static org.junit.Assert.*;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -37,17 +36,23 @@ import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.CASE;
 import org.openjax.rdb.jsql.DML.IS;
-import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema(types.class)
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class CaseTest {
+public abstract class CaseTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(types.class)
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends CaseTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema(types.class)
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends CaseTest {
+  }
+
   @Test
   public void testSimpleBoolean() throws IOException, SQLException {
     final types.Type t = new types.Type();

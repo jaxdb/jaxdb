@@ -22,9 +22,9 @@ import org.fastjax.jci.CompilationException;
 import org.fastjax.xml.ValidationException;
 import org.junit.Test;
 
-public class TypesCreateTest extends JSQLTest {
+public class TypesTest extends JSQLTest {
   @Test
-  public void testCreate() throws CompilationException, IOException, ValidationException {
+  public void test() throws CompilationException, IOException, ValidationException {
     createEntities("types");
   }
 }

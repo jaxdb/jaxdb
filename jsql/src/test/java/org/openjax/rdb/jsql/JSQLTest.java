@@ -16,6 +16,7 @@
 
 package org.openjax.rdb.jsql;
 
+import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.File;
@@ -43,6 +44,7 @@ import org.xml.sax.InputSource;
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
     final URL url = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
+    assertNotNull(url);
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);
     new JavaCompiler(destDir).compile(destDir);
@@ -57,11 +59,12 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
+    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
 
     final xL0gluGCXYYJc.Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
@@ -83,14 +86,15 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource(name + ".sqlx");
+    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    assertNotNull(sqlx);
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
       database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
     }
 
     final xL0gluGCXYYJc.Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx").openStream()) {
+    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 

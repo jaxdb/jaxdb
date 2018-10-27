@@ -22,9 +22,7 @@ import static org.openjax.rdb.jsql.DML.*;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.fastjax.test.MixedTest;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -39,12 +37,19 @@ import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
 import org.openjax.rdb.jsql.world;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class UncorrelatedSubQueryTest {
+public abstract class UncorrelatedSubQueryTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends UncorrelatedSubQueryTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class, world.class})
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends UncorrelatedSubQueryTest {
+  }
+
   @Test
   public void testAdd() throws IOException, SQLException {
     try (final Transaction transaction = new Transaction(types.class)) {

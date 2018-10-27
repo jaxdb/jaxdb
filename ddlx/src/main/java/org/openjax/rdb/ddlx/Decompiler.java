@@ -16,6 +16,7 @@
 
 package org.openjax.rdb.ddlx;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.sql.Connection;
@@ -68,7 +69,7 @@ abstract class Decompiler {
         }
       }
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

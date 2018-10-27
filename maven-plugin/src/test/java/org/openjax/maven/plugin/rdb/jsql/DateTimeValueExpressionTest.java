@@ -25,10 +25,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.fastjax.test.MixedTest;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -46,12 +44,19 @@ import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
 
-@RunWith(VendorSchemaRunner.class)
-@VendorSchemaRunner.Schema({classicmodels.class, types.class})
-@VendorSchemaRunner.Test({Derby.class, SQLite.class})
-@VendorSchemaRunner.Integration({MySQL.class, PostgreSQL.class, Oracle.class})
-@Category(MixedTest.class)
-public class DateTimeValueExpressionTest {
+public abstract class DateTimeValueExpressionTest {
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
+  @VendorSchemaRunner.Vendor({Derby.class, SQLite.class})
+  public static class IntegrationTest extends DateTimeValueExpressionTest {
+  }
+
+  @RunWith(VendorSchemaRunner.class)
+  @VendorSchemaRunner.Schema({classicmodels.class, types.class})
+  @VendorSchemaRunner.Vendor({MySQL.class, PostgreSQL.class, Oracle.class})
+  public static class RegressionTest extends DateTimeValueExpressionTest {
+  }
+
   private static void testInterval(final Interval interval) throws IOException, SQLException {
     testInterval(interval, new types.Type(), null, null);
   }
