@@ -28,7 +28,7 @@ import java.util.jar.JarFile;
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.fastjax.io.FastFiles;
 import org.fastjax.net.URLs;
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.fastjax.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
@@ -70,7 +70,7 @@ public class Derby implements Vendor {
     }
     else {
       logger.info("Creating new Derby DB");
-      new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
+      new AuditConnection(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
     }
 
     new File(db, "tmp").mkdir();
@@ -78,19 +78,7 @@ public class Derby implements Vendor {
 
   @Override
   public Connection getConnection() throws IOException, SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:derby:" + db.getPath())) {
-      @Override
-      public void setAutoCommit(final boolean autoCommit) throws SQLException {
-      }
-
-      @Override
-      public void commit() throws SQLException {
-      }
-
-      @Override
-      public void rollback() throws SQLException {
-      }
-    };
+    return new AuditConnection(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
   }
 
   @Override

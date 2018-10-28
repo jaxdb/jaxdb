@@ -28,6 +28,7 @@ import java.time.LocalTime;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -71,7 +72,7 @@ public abstract class DateTimeValueExpressionTest {
 
   private static void testInterval(final Interval interval, types.Type p, final Condition<?> condition, final Boolean testDate) throws IOException, SQLException {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final RowIterator<type.Subject<?>> rows =
         SELECT(
           p,
@@ -144,8 +145,6 @@ public abstract class DateTimeValueExpressionTest {
 
       if (testDate == null || !testDate)
         assertEquals(clone.timeType.get().minus(interval), p.timeType.get());
-
-      transaction.rollback();
     }
   }
 

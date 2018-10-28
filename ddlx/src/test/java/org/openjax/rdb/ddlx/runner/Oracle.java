@@ -22,7 +22,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.TimeZone;
 
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 
 public class Oracle implements Vendor {
@@ -44,7 +44,7 @@ public class Oracle implements Vendor {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:oracle:thin:rdb/rdb@localhost:1521:xe"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:oracle:thin:rdb/rdb@localhost:1521:xe"));
   }
 
   @Override

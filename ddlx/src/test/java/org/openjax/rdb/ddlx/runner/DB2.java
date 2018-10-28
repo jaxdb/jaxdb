@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
@@ -41,7 +41,7 @@ public class DB2 implements Vendor {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:db2://localhost:50001/rdb:user=rdb;password=rdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:db2://localhost:50001/rdb:user=rdb;password=rdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";"));
   }
 
   @Override

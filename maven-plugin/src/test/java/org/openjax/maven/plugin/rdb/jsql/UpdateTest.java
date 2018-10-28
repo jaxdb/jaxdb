@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -55,7 +56,7 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       classicmodels.Product p = new classicmodels.Product();
       final RowIterator<classicmodels.Product> rows =
         SELECT(p).
@@ -70,14 +71,12 @@ public abstract class UpdateTest {
 
       final int results = UPDATE(p).execute(transaction);
       assertEquals(1, results);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testUpdateEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       classicmodels.Product p = new classicmodels.Product();
       final RowIterator<classicmodels.Product> rows1 =
         SELECT(p).
@@ -108,14 +107,12 @@ public abstract class UpdateTest {
       final int[] result = batch.execute(transaction);
       assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
       assertTrue(result[1] == 1 || result[1] == Statement.SUCCESS_NO_INFO);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testUpdateSetWhere() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       final RowIterator<types.Type> rows =
         SELECT(t).
@@ -133,14 +130,12 @@ public abstract class UpdateTest {
         execute(transaction);
 
       assertTrue(results > 0);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testUpdateSet() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       final RowIterator<types.Type> rows =
         SELECT(t).
@@ -157,8 +152,6 @@ public abstract class UpdateTest {
         execute(transaction);
 
       assertTrue(results > 300);
-
-      transaction.rollback();
     }
   }
 }

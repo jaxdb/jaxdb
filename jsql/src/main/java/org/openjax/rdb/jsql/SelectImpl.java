@@ -45,7 +45,7 @@ class SelectImpl {
   private static void compile(final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Compilable subject) {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
-      for (int i = 0; i < entity.column.length; i++)
+      for (int i = 0; i < entity.column.length; ++i)
         dataTypes.add(new AbstractMap.SimpleEntry<type.DataType<?>,Integer>(entity.column[i], i));
     }
     else if (subject instanceof type.DataType) {
@@ -117,7 +117,7 @@ class SelectImpl {
           row = new type.Subject[select.entities.size()];
           index = 0;
           entity = null;
-          for (int i = 0; i < noColumns; i++) {
+          for (int i = 0; i < noColumns; ++i) {
             final AbstractMap.SimpleEntry<type.DataType<?>,Integer> dataTypePrototype = dataTypes.get(i);
             final type.DataType dataType;
             if (currentTable != null && (currentTable != dataTypePrototype.getKey().owner || dataTypePrototype.getValue() == -1)) {

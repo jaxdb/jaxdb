@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 import org.postgresql.Driver;
 
@@ -42,7 +42,7 @@ public class PostgreSQL implements Vendor {
 
   @Override
   public Connection getConnection() throws SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:postgresql://localhost/rdb?user=rdb&password=rdb"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost/rdb?user=rdb&password=rdb"));
   }
 
   @Override

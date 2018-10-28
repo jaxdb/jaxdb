@@ -24,7 +24,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.fastjax.util.IdentityHashSet;
 
 public final class Registry {
@@ -35,7 +35,7 @@ public final class Registry {
     return new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
-        return new ConnectionProxy(dataSource.getConnection());
+        return new AuditConnection(dataSource.getConnection());
       }
     };
   }

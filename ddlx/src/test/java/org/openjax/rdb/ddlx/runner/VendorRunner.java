@@ -34,7 +34,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.fastjax.logging.DeferredLogger;
-import org.fastjax.util.Throwables;
 import org.junit.Before;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
@@ -50,7 +49,11 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 public class VendorRunner extends BlockJUnit4ClassRunner {
-  protected static final Logger logger = DeferredLogger.defer(LoggerFactory.getLogger(VendorRunner.class), Level.DEBUG);
+  protected static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
+
+  static {
+    DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
+  }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
@@ -190,7 +193,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
             }
           }
 
-          Throwables.set(e, "[" + vendorClass.getSimpleName() + "] " + (e.getMessage() != null ? e.getMessage() : ""));
+          logger.error(vendorClass.getSimpleName());
           throw e instanceof SQLException ? flatten((SQLException)e) : e;
         }
       }

@@ -22,7 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.fastjax.sql.exception.SQLExceptionCatalog;
 
-public final class Transaction implements AutoCloseable {
+public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
   private final AtomicBoolean inited = new AtomicBoolean(false);

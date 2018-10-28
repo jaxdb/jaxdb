@@ -27,7 +27,7 @@ import java.util.jar.JarFile;
 
 import org.fastjax.io.FastFiles;
 import org.fastjax.net.URLs;
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.fastjax.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
 
@@ -73,7 +73,7 @@ public class SQLite implements Vendor {
 
   @Override
   public Connection getConnection() throws IOException, SQLException {
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:sqlite:" + db.getPath()));
+    return new AuditConnection(DriverManager.getConnection("jdbc:sqlite:" + db.getPath()));
   }
 
   @Override

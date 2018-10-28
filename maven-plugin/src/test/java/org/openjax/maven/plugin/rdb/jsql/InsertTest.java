@@ -30,6 +30,7 @@ import java.time.LocalTime;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -54,7 +55,7 @@ public abstract class InsertTest {
 
   @Test
   public void testInsertEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t = new types.Type();
       t.bigintType.set(8493l);
       t.binaryType.set("abc".getBytes());
@@ -72,15 +73,14 @@ public abstract class InsertTest {
       t.smallintType.set((short)32432);
       t.tinyintType.set((byte)127);
       t.timeType.set(LocalTime.now());
-      assertEquals(1, INSERT(t).execute(transaction));
 
-      transaction.rollback();
+      assertEquals(1, INSERT(t).execute(transaction));
     }
   }
 
   @Test
   public void testInsertEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t1 = new types.Type();
       t1.bigintType.set(8493l);
       t1.binaryType.set("abc".getBytes());
@@ -121,14 +121,12 @@ public abstract class InsertTest {
 
       assertEquals(1, INSERT(t1).execute(transaction));
       assertEquals(1, INSERT(t2).execute(transaction));
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testInsertColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t = new types.Type();
       t.bigintType.set(8493l);
       t.charType.set("hello");
@@ -138,37 +136,42 @@ public abstract class InsertTest {
 
       final int results = INSERT(t.bigintType, t.charType, t.doubleType, t.tinyintType, t.timeType).execute(transaction);
       assertEquals(1, results);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testInsertSelectIntoTable() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.TypeBackup b = new types.TypeBackup();
       DELETE(b).execute(transaction);
 
       final types.Type t = new types.Type();
       final int results = INSERT(b).VALUES(SELECT(t).FROM(t)).execute(transaction);
       assertTrue(results > 999);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testInsertSelectIntoColumns() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.TypeBackup b = new types.TypeBackup();
       final types.Type t1 = new types.Type();
       final types.Type t2 = new types.Type();
       final types.Type t3 = new types.Type();
-      DELETE(b).execute(transaction);
-      final int results = INSERT(b.binaryType, b.charType, b.enumType).VALUES(SELECT(t1.binaryType, t2.charType, t3.enumType).FROM(t1, t2, t3).WHERE(AND(EQ(t1.charType, t2.charType), EQ(t2.tinyintType, t3.tinyintType), EQ(t3.booleanType, t1.booleanType)))).execute(transaction);
-      assertTrue(results > 999);
 
-      transaction.rollback();
+      DELETE(b).execute(transaction);
+      final int results =
+        INSERT(b.binaryType, b.charType, b.enumType).
+        VALUES(
+          SELECT(t1.binaryType, t2.charType, t3.enumType).
+          FROM(t1, t2, t3).
+          WHERE(
+            AND(
+              EQ(t1.charType, t2.charType),
+              EQ(t2.tinyintType, t3.tinyintType),
+              EQ(t3.booleanType, t1.booleanType)))).
+        execute(transaction);
+      assertTrue(results > 999);
     }
   }
 }

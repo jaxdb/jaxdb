@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -162,7 +163,7 @@ public abstract class StringValueExpressionTest {
 
   @Test
   public void testConcatDynamic() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         IS.NOT.NULL(t.charType),
@@ -185,8 +186,6 @@ public abstract class StringValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
       assertEquals(clone.charType.get() + clone.enumType.get(), t.charType.get());
-
-      transaction.rollback();
     }
   }
 
@@ -212,10 +211,9 @@ public abstract class StringValueExpressionTest {
 
   @Test
   public void testChangeCaseDynamic() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, IS.NOT.NULL(t.charType), transaction), 0);
-
       final types.Type clone = t.clone();
 
       t.charType.set(LOWER(t.charType));
@@ -227,8 +225,6 @@ public abstract class StringValueExpressionTest {
 
       assertEquals(1, UPDATE(t).execute(transaction));
       assertEquals(clone.charType.get().toUpperCase(), t.charType.get());
-
-      transaction.rollback();
     }
   }
 }

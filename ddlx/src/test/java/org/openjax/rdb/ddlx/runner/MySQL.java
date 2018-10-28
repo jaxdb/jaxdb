@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.fastjax.sql.ConnectionProxy;
+import org.fastjax.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 
 import com.mysql.cj.jdbc.Driver;
@@ -44,7 +44,7 @@ public class MySQL implements Vendor {
   @Override
   public Connection getConnection() throws SQLException {
     // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect
-    return new ConnectionProxy(DriverManager.getConnection("jdbc:mysql://127.0.0.1/rdb?user=rdb&password=rdb&useSSL=false&serverTimezone=UTC"));
+    return new AuditConnection(DriverManager.getConnection("jdbc:mysql://127.0.0.1/rdb?user=rdb&password=rdb&useSSL=false&serverTimezone=UTC"));
   }
 
   @Override

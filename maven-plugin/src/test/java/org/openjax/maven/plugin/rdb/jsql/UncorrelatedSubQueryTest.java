@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -52,7 +53,7 @@ public abstract class UncorrelatedSubQueryTest {
 
   @Test
   public void testAdd() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       final RowIterator<? extends type.Numeric<?>> rows =
         SELECT(

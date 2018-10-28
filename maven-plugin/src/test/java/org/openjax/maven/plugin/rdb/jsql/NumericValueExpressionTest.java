@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -75,7 +76,7 @@ public abstract class NumericValueExpressionTest {
 
   @Test
   public void testAdd() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         LTE(t.tinyintType, 0),
@@ -104,14 +105,12 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Float.valueOf(clone.floatType.get() + clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf(clone.doubleType.get() + clone.doubleType.get()), t.doubleType.get());
       assertEquals(clone.decimalType.get().add(clone.decimalType.get()), t.decimalType.get());
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testSubtract() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         GTE(t.tinyintType, 0),
@@ -140,14 +139,12 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Float.valueOf(clone.floatType.get() - clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf(clone.doubleType.get() - clone.doubleType.get()), t.doubleType.get());
       assertEquals(clone.decimalType.get().subtract(clone.decimalType.get()), t.decimalType.get());
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testMultiply() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         GTE(t.tinyintType, -10), LTE(t.tinyintType, 10),
@@ -176,14 +173,12 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Float.valueOf(clone.floatType.get() * clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf(clone.doubleType.get() * clone.doubleType.get()), t.doubleType.get());
       assertEquals(clone.decimalType.get().multiply(clone.decimalType.get()), t.decimalType.get());
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testDivide() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(types.class)) {
+    try (final Transaction transaction = new TestTransaction(types.class)) {
       types.Type t = new types.Type();
       t = NumericFunctionDynamicTest.getNthRow(NumericFunctionDynamicTest.selectEntity(t, AND(
         NE(t.tinyintType, 0),
@@ -212,34 +207,31 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Float.valueOf(clone.floatType.get() / clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf((clone.doubleType.get() / clone.doubleType.get())), t.doubleType.get());
       assertEquals(clone.decimalType.get().divide(clone.decimalType.get()), t.decimalType.get());
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testUpdateVersion() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(world.class)) {
-      world.City c = new world.City();
-      try (final RowIterator<world.City> rows =
+    world.City c = new world.City();
+    try (
+      final Transaction transaction = new TestTransaction(world.class);
+      final RowIterator<world.City> rows =
         SELECT(c).
         FROM(c).
-        execute()) {
-        assertTrue(rows.nextRow());
-        c = rows.nextEntity();
+        execute();
+    ) {
+      assertTrue(rows.nextRow());
+      c = rows.nextEntity();
 
-        assertEquals(1, UPDATE(c).execute(transaction));
-        assertEquals(1, UPDATE(c).execute(transaction));
+      assertEquals(1, UPDATE(c).execute(transaction));
+      assertEquals(1, UPDATE(c).execute(transaction));
 
-        final long version = c.version.get();
-        c.version.set(0l);
-        assertEquals(0, UPDATE(c).execute(transaction));
+      final long version = c.version.get();
+      c.version.set(0l);
+      assertEquals(0, UPDATE(c).execute(transaction));
 
-        c.version.set(version);
-        assertEquals(1, UPDATE(c).execute(transaction));
-
-        transaction.rollback();
-      }
+      c.version.set(version);
+      assertEquals(1, UPDATE(c).execute(transaction));
     }
   }
 }

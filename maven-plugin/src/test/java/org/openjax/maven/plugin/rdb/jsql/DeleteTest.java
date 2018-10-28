@@ -26,6 +26,7 @@ import java.time.LocalDate;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.maven.plugin.rdb.jsql.runner.TestTransaction;
 import org.openjax.maven.plugin.rdb.jsql.runner.VendorSchemaRunner;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
@@ -51,21 +52,21 @@ public abstract class DeleteTest {
 
   @Test
   public void testDeleteEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(classicmodels.class)) {
+    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
       p.purchaseNumber.set(10102l);
       p.customerNumber.set(181);
 
-      final int results = DELETE(p).execute(transaction);
+      final int results =
+        DELETE(p).
+        execute(transaction);
       assertEquals(1, results);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testDeleteEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(classicmodels.class)) {
+    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
       p.purchaseNumber.set(10100l);
       p.customerNumber.set(363);
@@ -74,40 +75,37 @@ public abstract class DeleteTest {
       pa.customerNumber.set(103);
 
       // TODO: Implement batching mechanism to allow multiple jsql commands to execute in one batch
-
       final Batch batch = new Batch();
       batch.addStatement(DELETE(p));
       batch.addStatement(DELETE(pa));
-      final int[] result = batch.execute(transaction);
 
+      final int[] result = batch.execute(transaction);
       assertTrue(result[0] == 1 || result[0] == Statement.SUCCESS_NO_INFO);
       assertTrue(result[1] == 3 || result[1] == Statement.SUCCESS_NO_INFO);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testDeleteWhere() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(classicmodels.class)) {
+    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-
-      final int results = DELETE(p).WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09"))).execute(transaction);
+      final int results =
+        DELETE(p).
+        WHERE(
+          EQ(p.purchaseDate, LocalDate.parse("2003-01-09"))).
+        execute(transaction);
       assertEquals(1, results);
-
-      transaction.rollback();
     }
   }
 
   @Test
   public void testDeleteAll() throws IOException, SQLException {
-    try (final Transaction transaction = new Transaction(classicmodels.class)) {
+    try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.PurchaseDetail p = new classicmodels.PurchaseDetail();
-
-      final int results = DELETE(p).execute(transaction);
+      final int results =
+        DELETE(p).
+        execute(transaction);
       assertTrue(results > 2985);
-
-      transaction.rollback();
     }
   }
 }
