@@ -48,7 +48,6 @@ import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
 import org.fastjax.net.URLs;
 import org.fastjax.util.ClassLoaders;
-import org.fastjax.util.Classes;
 import org.fastjax.util.FastArrays;
 import org.fastjax.util.FastCollections;
 import org.fastjax.util.JavaIdentifiers;
@@ -136,7 +135,7 @@ final class SqlJaxb {
         return compiler.compile(new dt.TIME(LocalTime.now()));
     }
 
-    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + Classes.getStrictName(dataType));
+    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + dataType.getCanonicalName());
   }
 
   protected static class RowIterator implements Iterator<Row> {

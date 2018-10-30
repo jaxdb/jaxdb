@@ -146,7 +146,7 @@ final class SqlXsb {
     }
 
 
-    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + Classes.getStrictName(type));
+    throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 
   protected static class RowIterator implements Iterator<$Row> {

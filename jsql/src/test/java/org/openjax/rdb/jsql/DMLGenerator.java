@@ -268,12 +268,12 @@ public class DMLGenerator {
       return cls.getSimpleName();
 
     int index = cls.getName().indexOf("type$");
-    final String strictName = Classes.getStrictName(cls);
+    final String canonicalName = cls.getCanonicalName();
     if (index != -1)
-      return strictName.substring(index) + (cls == type.Numeric.class ? "<?>" : "");
+      return canonicalName.substring(index) + (cls == type.Numeric.class ? "<?>" : "");
 
     index = cls.getName().indexOf("UNS");
-    return strictName.substring(index);
+    return canonicalName.substring(index);
   }
 
   private static String newInstance(final Class<?> a, final Class<?> b, final Class<?> c) {

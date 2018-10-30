@@ -1086,8 +1086,8 @@ public final class type {
     }
 
     protected static final String getShortName(final Class<?> cls) {
-      final String strictName = Classes.getStrictName(cls);
-      return strictName.substring(strictName.indexOf("type.") + 5).replace(".", " ");
+      final String canonicalName = cls.getCanonicalName();
+      return canonicalName.substring(canonicalName.indexOf("type.") + 5).replace('.', ' ');
     }
 
     protected final Entity owner;

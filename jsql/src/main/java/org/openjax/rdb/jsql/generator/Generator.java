@@ -79,7 +79,7 @@ public class Generator {
     final String classSimpleName = JavaIdentifiers.toInstanceCase(name);
 
     String code = "package " + pkg + ";\n\n";
-    code += "public final class " + classSimpleName + " extends " + Classes.getStrictName(Schema.class) + " {\n";
+    code += "public final class " + classSimpleName + " extends " + Schema.class.getCanonicalName() + " {\n";
 
     String tables = "";
     // First create the abstract entities
@@ -282,7 +282,7 @@ public class Generator {
     }
 
     public String getType(final boolean withGeneric) {
-      final StringBuilder builder = new StringBuilder(Classes.getStrictName(type));
+      final StringBuilder builder = new StringBuilder(type.getCanonicalName());
       if (type != type.ENUM.class)
         return builder.toString();
 
@@ -320,7 +320,7 @@ public class Generator {
   }
 
   public String makeTable(final $Table table) {
-    final String ext = table.getExtends$() != null ? JavaIdentifiers.toClassCase(table.getExtends$().text()) : Classes.getStrictName(type.Entity.class);
+    final String ext = table.getExtends$() != null ? JavaIdentifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
     String out = "";
     String abs = "";
     if (table.getAbstract$().text())
@@ -334,19 +334,19 @@ public class Generator {
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
       out += "    protected static final " + entityName + " identity = new " + entityName + "();\n\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
-      out += "    protected " + Classes.getStrictName(String.class) + " name() {\n";
+      out += "    @" + Override.class.getName() + "\n";
+      out += "    protected " + String.class.getName() + " name() {\n";
       out += "      return \"" + table.getName$().text() + "\";\n";
       out += "    }\n\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    protected " + entityName + " newInstance() {\n";
       out += "      return new " + entityName + "(true);\n";
       out += "    }\n\n";
       out += "    public " + entityName + "() {\n";
-      out += "      this(false, new " + Classes.getStrictName(type.DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(type.DataType.class) + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(false, new " + type.DataType.class.getCanonicalName() + "[" + totalColumnCount + "], new " + type.DataType.class.getCanonicalName() + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
       out += "    protected " + entityName + "(final boolean wasSelected) {\n";
-      out += "      this(wasSelected, new " + Classes.getStrictName(type.DataType.class) + "[" + totalColumnCount + "], new " + Classes.getStrictName(type.DataType.class) + "[" + totalPrimaryCount + "]);\n";
+      out += "      this(wasSelected, new " + type.DataType.class.getCanonicalName() + "[" + totalColumnCount + "], new " + type.DataType.class.getCanonicalName() + "[" + totalPrimaryCount + "]);\n";
       out += "    }\n\n";
 
       // Constructor with primary key columns
@@ -392,7 +392,7 @@ public class Generator {
     }
 
     String defs = "";
-    out += "    protected " + entityName + "(final boolean wasSelected, final " + Classes.getStrictName(type.DataType.class) + "<?>[] column, final " + Classes.getStrictName(type.DataType.class) + "<?>[] primary) {\n";
+    out += "    protected " + entityName + "(final boolean wasSelected, final " + type.DataType.class.getCanonicalName() + "<?>[] column, final " + type.DataType.class.getCanonicalName() + "<?>[] primary) {\n";
     out += "      super(wasSelected, column, primary);\n";
 
     defs = "";
@@ -422,20 +422,20 @@ public class Generator {
 
     if (table.getAbstract$().text()) {
       out += "\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    public abstract " + entityName + " clone();\n";
     }
     else {
       out += "\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    public " + entityName + " clone() {\n";
       out += "      return new " + entityName + "(this);\n";
       out += "    }\n";
     }
 
     out += "\n";
-    out += "    @" + Classes.getStrictName(Override.class) + "\n";
-    out += "    public boolean equals(final " + Classes.getStrictName(Object.class) + " obj) {\n";
+    out += "    @" + Override.class.getName() + "\n";
+    out += "    public boolean equals(final " + Object.class.getName() + " obj) {\n";
     out += "      if (obj == this)\n        return true;\n\n";
     out += "      if (!(obj instanceof " + entityName + ")" + (table.getExtends$() != null ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
 
@@ -463,7 +463,7 @@ public class Generator {
     eq = "";
     if (equalsColumns != null && equalsColumns.size() > 0) {
       out += "\n\n";
-      out += "    @" + Classes.getStrictName(Override.class) + "\n";
+      out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
       for (final $Column column : equalsColumns)
         eq += " + (this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get().hashCode() : -1)";
@@ -472,9 +472,9 @@ public class Generator {
     }
 
     out += "\n\n";
-    out += "    @" + Classes.getStrictName(Override.class) + "\n";
-    out += "    public " + Classes.getStrictName(String.class) + " toString() {\n";
-    out += "      final " + Classes.getStrictName(StringBuilder.class) + " builder = new " + Classes.getStrictName(StringBuilder.class) + "(super.toString());\n";
+    out += "    @" + Override.class.getName() + "\n";
+    out += "    public " + String.class.getName() + " toString() {\n";
+    out += "      final " + StringBuilder.class.getName() + " builder = new " + StringBuilder.class.getName() + "(super.toString());\n";
     out += "      if (builder.charAt(builder.length() - 1) == '}')\n";
     out += "        builder.setLength(builder.length() - 1);\n";
     out += "      else\n";
@@ -497,7 +497,7 @@ public class Generator {
     if (column instanceof $Enum)
       rawType = JavaIdentifiers.toClassCase(column.getName$().text());
     else
-      rawType = Classes.getStrictName((Class<?>)Classes.getGenericSuperclasses(type.type)[0]);
+      rawType = ((Class<?>)Classes.getGenericSuperclasses(type.type)[0]).getCanonicalName();
 
     return "final " + rawType + " " + columnName;
   }
@@ -510,7 +510,7 @@ public class Generator {
     final StringBuilder builder = new StringBuilder();
     final Type type = getType(table, column);
     if (column instanceof $Enum) {
-      builder.append("\n    @").append(Classes.getStrictName(EntityEnum.Spec.class)).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
+      builder.append("\n    @").append(EntityEnum.Spec.class.getCanonicalName()).append("(table=\"").append(table.getName$().text()).append("\", column=\"").append(column.getName$().text()).append("\")");
       builder.append("\n    public static enum ").append(typeName).append(" implements ").append(EntityEnum.class.getName()).append(" {");
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
