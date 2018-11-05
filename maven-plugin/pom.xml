@@ -94,7 +94,7 @@
           <plugin>
             <groupId>org.openjax.rdb</groupId>
             <artifactId>rdb-maven-plugin</artifactId>
-            <version>0.9.9-SNAPSHOT</version>
+            <version>${project.version}</version>
             <executions>
               <execution>
                 <id>ddlx2jsql</id>
