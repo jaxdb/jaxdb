@@ -36,7 +36,6 @@ import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.util.Hexadecimal;
-import org.fastjax.util.Random;
 import org.fastjax.util.Strings;
 import org.fastjax.xml.ValidationException;
 import org.junit.runner.RunWith;
@@ -78,15 +77,15 @@ public abstract class TypesTest extends SQLxTest {
     final String[] values = {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
     out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n");
     for (int i = 0; i < 1000; ++i) {
-      final String bigintType = (Math.random() < .5 ? "-" : "") + Random.numeric((int)(Math.random() * 18) + 1);
-      final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
-      final String blobType = new Hexadecimal(Strings.getRandomAlphaNumericString(255).getBytes()).toString().toUpperCase();
+      final String bigintType = (Math.random() < .5 ? "-" : "") + Strings.getRandomNumeric((int)(Math.random() * 18) + 1);
+      final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumeric(255).getBytes()).toString().toUpperCase();
+      final String blobType = new Hexadecimal(Strings.getRandomAlphaNumeric(255).getBytes()).toString().toUpperCase();
       final String booleanType = String.valueOf(Math.random() < .5);
-      final String clobType = Strings.getRandomAlphaNumericString((int)(Math.random() * 255));
+      final String clobType = Strings.getRandomAlphaNumeric((int)(Math.random() * 255));
       final String dateType = LocalDate.of(2000 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28)).format(DateTimeFormatter.ISO_DATE);
       final String datetimeType = LocalDateTime.of(2010 + (int)(Math.random() * 100), 1 + (int)(Math.random() * 12), 1 + (int)(Math.random() * 28), (int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS"));
       final String timeType = LocalTime.of((int)(Math.random() * 23), (int)(Math.random() * 59), (int)(Math.random() * 59)).format(DateTimeFormatter.ISO_LOCAL_TIME);
-      final String charType = Math.random() < .2 ? Strings.getRandomAlphaString((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? datetimeType : Math.random() < .2 ? dateType : timeType;
+      final String charType = Math.random() < .2 ? Strings.getRandomAlpha((int)(Math.random() * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) : Math.random() < .2 ? String.valueOf((int)((Math.random() - .5) * 255)) + "." + String.valueOf((int)(Math.random() * 255)) : Math.random() < .2 ? datetimeType : Math.random() < .2 ? dateType : timeType;
       final String decimalType = BigDecimal.valueOf(((Math.random() - .5) * Math.pow(2, (int)(Math.random() * 64) - 1))).setScale(10, RoundingMode.FLOOR).toString();
       final String floatType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 16) - 1)));
       final String doubleType = String.valueOf((Math.random() - .5) * (Math.pow(2, (int)(Math.random() * 32) - 1)));
