@@ -396,7 +396,7 @@ class SelectImpl {
       }
 
       protected Collection<Compilable> getEntitiesWithOwners() {
-        final Collection<Compilable> clone = FastCollections.clone(entities);
+        final Collection<Compilable> clone = new ArrayList<>(entities);
         clone.removeIf(entitiesWithOwnerPredicate);
         return clone;
       }

@@ -16,21 +16,20 @@
 
 package org.openjax.rdb.ddlx;
 
-import org.fastjax.util.MaskedEnum;
+import org.fastjax.util.Enums;
 
-class SQLStandard extends MaskedEnum {
-  protected static final SQLStandard SQL92 = new SQLStandard(0, "SQL-92");
-  protected static final SQLStandard SQL99 = new SQLStandard(1, "SQL-99");
-  protected static final SQLStandard SQL2003 = new SQLStandard(2, "SQL-2003");
+enum SQLStandard {
+  SQL92("SQL-92"),
+  SQL99("SQL-99"),
+  SQL2003("SQL-2003");
 
-  protected static SQLStandard[] toArray(final int mask) {
-    return MaskedEnum.<SQLStandard>toArray(SQLStandard.class, mask);
+  static SQLStandard[] toArray(final int mask) {
+    return Enums.Mask.toArray(SQLStandard.values(), mask);
   }
 
   private final String name;
 
-  private SQLStandard(final int index, final String name) {
-    super(index);
+  SQLStandard(final String name) {
     this.name = name;
   }
 

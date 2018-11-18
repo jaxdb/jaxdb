@@ -141,7 +141,7 @@ final class Compilation {
   protected ResultSet executeQuery(final Connection connection) throws IOException, SQLException {
     if (prepared) {
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
-      for (int i = 0; i < parameters.size(); i++)
+      for (int i = 0; i < parameters.size(); ++i)
         parameters.get(i).get(statement, i + 1);
 
       return statement.executeQuery();
@@ -157,7 +157,7 @@ final class Compilation {
 //        final IntArrayList results = new IntArrayList(statements.size());
 //        PreparedStatement jdbcStatement = null;
 //        String last = null;
-//        for (int i = 0; i < statements.size(); i++) {
+//        for (int i = 0; i < statements.size(); ++i) {
 //          final Statement statement = statements.get(i);
 //          if (!statement.sql.equals(last)) {
 //            if (jdbcStatement != null)
@@ -167,7 +167,7 @@ final class Compilation {
 //            last = statement.sql;
 //          }
 //
-//          for (int j = 0; j < statement.parameters.size(); j++)
+//          for (int j = 0; j < statement.parameters.size(); ++j)
 //            statement.parameters.get(j).get(jdbcStatement, j + 1);
 //
 //          jdbcStatement.addBatch();
@@ -180,7 +180,7 @@ final class Compilation {
 //      }
 
         final PreparedStatement jdbcStatement = connection.prepareStatement(builder.toString());
-        for (int j = 0; j < parameters.size(); j++)
+        for (int j = 0; j < parameters.size(); ++j)
           parameters.get(j).get(jdbcStatement, j + 1);
 
       return jdbcStatement.executeUpdate();
@@ -188,7 +188,7 @@ final class Compilation {
 
 //    if (batching) {
 //      final java.sql.Statement jdbcStatement = connection.createStatement();
-//      for (int i = 0; i < statements.size(); i++) {
+//      for (int i = 0; i < statements.size(); ++i) {
 //        final Statement statement = statements.get(i);
 //        jdbcStatement.addBatch(statement.sql.toString());
 //      }

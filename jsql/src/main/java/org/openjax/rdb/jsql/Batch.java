@@ -26,7 +26,6 @@ import java.util.List;
 
 import org.fastjax.sql.exception.SQLExceptionCatalog;
 import org.fastjax.util.ArrayIntList;
-import org.fastjax.util.FastCollections;
 import org.openjax.rdb.jsql.Delete.DELETE;
 import org.openjax.rdb.jsql.Insert.INSERT;
 import org.openjax.rdb.jsql.Update.UPDATE;
@@ -99,7 +98,7 @@ public class Batch {
           }
 
           final List<type.DataType<?>> parameters = compilation.getParameters();
-          for (int j = 0; j < parameters.size(); j++)
+          for (int j = 0; j < parameters.size(); ++j)
             parameters.get(j).get((PreparedStatement)statement, j + 1);
 
           ((PreparedStatement)statement).addBatch();
@@ -144,11 +143,11 @@ public class Batch {
 
   @Override
   public boolean equals(final Object obj) {
-    return obj == this || (obj instanceof Batch && FastCollections.equals(executeUpdates, ((Batch)obj).executeUpdates));
+    return obj == this || obj instanceof Batch && executeUpdates.containsAll(((Batch)obj).executeUpdates);
   }
 
   @Override
   public int hashCode() {
-    return FastCollections.hashCode(executeUpdates);
+    return executeUpdates.hashCode();
   }
 }

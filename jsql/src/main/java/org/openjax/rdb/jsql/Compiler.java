@@ -113,7 +113,7 @@ abstract class Compiler {
     if (subject instanceof type.Entity) {
       final type.Entity entity = (type.Entity)subject;
       final Alias alias = compilation.registerAlias(entity);
-      for (int c = 0; c < entity.column.length; c++) {
+      for (int c = 0; c < entity.column.length; ++c) {
         final type.DataType<?> column = entity.column[c];
         if (c > 0)
           compilation.append(", ");
@@ -269,7 +269,7 @@ abstract class Compiler {
     if (orderBy != null) {
       compilation.append(" ORDER BY ");
       if (orderBy.columns != null) {
-        for (int i = 0; i < orderBy.columns.length; i++) {
+        for (int i = 0; i < orderBy.columns.length; ++i) {
           final type.DataType<?> dataType = orderBy.columns[i];
           if (i > 0)
             compilation.append(", ");
@@ -279,7 +279,7 @@ abstract class Compiler {
         }
       }
       else {
-        for (int i = 0; i < orderBy.columnNumbers.length; i++) {
+        for (int i = 0; i < orderBy.columnNumbers.length; ++i) {
           final int columnNumber = orderBy.columnNumbers[i];
           if (i > 0)
             compilation.append(", ");
@@ -316,7 +316,7 @@ abstract class Compiler {
     compilation.append("INSERT INTO ");
     final type.Entity entity = columns[0].owner;
     entity.compile(compilation);
-    for (int j = 0; j < columns.length; j++) {
+    for (int j = 0; j < columns.length; ++j) {
       final type.DataType column = columns[j];
       if (column.get() == null) {
         if (!column.wasSet() && column.generateOnInsert != null)
@@ -334,7 +334,7 @@ abstract class Compiler {
     compilation.append(" (").append(builder).append(") VALUES (");
 
     boolean paramAdded = false;
-    for (int j = 0; j < entity.column.length; j++) {
+    for (int j = 0; j < entity.column.length; ++j) {
       final type.DataType column = entity.column[j];
       if (column.get() == null && (column.wasSet() || column.generateOnInsert == null))
         continue;
@@ -362,7 +362,7 @@ abstract class Compiler {
       final type.Entity entity = insert.entity;
       entity.compile(compilation);
       compilation.append(" (");
-      for (int i = 0; i < entity.column.length; i++) {
+      for (int i = 0; i < entity.column.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
@@ -379,7 +379,7 @@ abstract class Compiler {
       final type.Entity entity = insert.columns[0].owner;
       entity.compile(compilation);
       compilation.append(" (");
-      for (int i = 0; i < insert.columns.length; i++) {
+      for (int i = 0; i < insert.columns.length; ++i) {
         if (i > 0)
           compilation.append(", ");
 
@@ -405,7 +405,7 @@ abstract class Compiler {
     update.entity.compile(compilation);
     compilation.append(" SET ");
     boolean paramAdded = false;
-    for (int c = 0; c < entity.column.length; c++) {
+    for (int c = 0; c < entity.column.length; ++c) {
       final type.DataType column = entity.column[c];
       if (!column.primary && (column.wasSet() || column.generateOnUpdate != null || column.indirection != null)) {
         if (column.generateOnUpdate != null)
@@ -470,7 +470,7 @@ abstract class Compiler {
     compilation.append("UPDATE ");
     update.entity.compile(compilation);
     compilation.append(" SET ");
-    for (int i = 0; i < sets.size(); i++) {
+    for (int i = 0; i < sets.size(); ++i) {
       final UpdateImpl.SET set = sets.get(i);
       if (i > 0)
         compilation.append(", ");
@@ -489,7 +489,7 @@ abstract class Compiler {
     compilation.append("DELETE FROM ");
     delete.entity.compile(compilation);
     boolean paramAdded = false;
-    for (int j = 0; j < delete.entity.column.length; j++) {
+    for (int j = 0; j < delete.entity.column.length; ++j) {
       final type.DataType<?> column = delete.entity.column[j];
       if (column.wasSet()) {
         if (paramAdded)
@@ -535,7 +535,7 @@ abstract class Compiler {
 
   protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append('(');
-    for (int i = 0; i < expression.args.length; i++) {
+    for (int i = 0; i < expression.args.length; ++i) {
       final Compilable arg = compilable(expression.args[i]);
       if (i > 0)
         compilation.append(" || ");
@@ -639,7 +639,7 @@ abstract class Compiler {
     formatBraces(condition.operator, condition.a, compilation);
     compilation.append(' ').append(condition.operator).append(' ');
     formatBraces(condition.operator, condition.b, compilation);
-    for (int i = 0; i < condition.conditions.length; i++) {
+    for (int i = 0; i < condition.conditions.length; ++i) {
       compilation.append(' ').append(condition.operator).append(' ');
       formatBraces(condition.operator, condition.conditions[i], compilation);
     }
@@ -669,7 +669,7 @@ abstract class Compiler {
       compilation.append("NOT ");
 
     compilation.append("IN").append(" (");
-    for (int i = 0; i < predicate.values.length; i++) {
+    for (int i = 0; i < predicate.values.length; ++i) {
       if (i > 0)
         compilation.append(", ");
 
