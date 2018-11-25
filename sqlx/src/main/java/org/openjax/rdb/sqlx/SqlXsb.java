@@ -28,19 +28,19 @@ import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
 import org.fastjax.io.FastFiles;
 import org.fastjax.net.URLs;
+import org.fastjax.util.ArrayIntList;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.Classes;
 import org.fastjax.util.FastArrays;
+import org.fastjax.util.IntList;
 import org.fastjax.xml.sax.XMLDocument;
 import org.fastjax.xml.sax.XMLDocuments;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
@@ -245,7 +245,7 @@ final class SqlXsb {
 
   protected static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final List<Integer> counts = new ArrayList<>();
+    final IntList counts = new ArrayIntList();
 
     if (!iterator.hasNext())
       return new int[0];
@@ -258,7 +258,7 @@ final class SqlXsb {
     }
 
     final int[] array = new int[counts.size()];
-    for (int i = 0; i < counts.size(); i++)
+    for (int i = 0; i < counts.size(); ++i)
       array[i] = counts.get(i);
 
     return array;
@@ -321,7 +321,7 @@ final class SqlXsb {
 
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       final RowIterator iterator = new RowIterator(database);
-      for (int i = 0; iterator.hasNext(); i++) {
+      for (int i = 0; iterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 

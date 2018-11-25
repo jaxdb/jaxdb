@@ -30,7 +30,6 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -47,9 +46,11 @@ import org.fastjax.io.FastFiles;
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
 import org.fastjax.net.URLs;
+import org.fastjax.util.ArrayIntList;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.FastArrays;
 import org.fastjax.util.FastCollections;
+import org.fastjax.util.IntList;
 import org.fastjax.util.JavaIdentifiers;
 import org.fastjax.xml.jaxb.JaxbUtil;
 import org.fastjax.xml.jaxb.XJCompiler;
@@ -234,7 +235,7 @@ final class SqlJaxb {
 
   protected static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final List<Integer> counts = new ArrayList<>();
+    final IntList counts = new ArrayIntList();
 
     try {
       if (!iterator.hasNext())
@@ -252,7 +253,7 @@ final class SqlJaxb {
     }
 
     final int[] array = new int[counts.size()];
-    for (int i = 0; i < counts.size(); i++)
+    for (int i = 0; i < counts.size(); ++i)
       array[i] = counts.get(i);
 
     return array;
@@ -298,7 +299,7 @@ final class SqlJaxb {
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
       final RowIterator iterator = new RowIterator(database);
-      for (int i = 0; iterator.hasNext(); i++) {
+      for (int i = 0; iterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 
