@@ -32,7 +32,7 @@ public class DMLGenerator {
     public final Class<?> a;
     public final Class<?> b;
 
-    public Args(final Class<?> a, final Class<?> b) {
+    Args(final Class<?> a, final Class<?> b) {
       this.a = a;
       this.b = b;
     }
@@ -74,7 +74,7 @@ public class DMLGenerator {
   private static final Map<Args,Class<?>> directMap = new HashMap<>();
   private static final Map<Class<?>,Class<?>> singleMap = new LinkedHashMap<>();
 
-  private static final void put(final Map<Args,Class<?>> map, final Class<?> r, final Class<?> a, final Class<?> b) {
+  private static void put(final Map<Args,Class<?>> map, final Class<?> r, final Class<?> a, final Class<?> b) {
     final Args args = new Args(a, b);
 //    final Class<?> exists = map.get(args);
 //    if (exists != null && exists != r)
@@ -88,22 +88,22 @@ public class DMLGenerator {
       map.put(new Args(b, getGenericType(a)), r);
   }
 
-  private static final void putApprox(final Class<?> r, final Class<?> a, final Class<?> b, final boolean includeScaled) {
+  private static void putApprox(final Class<?> r, final Class<?> a, final Class<?> b, final boolean includeScaled) {
     if (includeScaled)
       put(scaledMap, r, a, b);
 
     put(directMap, r, a, b);
   }
 
-  private static final void putApproxs(final Class<?> a, final Class<?> b, final Class<?> r) {
+  private static void putApproxs(final Class<?> a, final Class<?> b, final Class<?> r) {
     put(a, b, r, true);
   }
 
-  private static final void putDirect(final Class<?> a, final Class<?> b, final Class<?> r) {
+  private static void putDirect(final Class<?> a, final Class<?> b, final Class<?> r) {
     put(a, b, r, false);
   }
 
-  private static final void put(final Class<?> a, final Class<?> b, final Class<?> r, final boolean includeScaled) {
+  private static void put(final Class<?> a, final Class<?> b, final Class<?> r, final boolean includeScaled) {
     putApprox(r, a, b, includeScaled);
 
     final Class<?> ua = getUnsignedClass(a);
@@ -245,7 +245,7 @@ public class DMLGenerator {
     "$1 DIV(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new NumericExpression(Operator.DIVIDE, a, b));\n}"
   };
 
-  public static String getName(final Class<?> cls) {
+  private static String getName(final Class<?> cls) {
     if (cls == Float.class)
       return "float";
 

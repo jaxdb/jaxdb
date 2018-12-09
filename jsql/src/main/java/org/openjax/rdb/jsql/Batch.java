@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.fastjax.sql.exception.SQLExceptionCatalog;
@@ -38,9 +39,7 @@ public class Batch {
   }
 
   public Batch addStatements(final ExecuteUpdate ... statements) {
-    for (final ExecuteUpdate statement : statements)
-      executeUpdates.add(statement);
-
+    Collections.addAll(executeUpdates, statements);
     return this;
   }
 

@@ -145,7 +145,7 @@ public final class Generator {
     }
 
     if (violations.size() > 0)
-      violations.stream().forEach(v -> logger.warn(v));
+      violations.forEach(logger::warn);
   }
 
   private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
@@ -154,8 +154,7 @@ public final class Generator {
     registerColumns(tableNames, columnNameToColumn, table);
 
     final Compiler compiler = Compiler.getCompiler(vendor);
-    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>();
-    statements.addAll(compiler.types(table));
+    final LinkedHashSet<CreateStatement> statements = new LinkedHashSet<>(compiler.types(table));
 
     columnCount.put(table.getName$().text(), table.getColumn() != null ? table.getColumn().size() : 0);
     final CreateStatement createTable = compiler.createTableIfNotExists(table, columnNameToColumn);

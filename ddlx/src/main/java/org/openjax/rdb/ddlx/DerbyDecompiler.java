@@ -338,7 +338,7 @@ final class DerbyDecompiler extends Decompiler {
     $Check check = null;
     $Check previousCheck = null;
     for (int i = 0; i < terms.length; i += 3) {
-      final $Check nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i + 0], '"'), terms[i + 1], terms[i + 2]);
+      final $Check nextCheck = makeCheck(i == 0 ? null : terms[i++], Strings.trim(terms[i], '"'), terms[i + 1], terms[i + 2]);
       if (previousCheck == null)
         check = previousCheck = nextCheck;
       else {
@@ -431,7 +431,7 @@ final class DerbyDecompiler extends Decompiler {
       if (unique)
         index.setUnique$(new $Index.Unique$(unique));
 
-      final String columnNumbers[] = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
+      final String[] columnNumbers = descriptor.substring(descriptor.lastIndexOf('(') + 1, descriptor.lastIndexOf(')')).split(",");
       for (final String columnNumber : columnNumbers) {
         final String columnName = columnNames.get(Integer.parseInt(columnNumber.trim()) - 1);
         final $Table.Indexes.Index.Column column = new $Table.Indexes.Index.Column();

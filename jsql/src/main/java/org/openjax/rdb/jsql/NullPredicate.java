@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.util.Set;
 
 final class NullPredicate extends Predicate {
-  protected final boolean positive;
+  final boolean positive;
 
   protected NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
     super(dataType);
@@ -29,7 +29,7 @@ final class NullPredicate extends Predicate {
 
   @Override
   protected Boolean evaluate(final Set<Evaluable> visited) {
-    return (positive ? get() == null : get() != null) ? Boolean.TRUE : Boolean.FALSE;
+    return (get() == null) == positive ? Boolean.TRUE : Boolean.FALSE;
   }
 
   @Override

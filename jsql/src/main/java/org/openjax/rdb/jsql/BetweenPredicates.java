@@ -16,18 +16,18 @@
 
 package org.openjax.rdb.jsql;
 
+import org.fastjax.util.Numbers;
+import org.fastjax.util.Temporals;
+
 import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.Set;
 
-import org.fastjax.util.Numbers;
-import org.fastjax.util.Temporals;
-
 final class BetweenPredicates {
   protected static abstract class BetweenPredicate extends Predicate {
-    protected final boolean positive;
+    final boolean positive;
 
-    protected BetweenPredicate(final kind.DataType<?> dataType, final boolean positive) {
+    BetweenPredicate(final kind.DataType<?> dataType, final boolean positive) {
       super(dataType);
       this.positive = positive;
     }
@@ -69,7 +69,7 @@ final class BetweenPredicates {
       final Number a = (Number)((Evaluable)this.a).evaluate(visited);
       final Number b = (Number)((Evaluable)this.b).evaluate(visited);
       final Number c = (Number)((Evaluable)this.dataType).evaluate(visited);
-      return Numbers.compare(a, c) >= 0 && Numbers.compare(c, b) <= 0 ? positive : !positive;
+      return Numbers.compare(a, c) >= 0 && Numbers.compare(c, b) <= 0 == positive;
     }
   }
 
@@ -101,7 +101,7 @@ final class BetweenPredicates {
       final Temporal a = (Temporal)((Evaluable)this.a).evaluate(visited);
       final Temporal b = (Temporal)((Evaluable)this.b).evaluate(visited);
       final Temporal c = (Temporal)((Evaluable)this.dataType).evaluate(visited);
-      return Temporals.compare(a, c) <= 0 && Temporals.compare(c, b) >= 0 ? positive : !positive;
+      return Temporals.compare(a, c) <= 0 && Temporals.compare(c, b) >= 0 == positive;
     }
   }
 
@@ -133,7 +133,7 @@ final class BetweenPredicates {
       final Temporal a = (Temporal)((Evaluable)this.a).evaluate(visited);
       final Temporal b = (Temporal)((Evaluable)this.b).evaluate(visited);
       final Temporal c = (Temporal)((Evaluable)this.dataType).evaluate(visited);
-      return Temporals.compare(a, c) >= 0 && Temporals.compare(c, b) <= 0 ? positive : !positive;
+      return Temporals.compare(a, c) >= 0 && Temporals.compare(c, b) <= 0 == positive;
     }
   }
 
@@ -165,7 +165,7 @@ final class BetweenPredicates {
       final String a = (String)((Evaluable)this.a).evaluate(visited);
       final String b = (String)((Evaluable)this.b).evaluate(visited);
       final String c = (String)((Evaluable)this.dataType).evaluate(visited);
-      return a.compareTo(c) >= 0 && c.compareTo(b) <= 0 ? positive : !positive;
+      return a.compareTo(c) >= 0 && c.compareTo(b) <= 0  == positive;
     }
   }
 

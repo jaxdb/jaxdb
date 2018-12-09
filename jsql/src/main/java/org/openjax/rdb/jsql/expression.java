@@ -224,7 +224,7 @@ final class expression {
     protected final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
       for (final kind.DataType<?> arg : args) {
-        if (arg == null || !(arg instanceof Evaluable))
+        if (!(arg instanceof Evaluable))
           return null;
 
         builder.append(((Evaluable)arg).evaluate(visited));

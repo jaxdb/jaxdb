@@ -341,12 +341,12 @@ abstract class Compiler {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + minCheck + " AND " + maxCheck + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(" AND ").append(maxCheck).append(")");
           else
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + minCheck + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(")");
         }
         else if (maxCheck != null) {
-          contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + maxCheck + ")");
+          contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(maxCheck).append(")");
         }
       }
 
@@ -413,7 +413,7 @@ abstract class Compiler {
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (" + q(column.getName$().text()) + " " + operator + " " + condition + ")");
+            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(q(column.getName$().text())).append(" ").append(operator).append(" ").append(condition).append(")");
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }

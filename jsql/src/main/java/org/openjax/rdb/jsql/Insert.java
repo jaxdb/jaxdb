@@ -17,13 +17,13 @@
 package org.openjax.rdb.jsql;
 
 public interface Insert {
-  public interface VALUES<T extends type.Subject<?>> extends ExecuteUpdate {
+  interface VALUES<T extends type.Subject<?>> extends ExecuteUpdate {
   }
 
-  public interface INSERT<T extends type.Subject<?>> extends ExecuteUpdate {
+  interface INSERT<T extends type.Subject<?>> extends ExecuteUpdate {
   }
 
-  public interface _INSERT<T extends type.Subject<?>> extends INSERT<T> {
-    public VALUES<T> VALUES(final Select.untyped.SELECT<?> select);
+  interface _INSERT<T extends type.Subject<?>> extends INSERT<T> {
+    VALUES<T> VALUES(Select.untyped.SELECT<?> select);
   }
 }

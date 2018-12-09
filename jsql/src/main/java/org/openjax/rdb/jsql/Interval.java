@@ -129,7 +129,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   public Interval and(final long value, final Unit unit) {
-    final Long newValue = intervals.getOrDefault(unit, 0l) + value;
+    final long newValue = intervals.getOrDefault(unit, 0l) + value;
     if (newValue != 0)
       intervals.put(unit, newValue);
     else

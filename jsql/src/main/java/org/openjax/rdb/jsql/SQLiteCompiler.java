@@ -122,7 +122,7 @@ final class SQLiteCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      clause.append(' ').append(component).append(" " + unitString);
+      clause.append(' ').append(component).append(" ").append(unitString);
     }
 
     compilation.append(clause.substring(1));

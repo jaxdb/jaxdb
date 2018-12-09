@@ -17,10 +17,10 @@
 package org.openjax.rdb.jsql;
 
 public interface Delete {
-  public interface DELETE extends ExecuteUpdate {
+  interface DELETE extends ExecuteUpdate {
   }
 
-  public interface _DELETE extends DELETE {
-    public DELETE WHERE(final Condition<?> condition);
+  interface _DELETE extends DELETE {
+    DELETE WHERE(Condition<?> condition);
   }
 }

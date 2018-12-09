@@ -57,19 +57,19 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Order {
+  public @interface Order {
     int value();
   }
 
   @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Vendor {
+  public @interface Vendor {
     Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] value();
   }
 
   @Target(ElementType.METHOD)
   @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Unsupported {
+  public @interface Unsupported {
     Class<? extends org.openjax.rdb.ddlx.runner.Vendor>[] value();
   }
 

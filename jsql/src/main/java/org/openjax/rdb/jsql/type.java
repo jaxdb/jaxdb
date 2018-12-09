@@ -437,7 +437,7 @@ public final class type {
       else if (value instanceof BigInteger || value instanceof BigDecimal)
         this.value = ((Number)value).longValue();
       else if (value instanceof Long)
-        this.value = Long.valueOf((Long)value);
+        this.value = (Long)value;
       else if (value instanceof Integer)
         this.value = Long.valueOf((Integer)value);
       else if ((value instanceof Float || value instanceof Double) && Numbers.isInteger(((Number)value).floatValue()))
@@ -522,7 +522,7 @@ public final class type {
       set(value);
     }
 
-    private final void checkLength(final int length) {
+    private void checkLength(final int length) {
       if (length <= 0)
         throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
     }
@@ -1085,7 +1085,7 @@ public final class type {
       return array;
     }
 
-    protected static final String getShortName(final Class<?> cls) {
+    protected static String getShortName(final Class<?> cls) {
       final String canonicalName = cls.getCanonicalName();
       return canonicalName.substring(canonicalName.indexOf("type.") + 5).replace('.', ' ');
     }
@@ -1384,11 +1384,11 @@ public final class type {
         return this;
       }
 
-      private final void checkScale(final int precision, final int scale) {
+      private void checkScale(final int precision, final int scale) {
         if (precision < scale)
           throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
 
-        if (scale >= 0 && scale > maxScale)
+        if (scale > maxScale)
           throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
       }
 
@@ -1537,11 +1537,11 @@ public final class type {
       return this;
     }
 
-    private final void checkScale(final int precision, final int scale) {
+    private void checkScale(final int precision, final int scale) {
       if (precision < scale)
         throw new IllegalArgumentException(getShortName(getClass()) + " scale [" + scale + "] cannot be greater than precision [" + precision + "]");
 
-      if (scale >= 0 && scale > maxScale)
+      if (scale > maxScale)
         throw new IllegalArgumentException(getShortName(getClass()) + " scale [0, " + maxScale + "] exceeded: " + scale);
     }
 
@@ -2233,7 +2233,7 @@ public final class type {
       return length;
     }
 
-    private final void checkLength(final Long length) {
+    private void checkLength(final Long length) {
       if (length != null && length <= 0)
         throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
     }
@@ -2952,7 +2952,7 @@ public final class type {
     protected abstract T maxValue();
     protected abstract int maxPrecision();
 
-    private final void checkPrecision(final Integer precision) {
+    private void checkPrecision(final Integer precision) {
       if (precision != null && maxPrecision() != -1 && precision > maxPrecision())
         throw new IllegalArgumentException(getShortName(getClass()) + " precision [0, " + maxPrecision() + "] exceeded: " + precision);
     }

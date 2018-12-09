@@ -16,6 +16,10 @@
 
 package org.openjax.rdb.sqlx;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -37,11 +41,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
-
 import org.fastjax.io.FastFiles;
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
@@ -56,9 +55,9 @@ import org.fastjax.xml.jaxb.JaxbUtil;
 import org.fastjax.xml.jaxb.XJCompiler;
 import org.fastjax.xml.sax.XMLDocument;
 import org.fastjax.xml.sax.XMLDocuments;
-import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Table;
+import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.sqlx_0_9_9.Database;
 import org.openjax.rdb.sqlx_0_9_9.Insert;
 import org.openjax.rdb.sqlx_0_9_9.Row;
@@ -194,7 +193,7 @@ final class SqlJaxb {
 
       return row;
     }
-  };
+  }
 
   private static String loadRow(final DBVendor vendor, final Row row) throws IllegalAccessException, InvocationTargetException {
     final StringBuilder columns = new StringBuilder();
@@ -319,10 +318,6 @@ final class SqlJaxb {
     final LinkedHashSet<URL> xjbs = new LinkedHashSet<>();
     xjbs.add(Thread.currentThread().getContextClassLoader().getResource("sqlx.xjb"));
     command.setXJBs(xjbs);
-
-    final LinkedHashSet<URL> schemas = new LinkedHashSet<>();
-    for (final URL xsd : xsds)
-      schemas.add(xsd);
 
     command.setSchemas(xsds);
 

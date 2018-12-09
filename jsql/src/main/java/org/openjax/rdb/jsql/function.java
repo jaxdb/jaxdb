@@ -16,16 +16,16 @@
 
 package org.openjax.rdb.jsql;
 
+import org.fastjax.math.BigDecimals;
+import org.fastjax.math.SafeMath;
+import org.fastjax.util.Numbers;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Set;
-
-import org.fastjax.math.BigDecimals;
-import org.fastjax.math.SafeMath;
-import org.fastjax.util.Numbers;
 
 final class function {
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);
@@ -118,7 +118,7 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    protected void compile(final Compilation compilation) {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
@@ -240,7 +240,7 @@ final class function {
         return a;
 
       if (a instanceof Float)
-        return (float)SafeMath.floor(a.floatValue());
+        return SafeMath.floor(a.floatValue());
 
       if (a instanceof Double)
         return SafeMath.floor(a.doubleValue());
@@ -356,7 +356,7 @@ final class function {
       final BigDecimal bigDecimal;
       if (a instanceof BigDecimal)
         bigDecimal = (BigDecimal)a;
-      else if (a instanceof BigDecimal)
+      else if (a instanceof BigInteger)
         bigDecimal = new BigDecimal((BigInteger)a);
       else
         throw new UnsupportedOperationException(a.getClass().getName() + " is not a supported Number type");
@@ -399,22 +399,22 @@ final class function {
     protected Number evaluate(final Number a, final Number b) {
       if (a instanceof Float) {
         if (b instanceof Float)
-          return (float)(a.floatValue() % b.floatValue());
+          return (a.floatValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.floatValue() % b.doubleValue());
+          return (a.floatValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (float)(a.floatValue() % b.byteValue());
+          return (a.floatValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (float)(a.floatValue() % b.shortValue());
+          return (a.floatValue() % b.shortValue());
 
         if (b instanceof Integer)
-          return (float)(a.floatValue() % b.intValue());
+          return (a.floatValue() % b.intValue());
 
         if (b instanceof Long)
-          return (float)(a.floatValue() % b.longValue());
+          return (a.floatValue() % b.longValue());
 
         if (b instanceof BigDecimal)
           return BigDecimal.valueOf(a.floatValue()).remainder((BigDecimal)b);
@@ -427,22 +427,22 @@ final class function {
 
       if (a instanceof Double) {
         if (b instanceof Float)
-          return (double)(a.doubleValue() % b.floatValue());
+          return (a.doubleValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.doubleValue() % b.doubleValue());
+          return (a.doubleValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (double)(a.doubleValue() % b.byteValue());
+          return (a.doubleValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (double)(a.doubleValue() % b.shortValue());
+          return (a.doubleValue() % b.shortValue());
 
         if (b instanceof Integer)
-          return (double)(a.doubleValue() % b.intValue());
+          return (a.doubleValue() % b.intValue());
 
         if (b instanceof Long)
-          return (double)(a.doubleValue() % b.longValue());
+          return (a.doubleValue() % b.longValue());
 
         if (b instanceof BigDecimal)
           return BigDecimal.valueOf(a.doubleValue()).remainder((BigDecimal)b);
@@ -455,22 +455,22 @@ final class function {
 
       if (a instanceof Byte) {
         if (b instanceof Float)
-          return (float)(a.byteValue() % b.floatValue());
+          return(a.byteValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.byteValue() % b.doubleValue());
+          return (a.byteValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (byte)(a.byteValue() % b.byteValue());
+          return (a.byteValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (byte)(a.byteValue() % b.shortValue());
+          return (a.byteValue() % b.shortValue());
 
         if (b instanceof Integer)
-          return (byte)(a.byteValue() % b.intValue());
+          return (a.byteValue() % b.intValue());
 
         if (b instanceof Long)
-          return (byte)(a.byteValue() % b.longValue());
+          return (a.byteValue() % b.longValue());
 
         if (b instanceof BigDecimal)
           return BigDecimal.valueOf(a.byteValue()).remainder((BigDecimal)b);
@@ -483,22 +483,22 @@ final class function {
 
       if (a instanceof Short) {
         if (b instanceof Float)
-          return (float)(a.shortValue() % b.floatValue());
+          return (a.shortValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.shortValue() % b.doubleValue());
+          return (a.shortValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (byte)(a.shortValue() % b.byteValue());
+          return (a.shortValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (short)(a.shortValue() % b.shortValue());
+          return (a.shortValue() % b.shortValue());
 
         if (b instanceof Integer)
-          return (short)(a.shortValue() % b.intValue());
+          return (a.shortValue() % b.intValue());
 
         if (b instanceof Long)
-          return (short)(a.shortValue() % b.longValue());
+          return (a.shortValue() % b.longValue());
 
         if (b instanceof BigDecimal)
           return BigDecimal.valueOf(a.shortValue()).remainder((BigDecimal)b);
@@ -511,19 +511,19 @@ final class function {
 
       if (a instanceof Integer) {
         if (b instanceof Float)
-          return (float)(a.intValue() % b.floatValue());
+          return (a.intValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.intValue() % b.doubleValue());
+          return (a.intValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (byte)(a.intValue() % b.byteValue());
+          return (a.intValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (short)(a.intValue() % b.shortValue());
+          return (a.intValue() % b.shortValue());
 
         if (b instanceof Integer)
-          return (int)(a.intValue() % b.intValue());
+          return (a.intValue() % b.intValue());
 
         if (b instanceof Long)
           return (int)(a.intValue() % b.longValue());
@@ -539,22 +539,22 @@ final class function {
 
       if (a instanceof Long) {
         if (b instanceof Float)
-          return (float)(a.longValue() % b.floatValue());
+          return (a.longValue() % b.floatValue());
 
         if (b instanceof Double)
-          return (double)(a.longValue() % b.doubleValue());
+          return (a.longValue() % b.doubleValue());
 
         if (b instanceof Byte)
-          return (byte)(a.longValue() % b.byteValue());
+          return (a.longValue() % b.byteValue());
 
         if (b instanceof Short)
-          return (short)(a.longValue() % b.shortValue());
+          return (a.longValue() % b.shortValue());
 
         if (b instanceof Integer)
           return (int)(a.longValue() % b.intValue());
 
         if (b instanceof Long)
-          return (long)(a.longValue() % b.longValue());
+          return (a.longValue() % b.longValue());
 
         if (b instanceof BigDecimal)
           return BigDecimal.valueOf(a.longValue()).remainder((BigDecimal)b);

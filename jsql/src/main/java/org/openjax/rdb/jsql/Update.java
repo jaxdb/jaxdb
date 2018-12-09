@@ -17,15 +17,15 @@
 package org.openjax.rdb.jsql;
 
 public interface Update {
-  public interface UPDATE extends ExecuteUpdate {
+  interface UPDATE extends ExecuteUpdate {
   }
 
-  public interface _SET extends UPDATE {
-    public <T>SET SET(final type.DataType<? extends T> column, final type.DataType<? extends T> to);
-    public <T>SET SET(final type.DataType<T> column, final T to);
+  interface _SET extends UPDATE {
+    <T>SET SET(type.DataType<? extends T> column, type.DataType<? extends T> to);
+    <T>SET SET(type.DataType<T> column, T to);
   }
 
-  public interface SET extends _SET {
-    public UPDATE WHERE(final Condition<?> condition);
+  interface SET extends _SET {
+    UPDATE WHERE(Condition<?> condition);
   }
 }

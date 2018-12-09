@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 public interface EntityEnum {
   @Target({ElementType.TYPE})
   @Retention(RetentionPolicy.RUNTIME)
-  public @interface Spec {
-    public String table();
-    public String column();
+  @interface Spec {
+    String table();
+    String column();
   }
 }

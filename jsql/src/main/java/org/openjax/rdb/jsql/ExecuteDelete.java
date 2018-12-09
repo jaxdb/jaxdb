@@ -20,6 +20,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public interface ExecuteDelete {
-  public int[] execute(final Transaction transaction) throws IOException, SQLException;
-  public int[] execute() throws IOException, SQLException;
+  int[] execute(Transaction transaction) throws IOException, SQLException;
+  int[] execute() throws IOException, SQLException;
 }

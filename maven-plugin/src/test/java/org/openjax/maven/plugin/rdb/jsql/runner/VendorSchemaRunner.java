@@ -36,7 +36,7 @@ import org.openjax.rdb.vendor.DBVendor;
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.TYPE, ElementType.METHOD})
   @Retention(RetentionPolicy.RUNTIME)
-  public static @interface Schema {
+  public @interface Schema {
     Class<? extends org.openjax.rdb.jsql.Schema>[] value();
   }
 

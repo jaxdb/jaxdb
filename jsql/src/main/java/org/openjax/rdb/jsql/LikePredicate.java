@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.Set;
 
 final class LikePredicate extends Predicate {
-  protected final boolean positive;
-  protected final CharSequence pattern;
+  final boolean positive;
+  final CharSequence pattern;
 
   protected LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
     super(dataType);
@@ -39,7 +39,7 @@ final class LikePredicate extends Predicate {
       return null;
 
     final String value = a.get().toString();
-    return (value.matches(pattern.toString().replace("%", ".*")) ? positive : !positive) ? value : null;
+    return value.matches(pattern.toString().replace("%", ".*")) == positive ? value : null;
   }
 
   @Override

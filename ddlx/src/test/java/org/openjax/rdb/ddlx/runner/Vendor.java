@@ -23,8 +23,8 @@ import java.sql.SQLException;
 import org.openjax.rdb.vendor.DBVendor;
 
 public interface Vendor {
-  public DBVendor getDBVendor();
-  public void init() throws IOException, SQLException;
-  public Connection getConnection() throws IOException, SQLException;
-  public void destroy() throws IOException, SQLException;
+  DBVendor getDBVendor();
+  void init() throws IOException, SQLException;
+  Connection getConnection() throws IOException, SQLException;
+  void destroy() throws IOException, SQLException;
 }

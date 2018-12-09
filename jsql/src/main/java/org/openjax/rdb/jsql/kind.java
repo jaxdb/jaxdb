@@ -26,97 +26,97 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 interface kind {
-  public interface ApproxNumeric<T extends Number> extends Numeric<T> {
+  interface ApproxNumeric<T extends Number> extends Numeric<T> {
   }
 
-  public interface ARRAY<T> extends DataType<T> {
+  interface ARRAY<T> extends DataType<T> {
   }
 
-  public interface BIGINT extends ExactNumeric<Long> {
-    public interface UNSIGNED extends ExactNumeric<BigInteger>, Numeric.UNSIGNED {
+  interface BIGINT extends ExactNumeric<Long> {
+    interface UNSIGNED extends ExactNumeric<BigInteger>, Numeric.UNSIGNED {
     }
   }
 
-  public interface BINARY extends DataType<byte[]> {
+  interface BINARY extends DataType<byte[]> {
   }
 
-  public interface BLOB extends DataType<InputStream> {
+  interface BLOB extends DataType<InputStream> {
   }
 
-  public interface BOOLEAN extends DataType<Boolean> {
+  interface BOOLEAN extends DataType<Boolean> {
   }
 
-  public interface CHAR extends Textual<String> {
+  interface CHAR extends Textual<String> {
   }
 
-  public interface CLOB extends DataType<Reader> {
+  interface CLOB extends DataType<Reader> {
   }
 
-  public interface DataType<T> extends Subject<T> {
+  interface DataType<T> extends Subject<T> {
   }
 
-  public interface DATE extends Temporal<LocalDate> {
+  interface DATE extends Temporal<LocalDate> {
   }
 
-  public interface DATETIME extends Temporal<LocalDateTime> {
+  interface DATETIME extends Temporal<LocalDateTime> {
   }
 
-  public interface DECIMAL extends ExactNumeric<BigDecimal> {
-    public interface UNSIGNED extends ApproxNumeric<BigDecimal>, Numeric.UNSIGNED {
+  interface DECIMAL extends ExactNumeric<BigDecimal> {
+    interface UNSIGNED extends ApproxNumeric<BigDecimal>, Numeric.UNSIGNED {
     }
   }
 
-  public interface DOUBLE extends ApproxNumeric<Double> {
-    public interface UNSIGNED extends ApproxNumeric<Double>, Numeric.UNSIGNED {
+  interface DOUBLE extends ApproxNumeric<Double> {
+    interface UNSIGNED extends ApproxNumeric<Double>, Numeric.UNSIGNED {
     }
   }
 
-  public interface ENUM<T extends Enum<?>> extends Textual<T> {
+  interface ENUM<T extends Enum<?>> extends Textual<T> {
   }
 
-  public interface Entity<T> extends Subject<T> {
+  interface Entity<T> extends Subject<T> {
   }
 
-  public interface ExactNumeric<T extends Number> extends Numeric<T> {
+  interface ExactNumeric<T extends Number> extends Numeric<T> {
   }
 
-  public interface FLOAT extends ApproxNumeric<Float> {
-    public interface UNSIGNED extends ApproxNumeric<Float>, Numeric.UNSIGNED {
+  interface FLOAT extends ApproxNumeric<Float> {
+    interface UNSIGNED extends ApproxNumeric<Float>, Numeric.UNSIGNED {
     }
   }
 
-  public interface INT extends ExactNumeric<Integer> {
-    public interface UNSIGNED extends ExactNumeric<Long>, Numeric.UNSIGNED {
+  interface INT extends ExactNumeric<Integer> {
+    interface UNSIGNED extends ExactNumeric<Long>, Numeric.UNSIGNED {
     }
   }
 
-  public interface LargeObject<T extends Closeable> extends DataType<T> {
+  interface LargeObject<T extends Closeable> extends DataType<T> {
   }
 
-  public interface Numeric<T extends Number> extends DataType<T> {
-    public static interface UNSIGNED {
+  interface Numeric<T extends Number> extends DataType<T> {
+    interface UNSIGNED {
     }
   }
 
-  public interface SMALLINT extends ExactNumeric<Short> {
-    public interface UNSIGNED extends ExactNumeric<Integer>, Numeric.UNSIGNED {
+  interface SMALLINT extends ExactNumeric<Short> {
+    interface UNSIGNED extends ExactNumeric<Integer>, Numeric.UNSIGNED {
     }
   }
 
-  public interface Subject<T> {
+  interface Subject<T> {
   }
 
-  public interface Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
+  interface Temporal<T extends java.time.temporal.Temporal> extends DataType<T> {
   }
 
-  public interface Textual<T extends Comparable<?>> extends DataType<T> {
+  interface Textual<T extends Comparable<?>> extends DataType<T> {
   }
 
-  public interface TIME extends Temporal<LocalTime> {
+  interface TIME extends Temporal<LocalTime> {
   }
 
-  public interface TINYINT extends ExactNumeric<Byte> {
-    public interface UNSIGNED extends ExactNumeric<Short>, Numeric.UNSIGNED {
+  interface TINYINT extends ExactNumeric<Byte> {
+    interface UNSIGNED extends ExactNumeric<Short>, Numeric.UNSIGNED {
     }
   }
 }

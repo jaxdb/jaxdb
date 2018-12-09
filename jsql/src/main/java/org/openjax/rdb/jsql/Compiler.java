@@ -549,7 +549,7 @@ abstract class Compiler {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final TemporalUnit unit : units)
-      clause.append(' ').append(interval.get(unit)).append(" " + unit);
+      clause.append(' ').append(interval.get(unit)).append(" ").append(unit);
 
     compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');
   }

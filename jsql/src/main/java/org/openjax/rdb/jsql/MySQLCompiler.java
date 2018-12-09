@@ -103,7 +103,7 @@ class MySQLCompiler extends Compiler {
         throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
       }
 
-      clause.append(' ').append(component).append(" " + unitString);
+      clause.append(' ').append(component).append(' ').append(unitString);
     }
 
     compilation.append("INTERVAL ").append(clause.substring(1));
@@ -118,7 +118,7 @@ class MySQLCompiler extends Compiler {
       compilation.append("CAST((");
       compilable(as.dataType).compile(compilation);
       final String declaration = as.cast.declare(compilation.vendor);
-      compilation.append(") AS ").append(as.cast instanceof kind.Numeric.UNSIGNED ? declaration.substring(0, declaration.indexOf(" UNSIGNED")) : declaration).append(')');
+      compilation.append(") AS ").append(declaration).append(')');
     }
     else if (as.cast instanceof type.ExactNumeric) {
       compilation.append("CAST((");

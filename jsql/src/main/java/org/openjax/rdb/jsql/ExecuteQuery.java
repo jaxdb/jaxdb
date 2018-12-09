@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 public interface ExecuteQuery<T extends type.Subject<?>> {
-  public RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException;
-  public RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException;
-  public RowIterator<T> execute() throws IOException, SQLException;
+  RowIterator<T> execute(String dataSourceId) throws IOException, SQLException;
+  RowIterator<T> execute(Transaction transaction) throws IOException, SQLException;
+  RowIterator<T> execute() throws IOException, SQLException;
 }

@@ -115,7 +115,7 @@ abstract class Decompiler {
         columnNumberToColumn.put(index, column);
       }
 
-      columnNumberToColumn.values().stream().forEach(c -> table.addColumn(c));
+      columnNumberToColumn.values().forEach(table::addColumn);
 
       final ResultSet primaryKeyRows = metaData.getPrimaryKeys(null, null, tableName);
       while (primaryKeyRows.next()) {
@@ -277,7 +277,7 @@ abstract class Decompiler {
   }
 
   @SuppressWarnings("unchecked")
-  protected static final <T extends $Column>T newColumn(final Class<T> type) {
+  protected static <T extends $Column>T newColumn(final Class<T> type) {
     if (type == $Bigint.class)
       return (T)new $Bigint() {
         private static final long serialVersionUID = 8340538426557873933L;

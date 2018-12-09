@@ -16,18 +16,18 @@
 
 package org.openjax.rdb.jsql;
 
+import org.fastjax.sql.exception.SQLExceptionCatalog;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import org.fastjax.sql.exception.SQLExceptionCatalog;
 
 abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
   protected BatchableKeyword(final BatchableKeyword<T> parent) {
     super(parent);
   }
 
-  private final int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+  private int execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     Compilation compilation = null;
     try {
       final Command command = normalize();

@@ -16,6 +16,8 @@
 
 package org.openjax.rdb.sqlx;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,9 +25,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
-
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.xml.transform.Transformer;
@@ -51,7 +50,7 @@ public final class SQL {
 
   public static int[] INSERT(final Connection connection, final Insert insert) throws SQLException {
     return SqlJaxb.INSERT(connection, new RowIterator(insert));
-  };
+  }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
     SqlJaxb.xsd2jaxb(sourcesDestDir, classedDestDir, xsds);
@@ -67,7 +66,7 @@ public final class SQL {
 
   public static int[] INSERT(final Connection connection, final $Insert insert) throws SQLException {
     return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(insert));
-  };
+  }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
     SqlXsb.xsd2xsb(sourcesDestDir, classedDestDir, xsds);

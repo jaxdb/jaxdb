@@ -185,7 +185,7 @@ final class SqlXsb {
 
       return ($Row)rows.next();
     }
-  };
+  }
 
   @SuppressWarnings("unchecked")
   private static String loadRow(final DBVendor vendor, final $Row row) {
@@ -270,7 +270,7 @@ final class SqlXsb {
 
   public static int[] INSERT(final Connection connection, final $Insert insert) throws SQLException {
     return INSERT(connection, new RowIterator(insert));
-  };
+  }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
     final Set<SchemaReference> schemas = new HashSet<>();
