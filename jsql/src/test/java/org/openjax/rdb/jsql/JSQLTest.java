@@ -32,7 +32,7 @@ import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
 import org.fastjax.util.Identifiers;
 import org.fastjax.xml.ValidationException;
-import org.fastjax.xml.jaxb.JaxbUtil;
+import org.fastjax.jaxb.JaxbUtil;
 import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.jsql.generator.Generator;

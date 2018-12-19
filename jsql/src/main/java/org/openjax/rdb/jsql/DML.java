@@ -30,7 +30,7 @@ import org.fastjax.util.FastArrays;
 @SuppressWarnings("hiding")
 public final class DML {
 
-  /** Ordering Specification **/
+  /* Ordering Specification */
 
   @SuppressWarnings("unchecked")
   public static <V extends type.DataType<T>,T>V ASC(final V dataType) {
@@ -42,7 +42,7 @@ public final class DML {
     return (V)dataType.clone().wrapper(new OrderingSpec(operator.Ordering.DESC, dataType));
   }
 
-  /** START Cast **/
+  /* START Cast */
 
   public static Cast.BIGINT CAST(final kind.BIGINT a) {
     return new Cast.BIGINT(a);
@@ -132,9 +132,9 @@ public final class DML {
     return new Cast.TIME(a);
   }
 
-  /** END Cast **/
+  /* END Cast */
 
-  /** START ComparisonPredicate **/
+  /* START ComparisonPredicate */
 
   public static <Number extends java.lang.Number>type.BOOLEAN EQ(final kind.Numeric<?> a, final kind.Numeric<?> b) {
     return new ComparisonPredicate<Number>(operator.Logical.EQ, a, b);
@@ -712,9 +712,9 @@ public final class DML {
     return new ComparisonPredicate<>(operator.Logical.GTE, a, b);
   }
 
-  /** END ComparisonPredicate **/
+  /* END ComparisonPredicate */
 
-  /** SELECT **/
+  /* SELECT */
 
   @SafeVarargs
   public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> SELECT(final kind.ARRAY<? extends T> ... entities) {
@@ -1018,7 +1018,7 @@ public final class DML {
     }
   }
 
-  /** CASE **/
+  /* CASE */
 
   public static class CASE {
     public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) {
@@ -1046,7 +1046,7 @@ public final class DML {
     return new CaseImpl.Simple.CASE<T,type.Numeric<T>>(numeric);
   }
 
-  /** DELETE **/
+  /* DELETE */
 
   public static Update._SET UPDATE(final type.Entity entity) {
     return new UpdateImpl.UPDATE(entity);
@@ -1056,7 +1056,7 @@ public final class DML {
     return new DeleteImpl.DELETE(entity);
   }
 
-  /** INSERT **/
+  /* INSERT */
 
   public static <E extends type.Entity>Insert._INSERT<E> INSERT(final E entity) {
     return new InsertImpl.INSERT<>(entity);
@@ -1068,7 +1068,7 @@ public final class DML {
     return new InsertImpl.INSERT<>(FastArrays.splice(columns, 0, 0, column));
   }
 
-  /** String Functions **/
+  /* String Functions */
 
   public static type.CHAR CONCAT(final kind.CHAR a, final kind.CHAR b) {
     return new type.CHAR().wrapper(new expression.Concat(a, b));
@@ -1238,7 +1238,7 @@ public final class DML {
     return new type.CHAR().wrapper(new expression.ChangeCase(operator.String.UPPER_CASE, a));
   }
 
-  /** Start UnsignedNumber(s) **/
+  /* Start UnsignedNumber(s) */
 
   public static UNSIGNED.Float UNSIGNED(final float value) {
     return new UNSIGNED.Float(value);
@@ -1268,9 +1268,9 @@ public final class DML {
     return new UNSIGNED.Long(value);
   }
 
-  /** End UnsignedNumber(s) **/
+  /* End UnsignedNumber(s) */
 
-  /** Start Math Functions (1 parameter) **/
+  /* Start Math Functions (1 parameter) */
 
   public static type.TINYINT SIGN(final kind.Numeric<?> a) {
     return new type.TINYINT(1).wrapper(new function.Sign(a));
@@ -2172,9 +2172,9 @@ public final class DML {
     return new type.DECIMAL.UNSIGNED().wrapper(new function.Atan(a));
   }
 
-  /** End Math Functions (1 parameter) **/
+  /* End Math Functions (1 parameter) */
 
-  /** Start Math Functions (2 parameter) **/
+  /* Start Math Functions (2 parameter) */
 
   public static type.FLOAT POW(final kind.FLOAT a, final kind.FLOAT b) {
     return new type.FLOAT().wrapper(new function.Pow(a, b));
@@ -7096,7 +7096,7 @@ public final class DML {
     return new type.DECIMAL().wrapper(new function.Atan2(a, b));
   }
 
-  /** End Math Functions (2 parameters) **/
+  /* End Math Functions (2 parameters) */
 
   @SuppressWarnings("unchecked")
   public static <Temporal extends type.Temporal<T>,T extends java.time.temporal.Temporal>Temporal ADD(final Temporal a, final Interval interval) {
@@ -7116,7 +7116,7 @@ public final class DML {
     return SUB(a, interval);
   }
 
-  /** Start Numeric Expressions **/
+  /* Start Numeric Expressions */
 
   public static type.INT.UNSIGNED ADD(final kind.INT.UNSIGNED a, final kind.INT.UNSIGNED b) {
     return new type.INT.UNSIGNED().wrapper(new expression.Numeric(operator.Arithmetic.PLUS, a, b));
@@ -12318,9 +12318,9 @@ public final class DML {
     return new type.DECIMAL().wrapper(new expression.Numeric(operator.Arithmetic.DIVIDE, a, b));
   }
 
-  /** End Numeric Expressions **/
+  /* End Numeric Expressions */
 
-  /** Start Aggregates **/
+  /* Start Aggregates */
 
   public static type.INT COUNT() {
     return new type.INT(10).wrapper(expression.Count.STAR);
@@ -12386,7 +12386,7 @@ public final class DML {
     }
   }
 
-  /** End Aggregates **/
+  /* End Aggregates */
 
   private static class NOW extends type.DATETIME {
     protected NOW() {
@@ -12429,7 +12429,7 @@ public final class DML {
     return PI;
   }
 
-  /** Condition **/
+  /* Condition */
 
   @SafeVarargs
   public static type.BOOLEAN AND(final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
@@ -12485,7 +12485,7 @@ public final class DML {
     return new BooleanTerm(operator.Boolean.OR, array[0], array[1], FastArrays.subArray(array, 2));
   }
 
-  /** Predicate **/
+  /* Predicate */
 
   protected static final class ALL<T> extends QuantifiedComparisonPredicate<T> {
     protected ALL(final Select.untyped.SELECT<?> subQuery) {
