@@ -50,7 +50,7 @@ import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.FastArrays;
 import org.fastjax.util.FastCollections;
 import org.fastjax.util.IntList;
-import org.fastjax.util.JavaIdentifiers;
+import org.fastjax.util.Identifiers;
 import org.fastjax.xml.jaxb.JaxbUtil;
 import org.fastjax.xml.jaxb.XJCompiler;
 import org.fastjax.xml.sax.XMLDocument;
@@ -168,7 +168,7 @@ final class SqlJaxb {
 
       try {
         do {
-          this.rows = ((List<Row>)insert.getClass().getMethod("get" + JavaIdentifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
+          this.rows = ((List<Row>)insert.getClass().getMethod("get" + Identifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
         }
         while (!this.rows.hasNext() && index < tableNames.length);
       }
@@ -267,7 +267,7 @@ final class SqlJaxb {
 
     Class<Database> bindingClass;
     try {
-      bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + JavaIdentifiers.toClassCase(rootElement.getLocalPart()));
+      bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()));
     }
     catch (final ClassNotFoundException e) {
       final File sqlxTempDir = new File(FastFiles.getTempDir(), "sqlx");
@@ -288,7 +288,7 @@ final class SqlJaxb {
       try {
         xsd2jaxb(tempDir, tempDir, xmlDocument.getSchemaLocation());
         final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
-        bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + JavaIdentifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
+        bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
       catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
         throw new UnsupportedOperationException(e1);

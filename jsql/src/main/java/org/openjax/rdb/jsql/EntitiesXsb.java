@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.fastjax.util.Classes;
-import org.fastjax.util.JavaIdentifiers;
+import org.fastjax.util.Identifiers;
 import org.fastjax.xml.datatype.HexBinary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Binary;
@@ -39,7 +39,7 @@ final class EntitiesXsb {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private static type.Entity toEntity(final $Database database, final $Row row) throws ClassNotFoundException, IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchFieldException, NoSuchMethodException {
     // FIXME: This is brittle... Need to modularize it and make it clearer:
-    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + JavaIdentifiers.toInstanceCase(database.id()) + "$" + JavaIdentifiers.toClassCase(row.id()));
+    final Class<?> binding = Class.forName(Entities.class.getPackage().getName() + "." + Identifiers.toInstanceCase(database.id()) + "$" + Identifiers.toClassCase(row.id()));
     final type.Entity entity = (type.Entity)binding.getDeclaredConstructor().newInstance();
     for (final Method method : Classes.getDeclaredMethodsWithAnnotationDeep(row.getClass(), Id.class)) {
       if (!method.getName().startsWith("get") || !Attribute.class.isAssignableFrom(method.getReturnType()))
@@ -51,7 +51,7 @@ final class EntitiesXsb {
       if (column == null)
         continue;
 
-      final Field field = binding.getField(JavaIdentifiers.toCamelCase(id.value().substring(id.value().indexOf('-') + 1)));
+      final Field field = binding.getField(Identifiers.toCamelCase(id.value().substring(id.value().indexOf('-') + 1)));
       final type.DataType dataType = (type.DataType<?>)field.get(entity);
 
       final Object value = column.text();

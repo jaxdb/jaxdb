@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.fastjax.util.Classes;
-import org.fastjax.util.JavaIdentifiers;
+import org.fastjax.util.Identifiers;
 import org.fastjax.xml.ValidationException;
 import org.openjax.rdb.ddlx.DDLxAudit;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
@@ -76,7 +76,7 @@ public class Generator {
     if (!dir.exists() && !dir.mkdirs())
       throw new IOException("Unable to create output dir: " + dir.getAbsolutePath());
 
-    final String classSimpleName = JavaIdentifiers.toInstanceCase(name);
+    final String classSimpleName = Identifiers.toInstanceCase(name);
 
     String code = "package " + pkg + ";\n\n";
     code += "public final class " + classSimpleName + " extends " + Schema.class.getCanonicalName() + " {\n";
@@ -236,7 +236,7 @@ public class Generator {
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : JavaIdentifiers.toClassCase(column.getName$().text()) + "." + String.valueOf(type.getDefault$().text()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + String.valueOf(type.getDefault$().text()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
@@ -288,7 +288,7 @@ public class Generator {
 
       builder.append('<');
       if (withGeneric)
-        builder.append(JavaIdentifiers.toClassCase(column.getName$().text()));
+        builder.append(Identifiers.toClassCase(column.getName$().text()));
 
       builder.append('>');
       return builder.toString();
@@ -296,7 +296,7 @@ public class Generator {
 
     @Override
     public String toString() {
-      return "new " + getType(false) + "(" + compileParams() + (type == type.ENUM.class ? ", " + JavaIdentifiers.toClassCase(column.getName$().text()) + ".class" : "") + ")";
+      return "new " + getType(false) + "(" + compileParams() + (type == type.ENUM.class ? ", " + Identifiers.toClassCase(column.getName$().text()) + ".class" : "") + ")";
     }
   }
 
@@ -320,13 +320,13 @@ public class Generator {
   }
 
   public String makeTable(final $Table table) {
-    final String ext = table.getExtends$() != null ? JavaIdentifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
+    final String ext = table.getExtends$() != null ? Identifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
     String out = "";
     String abs = "";
     if (table.getAbstract$().text())
       abs = table.getAbstract$().text() ? " abstract" : "";
 
-    final String entityName = JavaIdentifiers.toClassCase(table.getName$().text());
+    final String entityName = Identifiers.toClassCase(table.getName$().text());
     final int totalColumnCount = getColumnCount(table, true);
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
@@ -360,7 +360,7 @@ public class Generator {
             final $Column column = t.getColumn().get(i);
             if (audit.isPrimary(table, column)) {
               params += ", " + makeParam(t, column);
-              final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
+              final String columnName = Identifiers.toCamelCase(column.getName$().text());
               set += "\n      this." + columnName + ".set(" + columnName + ");";
             }
           }
@@ -381,7 +381,7 @@ public class Generator {
       if (table.getColumn() != null) {
         for (int i = 0; i < table.getColumn().size(); ++i) {
           final $Column column = table.getColumn().get(i);
-          final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
+          final String columnName = Identifiers.toCamelCase(column.getName$().text());
           set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
         }
 
@@ -400,7 +400,7 @@ public class Generator {
     if (table.getColumn() != null) {
       for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
-        final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
+        final String columnName = Identifiers.toCamelCase(column.getName$().text());
         defs += "\n      column[" + (totalColumnCount - (table.getColumn().size() - i)) + "] = ";
         defs += audit.isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "";
         defs += columnName + ";";
@@ -450,7 +450,7 @@ public class Generator {
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table.getColumn();
       out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
       for (final $Column column : equalsColumns)
-        eq += " && (this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get().equals(that." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get()) : that." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get() == null)";
+        eq += " && (this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get().equals(that." + Identifiers.toInstanceCase(column.getName$().text()) + ".get()) : that." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() == null)";
 
       out += "      return " + eq.substring(4) + ";";
     }
@@ -466,7 +466,7 @@ public class Generator {
       out += "    @" + Override.class.getName() + "\n";
       out += "    public int hashCode() {\n";
       for (final $Column column : equalsColumns)
-        eq += " + (this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ".get().hashCode() : -1)";
+        eq += " + (this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get().hashCode() : -1)";
       out += "      return " + eq.substring(3) + ";";
       out += "\n    }";
     }
@@ -481,7 +481,7 @@ public class Generator {
     out += "        builder.append(\" {\\n\");\n\n";
     if (table.getColumn() != null)
       for (final $Column column : table.getColumn())
-        out += "      builder.append(\"  " + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ": \").append(" + JavaIdentifiers.toInstanceCase(column.getName$().text()) + ").append(\"\\n\");\n";
+        out += "      builder.append(\"  " + Identifiers.toInstanceCase(column.getName$().text()) + ": \").append(" + Identifiers.toInstanceCase(column.getName$().text()) + ").append(\"\\n\");\n";
     out += "      return builder.append('}').toString();";
     out += "\n    }";
 
@@ -491,11 +491,11 @@ public class Generator {
   }
 
   public String makeParam(final xL0gluGCXYYJc.$Table table, final $Column column) {
-    final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
+    final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     final String rawType;
     if (column instanceof $Enum)
-      rawType = JavaIdentifiers.toClassCase(column.getName$().text());
+      rawType = Identifiers.toClassCase(column.getName$().text());
     else
       rawType = ((Class<?>)Classes.getGenericSuperclasses(type.type)[0]).getCanonicalName();
 
@@ -505,8 +505,8 @@ public class Generator {
   private static final Map<Character,String> substitutions = Collections.singletonMap(' ', "_");
 
   public String makeColumn(final $Table table, final $Column column) {
-    final String columnName = JavaIdentifiers.toCamelCase(column.getName$().text());
-    final String typeName = JavaIdentifiers.toClassCase(column.getName$().text());
+    final String columnName = Identifiers.toCamelCase(column.getName$().text());
+    final String typeName = Identifiers.toClassCase(column.getName$().text());
     final StringBuilder builder = new StringBuilder();
     final Type type = getType(table, column);
     if (column instanceof $Enum) {
@@ -515,7 +515,7 @@ public class Generator {
       final StringBuilder enums = new StringBuilder();
       final List<String> values = Dialect.parseEnum((($Enum)column).getValues$().text());
       for (final String value : values)
-        enums.append(", ").append(JavaIdentifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
+        enums.append(", ").append(Identifiers.toIdentifier(value, substitutions).toUpperCase().replace(' ', '_')).append("(\"").append(value).append("\")");
 
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
       builder.append("      public static ").append(typeName).append(" fromString(final ").append(String.class.getName()).append(" string) {\n        if (string == null)\n          return null;\n\n        for (final ").append(typeName).append(" value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");

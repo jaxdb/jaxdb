@@ -30,7 +30,7 @@ import javax.xml.bind.UnmarshalException;
 
 import org.fastjax.jci.CompilationException;
 import org.fastjax.jci.JavaCompiler;
-import org.fastjax.util.JavaIdentifiers;
+import org.fastjax.util.Identifiers;
 import org.fastjax.xml.ValidationException;
 import org.fastjax.xml.jaxb.JaxbUtil;
 import org.openjax.rdb.ddlx.Schemas;
@@ -90,7 +90,7 @@ public abstract class JSQLTest {
     assertNotNull(sqlx);
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + JavaIdentifiers.toClassCase(name)), sqlx, false);
+      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Identifiers.toClassCase(name)), sqlx, false);
     }
 
     final xL0gluGCXYYJc.Schema schema;
