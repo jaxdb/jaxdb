@@ -440,7 +440,7 @@ public final class type {
         this.value = (Long)value;
       else if (value instanceof Integer)
         this.value = Long.valueOf((Integer)value);
-      else if ((value instanceof Float || value instanceof Double) && Numbers.isInteger(((Number)value).floatValue()))
+      else if ((value instanceof Float || value instanceof Double) && Numbers.isWhole(((Number)value).floatValue()))
         this.value = ((Number)value).longValue();
       else
         throw new UnsupportedOperationException("Unsupported non-integer value for BIGINT: (" + value.getClass().getSimpleName() + ")" + value);
