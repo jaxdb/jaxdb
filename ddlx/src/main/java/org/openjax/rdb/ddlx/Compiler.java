@@ -107,6 +107,14 @@ abstract class Compiler {
     return getVendor().getDialect().quoteIdentifier(identifier);
   }
 
+  /**
+   * Create a "SchemaIfNotExists" {@code CreateStatement} for the specified
+   * {@code Schema}.
+   *
+   * @param schema The {@code Schema}.
+   * @return A "SchemaIfNotExists" {@code CreateStatement} for the specified
+   *         {@code Schema}.
+   */
   protected CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
   }
@@ -186,7 +194,7 @@ abstract class Compiler {
       ddl.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
-    final String defaultFragement = $default(table, column);
+    final String defaultFragement = $default(column);
     if (defaultFragement != null && defaultFragement.length() > 0)
       ddl.append(" DEFAULT ").append(defaultFragement);
 
@@ -425,6 +433,12 @@ abstract class Compiler {
     return new CreateStatement(contraintsBuilder.toString());
   }
 
+  /**
+   * Returns the "CHECK" keyword for the specified {@code $Table}.
+   *
+   * @param table The {@code $Table}.
+   * @return The "CHECK" keyword for the specified {@code $Table}.
+   */
   protected String check(final $Table table) {
     return "CHECK";
   }
@@ -446,10 +460,22 @@ abstract class Compiler {
     return ",\n  " + primaryKey(table) + " (" + primaryKeyBuilder.substring(2) + ")";
   }
 
+  /**
+   * Returns the "FOREIGN KEY" keyword for the specified {@code $Table}.
+   *
+   * @param table The {@code $Table}.
+   * @return The "FOREIGN KEY" keyword for the specified {@code $Table}.
+   */
   protected String foreignKey(final $Table table) {
     return "FOREIGN KEY";
   }
 
+  /**
+   * Returns the "PRIMARY KEY" keyword for the specified {@code $Table}.
+   *
+   * @param table The {@code $Table}.
+   * @return The "PRIMARY KEY" keyword for the specified {@code $Table}.
+   */
   protected String primaryKey(final $Table table) {
     return "PRIMARY KEY";
   }
@@ -471,7 +497,7 @@ abstract class Compiler {
     if (check.getColumn().size() == 2)
       condition = check.getColumn(0).text();
     else if (check.getValue() != null)
-      condition = Numbers.isNumber(check.getValue().text()) ? Numbers.roundInsignificant(check.getValue().text()) : "'" + check.getValue().text() + "'";
+      condition = Numbers.isNumber(check.getValue().text()) ? Numbers.stripTrailingZeros(check.getValue().text()) : "'" + check.getValue().text() + "'";
     else
       throw new UnsupportedOperationException("Unsupported condition on column '" + check.getColumn(0).text() + "'");
 
@@ -512,6 +538,14 @@ abstract class Compiler {
     return statements;
   }
 
+  /**
+   * Returns a list of {@code CreateStatement} objects for the creation of types
+   * for the specified {@code $Table}.
+   *
+   * @param table The {@code $Table}.
+   * @return A list of {@code CreateStatement} objects for the creation of types
+   *         for the specified {@code $Table}.
+   */
   protected List<CreateStatement> types(final $Table table) {
     return new ArrayList<>();
   }
@@ -542,6 +576,14 @@ abstract class Compiler {
     return statements;
   }
 
+  /**
+   * Returns a list of {@code DropStatement} objects for the dropping of types
+   * for the specified {@code $Table}.
+   *
+   * @param table The {@code $Table}.
+   * @return A list of {@code DropStatement} objects for the dropping of types
+   *         for the specified {@code $Table}.
+   */
   protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
     return new LinkedHashSet<>();
   }
@@ -570,7 +612,7 @@ abstract class Compiler {
     }
   }
 
-  protected String $default(final $Table table, final $Column column) {
+  protected String $default(final $Column column) {
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getDefault$() == null)

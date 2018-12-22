@@ -425,7 +425,7 @@ abstract class Compiler {
                 }
                 else if (column.type() != evaluated.getClass()) {
                   if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-                    column.value = Numbers.valueOf((Class<? extends Number>)column.type(), (Number)evaluated);
+                    column.value = Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type());
                   else
                     throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
                 }
@@ -595,6 +595,12 @@ abstract class Compiler {
     }
   }
 
+  /**
+   * Compile the specified {@code Alias}, and append to the provided {@code Compilation}.
+   *
+   * @param alias The {@code Alias}.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final Alias alias, final Compilation compilation) {
     compilation.append(alias.name);
   }
@@ -723,22 +729,46 @@ abstract class Compiler {
     compilation.append("NULL");
   }
 
+  /**
+   * Compile the PI function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Pi function, final Compilation compilation) {
     compilation.append("PI()");
   }
 
+  /**
+   * Compile the ABS function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Abs function, final Compilation compilation) throws IOException {
     compilation.append("ABS(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the SIGN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Sign function, final Compilation compilation) throws IOException {
     compilation.append("SIGN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the ROUND function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
     function.a.compile(compilation);
@@ -747,24 +777,48 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the FLOOR function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Floor function, final Compilation compilation) throws IOException {
     compilation.append("FLOOR(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the CEIL function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Ceil function, final Compilation compilation) throws IOException {
     compilation.append("CEIL(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the SQRT function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the POW function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Pow function, final Compilation compilation) throws IOException {
     compilation.append("POWER(");
     function.a.compile(compilation);
@@ -773,6 +827,12 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the MOD function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MOD(");
     function.a.compile(compilation);
@@ -781,42 +841,84 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the SIN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Sin function, final Compilation compilation) throws IOException {
     compilation.append("SIN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the ASIN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Asin function, final Compilation compilation) throws IOException {
     compilation.append("ASIN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the COS function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Cos function, final Compilation compilation) throws IOException {
     compilation.append("COS(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the ACOS function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Acos function, final Compilation compilation) throws IOException {
     compilation.append("ACOS(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the TAN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Tan function, final Compilation compilation) throws IOException {
     compilation.append("TAN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the ATAN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Atan function, final Compilation compilation) throws IOException {
     compilation.append("ATAN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the ATAN2 function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
     compilation.append("ATAN2(");
     function.a.compile(compilation);
@@ -825,18 +927,36 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the EXP function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Exp function, final Compilation compilation) throws IOException {
     compilation.append("EXP(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the LN function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LN(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the LOG function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
     function.a.compile(compilation);
@@ -845,18 +965,36 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the LOG2 function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG2(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the LOG10 function, and append to the provided {@code Compilation}.
+   *
+   * @param function The function to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG10(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
+  /**
+   * Compile the COUNT expression, and append to the provided {@code Compilation}.
+   *
+   * @param expression The expression to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final expression.Count expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');
     if (expression.column == null) {
@@ -872,6 +1010,12 @@ abstract class Compiler {
     compilation.append(')');
   }
 
+  /**
+   * Compile the SET expression, and append to the provided {@code Compilation}.
+   *
+   * @param expression The expression to compile.
+   * @param compilation The target {@code Compilation}.
+   */
   protected void compile(final expression.Set expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');
     if (expression.a != null) {
