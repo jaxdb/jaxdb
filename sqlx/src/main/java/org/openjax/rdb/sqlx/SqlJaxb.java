@@ -16,10 +16,8 @@
 
 package org.openjax.rdb.sqlx;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
+import static org.fastjax.util.function.Throwing.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,6 +26,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,23 +40,28 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
+
 import org.fastjax.io.FastFiles;
+import org.fastjax.jaxb.JaxbUtil;
+import org.fastjax.jaxb.XJCompiler;
 import org.fastjax.jci.CompilationException;
-import org.fastjax.jci.JavaCompiler;
+import org.fastjax.jci.InMemoryCompiler;
 import org.fastjax.net.URLs;
 import org.fastjax.util.ArrayIntList;
 import org.fastjax.util.ClassLoaders;
 import org.fastjax.util.FastArrays;
 import org.fastjax.util.FastCollections;
-import org.fastjax.util.IntList;
 import org.fastjax.util.Identifiers;
-import org.fastjax.jaxb.JaxbUtil;
-import org.fastjax.jaxb.XJCompiler;
+import org.fastjax.util.IntList;
 import org.fastjax.xml.sax.XMLDocument;
 import org.fastjax.xml.sax.XMLDocuments;
+import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Table;
-import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.sqlx_0_9_9.Database;
 import org.openjax.rdb.sqlx_0_9_9.Insert;
 import org.openjax.rdb.sqlx_0_9_9.Row;
@@ -322,7 +326,14 @@ final class SqlJaxb {
     command.setSchemas(xsds);
 
     XJCompiler.compile(command);
-    new JavaCompiler(classedDestDir, command.getClasspath()).compile(command.getDestDir());
+
+    final InMemoryCompiler compiler = new InMemoryCompiler();
+    Files.walk(command.getDestDir().toPath())
+      .map(p -> p.toFile())
+      .filter(f -> f.getName().endsWith(".java"))
+      .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
+
+    compiler.compile(new URLClassLoader(command.getClasspath().stream().map(rethrow((File f) -> f.toURI().toURL())).toArray(URL[]::new), null), classedDestDir);
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {

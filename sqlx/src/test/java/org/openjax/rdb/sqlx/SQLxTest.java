@@ -45,7 +45,12 @@ public abstract class SQLxTest {
   private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/rdb");
   protected static final File testClassesDir = new File("target/test-classes");
-  private static final File[] classpath = FastArrays.concat(ClassLoaders.getClassPath(), ClassLoaders.getTestClassPath());
+  private static final File[] classpath;
+
+  static {
+    final File[] testClassPath = ClassLoaders.getTestClassPath();
+    classpath = testClassPath != null ? FastArrays.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
+  }
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");

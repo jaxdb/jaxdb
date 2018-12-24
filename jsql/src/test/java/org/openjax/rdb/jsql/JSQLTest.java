@@ -16,6 +16,7 @@
 
 package org.openjax.rdb.jsql;
 
+import static org.fastjax.util.function.Throwing.*;
 import static org.junit.Assert.*;
 import static org.openjax.rdb.jsql.DML.*;
 
@@ -23,16 +24,18 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 import javax.xml.bind.UnmarshalException;
 
+import org.fastjax.jaxb.JaxbUtil;
 import org.fastjax.jci.CompilationException;
-import org.fastjax.jci.JavaCompiler;
+import org.fastjax.jci.InMemoryCompiler;
 import org.fastjax.util.Identifiers;
 import org.fastjax.xml.ValidationException;
-import org.fastjax.jaxb.JaxbUtil;
 import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.jsql.generator.Generator;
@@ -47,7 +50,13 @@ public abstract class JSQLTest {
     assertNotNull(url);
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);
-    new JavaCompiler(destDir).compile(destDir);
+    final InMemoryCompiler compiler = new InMemoryCompiler();
+    Files.walk(destDir.toPath())
+      .map(p -> p.toFile())
+      .filter(f -> f.getName().endsWith(".java"))
+      .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
+
+    compiler.compile(Arrays.asList("-g"), destDir);
   }
 
   @SuppressWarnings("unchecked")

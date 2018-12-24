@@ -24,7 +24,7 @@ enum SQLStandard {
   SQL2003("SQL-2003");
 
   static SQLStandard[] toArray(final int mask) {
-    return Enums.Mask.toArray(SQLStandard.values(), mask);
+    return Enums.Mask.toArray(mask, SQLStandard.values());
   }
 
   private final String name;

@@ -67,10 +67,10 @@ public final class GeneratorUtil {
           if (field.get(null) == object)
             return GenerateOn.class.getName() + "." + field.getName();
 
-        throw new RuntimeException("Did not find the desired field");
+        throw new IllegalStateException("Did not find the desired field");
       }
       catch (final IllegalAccessException e) {
-        throw new RuntimeException(e);
+        throw new IllegalStateException(e);
       }
     }
 
