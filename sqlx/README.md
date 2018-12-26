@@ -81,6 +81,16 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 5. The `data.sqlx` file is strictly compliant to the `basis.ddlx` file that specifies the data model. You can now create static data that complies to the data model, having the power of XML to foster confidence in the validity of the data far before you load it in the DB.
 
+### JavaDocs
+
+JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.

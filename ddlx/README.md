@@ -128,6 +128,16 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   
   Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
 
+### JavaDocs
+
+JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+Please make sure to update tests as appropriate.
+
 ### License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
