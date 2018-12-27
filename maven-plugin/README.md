@@ -1,7 +1,6 @@
-<img src="https://images.cooltext.com/5195722.png" align="right">
+# OpenJAX RDB Maven Plugin
 
-## rdb-maven-plugin<br>![mvn-plugin][mvn-plugin] <a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
-> Maven Plugin for [RDB][rdb] framework
+**Maven Plugin for [RDB][rdb] framework**
 
 ### Introduction
 

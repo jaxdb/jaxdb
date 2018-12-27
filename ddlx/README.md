@@ -1,7 +1,6 @@
-<img src="https://images.cooltext.com/5195722.png" align="right">
+# OpenJAX RDB DDLx
 
-## rdb-ddlx<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
-> Relational Data Binding DDLx
+**Relational Data Binding DDLx**
 
 ### Introduction
 

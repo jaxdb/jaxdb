@@ -1,7 +1,6 @@
-<img src="https://images.cooltext.com/5195722.png" align="right">
+# OpenJAX RDB SQLx
 
-## rdb-sqlx<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
-> Relational Data Binding SQLx
+**Relational Data Binding SQLx**
 
 ### Introduction
 

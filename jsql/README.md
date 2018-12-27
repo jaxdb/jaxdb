@@ -1,7 +1,6 @@
-<img src="https://images.cooltext.com/5195722.png" align="right">
+# OpenJAX RDB jSQL
 
-## rdb-jsql<br><a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
-> Relational Data Binding jSQL
+**Relational Data Binding jSQL**
 
 ### Introduction
 

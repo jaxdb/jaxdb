@@ -1,7 +1,6 @@
-<img src="https://images.cooltext.com/5195722.png" align="right">
+# OpenJAX RDB Maven Archetype
 
-## rdb-maven-archetype<br>![mvn-archetype][mvn-archetype] <a href="https://www.openjax.org/"><img src="https://img.shields.io/badge/OpenJAX--blue.svg"></a>
-> Quick-start Maven Archetype for RDB framework
+**Quick-start Maven Archetype for RDB framework**
 
 ### Introduction
 
