@@ -22,7 +22,7 @@ import java.time.LocalTime;
 import java.time.temporal.Temporal;
 
 public abstract class GenerateOn<T> {
-  public static final GenerateOn<Number> INCREMENT = new GenerateOn<>() {
+  public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
     @SuppressWarnings("cast")
     public void generate(final type.DataType<Number> dataType) {
@@ -60,7 +60,7 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<>() {
+  public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
     @SuppressWarnings("cast")
     public void generate(final type.DataType<Temporal> dataType) {
@@ -76,7 +76,7 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public static final GenerateOn<String> UUID = new GenerateOn<>() {
+  public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
     public void generate(final type.DataType<String> dataType) {
       dataType.value = java.util.UUID.randomUUID().toString();

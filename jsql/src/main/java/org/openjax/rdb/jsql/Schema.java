@@ -19,7 +19,7 @@ package org.openjax.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptions;
 import org.fastjax.sql.exception.SQLInvalidSchemaNameException;
 import org.fastjax.util.ConcurrentHashSet;
 import org.openjax.rdb.vendor.DBVendor;
@@ -52,7 +52,7 @@ public abstract class Schema {
         return DBVendor.POSTGRE_SQL;
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
 
     return null;
@@ -80,7 +80,7 @@ public abstract class Schema {
       return connection;
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 }

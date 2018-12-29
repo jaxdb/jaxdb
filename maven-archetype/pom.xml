@@ -27,7 +27,4 @@
   <artifactId>rdb-maven-archetype</artifactId>
   <version>0.9-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
 </project>

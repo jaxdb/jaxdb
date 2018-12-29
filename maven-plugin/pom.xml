@@ -27,9 +27,6 @@
   <artifactId>rdb-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>${project.groupId}:${project.artifactId}</name>
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-  </properties>
   <build>
     <plugins>
       <plugin>
@@ -58,6 +55,35 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>jdk1.8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <phase>test-compile</phase>
+                <configuration>
+                  <testExcludes>
+                    <!-- Excluded for jdk1.8 due to: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8051946 -->
+                    <testExclude>**/NumericFunctionStaticTest.java</testExclude>
+                  </testExcludes>
+                </configuration> 
+              </execution>                  
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <id>maven-invoker-plugin</id>
       <activation>

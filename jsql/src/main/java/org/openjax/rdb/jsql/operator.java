@@ -440,37 +440,37 @@ final class operator {
   }
 
   static abstract class Logical<D> extends Generic {
-    public static final Logical<type.DataType<?>> EQ = new Logical<>("=") {
+    public static final Logical<type.DataType<?>> EQ = new Logical<type.DataType<?>>("=") {
       @Override
       protected java.lang.Boolean evaluate(final DataType<?> a, final DataType<?> b) {
         return a == null || b == null ? null : a.equals(b);
       }
     };
-    public static final Logical<Comparable<Object>> LT = new Logical<>("<") {
+    public static final Logical<Comparable<Object>> LT = new Logical<Comparable<Object>>("<") {
       @Override
       protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return a == null || b == null ? null : a.compareTo(b) < 0;
       }
     };
-    public static final Logical<Comparable<Object>> LTE = new Logical<>("<=") {
+    public static final Logical<Comparable<Object>> LTE = new Logical<Comparable<Object>>("<=") {
       @Override
       protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return a != null && a.compareTo(b) <= 0;
       }
     };
-    public static final Logical<Comparable<Object>> GT = new Logical<>(">") {
+    public static final Logical<Comparable<Object>> GT = new Logical<Comparable<Object>>(">") {
       @Override
       protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return LT.evaluate(b, a);
       }
     };
-    public static final Logical<Comparable<Object>> GTE = new Logical<>(">=") {
+    public static final Logical<Comparable<Object>> GTE = new Logical<Comparable<Object>>(">=") {
       @Override
       protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return LTE.evaluate(b, a);
       }
     };
-    public static final Logical<type.DataType<?>> NE = new Logical<>("<>") {
+    public static final Logical<type.DataType<?>> NE = new Logical<type.DataType<?>>("<>") {
       @Override
       protected java.lang.Boolean evaluate(final type.DataType<?> a, final type.DataType<?> b) {
         return !EQ.evaluate(a, b);

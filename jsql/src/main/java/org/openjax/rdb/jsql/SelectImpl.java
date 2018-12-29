@@ -30,12 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptions;
 import org.fastjax.util.FastCollections;
 import org.openjax.rdb.vendor.DBVendor;
 
 class SelectImpl {
-  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<>() {
+  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<Compilable>() {
     @Override
     public boolean test(final Compilable t) {
       return (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
@@ -82,7 +82,7 @@ class SelectImpl {
       return parseResultSet(connection, resultSet, command.select(), compilation.skipFirstColumn());
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 
@@ -93,7 +93,7 @@ class SelectImpl {
 
     final int columnOffset = skipFirstColumn ? 2 : 1;
     final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
-    return new RowIterator<>() {
+    return new RowIterator<B>() {
       private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
       private final Map<type.Entity,type.Entity> cache = new HashMap<>();
       private type.Entity currentTable = null;
@@ -151,7 +151,7 @@ class SelectImpl {
           }
         }
         catch (final SQLException e) {
-          throw SQLExceptionCatalog.lookup(e);
+          throw SQLExceptions.getStrongType(e);
         }
 
         if (entity != null) {
@@ -173,7 +173,7 @@ class SelectImpl {
           connection.close();
         }
         catch (final SQLException e) {
-          throw SQLExceptionCatalog.lookup(e);
+          throw SQLExceptions.getStrongType(e);
         }
         finally {
           prototypes.clear();
@@ -429,7 +429,7 @@ class SelectImpl {
                   dataType.get(statement, ++index);
 
               try (final ResultSet resultSet = statement.executeQuery()) {
-                return new RowIterator<>() {
+                return new RowIterator<T>() {
                   @Override
                   @SuppressWarnings({"rawtypes", "unchecked"})
                   public boolean nextRow() throws SQLException {
@@ -448,7 +448,7 @@ class SelectImpl {
                         dataType.set(resultSet, ++index);
                     }
                     catch (final SQLException e) {
-                      throw SQLExceptionCatalog.lookup(e);
+                      throw SQLExceptions.getStrongType(e);
                     }
 
                     rows.add((T[])new type.Entity[] {out});
@@ -464,7 +464,7 @@ class SelectImpl {
                       connection.close();
                     }
                     catch (final SQLException e) {
-                      throw SQLExceptionCatalog.lookup(e);
+                      throw SQLExceptions.getStrongType(e);
                     }
                     finally {
                       rows.clear();
@@ -474,7 +474,7 @@ class SelectImpl {
               }
             }
             catch (final SQLException e) {
-              throw SQLExceptionCatalog.lookup(e);
+              throw SQLExceptions.getStrongType(e);
             }
           }
         }
@@ -563,7 +563,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -633,7 +633,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -669,7 +669,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -725,7 +725,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -826,7 +826,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -856,7 +856,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -882,7 +882,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -908,7 +908,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -950,7 +950,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -971,7 +971,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -1007,7 +1007,7 @@ class SelectImpl {
 
       @Override
       public Select.ARRAY._UNION.ALL<T> UNION() {
-        return new Select.ARRAY._UNION.ALL<>() {
+        return new Select.ARRAY._UNION.ALL<T>() {
           @Override
           public Select.ARRAY.UNION<T> ALL(final Select.ARRAY.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -1048,7 +1048,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -1118,7 +1118,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -1154,7 +1154,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -1210,7 +1210,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -1311,7 +1311,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -1341,7 +1341,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -1367,7 +1367,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -1393,7 +1393,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -1435,7 +1435,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -1456,7 +1456,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -1492,7 +1492,7 @@ class SelectImpl {
 
         @Override
         public Select.BIGINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.BIGINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.BIGINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.BIGINT.UNSIGNED.UNION<T> ALL(final Select.BIGINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -1531,7 +1531,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -1601,7 +1601,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -1637,7 +1637,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -1693,7 +1693,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -1794,7 +1794,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -1824,7 +1824,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -1850,7 +1850,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -1876,7 +1876,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -1918,7 +1918,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -1939,7 +1939,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -1975,7 +1975,7 @@ class SelectImpl {
 
       @Override
       public Select.BIGINT._UNION.ALL<T> UNION() {
-        return new Select.BIGINT._UNION.ALL<>() {
+        return new Select.BIGINT._UNION.ALL<T>() {
           @Override
           public Select.BIGINT.UNION<T> ALL(final Select.BIGINT.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -2015,7 +2015,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -2085,7 +2085,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -2121,7 +2121,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -2177,7 +2177,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -2278,7 +2278,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -2308,7 +2308,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -2334,7 +2334,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -2360,7 +2360,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -2402,7 +2402,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -2423,7 +2423,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -2459,7 +2459,7 @@ class SelectImpl {
 
       @Override
       public Select.BINARY._UNION.ALL<T> UNION() {
-        return new Select.BINARY._UNION.ALL<>() {
+        return new Select.BINARY._UNION.ALL<T>() {
           @Override
           public Select.BINARY.UNION<T> ALL(final Select.BINARY.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -2499,7 +2499,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -2569,7 +2569,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -2605,7 +2605,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -2661,7 +2661,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -2762,7 +2762,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -2792,7 +2792,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -2818,7 +2818,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -2844,7 +2844,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -2886,7 +2886,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -2907,7 +2907,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -2943,7 +2943,7 @@ class SelectImpl {
 
       @Override
       public Select.BLOB._UNION.ALL<T> UNION() {
-        return new Select.BLOB._UNION.ALL<>() {
+        return new Select.BLOB._UNION.ALL<T>() {
           @Override
           public Select.BLOB.UNION<T> ALL(final Select.BLOB.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -2983,7 +2983,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -3053,7 +3053,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -3089,7 +3089,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -3145,7 +3145,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -3246,7 +3246,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -3276,7 +3276,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -3302,7 +3302,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -3328,7 +3328,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -3370,7 +3370,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -3391,7 +3391,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -3427,7 +3427,7 @@ class SelectImpl {
 
       @Override
       public Select.BOOLEAN._UNION.ALL<T> UNION() {
-        return new Select.BOOLEAN._UNION.ALL<>() {
+        return new Select.BOOLEAN._UNION.ALL<T>() {
           @Override
           public Select.BOOLEAN.UNION<T> ALL(final Select.BOOLEAN.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -3467,7 +3467,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -3537,7 +3537,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -3573,7 +3573,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -3629,7 +3629,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -3730,7 +3730,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -3760,7 +3760,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -3786,7 +3786,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -3812,7 +3812,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -3854,7 +3854,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -3875,7 +3875,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -3911,7 +3911,7 @@ class SelectImpl {
 
       @Override
       public Select.CHAR._UNION.ALL<T> UNION() {
-        return new Select.CHAR._UNION.ALL<>() {
+        return new Select.CHAR._UNION.ALL<T>() {
           @Override
           public Select.CHAR.UNION<T> ALL(final Select.CHAR.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -3951,7 +3951,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -4021,7 +4021,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -4057,7 +4057,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -4113,7 +4113,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -4214,7 +4214,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -4244,7 +4244,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -4270,7 +4270,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -4296,7 +4296,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -4338,7 +4338,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -4359,7 +4359,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -4395,7 +4395,7 @@ class SelectImpl {
 
       @Override
       public Select.CLOB._UNION.ALL<T> UNION() {
-        return new Select.CLOB._UNION.ALL<>() {
+        return new Select.CLOB._UNION.ALL<T>() {
           @Override
           public Select.CLOB.UNION<T> ALL(final Select.CLOB.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -4435,7 +4435,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -4505,7 +4505,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -4541,7 +4541,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -4597,7 +4597,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -4698,7 +4698,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -4728,7 +4728,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -4754,7 +4754,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -4780,7 +4780,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -4822,7 +4822,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -4843,7 +4843,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -4879,7 +4879,7 @@ class SelectImpl {
 
       @Override
       public Select.DataType._UNION.ALL<T> UNION() {
-        return new Select.DataType._UNION.ALL<>() {
+        return new Select.DataType._UNION.ALL<T>() {
           @Override
           public Select.DataType.UNION<T> ALL(final Select.DataType.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -4919,7 +4919,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -4989,7 +4989,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -5025,7 +5025,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -5081,7 +5081,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -5182,7 +5182,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -5212,7 +5212,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -5238,7 +5238,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -5264,7 +5264,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -5306,7 +5306,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -5327,7 +5327,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -5363,7 +5363,7 @@ class SelectImpl {
 
       @Override
       public Select.DATE._UNION.ALL<T> UNION() {
-        return new Select.DATE._UNION.ALL<>() {
+        return new Select.DATE._UNION.ALL<T>() {
           @Override
           public Select.DATE.UNION<T> ALL(final Select.DATE.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -5403,7 +5403,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -5473,7 +5473,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -5509,7 +5509,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -5565,7 +5565,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -5666,7 +5666,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -5696,7 +5696,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -5722,7 +5722,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -5748,7 +5748,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -5790,7 +5790,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -5811,7 +5811,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -5847,7 +5847,7 @@ class SelectImpl {
 
       @Override
       public Select.DATETIME._UNION.ALL<T> UNION() {
-        return new Select.DATETIME._UNION.ALL<>() {
+        return new Select.DATETIME._UNION.ALL<T>() {
           @Override
           public Select.DATETIME.UNION<T> ALL(final Select.DATETIME.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -5888,7 +5888,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -5958,7 +5958,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -5994,7 +5994,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -6050,7 +6050,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -6151,7 +6151,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -6181,7 +6181,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -6207,7 +6207,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -6233,7 +6233,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -6275,7 +6275,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -6296,7 +6296,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -6332,7 +6332,7 @@ class SelectImpl {
 
         @Override
         public Select.DECIMAL.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DECIMAL.UNSIGNED._UNION.ALL<>() {
+          return new Select.DECIMAL.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DECIMAL.UNSIGNED.UNION<T> ALL(final Select.DECIMAL.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -6371,7 +6371,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -6441,7 +6441,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -6477,7 +6477,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -6533,7 +6533,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -6634,7 +6634,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -6664,7 +6664,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -6690,7 +6690,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -6716,7 +6716,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -6758,7 +6758,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -6779,7 +6779,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -6815,7 +6815,7 @@ class SelectImpl {
 
       @Override
       public Select.DECIMAL._UNION.ALL<T> UNION() {
-        return new Select.DECIMAL._UNION.ALL<>() {
+        return new Select.DECIMAL._UNION.ALL<T>() {
           @Override
           public Select.DECIMAL.UNION<T> ALL(final Select.DECIMAL.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -6856,7 +6856,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -6926,7 +6926,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -6962,7 +6962,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -7018,7 +7018,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -7119,7 +7119,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -7149,7 +7149,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -7175,7 +7175,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -7201,7 +7201,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -7243,7 +7243,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -7264,7 +7264,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -7300,7 +7300,7 @@ class SelectImpl {
 
         @Override
         public Select.DOUBLE.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.DOUBLE.UNSIGNED._UNION.ALL<>() {
+          return new Select.DOUBLE.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.DOUBLE.UNSIGNED.UNION<T> ALL(final Select.DOUBLE.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -7339,7 +7339,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -7409,7 +7409,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -7445,7 +7445,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -7501,7 +7501,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -7602,7 +7602,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -7632,7 +7632,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -7658,7 +7658,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -7684,7 +7684,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -7726,7 +7726,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -7747,7 +7747,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -7783,7 +7783,7 @@ class SelectImpl {
 
       @Override
       public Select.DOUBLE._UNION.ALL<T> UNION() {
-        return new Select.DOUBLE._UNION.ALL<>() {
+        return new Select.DOUBLE._UNION.ALL<T>() {
           @Override
           public Select.DOUBLE.UNION<T> ALL(final Select.DOUBLE.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -7823,7 +7823,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -7893,7 +7893,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -7929,7 +7929,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -7985,7 +7985,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -8086,7 +8086,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -8116,7 +8116,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -8142,7 +8142,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -8168,7 +8168,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -8210,7 +8210,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -8231,7 +8231,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -8267,7 +8267,7 @@ class SelectImpl {
 
       @Override
       public Select.Entity._UNION.ALL<T> UNION() {
-        return new Select.Entity._UNION.ALL<>() {
+        return new Select.Entity._UNION.ALL<T>() {
           @Override
           public Select.Entity.UNION<T> ALL(final Select.Entity.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -8307,7 +8307,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -8377,7 +8377,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -8413,7 +8413,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -8469,7 +8469,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -8570,7 +8570,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -8600,7 +8600,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -8626,7 +8626,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -8652,7 +8652,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -8694,7 +8694,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -8715,7 +8715,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -8751,7 +8751,7 @@ class SelectImpl {
 
       @Override
       public Select.ENUM._UNION.ALL<T> UNION() {
-        return new Select.ENUM._UNION.ALL<>() {
+        return new Select.ENUM._UNION.ALL<T>() {
           @Override
           public Select.ENUM.UNION<T> ALL(final Select.ENUM.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -8792,7 +8792,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -8862,7 +8862,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -8898,7 +8898,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -8954,7 +8954,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -9055,7 +9055,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -9085,7 +9085,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -9111,7 +9111,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -9137,7 +9137,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -9179,7 +9179,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -9200,7 +9200,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -9236,7 +9236,7 @@ class SelectImpl {
 
         @Override
         public Select.FLOAT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.FLOAT.UNSIGNED._UNION.ALL<>() {
+          return new Select.FLOAT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.FLOAT.UNSIGNED.UNION<T> ALL(final Select.FLOAT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -9275,7 +9275,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -9345,7 +9345,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -9381,7 +9381,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -9437,7 +9437,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -9538,7 +9538,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -9568,7 +9568,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -9594,7 +9594,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -9620,7 +9620,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -9662,7 +9662,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -9683,7 +9683,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -9719,7 +9719,7 @@ class SelectImpl {
 
       @Override
       public Select.FLOAT._UNION.ALL<T> UNION() {
-        return new Select.FLOAT._UNION.ALL<>() {
+        return new Select.FLOAT._UNION.ALL<T>() {
           @Override
           public Select.FLOAT.UNION<T> ALL(final Select.FLOAT.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -9760,7 +9760,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -9830,7 +9830,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -9866,7 +9866,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -9922,7 +9922,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -10023,7 +10023,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -10053,7 +10053,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -10079,7 +10079,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -10105,7 +10105,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -10147,7 +10147,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -10168,7 +10168,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -10204,7 +10204,7 @@ class SelectImpl {
 
         @Override
         public Select.INT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.INT.UNSIGNED._UNION.ALL<>() {
+          return new Select.INT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.INT.UNSIGNED.UNION<T> ALL(final Select.INT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -10243,7 +10243,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -10313,7 +10313,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -10349,7 +10349,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -10405,7 +10405,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -10506,7 +10506,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -10536,7 +10536,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -10562,7 +10562,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -10588,7 +10588,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -10630,7 +10630,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -10651,7 +10651,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -10687,7 +10687,7 @@ class SelectImpl {
 
       @Override
       public Select.INT._UNION.ALL<T> UNION() {
-        return new Select.INT._UNION.ALL<>() {
+        return new Select.INT._UNION.ALL<T>() {
           @Override
           public Select.INT.UNION<T> ALL(final Select.INT.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -10727,7 +10727,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -10797,7 +10797,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -10833,7 +10833,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -10889,7 +10889,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -10990,7 +10990,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -11020,7 +11020,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -11046,7 +11046,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -11072,7 +11072,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -11114,7 +11114,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -11135,7 +11135,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -11171,7 +11171,7 @@ class SelectImpl {
 
       @Override
       public Select.LargeObject._UNION.ALL<T> UNION() {
-        return new Select.LargeObject._UNION.ALL<>() {
+        return new Select.LargeObject._UNION.ALL<T>() {
           @Override
           public Select.LargeObject.UNION<T> ALL(final Select.LargeObject.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -11211,7 +11211,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -11281,7 +11281,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -11317,7 +11317,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -11373,7 +11373,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -11474,7 +11474,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -11504,7 +11504,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -11530,7 +11530,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -11556,7 +11556,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -11598,7 +11598,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -11619,7 +11619,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -11655,7 +11655,7 @@ class SelectImpl {
 
       @Override
       public Select.Numeric._UNION.ALL<T> UNION() {
-        return new Select.Numeric._UNION.ALL<>() {
+        return new Select.Numeric._UNION.ALL<T>() {
           @Override
           public Select.Numeric.UNION<T> ALL(final Select.Numeric.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -11696,7 +11696,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -11766,7 +11766,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -11802,7 +11802,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -11858,7 +11858,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -11959,7 +11959,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -11989,7 +11989,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -12015,7 +12015,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -12041,7 +12041,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -12083,7 +12083,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -12104,7 +12104,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -12140,7 +12140,7 @@ class SelectImpl {
 
         @Override
         public Select.SMALLINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.SMALLINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.SMALLINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.SMALLINT.UNSIGNED.UNION<T> ALL(final Select.SMALLINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -12179,7 +12179,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -12249,7 +12249,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -12285,7 +12285,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -12341,7 +12341,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -12442,7 +12442,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -12472,7 +12472,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -12498,7 +12498,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -12524,7 +12524,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -12566,7 +12566,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -12587,7 +12587,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -12623,7 +12623,7 @@ class SelectImpl {
 
       @Override
       public Select.SMALLINT._UNION.ALL<T> UNION() {
-        return new Select.SMALLINT._UNION.ALL<>() {
+        return new Select.SMALLINT._UNION.ALL<T>() {
           @Override
           public Select.SMALLINT.UNION<T> ALL(final Select.SMALLINT.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -12663,7 +12663,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -12733,7 +12733,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -12769,7 +12769,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -12825,7 +12825,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -12926,7 +12926,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -12956,7 +12956,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -12982,7 +12982,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -13008,7 +13008,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -13050,7 +13050,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -13071,7 +13071,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -13107,7 +13107,7 @@ class SelectImpl {
 
       @Override
       public Select.Temporal._UNION.ALL<T> UNION() {
-        return new Select.Temporal._UNION.ALL<>() {
+        return new Select.Temporal._UNION.ALL<T>() {
           @Override
           public Select.Temporal.UNION<T> ALL(final Select.Temporal.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -13147,7 +13147,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -13217,7 +13217,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -13253,7 +13253,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -13309,7 +13309,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -13410,7 +13410,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -13440,7 +13440,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -13466,7 +13466,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -13492,7 +13492,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -13534,7 +13534,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -13555,7 +13555,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -13591,7 +13591,7 @@ class SelectImpl {
 
       @Override
       public Select.Textual._UNION.ALL<T> UNION() {
-        return new Select.Textual._UNION.ALL<>() {
+        return new Select.Textual._UNION.ALL<T>() {
           @Override
           public Select.Textual.UNION<T> ALL(final Select.Textual.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -13631,7 +13631,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -13701,7 +13701,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -13737,7 +13737,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -13793,7 +13793,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -13894,7 +13894,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -13924,7 +13924,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -13950,7 +13950,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -13976,7 +13976,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -14018,7 +14018,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -14039,7 +14039,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -14075,7 +14075,7 @@ class SelectImpl {
 
       @Override
       public Select.TIME._UNION.ALL<T> UNION() {
-        return new Select.TIME._UNION.ALL<>() {
+        return new Select.TIME._UNION.ALL<T>() {
           @Override
           public Select.TIME.UNION<T> ALL(final Select.TIME.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);
@@ -14116,7 +14116,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(FROM.this, true, union);
@@ -14186,7 +14186,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(GROUP_BY.this, true, union);
@@ -14222,7 +14222,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(HAVING.this, true, union);
@@ -14278,7 +14278,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(JOIN.this, true, union);
@@ -14379,7 +14379,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ON.this, true, union);
@@ -14409,7 +14409,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(ORDER_BY.this, true, union);
@@ -14435,7 +14435,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(LIMIT.this, true, union);
@@ -14461,7 +14461,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(OFFSET.this, true, union);
@@ -14503,7 +14503,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(SELECT.this, true, union);
@@ -14524,7 +14524,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(WHERE.this, true, union);
@@ -14560,7 +14560,7 @@ class SelectImpl {
 
         @Override
         public Select.TINYINT.UNSIGNED._UNION.ALL<T> UNION() {
-          return new Select.TINYINT.UNSIGNED._UNION.ALL<>() {
+          return new Select.TINYINT.UNSIGNED._UNION.ALL<T>() {
             @Override
             public Select.TINYINT.UNSIGNED.UNION<T> ALL(final Select.TINYINT.UNSIGNED.SELECT<T> union) {
               return new UNION<>(UNION.this, true, union);
@@ -14599,7 +14599,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(FROM.this, true, union);
@@ -14669,7 +14669,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(GROUP_BY.this, true, union);
@@ -14705,7 +14705,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(HAVING.this, true, union);
@@ -14761,7 +14761,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(JOIN.this, true, union);
@@ -14862,7 +14862,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(ON.this, true, union);
@@ -14892,7 +14892,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(ORDER_BY.this, true, union);
@@ -14918,7 +14918,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(LIMIT.this, true, union);
@@ -14944,7 +14944,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(OFFSET.this, true, union);
@@ -14986,7 +14986,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(SELECT.this, true, union);
@@ -15007,7 +15007,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(WHERE.this, true, union);
@@ -15043,7 +15043,7 @@ class SelectImpl {
 
       @Override
       public Select.TINYINT._UNION.ALL<T> UNION() {
-        return new Select.TINYINT._UNION.ALL<>() {
+        return new Select.TINYINT._UNION.ALL<T>() {
           @Override
           public Select.TINYINT.UNION<T> ALL(final Select.TINYINT.SELECT<T> union) {
             return new UNION<>(UNION.this, true, union);

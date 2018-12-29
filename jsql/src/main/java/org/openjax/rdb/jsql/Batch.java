@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptions;
 import org.fastjax.util.ArrayIntList;
 import org.openjax.rdb.jsql.Delete.DELETE;
 import org.openjax.rdb.jsql.Insert.INSERT;
@@ -124,7 +124,7 @@ public class Batch {
       return results.toArray(new int[results.size()]);
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 

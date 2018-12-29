@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.jsql;
 
-import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptions;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -45,7 +45,7 @@ abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> im
       if (compilation != null)
         compilation.afterExecute(false);
 
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 

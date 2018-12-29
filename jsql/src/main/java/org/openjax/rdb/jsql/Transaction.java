@@ -20,7 +20,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.fastjax.sql.exception.SQLExceptionCatalog;
+import org.fastjax.sql.exception.SQLExceptions;
 
 public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
@@ -51,7 +51,7 @@ public class Transaction implements AutoCloseable {
         this.connection.setAutoCommit(false);
       }
       catch (final SQLException e) {
-        throw SQLExceptionCatalog.lookup(e);
+        throw SQLExceptions.getStrongType(e);
       }
 
       inited.set(true);
@@ -73,7 +73,7 @@ public class Transaction implements AutoCloseable {
       return true;
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 
@@ -86,7 +86,7 @@ public class Transaction implements AutoCloseable {
       return true;
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 
@@ -99,7 +99,7 @@ public class Transaction implements AutoCloseable {
       connection.close();
     }
     catch (final SQLException e) {
-      throw SQLExceptionCatalog.lookup(e);
+      throw SQLExceptions.getStrongType(e);
     }
   }
 }
