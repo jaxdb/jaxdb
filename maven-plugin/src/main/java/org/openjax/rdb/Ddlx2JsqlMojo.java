@@ -26,10 +26,10 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.fastjax.maven.mojo.GeneratorMojo;
-import org.fastjax.maven.mojo.SourceInput;
-import org.fastjax.net.URLs;
-import org.fastjax.xml.ValidationException;
+import org.openjax.classic.maven.mojo.GeneratorMojo;
+import org.openjax.classic.maven.mojo.SourceInput;
+import org.openjax.classic.net.URLs;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.jsql.generator.Generator;
 
 @Mojo(name="ddlx2jsql", defaultPhase=LifecyclePhase.GENERATE_SOURCES)

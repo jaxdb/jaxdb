@@ -34,15 +34,15 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
-import org.fastjax.io.FastFiles;
-import org.fastjax.net.URLs;
-import org.fastjax.util.ArrayIntList;
-import org.fastjax.util.ClassLoaders;
-import org.fastjax.util.Classes;
-import org.fastjax.util.FastArrays;
-import org.fastjax.util.IntList;
-import org.fastjax.xml.sax.XMLDocument;
-import org.fastjax.xml.sax.XMLDocuments;
+import org.openjax.classic.io.FastFiles;
+import org.openjax.classic.net.URLs;
+import org.openjax.classic.util.ArrayIntList;
+import org.openjax.classic.util.ClassLoaders;
+import org.openjax.classic.util.Classes;
+import org.openjax.classic.util.FastArrays;
+import org.openjax.classic.util.IntList;
+import org.openjax.classic.xml.sax.XMLDocument;
+import org.openjax.classic.xml.sax.XMLDocuments;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Binary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Blob;
@@ -306,7 +306,7 @@ final class SqlXsb {
             FastFiles.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
-            throw new UnsupportedOperationException(e);
+            throw new IllegalStateException(e);
           }
         }
       });

@@ -44,7 +44,7 @@ Developed with the CohesionFirst approach, **RDB** is reliably designed, consist
 
 ### JavaDocs
 
-JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

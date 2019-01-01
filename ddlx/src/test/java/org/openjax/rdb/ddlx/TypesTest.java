@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.fastjax.xml.ValidationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;

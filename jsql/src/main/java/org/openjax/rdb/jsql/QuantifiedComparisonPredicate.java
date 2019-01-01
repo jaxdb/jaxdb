@@ -19,8 +19,6 @@ package org.openjax.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-import org.openjax.rdb.jsql.Select;
-
 class QuantifiedComparisonPredicate<T> extends type.Subject<T> {
   protected final String qualifier;
   protected final Compilable subQuery;

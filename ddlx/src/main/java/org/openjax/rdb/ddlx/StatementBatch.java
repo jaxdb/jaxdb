@@ -29,7 +29,7 @@ public class StatementBatch {
     this.statements = statements;
   }
 
-  public void writeOutput(final File file) {
+  public void writeOutput(final File file) throws IOException {
     final StringBuilder builder = new StringBuilder();
     final Iterator<Statement> iterator = statements.iterator();
     for (int i = 0; iterator.hasNext(); ++i) {
@@ -39,19 +39,14 @@ public class StatementBatch {
       builder.append(iterator.next()).append(';');
     }
 
-    try {
-      if (file.getParentFile().isFile())
-        throw new IllegalArgumentException(file.getParent() + " is a file");
+    if (file.getParentFile().isFile())
+      throw new IllegalArgumentException(file.getParent() + " is a file");
 
-      if (!file.getParentFile().exists())
-        if (!file.getParentFile().mkdirs())
-          throw new IllegalArgumentException("Could not create path: " + file.getParent());
+    if (!file.getParentFile().exists())
+      if (!file.getParentFile().mkdirs())
+        throw new IllegalArgumentException("Could not create path: " + file.getParent());
 
-      Files.write(file.toPath(), builder.toString().getBytes());
-    }
-    catch (final IOException e) {
-      throw new IllegalStateException(e);
-    }
+    Files.write(file.toPath(), builder.toString().getBytes());
   }
 
   public LinkedHashSet<Statement> getStatements() {

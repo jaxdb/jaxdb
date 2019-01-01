@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.openjax.rdb.jsql.Select;
-
 final class InPredicate extends Predicate {
   protected final boolean positive;
   protected final Compilable[] values;

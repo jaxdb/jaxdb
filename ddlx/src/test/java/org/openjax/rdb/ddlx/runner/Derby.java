@@ -26,10 +26,10 @@ import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
-import org.fastjax.io.FastFiles;
-import org.fastjax.net.URLs;
-import org.fastjax.sql.AuditConnection;
-import org.fastjax.util.zip.ZipFiles;
+import org.openjax.classic.io.FastFiles;
+import org.openjax.classic.net.URLs;
+import org.openjax.classic.sql.AuditConnection;
+import org.openjax.classic.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

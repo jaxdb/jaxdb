@@ -21,8 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import org.fastjax.lang.PackageLoader;
-import org.fastjax.lang.PackageNotFoundException;
+import org.openjax.classic.lang.PackageLoader;
+import org.openjax.classic.lang.PackageNotFoundException;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.vendor.DBVendor;
 

@@ -19,8 +19,6 @@ package org.openjax.rdb.jsql;
 import java.io.IOException;
 import java.util.Set;
 
-import org.openjax.rdb.jsql.Select;
-
 final class ExistsPredicate extends Predicate {
   protected final Compilable subQuery;
 

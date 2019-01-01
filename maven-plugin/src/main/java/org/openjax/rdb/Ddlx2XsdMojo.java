@@ -30,9 +30,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.fastjax.maven.mojo.GeneratorMojo;
-import org.fastjax.maven.mojo.SourceInput;
-import org.fastjax.net.URLs;
+import org.openjax.classic.maven.mojo.GeneratorMojo;
+import org.openjax.classic.maven.mojo.SourceInput;
+import org.openjax.classic.net.URLs;
 import org.openjax.rdb.sqlx.SQL;
 
 @Mojo(name="ddlx2xsd", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)

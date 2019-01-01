@@ -128,9 +128,9 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://easyjax.org/dbcp-2.0.4.xsd"
+    xmlns="http://support.openjax.org/dbcp-2.0.4.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://easyjax.org/dbcp-2.0.4.xsd http://easyjax.org/dbcp.xsd">
+    xsi:schemaLocation="http://support.openjax.org/dbcp-2.0.4.xsd http://support.openjax.org/dbcp.xsd">
     <jdbc>
       <url>jdbc:postgresql://localhost/basis</url>
       <driverClassName>org.postgresql.Driver</driverClassName>
@@ -166,12 +166,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.easyjax:dbcp`][dbcp] dependency to the POM.
+7. Add [`org.openjax.support:dbcp`][dbcp] dependency to the POM.
 
   ```xml
   <dependency>
-    <groupId>org.easyjax</groupId>
-    <artifactId>dbcp</artifactId>
+    <groupId>org.openjax.support</groupId>
+    <artifactId>support-dbcp</artifactId>
     <version>2.0.4-SNAPSHOT</version>
   </dependency>
   ```
@@ -551,7 +551,7 @@ Specification                                                                   
 
 ### JavaDocs
 
-JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 
@@ -565,13 +565,13 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 
 <a href="http://cooltext.com" target="_top"><img src="https://cooltext.com/images/ct_pixel.gif" width="80" height="15" alt="Cool Text: Logo and Graphics Generator" border="0" /></a>
 
-[dbcp.xsd]: /../../../../easyjax/dbcp/src/main/resources/dbcp.xsd
+[dbcp.xsd]: /../../../../openjax/support-dbcp/src/main/resources/dbcp.xsd
 [ddlx-example]: /ddlx#example
 [ddlx]: /ddlx
 [hospital.ddlx]: /maven-plugin/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
-[dbcp]: /../../../../easyjax/dbcp
+[dbcp]: /../../../../openjax/support-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /maven-plugin
 

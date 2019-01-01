@@ -34,11 +34,11 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.fastjax.jci.CompilationException;
-import org.fastjax.util.Hexadecimal;
-import org.fastjax.util.Strings;
-import org.fastjax.xml.ValidationException;
 import org.junit.runner.RunWith;
+import org.openjax.classic.jci.CompilationException;
+import org.openjax.classic.util.Hexadecimal;
+import org.openjax.classic.util.Strings;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;

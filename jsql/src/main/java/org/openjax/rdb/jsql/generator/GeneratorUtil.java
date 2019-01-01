@@ -20,7 +20,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.fastjax.util.Numbers;
+import org.openjax.classic.util.Numbers;
 import org.openjax.rdb.jsql.GenerateOn;
 
 public final class GeneratorUtil {

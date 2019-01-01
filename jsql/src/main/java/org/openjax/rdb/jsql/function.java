@@ -16,16 +16,16 @@
 
 package org.openjax.rdb.jsql;
 
-import org.fastjax.math.BigDecimals;
-import org.fastjax.math.SafeMath;
-import org.fastjax.util.Numbers;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Set;
+
+import org.openjax.classic.math.BigDecimals;
+import org.openjax.classic.math.SafeMath;
+import org.openjax.classic.util.Numbers;
 
 final class function {
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);

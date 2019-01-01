@@ -28,10 +28,10 @@ import java.sql.SQLException;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.fastjax.jci.CompilationException;
-import org.fastjax.util.ClassLoaders;
-import org.fastjax.util.FastArrays;
-import org.fastjax.xml.ValidationException;
+import org.openjax.classic.jci.CompilationException;
+import org.openjax.classic.util.ClassLoaders;
+import org.openjax.classic.util.FastArrays;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;

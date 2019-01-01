@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.sqlx;
 
-import static org.fastjax.util.function.Throwing.*;
+import static org.openjax.classic.util.function.Throwing.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -33,6 +33,7 @@ import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -45,20 +46,20 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.fastjax.io.FastFiles;
-import org.fastjax.jaxb.JaxbUtil;
-import org.fastjax.jaxb.XJCompiler;
-import org.fastjax.jci.CompilationException;
-import org.fastjax.jci.InMemoryCompiler;
-import org.fastjax.net.URLs;
-import org.fastjax.util.ArrayIntList;
-import org.fastjax.util.ClassLoaders;
-import org.fastjax.util.FastArrays;
-import org.fastjax.util.FastCollections;
-import org.fastjax.util.Identifiers;
-import org.fastjax.util.IntList;
-import org.fastjax.xml.sax.XMLDocument;
-import org.fastjax.xml.sax.XMLDocuments;
+import org.openjax.classic.io.FastFiles;
+import org.openjax.classic.jaxb.xjc.JaxbUtil;
+import org.openjax.classic.jaxb.xjc.XJCompiler;
+import org.openjax.classic.jci.CompilationException;
+import org.openjax.classic.jci.InMemoryCompiler;
+import org.openjax.classic.net.URLs;
+import org.openjax.classic.util.ArrayIntList;
+import org.openjax.classic.util.ClassLoaders;
+import org.openjax.classic.util.FastArrays;
+import org.openjax.classic.util.FastCollections;
+import org.openjax.classic.util.Identifiers;
+import org.openjax.classic.util.IntList;
+import org.openjax.classic.xml.sax.XMLDocument;
+import org.openjax.classic.xml.sax.XMLDocuments;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Table;
@@ -283,7 +284,7 @@ final class SqlJaxb {
             FastFiles.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
-            throw new UnsupportedOperationException(e);
+            throw new IllegalStateException(e);
           }
         }
       });
@@ -333,7 +334,7 @@ final class SqlJaxb {
       .filter(f -> f.getName().endsWith(".java"))
       .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
 
-    compiler.compile(new URLClassLoader(command.getClasspath().stream().map(rethrow((File f) -> f.toURI().toURL())).toArray(URL[]::new), null), classedDestDir);
+    compiler.compile(new ArrayList<>(command.getClasspath()), classedDestDir);
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {

@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.fastjax.sql.AuditConnection;
+import org.openjax.classic.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 import org.postgresql.Driver;
 

@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.fastjax.util.Classes;
+import org.openjax.classic.util.Classes;
 
 public class DMLGenerator {
   public static class Args {

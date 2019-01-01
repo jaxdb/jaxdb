@@ -129,7 +129,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 ### JavaDocs
 
-JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

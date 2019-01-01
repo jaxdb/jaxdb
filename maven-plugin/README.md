@@ -125,7 +125,7 @@ The `rdb:jsql` goal is bound to the `generate-sources` phase, and is used to gen
 
 ### JavaDocs
 
-JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

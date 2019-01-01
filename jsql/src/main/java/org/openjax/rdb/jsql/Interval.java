@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.fastjax.util.Temporals;
+import org.openjax.classic.util.Temporals;
 
 public final class Interval extends Compilable implements TemporalAmount {
   public static final class Unit implements TemporalUnit {

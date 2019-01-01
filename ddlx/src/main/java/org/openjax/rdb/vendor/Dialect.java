@@ -23,7 +23,7 @@ import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.fastjax.util.DecimalFormatter;
+import org.openjax.classic.util.DecimalFormatter;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.xsb.runtime.Binding;

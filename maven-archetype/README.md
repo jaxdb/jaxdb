@@ -19,7 +19,7 @@ To use the archetype, execute the following:
 
 ### JavaDocs
 
-JavaDocs are available [here](https://rdb.openjax.org/javadocs/).
+JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

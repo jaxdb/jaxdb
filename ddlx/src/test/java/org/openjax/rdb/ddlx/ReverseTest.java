@@ -26,11 +26,11 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.fastjax.test.AssertXml;
-import org.fastjax.xml.ValidationException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.classic.test.AssertXml;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;

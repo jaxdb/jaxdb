@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.fastjax.util.Classes;
-import org.fastjax.util.Identifiers;
-import org.fastjax.xml.datatype.HexBinary;
+import org.openjax.classic.util.Classes;
+import org.openjax.classic.util.Identifiers;
+import org.openjax.classic.xml.datatype.HexBinary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Binary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Blob;
@@ -27,12 +27,12 @@ import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Int;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Smallint;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Time;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Tinyint;
+import org.openjax.rdb.jsql.kind.Numeric;
 import org.openjax.rdb.sqlx.SQL;
 import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;
 import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Row;
 import org.openjax.xsb.runtime.Attribute;
 import org.openjax.xsb.runtime.Id;
-import org.openjax.rdb.jsql.kind.Numeric;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class EntitiesXsb {

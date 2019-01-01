@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.fastjax.logging.DeferredLogger;
 import org.junit.Before;
 import org.junit.internal.runners.statements.RunBefores;
 import org.junit.runner.Description;
@@ -44,6 +43,7 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openjax.classic.logging.DeferredLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;

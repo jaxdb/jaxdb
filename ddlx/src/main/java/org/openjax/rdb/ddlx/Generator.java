@@ -28,10 +28,10 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.fastjax.lang.PackageLoader;
-import org.fastjax.lang.PackageNotFoundException;
-import org.fastjax.util.FastArrays;
-import org.fastjax.xml.ValidationException;
+import org.openjax.classic.lang.PackageLoader;
+import org.openjax.classic.lang.PackageNotFoundException;
+import org.openjax.classic.util.FastArrays;
+import org.openjax.classic.xml.api.ValidationException;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;

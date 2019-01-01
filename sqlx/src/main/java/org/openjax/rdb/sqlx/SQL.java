@@ -16,8 +16,6 @@
 
 package org.openjax.rdb.sqlx;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -26,8 +24,11 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.fastjax.jci.CompilationException;
-import org.fastjax.xml.transform.Transformer;
+import javax.xml.bind.JAXBException;
+import javax.xml.transform.TransformerException;
+
+import org.openjax.classic.jci.CompilationException;
+import org.openjax.classic.xml.transform.Transformer;
 import org.openjax.rdb.sqlx.SqlJaxb.RowIterator;
 import org.openjax.rdb.sqlx_0_9_9.Database;
 import org.openjax.rdb.sqlx_0_9_9.Insert;

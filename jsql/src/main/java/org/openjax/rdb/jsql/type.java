@@ -38,8 +38,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.fastjax.util.Classes;
-import org.fastjax.util.Numbers;
+import org.openjax.classic.util.Classes;
+import org.openjax.classic.util.Numbers;
+import org.openjax.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
 

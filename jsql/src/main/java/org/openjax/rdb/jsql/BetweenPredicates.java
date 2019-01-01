@@ -16,12 +16,12 @@
 
 package org.openjax.rdb.jsql;
 
-import org.fastjax.util.Numbers;
-import org.fastjax.util.Temporals;
-
 import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.Set;
+
+import org.openjax.classic.util.Numbers;
+import org.openjax.classic.util.Temporals;
 
 final class BetweenPredicates {
   protected static abstract class BetweenPredicate extends Predicate {

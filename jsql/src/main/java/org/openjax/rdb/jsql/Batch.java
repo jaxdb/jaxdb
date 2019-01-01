@@ -25,8 +25,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.fastjax.sql.exception.SQLExceptions;
-import org.fastjax.util.ArrayIntList;
+import org.openjax.classic.sql.exception.SQLExceptions;
+import org.openjax.classic.util.ArrayIntList;
 import org.openjax.rdb.jsql.Delete.DELETE;
 import org.openjax.rdb.jsql.Insert.INSERT;
 import org.openjax.rdb.jsql.Update.UPDATE;
