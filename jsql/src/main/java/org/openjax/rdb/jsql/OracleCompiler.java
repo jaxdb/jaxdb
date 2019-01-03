@@ -28,7 +28,7 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.Map;
 
-import org.openjax.classic.util.Temporals;
+import org.openjax.standard.util.Temporals;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
 

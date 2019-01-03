@@ -19,8 +19,8 @@ package org.openjax.rdb.jsql;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.openjax.classic.jci.CompilationException;
-import org.openjax.classic.xml.api.ValidationException;
+import org.openjax.standard.jci.CompilationException;
+import org.openjax.standard.xml.api.ValidationException;
 
 public class TypesTest extends JSQLTest {
   @Test

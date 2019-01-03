@@ -27,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.openjax.classic.xml.datatype.HexBinary;
+import org.openjax.standard.xml.datatype.HexBinary;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Char;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Check;

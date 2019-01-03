@@ -19,9 +19,9 @@ package org.openjax.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.openjax.classic.sql.exception.SQLExceptions;
-import org.openjax.classic.sql.exception.SQLInvalidSchemaNameException;
-import org.openjax.classic.util.ConcurrentHashSet;
+import org.openjax.standard.sql.exception.SQLExceptions;
+import org.openjax.standard.sql.exception.SQLInvalidSchemaNameException;
+import org.openjax.standard.util.ConcurrentHashSet;
 import org.openjax.rdb.vendor.DBVendor;
 
 public abstract class Schema {

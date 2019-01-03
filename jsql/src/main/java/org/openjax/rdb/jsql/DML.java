@@ -25,7 +25,7 @@ import java.time.temporal.Temporal;
 import java.util.Collection;
 import java.util.Set;
 
-import org.openjax.classic.util.FastArrays;
+import org.openjax.standard.util.FastArrays;
 
 @SuppressWarnings("hiding")
 public final class DML {

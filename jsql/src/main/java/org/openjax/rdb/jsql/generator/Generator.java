@@ -26,9 +26,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openjax.classic.util.Classes;
-import org.openjax.classic.util.Identifiers;
-import org.openjax.classic.xml.api.ValidationException;
+import org.openjax.standard.util.Classes;
+import org.openjax.standard.util.Identifiers;
+import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.DDLxAudit;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;

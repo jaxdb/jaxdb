@@ -17,7 +17,7 @@
 package org.openjax.rdb.jsql;
 
 import static org.junit.Assert.*;
-import static org.openjax.classic.util.function.Throwing.*;
+import static org.openjax.standard.util.function.Throwing.*;
 import static org.openjax.rdb.jsql.DML.*;
 
 import java.io.File;
@@ -30,11 +30,11 @@ import java.sql.SQLException;
 
 import javax.xml.bind.UnmarshalException;
 
-import org.openjax.classic.jaxb.xjc.JaxbUtil;
-import org.openjax.classic.jci.CompilationException;
-import org.openjax.classic.jci.InMemoryCompiler;
-import org.openjax.classic.util.Identifiers;
-import org.openjax.classic.xml.api.ValidationException;
+import org.openjax.standard.jaxb.xjc.JaxbUtil;
+import org.openjax.standard.jci.CompilationException;
+import org.openjax.standard.jci.InMemoryCompiler;
+import org.openjax.standard.util.Identifiers;
+import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.Schemas;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.jsql.generator.Generator;

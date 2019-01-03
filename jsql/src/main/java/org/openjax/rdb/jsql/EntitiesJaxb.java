@@ -29,7 +29,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlType;
 
-import org.openjax.classic.util.Identifiers;
+import org.openjax.standard.util.Identifiers;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Schema;

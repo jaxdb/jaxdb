@@ -22,7 +22,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.TimeZone;
 
-import org.openjax.classic.sql.AuditConnection;
+import org.openjax.standard.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
 
 public class Oracle implements Vendor {

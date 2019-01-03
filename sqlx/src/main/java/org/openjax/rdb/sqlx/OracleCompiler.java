@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.sqlx;
 
-import org.openjax.classic.util.Hexadecimal;
+import org.openjax.standard.util.Hexadecimal;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.vendor.DBVendor;
 

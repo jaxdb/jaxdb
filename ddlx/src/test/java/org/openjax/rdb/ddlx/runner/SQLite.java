@@ -25,10 +25,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
-import org.openjax.classic.io.FastFiles;
-import org.openjax.classic.net.URLs;
-import org.openjax.classic.sql.AuditConnection;
-import org.openjax.classic.util.zip.ZipFiles;
+import org.openjax.standard.io.FastFiles;
+import org.openjax.standard.net.URLs;
+import org.openjax.standard.sql.AuditConnection;
+import org.openjax.standard.util.zip.ZipFiles;
 import org.openjax.rdb.vendor.DBVendor;
 
 public class SQLite implements Vendor {

@@ -30,8 +30,8 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.openjax.classic.io.Readers;
-import org.openjax.classic.io.Streams;
+import org.openjax.standard.io.Readers;
+import org.openjax.standard.io.Streams;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
 

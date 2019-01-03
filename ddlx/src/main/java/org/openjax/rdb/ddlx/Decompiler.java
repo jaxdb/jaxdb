@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.openjax.classic.lang.PackageLoader;
-import org.openjax.classic.lang.PackageNotFoundException;
+import org.openjax.standard.lang.PackageLoader;
+import org.openjax.standard.lang.PackageNotFoundException;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Binary;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Blob;

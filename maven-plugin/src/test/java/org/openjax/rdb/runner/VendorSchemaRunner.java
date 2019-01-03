@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
-import org.openjax.classic.util.FastArrays;
+import org.openjax.standard.util.FastArrays;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.jsql.Connector;
 import org.openjax.rdb.jsql.Registry;

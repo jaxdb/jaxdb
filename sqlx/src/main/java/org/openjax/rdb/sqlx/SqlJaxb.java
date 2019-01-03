@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.sqlx;
 
-import static org.openjax.classic.util.function.Throwing.*;
+import static org.openjax.standard.util.function.Throwing.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -46,20 +46,20 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.openjax.classic.io.FastFiles;
-import org.openjax.classic.jaxb.xjc.JaxbUtil;
-import org.openjax.classic.jaxb.xjc.XJCompiler;
-import org.openjax.classic.jci.CompilationException;
-import org.openjax.classic.jci.InMemoryCompiler;
-import org.openjax.classic.net.URLs;
-import org.openjax.classic.util.ArrayIntList;
-import org.openjax.classic.util.ClassLoaders;
-import org.openjax.classic.util.FastArrays;
-import org.openjax.classic.util.FastCollections;
-import org.openjax.classic.util.Identifiers;
-import org.openjax.classic.util.IntList;
-import org.openjax.classic.xml.sax.XMLDocument;
-import org.openjax.classic.xml.sax.XMLDocuments;
+import org.openjax.standard.io.FastFiles;
+import org.openjax.standard.jaxb.xjc.JaxbUtil;
+import org.openjax.standard.jaxb.xjc.XJCompiler;
+import org.openjax.standard.jci.CompilationException;
+import org.openjax.standard.jci.InMemoryCompiler;
+import org.openjax.standard.net.URLs;
+import org.openjax.standard.util.ArrayIntList;
+import org.openjax.standard.util.ClassLoaders;
+import org.openjax.standard.util.FastArrays;
+import org.openjax.standard.util.FastCollections;
+import org.openjax.standard.util.Identifiers;
+import org.openjax.standard.util.IntList;
+import org.openjax.standard.xml.sax.XMLDocument;
+import org.openjax.standard.xml.sax.XMLDocuments;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Table;

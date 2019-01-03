@@ -35,10 +35,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.runner.RunWith;
-import org.openjax.classic.jci.CompilationException;
-import org.openjax.classic.util.Hexadecimal;
-import org.openjax.classic.util.Strings;
-import org.openjax.classic.xml.api.ValidationException;
+import org.openjax.standard.jci.CompilationException;
+import org.openjax.standard.util.Hexadecimal;
+import org.openjax.standard.util.Strings;
+import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;

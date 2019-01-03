@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.openjax.classic.sql.exception.SQLExceptions;
+import org.openjax.standard.sql.exception.SQLExceptions;
 
 abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
   protected BatchableKeyword(final BatchableKeyword<T> parent) {

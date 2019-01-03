@@ -47,7 +47,7 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.openjax.classic.xml</groupId>
+        <groupId>org.openjax.standard.xml</groupId>
         <artifactId>xml-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -112,17 +112,17 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.openjax.classic</groupId>
-      <artifactId>classic-math</artifactId>
+      <groupId>org.openjax.standard</groupId>
+      <artifactId>standard-math</artifactId>
       <version>0.6.4-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.classic</groupId>
-      <artifactId>classic-sql</artifactId>
+      <groupId>org.openjax.standard</groupId>
+      <artifactId>standard-sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.classic.jaxb</groupId>
+      <groupId>org.openjax.standard.jaxb</groupId>
       <artifactId>jaxb-xjc</artifactId>
     </dependency>
     <dependency>

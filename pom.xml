@@ -47,7 +47,7 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>org.openjax.classic.xml</groupId>
+        <groupId>org.openjax.standard.xml</groupId>
         <artifactId>xml-maven-plugin</artifactId>
       </plugin>
     </plugins>
@@ -88,8 +88,8 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.openjax.classic</groupId>
-      <artifactId>classic-sql</artifactId>
+      <groupId>org.openjax.standard</groupId>
+      <artifactId>standard-sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -124,13 +124,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openjax.classic</groupId>
-      <artifactId>classic-logging</artifactId>
+      <groupId>org.openjax.standard</groupId>
+      <artifactId>standard-logging</artifactId>
       <version>0.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.classic</groupId>
-      <artifactId>classic-test</artifactId>
+      <groupId>org.openjax.standard</groupId>
+      <artifactId>standard-test</artifactId>
       <version>0.6.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
@@ -138,7 +138,7 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.openjax.classic.jaxb</groupId>
+        <groupId>org.openjax.standard.jaxb</groupId>
         <artifactId>jaxb-xjc</artifactId>
         <version>0.8.1-SNAPSHOT</version>
       </dependency>

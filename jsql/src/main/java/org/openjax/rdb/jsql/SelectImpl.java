@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-import org.openjax.classic.sql.exception.SQLExceptions;
-import org.openjax.classic.util.FastCollections;
+import org.openjax.standard.sql.exception.SQLExceptions;
+import org.openjax.standard.util.FastCollections;
 import org.openjax.rdb.vendor.DBVendor;
 
 class SelectImpl {

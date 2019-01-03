@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.jsql;
 
-import org.openjax.classic.util.Strings;
+import org.openjax.standard.util.Strings;
 
 final class Alias extends Compilable {
   protected final String name;

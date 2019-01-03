@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openjax.classic.util.Classes;
-import org.openjax.classic.util.Identifiers;
-import org.openjax.classic.xml.datatype.HexBinary;
+import org.openjax.standard.util.Classes;
+import org.openjax.standard.util.Identifiers;
+import org.openjax.standard.xml.datatype.HexBinary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Bigint;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Binary;
 import org.openjax.rdb.datatypes_0_9_9.xL5gluGCXYYJc.$Blob;
