@@ -134,6 +134,24 @@
       <version>0.6.9-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>com.oracle.jdbc</groupId>
+      <artifactId>ojdbc7</artifactId>
+      <version>12.1.0.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm.db2</groupId>
+      <artifactId>db2jcc</artifactId>
+      <version>8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm.db2</groupId>
+      <artifactId>db2jcc_license_cu</artifactId>
+      <version>8.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
   <dependencyManagement>
     <dependencies>
@@ -149,50 +167,20 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
-  <profiles>
-    <profile>
-      <id>!maven.test.skip</id>
-      <activation>
-        <property>
-          <name>!maven.test.skip</name>
-        </property>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>com.oracle.jdbc</groupId>
-          <artifactId>ojdbc7</artifactId>
-          <version>12.1.0.2</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.ibm.db2</groupId>
-          <artifactId>db2jcc</artifactId>
-          <version>8.1</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.ibm.db2</groupId>
-          <artifactId>db2jcc_license_cu</artifactId>
-          <version>8.1</version>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <repositories>
-        <repository>
-          <id>maven.atlassian.com</id>
-          <url>https://maven.atlassian.com/3rdparty</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-        <repository>
-          <id>maven.oracle.com</id>
-          <url>https://maven.oracle.com</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
-    </profile>
-  </profiles>
+  <repositories>
+    <repository>
+      <id>maven.atlassian.com</id>
+      <url>https://maven.atlassian.com/3rdparty</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
+      <id>maven.oracle.com</id>
+      <url>https://maven.oracle.com</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
 </project>

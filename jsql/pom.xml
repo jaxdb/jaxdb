@@ -47,19 +47,6 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.openjax.standard.xml</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>test-compile</id>
-            <goals>
-              <goal>validate</goal>
-            </goals>
-            <phase>test</phase>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
         <groupId>org.openjax.xsb</groupId>
         <artifactId>xsb-maven-plugin</artifactId>
         <executions>
@@ -110,6 +97,36 @@
       </plugins>
     </pluginManagement>
   </build>
+  <profiles>
+    <profile>
+      <id>xml-maven-plugin</id>
+      <activation>
+        <property>
+          <name>!maven.test.skip</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.openjax.standard.xml</groupId>
+            <artifactId>xml-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>test-compile</id>
+                <goals>
+                  <goal>validate</goal>
+                </goals>
+                <phase>test</phase>
+                <configuration>
+                  <skip>${skipTests}</skip>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
   <dependencies>
     <dependency>
       <groupId>org.openjax.standard</groupId>
