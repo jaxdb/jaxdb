@@ -77,6 +77,7 @@
                   <testExcludes>
                     <!-- Excluded for jdk1.8 due to: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8051946 -->
                     <testExclude>**/NumericFunctionStaticTest.java</testExclude>
+                    <testExclude>**/CaseTest.java</testExclude>
                   </testExcludes>
                 </configuration> 
               </execution>                  
