@@ -83,7 +83,7 @@ public abstract class BetweenPredicateTest {
       FROM(p).
       WHERE(BETWEEN(p.msrp, p.price, 100)).
       execute()) {
-      for (int i = 0; i < 59; i++) {
+      for (int i = 0; i < 59; ++i) {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().get());
       }
@@ -110,7 +110,7 @@ public abstract class BetweenPredicateTest {
       FROM(p).
       WHERE(BETWEEN(p.quantityInStock, 500, 1000)).
       execute()) {
-      for (int i = 0; i < 7; i++) {
+      for (int i = 0; i < 7; ++i) {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().get());
       }

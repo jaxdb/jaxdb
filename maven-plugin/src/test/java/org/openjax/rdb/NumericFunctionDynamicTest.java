@@ -71,7 +71,7 @@ public abstract class NumericFunctionDynamicTest {
 
   protected static <E extends type.Entity>E getNthRow(final RowIterator<E> rows, final int rowNum) throws SQLException {
     E row = null;
-    for (int i = 0; i <= rowNum && rows.nextRow(); i++)
+    for (int i = 0; i <= rowNum && rows.nextRow(); ++i)
       row = rows.nextEntity();
 
     return row;
