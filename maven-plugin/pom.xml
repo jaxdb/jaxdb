@@ -73,6 +73,7 @@
                 </goals>
                 <phase>test-compile</phase>
                 <configuration>
+                  <!-- Output something during compilation, so Travis CI won't terminate the build due to its silence -->
                   <verbose>true</verbose>
                   <testExcludes>
                     <!-- Excluded for jdk1.8 due to: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8051946 -->
