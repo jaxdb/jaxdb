@@ -18,18 +18,16 @@ jdk:
 - oraclejdk8
 - oraclejdk11
 install:
-- '[ "$TRAVIS_JDK_VERSION" = "oraclejdk8" ] &&
-   [ "$TRAVIS_BRANCH" = "master" ] &&
-   [ "$TRAVIS_PULL_REQUEST" = "false" ] &&
-   sh -c "$SIGNING_KEY" | $GPG_EXECUTABLE --fast-import &> /dev/null ||
-   true'
 - cp settings.xml $HOME/.m2/settings.xml
 script:
-- '[ "$TRAVIS_JDK_VERSION" = "oraclejdk8" ] &&
-   [ "$TRAVIS_BRANCH" = "master" ] &&
-   [ "$TRAVIS_PULL_REQUEST" = "false" ] &&
-   mvn -Dmaven.rtest.skip clean deploy -P deploy ||
-   mvn -Dmaven.rtest.skip clean install'
+- 'if [ "$TRAVIS_JDK_VERSION" = "oraclejdk8" ] &&
+      [ "$TRAVIS_BRANCH" = "master" ] &&
+      [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
+    sh -c "$SIGNING_KEY" | $GPG_EXECUTABLE --fast-import &> /dev/null &&
+    mvn -Dmaven.rtest.skip clean deploy -P deploy
+  else
+    mvn -Dmaven.rtest.skip clean install
+  fi'
 cache:
   directories:
     - ~/.m2/repository
