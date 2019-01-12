@@ -1,6 +1,8 @@
 # OpenJAX RDB Maven Archetype
 
-**Quick-start Maven Archetype for RDB framework**
+> Quick-start Maven Archetype for RDB framework
+
+[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 
 ### Introduction
 

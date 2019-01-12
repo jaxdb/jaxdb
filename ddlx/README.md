@@ -1,6 +1,8 @@
 # OpenJAX RDB DDLx
 
-**Relational Data Binding DDLx**
+> Relational Data Binding DDLx
+
+[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 
 ### Introduction
 

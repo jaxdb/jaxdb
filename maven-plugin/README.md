@@ -1,6 +1,8 @@
 # OpenJAX RDB Maven Plugin
 
-**Maven Plugin for [RDB][rdb] framework**
+> Maven Plugin for [RDB][rdb] framework
+
+[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 
 ### Introduction
 
