@@ -1,6 +1,8 @@
 # OpenJAX RDB
 
-**Relational Data Binding**
+> Relational Data Binding
+
+[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 
 ### Introduction
 
