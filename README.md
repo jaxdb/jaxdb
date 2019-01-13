@@ -3,6 +3,7 @@
 > Relational Data Binding
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
+[![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
 
 ### Introduction
 
