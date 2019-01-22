@@ -26,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openjax.standard.util.Classes;
-import org.openjax.standard.util.Identifiers;
-import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.DDLxAudit;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
@@ -55,6 +52,9 @@ import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql_0_9_9.xL0gluGCXYYJc.$Integer;
 import org.openjax.rdb.jsql_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.Dialect;
+import org.openjax.standard.util.Classes;
+import org.openjax.standard.util.Identifiers;
+import org.openjax.standard.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -497,7 +497,7 @@ public class Generator {
     if (column instanceof $Enum)
       rawType = Identifiers.toClassCase(column.getName$().text());
     else
-      rawType = ((Class<?>)Classes.getGenericSuperclasses(type.type)[0]).getCanonicalName();
+      rawType = ((Class<?>)Classes.getSuperclassGenericTypes(type.type)[0]).getCanonicalName();
 
     return "final " + rawType + " " + columnName;
   }

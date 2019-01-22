@@ -119,7 +119,7 @@ public class DMLGenerator {
   }
 
   private static Class<?> getGenericType(final Class<?> cls) {
-    final Type[] genericTypes = Classes.getGenericSuperclasses(cls);
+    final Type[] genericTypes = Classes.getSuperclassGenericTypes(cls);
     final Class<?> generic = genericTypes != null ? (Class<?>)genericTypes[0] : getGenericType(cls.getSuperclass());
     return kind.Numeric.UNSIGNED.class.isAssignableFrom(cls) ? getUnsignedPrimitive(generic) : generic;
   }

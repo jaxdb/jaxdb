@@ -38,11 +38,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.openjax.standard.util.Classes;
-import org.openjax.standard.util.Numbers;
-import org.openjax.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
+import org.openjax.standard.util.Classes;
+import org.openjax.standard.util.Numbers;
 
 public final class type {
   private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<>();
@@ -51,7 +50,7 @@ public final class type {
     typeToClass.put(null, ENUM.class);
     for (final Class<?> cls : type.class.getClasses()) {
       if (!Modifier.isAbstract(cls.getModifiers())) {
-        final Type type = Classes.getGenericSuperclasses(cls)[0];
+        final Type type = Classes.getSuperclassGenericTypes(cls)[0];
         if (type instanceof Class<?>)
           typeToClass.put((Class<?>)type, cls);
       }
