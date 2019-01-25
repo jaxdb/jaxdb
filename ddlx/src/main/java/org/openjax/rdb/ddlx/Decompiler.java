@@ -216,10 +216,10 @@ abstract class Decompiler {
   }
 
   protected abstract DBVendor getVendor();
-  protected abstract $Column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement);
-  protected abstract Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException;
-  protected abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException;
-  protected abstract Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException;
+  protected abstract $Column makeColumn(String columnName, String typeName, int size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
+  protected abstract Map<String,List<$Check>> getCheckConstraints(Connection connection) throws SQLException;
+  protected abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
+  protected abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {
     if (rule == 1)

@@ -141,7 +141,7 @@ abstract class Compiler {
 
   protected abstract DBVendor getVendor();
 
-  protected abstract void onRegister(final Connection connection) throws SQLException;
+  protected abstract void onRegister(Connection connection) throws SQLException;
 
   protected static <T extends kind.DataType<?>> Compilable compilable(final T kind) {
     return (Compilable)kind;

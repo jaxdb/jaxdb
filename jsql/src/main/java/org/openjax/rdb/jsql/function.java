@@ -72,7 +72,7 @@ final class function {
       return evaluated == null ? null : evaluate(evaluated);
     }
 
-    protected abstract Number evaluate(final Number a);
+    protected abstract Number evaluate(Number a);
   }
 
   protected static abstract class Function2 extends Generic {
@@ -104,7 +104,7 @@ final class function {
       return evaluate(a, b);
     }
 
-    protected abstract Number evaluate(final Number a, final Number b);
+    protected abstract Number evaluate(Number a, Number b);
   }
 
   static final class Pi extends Function0 {

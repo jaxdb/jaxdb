@@ -83,5 +83,5 @@ public abstract class GenerateOn<T> {
     }
   };
 
-  public abstract void generate(final type.DataType<T> dataType);
+  public abstract void generate(type.DataType<T> dataType);
 }

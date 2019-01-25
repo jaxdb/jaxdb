@@ -19,5 +19,5 @@ package org.openjax.rdb.jsql;
 import java.util.Set;
 
 abstract class Evaluable extends Compilable {
-  protected abstract Object evaluate(final Set<Evaluable> visited);
+  protected abstract Object evaluate(Set<Evaluable> visited);
 }

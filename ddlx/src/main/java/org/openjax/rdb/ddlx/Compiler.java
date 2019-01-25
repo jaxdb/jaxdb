@@ -93,9 +93,9 @@ abstract class Compiler {
 
   protected abstract DBVendor getVendor();
 
-  protected abstract CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns);
+  protected abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
 
-  protected abstract void init(final Connection connection) throws SQLException;
+  protected abstract void init(Connection connection) throws SQLException;
 
   /**
    * Quote a named identifier.
@@ -550,7 +550,7 @@ abstract class Compiler {
     return new ArrayList<>();
   }
 
-  protected abstract String dropIndexOnClause(final $Table table);
+  protected abstract String dropIndexOnClause($Table table);
 
   protected final LinkedHashSet<DropStatement> dropTable(final $Table table) {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
@@ -753,8 +753,8 @@ abstract class Compiler {
     return "DELETE FROM " + q(tableName);
   }
 
-  protected abstract String $null(final $Table table, final $Column column);
-  protected abstract String $autoIncrement(final $Table table, final $Integer column);
+  protected abstract String $null($Table table, $Column column);
+  protected abstract String $autoIncrement($Table table, $Integer column);
 
   protected String compileBinary(final String value) {
     return "X'" + value + "'";

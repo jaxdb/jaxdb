@@ -102,7 +102,7 @@ public abstract class Dialect {
 
   public abstract boolean allowsUnsignedNumeric();
 
-  protected abstract String declareBinary(final boolean varying, final int length);
+  protected abstract String declareBinary(boolean varying, int length);
   protected abstract Integer binaryMaxLength();
   public String compileBinary(final boolean varying, final Integer length) {
     if (length != null && binaryMaxLength() != null && length > binaryMaxLength())
@@ -111,7 +111,7 @@ public abstract class Dialect {
     return declareBinary(varying, length);
   }
 
-  protected abstract String declareBlob(final Long length);
+  protected abstract String declareBlob(Long length);
   protected abstract Long blobMaxLength();
   public String compileBlob(final Long length) {
     if (length != null && blobMaxLength() != null && length > blobMaxLength())
@@ -122,7 +122,7 @@ public abstract class Dialect {
 
   public abstract String declareBoolean();
 
-  protected abstract String declareChar(final boolean varying, final int length);
+  protected abstract String declareChar(boolean varying, int length);
   protected abstract Integer charMaxLength();
   public String compileChar(final boolean varying, final int length) {
     if (charMaxLength() != null && length > charMaxLength())
@@ -131,7 +131,7 @@ public abstract class Dialect {
     return declareChar(varying, length);
   }
 
-  protected abstract String declareClob(final Long length);
+  protected abstract String declareClob(Long length);
   protected abstract Long clobMaxLength();
   public String compileClob(final Long length) {
     if (length != null && clobMaxLength() != null && length > clobMaxLength())
@@ -142,17 +142,17 @@ public abstract class Dialect {
 
   public abstract String declareDate();
 
-  public abstract String declareDateTime(final byte precision);
+  public abstract String declareDateTime(byte precision);
 
-  public abstract String declareDecimal(final Short precision, final Short scale, final boolean unsigned);
+  public abstract String declareDecimal(Short precision, Short scale, boolean unsigned);
   public abstract short decimalMaxPrecision();
   protected abstract Integer decimalMaxScale();
 
-  public abstract String declareFloat(final boolean unsigned);
+  public abstract String declareFloat(boolean unsigned);
 
-  public abstract String declareDouble(final boolean unsigned);
+  public abstract String declareDouble(boolean unsigned);
 
-  protected abstract String declareInt8(final byte precision, final boolean unsigned);
+  protected abstract String declareInt8(byte precision, boolean unsigned);
   protected static final byte int8SignedMaxPrecision = 3;
   protected static final byte int8UnsignedMaxPrecision = 3;
   public String compileInt8(final byte precision, final boolean unsigned) {
@@ -163,7 +163,7 @@ public abstract class Dialect {
     return declareInt8(precision, unsigned);
   }
 
-  protected abstract String declareInt16(final byte precision, final boolean unsigned);
+  protected abstract String declareInt16(byte precision, boolean unsigned);
   protected static final byte int16SignedMaxPrecision = 5;
   protected static final byte int16UnsignedMaxPrecision = 5;
   public String compileInt16(final byte precision, final boolean unsigned) {
@@ -174,7 +174,7 @@ public abstract class Dialect {
     return declareInt16(precision, unsigned);
   }
 
-  protected abstract String declareInt32(final byte precision, final boolean unsigned);
+  protected abstract String declareInt32(byte precision, boolean unsigned);
   protected static final byte int32SignedMaxPrecision = 10;
   protected static final byte int32UnsignedMaxPrecision = 10;
   public String compileInt32(final byte precision, final boolean unsigned) {
@@ -185,7 +185,7 @@ public abstract class Dialect {
     return declareInt32(precision, unsigned);
   }
 
-  protected abstract String declareInt64(final byte precision, final boolean unsigned);
+  protected abstract String declareInt64(byte precision, boolean unsigned);
   protected static final byte int64SignedMaxPrecision = 19;
   protected static final byte int64UnsignedMaxPrecision = 20;
   public String compileInt64(Byte precision, final boolean unsigned) {
@@ -206,7 +206,7 @@ public abstract class Dialect {
     return declareInt64(precision, unsigned);
   }
 
-  public abstract String declareTime(final byte precision);
+  public abstract String declareTime(byte precision);
   public abstract String declareInterval();
-  public abstract String declareEnum(final $Enum type);
+  public abstract String declareEnum($Enum type);
 }

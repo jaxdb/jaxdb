@@ -43,9 +43,9 @@ final class operator {
       super(symbol);
     }
 
-    protected abstract LocalDate evaluate(final LocalDate a, final Interval b);
-    protected abstract LocalDateTime evaluate(final LocalDateTime a, final Interval b);
-    protected abstract LocalTime evaluate(final LocalTime a, final Interval b);
+    protected abstract LocalDate evaluate(LocalDate a, Interval b);
+    protected abstract LocalDateTime evaluate(LocalDateTime a, Interval b);
+    protected abstract LocalTime evaluate(LocalTime a, Interval b);
   }
 
   static abstract class Arithmetic extends Generic {
@@ -408,14 +408,14 @@ final class operator {
       throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
     }
 
-    protected abstract float evaluate(final float a, final float b);
-    protected abstract double evaluate(final double a, final double b);
-    protected abstract Number evaluate(final byte a, final byte b);
-    protected abstract Number evaluate(final short a, final short b);
-    protected abstract Number evaluate(final int a, final int b);
-    protected abstract Number evaluate(final long a, final long b);
-    protected abstract Number evaluate(final BigInteger a, final BigInteger b);
-    protected abstract Number evaluate(final BigDecimal a, final BigDecimal b);
+    protected abstract float evaluate(float a, float b);
+    protected abstract double evaluate(double a, double b);
+    protected abstract Number evaluate(byte a, byte b);
+    protected abstract Number evaluate(short a, short b);
+    protected abstract Number evaluate(int a, int b);
+    protected abstract Number evaluate(long a, long b);
+    protected abstract Number evaluate(BigInteger a, BigInteger b);
+    protected abstract Number evaluate(BigDecimal a, BigDecimal b);
   }
 
   static abstract class Boolean extends Generic {
@@ -436,7 +436,7 @@ final class operator {
       super(symbol);
     }
 
-    protected abstract java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b);
+    protected abstract java.lang.Boolean evaluate(Condition<java.lang.Boolean> a, Condition<java.lang.Boolean> b);
   }
 
   static abstract class Logical<D> extends Generic {
@@ -481,7 +481,7 @@ final class operator {
       super(symbol);
     }
 
-    protected abstract java.lang.Boolean evaluate(final D a, final D b);
+    protected abstract java.lang.Boolean evaluate(D a, D b);
   }
 
   static abstract class String extends Generic {
@@ -509,7 +509,7 @@ final class operator {
       super(symbol);
     }
 
-    protected abstract java.lang.String evaluate(final java.lang.String a);
+    protected abstract java.lang.String evaluate(java.lang.String a);
   }
 
   static abstract class StringN extends String {
@@ -517,7 +517,7 @@ final class operator {
       super(symbol);
     }
 
-    protected abstract java.lang.String evaluate(final java.lang.String ... strings);
+    protected abstract java.lang.String evaluate(java.lang.String ... strings);
   }
 
   public static class Ordering extends Generic {

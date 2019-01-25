@@ -19,5 +19,5 @@ package org.openjax.rdb.jsql;
 import java.io.IOException;
 
 abstract class Compilable {
-  protected abstract void compile(final Compilation compilation) throws IOException;
+  protected abstract void compile(Compilation compilation) throws IOException;
 }

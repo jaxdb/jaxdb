@@ -1177,11 +1177,11 @@ public final class type {
 
     protected abstract Class<T> type();
     protected abstract int sqlType();
-    protected abstract void get(final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException;
-    protected abstract void set(final ResultSet resultSet, final int columnIndex) throws SQLException;
-    protected abstract String compile(final DBVendor vendor) throws IOException;
-    protected abstract String declare(final DBVendor vendor);
-    protected abstract DataType<?> scaleTo(final DataType<?> dataType);
+    protected abstract void get(PreparedStatement statement, int parameterIndex) throws IOException, SQLException;
+    protected abstract void set(ResultSet resultSet, int columnIndex) throws SQLException;
+    protected abstract String compile(DBVendor vendor) throws IOException;
+    protected abstract String declare(DBVendor vendor);
+    protected abstract DataType<?> scaleTo(DataType<?> dataType);
 
     @Override
     public abstract DataType<T> clone();
