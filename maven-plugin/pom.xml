@@ -175,11 +175,6 @@
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-core</artifactId>
-      <version>3.5.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.plugin-tools</groupId>
       <artifactId>maven-plugin-annotations</artifactId>
       <version>3.5</version>
@@ -229,6 +224,13 @@
       <version>0.9.9-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+
+    <!-- This order matters, to override other dependency versions imported above -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>3.5.0</version>
     </dependency>
   </dependencies>
 </project>
