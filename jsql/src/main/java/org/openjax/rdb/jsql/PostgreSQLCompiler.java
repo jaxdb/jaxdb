@@ -175,7 +175,7 @@ final class PostgreSQLCompiler extends Compiler {
         unitString = unit.toString().substring(0, unit.toString().length() - 1);
       }
 
-      clause.append(' ').append(component).append(" ").append(unitString);
+      clause.append(' ').append(component).append(' ').append(unitString);
     }
 
     compilation.append("INTERVAL '").append(clause.substring(1)).append('\'');

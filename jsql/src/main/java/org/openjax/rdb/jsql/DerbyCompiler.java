@@ -136,7 +136,7 @@ final class DerbyCompiler extends Compiler {
       throw new UnsupportedOperationException("FIXME: units.size() > 1");
 
     for (final TemporalUnit unit : units)
-      clause.append(' ').append(interval.get(unit)).append(" ").append(unit);
+      clause.append(' ').append(interval.get(unit)).append(' ').append(unit);
 
     compilation.append('\'').append(clause.substring(1)).append('\'');
   }
