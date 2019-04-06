@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.openjax.standard.lang.PackageLoader;
-import org.openjax.standard.lang.PackageNotFoundException;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Binary;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Blob;
@@ -55,6 +53,8 @@ import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Time;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Tinyint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.lang.PackageLoader;
+import org.openjax.standard.lang.PackageNotFoundException;
 
 abstract class Decompiler {
   private static final Decompiler[] decompilers = new Decompiler[DBVendor.values().length];

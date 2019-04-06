@@ -38,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.openjax.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
 import org.openjax.standard.util.Classes;

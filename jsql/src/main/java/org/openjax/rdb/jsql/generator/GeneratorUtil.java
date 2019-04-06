@@ -20,8 +20,8 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.openjax.standard.util.Numbers;
 import org.openjax.rdb.jsql.GenerateOn;
+import org.openjax.standard.util.Numbers;
 
 public final class GeneratorUtil {
   public static String compile(final Object[] object) {

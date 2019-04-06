@@ -27,8 +27,6 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.standard.math.BigDecimals;
-import org.openjax.standard.math.SafeMath;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -37,12 +35,14 @@ import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.Condition;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.Select.untyped.FROM;
-import org.openjax.rdb.runner.TestTransaction;
-import org.openjax.rdb.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.Transaction;
 import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
+import org.openjax.rdb.runner.TestTransaction;
+import org.openjax.rdb.runner.VendorSchemaRunner;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.math.BigDecimals;
+import org.openjax.standard.math.SafeMath;
 
 public abstract class NumericFunctionDynamicTest {
   @RunWith(VendorSchemaRunner.class)

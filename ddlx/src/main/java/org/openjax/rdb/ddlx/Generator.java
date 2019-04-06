@@ -28,14 +28,14 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.openjax.standard.lang.PackageLoader;
-import org.openjax.standard.lang.PackageNotFoundException;
-import org.openjax.standard.util.FastArrays;
-import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.lang.PackageLoader;
+import org.openjax.standard.lang.PackageNotFoundException;
+import org.openjax.standard.util.FastArrays;
+import org.openjax.standard.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

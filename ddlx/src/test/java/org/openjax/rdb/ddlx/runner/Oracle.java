@@ -22,8 +22,8 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.TimeZone;
 
-import org.openjax.standard.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.sql.AuditConnection;
 
 public class Oracle implements Vendor {
   @Override

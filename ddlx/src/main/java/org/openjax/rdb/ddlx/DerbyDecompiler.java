@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openjax.standard.util.Strings;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Bigint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Binary;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Blob;
@@ -51,6 +50,7 @@ import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Smallint;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Time;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.util.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override

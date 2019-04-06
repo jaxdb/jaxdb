@@ -20,12 +20,12 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openjax.standard.util.FastArrays;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Index;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Integer;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.Dialect;
+import org.openjax.standard.util.FastArrays;
 import org.openjax.xsb.runtime.BindingList;
 
 final class SQLDataTypes {

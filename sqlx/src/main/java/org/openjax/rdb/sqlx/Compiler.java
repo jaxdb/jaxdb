@@ -21,10 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.Set;
 
-import org.openjax.standard.lang.PackageLoader;
-import org.openjax.standard.lang.PackageNotFoundException;
 import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.lang.PackageLoader;
+import org.openjax.standard.lang.PackageNotFoundException;
 
 abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];

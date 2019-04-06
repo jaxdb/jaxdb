@@ -30,10 +30,10 @@ import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.jsql.DML.NOT;
-import org.openjax.rdb.runner.VendorSchemaRunner;
 import org.openjax.rdb.jsql.RowIterator;
 import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
+import org.openjax.rdb.runner.VendorSchemaRunner;
 import org.openjax.rdb.vendor.DBVendor;
 
 public abstract class CastTest {

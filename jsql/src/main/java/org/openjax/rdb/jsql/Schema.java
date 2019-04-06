@@ -19,10 +19,10 @@ package org.openjax.rdb.jsql;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.standard.sql.exception.SQLExceptions;
 import org.openjax.standard.sql.exception.SQLInvalidSchemaNameException;
 import org.openjax.standard.util.ConcurrentHashSet;
-import org.openjax.rdb.vendor.DBVendor;
 
 public abstract class Schema {
   private static final ConcurrentHashSet<Class<? extends Schema>> inited = new ConcurrentHashSet<>();

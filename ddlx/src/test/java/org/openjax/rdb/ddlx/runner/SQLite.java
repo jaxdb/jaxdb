@@ -25,11 +25,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
+import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.standard.io.FastFiles;
 import org.openjax.standard.net.URLs;
 import org.openjax.standard.sql.AuditConnection;
 import org.openjax.standard.util.zip.ZipFiles;
-import org.openjax.rdb.vendor.DBVendor;
 
 public class SQLite implements Vendor {
   private static final File db = new File("target/generated-test-resources/rdb/sqlite.db");

@@ -31,8 +31,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.openjax.standard.util.FastCollections;
-import org.openjax.standard.util.RefDigraph;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Columns;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Constraints;
@@ -41,6 +39,8 @@ import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Named;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.util.FastCollections;
+import org.openjax.standard.util.RefDigraph;
 import org.openjax.xsb.runtime.BindingProxy;
 import org.openjax.xsb.runtime.Bindings;
 

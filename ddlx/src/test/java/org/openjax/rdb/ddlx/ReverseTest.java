@@ -29,8 +29,6 @@ import javax.xml.xpath.XPathExpressionException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.standard.test.AssertXml;
-import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -39,6 +37,8 @@ import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
+import org.openjax.standard.test.AssertXml;
+import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.xsb.runtime.Binding;
 import org.openjax.xsb.runtime.MarshalException;
 

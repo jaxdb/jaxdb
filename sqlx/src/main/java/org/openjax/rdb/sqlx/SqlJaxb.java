@@ -46,6 +46,13 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
+import org.openjax.rdb.ddlx.dt;
+import org.openjax.rdb.ddlx.annotation.Column;
+import org.openjax.rdb.ddlx.annotation.Table;
+import org.openjax.rdb.sqlx_0_9_9.Database;
+import org.openjax.rdb.sqlx_0_9_9.Insert;
+import org.openjax.rdb.sqlx_0_9_9.Row;
+import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.standard.io.FastFiles;
 import org.openjax.standard.jaxb.xjc.JaxbUtil;
 import org.openjax.standard.jaxb.xjc.XJCompiler;
@@ -60,13 +67,6 @@ import org.openjax.standard.util.Identifiers;
 import org.openjax.standard.util.IntList;
 import org.openjax.standard.xml.sax.XMLDocument;
 import org.openjax.standard.xml.sax.XMLDocuments;
-import org.openjax.rdb.ddlx.dt;
-import org.openjax.rdb.ddlx.annotation.Column;
-import org.openjax.rdb.ddlx.annotation.Table;
-import org.openjax.rdb.sqlx_0_9_9.Database;
-import org.openjax.rdb.sqlx_0_9_9.Insert;
-import org.openjax.rdb.sqlx_0_9_9.Row;
-import org.openjax.rdb.vendor.DBVendor;
 import org.xml.sax.SAXException;
 
 final class SqlJaxb {
