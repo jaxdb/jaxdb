@@ -55,7 +55,7 @@ public class Derby implements Vendor {
     if (db.exists() && new File(db, "seg0").exists())
       return;
 
-    final URL url = Thread.currentThread().getContextClassLoader().getResource("derby.db");
+    final URL url = ClassLoader.getSystemClassLoader().getResource("derby.db");
     if (url != null) {
       logger.info("Copying Derby DB from: " + url);
       db.getParentFile().mkdirs();

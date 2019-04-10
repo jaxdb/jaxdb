@@ -53,7 +53,7 @@ public abstract class SQLxTest {
   }
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
-    final URL ddlx = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
+    final URL ddlx = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
     assertNotNull(ddlx);
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlx(ddlx, destFile);
@@ -63,19 +63,19 @@ public abstract class SQLxTest {
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    final URL sqlx = ClassLoader.getSystemClassLoader().getResource("rdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException, ValidationException {
     final Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
+    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.truncate(connection, Schemas.flatten(schema).getTable());
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    final URL sqlx = ClassLoader.getSystemClassLoader().getResource("rdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     return SqlXsb.INSERT(connection, ($Database)Bindings.parse(sqlx));
   }

@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
-    final URL url = Thread.currentThread().getContextClassLoader().getResource(name + ".ddlx");
+    final URL url = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
     assertNotNull(url);
     final File destDir = new File("target/generated-test-sources/rdb");
     new Generator(url).generate(name, destDir);
@@ -67,12 +67,12 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    final URL sqlx = ClassLoader.getSystemClassLoader().getResource("rdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
 
     final xL0gluGCXYYJc.Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
+    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 
@@ -94,7 +94,7 @@ public abstract class JSQLTest {
       }
     });
 
-    final URL sqlx = Thread.currentThread().getContextClassLoader().getResource("rdb/" + name + ".sqlx");
+    final URL sqlx = ClassLoader.getSystemClassLoader().getResource("rdb/" + name + ".sqlx");
     assertNotNull(sqlx);
     final Database database;
     try (final InputStream in = sqlx.openStream()) {
@@ -102,7 +102,7 @@ public abstract class JSQLTest {
     }
 
     final xL0gluGCXYYJc.Schema schema;
-    try (final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(name + ".ddlx")) {
+    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (xL0gluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
     }
 

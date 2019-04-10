@@ -57,7 +57,7 @@ public class SQLite implements Vendor {
         throw new IOException("Unable to delete " + db.getPath());
     }
 
-    final URL url = Thread.currentThread().getContextClassLoader().getResource("sqlite.db");
+    final URL url = ClassLoader.getSystemClassLoader().getResource("sqlite.db");
     if (url != null) {
       db.getParentFile().mkdirs();
       if (URLs.isJar(url)) {

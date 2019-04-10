@@ -292,7 +292,7 @@ final class SqlJaxb {
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
         xsd2jaxb(tempDir, tempDir, xmlDocument.getSchemaLocation());
-        final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+        final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
       catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
@@ -321,7 +321,7 @@ final class SqlJaxb {
     command.setDestDir(sourcesDestDir);
 
     final LinkedHashSet<URL> xjbs = new LinkedHashSet<>();
-    xjbs.add(Thread.currentThread().getContextClassLoader().getResource("sqlx.xjb"));
+    xjbs.add(ClassLoader.getSystemClassLoader().getResource("sqlx.xjb"));
     command.setXJBs(xjbs);
 
     command.setSchemas(xsds);

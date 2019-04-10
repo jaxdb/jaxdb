@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
 public final class SQL {
   public static void ddlx2sqlx(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    Transformer.transform(Thread.currentThread().getContextClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
+    Transformer.transform(ClassLoader.getSystemClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
   }
 
   public static int[] INSERT(final Connection connection, final Database database) throws SQLException {

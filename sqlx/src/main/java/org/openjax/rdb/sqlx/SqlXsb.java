@@ -313,7 +313,7 @@ final class SqlXsb {
 
       xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
 
-      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), Thread.currentThread().getContextClassLoader());
+      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       try (final InputStream in = xmlDocument.getURL().openStream()) {
         database = ($Database)Bindings.parse(in, classLoader);
       }
