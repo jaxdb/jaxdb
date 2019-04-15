@@ -13,7 +13,7 @@ The `rdb-maven-archetype` archetype is a quick-start example of how to use the [
 
 To use the archetype, execute the following:
 
-  ```tcsh
+  ```bash
   mvn archetype:generate \
   -DgroupId=com.mycompany.app -DartifactId=my-app \
   -DarchetypeGroupId=org.openjax.maven.archetype -DarchetypeArtifactId=rdb-maven-archetype \

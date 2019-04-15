@@ -36,7 +36,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 1. In your preferred development directory, create a [`maven-archetype-quickstart`][maven-archetype-quickstart] project.
 
-  ```tcsh
+  ```bash
   mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
   ```
 
@@ -124,7 +124,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 6. Import the DDL into your database. The 
 
-  ```tcsh
+  ```bash
   psql -d example < generated-resources/rdb/basis.sql
   ```
   
