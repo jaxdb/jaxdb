@@ -92,7 +92,7 @@ final class DerbyCompiler extends Compiler {
 
   private static void createFunction(final Statement statement, final String function) throws SQLException {
     try {
-//      statement.execute("DROP FUNCTION " + function.substring(16, function.indexOf("(")));
+//      statement.execute("DROP FUNCTION " + function.substring(16, function.indexOf('(')));
       statement.execute(function);
     }
     catch (final SQLException e) {

@@ -254,7 +254,7 @@ final class OracleCompiler extends Compiler {
     if (resultSet.wasNull() || value == null)
       return null;
 
-    final LocalTime localTime = LocalTime.parse(value.toString().substring(value.toString().indexOf(" ") + 1), Dialect.TIME_FORMAT);
+    final LocalTime localTime = LocalTime.parse(value.toString().substring(value.toString().indexOf(' ') + 1), Dialect.TIME_FORMAT);
     return value.toString().charAt(0) == '-' ? Temporals.subtract(LocalTime.MIDNIGHT, localTime) : localTime;
   }
 
