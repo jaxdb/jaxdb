@@ -34,7 +34,7 @@
     <module>ddlx</module>
     <module>sqlx</module>
     <module>jsql</module>
-    <module>maven-plugin</module>
+    <module>rdb-maven-plugin</module>
   </modules>
   <build>
     <testResources>
