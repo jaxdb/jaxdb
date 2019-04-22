@@ -1,16 +1,16 @@
 <!--
   Copyright (c) 2015 OpenJAX
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
+
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
@@ -24,7 +24,7 @@
     <artifactId>rdb</artifactId>
     <version>0.9.9-SNAPSHOT</version>
   </parent>
-  <artifactId>rdb-sqlx</artifactId>
+  <artifactId>sqlx</artifactId>
   <name>${project.groupId}:${project.artifactId}</name>
   <build>
     <testResources>
@@ -43,8 +43,8 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
+        <groupId>org.safris.maven</groupId>
+        <artifactId>offlinejavadoc-maven-plugin</artifactId>
         <configuration>
           <sourcepath>${project.build.directory}/generated-sources/jaxb:${project.build.directory}/generated-sources/xsb</sourcepath>
         </configuration>
@@ -62,7 +62,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}/test-classes/rdb</outputDirectory>
-              <resources>          
+              <resources>
                 <resource>
                   <directory>src/test/resources</directory>
                   <includes>
@@ -191,30 +191,30 @@
   <dependencies>
     <dependency>
       <groupId>org.openjax.standard.jaxb</groupId>
-      <artifactId>jaxb-xjc</artifactId>
+      <artifactId>xjc</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openjax.standard.xml</groupId>
-      <artifactId>xml-transform</artifactId>
+      <artifactId>transform</artifactId>
       <version>0.9.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.xsb</groupId>
-      <artifactId>xsb-generator</artifactId>
+      <artifactId>generator</artifactId>
     </dependency>
     <dependency>
       <groupId>org.openjax.standard</groupId>
-      <artifactId>standard-jci</artifactId>
+      <artifactId>jci</artifactId>
       <version>0.8.3-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
+      <artifactId>ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
+      <artifactId>ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>

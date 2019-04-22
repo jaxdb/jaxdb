@@ -186,41 +186,41 @@
     </dependency>
     <dependency>
       <groupId>org.openjax.standard.maven</groupId>
-      <artifactId>maven-mojo</artifactId>
+      <artifactId>mojo</artifactId>
       <version>0.3.5-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-jsql</artifactId>
+      <artifactId>jsql</artifactId>
       <version>0.9.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-jsql</artifactId>
-      <version>0.9.9-SNAPSHOT</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-sqlx</artifactId>
-      <version>0.9.9-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-sqlx</artifactId>
+      <artifactId>jsql</artifactId>
       <version>0.9.9-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
+      <artifactId>sqlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.rdb</groupId>
-      <artifactId>rdb-ddlx</artifactId>
+      <artifactId>sqlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>0.9.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.rdb</groupId>
+      <artifactId>ddlx</artifactId>
       <version>0.9.9-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
