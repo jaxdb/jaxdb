@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/rdb.svg)](https://www.javadoc.io/doc/org.openjax.rdb/rdb)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/rdb.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/rdb)
 
 ### Introduction
 
@@ -44,10 +46,6 @@ Developed with the CohesionFirst approach, **RDB** is reliably designed, consist
 [**rdb-sqlx**](/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
 
 [**rdb-jsql**](/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
-
-### JavaDocs
-
-JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

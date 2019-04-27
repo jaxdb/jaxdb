@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/sqlx.svg)](https://www.javadoc.io/doc/org.openjax.rdb/sqlx)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/sqlx.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/sqlx)
 
 ### Introduction
 
@@ -82,10 +84,6 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   ```
 
 5. The `data.sqlx` file is strictly compliant to the `basis.ddlx` file that specifies the data model. You can now create static data that complies to the data model, having the power of XML to foster confidence in the validity of the data far before you load it in the DB.
-
-### JavaDocs
-
-JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

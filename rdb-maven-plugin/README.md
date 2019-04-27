@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/rdb-maven-plugin.svg)](https://www.javadoc.io/doc/org.openjax.rdb/rdb-maven-plugin)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/rdb-maven-plugin.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/rdb-maven-plugin)
 
 ### Introduction
 
@@ -125,10 +127,6 @@ The `rdb:jsql` goal is bound to the `generate-sources` phase, and is used to gen
 | `/destDir`        | String  | Required | Destination path of generated bindings.                                       |
 | `/schemas`        | List    | Required | List of `resource` elements.                                                  |
 | `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
-
-### JavaDocs
-
-JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

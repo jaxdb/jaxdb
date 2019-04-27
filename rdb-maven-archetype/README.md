@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/rdb-maven-archetype.svg)](https://www.javadoc.io/doc/org.openjax.rdb/rdb-maven-archetype)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/rdb-maven-archetype.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/rdb-maven-archetype)
 
 ### Introduction
 
@@ -19,10 +21,6 @@ To use the archetype, execute the following:
   -DarchetypeGroupId=org.openjax.maven.archetype -DarchetypeArtifactId=rdb-maven-archetype \
   -DarchetypeCatalog=http://mvn.repo.openjax.org -DinteractiveMode=false
   ```
-
-### JavaDocs
-
-JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 

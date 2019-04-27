@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
 [![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
+[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/ddlx.svg)](https://www.javadoc.io/doc/org.openjax.rdb/ddlx)
+[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/ddlx.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/ddlx)
 
 ### Introduction
 
@@ -122,17 +124,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 5. Run `mvn generate-resources`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], an `example.sql` will be created in `generated-resources/rdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
-6. Import the DDL into your database. The 
+6. Import the DDL into your database. The
 
   ```bash
   psql -d example < generated-resources/rdb/basis.sql
   ```
-  
+
   Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
-
-### JavaDocs
-
-JavaDocs are available [here](https://rdb.openjax.org/apidocs/).
 
 ## Contributing
 
