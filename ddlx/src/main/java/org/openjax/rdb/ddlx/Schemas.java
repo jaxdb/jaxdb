@@ -39,8 +39,8 @@ import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Named;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.util.FastCollections;
-import org.openjax.standard.util.RefDigraph;
+import org.openjax.ext.util.FastCollections;
+import org.openjax.ext.util.RefDigraph;
 import org.openjax.xsb.runtime.BindingProxy;
 import org.openjax.xsb.runtime.Bindings;
 

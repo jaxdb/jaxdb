@@ -27,6 +27,8 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
+import org.openjax.ext.jci.CompilationException;
+import org.openjax.ext.xml.transform.Transformer;
 import org.openjax.rdb.sqlx.SqlJaxb.RowIterator;
 import org.openjax.rdb.sqlx_0_3_9.Database;
 import org.openjax.rdb.sqlx_0_3_9.Insert;
@@ -35,8 +37,6 @@ import org.openjax.rdb.sqlx_0_3_9.xL0gluGCXYYJc.$Database;
 import org.openjax.rdb.sqlx_0_3_9.xL0gluGCXYYJc.$Insert;
 import org.openjax.rdb.sqlx_0_3_9.xL0gluGCXYYJc.$Row;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.jci.CompilationException;
-import org.openjax.standard.xml.transform.Transformer;
 import org.xml.sax.SAXException;
 
 public final class SQL {

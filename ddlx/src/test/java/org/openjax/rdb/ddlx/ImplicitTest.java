@@ -22,13 +22,13 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.ext.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
-import org.openjax.standard.xml.api.ValidationException;
 
 public abstract class ImplicitTest extends DDLxTest {
   @RunWith(VendorRunner.class)

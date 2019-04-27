@@ -26,6 +26,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.runner.RunWith;
+import org.openjax.ext.jci.CompilationException;
+import org.openjax.ext.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -35,8 +37,6 @@ import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
 import org.openjax.rdb.ddlx.runner.VendorRunner.Order;
-import org.openjax.standard.jci.CompilationException;
-import org.openjax.standard.xml.api.ValidationException;
 import org.xml.sax.SAXException;
 
 public abstract class ClassicModelsTest extends SQLxTest {

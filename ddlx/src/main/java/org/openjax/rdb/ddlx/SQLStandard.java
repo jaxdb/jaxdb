@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.ddlx;
 
-import org.openjax.standard.util.Enums;
+import org.openjax.ext.util.Enums;
 
 enum SQLStandard {
   SQL92("SQL-92"),

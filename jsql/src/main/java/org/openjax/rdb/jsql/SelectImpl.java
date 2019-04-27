@@ -30,9 +30,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
+import org.openjax.ext.sql.exception.SQLExceptions;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.sql.exception.SQLExceptions;
-import org.openjax.standard.util.FastCollections;
+import org.openjax.ext.util.FastCollections;
 
 class SelectImpl {
   protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<Compilable>() {

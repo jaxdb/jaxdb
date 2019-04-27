@@ -14,10 +14,10 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://rdb.openjax.org/datatypes-0.3.9.xsd"
-  xmlns:dt="http://standard.openjax.org/xml/datatypes-0.9.2.xsd"
+  xmlns:dt="http://ext.openjax.org/xml/datatypes-0.9.2.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://standard.openjax.org/xml/datatypes-0.9.2.xsd" schemaLocation="http://standard.openjax.org/xml/datatypes-0.9.2.xsd"/>
+  <xs:import namespace="http://ext.openjax.org/xml/datatypes-0.9.2.xsd" schemaLocation="http://ext.openjax.org/xml/datatypes-0.9.2.xsd"/>
 
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">

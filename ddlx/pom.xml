@@ -59,7 +59,7 @@
   </build>
   <dependencies>
     <dependency>
-      <groupId>org.openjax.standard</groupId>
+      <groupId>org.openjax.ext</groupId>
       <artifactId>io</artifactId>
       <version>0.7.5-SNAPSHOT</version>
     </dependency>

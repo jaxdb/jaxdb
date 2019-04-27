@@ -21,13 +21,13 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.openjax.ext.xml.api.ValidationException;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Decimal;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
-import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.xsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 

@@ -57,9 +57,9 @@ import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Time;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Tinyint;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.lang.PackageLoader;
-import org.openjax.standard.lang.PackageNotFoundException;
-import org.openjax.standard.util.Numbers;
+import org.openjax.ext.lang.PackageLoader;
+import org.openjax.ext.lang.PackageNotFoundException;
+import org.openjax.ext.util.Numbers;
 
 abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];

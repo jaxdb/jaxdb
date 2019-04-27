@@ -24,6 +24,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.openjax.ext.math.SafeMath;
 import org.openjax.rdb.ddlx.runner.Derby;
 import org.openjax.rdb.ddlx.runner.MySQL;
 import org.openjax.rdb.ddlx.runner.Oracle;
@@ -36,7 +37,6 @@ import org.openjax.rdb.jsql.classicmodels;
 import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql.types;
 import org.openjax.rdb.runner.VendorSchemaRunner;
-import org.openjax.standard.math.SafeMath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

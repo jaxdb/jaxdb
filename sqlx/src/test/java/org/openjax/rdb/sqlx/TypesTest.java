@@ -35,6 +35,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.runner.RunWith;
+import org.openjax.ext.jci.CompilationException;
 import org.openjax.rdb.ddlx.DDLxTest;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.runner.Derby;
@@ -43,10 +44,9 @@ import org.openjax.rdb.ddlx.runner.Oracle;
 import org.openjax.rdb.ddlx.runner.PostgreSQL;
 import org.openjax.rdb.ddlx.runner.SQLite;
 import org.openjax.rdb.ddlx.runner.VendorRunner;
-import org.openjax.standard.jci.CompilationException;
-import org.openjax.standard.util.Hexadecimal;
-import org.openjax.standard.util.Strings;
-import org.openjax.standard.xml.api.ValidationException;
+import org.openjax.ext.util.Hexadecimal;
+import org.openjax.ext.util.Strings;
+import org.openjax.ext.xml.api.ValidationException;
 
 public abstract class TypesTest extends SQLxTest {
   private static final String name = "types";

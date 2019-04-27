@@ -27,15 +27,15 @@ import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.openjax.ext.maven.mojo.GeneratorMojo;
+import org.openjax.ext.maven.mojo.MojoUtil;
+import org.openjax.ext.maven.mojo.SourceInput;
+import org.openjax.ext.net.URLs;
+import org.openjax.ext.xml.api.ValidationException;
 import org.openjax.rdb.ddlx.Generator;
 import org.openjax.rdb.ddlx.GeneratorExecutionException;
 import org.openjax.rdb.ddlx.StatementBatch;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.maven.mojo.GeneratorMojo;
-import org.openjax.standard.maven.mojo.MojoUtil;
-import org.openjax.standard.maven.mojo.SourceInput;
-import org.openjax.standard.net.URLs;
-import org.openjax.standard.xml.api.ValidationException;
 
 @Mojo(name="ddlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES)
 @Execute(goal="ddlx2sql")

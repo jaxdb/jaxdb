@@ -22,12 +22,12 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openjax.ext.xml.api.ValidationException;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Columns;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Indexes;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Named;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
-import org.openjax.standard.xml.api.ValidationException;
 import org.openjax.xsb.runtime.Bindings;
 
 public class DDLxAudit {

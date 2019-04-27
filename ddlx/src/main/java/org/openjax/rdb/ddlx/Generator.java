@@ -32,10 +32,10 @@ import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Column;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.lang.PackageLoader;
-import org.openjax.standard.lang.PackageNotFoundException;
-import org.openjax.standard.util.FastArrays;
-import org.openjax.standard.xml.api.ValidationException;
+import org.openjax.ext.lang.PackageLoader;
+import org.openjax.ext.lang.PackageNotFoundException;
+import org.openjax.ext.util.FastArrays;
+import org.openjax.ext.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

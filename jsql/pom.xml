@@ -101,7 +101,7 @@
       <build>
         <plugins>
           <plugin>
-            <groupId>org.openjax.standard.xml</groupId>
+            <groupId>org.openjax.ext.xml</groupId>
             <artifactId>xml-maven-plugin</artifactId>
             <executions>
               <execution>
@@ -122,17 +122,17 @@
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>org.openjax.standard</groupId>
+      <groupId>org.openjax.ext</groupId>
       <artifactId>math</artifactId>
       <version>0.6.4-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.standard</groupId>
+      <groupId>org.openjax.ext</groupId>
       <artifactId>sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.standard.jaxb</groupId>
+      <groupId>org.openjax.ext.jaxb</groupId>
       <artifactId>xjc</artifactId>
     </dependency>
     <dependency>

@@ -21,8 +21,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.openjax.ext.sql.AuditConnection;
 import org.openjax.rdb.vendor.DBVendor;
-import org.openjax.standard.sql.AuditConnection;
 import org.postgresql.Driver;
 
 @SuppressWarnings("unused")

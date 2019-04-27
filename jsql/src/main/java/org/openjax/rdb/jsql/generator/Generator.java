@@ -52,9 +52,9 @@ import org.openjax.rdb.jsql.type;
 import org.openjax.rdb.jsql_0_3_9.xL0gluGCXYYJc.$Integer;
 import org.openjax.rdb.jsql_0_3_9.xL0gluGCXYYJc.$Table;
 import org.openjax.rdb.vendor.Dialect;
-import org.openjax.standard.util.Classes;
-import org.openjax.standard.util.Identifiers;
-import org.openjax.standard.xml.api.ValidationException;
+import org.openjax.ext.util.Classes;
+import org.openjax.ext.util.Identifiers;
+import org.openjax.ext.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

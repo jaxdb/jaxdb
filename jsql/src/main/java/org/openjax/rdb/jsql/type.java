@@ -41,8 +41,8 @@ import java.util.Set;
 import org.openjax.rdb.jsql.kind.Numeric.UNSIGNED;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.rdb.vendor.Dialect;
-import org.openjax.standard.util.Classes;
-import org.openjax.standard.util.Numbers;
+import org.openjax.ext.util.Classes;
+import org.openjax.ext.util.Numbers;
 
 public final class type {
   private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<>();

@@ -36,7 +36,7 @@ import org.openjax.rdb.ddlx.annotation.Table;
 import org.openjax.rdb.sqlx_0_3_9.Database;
 import org.openjax.rdb.sqlx_0_3_9.Insert;
 import org.openjax.rdb.sqlx_0_3_9.Row;
-import org.openjax.standard.util.Identifiers;
+import org.openjax.ext.util.Identifiers;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})
