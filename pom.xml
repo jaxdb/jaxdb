@@ -35,6 +35,7 @@
     <module>sqlx</module>
     <module>jsql</module>
     <module>rdb-maven-plugin</module>
+    <module>rdb-maven-archetype</module>
   </modules>
   <build>
     <testResources>

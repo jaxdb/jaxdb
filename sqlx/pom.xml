@@ -43,13 +43,6 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>org.safris.maven</groupId>
-        <artifactId>offlinejavadoc-maven-plugin</artifactId>
-        <configuration>
-          <sourcepath>${project.build.directory}/generated-sources/jaxb:${project.build.directory}/generated-sources/xsb</sourcepath>
-        </configuration>
-      </plugin>
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
