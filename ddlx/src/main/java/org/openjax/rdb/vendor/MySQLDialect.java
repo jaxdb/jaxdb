@@ -18,7 +18,7 @@ package org.openjax.rdb.vendor;
 
 import java.util.List;
 
-import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
+import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Enum;
 
 public class MySQLDialect extends Dialect {
   @Override

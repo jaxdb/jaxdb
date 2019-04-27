@@ -16,7 +16,7 @@
 
 package org.openjax.rdb.vendor;
 
-import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.$Enum;
+import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.$Enum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

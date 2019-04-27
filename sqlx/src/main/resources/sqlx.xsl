@@ -1,16 +1,16 @@
 <!--
   Copyright (c) 2016 OpenJAX
-  
+
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
   in the Software without restriction, including without limitation the rights
   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
   copies of the Software, and to permit persons to whom the Software is
   furnished to do so, subject to the following conditions:
-  
+
   The above copyright notice and this permission notice shall be included in
   all copies or substantial portions of the Software.
-  
+
   You should have received a copy of The MIT License (MIT) along with this
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
@@ -18,36 +18,36 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:dt="http://rdb.openjax.org/datatypes-0.9.9.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.9.xsd"
-  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.9.xsd"
+  xmlns:dt="http://rdb.openjax.org/datatypes-0.3.9.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.3.9.xsd"
   xmlns:function="http://rdb.openjax.org/sqlx.xsl"
-  xmlns:ext="http://exslt.org/common" 
+  xmlns:ext="http://exslt.org/common"
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
   xmlns:saxon="http://saxon.sf.net/"
   xmlns:annox="http://annox.dev.java.net"
   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
   exclude-result-prefixes="ext function math saxon ddlx xs xsi"
   version="2.0">
-  
+
   <xsl:output method="xml" indent="yes" omit-xml-declaration="yes"/>
-  
+
   <xsl:variable name="database">
     <xsl:value-of select="function:file-name(base-uri())"/>
   </xsl:variable>
-  
+
   <xsl:variable name="namespace">
     <xsl:value-of select="concat('sqlx.', $database)"/>
-  </xsl:variable>  
-  
+  </xsl:variable>
+
   <xsl:variable name="xmlns">
     <xsl:element name="ns:x" namespace="{$namespace}"/>
   </xsl:variable>
-  
+
   <xsl:variable name="noTables">
     <xsl:value-of select="count(/ddlx:schema/ddlx:table)"/>
   </xsl:variable>
-  
+
   <!-- This function is used to sort the tables in topological dependency order -->
   <xsl:function name="function:computeWeight" as="xs:integer*">
     <xsl:param name="node"/>
@@ -84,29 +84,29 @@
       </xsl:when>
     </xsl:choose>
   </xsl:function>
-  
+
   <xsl:function name="function:camel-case">
     <xsl:param name="string"/>
     <xsl:value-of select="string-join(for $s in tokenize($string, '\W+') return concat(upper-case(substring($s, 1, 1)), substring($s, 2)), '')"/>
   </xsl:function>
-  
+
   <xsl:function name="function:instance-case">
     <xsl:param name="string"/>
     <xsl:value-of select="concat(lower-case(substring($string, 1, 1)), substring(function:camel-case($string), 2))"/>
   </xsl:function>
-  
+
   <xsl:function name="function:substring-after-last-match" as="xs:string">
     <xsl:param name="arg" as="xs:string?"/>
     <xsl:param name="regex" as="xs:string"/>
-    
+
     <xsl:sequence select="replace($arg, concat('^.*',$regex), '')"/>
   </xsl:function>
-  
+
   <xsl:function name="function:file-name">
     <xsl:param name="string"/>
     <xsl:value-of select="substring-before(function:substring-after-last-match($string, '/'), '.')"/>
   </xsl:function>
-  
+
   <xsl:function name="function:precision-scale">
     <xsl:param name="precision"/>
     <xsl:param name="max"/>
@@ -119,25 +119,25 @@
       </xsl:otherwise>
     </xsl:choose>
   </xsl:function>
-  
+
   <xsl:template match="/ddlx:schema">
     <xs:schema
       elementFormDefault="qualified"
-      xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.9.xsd"
+      xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.9.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
-      
+
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
-      
+
       <xsl:attribute name="targetNamespace">
         <xsl:value-of select="$namespace"/>
       </xsl:attribute>
-      
+
       <xsl:attribute name="jaxb:version">2.1</xsl:attribute>
       <xsl:attribute name="jaxb:extensionBindingPrefixes">annox</xsl:attribute>
-      
-      <xs:import namespace="http://rdb.openjax.org/sqlx-0.9.9.xsd" schemaLocation="http://rdb.openjax.org/sqlx-0.9.9.xsd"/>
-      <xs:import namespace="http://rdb.openjax.org/datatypes-0.9.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.9.9.xsd"/>
-      
+
+      <xs:import namespace="http://rdb.openjax.org/sqlx-0.3.9.xsd" schemaLocation="http://rdb.openjax.org/sqlx-0.3.9.xsd"/>
+      <xs:import namespace="http://rdb.openjax.org/datatypes-0.3.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.3.9.xsd"/>
+
       <xsl:for-each select="ddlx:table">
         <xs:complexType>
           <xsl:attribute name="name">
@@ -413,7 +413,7 @@
           </xs:complexContent>
         </xs:complexType>
       </xsl:for-each>
-      
+
       <xs:complexType name="insert">
         <xs:complexContent>
           <xs:extension base="sqlx:insert">
@@ -438,7 +438,7 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      
+
       <xs:complexType>
         <xsl:attribute name="name">
           <xsl:value-of select="$database"/>
@@ -458,7 +458,7 @@
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
-      
+
       <xs:element>
         <xsl:attribute name="id">
           <xsl:value-of select="$database"/>
@@ -537,5 +537,5 @@
       </xs:element>
     </xs:schema>
   </xsl:template>
-    
+
 </xsl:stylesheet>

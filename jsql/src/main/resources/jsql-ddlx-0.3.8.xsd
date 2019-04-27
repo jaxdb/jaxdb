@@ -16,18 +16,18 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.openjax.org/ddlx-0.9.8.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.8.xsd"
-  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.8.xsd"
-  xmlns:jsql="http://rdb.openjax.org/jsql-0.9.8.xsd"
+  targetNamespace="http://rdb.openjax.org/ddlx-0.3.8.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.8.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.3.8.xsd"
+  xmlns:jsql="http://rdb.openjax.org/jsql-0.3.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
-  <xs:import namespace="http://rdb.openjax.org/jsql-0.9.8.xsd" schemaLocation="jsql-0.9.8.xsd"/>
-  
-  <xs:include schemaLocation="http://rdb.openjax.org/ddlx-common-0.9.8.xsd"/>
-  
+
+  <xs:import namespace="http://rdb.openjax.org/jsql-0.3.8.xsd" schemaLocation="jsql-0.3.8.xsd"/>
+
+  <xs:include schemaLocation="http://rdb.openjax.org/ddlx-common-0.3.8.xsd"/>
+
   <!-- text data -->
-  
+
   <xs:complexType name="char">
     <xs:complexContent>
       <xs:extension base="jsql:char">
@@ -36,7 +36,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="clob">
     <xs:complexContent>
       <xs:extension base="jsql:clob">
@@ -45,9 +45,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- binary data -->
-  
+
   <xs:complexType name="binary">
     <xs:complexContent>
       <xs:extension base="jsql:binary">
@@ -55,7 +55,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="blob">
     <xs:complexContent>
       <xs:extension base="jsql:blob">
@@ -63,9 +63,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- numeric data -->
-  
+
   <xs:complexType name="tinyint">
     <xs:complexContent>
       <xs:extension base="jsql:integer">
@@ -74,7 +74,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="smallint">
     <xs:complexContent>
       <xs:extension base="jsql:integer">
@@ -83,7 +83,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="int">
     <xs:complexContent>
       <xs:extension base="jsql:integer">
@@ -92,7 +92,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="bigint">
     <xs:complexContent>
       <xs:extension base="jsql:integer">
@@ -101,9 +101,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- REAL is synonym for FLOAT(24) -->
-  
+
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="jsql:float">
@@ -112,7 +112,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="double">
     <xs:complexContent>
       <xs:extension base="jsql:double">
@@ -121,9 +121,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- NUMERIC is synonym for DECIMAL -->
-  
+
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="jsql:decimal">
@@ -132,9 +132,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- time data -->
-  
+
   <xs:complexType name="date">
     <xs:complexContent>
       <xs:extension base="jsql:date">
@@ -142,7 +142,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="jsql:time">
@@ -150,7 +150,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="datetime">
     <xs:complexContent>
       <xs:extension base="jsql:datetime">
@@ -158,9 +158,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- boolean -->
-  
+
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="jsql:boolean">
@@ -168,9 +168,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- enum -->
-  
+
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="jsql:enum">
@@ -178,9 +178,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- containers -->
-  
+
   <xs:complexType name="schema">
     <xs:sequence>
       <xs:element name="table" type="jsql:table" minOccurs="0" maxOccurs="unbounded">
@@ -207,7 +207,7 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
-  
+
   <xs:element name="schema" type="ddlx:schema">
     <xs:key name="keyTableName">
       <xs:selector xpath="./ddlx:table"/>
@@ -222,5 +222,5 @@
       <xs:field xpath="@extends"/>
     </xs:keyref>
   </xs:element>
-  
+
 </xs:schema>

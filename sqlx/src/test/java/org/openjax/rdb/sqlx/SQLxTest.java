@@ -29,8 +29,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.openjax.rdb.ddlx.Schemas;
-import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc.Schema;
-import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;
+import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc.Schema;
+import org.openjax.rdb.sqlx_0_3_9.xL0gluGCXYYJc.$Database;
 import org.openjax.rdb.vendor.DBVendor;
 import org.openjax.standard.jci.CompilationException;
 import org.openjax.standard.util.ClassLoaders;

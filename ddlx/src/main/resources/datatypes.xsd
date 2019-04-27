@@ -13,86 +13,86 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.openjax.org/datatypes-0.9.9.xsd"
+  targetNamespace="http://rdb.openjax.org/datatypes-0.3.9.xsd"
   xmlns:dt="http://standard.openjax.org/xml/datatypes-0.9.2.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
+
   <xs:import namespace="http://standard.openjax.org/xml/datatypes-0.9.2.xsd" schemaLocation="http://standard.openjax.org/xml/datatypes-0.9.2.xsd"/>
-  
+
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-9223372036854775808"/>
       <xs:maxInclusive value="18446744073709551615"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="binary">
     <xs:restriction base="xs:hexBinary"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="blob">
     <xs:restriction base="xs:hexBinary"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="boolean">
     <xs:restriction base="xs:boolean"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="char">
     <xs:restriction base="xs:string"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="clob">
     <xs:restriction base="xs:string"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="date">
     <xs:restriction base="dt:localDate"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="datetime">
     <xs:restriction base="dt:localDateTime"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="decimal">
     <xs:restriction base="xs:decimal"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="double">
     <xs:restriction base="xs:double"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="enum">
     <xs:restriction base="xs:string"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="float">
     <xs:restriction base="xs:float"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="int">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-2147483648"/>
       <xs:maxInclusive value="4294967295"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="smallint">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-32768"/>
       <xs:maxInclusive value="64535"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:simpleType name="time">
     <xs:restriction base="dt:localTime"/>
   </xs:simpleType>
-  
+
   <xs:simpleType name="tinyint">
     <xs:restriction base="xs:integer">
       <xs:minInclusive value="-128"/>
       <xs:maxInclusive value="255"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
 </xs:schema>

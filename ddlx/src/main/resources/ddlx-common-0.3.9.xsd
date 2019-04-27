@@ -16,13 +16,13 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.openjax.org/ddlx-0.9.9.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.9.xsd"
-  xmlns:dt="http://rdb.openjax.org/datatypes-0.9.9.xsd"
+  targetNamespace="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+  xmlns:dt="http://rdb.openjax.org/datatypes-0.3.9.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://rdb.openjax.org/datatypes-0.9.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.9.9.xsd"/>
-  
+  <xs:import namespace="http://rdb.openjax.org/datatypes-0.3.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.3.9.xsd"/>
+
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">
       <xs:maxLength value="64"/> <!-- http://wiki.ispirer.com/sqlways/postgresql/identifiers -->
@@ -33,7 +33,7 @@
   <xs:complexType name="named">
     <xs:attribute name="name" type="ddlx:name" use="required"/>
   </xs:complexType>
-  
+
   <xs:simpleType name="changeRule">
     <xs:restriction base="xs:string">
       <xs:enumeration value="RESTRICT"/>
@@ -42,7 +42,7 @@
       <xs:enumeration value="SET DEFAULT"/>
     </xs:restriction>
   </xs:simpleType>
-  
+
   <xs:complexType name="foreignKey">
     <xs:attribute name="id" type="xs:string"/>
     <xs:attribute name="references" type="ddlx:name" use="required"/>
@@ -184,7 +184,7 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:group name="char">
     <xs:sequence>
       <xs:element name="check">
@@ -206,7 +206,7 @@
       </xs:simpleType>
     </xs:attribute>
   </xs:attributeGroup>
-  
+
   <xs:group name="clob">
     <xs:sequence>
       <xs:element name="check">
@@ -245,7 +245,7 @@
   </xs:attributeGroup>
 
   <!-- numeric data -->
-  
+
   <xs:complexType name="integer" abstract="true">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -260,7 +260,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:attributeGroup name="bigint">
     <xs:attribute name="precision">
       <xs:simpleType>
@@ -274,7 +274,7 @@
     <xs:attribute name="min" type="dt:bigint"/>
     <xs:attribute name="max" type="dt:bigint"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="bigint">
     <xs:sequence>
       <xs:element name="check">
@@ -285,7 +285,7 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="int">
     <xs:attribute name="precision" default="10">
       <xs:simpleType>
@@ -299,7 +299,7 @@
     <xs:attribute name="min" type="dt:int"/>
     <xs:attribute name="max" type="dt:int"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="int">
     <xs:sequence>
       <xs:element name="check">
@@ -310,7 +310,7 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="smallint">
     <xs:attribute name="precision" default="5">
       <xs:simpleType>
@@ -320,11 +320,11 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:smallint"/>    
+    <xs:attribute name="default" type="dt:smallint"/>
     <xs:attribute name="min" type="dt:smallint"/>
     <xs:attribute name="max" type="dt:smallint"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="smallint">
     <xs:sequence>
       <xs:element name="check">
@@ -335,7 +335,7 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="tinyint">
     <xs:attribute name="precision" default="3">
       <xs:simpleType>
@@ -345,11 +345,11 @@
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
-    <xs:attribute name="default" type="dt:tinyint"/>    
+    <xs:attribute name="default" type="dt:tinyint"/>
     <xs:attribute name="min" type="dt:tinyint"/>
     <xs:attribute name="max" type="dt:tinyint"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="tinyint">
     <xs:sequence>
       <xs:element name="check">
@@ -360,14 +360,14 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="float">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="dt:float"/>
     <xs:attribute name="min" type="dt:float"/>
     <xs:attribute name="max" type="dt:float"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="float">
     <xs:sequence>
       <xs:element name="check">
@@ -378,14 +378,14 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="double">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="default" type="dt:double"/>
     <xs:attribute name="min" type="dt:double"/>
     <xs:attribute name="max" type="dt:double"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="double">
     <xs:sequence>
       <xs:element name="check">
@@ -396,7 +396,7 @@
       </xs:element>
     </xs:sequence>
   </xs:group>
-  
+
   <xs:attributeGroup name="decimal">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="precision">
@@ -419,7 +419,7 @@
     <xs:attribute name="min" type="dt:decimal"/>
     <xs:attribute name="max" type="dt:decimal"/>
   </xs:attributeGroup>
-  
+
   <xs:group name="decimal">
     <xs:sequence>
       <xs:element name="check">

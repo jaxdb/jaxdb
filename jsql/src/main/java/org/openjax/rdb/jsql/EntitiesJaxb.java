@@ -33,9 +33,9 @@ import org.openjax.rdb.ddlx.dt;
 import org.openjax.rdb.ddlx.annotation.Column;
 import org.openjax.rdb.ddlx.annotation.Schema;
 import org.openjax.rdb.ddlx.annotation.Table;
-import org.openjax.rdb.sqlx_0_9_9.Database;
-import org.openjax.rdb.sqlx_0_9_9.Insert;
-import org.openjax.rdb.sqlx_0_9_9.Row;
+import org.openjax.rdb.sqlx_0_3_9.Database;
+import org.openjax.rdb.sqlx_0_3_9.Insert;
+import org.openjax.rdb.sqlx_0_3_9.Row;
 import org.openjax.standard.util.Identifiers;
 
 final class EntitiesJaxb {

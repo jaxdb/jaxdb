@@ -16,14 +16,14 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://rdb.openjax.org/ddlx-0.9.8.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.9.8.xsd"
+  targetNamespace="http://rdb.openjax.org/ddlx-0.3.8.xsd"
+  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
-  
-  <xs:include schemaLocation="ddlx-common-0.9.8.xsd"/>
-  
+
+  <xs:include schemaLocation="ddlx-common-0.3.8.xsd"/>
+
   <!-- text data -->
-  
+
   <xs:complexType name="char">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -32,7 +32,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="clob">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -41,9 +41,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- binary data -->
-  
+
   <xs:complexType name="binary">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -61,7 +61,7 @@
   </xs:complexType>
 
   <!-- numeric data -->
-  
+
   <xs:complexType name="tinyint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
@@ -70,7 +70,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="smallint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
@@ -79,7 +79,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="int">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
@@ -88,7 +88,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="bigint">
     <xs:complexContent>
       <xs:extension base="ddlx:integer">
@@ -97,9 +97,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- REAL is synonym for FLOAT(24) -->
-  
+
   <xs:complexType name="float">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -108,7 +108,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="double">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -117,9 +117,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- NUMERIC is synonym for DECIMAL -->
-  
+
   <xs:complexType name="decimal">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -138,7 +138,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="time">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -146,7 +146,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <xs:complexType name="datetime">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -154,9 +154,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- boolean -->
-  
+
   <xs:complexType name="boolean">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -164,9 +164,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- enum -->
-  
+
   <xs:complexType name="enum">
     <xs:complexContent>
       <xs:extension base="ddlx:column">
@@ -174,9 +174,9 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-  
+
   <!-- containers -->
-  
+
   <xs:complexType name="schema">
     <xs:sequence>
       <xs:element name="table" type="ddlx:table" minOccurs="0" maxOccurs="unbounded">

@@ -31,10 +31,10 @@ import java.sql.SQLException;
 import javax.xml.bind.UnmarshalException;
 
 import org.openjax.rdb.ddlx.Schemas;
-import org.openjax.rdb.ddlx_0_9_9.xL0gluGCXYYJc;
+import org.openjax.rdb.ddlx_0_3_9.xL0gluGCXYYJc;
 import org.openjax.rdb.jsql.generator.Generator;
-import org.openjax.rdb.sqlx_0_9_9.Database;
-import org.openjax.rdb.sqlx_0_9_9.xL0gluGCXYYJc.$Database;
+import org.openjax.rdb.sqlx_0_3_9.Database;
+import org.openjax.rdb.sqlx_0_3_9.xL0gluGCXYYJc.$Database;
 import org.openjax.standard.jaxb.xjc.JaxbUtil;
 import org.openjax.standard.jci.CompilationException;
 import org.openjax.standard.jci.InMemoryCompiler;

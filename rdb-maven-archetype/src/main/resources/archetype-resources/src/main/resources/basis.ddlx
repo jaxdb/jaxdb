@@ -1,10 +1,10 @@
 <schema
-  xmlns="http://rdb.openjax.org/ddlx-0.9.9.xsd"
-  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.9.9.xsd"
-  xmlns:jsql="http://rdb.openjax.org/jsql-0.9.9.xsd"
+  xmlns="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.3.9.xsd"
+  xmlns:jsql="http://rdb.openjax.org/jsql-0.3.9.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.openjax.org/jsql-0.9.9.xsd http://rdb.openjax.org/jsql.xsd">
-  
+  xsi:schemaLocation="http://rdb.openjax.org/jsql-0.3.9.xsd http://rdb.openjax.org/jsql.xsd">
+
   <table name="id" abstract="true">
     <column name="id" xsi:type="char" length="36" null="false" sqlx:generateOnInsert="UUID"/>
     <constraints>
@@ -13,13 +13,13 @@
       </primaryKey>
     </constraints>
   </table>
-  
+
   <table name="timestamp_id" abstract="true" extends="id">
     <column name="created_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP"/>
     <column name="modified_on" xsi:type="datetime" null="false" sqlx:generateOnInsert="TIMESTAMP" sqlx:generateOnUpdate="TIMESTAMP"/>
     <column name="version" xsi:type="int" precision="9" unsigned="true" default="0" null="false" sqlx:generateOnUpdate="INCREMENT" jsql:keyForUpdate="true"/>
   </table>
-  
+
   <table name="account" extends="timestamp_id">
     <column name="email" xsi:type="char" varying="true" length="255" null="false">
       <index unique="true" type="HASH"/>
@@ -38,5 +38,5 @@
       </unique>
     </constraints>
   </table>
-  
+
 </schema>

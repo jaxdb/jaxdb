@@ -22,9 +22,9 @@
   <parent>
     <groupId>org.openjax.rdb</groupId>
     <artifactId>rdb</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <version>0.3.9-SNAPSHOT</version>
   </parent>
   <artifactId>rdb-maven-archetype</artifactId>
-  <version>0.9-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <name>${project.groupId}:${project.artifactId}</name>
 </project>
