@@ -89,10 +89,10 @@
   </build>
   <profiles>
     <profile>
-      <id>!maven.itest.skip</id>
+      <id>!maven.test.skip</id>
       <activation>
         <property>
-          <name>!maven.itest.skip</name>
+          <name>!maven.test.skip</name>
         </property>
       </activation>
       <dependencies>
@@ -114,16 +114,6 @@
           <version>3.27.2.1</version>
           <scope>test</scope>
         </dependency>
-      </dependencies>
-    </profile>
-    <profile>
-      <id>!maven.rtest.skip</id>
-      <activation>
-        <property>
-          <name>!maven.rtest.skip</name>
-        </property>
-      </activation>
-      <dependencies>
         <dependency>
           <groupId>mysql</groupId>
           <artifactId>mysql-connector-java</artifactId>
@@ -134,12 +124,6 @@
           <groupId>org.postgresql</groupId>
           <artifactId>postgresql</artifactId>
           <version>42.2.5.jre7</version>
-          <scope>test</scope>
-        </dependency>
-        <dependency>
-          <groupId>com.oracle.jdbc</groupId>
-          <artifactId>ojdbc7</artifactId>
-          <version>12.1.0.2</version>
           <scope>test</scope>
         </dependency>
         <dependency>
@@ -163,6 +147,25 @@
             <enabled>false</enabled>
           </snapshots>
         </repository>
+      </repositories>
+    </profile>
+    <profile>
+      <id>!skipRTests</id>
+      <activation>
+        <property>
+          <name>!skipRTests</name>
+        </property>
+      </activation>
+      <dependencies>
+        <dependency>
+          <!-- https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_02 -->
+          <groupId>com.oracle.jdbc</groupId>
+          <artifactId>ojdbc8</artifactId>
+          <version>12.2.0.1</version>
+          <scope>test</scope>
+        </dependency>
+      </dependencies>
+      <repositories>
         <repository>
           <id>maven.oracle.com</id>
           <url>https://maven.oracle.com</url>
