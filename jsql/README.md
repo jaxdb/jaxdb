@@ -133,9 +133,9 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
   ```xml
   <dbcp name="basis"
-    xmlns="http://support.openjax.org/dbcp-2.0.4.xsd"
+    xmlns="http://std.openjax.org/dbcp-2.0.4.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://support.openjax.org/dbcp-2.0.4.xsd http://support.openjax.org/dbcp.xsd">
+    xsi:schemaLocation="http://std.openjax.org/dbcp-2.0.4.xsd http://std.openjax.org/dbcp.xsd">
     <jdbc>
       <url>jdbc:postgresql://localhost/basis</url>
       <driverClassName>org.postgresql.Driver</driverClassName>
@@ -171,12 +171,12 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </dbcp>
   ```
 
-7. Add [`org.openjax.support:dbcp`][dbcp] dependency to the POM.
+7. Add [`org.openjax.std:dbcp`][dbcp] dependency to the POM.
 
   ```xml
   <dependency>
-    <groupId>org.openjax.support</groupId>
-    <artifactId>support-dbcp</artifactId>
+    <groupId>org.openjax.std</groupId>
+    <artifactId>dbcp</artifactId>
     <version>2.0.4-SNAPSHOT</version>
   </dependency>
   ```
@@ -565,13 +565,13 @@ Please make sure to update tests as appropriate.
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 
-[dbcp.xsd]: /../../../../openjax/support-dbcp/src/main/resources/dbcp.xsd
+[dbcp.xsd]: /../../../../openjax/std-dbcp/src/main/resources/dbcp.xsd
+[dbcp]: /../../../../openjax/std-dbcp
 [ddlx-example]: /ddlx#example
 [ddlx]: /ddlx
 [hospital.ddlx]: /maven-plugin/src/test/resources/hospital.ddlx
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
-[dbcp]: /../../../../openjax/support-dbcp
 [maven]: https://maven.apache.org/
 [rdb-maven-plugin]: /maven-plugin
 
