@@ -25,7 +25,13 @@
     <version>0.3.9-SNAPSHOT</version>
   </parent>
   <artifactId>jsql</artifactId>
-  <name>${project.groupId}:${project.artifactId}</name>
+  <name>OpenJAX RDB JSQL</name>
+  <description>
+    jSQL is an extension to DDLx, offering a lightweight ORM (Object Relational Mapping) solution
+    that runs on the JDBC v4.1 API. The jSQL framework provides strongly-typed semantics for the
+    SQL language, as well as a cohesive binding to user data models. jSQL uses a SQL schema defined
+    in a DDLx file to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+  </description>
   <build>
     <testResources>
       <testResource>
@@ -63,7 +69,7 @@
       <plugins>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
+          <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
             <reuseForks>false</reuseForks>
             <runOrder>alphabetical</runOrder>
@@ -76,7 +82,7 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
+          <artifactId>maven-failsafe-plugin</artifactId>
           <configuration>
             <reuseForks>false</reuseForks>
             <runOrder>alphabetical</runOrder>

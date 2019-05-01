@@ -26,7 +26,10 @@
   </parent>
   <artifactId>rdb-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>${project.groupId}:${project.artifactId}</name>
+  <name>OpenJAX RDB Maven Plugin</name>
+  <description>
+    The rdb-maven-plugin plugin is used to execute database-related generators, which are currently the RDB framework.
+  </description>
   <build>
     <plugins>
       <plugin>

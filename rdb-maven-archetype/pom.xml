@@ -26,5 +26,8 @@
   </parent>
   <artifactId>rdb-maven-archetype</artifactId>
   <version>0.3-SNAPSHOT</version>
-  <name>${project.groupId}:${project.artifactId}</name>
+  <name>OpenJAX RDB Maven Archetype</name>
+  <description>
+    A quick-start example of how to use the rdb framework.
+  </description>
 </project>
