@@ -46,17 +46,17 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>org.openjax.xsb</groupId>
-        <artifactId>xsb-maven-plugin</artifactId>
+        <groupId>org.jaxsb</groupId>
+        <artifactId>jaxsb-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>xsb-generate</id>
+            <id>jaxsb-generate</id>
             <goals>
               <goal>generate</goal>
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <destDir>${project.build.directory}/generated-sources/xsb</destDir>
+              <destDir>${project.build.directory}/generated-sources/jaxsb</destDir>
               <schemas>
                 <schema>src/main/resources/jsql.xsd</schema>
               </schemas>
@@ -76,7 +76,7 @@
             <additionalClasspathElements>
               <additionalClasspathElement>${project.build.directory}/generated-test-resources/jaxdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxsb</additionalClasspathElement>
             </additionalClasspathElements>
           </configuration>
         </plugin>
@@ -89,7 +89,7 @@
             <additionalClasspathElements>
               <additionalClasspathElement>${project.build.directory}/generated-test-resources/jaxdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxsb</additionalClasspathElement>
             </additionalClasspathElements>
           </configuration>
         </plugin>
@@ -166,7 +166,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openjax.xsb</groupId>
+      <groupId>org.jaxsb</groupId>
       <artifactId>generator</artifactId>
       <scope>test</scope>
     </dependency>

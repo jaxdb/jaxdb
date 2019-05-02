@@ -36,7 +36,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.openjax.ext.util.ClassLoaders;
 import org.openjax.ext.util.FastArrays;
 import org.openjax.ext.xml.api.ValidationException;
-import org.openjax.xsb.runtime.Bindings;
+import org.jaxsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

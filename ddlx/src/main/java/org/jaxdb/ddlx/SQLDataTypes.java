@@ -26,7 +26,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.vendor.Dialect;
 import org.openjax.ext.util.FastArrays;
-import org.openjax.xsb.runtime.BindingList;
+import org.jaxsb.runtime.BindingList;
 
 final class SQLDataTypes {
   protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {

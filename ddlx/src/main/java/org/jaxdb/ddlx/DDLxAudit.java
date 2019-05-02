@@ -28,7 +28,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Indexes;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
-import org.openjax.xsb.runtime.Bindings;
+import org.jaxsb.runtime.Bindings;
 
 public class DDLxAudit {
   protected static DDLxAudit makeAudit(final URL url) throws IOException, ValidationException {

@@ -42,17 +42,17 @@
     </testResources>
     <plugins>
       <plugin>
-        <groupId>org.openjax.xsb</groupId>
-        <artifactId>xsb-maven-plugin</artifactId>
+        <groupId>org.jaxsb</groupId>
+        <artifactId>jaxsb-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>xsb-generate</id>
+            <id>jaxsb-generate</id>
             <goals>
               <goal>generate</goal>
             </goals>
             <phase>generate-resources</phase>
             <configuration>
-              <destDir>${project.build.directory}/generated-sources/xsb</destDir>
+              <destDir>${project.build.directory}/generated-sources/jaxsb</destDir>
               <schemas>
                 <schema>src/main/resources/ddlx.xsd</schema>
               </schemas>
@@ -69,7 +69,7 @@
       <version>0.7.5-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.xsb</groupId>
+      <groupId>org.jaxsb</groupId>
       <artifactId>runtime</artifactId>
       <version>2.1.4-SNAPSHOT</version>
     </dependency>

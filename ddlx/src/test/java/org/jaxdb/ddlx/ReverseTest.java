@@ -39,8 +39,8 @@ import org.jaxdb.ddlx.runner.VendorRunner;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.xsb.runtime.Binding;
-import org.openjax.xsb.runtime.MarshalException;
+import org.jaxsb.runtime.Binding;
+import org.jaxsb.runtime.MarshalException;
 
 public abstract class ReverseTest extends DDLxTest {
   @RunWith(VendorRunner.class)

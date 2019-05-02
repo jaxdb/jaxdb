@@ -41,8 +41,8 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.openjax.ext.util.FastCollections;
 import org.openjax.ext.util.RefDigraph;
-import org.openjax.xsb.runtime.BindingProxy;
-import org.openjax.xsb.runtime.Bindings;
+import org.jaxsb.runtime.BindingProxy;
+import org.jaxsb.runtime.Bindings;
 
 public final class Schemas {
   public static int[] drop(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {

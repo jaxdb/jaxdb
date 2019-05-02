@@ -28,7 +28,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.xsb.runtime.Bindings;
+import org.jaxsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {

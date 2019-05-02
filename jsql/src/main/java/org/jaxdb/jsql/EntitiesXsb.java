@@ -31,8 +31,8 @@ import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Row;
 import org.openjax.ext.util.Classes;
 import org.openjax.ext.util.Identifiers;
 import org.openjax.ext.xml.datatype.HexBinary;
-import org.openjax.xsb.runtime.Attribute;
-import org.openjax.xsb.runtime.Id;
+import org.jaxsb.runtime.Attribute;
+import org.jaxsb.runtime.Id;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class EntitiesXsb {

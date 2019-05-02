@@ -40,7 +40,7 @@ import org.jaxdb.sqlx_0_3_9.Database;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
 import org.openjax.ext.util.Identifiers;
 import org.openjax.ext.xml.api.ValidationException;
-import org.openjax.xsb.runtime.Bindings;
+import org.jaxsb.runtime.Bindings;
 import org.xml.sax.InputSource;
 
 public abstract class JSQLTest {
