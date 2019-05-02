@@ -23,9 +23,9 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Set;
 
-import org.openjax.ext.math.BigDecimals;
-import org.openjax.ext.math.SafeMath;
-import org.openjax.ext.util.Numbers;
+import org.openjax.math.BigDecimals;
+import org.openjax.math.SafeMath;
+import org.openjax.util.Numbers;
 
 final class function {
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);

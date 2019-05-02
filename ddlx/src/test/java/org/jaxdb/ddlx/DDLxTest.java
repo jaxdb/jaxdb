@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.openjax.ext.xml.api.ValidationException;
+import org.openjax.xml.api.ValidationException;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Decimal;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;

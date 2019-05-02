@@ -21,7 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
 
-import org.openjax.ext.util.FastArrays;
+import org.openjax.util.FastArrays;
 
 final class SQLArray<T> implements Array {
   private final type.ARRAY<T> array;

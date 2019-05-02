@@ -27,8 +27,8 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.openjax.ext.jci.CompilationException;
-import org.openjax.ext.xml.transform.Transformer;
+import org.openjax.jci.CompilationException;
+import org.openjax.xml.transform.Transformer;
 import org.jaxdb.sqlx.SqlJaxb.RowIterator;
 import org.jaxdb.sqlx_0_3_9.Database;
 import org.jaxdb.sqlx_0_3_9.Insert;

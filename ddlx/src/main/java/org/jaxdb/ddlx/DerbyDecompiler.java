@@ -50,7 +50,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Smallint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Time;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.ext.util.Strings;
+import org.openjax.util.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override

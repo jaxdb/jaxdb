@@ -22,7 +22,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openjax.ext.xml.api.ValidationException;
+import org.openjax.xml.api.ValidationException;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Columns;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Indexes;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;

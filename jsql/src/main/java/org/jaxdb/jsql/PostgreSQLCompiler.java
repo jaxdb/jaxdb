@@ -28,8 +28,8 @@ import java.sql.Statement;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.openjax.ext.io.Readers;
-import org.openjax.ext.io.Streams;
+import org.openjax.io.Readers;
+import org.openjax.io.Streams;
 import org.jaxdb.jsql.type.BLOB;
 import org.jaxdb.jsql.type.ENUM;
 import org.jaxdb.vendor.DBVendor;

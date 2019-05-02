@@ -52,9 +52,9 @@ import org.jaxdb.jsql.type;
 import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.ext.util.Classes;
-import org.openjax.ext.util.Identifiers;
-import org.openjax.ext.xml.api.ValidationException;
+import org.openjax.util.Classes;
+import org.openjax.util.Identifiers;
+import org.openjax.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

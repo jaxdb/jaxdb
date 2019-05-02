@@ -27,8 +27,8 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.ext.math.BigDecimals;
-import org.openjax.ext.math.SafeMath;
+import org.openjax.math.BigDecimals;
+import org.openjax.math.SafeMath;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;

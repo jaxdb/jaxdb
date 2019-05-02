@@ -22,7 +22,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.ext.xml.api.ValidationException;
+import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;

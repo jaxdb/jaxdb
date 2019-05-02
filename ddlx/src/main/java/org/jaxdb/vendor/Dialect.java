@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Enum;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
-import org.openjax.ext.util.DecimalFormatter;
+import org.openjax.util.DecimalFormatter;
 import org.jaxsb.runtime.Binding;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 

@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import org.openjax.ext.io.Readers;
+import org.openjax.io.Readers;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$ForeignKey;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Index;

@@ -26,7 +26,7 @@ import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.ext.util.Temporals;
+import org.openjax.util.Temporals;
 
 class MySQLCompiler extends Compiler {
   @Override

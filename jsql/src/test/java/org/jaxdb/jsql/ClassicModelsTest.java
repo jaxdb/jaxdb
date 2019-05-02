@@ -19,8 +19,8 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 
 import org.junit.Test;
-import org.openjax.ext.jci.CompilationException;
-import org.openjax.ext.xml.api.ValidationException;
+import org.openjax.jci.CompilationException;
+import org.openjax.xml.api.ValidationException;
 
 public class ClassicModelsTest extends JSQLTest {
   @Test

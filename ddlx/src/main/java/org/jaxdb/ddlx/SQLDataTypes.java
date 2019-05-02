@@ -25,7 +25,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.ext.util.FastArrays;
+import org.openjax.util.FastArrays;
 import org.jaxsb.runtime.BindingList;
 
 final class SQLDataTypes {

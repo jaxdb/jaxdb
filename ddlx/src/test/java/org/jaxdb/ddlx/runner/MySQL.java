@@ -21,7 +21,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.openjax.ext.sql.AuditConnection;
+import org.openjax.sql.AuditConnection;
 import org.jaxdb.vendor.DBVendor;
 
 import com.mysql.cj.jdbc.Driver;

@@ -41,16 +41,16 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import org.openjax.ext.io.Readers;
-import org.openjax.ext.io.Streams;
+import org.openjax.io.Readers;
+import org.openjax.io.Streams;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.ext.lang.PackageLoader;
-import org.openjax.ext.lang.PackageNotFoundException;
-import org.openjax.ext.util.Hexadecimal;
-import org.openjax.ext.util.IdentityHashSet;
-import org.openjax.ext.util.Numbers;
+import org.openjax.lang.PackageLoader;
+import org.openjax.lang.PackageNotFoundException;
+import org.openjax.util.Hexadecimal;
+import org.openjax.util.IdentityHashSet;
+import org.openjax.util.Numbers;
 
 abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
