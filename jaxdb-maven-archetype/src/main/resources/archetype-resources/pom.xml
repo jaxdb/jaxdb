@@ -1,0 +1,31 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <version>${version}</version>
+  <name>${project.groupId}:${project.artifactId}</name>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jaxdb</groupId>
+        <artifactId>jaxdb-maven-plugin</artifactId>
+        <version>0.3.9-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>default-ddlx</id>
+            <configuration>
+              <vendor>PostgreSQL</vendor>
+              <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
+              <schemas>
+                <schema>src/main/resources/basis.ddlx</schema>
+              </schemas>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

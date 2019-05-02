@@ -16,7 +16,7 @@
 -->
 <classicmodels xmlns="sqlx.classicmodels"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="sqlx.classicmodels ../../../target/generated-test-resources/rdb/classicmodels.xsd">
+  xsi:schemaLocation="sqlx.classicmodels ../../../target/generated-test-resources/jaxdb/classicmodels.xsd">
   <insert>
     <office
       officeCode="1"

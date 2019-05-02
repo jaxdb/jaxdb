@@ -1,0 +1,102 @@
+<!--
+  Copyright (c) 2015 OpenJAX
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<schema
+  xmlns="http://www.jaxdb.org/ddlx-0.3.9.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.3.9.xsd http://www.jaxdb.org/ddlx.xsd">
+  <table name="dish">
+    <column name="id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
+    <column name="name" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="description" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="type" xsi:type="enum" values="main side" null="false"/>
+    <column name="image_url" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="created_on" xsi:type="datetime" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="meal">
+    <column name="id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
+    <column name="order_id" xsi:type="smallint" precision="5" unsigned="true" null="false"/>
+    <column name="created_on" xsi:type="datetime" null="false"/>
+    <column name="email" xsi:type="char" length="255" varying="true" null="false"/>
+    <column name="sent" xsi:type="boolean" null="false" default="false"/>
+    <column name="skipped" xsi:type="boolean" null="false" default="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="id"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="meal_dish">
+    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="meal" column="id"/>
+    </column>
+    <column name="dish_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="dish" column="id"/>
+    </column>
+    <column name="quantity" xsi:type="tinyint" precision="1" unsigned="true" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="meal_id"/>
+        <column name="dish_id"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="meal_audit">
+    <column name="range_from" xsi:type="datetime" null="false"/>
+    <column name="range_to" xsi:type="datetime" null="false"/>
+  </table>
+  <table name="unsubscribed">
+    <column name="email" xsi:type="char" length="255" varying="true" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="email"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="meal_survey">
+    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="meal" column="id"/>
+    </column>
+    <column name="rating" xsi:type="tinyint" precision="1" unsigned="true" null="true"/>
+    <column name="comment" xsi:type="char" length="2048" varying="true" null="false"/>
+    <constraints>
+      <primaryKey>
+        <column name="meal_id"/>
+      </primaryKey>
+    </constraints>
+  </table>
+  <table name="dish_survey">
+    <column name="meal_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="meal_survey" column="meal_id"/>
+    </column>
+    <column name="dish_id" xsi:type="smallint" precision="5" unsigned="true" null="false">
+      <foreignKey references="dish" column="id"/>
+    </column>
+    <column name="rating" xsi:type="tinyint" precision="1" unsigned="true" null="false"/>
+    <column name="comment" xsi:type="char" varying="true" length="2048" null="false"/>
+    <!--<constraints>
+      <primaryKey>
+        <column name="meal_id"/>
+        <column name="dish_id"/>
+      </primaryKey>
+    </constraints>-->
+  </table>
+</schema>

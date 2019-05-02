@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 OpenJAX
+  Copyright (c) 2016 JAX-DB
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -18,10 +18,10 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:dt="http://rdb.openjax.org/datatypes-0.3.9.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.9.xsd"
-  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.3.9.xsd"
-  xmlns:function="http://rdb.openjax.org/sqlx.xsl"
+  xmlns:dt="http://www.jaxdb.org/datatypes-0.3.9.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.3.9.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.3.9.xsd"
+  xmlns:function="http://www.jaxdb.org/sqlx.xsl"
   xmlns:ext="http://exslt.org/common"
   xmlns:math="http://www.w3.org/2005/xpath-functions/math"
   xmlns:saxon="http://saxon.sf.net/"
@@ -123,7 +123,7 @@
   <xsl:template match="/ddlx:schema">
     <xs:schema
       elementFormDefault="qualified"
-      xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+      xmlns:ddlx="http://www.jaxdb.org/ddlx-0.3.9.xsd"
       xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
       <xsl:copy-of select="ext:node-set($xmlns)/*/namespace::*[.=$namespace]"/>
@@ -135,8 +135,8 @@
       <xsl:attribute name="jaxb:version">2.1</xsl:attribute>
       <xsl:attribute name="jaxb:extensionBindingPrefixes">annox</xsl:attribute>
 
-      <xs:import namespace="http://rdb.openjax.org/sqlx-0.3.9.xsd" schemaLocation="http://rdb.openjax.org/sqlx-0.3.9.xsd"/>
-      <xs:import namespace="http://rdb.openjax.org/datatypes-0.3.9.xsd" schemaLocation="http://rdb.openjax.org/datatypes-0.3.9.xsd"/>
+      <xs:import namespace="http://www.jaxdb.org/sqlx-0.3.9.xsd" schemaLocation="http://www.jaxdb.org/sqlx-0.3.9.xsd"/>
+      <xs:import namespace="http://www.jaxdb.org/datatypes-0.3.9.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.3.9.xsd"/>
 
       <xsl:for-each select="ddlx:table">
         <xs:complexType>
@@ -147,7 +147,7 @@
             <xs:annotation>
               <xs:appinfo>
                 <annox:annotate>
-                  <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
+                  <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Table(name = &quot;', @name, '&quot;)')"/>
                 </annox:annotate>
               </xs:appinfo>
             </xs:annotation>
@@ -205,7 +205,7 @@
                   <xs:annotation>
                     <xs:appinfo>
                       <annox:annotate>
-                        <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
+                        <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Column(name = &quot;', @name, '&quot;')"/>
                         <xsl:if test="@sqlx:generateOnInsert">
                           <xsl:value-of select="concat(', generateOnInsert = &quot;', @sqlx:generateOnInsert, '&quot;')"/>
                         </xsl:if>
@@ -446,7 +446,7 @@
         <xs:annotation>
           <xs:appinfo>
             <annox:annotate>
-              <xsl:value-of select="concat('@org.openjax.rdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
+              <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
             </annox:annotate>
           </xs:appinfo>
         </xs:annotation>

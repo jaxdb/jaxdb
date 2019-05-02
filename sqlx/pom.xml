@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2015 OpenJAX
+  Copyright (c) 2015 JAX-DB
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb</artifactId>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb</artifactId>
     <version>0.3.9-SNAPSHOT</version>
   </parent>
   <artifactId>sqlx</artifactId>
-  <name>OpenJAX RDB SQLX</name>
+  <name>JAX-DB SQLX</name>
   <description>
     SQLx is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML
     validation for your static SQL data. The SQLx framework utilizes a strongly-typed DDLx file to
@@ -36,7 +36,7 @@
   <build>
     <testResources>
       <testResource>
-        <directory>${project.build.directory}/generated-test-resources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-resources/jaxdb</directory>
       </testResource>
       <testResource>
         <directory>${project.build.directory}/generated-test-sources/xsb</directory>
@@ -53,7 +53,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
-          <!-- Copy *.sqlx to "rdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
+          <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
           <execution>
             <id>copy-resources</id>
             <phase>validate</phase>
@@ -61,7 +61,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${project.build.directory}/test-classes/rdb</outputDirectory>
+              <outputDirectory>${project.build.directory}/test-classes/jaxdb</outputDirectory>
               <resources>
                 <resource>
                   <directory>src/test/resources</directory>
@@ -80,7 +80,7 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <additionalClasspathElements>
-            <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
+            <additionalClasspathElement>${project.build.directory}/generated-test-resources/jaxdb</additionalClasspathElement>
             <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
           </additionalClasspathElements>
         </configuration>
@@ -103,7 +103,7 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <destDir>${project.build.directory}/generated-test-resources/rdb</destDir>
+              <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
               <rename>/\.\S+$/.xsd/</rename>
               <stylesheet>src/main/resources/sqlx.xsl</stylesheet>
               <resources>
@@ -140,8 +140,8 @@
             <configuration>
               <destDir>${project.build.directory}/generated-test-sources/xsb</destDir>
               <schemas>
-                <schema>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</schema>
-                <schema>${project.build.directory}/generated-test-resources/rdb/types.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/jaxdb/classicmodels.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/jaxdb/types.xsd</schema>
               </schemas>
             </configuration>
           </execution>
@@ -176,8 +176,8 @@
               <destDir>${project.build.directory}/generated-test-sources/jaxb</destDir>
               <extension>true</extension>
               <schemas>
-                <schema>${project.build.directory}/generated-test-resources/rdb/classicmodels.xsd</schema>
-                <schema>${project.build.directory}/generated-test-resources/rdb/types.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/jaxdb/classicmodels.xsd</schema>
+                <schema>${project.build.directory}/generated-test-resources/jaxdb/types.xsd</schema>
               </schemas>
               <bindings>
                 <binding>src/main/resources/sqlx.xjb</binding>
@@ -208,12 +208,12 @@
       <version>0.8.3-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
       <type>test-jar</type>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2015 OpenJAX
+  Copyright (c) 2015 JAX-DB
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -20,12 +20,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb</artifactId>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb</artifactId>
     <version>0.3.9-SNAPSHOT</version>
   </parent>
   <artifactId>jsql</artifactId>
-  <name>OpenJAX RDB JSQL</name>
+  <name>JAX-DB JSQL</name>
   <description>
     jSQL is an extension to DDLx, offering a lightweight ORM (Object Relational Mapping) solution
     that runs on the JDBC v4.1 API. The jSQL framework provides strongly-typed semantics for the
@@ -35,10 +35,10 @@
   <build>
     <testResources>
       <testResource>
-        <directory>${project.build.directory}/generated-test-resources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-resources/jaxdb</directory>
       </testResource>
       <testResource>
-        <directory>${project.build.directory}/generated-test-sources/rdb</directory>
+        <directory>${project.build.directory}/generated-test-sources/jaxdb</directory>
       </testResource>
       <testResource>
         <directory>src/test/resources</directory>
@@ -74,8 +74,8 @@
             <reuseForks>false</reuseForks>
             <runOrder>alphabetical</runOrder>
             <additionalClasspathElements>
-              <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-resources/jaxdb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
             </additionalClasspathElements>
           </configuration>
@@ -87,8 +87,8 @@
             <reuseForks>false</reuseForks>
             <runOrder>alphabetical</runOrder>
             <additionalClasspathElements>
-              <additionalClasspathElement>${project.build.directory}/generated-test-resources/rdb</additionalClasspathElement>
-              <additionalClasspathElement>${project.build.directory}/generated-test-sources/rdb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-resources/jaxdb</additionalClasspathElement>
+              <additionalClasspathElement>${project.build.directory}/generated-test-sources/jaxdb</additionalClasspathElement>
               <additionalClasspathElement>${project.build.directory}/generated-test-sources/xsb</additionalClasspathElement>
             </additionalClasspathElements>
           </configuration>
@@ -142,24 +142,24 @@
       <artifactId>xjc</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax.rdb</groupId>
+      <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
       <version>0.3.9-SNAPSHOT</version>
       <type>test-jar</type>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2016 OpenJAX
+  Copyright (c) 2016 JAX-DB
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -17,12 +17,12 @@
 <xs:schema
   elementFormDefault="qualified"
   attributeFormDefault="qualified"
-  targetNamespace="http://rdb.openjax.org/sqlx-0.3.8.xsd"
-  xmlns:sqlx="http://rdb.openjax.org/sqlx-0.3.8.xsd"
-  xmlns:ddlx="http://rdb.openjax.org/ddlx-0.3.8.xsd"
+  targetNamespace="http://www.jaxdb.org/sqlx-0.3.8.xsd"
+  xmlns:sqlx="http://www.jaxdb.org/sqlx-0.3.8.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.3.8.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://rdb.openjax.org/ddlx-0.3.8.xsd" schemaLocation="sqlx-ddlx-0.3.8.xsd"/>
+  <xs:import namespace="http://www.jaxdb.org/ddlx-0.3.8.xsd" schemaLocation="sqlx-ddlx-0.3.8.xsd"/>
 
   <xs:include schemaLocation="sqlx-common-0.3.8.xsd"/>
 

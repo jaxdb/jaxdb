@@ -16,7 +16,7 @@
 -->
 <world xmlns="sqlx.world"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="sqlx.world ../../../target/generated-test-resources/rdb/world.xsd">
+  xsi:schemaLocation="sqlx.world ../../../target/generated-test-resources/jaxdb/world.xsd">
   <insert>
     <country
       code="ABW"

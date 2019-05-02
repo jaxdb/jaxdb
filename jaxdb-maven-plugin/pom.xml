@@ -1,0 +1,241 @@
+<!--
+  Copyright (c) 2015 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb</artifactId>
+    <version>0.3.9-SNAPSHOT</version>
+  </parent>
+  <artifactId>jaxdb-maven-plugin</artifactId>
+  <packaging>maven-plugin</packaging>
+  <name>JAX-DB Maven Plugin</name>
+  <description>
+    The jaxdb-maven-plugin plugin is used to execute database-related generators, which are currently the JAX-DB framework.
+  </description>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-plugin-plugin</artifactId>
+        <configuration>
+          <goalPrefix>jaxdb</goalPrefix>
+        </configuration>
+        <executions>
+          <execution>
+            <id>default-descriptor</id>
+            <goals>
+              <goal>descriptor</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+          <execution>
+            <id>help-descriptor</id>
+            <goals>
+              <goal>helpmojo</goal>
+            </goals>
+            <phase>process-classes</phase>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  <profiles>
+    <profile>
+      <id>jdk1.8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-testCompile</id>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <phase>test-compile</phase>
+                <configuration>
+                  <!-- Output something during compilation, so Travis CI won't terminate the build due to its silence -->
+                  <verbose>true</verbose>
+                  <testExcludes>
+                    <!-- Excluded for jdk1.8 due to: https://bugs.java.com/bugdatabase/view_bug.do?bug_id=8051946 -->
+                    <testExclude>**/NumericFunctionStaticTest.java</testExclude>
+                    <testExclude>**/CaseTest.java</testExclude>
+                    <testExclude>**/CastTest.java</testExclude>
+                  </testExcludes>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>maven-invoker-plugin</id>
+      <activation>
+        <property>
+          <name>!maven.test.skip</name>
+        </property>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-invoker-plugin</artifactId>
+            <executions>
+              <execution>
+                <configuration>
+                  <profiles>
+                    <profile>!report</profile>
+                    <profile>!javadoc</profile>
+                    <profile>!maven-invoker-plugin</profile>
+                    <profile>plugin-test</profile>
+                  </profiles>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>plugin-test</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jaxdb</groupId>
+            <artifactId>jaxdb-maven-plugin</artifactId>
+            <version>${project.version}</version>
+            <executions>
+              <execution>
+                <id>ddlx2jsql</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>ddlx2jsql</goal>
+                </goals>
+                <configuration>
+                  <destDir>${project.build.directory}/generated-test-sources/jaxdb</destDir>
+                  <schemas>
+                    <schema>src/test/resources/survey.ddlx</schema>
+                  </schemas>
+                </configuration>
+              </execution>
+              <execution>
+                <id>ddlx2sql</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>ddlx2sql</goal>
+                </goals>
+                <configuration>
+                  <vendor>MySQL</vendor>
+                  <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
+                  <schemas>
+                    <schema>src/test/resources/library.ddlx</schema>
+                  </schemas>
+                </configuration>
+              </execution>
+              <execution>
+                <id>ddlx2sqlx</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                  <goal>ddlx2sqlx</goal>
+                </goals>
+                <configuration>
+                  <vendor>MySQL</vendor>
+                  <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
+                  <schemas>
+                    <schema>src/test/resources/hospital.ddlx</schema>
+                  </schemas>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven.plugin-tools</groupId>
+      <artifactId>maven-plugin-annotations</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjax.ext.maven</groupId>
+      <artifactId>mojo</artifactId>
+      <version>0.3.5-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>jsql</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>jsql</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>sqlx</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>sqlx</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jaxdb</groupId>
+      <artifactId>ddlx</artifactId>
+      <version>0.3.9-SNAPSHOT</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- This order matters, to override other dependency versions imported above -->
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>3.6.1</version>
+    </dependency>
+  </dependencies>
+</project>

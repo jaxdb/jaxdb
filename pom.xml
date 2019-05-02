@@ -1,5 +1,5 @@
 <!--
-  Copyright (c) 2015 OpenJAX
+  Copyright (c) 2015 JAX-DB
 
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,21 @@
     <artifactId>openjax</artifactId>
     <version>2.5.3-SNAPSHOT</version>
   </parent>
-  <groupId>org.openjax.rdb</groupId>
-  <artifactId>rdb</artifactId>
+  <groupId>org.jaxdb</groupId>
+  <artifactId>jaxdb</artifactId>
   <version>0.3.9-SNAPSHOT</version>
   <packaging>pom</packaging>
-  <url>https://rdb.openjax.org/</url>
-  <name>OpenJAX RDB</name>
+  <url>https://www.jaxdb.org/</url>
+  <name>JAX-DB</name>
   <description>
-    RDB (Relational Database Binding) is a framework that cohesively binds the Java Application Layer to a Vendor Agnostic RDBMS Layer.
+    JAX-DB (Java Architecture Extension for [Relational] Database Binding) is a framework that cohesively binds the Java Application Layer to a Vendor Agnostic RDBMS Layer.
   </description>
   <modules>
     <module>ddlx</module>
     <module>sqlx</module>
     <module>jsql</module>
-    <module>rdb-maven-plugin</module>
-    <module>rdb-maven-archetype</module>
+    <module>jaxdb-maven-plugin</module>
+    <module>jaxdb-maven-archetype</module>
   </modules>
   <build>
     <testResources>
@@ -61,7 +61,7 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
           <executions>
-            <!-- Copy *.sqlx to "rdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
+            <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
             <execution>
               <id>copy-resources</id>
               <phase>validate</phase>
@@ -69,7 +69,7 @@
                 <goal>copy-resources</goal>
               </goals>
               <configuration>
-                <outputDirectory>${project.build.directory}/test-classes/rdb</outputDirectory>
+                <outputDirectory>${project.build.directory}/test-classes/jaxdb</outputDirectory>
                 <resources>
                   <resource>
                     <directory>src/test/resources</directory>

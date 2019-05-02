@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://rdb.openjax.org/ddlx-0.3.9.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.3.9.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://rdb.openjax.org/ddlx-0.3.9.xsd http://rdb.openjax.org/ddlx.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.3.9.xsd http://www.jaxdb.org/ddlx.xsd">
   <table name="t_bigint">
     <column name="c_auto" xsi:type="bigint" precision="14" generateOnInsert="AUTO_INCREMENT" null="false"/>
     <column name="c_null" xsi:type="bigint" precision="15"/>

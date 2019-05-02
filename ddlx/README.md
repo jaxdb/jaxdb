@@ -1,11 +1,11 @@
-# OpenJAX RDB DDLx
+# JAX-DB DDLx
 
 > Relational Data Binding DDLx
 
-[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
-[![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
-[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/ddlx.svg)](https://www.javadoc.io/doc/org.openjax.rdb/ddlx)
-[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/ddlx.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/ddlx)
+[![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
+[![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
+[![Javadocs](https://www.javadoc.io/badge/org.jaxdb/ddlx.svg)](https://www.javadoc.io/doc/org.jaxdb/ddlx)
+[![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/ddlx.svg)](https://mvnrepository.com/artifact/org.jaxdb/ddlx)
 
 ### Introduction
 
@@ -42,30 +42,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   mvn archetype:generate -DgroupId=com.mycompany.app -DartifactId=my-app -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
   ```
 
-2. Add the `mvn.repo.openjax.org` Maven repositories to the POM.
-
-  ```xml
-  <repositories>
-    <repository>
-      <id>mvn.repo.openjax.org</id>
-      <url>http://mvn.repo.openjax.org/m2</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>mvn.repo.openjax.org</id>
-      <url>http://mvn.repo.openjax.org/m2</url>
-    </pluginRepository>
-  </pluginRepositories>
-  ```
-
-3. Create a `basis.ddlx` **DDLx** schema and put it in `src/main/resources/`.
+2. Create a `basis.ddlx` **DDLx** schema and put it in `src/main/resources/`.
 
   ```xml
   <schema name="basis"
-    xmlns="http://rdb.openjax.org/ddlx-0.9.9.xsd"
+    xmlns="http://www.jaxdb.org/ddlx-0.3.9.xsd"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://rdb.openjax.org/ddlx-0.9.9.xsd http://rdb.openjax.org/ddlx.xsd">
+    xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.3.9.xsd http://www.jaxdb.org/ddlx.xsd">
 
     <table name="id" abstract="true">
       <column name="id" xsi:type="char" length="36" null="false"/>
@@ -98,13 +81,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </schema>
   ```
 
-4. Add the [`org.openjax.rdb:rdb-maven-plugin`][rdb-maven-plugin] to the POM.
+3. Add the [`org.jaxdb:jaxdb-maven-plugin`][jaxdb-maven-plugin] to the POM.
 
   ```xml
   <plugin>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb-maven-plugin</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb-maven-plugin</artifactId>
+    <version>0.3.9-SNAPSHOT</version>
     <executions>
       <execution>
         <goals>
@@ -112,7 +95,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
         </goals>
         <configuration>
           <vendor>PostgreSQL</vendor>
-          <destDir>${project.build.directory}/generated-resources/rdb</destDir>
+          <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
           <schemas>
             <schema>src/main/resources/basis.ddlx</schema>
           </schemas>
@@ -122,12 +105,12 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-5. Run `mvn generate-resources`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], an `example.sql` will be created in `generated-resources/rdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
+4. Run `mvn generate-resources`, and upon successful execution of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin], an `example.sql` will be created in `generated-resources/jaxdb` that complies to the `PostgreSQL` vendor as is specified in the POM.
 
-6. Import the DDL into your database. The
+5. Import the DDL into your database. The
 
   ```bash
-  psql -d example < generated-resources/rdb/basis.sql
+  psql -d example < generated-resources/jaxdb/basis.sql
   ```
 
   Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
@@ -147,4 +130,4 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [jsql]: /jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart/
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: /../../../../openjax/rdb-maven-plugin
+[jaxdb-maven-plugin]: /../../../../jaxdb/jaxdb-maven-plugin

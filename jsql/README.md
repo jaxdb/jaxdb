@@ -1,11 +1,11 @@
-# OpenJAX RDB jSQL
+# JAX-DB jSQL
 
 > Relational Data Binding jSQL
 
-[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
-[![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
-[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/jsql.svg)](https://www.javadoc.io/doc/org.openjax.rdb/jsql)
-[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/jsql.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/jsql)
+[![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
+[![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
+[![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jsql.svg)](https://www.javadoc.io/doc/org.jaxdb/jsql)
+[![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jsql.svg)](https://mvnrepository.com/artifact/org.jaxdb/jsql)
 
 ### Introduction
 
@@ -61,23 +61,23 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
-2. Next, add the `org.openjax.rdb:rdb-jsql` dependency into the POM.
+2. Next, add the `org.jaxdb:jsql` dependency into the POM.
 
   ```xml
   <dependency>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb-jsql</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jsql</artifactId>
+    <version>0.3.9-SNAPSHOT</version>
   </dependency>
   ```
 
-3. Include a `jsql` goal in your [`rdb-maven-plugin`][rdb-maven-plugin] in the POM.
+3. Include a `jsql` goal in your [`jaxdb-maven-plugin`][jaxdb-maven-plugin] in the POM.
 
   ```xml
   <plugin>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb-maven-plugin</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb-maven-plugin</artifactId>
+    <version>0.3.9-SNAPSHOT</version>
     <executions>
       <!-- [...] the ddlx <execution> is here -->
       <execution>
@@ -85,7 +85,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
           <goal>jsql</goal>
         </goals>
         <configuration>
-          <destDir>${project.build.directory}/generated-sources/rdb</destDir>
+          <destDir>${project.build.directory}/generated-sources/jaxdb</destDir>
           <schemas>
             <schema>src/main/resources/schema.ddlx</schema>
           </schemas>
@@ -95,7 +95,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   </plugin>
   ```
 
-4. Run `mvn install`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], classes will be generated in `target/generated-sources/rdb`. Add this path to your Build Paths in your IDE to integrate into your project.
+4. Run `mvn install`, and upon successful execution of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin], classes will be generated in `target/generated-sources/jaxdb`. Add this path to your Build Paths in your IDE to integrate into your project.
 
 5. In `App.java`, include:
 
@@ -489,7 +489,7 @@ Specification                                                                   
 
    **`*`** For vendors that do not support UNSIGNED types, the maximum value bounds are constrained by the value bounds of the signed limit.
 
-   **`@`** <samp>DECIMAL</samp> precision, scale and value ranges varry with each vendor. This type's bounds in RDB are therefore vendor specific. Refer to the following table for vendor-specific limits.
+   **`@`** <samp>DECIMAL</samp> precision, scale and value ranges varry with each vendor. This type's bounds in JAX-DB are therefore vendor specific. Refer to the following table for vendor-specific limits.
 
 <br>
 
@@ -573,7 +573,7 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [jdk9-download]: http://www.oracle.com/technetwork/java/javase/downloads/jdk9-downloads-3848520.html
 [jep215]: https://bugs.openjdk.java.net/browse/JDK-8051946
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: /maven-plugin
+[jaxdb-maven-plugin]: /maven-plugin
 
 [derby-decimal]: https://db.apache.org/derby/docs/10.2/ref/rrefsqlj15260.html
 [sqltile-decial]: http://www.sqlite.org/datatype3.html
@@ -583,30 +583,30 @@ This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.
 [db2-decimal]: https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_numericdatatypes.html
 [sqlserver-decimal]: https://docs.microsoft.com/en-us/sql/t-sql/data-types/decimal-and-numeric-transact-sql
 
-[BetweenPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/BetweenPredicateTest.java
-[BooleanValueExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/BooleanValueExpressionTest.java
-[CastTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/CastTest.java
-[ComparisonPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/ComparisonPredicateTest.java
-[CorrelatedSubQueryTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/CorrelatedSubQueryTest.java
-[CountFunctionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/CountFunctionTest.java
-[DateTimeValueExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/DateTimeValueExpressionTest.java
-[DeleteTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/DeleteTest.java
-[ExistsPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/ExistsPredicateTest.java
-[GroupClauseTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/GroupClauseTest.java
-[HavingClauseTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/HavingClauseTest.java
-[InPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/InPredicateTest.java
-[InsertTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/InsertTest.java
-[JoinedTableTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/JoinedTableTest.java
-[LikePredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/LikePredicateTest.java
-[LimitExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/LimitExpressionTest.java
-[NullPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/NullPredicateTest.java
-[NumericFunctionDynamicTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericFunctionDynamicTest.java
-[NumericFunctionStaticTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericFunctionStaticTest.java
-[NumericValueExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/NumericValueExpressionTest.java
-[OrderExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/OrderExpressionTest.java
-[QuantifiedComparisonPredicateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/QuantifiedComparisonPredicateTest.java
-[QueryExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/QueryExpressionTest.java
-[SetFunctionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/SetFunctionTest.java
-[StringValueExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/StringValueExpressionTest.java
-[UnionExpressionTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/UnionExpressionTest.java
-[UpdateTest]: /maven-plugin/src/test/java/org/openjax/maven/plugin/rdb/jsql/UpdateTest.java
+[BetweenPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/BetweenPredicateTest.java
+[BooleanValueExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/BooleanValueExpressionTest.java
+[CastTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/CastTest.java
+[ComparisonPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/ComparisonPredicateTest.java
+[CorrelatedSubQueryTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/CorrelatedSubQueryTest.java
+[CountFunctionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/CountFunctionTest.java
+[DateTimeValueExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/DateTimeValueExpressionTest.java
+[DeleteTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/DeleteTest.java
+[ExistsPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/ExistsPredicateTest.java
+[GroupClauseTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/GroupClauseTest.java
+[HavingClauseTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/HavingClauseTest.java
+[InPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/InPredicateTest.java
+[InsertTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/InsertTest.java
+[JoinedTableTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/JoinedTableTest.java
+[LikePredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/LikePredicateTest.java
+[LimitExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/LimitExpressionTest.java
+[NullPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/NullPredicateTest.java
+[NumericFunctionDynamicTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/NumericFunctionDynamicTest.java
+[NumericFunctionStaticTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/NumericFunctionStaticTest.java
+[NumericValueExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/NumericValueExpressionTest.java
+[OrderExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/OrderExpressionTest.java
+[QuantifiedComparisonPredicateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/QuantifiedComparisonPredicateTest.java
+[QueryExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/QueryExpressionTest.java
+[SetFunctionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/SetFunctionTest.java
+[StringValueExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/StringValueExpressionTest.java
+[UnionExpressionTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/UnionExpressionTest.java
+[UpdateTest]: /maven-plugin/src/test/java/org/jaxdb/jsql/UpdateTest.java

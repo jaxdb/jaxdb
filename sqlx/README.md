@@ -1,11 +1,11 @@
-# OpenJAX RDB SQLx
+# JAX-DB SQLx
 
 > Relational Data Binding SQLx
 
-[![Build Status](https://travis-ci.org/openjax/rdb.png)](https://travis-ci.org/openjax/rdb)
-[![Coverage Status](https://coveralls.io/repos/github/openjax/rdb/badge.svg)](https://coveralls.io/github/openjax/rdb)
-[![Javadocs](https://www.javadoc.io/badge/org.openjax.rdb/sqlx.svg)](https://www.javadoc.io/doc/org.openjax.rdb/sqlx)
-[![Released Version](https://img.shields.io/maven-central/v/org.openjax.rdb/sqlx.svg)](https://mvnrepository.com/artifact/org.openjax.rdb/sqlx)
+[![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
+[![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
+[![Javadocs](https://www.javadoc.io/badge/org.jaxdb/sqlx.svg)](https://www.javadoc.io/doc/org.jaxdb/sqlx)
+[![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/sqlx.svg)](https://mvnrepository.com/artifact/org.jaxdb/sqlx)
 
 ### Introduction
 
@@ -13,7 +13,7 @@
 
 ### Why **SQLx**?
 
-**SQLx** is a natural extension of [**DDLx**][ddlx], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**jSQL**][jsql], ***SQLx*** is the last missing gap in rdb's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
+**SQLx** is a natural extension of [**DDLx**][ddlx], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**jSQL**][jsql], ***SQLx*** is the last missing gap in JAX-DB's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
 
 #### CohesionFirst
 
@@ -38,20 +38,20 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
 1. As the **SQLx** tool extends the functionality of **DDLx**, please begin this example by first completing [the **DDLx** example][ddlx-example].
 
-2. After having created the basis.ddlx file, include an extra execution tag into the configuration of the [`rdb-maven-plugin`][rdb-maven-plugin].
+2. After having created the basis.ddlx file, include an extra execution tag into the configuration of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin].
 
   ```xml
   <plugin>
-    <groupId>org.openjax.rdb</groupId>
-    <artifactId>rdb-maven-plugin</artifactId>
-    <version>0.9.9-SNAPSHOT</version>
+    <groupId>org.jaxdb</groupId>
+    <artifactId>jaxdb-maven-plugin</artifactId>
+    <version>0.3.9-SNAPSHOT</version>
     <executions>
       <execution>
         <goals>
           <goal>sqlx</goal>
         </goals>
         <configuration>
-          <destDir>${project.build.directory}/generated-resources/rdb</destDir>
+          <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
           <schemas>
             <schema>src/main/resources/basis.ddlx</schema>
           </schemas>
@@ -61,7 +61,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   </plugin>
   ```
 
-3. Run `mvn generate-resources`, and upon successful execution of the [`rdb-maven-plugin`][rdb-maven-plugin], an `basis.xsd` will be created in `generated-resources/rdb`.
+3. Run `mvn generate-resources`, and upon successful execution of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin], an `basis.xsd` will be created in `generated-resources/jaxdb`.
 
 4. Create a `data.sqlx` file in the `src/main/resources` directory.
 
@@ -69,7 +69,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   <basis
     xmlns="sqlx.basis"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="sqlx.basis ../../../target/generated-resources/rdb/basis.xsd">
+    xsi:schemaLocation="sqlx.basis ../../../target/generated-resources/jaxdb/basis.xsd">
     <insert>
       <account
         email="scott@tiger.com"
@@ -103,4 +103,4 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [jsql]: /jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
-[rdb-maven-plugin]: /maven-plugin
+[jaxdb-maven-plugin]: /maven-plugin
