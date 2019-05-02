@@ -18,8 +18,8 @@ To use the archetype, execute the following:
   ```bash
   mvn archetype:generate \
   -DgroupId=com.mycompany.app -DartifactId=my-app \
-  -DarchetypeGroupId=org.openjax.maven.archetype -DarchetypeArtifactId=jaxdb-maven-archetype \
-  -DarchetypeCatalog=http://mvn.repo.openjax.org -DinteractiveMode=false
+  -DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype \
+  -DinteractiveMode=false
   ```
 
 ## Contributing
