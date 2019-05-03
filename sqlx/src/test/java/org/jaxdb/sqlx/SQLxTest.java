@@ -41,7 +41,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class SQLxTest {
-  private static final File sourcesXsbDestDir = new File("target/generated-test-sources/xsb");
+  private static final File sourcesXsbDestDir = new File("target/generated-test-sources/jaxsb");
   private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/jaxdb");
   protected static final File testClassesDir = new File("target/test-classes");
