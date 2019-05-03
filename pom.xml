@@ -64,7 +64,7 @@
             <!-- Copy *.sqlx to "jaxdb" subdir to be 1 dir deeper, so xsi:schemaLocation works for SQLxTest#createSql(...) -->
             <execution>
               <id>copy-resources</id>
-              <phase>validate</phase>
+              <phase>initialize</phase>
               <goals>
                 <goal>copy-resources</goal>
               </goals>
