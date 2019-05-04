@@ -27,8 +27,6 @@ import java.util.Set;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.openjax.jci.CompilationException;
-import org.openjax.xml.transform.Transformer;
 import org.jaxdb.sqlx.SqlJaxb.RowIterator;
 import org.jaxdb.sqlx_0_3_9.Database;
 import org.jaxdb.sqlx_0_3_9.Insert;
@@ -36,6 +34,8 @@ import org.jaxdb.sqlx_0_3_9.Row;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Insert;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Row;
+import org.libj.jci.CompilationException;
+import org.openjax.xml.transform.Transformer;
 import org.jaxdb.vendor.DBVendor;
 import org.xml.sax.SAXException;
 

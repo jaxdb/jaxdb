@@ -16,7 +16,7 @@
 
 package org.jaxdb.sqlx;
 
-import static org.openjax.util.function.Throwing.*;
+import static org.libj.util.function.Throwing.*;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -46,12 +46,10 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.openjax.io.FastFiles;
 import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.jaxb.xjc.XJCompiler;
-import org.openjax.jci.CompilationException;
-import org.openjax.jci.InMemoryCompiler;
-import org.openjax.net.URLs;
+import org.openjax.xml.sax.XMLDocument;
+import org.openjax.xml.sax.XMLDocuments;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Table;
@@ -59,14 +57,16 @@ import org.jaxdb.sqlx_0_3_9.Database;
 import org.jaxdb.sqlx_0_3_9.Insert;
 import org.jaxdb.sqlx_0_3_9.Row;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.util.ArrayIntList;
-import org.openjax.util.ClassLoaders;
-import org.openjax.util.FastArrays;
-import org.openjax.util.FastCollections;
-import org.openjax.util.Identifiers;
-import org.openjax.util.IntList;
-import org.openjax.xml.sax.XMLDocument;
-import org.openjax.xml.sax.XMLDocuments;
+import org.libj.io.FastFiles;
+import org.libj.jci.CompilationException;
+import org.libj.jci.InMemoryCompiler;
+import org.libj.net.URLs;
+import org.libj.util.ArrayIntList;
+import org.libj.util.ClassLoaders;
+import org.libj.util.FastArrays;
+import org.libj.util.FastCollections;
+import org.libj.util.Identifiers;
+import org.libj.util.IntList;
 import org.xml.sax.SAXException;
 
 final class SqlJaxb {

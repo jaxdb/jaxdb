@@ -25,7 +25,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Map;
 
-import org.openjax.io.Readers;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$ForeignKey;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Index;
@@ -33,6 +32,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
+import org.libj.io.Readers;
 import org.jaxdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

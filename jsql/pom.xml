@@ -128,12 +128,12 @@
   </profiles>
   <dependencies>
     <dependency>
-      <groupId>org.openjax</groupId>
+      <groupId>org.libj</groupId>
       <artifactId>math</artifactId>
       <version>0.6.4-SNAPSHOT</version>
     </dependency>
     <dependency>
-      <groupId>org.openjax</groupId>
+      <groupId>org.libj</groupId>
       <artifactId>sql</artifactId>
       <version>0.4.5-SNAPSHOT</version>
     </dependency>

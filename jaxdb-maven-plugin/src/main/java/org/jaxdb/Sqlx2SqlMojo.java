@@ -36,9 +36,9 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.MojoUtil;
 import org.openjax.maven.mojo.SourceInput;
-import org.openjax.net.URLs;
 import org.jaxdb.sqlx.SQL;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.net.URLs;
 import org.xml.sax.SAXException;
 
 @Mojo(name="sqlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution=ResolutionScope.TEST)

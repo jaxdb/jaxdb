@@ -26,8 +26,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 import org.junit.Test;
-import org.openjax.util.Dates;
-import org.openjax.util.Temporals;
+import org.libj.util.Dates;
+import org.libj.util.Temporals;
 
 public class IntervalTest {
   private static final Date date = Date.from(LocalDateTime.parse("2000-01-01T00:00:00", DateTimeFormatter.ISO_DATE_TIME).atZone(ZoneId.systemDefault()).toInstant());

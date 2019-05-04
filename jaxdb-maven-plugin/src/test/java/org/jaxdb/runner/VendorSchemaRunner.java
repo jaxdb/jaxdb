@@ -31,7 +31,7 @@ import org.jaxdb.ddlx.runner.VendorRunner;
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Registry;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.util.FastArrays;
+import org.libj.util.FastArrays;
 
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.TYPE, ElementType.METHOD})

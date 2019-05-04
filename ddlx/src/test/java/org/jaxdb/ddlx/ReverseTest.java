@@ -29,7 +29,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.test.AssertXml;
+import org.libj.test.AssertXml;
 import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;

@@ -28,9 +28,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.SourceInput;
-import org.openjax.net.URLs;
 import org.openjax.xml.api.ValidationException;
 import org.jaxdb.jsql.generator.Generator;
+import org.libj.net.URLs;
 
 @Mojo(name="ddlx2jsql", defaultPhase=LifecyclePhase.GENERATE_SOURCES)
 @Execute(goal="ddlx2jsql")

@@ -24,8 +24,8 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.openjax.sql.AuditConnection;
-import org.openjax.util.IdentityHashSet;
+import org.libj.sql.AuditConnection;
+import org.libj.util.IdentityHashSet;
 
 public final class Registry {
   private static Connector makeConnector(final DataSource dataSource) {

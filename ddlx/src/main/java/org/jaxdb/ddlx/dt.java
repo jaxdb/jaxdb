@@ -27,7 +27,6 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.openjax.xml.datatype.HexBinary;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Bigint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Char;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Check;
@@ -38,6 +37,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Int;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$RangeOperator;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Smallint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Tinyint;
+import org.openjax.xml.datatype.HexBinary;
 
 public class dt {
   public static abstract class DataType<T> implements Serializable {

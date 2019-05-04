@@ -28,12 +28,12 @@ import java.sql.Statement;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.openjax.io.Readers;
-import org.openjax.io.Streams;
 import org.jaxdb.jsql.type.BLOB;
 import org.jaxdb.jsql.type.ENUM;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.io.Readers;
+import org.libj.io.Streams;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override

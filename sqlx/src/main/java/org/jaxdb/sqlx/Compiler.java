@@ -23,8 +23,8 @@ import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.lang.PackageLoader;
-import org.openjax.lang.PackageNotFoundException;
+import org.libj.lang.PackageLoader;
+import org.libj.lang.PackageNotFoundException;
 
 abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];

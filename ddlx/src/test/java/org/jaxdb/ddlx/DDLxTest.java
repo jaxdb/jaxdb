@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.openjax.xml.api.ValidationException;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Decimal;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
@@ -29,6 +28,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.jaxsb.runtime.Bindings;
+import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
 
 public abstract class DDLxTest {

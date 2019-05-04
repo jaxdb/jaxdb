@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.junit.runner.RunWith;
-import org.openjax.jci.CompilationException;
+import org.libj.jci.CompilationException;
 import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;

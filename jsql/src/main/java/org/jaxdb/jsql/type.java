@@ -41,8 +41,8 @@ import java.util.Set;
 import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.util.Classes;
-import org.openjax.util.Numbers;
+import org.libj.util.Classes;
+import org.libj.util.Numbers;
 
 public final class type {
   private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<>();

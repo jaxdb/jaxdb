@@ -33,8 +33,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.SourceInput;
-import org.openjax.net.URLs;
 import org.jaxdb.sqlx.SQL;
+import org.libj.net.URLs;
 
 @Mojo(name="ddlx2sqlx", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
 @Execute(goal="ddlx2sqlx")

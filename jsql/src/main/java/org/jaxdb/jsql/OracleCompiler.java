@@ -30,7 +30,7 @@ import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.openjax.util.Temporals;
+import org.libj.util.Temporals;
 
 final class OracleCompiler extends Compiler {
   private static Constructor<?> INTERVALDS;

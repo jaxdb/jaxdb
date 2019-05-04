@@ -25,11 +25,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.jar.JarFile;
 
-import org.openjax.io.FastFiles;
-import org.openjax.net.URLs;
-import org.openjax.sql.AuditConnection;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.util.zip.ZipFiles;
+import org.libj.io.FastFiles;
+import org.libj.net.URLs;
+import org.libj.sql.AuditConnection;
+import org.libj.util.zip.ZipFiles;
 
 public class SQLite implements Vendor {
   private static final File db = new File("target/generated-test-resources/jaxdb/sqlite.db");

@@ -53,8 +53,8 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Time;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Tinyint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.lang.PackageLoader;
-import org.openjax.lang.PackageNotFoundException;
+import org.libj.lang.PackageLoader;
+import org.libj.lang.PackageNotFoundException;
 
 abstract class Decompiler {
   private static final Decompiler[] decompilers = new Decompiler[DBVendor.values().length];

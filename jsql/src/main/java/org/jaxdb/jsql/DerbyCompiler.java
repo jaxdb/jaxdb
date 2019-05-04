@@ -26,9 +26,9 @@ import java.sql.Timestamp;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.openjax.math.Constants;
-import org.openjax.math.SafeMath;
-import org.openjax.sql.DateTimes;
+import org.libj.math.Constants;
+import org.libj.math.SafeMath;
+import org.libj.sql.DateTimes;
 import org.jaxdb.vendor.DBVendor;
 
 final class DerbyCompiler extends Compiler {

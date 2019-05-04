@@ -21,8 +21,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.openjax.sql.AuditConnection;
 import org.jaxdb.vendor.DBVendor;
+import org.libj.sql.AuditConnection;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
 import com.ibm.db2.jcc.DB2Driver;

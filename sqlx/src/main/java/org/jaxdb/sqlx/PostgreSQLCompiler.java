@@ -18,8 +18,8 @@ package org.jaxdb.sqlx;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.openjax.util.Bytes;
-import org.openjax.util.Hexadecimal;
+import org.libj.util.Bytes;
+import org.libj.util.Hexadecimal;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override

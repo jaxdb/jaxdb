@@ -25,11 +25,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.openjax.sql.exception.SQLExceptions;
 import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Update.UPDATE;
-import org.openjax.util.ArrayIntList;
+import org.libj.sql.exception.SQLExceptions;
+import org.libj.util.ArrayIntList;
 
 public class Batch {
   private final List<ExecuteUpdate> executeUpdates = new ArrayList<>();
