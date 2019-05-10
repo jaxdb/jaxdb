@@ -20,15 +20,15 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.openjax.xml.api.ValidationException;
 
 public abstract class TypesTest extends DDLxTest {
   @RunWith(VendorRunner.class)

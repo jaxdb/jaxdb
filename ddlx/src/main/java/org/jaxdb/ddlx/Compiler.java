@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Bigint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Binary;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Blob;
@@ -56,7 +57,6 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Time;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Tinyint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
-import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.Numbers;

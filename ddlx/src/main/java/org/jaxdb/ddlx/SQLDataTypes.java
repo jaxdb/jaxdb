@@ -20,13 +20,13 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jaxdb.vendor.Dialect;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Index;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
-import org.jaxdb.vendor.Dialect;
-import org.libj.util.FastArrays;
 import org.jaxsb.runtime.BindingList;
+import org.libj.util.FastArrays;
 
 final class SQLDataTypes {
   protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {

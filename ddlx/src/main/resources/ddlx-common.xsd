@@ -30,8 +30,18 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:complexType name="documented">
+    <xs:sequence>
+      <xs:element name="documentation" minOccurs="0" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  
   <xs:complexType name="named">
-    <xs:attribute name="name" type="ddlx:name" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:attribute name="name" type="ddlx:name" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:simpleType name="changeRule">
@@ -52,15 +62,19 @@
   </xs:complexType>
 
   <xs:complexType name="index">
-    <xs:attribute name="unique" type="xs:boolean" default="false"/>
-    <xs:attribute name="type" default="BTREE">
-      <xs:simpleType>
-        <xs:restriction base="xs:token">
-          <xs:enumeration value="BTREE"/>
-          <xs:enumeration value="HASH"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
+    <xs:complexContent>
+      <xs:extension base="ddlx:documented">
+        <xs:attribute name="unique" type="xs:boolean" default="false"/>
+        <xs:attribute name="type" default="BTREE">
+          <xs:simpleType>
+            <xs:restriction base="xs:token">
+              <xs:enumeration value="BTREE"/>
+              <xs:enumeration value="HASH"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="check">

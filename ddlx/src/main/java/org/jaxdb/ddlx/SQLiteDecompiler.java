@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Bigint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Binary;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Blob;
@@ -27,7 +28,6 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Smallint;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Time;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Tinyint;
-import org.jaxdb.vendor.DBVendor;
 
 class SQLiteDecompiler extends Decompiler {
   @Override

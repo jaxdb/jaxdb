@@ -26,21 +26,21 @@ import java.util.Map;
 
 import javax.xml.xpath.XPathExpressionException;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.libj.test.AssertXml;
-import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.VendorRunner;
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
-import org.jaxdb.vendor.DBVendor;
 import org.jaxsb.runtime.Binding;
 import org.jaxsb.runtime.MarshalException;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.libj.test.AssertXml;
+import org.openjax.xml.api.ValidationException;
 
 public abstract class ReverseTest extends DDLxTest {
   @RunWith(VendorRunner.class)

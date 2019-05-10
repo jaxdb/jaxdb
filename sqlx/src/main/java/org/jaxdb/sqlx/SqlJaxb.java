@@ -46,10 +46,6 @@ import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 
-import org.openjax.jaxb.xjc.JaxbUtil;
-import org.openjax.jaxb.xjc.XJCompiler;
-import org.openjax.xml.sax.XMLDocument;
-import org.openjax.xml.sax.XMLDocuments;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Table;
@@ -67,6 +63,10 @@ import org.libj.util.FastArrays;
 import org.libj.util.FastCollections;
 import org.libj.util.Identifiers;
 import org.libj.util.IntList;
+import org.openjax.jaxb.xjc.JaxbUtil;
+import org.openjax.jaxb.xjc.XJCompiler;
+import org.openjax.xml.sax.XMLDocument;
+import org.openjax.xml.sax.XMLDocuments;
 import org.xml.sax.SAXException;
 
 final class SqlJaxb {

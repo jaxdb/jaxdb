@@ -16,8 +16,8 @@
 
 package org.jaxdb.jsql;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 import static org.libj.util.function.Throwing.*;
 
 import java.io.File;
@@ -30,17 +30,17 @@ import java.sql.SQLException;
 
 import javax.xml.bind.UnmarshalException;
 
-import org.openjax.jaxb.xjc.JaxbUtil;
-import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.Schemas;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc;
 import org.jaxdb.jsql.generator.Generator;
 import org.jaxdb.sqlx_0_3_9.Database;
+import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
-import org.libj.util.Identifiers;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
+import org.libj.util.Identifiers;
+import org.openjax.jaxb.xjc.JaxbUtil;
+import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
 
 public abstract class JSQLTest {

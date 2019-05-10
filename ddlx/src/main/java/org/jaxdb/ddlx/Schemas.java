@@ -31,6 +31,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Columns;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Constraints;
@@ -38,11 +39,10 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Enum;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
-import org.jaxdb.vendor.DBVendor;
-import org.libj.util.FastCollections;
-import org.libj.util.RefDigraph;
 import org.jaxsb.runtime.BindingProxy;
 import org.jaxsb.runtime.Bindings;
+import org.libj.util.FastCollections;
+import org.libj.util.RefDigraph;
 
 public final class Schemas {
   public static int[] drop(final Connection connection, final Schema ... schemas) throws GeneratorExecutionException, SQLException {

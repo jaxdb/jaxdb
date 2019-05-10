@@ -29,14 +29,14 @@ import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
-import org.jaxdb.vendor.DBVendor;
+import org.jaxsb.runtime.Bindings;
+import org.libj.jci.CompilationException;
 import org.libj.util.ClassLoaders;
 import org.libj.util.FastArrays;
 import org.openjax.xml.api.ValidationException;
-import org.jaxsb.runtime.Bindings;
-import org.libj.jci.CompilationException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 

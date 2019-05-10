@@ -24,9 +24,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.UnmarshalException;
 import javax.xml.transform.TransformerException;
 
-import org.junit.runner.RunWith;
-import org.libj.jci.CompilationException;
-import org.openjax.xml.api.ValidationException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.runner.Derby;
@@ -36,6 +33,9 @@ import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
 import org.jaxdb.sqlx.SQLxTest;
+import org.junit.runner.RunWith;
+import org.libj.jci.CompilationException;
+import org.openjax.xml.api.ValidationException;
 
 public abstract class WorldTest extends JSQLTest {
   private static final String name = "world";

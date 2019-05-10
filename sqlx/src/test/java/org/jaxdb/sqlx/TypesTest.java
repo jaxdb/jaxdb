@@ -34,8 +34,6 @@ import java.time.format.DateTimeFormatter;
 import javax.xml.bind.JAXBException;
 import javax.xml.transform.TransformerException;
 
-import org.junit.runner.RunWith;
-import org.libj.jci.CompilationException;
 import org.jaxdb.ddlx.DDLxTest;
 import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.runner.Derby;
@@ -44,6 +42,8 @@ import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
+import org.junit.runner.RunWith;
+import org.libj.jci.CompilationException;
 import org.libj.util.Hexadecimal;
 import org.libj.util.Strings;
 import org.openjax.xml.api.ValidationException;
