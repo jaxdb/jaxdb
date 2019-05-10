@@ -26,7 +26,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxsb.runtime.BindingList;
-import org.libj.util.FastArrays;
+import org.libj.util.ArrayUtil;
 
 final class SQLDataTypes {
   protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {
@@ -77,7 +77,7 @@ final class SQLDataTypes {
   }
 
   protected static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
-    final BigInteger maxForPrecision = new BigInteger(String.valueOf(FastArrays.createRepeat('9', precision)));
+    final BigInteger maxForPrecision = new BigInteger(String.valueOf(ArrayUtil.createRepeat('9', precision)));
     if (max == null)
       max = maxForPrecision;
     else if (maxForPrecision.compareTo(max) == -1)

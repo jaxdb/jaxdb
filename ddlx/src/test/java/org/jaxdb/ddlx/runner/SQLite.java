@@ -26,7 +26,7 @@ import java.sql.SQLException;
 import java.util.jar.JarFile;
 
 import org.jaxdb.vendor.DBVendor;
-import org.libj.io.FastFiles;
+import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.sql.AuditConnection;
 import org.libj.util.zip.ZipFiles;
@@ -42,11 +42,11 @@ public class SQLite implements Vendor {
   @Override
   public synchronized void init() throws IOException, SQLException {
     final File classes = new File("target/classes/sqlite.db");
-    if (classes.exists() && !FastFiles.deleteAll(classes.toPath()))
+    if (classes.exists() && !FileUtil.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     final File testClasses = new File("target/test-classes/sqlite.db");
-    if (testClasses.exists() && !FastFiles.deleteAll(testClasses.toPath()))
+    if (testClasses.exists() && !FileUtil.deleteAll(testClasses.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
 
     if (db.exists()) {

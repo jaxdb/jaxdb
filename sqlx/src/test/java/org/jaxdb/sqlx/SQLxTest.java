@@ -35,7 +35,7 @@ import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.util.ClassLoaders;
-import org.libj.util.FastArrays;
+import org.libj.util.ArrayUtil;
 import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -49,7 +49,7 @@ public abstract class SQLxTest {
 
   static {
     final File[] testClassPath = ClassLoaders.getTestClassPath();
-    classpath = testClassPath != null ? FastArrays.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
+    classpath = testClassPath != null ? ArrayUtil.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
   }
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {

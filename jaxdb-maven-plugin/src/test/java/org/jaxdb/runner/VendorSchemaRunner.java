@@ -31,7 +31,7 @@ import org.jaxdb.ddlx.runner.VendorRunner;
 import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Registry;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.util.FastArrays;
+import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.TYPE, ElementType.METHOD})
@@ -58,7 +58,7 @@ public class VendorSchemaRunner extends VendorRunner {
 
     final org.jaxdb.ddlx.runner.Vendor vendor = getVendor(vendorClass);
     if (entityClass != null) {
-      for (final Class<? extends org.jaxdb.jsql.Schema> schemaClass : FastArrays.concat(entityClass.value(), (Class<? extends org.jaxdb.jsql.Schema>)null)) {
+      for (final Class<? extends org.jaxdb.jsql.Schema> schemaClass : ArrayUtil.concat(entityClass.value(), (Class<? extends org.jaxdb.jsql.Schema>)null)) {
         Registry.registerPrepared(schemaClass, new Connector() {
           @Override
           public Connection getConnection() throws SQLException {

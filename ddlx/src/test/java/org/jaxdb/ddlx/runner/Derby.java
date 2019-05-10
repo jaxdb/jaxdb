@@ -27,7 +27,7 @@ import java.util.jar.JarFile;
 
 import org.apache.derby.jdbc.EmbeddedDriver;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.io.FastFiles;
+import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.sql.AuditConnection;
 import org.libj.util.zip.ZipFiles;
@@ -49,7 +49,7 @@ public class Derby implements Vendor {
   public synchronized void init() throws IOException, SQLException {
     new EmbeddedDriver();
     for (final File dbPath : dbPaths)
-      if (dbPath.exists() && !FastFiles.deleteAll(dbPath.toPath()))
+      if (dbPath.exists() && !FileUtil.deleteAll(dbPath.toPath()))
         throw new IOException("Unable to delete " + dbPath.getPath());
 
     if (db.exists() && new File(db, "seg0").exists())
@@ -65,7 +65,7 @@ public class Derby implements Vendor {
         ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
       }
       else {
-        FastFiles.copyAll(new File(url.getPath()).toPath(), db.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        FileUtil.copyAll(new File(url.getPath()).toPath(), db.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
     }
     else {

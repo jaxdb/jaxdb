@@ -34,7 +34,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.util.FastArrays;
+import org.libj.util.ArrayUtil;
 import org.openjax.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ public final class Generator {
 
   public static void main(final String[] args) throws Exception {
     if (args.length != 2) {
-      final String vendors = FastArrays.toString(DBVendor.values(), "|");
+      final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 

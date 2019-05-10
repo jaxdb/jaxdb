@@ -41,7 +41,7 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxsb.runtime.BindingProxy;
 import org.jaxsb.runtime.Bindings;
-import org.libj.util.FastCollections;
+import org.libj.util.CollectionUtil;
 import org.libj.util.RefDigraph;
 
 public final class Schemas {
@@ -151,7 +151,7 @@ public final class Schemas {
     }
 
     if (digraph.hasCycle())
-      throw new IllegalStateException("Cycle exists in relational model: " + FastCollections.toString(digraph.getCycle(), " -> "));
+      throw new IllegalStateException("Cycle exists in relational model: " + CollectionUtil.toString(digraph.getCycle(), " -> "));
 
     final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
     while (topological.hasPrevious())

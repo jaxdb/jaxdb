@@ -62,12 +62,12 @@ import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Binding;
 import org.jaxsb.runtime.Bindings;
 import org.jaxsb.runtime.Id;
-import org.libj.io.FastFiles;
+import org.libj.io.FileUtil;
 import org.libj.net.URLs;
 import org.libj.util.ArrayIntList;
 import org.libj.util.ClassLoaders;
 import org.libj.util.Classes;
-import org.libj.util.FastArrays;
+import org.libj.util.ArrayUtil;
 import org.libj.util.IntList;
 import org.openjax.xml.sax.XMLDocument;
 import org.openjax.xml.sax.XMLDocuments;
@@ -297,13 +297,13 @@ final class SqlXsb {
       database = ($Database)Bindings.parse(in);
     }
     catch (final Throwable t) {
-      final File sqlxTempDir = new File(FastFiles.getTempDir(), "sqlx");
+      final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
           try {
-            FastFiles.deleteAll(sqlxTempDir.toPath());
+            FileUtil.deleteAll(sqlxTempDir.toPath());
           }
           catch (final IOException e) {
             throw new IllegalStateException(e);
@@ -313,7 +313,7 @@ final class SqlXsb {
 
       xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
 
-      final URLClassLoader classLoader = new URLClassLoader(FastArrays.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
+      final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       try (final InputStream in = xmlDocument.getURL().openStream()) {
         database = ($Database)Bindings.parse(in, classLoader);
       }
