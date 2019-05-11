@@ -7,23 +7,23 @@
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb-maven-plugin.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb-maven-plugin)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jaxdb-maven-plugin.svg)](https://mvnrepository.com/artifact/org.jaxdb/jaxdb-maven-plugin)
 
-### Introduction
+## Introduction
 
 The `jaxdb-maven-plugin` plugin is used to execute database-related generators, which are currently the [JAX-DB][jaxdb] framework.
 
-### Goals Overview
+## Goals Overview
 
 * [`jaxdb:ddlx`](#jaxdbddlx) generates .sql schema from .ddlx.
 * [`jaxdb:sqlx`](#jaxdbsqlx) generates .xsd schema from .ddlx.
 * [`jaxdb:jsql`](#jaxdbjsql) generates jSQL Entities from .ddlx.
 
-### Usage
+## Usage
 
-#### `jaxdb:ddlx`
+### `jaxdb:ddlx`
 
 The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to generate DDL schema files from XML files conforming to the [DDLx Schema][ddlx-schema].
 
-##### Example
+#### Example
 
 ```xml
 <plugin>
@@ -47,7 +47,7 @@ The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to
 </plugin>
 ```
 
-#### Configuration Parameters
+### Configuration Parameters
 
 | Name              | Type    | Use      | Description                                                                   |
 |:------------------|:--------|:---------|:------------------------------------------------------------------------------|
@@ -56,11 +56,11 @@ The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to
 | `/schemas`        | List    | Required | List of `schema` elements.                                                    |
 | `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
 
-#### `jaxdb:sqlx`
+### `jaxdb:sqlx`
 
 The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to generate an XML Schema to allow one to create a validating SQLx file for static data.
 
-##### Example
+#### Example
 
 ```xml
 <plugin>
@@ -84,7 +84,7 @@ The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to
 </plugin>
 ```
 
-#### Configuration Parameters
+### Configuration Parameters
 
 | Name              | Type    | Use      | Description                                                                   |
 |:------------------|:--------|:---------|:------------------------------------------------------------------------------|
@@ -92,11 +92,11 @@ The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to
 | `/schemas`        | List    | Required | List of `schema` elements.                                                    |
 | `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
 
-#### `jaxdb:jsql`
+### `jaxdb:jsql`
 
 The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to generate jSQL Entities from XML files conforming to the [DDLx Schema][ddlx-schema].
 
-##### Example
+#### Example
 
 ```xml
 <plugin>
@@ -120,7 +120,7 @@ The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to g
 </plugin>
 ```
 
-#### Configuration Parameters
+### Configuration Parameters
 
 | Name              | Type    | Use      | Description                                                                   |
 |:------------------|:--------|:---------|:------------------------------------------------------------------------------|
@@ -134,7 +134,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-### License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 

@@ -7,34 +7,34 @@
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/sqlx.svg)](https://www.javadoc.io/doc/org.jaxdb/sqlx)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/sqlx.svg)](https://mvnrepository.com/artifact/org.jaxdb/sqlx)
 
-### Introduction
+## Introduction
 
 **SQLx** is a vendor-agnostic, XML-based SQL data definition standard that offers the power of XML validation for your static SQL data. The **SQLx** framework utilizes a strongly-typed [DDLx][ddlx.xsd] file to generate a XML Schema document that translates DDLx constructs into the XSD language. With the [SQLx XSLT][sqlx.xsl], the **SQLx** tool leverages the power of XML Schema Validation and provides a cohesive structured model to define SQL data (that conforms to your SQL schema, defined in a **DDLx** file).
 
-### Why **SQLx**?
+## Why **SQLx**?
 
 **SQLx** is a natural extension of [**DDLx**][ddlx], offering the next needed highly-cohesive expression standard for SQL databases. Together with [**jSQL**][jsql], ***SQLx*** is the last missing gap in JAX-DB's quest to achieve an advanced, cohesive and lightweight schema, static data, and ORM solution.
 
-#### CohesionFirst
+### CohesionFirst
 
 Developed with the CohesionFirst approach, **SQLx** is the cohesive alternative to the creation of RDBMS static data that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **SQLx** is a complete solution for the creation and management of SQL static data. The **SQLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
-#### Vendor-Agnostic
+### Vendor-Agnostic
 
 How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor differs in SQL dialect. Though the SQL standards (SQL-89, SQL-92, SQL-99, SQL-2003) set a significant amount of requirements to the RDBMS vendors, there is still significant room for variation. These variations are what define the differences of the vendor-specific dialects. As example of such variation, proprietary extensions to the DDL specification of more advanced definition semantics (for instance, index type semantics, enum semantics, function name differences, etc). Because the SQL standards do not specify the full scope of SQL, vendors implement proprietary extensions to DDL and SQL semantics of the modern-day RDBMS features we use today.
 
-#### Validating and Fail-Fast
+### Validating and Fail-Fast
 
 **SQLx** is a standard that abstracts the static data loading SQL with a vendor-agnostic model. Utilizing the full power of XML Schema Validation, **SQLx** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL static data.
 
-### Getting Started
+## Getting Started
 
-#### Prerequisites
+### Prerequisites
 
 * [Java 8][jdk8-download] - The minimum required JDK version.
 * [Maven][maven] - The dependency management system.
 
-#### Example
+### Example
 
 1. As the **SQLx** tool extends the functionality of **DDLx**, please begin this example by first completing [the **DDLx** example][ddlx-example].
 
@@ -91,7 +91,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-### License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 

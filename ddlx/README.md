@@ -7,34 +7,34 @@
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/ddlx.svg)](https://www.javadoc.io/doc/org.jaxdb/ddlx)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/ddlx.svg)](https://mvnrepository.com/artifact/org.jaxdb/ddlx)
 
-### Introduction
+## Introduction
 
 **DDLx** is a XML definition of the DDL specification. It is a vendor-agnostic, SQL compliant XSD used to create SQL Schemas in XML. The [DDLx Schema][ddlx.xsd] utilizes the power of XML Schema Validation to provides a cohesive structured model for the creation of SQL Schemas.
 
-### Why **DDLx**?
+## Why **DDLx**?
 
 **DDLx** can also be used with [**jSQL**][jsql], an advanced, cohesive and lightweight ORM approach.
 
-#### CohesionFirst
+### CohesionFirst
 
 Developed with the CohesionFirst approach, **DDLx** is the cohesive alternative to the creation of RDBMS data models that offers validation and fail-fast execution. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **DDLx** is a complete solution for the creation and management of a SQL Schema. The **DDLx** solution differentiates itself from alternative approaches with the strength of its cohesion to the XML Schema language and the DDL model.
 
-#### Vendor-Agnostic
+### Vendor-Agnostic
 
 How can one create a SQL Schema that is not vendor specific? Often, a DDL written for MySQL will not execute in PostreSQL, as each vendor differs in SQL dialect. Though the SQL standards (SQL-89, SQL-92, SQL-99, SQL-2003) set a significant amount of requirements to the RDBMS vendors, there is still significant room for variation. These variations are what define the differences of the vendor-specific dialects. As example of such variation, proprietary extensions to the DDL specification of more advanced definition semantics (for instance, index type semantics, enum semantics, function name differences, etc). Because the SQL standards do not specify the full scope of SQL, vendors implement proprietary extensions to DDL and DML semantics of the modern-day RDBMS features we use today. Using **DDLx** as the primary descriptor of one's SQL Data Model, one can maintain a single SQL Schema uncoupled to a RDBMS vendor.
 
-#### Validating and Fail-Fast
+### Validating and Fail-Fast
 
 **DDLx** is a standard that abstracts the DDL with a vendor-agnostic model, and provides cohesive semantics for the definition of most (close to all) of the SQL-92 and SQL-99 DDL structures. Utilizing the full power of XML Schema Validation, **DDLx** provides a cohesive, error-checking and fail-fast, structured model for the creation of SQL Schemas.
 
-### Getting Started
+## Getting Started
 
-#### Prerequisites
+### Prerequisites
 
 * [Java 8][jdk8-download] - The minimum required JDK version.
 * [Maven][maven] - The dependency management system.
 
-#### Example
+### Example
 
 1. In your preferred development directory, create a [`maven-archetype-quickstart`][maven-archetype-quickstart] project.
 
@@ -115,13 +115,13 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
 
   Subsequent imports of `basis.sql` into the database will `DROP` and re-`CREATE` the data model.
 
-## Contributing
+# Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 Please make sure to update tests as appropriate.
 
-### License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 

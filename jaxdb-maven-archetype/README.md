@@ -7,11 +7,11 @@
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb-maven-archetype.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb-maven-archetype)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jaxdb-maven-archetype.svg)](https://mvnrepository.com/artifact/org.jaxdb/jaxdb-maven-archetype)
 
-### Introduction
+## Introduction
 
 The `jaxdb-maven-archetype` archetype is a quick-start example of how to use the [JAX-DB][jaxdb] framework.
 
-### Usage Overview
+## Usage Overview
 
 To use the archetype, execute the following:
 
@@ -28,7 +28,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-### License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 

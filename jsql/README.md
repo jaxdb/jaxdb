@@ -7,21 +7,21 @@
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jsql.svg)](https://www.javadoc.io/doc/org.jaxdb/jsql)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jsql.svg)](https://mvnrepository.com/artifact/org.jaxdb/jsql)
 
-### Introduction
+## Introduction
 
 **jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. **jSQL** uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
-### Current Release and Support
+## Current Release and Support
 
 **0.2.2-SNAPSHOT**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
 
-### Why **jSQL**?
+## Why **jSQL**?
 
-#### CohesionFirst
+### CohesionFirst
 
 Developed with the CohesionFirst approach, **jSQL** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **jSQL** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **jSQL** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
 
-#### Strongly Typed DML Semantics
+### Strongly Typed DML Semantics
 
 In addition to generating Java classes that bind to a DDL, the **jSQL** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
 
@@ -42,22 +42,22 @@ public static basis.Account findAccount(String email) throws SQLException {
 
 Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
 
-#### Fast and Memory Efficient
+### Fast and Memory Efficient
 
 **jSQL** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
 
-#### Cohesive and Fail-Fast
+### Cohesive and Fail-Fast
 
 **jSQL** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
 
-### Getting Started
+## Getting Started
 
-#### Prerequisites
+### Prerequisites
 
 * [Java 9][jdk9-download] - The minimum required JDK version. Java 9 is required due to this framework triggering [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
 * [Maven][maven] - The dependency management system.
 
-#### Example
+### Example
 
 1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
@@ -184,7 +184,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `Registry`.
 
   ```java
-  Dbcp dbcp = JaxbUtil.parse(Dbcp.class, Thread.currentThread().getContextClassLoader().getResource("dbcp.xml").openStream()));
+  Dbcp dbcp = JaxbUtil.parse(Dbcp.class, ClassLoader.getSystemClassLoader().getResource("dbcp.xml").openStream()));
   DataSource dataSource = DataSources.createDataSource(dbcp);
   Registry.registerPreparedBatching(basis.class, new Connector() {
     @Override
@@ -196,18 +196,18 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 9. Run `App`.
 
-### Known Issues
+## Known Issues
 
 * To model the strong-typed relation amongst the `DataType`s, the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
-### Releases (Supported Vendors)
+## Releases (Supported Vendors)
 
 <samp>04/23/2017</samp> **0.2.2-SNAPSHOT** (Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**)<br>
 <samp>03/05/2017</samp> **0.9.6** (Derby, **SQLite**, PostgreSQL, MySQL, MariaDB)<br>
 <samp>02/25/2017</samp> **0.9.5** (Derby, **PostgreSQL**, **MySQL**, **MariaDB**)<br>
 <samp>10/18/2016</samp> **0.8.1** (**Derby**)<br>
 
-### Dev Status
+## Dev Status
 
 **Current vendor versions tested**: Derby 10.13.1.1, SQLite 3.16.0, PostgreSQL 9.6.2, MySQL 5.7.17, MariaDB 10.0.29, Oracle 11g
 
@@ -549,7 +549,7 @@ Specification                                                                   
 
 <br>
 
-### Simplified Class Diagram
+## Simplified Class Diagram
 
 ![PlantUML model](http://www.plantuml.com/plantuml/svg/bLFBRfmm5DtxA-O7Cb_G3HceX4fWKXDLNNhWDd9hRDSsIQZwyJKo3viQbAoud7Fkm_T1RjeeqfWJ1aK9et_8ZG52P0k3Ggjv-lJtxkwKWheD1_p3W1-B0_ugj7bM48gGNuVJ9OmIlLPq4Lr7U1iHpipqdK2Y8KfWOD2OA9Lp3IfEFScMc7Z0r0PSgV_Boxa1zK9OXAeaA6A4yXlVttxQ-YBYcK5N9Lwefe8lBpNd1DiMEi7KFUq5hLHhm_5dBA69bU7J_iyK2byYQ9fPU4sHlKa5UgmghCF3LtEUMy_Dvvut9iQMVMSpDWV-6FQziHchFN2kePD24VOEoP9ayp9kg1cy5fX1mZabXjJM2BKXjReieunCPUMs4o-J-kbhKWJdQXvxw_w3sblQg0CE-N_JU8iYWgOvhlFoKdj9li3mAbIxZJ_3Q3BM-miHTtWXvYuknDofXPYxCOI2FivRn5lgnhEONjFlgwh8adBBBR_V595oR8olTffx8HWGNeFg8gmzU4aKrO9V5RIq6Mls1pjZcyIUU36dT61U0Rne6pvxezheNJhVzopeBzWbovwnNT8kXTroknLjzBc7j8lmUrghzZpksSSSokyVSy3LG_OF)
 <!-- http://www.plantuml.com/plantuml/uml/bLNRRfmm47ttL-mFPB-W3zaiL48bi8c9gZvwOHgvDJQnXoHK_VWQSRE9GStJ3kUSkNWksbk3J6DR2yAk1ZKhyK11SoRu7tOLG3x2eCbY7hxylRavHA2ltGv_tz67T8U_A8FF6dmHSUiOT2V1cLagEgkwPh8A22Tc_1r1PY18K11GOf1Af04TffwQYc4uO6G3BjJ7yXA9e5-P251v0vgXqcxZs-ilMrz0F37aejKhDrp9-QLuF57Rma4mTiyuGNDTsN3ocJPGXifmQVTZ34NF0JIABRoaYDyR3QQlog_3mHTpcbihyMihImonMLlRZEMEFuLjRufzjJlE1TIDqapyXsHEidgPH8wTqmBi6ZX635bX3L_hKulBFCh0L1PkFV7iL3mzdbBlNF6XjUu_kRsbbThZYFirZZTD0sYKq2B9peMJv1jqRqfNw_WJJ4PZkJyV6GxFnuQByx7Xr7nik352l3vEMoGhFendDfsct-Lv6f-oDJT_VjUiQVh6kEf1SwUK02OBq7M0jGVVCCsDaXSD5I_xcjt1JjWgiIEUpJ4Tu1k04st5n-_SeDcaastFbF-6JJ9hXTWaxLBOBRTRKGMVkqiF4Lx6jQgE_PvzpY7xyJa7cj_7v1PaPV_X_W40 -->
@@ -560,7 +560,7 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 Please make sure to update tests as appropriate.
 
-### License
+## License
 
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
