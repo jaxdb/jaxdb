@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
   </parent>
   <artifactId>jaxdb-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
@@ -192,41 +192,41 @@
     <dependency>
       <groupId>org.openjax.maven</groupId>
       <artifactId>mojo</artifactId>
-      <version>0.3.5-SNAPSHOT</version>
+      <version>0.3.5</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>jsql</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>jsql</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.3.9-SNAPSHOT</version>
+      <version>0.3.9</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

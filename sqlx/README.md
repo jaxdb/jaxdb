@@ -44,7 +44,7 @@ How can one create a SQL Schema that is not vendor specific? Often, a DDL writte
   <plugin>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb-maven-plugin</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
     <executions>
       <execution>
         <goals>

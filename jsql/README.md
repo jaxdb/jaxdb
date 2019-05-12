@@ -13,7 +13,7 @@
 
 ## Current Release and Support
 
-**0.2.2-SNAPSHOT**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
+**0.2.2**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
 
 ## Why **jSQL**?
 
@@ -67,7 +67,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <dependency>
     <groupId>org.jaxdb</groupId>
     <artifactId>jsql</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
   </dependency>
   ```
 
@@ -77,7 +77,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <plugin>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb-maven-plugin</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
     <executions>
       <!-- [...] the ddlx <execution> is here -->
       <execution>
@@ -177,7 +177,7 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
   <dependency>
     <groupId>org.openjax</groupId>
     <artifactId>dbcp</artifactId>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.4</version>
   </dependency>
   ```
 
@@ -202,10 +202,10 @@ Together, these two concepts provide the integrity into an otherwise non-cohesiv
 
 ## Releases (Supported Vendors)
 
-<samp>04/23/2017</samp> **0.2.2-SNAPSHOT** (Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**)<br>
-<samp>03/05/2017</samp> **0.9.6** (Derby, **SQLite**, PostgreSQL, MySQL, MariaDB)<br>
-<samp>02/25/2017</samp> **0.9.5** (Derby, **PostgreSQL**, **MySQL**, **MariaDB**)<br>
-<samp>10/18/2016</samp> **0.8.1** (**Derby**)<br>
+<samp>04/23/2017</samp> **0.3.9** (Derby, SQLite, PostgreSQL, MySQL, MariaDB, **Oracle**)<br>
+<samp>03/05/2017</samp> **0.3.8** (Derby, **SQLite**, PostgreSQL, MySQL, MariaDB)<br>
+<samp>02/25/2017</samp> **0.2.0** (Derby, **PostgreSQL**, **MySQL**, **MariaDB**)<br>
+<samp>10/18/2016</samp> **0.1.0** (**Derby**)<br>
 
 ## Dev Status
 

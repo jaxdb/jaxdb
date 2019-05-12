@@ -29,7 +29,7 @@ The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to
 <plugin>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb-maven-plugin</artifactId>
-  <version>0.3.9-SNAPSHOT</version>
+  <version>0.3.9</version>
   <executions>
     <execution>
       <goals>
@@ -66,7 +66,7 @@ The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to
 <plugin>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb-maven-plugin</artifactId>
-  <version>0.3.9-SNAPSHOT</version>
+  <version>0.3.9</version>
   <executions>
     <execution>
       <goals>
@@ -102,7 +102,7 @@ The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to g
 <plugin>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb-maven-plugin</artifactId>
-  <version>0.3.9-SNAPSHOT</version>
+  <version>0.3.9</version>
   <executions>
     <execution>
       <goals>

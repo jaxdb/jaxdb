@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
   </parent>
   <artifactId>ddlx</artifactId>
   <name>JAX-DB DDLX</name>
@@ -66,12 +66,12 @@
     <dependency>
       <groupId>org.libj</groupId>
       <artifactId>io</artifactId>
-      <version>0.7.5-SNAPSHOT</version>
+      <version>0.7.5</version>
     </dependency>
     <dependency>
       <groupId>org.jaxsb</groupId>
       <artifactId>runtime</artifactId>
-      <version>2.1.4-SNAPSHOT</version>
+      <version>2.1.4</version>
     </dependency>
   </dependencies>
 </project>

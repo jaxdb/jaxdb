@@ -22,10 +22,10 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.3.9-SNAPSHOT</version>
+    <version>0.3.9</version>
   </parent>
   <artifactId>jaxdb-maven-archetype</artifactId>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.3</version>
   <name>JAX-DB Maven Archetype</name>
   <description>
     A quick-start example of how to use the JAX-DB framework.
