@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.safris.maven</groupId>
     <artifactId>rootpom</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
   </parent>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb</artifactId>
@@ -33,6 +33,30 @@
   <description>
     JAX-DB (Java Architecture Extension for [Relational] Database Binding) is a framework that cohesively binds the Java Application Layer to a Vendor Agnostic RDBMS Layer.
   </description>
+  <organization>
+    <name>JAX-DB</name>
+    <url>https://www.jaxdb.org/</url>
+  </organization>
+  <scm>
+    <url>https://github.com/jaxdb/jaxdb</url>
+    <connection>scm:git:https://github.com/jaxdb/jaxdb.git</connection>
+    <developerConnection>scm:git:https://github.com/jaxdb/jaxdb.git</developerConnection>
+    <tag>HEAD</tag>
+  </scm>
+  <licenses>
+    <license>
+      <name>The MIT License (MIT)</name>
+      <url>https://opensource.org/licenses/MIT/</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>sevasafris</id>
+      <name>Seva Safris</name>
+      <email>seva@safris.org</email>
+    </developer>
+  </developers>
   <modules>
     <module>ddlx</module>
     <module>sqlx</module>
