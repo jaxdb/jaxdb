@@ -1,6 +1,6 @@
 # JAX-DB
 
-> Relational Data Binding
+> Java Architecture Extension for [Relational] Database Binding.
 
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
@@ -9,9 +9,21 @@
 
 ## Introduction
 
-### What is JAX-DB?
+JAX-DB (Java Architecture Extension for [Relational] Database Binding) is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
 
-In short, JAX-DB (Java Architecture Extension for [Relational] Database Binding) is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
+### Modules
+
+* [**<ins>JAX-DB Maven Archetype</ins>**](/jaxdb-maven-archetype) - Quick-start Maven Archetype for the JAX-DB framework.
+
+* [**<ins>JAX-DB Maven Plugin</ins>**](/jaxdb-maven-plugin) - Maven Plugin for the JAX-DB framework.
+
+* [**<ins>DDLx</ins>**](/ddlx) - An XML-based and vendor-agnostic model for SQL <ins>schema</ins> definitions.
+
+* [**<ins>SQLx</ins>**](/sqlx) - An XML-based and vendor-agnostic model for SQL <ins>data</ins> definitions.
+
+* [**<ins>jSQL</ins>**](/jsql) - Strong-typed SQL semantics and ORM implementation.
+
+## FAQ
 
 ### What is Cohesive Binding?
 
@@ -33,21 +45,7 @@ JAX-DB is a highly cohesive binding framework that binds a business/project/solu
 
 The JAX-DB framework is designed with one prime objective: To allow for the realization of as many bugs that exist, or can exist, due to mistakes in the data model, or mistakes in the expression of SQL itself. More so, the JAX-DB framework must not disallow for the legal expressions of the data model or SQL itself. This is a particularly challenging order, as the extent of the data model language and the SQL language is very wide.
 
-## Why **JAX-DB**?
-
-### CohesionFirst
-
-Developed with the CohesionFirst approach, **JAX-DB** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **JAX-DB** is a complete binding solution between the DB tier and the business tier. The **JAX-DB** solution differentiates itself from the rest with the strength of its cohesion to the Java language and the SQL, DDL, and DML models.
-
-### Modules
-
-[**ddlx**](/ddlx) - A XML-based and vendor-agnostic model for SQL schema definitions.
-
-[**sqlx**](/sqlx) - A XML-based and vendor-agnostic model for SQL data definitions.
-
-[**jsql**](/jsql) - A light-weight ORM implementation that utilizes strongly-typed DML semantics.
-
-# Contributing
+## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 

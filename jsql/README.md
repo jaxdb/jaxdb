@@ -1,6 +1,6 @@
 # JAX-DB jSQL
 
-> Relational Data Binding jSQL
+> Strong-typed SQL semantics
 
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
@@ -9,196 +9,161 @@
 
 ## Introduction
 
-**jSQL** is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The **jSQL** framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. **jSQL** uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+<ins>jSQL</ins> is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The <ins>jSQL</ins> framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. <ins>jSQL</ins> uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
 ## Current Release and Support
 
-**0.2.2**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
-
-## Why **jSQL**?
-
-### CohesionFirst
-
-Developed with the CohesionFirst approach, **jSQL** is reliably designed, consistently implemented, and straightforward to use. Made possible by the rigorous conformance to design patterns and best practices in every line of its implementation, **jSQL** is a complete ORM solution and cohesive DML wrapper around JDBC v4.1. The **jSQL** solution differentiates itself from the rest with the strength of its cohesion of the SQL DML to the Java language.
-
-### Strongly Typed DML Semantics
-
-In addition to generating Java classes that bind to a DDL, the **jSQL** framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
-
-```java
-public static basis.Account findAccount(String email) throws SQLException {
-  basis.Account a = new basis.Account();
-  try (RowIterator<basis.Account> rows =
-    SELECT(a).
-    FROM(a).
-    WHERE(EQ(a.email, email)).
-    execute()) {
-    return rows.nextRow() ? rows.nextEntity() : null;
-  }
-}
-```
-
-**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, **jSQL** provides a strongly typed approach for the construction of SQL DML.
-
-Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
-
-### Fast and Memory Efficient
-
-**jSQL** is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
-
-### Cohesive and Fail-Fast
-
-**jSQL** is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
+**0.3.9**: Derby, SQLite, MySQL, MariaDB, PostgreSQL, Oracle
 
 ## Getting Started
 
 ### Prerequisites
 
-* [Java 9][jdk9-download] - The minimum required JDK version. Java 9 is required due to this framework triggering [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
+* [Java 9][jdk9-download] - The minimum required JDK version. Java 9 is required due to framework triggering issue [JEP 215: Tiered Attribution for javac][jep215] in Java 8.
 * [Maven][maven] - The dependency management system.
 
 ### Example
 
-1. As **jSQL** framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
+1. As <ins>jSQL</ins> framework requires a DDLx-based SQL Schema, start with a [`DDLx` Example][ddlx-example].
 
-2. Next, add the `org.jaxdb:jsql` dependency into the POM.
+1. Next, add the `org.jaxdb:jsql` dependency into the POM.
 
-  ```xml
-  <dependency>
-    <groupId>org.jaxdb</groupId>
-    <artifactId>jsql</artifactId>
-    <version>0.3.9</version>
-  </dependency>
-  ```
+   ```xml
+   <dependency>
+     <groupId>org.jaxdb</groupId>
+     <artifactId>jsql</artifactId>
+     <version>0.3.9</version>
+   </dependency>
+   ```
 
-3. Include a `jsql` goal in your [`jaxdb-maven-plugin`][jaxdb-maven-plugin] in the POM.
+1. Include a `jsql` goal in your [`jaxdb-maven-plugin`][jaxdb-maven-plugin] in the POM.
 
-  ```xml
-  <plugin>
-    <groupId>org.jaxdb</groupId>
-    <artifactId>jaxdb-maven-plugin</artifactId>
-    <version>0.3.9</version>
-    <executions>
-      <!-- [...] the ddlx <execution> is here -->
-      <execution>
-        <goals>
-          <goal>jsql</goal>
-        </goals>
-        <configuration>
-          <destDir>${project.build.directory}/generated-sources/jaxdb</destDir>
-          <schemas>
-            <schema>src/main/resources/schema.ddlx</schema>
-          </schemas>
-        </configuration>
-      </execution>
-    </executions>
-  </plugin>
-  ```
+   ```xml
+   <plugin>
+     <groupId>org.jaxdb</groupId>
+     <artifactId>jaxdb-maven-plugin</artifactId>
+     <version>0.3.9</version>
+     <executions>
+       <!-- [...] the ddlx <execution> is here -->
+       <execution>
+         <goals>
+           <goal>jsql</goal>
+         </goals>
+         <configuration>
+           <destDir>${project.build.directory}/generated-sources/jaxdb</destDir>
+           <schemas>
+             <schema>src/main/resources/example.ddlx</schema>
+           </schemas>
+         </configuration>
+       </execution>
+     </executions>
+   </plugin>
+   ```
 
-4. Run `mvn install`, and upon successful execution of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin], classes will be generated in `target/generated-sources/jaxdb`. Add this path to your Build Paths in your IDE to integrate into your project.
+1. Run `mvn install`, and upon successful execution of the [`jaxdb-maven-plugin`][jaxdb-maven-plugin], classes will be generated in `target/generated-sources/jaxdb`. Add this path to your Build Paths in your IDE to integrate into your project.
 
-5. In `App.java`, include:
+1. In `App.java`, include:
 
-  ```java
-  public static void main(String[] args) throws SQLException {
-    basis.Account account = new basis.Account();
-    account.email.set("john@doe");
-    account.firstName.set("John");
-    account.lastName.set("Doe");
-    account.password.set("w3lcome");
+   ```java
+   public static void main(String[] args) throws SQLException {
+     example.Account account = new example.Account();
+     account.email.set("john@doe");
+     account.firstName.set("John");
+     account.lastName.set("Doe");
+     account.password.set("w3lcome");
 
-    INSERT(account).execute();
+     INSERT(account).execute();
 
-    account.firstName.set("Bob");
+     account.firstName.set("Bob");
 
-    UPDATE(account).execute();
+     UPDATE(account).execute();
 
-    basis.Account found = findAccount(account.email.get());
-    System.out.println(found != null ? found.firstName.get() : "null");
-  }
+     example.Account found = findAccount(account.email.get());
+     System.out.println(found != null ? found.firstName.get() : "null");
+   }
 
-  public static basis.Account findAccount(String email) throws SQLException {
-    basis.Account a = new basis.Account();
-    try (RowIterator<basis.Account> rows =
-      SELECT(a).
-      FROM(a).
-      WHERE(EQ(a.email, email)).
-      execute()) {
-      return rows.nextRow() ? rows.nextEntity() : null;
-    }
-  }
-  ```
+   public static example.Account findAccount(String email) throws SQLException {
+     example.Account a = new example.Account();
+     try (RowIterator<example.Account> rows =
+       SELECT(a).
+       FROM(a).
+       WHERE(EQ(a.email, email)).
+       execute()) {
+       return rows.nextRow() ? rows.nextEntity() : null;
+     }
+   }
+   ```
 
-6. To run the code, you must now connect **jSQL** to your database. **jSQL** relies on the [`dbcp`][dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
+1. To run the code, you must now connect <ins>jSQL</ins> to your database. <ins>jSQL</ins> relies on the [`dbcp`][dbcp] module to aide in configuration of Database Connection Pools. Create a `dbcp.xml` file in `src/main/resources` that conforms to [this XSD][dbcp.xsd], which defines the Database Connection Pool settings for your connection.
 
-  ```xml
-  <dbcp name="basis"
-    xmlns="http://www.openjax.org/dbcp-2.0.4.xsd"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.openjax.org/dbcp-2.0.4.xsd http://www.openjax.org/dbcp.xsd">
-    <jdbc>
-      <url>jdbc:postgresql://localhost/basis</url>
-      <driverClassName>org.postgresql.Driver</driverClassName>
-      <username>basis</username>
-      <password>basis</password>
-    </jdbc>
-    <default>
-      <autoCommit>true</autoCommit>
-      <readOnly>false</readOnly>
-      <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
-      <queryTimeout>1000</queryTimeout>
-    </default>
-    <size>
-      <initialSize>0</initialSize>
-      <maxTotal>16</maxTotal>
-      <maxIdle>16</maxIdle>
-      <minIdle>0</minIdle>
-      <maxOpenPreparedStatements>10</maxOpenPreparedStatements>
-    </size>
-    <pool>
-      <evictor>
-        <timeBetweenRuns>30</timeBetweenRuns>
-        <numTestsPerRun>3</numTestsPerRun>
-        <minIdleTime>1800000</minIdleTime>
-      </evictor>
-      <removeAbandoned on="borrow" timeout="300"/>
-    </pool>
-    <logging>
-      <level>TRACE</level>
-      <logExpiredConnections>true</logExpiredConnections>
-      <logAbandoned>true</logAbandoned>
-    </logging>
-  </dbcp>
-  ```
+   ```xml
+   <dbcp name="example"
+     xmlns="http://www.openjax.org/dbcp-1.0.4.xsd"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.openjax.org/dbcp-1.0.4.xsd http://www.openjax.org/dbcp.xsd">
+     <jdbc>
+       <url>jdbc:postgresql://localhost/example</url>
+       <driverClassName>org.postgresql.Driver</driverClassName>
+       <username>example</username>
+       <password>example</password>
+     </jdbc>
+     <default>
+       <autoCommit>true</autoCommit>
+       <readOnly>false</readOnly>
+       <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
+       <queryTimeout>1000</queryTimeout>
+     </default>
+     <size>
+       <initialSize>0</initialSize>
+       <maxTotal>16</maxTotal>
+       <maxIdle>16</maxIdle>
+       <minIdle>0</minIdle>
+       <maxOpenPreparedStatements>10</maxOpenPreparedStatements>
+     </size>
+     <pool>
+       <eviction>
+         <timeBetweenRuns>30</timeBetweenRuns>
+         <numTestsPerRun>3</numTestsPerRun>
+         <minIdleTime>1800000</minIdleTime>
+       </eviction>
+       <removeAbandoned on="borrow" timeout="300"/>
+     </pool>
+     <logging>
+       <level>TRACE</level>
+       <logExpiredConnections>true</logExpiredConnections>
+       <logAbandoned>true</logAbandoned>
+     </logging>
+   </dbcp>
+   ```
 
-7. Add [`org.openjax:dbcp`][dbcp] dependency to the POM.
+1. Add [`org.openjax:dbcp`][dbcp] dependency to the POM.
 
-  ```xml
-  <dependency>
-    <groupId>org.openjax</groupId>
-    <artifactId>dbcp</artifactId>
-    <version>2.0.4</version>
-  </dependency>
-  ```
+   ```xml
+   <dependency>
+     <groupId>org.openjax</groupId>
+     <artifactId>dbcp</artifactId>
+     <version>1.0.4</version>
+   </dependency>
+   ```
 
-8. In the beginning of the `main()` method in `App.java`, initialize the **jSQL** `Registry`.
+1. In the beginning of the `main()` method in `App.java`, initialize the <ins>jSQL</ins> `Registry`.
 
-  ```java
-  Dbcp dbcp = JaxbUtil.parse(Dbcp.class, ClassLoader.getSystemClassLoader().getResource("dbcp.xml").openStream()));
-  DataSource dataSource = DataSources.createDataSource(dbcp);
-  Registry.registerPreparedBatching(basis.class, new Connector() {
-    @Override
-    public Connection getConnection() throws SQLException {
-      return dataSource.getConnection();
-    }
-  });
-  ```
+   ```java
+   Dbcp dbcp = JaxbUtil.parse(Dbcp.class, ClassLoader.getSystemClassLoader().getResource("dbcp.xml").openStream()));
+   DataSource dataSource = DataSources.createDataSource(dbcp);
+   Registry.registerPreparedBatching(example.class, new Connector() {
+     @Override
+     public Connection getConnection() throws SQLException {
+       return dataSource.getConnection();
+     }
+   });
+   ```
 
-9. Run `App`.
+1. Run `App`.
 
 ## Known Issues
 
-* To model the strong-typed relation amongst the `DataType`s, the **jSQL** framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
+* To model the strong-typed relation amongst the `DataType`s, the <ins>jSQL</ins> framework has many method definitions that have hundreds of overloads. This pattern causes a compilation performance inefficiency that results in lengthy compilation times. This is a known bug of javac that has been fixed in JDK 9. The bug can be referenced [here](https://bugs.openjdk.java.net/browse/JDK-8051946).
 
 ## Releases (Supported Vendors)
 
@@ -485,23 +450,22 @@ Specification                                                                   
 **<samp>DOUBLE<br>.UNSIGNED</samp>**   | <samp>8<br>8\*</samp> | <samp>-1.7976931348623E+308<br>0\*</samp>                  | <samp>1.7976931348623E+308<br>1.7976931348623E+308\*</samp>                                     | <samp>15<br>15\*</samp> | <samp>Double<br>Double</samp>         |
 **<samp>DECIMAL<br>.UNSIGNED</samp>**  | <samp>@<br>@</samp>   | <samp>@<br>@</samp>                                        | <samp>@<br>@</samp>                                                                             | <samp>@<br>@</samp>     | <samp>BigDecimal<br>BigDecimal</samp> |
 
-<br>
+&ensp;&ensp;&ensp;&ensp;<sub>**`*`** For vendors that do not support UNSIGNED types, the maximum value bounds are constrained by the value bounds of the signed limit.</sub>
 
-   **`*`** For vendors that do not support UNSIGNED types, the maximum value bounds are constrained by the value bounds of the signed limit.
+&ensp;&ensp;&ensp;&ensp;<sub>**`@`** <samp>DECIMAL</samp> precision, scale and value ranges varry with each vendor. This type's bounds in JAX-DB are therefore vendor specific.</sub><br>
+&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;&ensp;<sub>Refer to the following table for vendor-specific limits:</sub>
 
-   **`@`** <samp>DECIMAL</samp> precision, scale and value ranges varry with each vendor. This type's bounds in JAX-DB are therefore vendor specific. Refer to the following table for vendor-specific limits.
+#### `DECIMAL` Precision Limits per Vendor
 
-<br>
-
- Vendor                       | Supports<br>Unsigned | DECIMAL<br>[precision, (scale)]                                         |
------------------------------:|:--------------------:|:------------------------------------------------------------------------|
-<samp>Derby</samp>            | <samp>No</samp>      | <samp>[[0-31, (0-precision)]][derby-decimal]</samp>                     |
-<samp>SQLite</samp>           | <samp>No</samp>      | <samp>[[0-15, (0-precision)]][sqltile-decial]</samp>                    |
-<samp>MySQL<br>MariaDB</samp> | <samp>Yes</samp>     | <samp>[[0-65, (0-precision)]][mysql-decimal]</samp>                     |
-<samp>PostgreSQL</samp>       | <samp>No</samp>      | <samp>[[0-1000, (0-precision)] explicit<br>[0-131072, (0-(precision &lt; 16384))]][postgres-decimal]</samp> |
-<samp>Oracle</samp>           | <samp>No</samp>      | <samp>[[0-38, (0-precision)]][oracle-decimal]</samp>                    |
-<samp>DB2</samp>              | <samp>No</samp>      | <samp>[[0-31, (0-precision)]][db2-decimal]</samp>                       |
-<samp>SQL Server</samp>       | <samp>No</samp>      | <samp>[[0-38, (0-precision)]][sqlserver-decimal]</samp>                 |
+ Vendor                           | Supports<br>Unsigned       | DECIMAL<br>[precision, (scale)]                                                                             |
+---------------------------------:|:--------------------------:|:------------------------------------------------------------------------------------------------------------|
+<samp>Derby</samp>                | <samp>No</samp>            | <samp>[[0-31, (0-precision)]][derby-decimal]</samp>                                                         |
+<samp>SQLite</samp>               | <samp>No</samp>            | <samp>[[0-15, (0-precision)]][sqltile-decial]</samp>                                                        |
+<samp>MySQL<br>MariaDB</samp>     | <samp>Yes</samp><br>&nbsp; | <samp>[[0-65, (0-precision)]][mysql-decimal]</samp><br>&nbsp;                                               |
+<samp>PostgreSQL</samp><br>&nbsp; | <samp>No</samp><br>&nbsp;  | <samp>[[0-1000, (0-precision)] explicit<br>[0-131072, (0-(precision &lt; 16384))]][postgres-decimal]</samp> |
+<samp>Oracle</samp>               | <samp>No</samp>            | <samp>[[0-38, (0-precision)]][oracle-decimal]</samp>                                                        |
+<samp>DB2</samp>                  | <samp>No</samp>            | <samp>[[0-31, (0-precision)]][db2-decimal]</samp>                                                           |
+<samp>SQL Server</samp>           | <samp>No</samp>            | <samp>[[0-38, (0-precision)]][sqlserver-decimal]</samp>                                                     |
 
 <br>
 
@@ -554,6 +518,37 @@ Specification                                                                   
 ![PlantUML model](http://www.plantuml.com/plantuml/svg/bLFBRfmm5DtxA-O7Cb_G3HceX4fWKXDLNNhWDd9hRDSsIQZwyJKo3viQbAoud7Fkm_T1RjeeqfWJ1aK9et_8ZG52P0k3Ggjv-lJtxkwKWheD1_p3W1-B0_ugj7bM48gGNuVJ9OmIlLPq4Lr7U1iHpipqdK2Y8KfWOD2OA9Lp3IfEFScMc7Z0r0PSgV_Boxa1zK9OXAeaA6A4yXlVttxQ-YBYcK5N9Lwefe8lBpNd1DiMEi7KFUq5hLHhm_5dBA69bU7J_iyK2byYQ9fPU4sHlKa5UgmghCF3LtEUMy_Dvvut9iQMVMSpDWV-6FQziHchFN2kePD24VOEoP9ayp9kg1cy5fX1mZabXjJM2BKXjReieunCPUMs4o-J-kbhKWJdQXvxw_w3sblQg0CE-N_JU8iYWgOvhlFoKdj9li3mAbIxZJ_3Q3BM-miHTtWXvYuknDofXPYxCOI2FivRn5lgnhEONjFlgwh8adBBBR_V595oR8olTffx8HWGNeFg8gmzU4aKrO9V5RIq6Mls1pjZcyIUU36dT61U0Rne6pvxezheNJhVzopeBzWbovwnNT8kXTroknLjzBc7j8lmUrghzZpksSSSokyVSy3LG_OF)
 <!-- http://www.plantuml.com/plantuml/uml/bLNRRfmm47ttL-mFPB-W3zaiL48bi8c9gZvwOHgvDJQnXoHK_VWQSRE9GStJ3kUSkNWksbk3J6DR2yAk1ZKhyK11SoRu7tOLG3x2eCbY7hxylRavHA2ltGv_tz67T8U_A8FF6dmHSUiOT2V1cLagEgkwPh8A22Tc_1r1PY18K11GOf1Af04TffwQYc4uO6G3BjJ7yXA9e5-P251v0vgXqcxZs-ilMrz0F37aejKhDrp9-QLuF57Rma4mTiyuGNDTsN3ocJPGXifmQVTZ34NF0JIABRoaYDyR3QQlog_3mHTpcbihyMihImonMLlRZEMEFuLjRufzjJlE1TIDqapyXsHEidgPH8wTqmBi6ZX635bX3L_hKulBFCh0L1PkFV7iL3mzdbBlNF6XjUu_kRsbbThZYFirZZTD0sYKq2B9peMJv1jqRqfNw_WJJ4PZkJyV6GxFnuQByx7Xr7nik352l3vEMoGhFendDfsct-Lv6f-oDJT_VjUiQVh6kEf1SwUK02OBq7M0jGVVCCsDaXSD5I_xcjt1JjWgiIEUpJ4Tu1k04st5n-_SeDcaastFbF-6JJ9hXTWaxLBOBRTRKGMVkqiF4Lx6jQgE_PvzpY7xyJa7cj_7v1PaPV_X_W40 -->
 
+## FAQ
+
+### What are strongly Typed DML Semantics?
+
+In addition to generating Java classes that bind to a DDL, the <ins>jSQL</ins> framework offers an API for **Strongly-Typed DML Semantics**. These APIs come in the form of method invocations that resemble a non-cohesive, String-based SQL alternative. For example:
+
+```java
+public static example.Account findAccount(String email) throws SQLException {
+  example.Account a = new example.Account();
+  try (RowIterator<example.Account> rows =
+    SELECT(a).
+    FROM(a).
+    WHERE(EQ(a.email, email)).
+    execute()) {
+    return rows.nextRow() ? rows.nextEntity() : null;
+  }
+}
+```
+
+**Strongly-Typed DML Semantics** are powerful, because they extend the power of the Java compiler to realize errors in edit-time or compile-time. Alternatively, if non-cohesive, String-based SQL is used, errors are only presented in runtime upon execution by the application to the database. In addition to binding Java classes to the DDL, <ins>jSQL</ins> provides a strongly typed approach for the construction of SQL DML.
+
+Together, these two concepts provide the integrity into an otherwise non-cohesive aspect of the application stack: the database tier.
+
+### Fast and Memory Efficient?
+
+<ins>jSQL</ins> is fast, memory efficient, lightweight and intuitive ORM solution that does not involve a steep learning curve, and does not involve proprietary semantics that would couple a codebase to the ORM provider (like Hybernate, or JPE).
+
+### What does it mean to be "Cohesive and Fail-Fast"?
+
+<ins>jSQL</ins> is cohesive, offering the power of Java's compiler to realize errors in edit-time or compile-time.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
@@ -563,7 +558,6 @@ Please make sure to update tests as appropriate.
 ## License
 
 This  project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
-
 
 [dbcp.xsd]: /../../../../openjax/dbcp/src/main/resources/dbcp.xsd
 [dbcp]: /../../../../openjax/dbcp

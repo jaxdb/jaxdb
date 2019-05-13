@@ -1,6 +1,6 @@
 # JAX-DB Maven Archetype
 
-> Quick-start Maven Archetype for JAX-DB framework
+> Quick-start Maven Archetype for the [JAX-DB][jaxdb] framework
 
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
@@ -15,12 +15,12 @@ The `jaxdb-maven-archetype` archetype is a quick-start example of how to use the
 
 To use the archetype, execute the following:
 
-  ```bash
-  mvn archetype:generate \
-  -DgroupId=com.mycompany.app -DartifactId=my-app \
-  -DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype \
-  -DinteractiveMode=false
-  ```
+```bash
+mvn archetype:generate \
+-DgroupId=com.mycompany.app -DartifactId=my-app \
+-DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype \
+-DinteractiveMode=false
+```
 
 ## Contributing
 

@@ -1,6 +1,6 @@
 # JAX-DB Maven Plugin
 
-> Maven Plugin for [JAX-DB][jaxdb] framework
+> Maven Plugin for the [JAX-DB][jaxdb] framework.
 
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
@@ -13,15 +13,21 @@ The `jaxdb-maven-plugin` plugin is used to execute database-related generators, 
 
 ## Goals Overview
 
-* [`jaxdb:ddlx`](#jaxdbddlx) generates .sql schema from .ddlx.
-* [`jaxdb:sqlx`](#jaxdbsqlx) generates .xsd schema from .ddlx.
-* [`jaxdb:jsql`](#jaxdbjsql) generates jSQL Entities from .ddlx.
+* [**`jaxdb:ddlx2sql`**](#jaxdbddlx2sql)<br>&nbsp;&nbsp;&nbsp;&nbsp;Generate a `.sql` DDL schema from a `.ddlx` file for a specific RDBMS vendor.
+
+* [**`jaxdb:ddlx2sqlx`**](#jaxdbddlx2sqlx)<br>&nbsp;&nbsp;&nbsp;&nbsp;Generate a [<ins>SQLx</ins>][sqlx] schema from a `.ddlx` file, which allows for the definition of `.sqlx` files.
+
+* [**`jaxdb:ddlx2jsql`**](#jaxdbddlx2jsql)<br>&nbsp;&nbsp;&nbsp;&nbsp;Generate [<ins>jSQL</ins>][jsql] entities from a `.ddlx` file, which allows for the use of strong-typed SQL semantics.
+
+* [**`jaxdb:ddlx2xsd`**](#jaxdbddlx2xsd)<br>&nbsp;&nbsp;&nbsp;&nbsp;Generate a `.xsd` schema from a `.ddlx` file, which allows for XML Schema Binding with [JAX-SB](https://github.com/jaxsb/jaxsb/).
+
+* [**`jaxdb:sqlx2sql`**](#jaxdbsqlx2sql)<br>&nbsp;&nbsp;&nbsp;&nbsp;Generate `.sql` DML data file from a `.sqlx` file.
 
 ## Usage
 
-### `jaxdb:ddlx`
+### `jaxdb:ddlx2sql`
 
-The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to generate DDL schema files from XML files conforming to the [DDLx Schema][ddlx-schema].
+The `jaxdb:ddlx2sql` goal is bound to the `generate-resources` phase, and is used to generate DDL schema files from XML files conforming to the [DDLx Schema][ddlx-schema].
 
 #### Example
 
@@ -32,14 +38,15 @@ The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to
   <version>0.3.9</version>
   <executions>
     <execution>
+      <phase>generate-resources</phase>
       <goals>
-        <goal>ddlx</goal>
+        <goal>ddlx2sql</goal>
       </goals>
       <configuration>
-        <vendor>PostgreSQL</vendor>
+        <vendor>PostgreSQL</vendor> <!-- Derby | MariaDB | MySQL | Oracle | PostgreSQL | SQLite -->
         <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
         <schemas>
-          <schema>src/main/resources/resource.ddlx</schema>
+          <schema>src/main/resources/example.ddlx</schema>
         </schemas>
       </configuration>
     </execution>
@@ -49,16 +56,18 @@ The `jaxdb:ddlx` goal is bound to the `generate-resources` phase, and is used to
 
 ### Configuration Parameters
 
-| Name              | Type    | Use      | Description                                                                   |
-|:------------------|:--------|:---------|:------------------------------------------------------------------------------|
-| `/vendor`         | String  | Required | Target vendor of generated DDL.                                               |
-| `/destDir`        | String  | Required | Destination path of generated bindings.                                       |
-| `/schemas`        | List    | Required | List of `schema` elements.                                                    |
-| `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
+| Name                           | Type                       | Use                          | Description                                                                                                                                                      |
+|:-------------------------------|:---------------------------|:-----------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `/overwrite¹`<br>&nbsp;        | boolean<br>&nbsp;          | Optional<br>&nbsp;           | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`.                                                                                               |
+| `/destDir¹`                    | String                     | Required                     | Destination path of generated bindings.                                                                                                                          |
+| `/vendor¹`<br>&nbsp;           | String<br>&nbsp;           | Required<br>&nbsp;           | RDBMS vendor:<br>&nbsp;&nbsp;&nbsp;&nbsp;`<Derby\|MariaDB\|MySQL\|Oracle\|PostgreSQL\|SQLite>`.                                                                  |
+| `/rename¹`<br>&nbsp;<br>&nbsp; | String<br>&nbsp;<br>&nbsp; | Optional<br>&nbsp;<br>&nbsp; | Regex pattern specifying the name of the output `.sql` file<br>based on the input `.ddlx` file:<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `/([^.]+).ddlx/$1.sql/`. |
+| `/schemas¹`                    | List                       | Required                     | List of `schema` elements.                                                                                                                                       |
+| `/schemas/schemaⁿ`             | String                     | Required                     | File path of `.ddlx` schema.                                                                                                                                     |
 
-### `jaxdb:sqlx`
+### `jaxdb:ddlx2sqlx`
 
-The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to generate an XML Schema to allow one to create a validating SQLx file for static data.
+The `jaxdb:ddlx2sqlx` goal is bound to the `generate-resources` phase, and is used to generate an XML Schema to allow one to create a validating [<ins>SQLx</ins>][sqlx] file for static data.
 
 #### Example
 
@@ -69,14 +78,14 @@ The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to
   <version>0.3.9</version>
   <executions>
     <execution>
+      <phase>generate-resources</phase>
       <goals>
-        <goal>sqlx</goal>
+        <goal>ddlx2sqlx</goal>
       </goals>
       <configuration>
-        <vendor>PostgreSQL</vendor>
         <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
         <schemas>
-          <schema>src/main/resources/schema.ddlx</schema>
+          <schema>src/main/resources/example.ddlx</schema>
         </schemas>
       </configuration>
     </execution>
@@ -86,15 +95,16 @@ The `jaxdb:sqlx` goal is bound to the `generate-resources` phase, and is used to
 
 ### Configuration Parameters
 
-| Name              | Type    | Use      | Description                                                                   |
-|:------------------|:--------|:---------|:------------------------------------------------------------------------------|
-| `/destDir`        | String  | Required | Destination path of generated bindings.                                       |
-| `/schemas`        | List    | Required | List of `schema` elements.                                                    |
-| `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
+| Name                    | Type              | Use                | Description                                                                                   |
+|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
+| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
+| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
-### `jaxdb:jsql`
+### `jaxdb:ddlx2jsql`
 
-The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to generate jSQL Entities from XML files conforming to the [DDLx Schema][ddlx-schema].
+The `jaxdb:ddlx2jsql` goal is bound to the `generate-sources` phase, and is used to generate [<ins>jSQL</ins>][jsql] entities from XML files conforming to the [DDLx Schema][ddlx-schema].
 
 #### Example
 
@@ -105,14 +115,14 @@ The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to g
   <version>0.3.9</version>
   <executions>
     <execution>
+      <phase>generate-sources</phase>
       <goals>
         <goal>jsql</goal>
       </goals>
       <configuration>
-        <vendor>PostgreSQL</vendor>
         <destDir>${project.build.directory}/generated-sources/jaxdb</destDir>
         <schemas>
-          <schema>src/main/resources/schema.ddlx</schema>
+          <schema>src/main/resources/example.ddlx</schema>
         </schemas>
       </configuration>
     </execution>
@@ -122,11 +132,86 @@ The `jaxdb:jsql` goal is bound to the `generate-sources` phase, and is used to g
 
 ### Configuration Parameters
 
-| Name              | Type    | Use      | Description                                                                   |
-|:------------------|:--------|:---------|:------------------------------------------------------------------------------|
-| `/destDir`        | String  | Required | Destination path of generated bindings.                                       |
-| `/schemas`        | List    | Required | List of `resource` elements.                                                  |
-| `/schemas/schema` | String  | Required | File path of XML Schema.                                                      |
+| Name                    | Type              | Use                | Description                                                                                   |
+|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
+| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
+| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+
+### `jaxdb:ddlx2xsd`
+
+The `jaxdb:ddlx2xsd` goal is bound to the `generate-resources` phase, and is used to generate an XML Schema, which allows for XML Schema Binding with [JAX-SB](https://github.com/jaxsb/jaxsb/).
+
+#### Example
+
+```xml
+<plugin>
+  <groupId>org.jaxdb</groupId>
+  <artifactId>jaxdb-maven-plugin</artifactId>
+  <version>0.3.9</version>
+  <executions>
+    <execution>
+      <phase>generate-resources</phase>
+      <goals>
+        <goal>ddlx2xsd</goal>
+      </goals>
+      <configuration>
+        <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
+        <schemas>
+          <schema>src/main/resources/example.ddlx</schema>
+        </schemas>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+### Configuration Parameters
+
+| Name                    | Type              | Use                | Description                                                                                   |
+|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
+| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
+| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+
+### `jaxdb:sqlx2sql`
+
+The `jaxdb:sqlx2sql` goal is bound to the `generate-resources` phase, and is used to generate DML data files from XML files conforming to the [DDLx Schema][ddlx-schema].
+
+#### Example
+
+```xml
+<plugin>
+  <groupId>org.jaxdb</groupId>
+  <artifactId>jaxdb-maven-plugin</artifactId>
+  <version>0.3.9</version>
+  <executions>
+    <execution>
+      <phase>generate-resources</phase>
+      <goals>
+        <goal>sqlx2sql</goal>
+      </goals>
+      <configuration>
+        <destDir>${project.build.directory}/generated-resources/jaxdb</destDir>
+        <schemas>
+          <schema>src/main/resources/example.ddlx</schema>
+        </schemas>
+      </configuration>
+    </execution>
+  </executions>
+</plugin>
+```
+
+### Configuration Parameters
+
+| Name                    | Type              | Use                | Description                                                                                   |
+|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
+| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
+| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
 ## Contributing
 
@@ -141,3 +226,5 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [ddlx-schema]: /ddlx/src/main/resources/ddlx.xsd
 [mvn-plugin]: https://img.shields.io/badge/mvn-plugin-lightgrey.svg
 [jaxdb]: /
+[jsql]: /../../../../jaxdb/jsql
+[sqlx]: /../../../../jaxdb/sqlx
