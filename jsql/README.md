@@ -509,13 +509,6 @@ Specification                                                                   
 
 *__NOTE:__ UNSIGNED types follow the same type cast behavior. The UNSIGNED quality of a type is preserved for two UNSIGNED types, and is lost for a mixed pair.*
 
-<br>
-
-## Simplified Class Diagram
-
-![PlantUML model](http://www.plantuml.com/plantuml/svg/bLFBRfmm5DtxA-O7Cb_G3HceX4fWKXDLNNhWDd9hRDSsIQZwyJKo3viQbAoud7Fkm_T1RjeeqfWJ1aK9et_8ZG52P0k3Ggjv-lJtxkwKWheD1_p3W1-B0_ugj7bM48gGNuVJ9OmIlLPq4Lr7U1iHpipqdK2Y8KfWOD2OA9Lp3IfEFScMc7Z0r0PSgV_Boxa1zK9OXAeaA6A4yXlVttxQ-YBYcK5N9Lwefe8lBpNd1DiMEi7KFUq5hLHhm_5dBA69bU7J_iyK2byYQ9fPU4sHlKa5UgmghCF3LtEUMy_Dvvut9iQMVMSpDWV-6FQziHchFN2kePD24VOEoP9ayp9kg1cy5fX1mZabXjJM2BKXjReieunCPUMs4o-J-kbhKWJdQXvxw_w3sblQg0CE-N_JU8iYWgOvhlFoKdj9li3mAbIxZJ_3Q3BM-miHTtWXvYuknDofXPYxCOI2FivRn5lgnhEONjFlgwh8adBBBR_V595oR8olTffx8HWGNeFg8gmzU4aKrO9V5RIq6Mls1pjZcyIUU36dT61U0Rne6pvxezheNJhVzopeBzWbovwnNT8kXTroknLjzBc7j8lmUrghzZpksSSSokyVSy3LG_OF)
-<!-- http://www.plantuml.com/plantuml/uml/bLNRRfmm47ttL-mFPB-W3zaiL48bi8c9gZvwOHgvDJQnXoHK_VWQSRE9GStJ3kUSkNWksbk3J6DR2yAk1ZKhyK11SoRu7tOLG3x2eCbY7hxylRavHA2ltGv_tz67T8U_A8FF6dmHSUiOT2V1cLagEgkwPh8A22Tc_1r1PY18K11GOf1Af04TffwQYc4uO6G3BjJ7yXA9e5-P251v0vgXqcxZs-ilMrz0F37aejKhDrp9-QLuF57Rma4mTiyuGNDTsN3ocJPGXifmQVTZ34NF0JIABRoaYDyR3QQlog_3mHTpcbihyMihImonMLlRZEMEFuLjRufzjJlE1TIDqapyXsHEidgPH8wTqmBi6ZX635bX3L_hKulBFCh0L1PkFV7iL3mzdbBlNF6XjUu_kRsbbThZYFirZZTD0sYKq2B9peMJv1jqRqfNw_WJJ4PZkJyV6GxFnuQByx7Xr7nik352l3vEMoGhFendDfsct-Lv6f-oDJT_VjUiQVh6kEf1SwUK02OBq7M0jGVVCCsDaXSD5I_xcjt1JjWgiIEUpJ4Tu1k04st5n-_SeDcaastFbF-6JJ9hXTWaxLBOBRTRKGMVkqiF4Lx6jQgE_PvzpY7xyJa7cj_7v1PaPV_X_W40 -->
-
 ## FAQ
 
 ### What are strongly Typed DML Semantics?
