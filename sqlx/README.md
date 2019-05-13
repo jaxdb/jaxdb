@@ -1,7 +1,5 @@
 # JAX-DB SQLx
 
-> JAX-DB SQL w/ XML
-
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/sqlx.svg)](https://www.javadoc.io/doc/org.jaxdb/sqlx)

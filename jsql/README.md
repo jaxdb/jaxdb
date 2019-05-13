@@ -1,7 +1,5 @@
 # JAX-DB jSQL
 
-> Strong-typed SQL semantics
-
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jsql.svg)](https://www.javadoc.io/doc/org.jaxdb/jsql)
@@ -9,7 +7,7 @@
 
 ## Introduction
 
-<ins>jSQL</ins> is an extension to [**DDLx**][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The <ins>jSQL</ins> framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. <ins>jSQL</ins> uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
+<ins>jSQL</ins> strong-typed SQL semantics, and an extension to [<ins>DDLx</ins>][ddlx], offering a lightweight ORM (Object Relational Mapping) solution that runs on the JDBC v4.1 API. The <ins>jSQL</ins> framework provides strongly-typed semantics for the SQL language, as well as a cohesive binding to user data models. <ins>jSQL</ins> uses a SQL schema defined in a [DDLx file][hospital.ddlx] to create a one-to-one, Object-Model-to-Data-Model API that is vendor agnostic.
 
 ## Current Release and Support
 

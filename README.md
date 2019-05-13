@@ -1,7 +1,5 @@
 # JAX-DB
 
-> Java Architecture Extension for [Relational] Database Binding.
-
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb)
@@ -9,7 +7,7 @@
 
 ## Introduction
 
-JAX-DB (Java Architecture Extension for [Relational] Database Binding) is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
+<ins>JAX-DB (Java Architecture Extension for [Relational] Database Binding)</ins> is a framework that cohesively binds the [Java Application Layer](#what-is-the-java-application-layer) to a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer).
 
 ### Modules
 
@@ -37,13 +35,13 @@ This is the layer in the application stack that is responsible for the business 
 
 This is the layer where data is retained in a Relational Database Management System. Being Vendor Agnostic simply means that the [Java Application Layer](#what-is-the-java-application-layer) should not have to know the specific vendor of the database system.
 
-### What is so special about JAX-DB?
+### What is so special about <ins>JAX-DB</ins>?
 
-JAX-DB is a highly cohesive binding framework that binds a business/project/solution-specific data model between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer). JAX-DB is also a highly cohesive binding framework that binds the SQL language itself, which allows developers to efficiently implement SQL logic with the help of compile- and edit-time error checking. Such ability for error checking is powerful, because it allows errors to be caught earlier in the development lifecycle. With other frameworks, errors between the application and data layers are most always encountered in runtime. With JAX-DB, an incredibly high percentage of possible errors has been pushed into the compile- and edit-time. This quality significantly reduces the software risk of an application, because it allows developers to spend less time and effort finding and fixing bugs -- instead, bugs are elucidated purely due to the construct of the JAX-DB framework itself.
+<ins>JAX-DB</ins> is a highly cohesive binding framework that binds a business/project/solution-specific data model between the [Java Application Layer](#what-is-the-java-application-layer) and a [Vendor Agnostic RDBMS Layer](#what-is-a-vendor-agnostic-rdbms-layer). <ins>JAX-DB</ins> is also a highly cohesive binding framework that binds the SQL language itself, which allows developers to efficiently implement SQL logic with the help of compile- and edit-time error checking. Such ability for error checking is powerful, because it allows errors to be caught earlier in the development lifecycle. With other frameworks, errors between the application and data layers are most always encountered in runtime. With <ins>JAX-DB</ins>, an incredibly high percentage of possible errors has been pushed into the compile- and edit-time. This quality significantly reduces the software risk of an application, because it allows developers to spend less time and effort finding and fixing bugs -- instead, bugs are elucidated purely due to the construct of the <ins>JAX-DB</ins> framework itself.
 
-### What is so special about the construct of the JAX-DB framework?
+### What is so special about the construct of the <ins>JAX-DB</ins> framework?
 
-The JAX-DB framework is designed with one prime objective: To allow for the realization of as many bugs that exist, or can exist, due to mistakes in the data model, or mistakes in the expression of SQL itself. More so, the JAX-DB framework must not disallow for the legal expressions of the data model or SQL itself. This is a particularly challenging order, as the extent of the data model language and the SQL language is very wide.
+The <ins>JAX-DB</ins> framework is designed with one prime objective: To allow for the realization of as many bugs that exist, or can exist, due to mistakes in the data model, or mistakes in the expression of SQL itself. More so, the <ins>JAX-DB</ins> framework must not disallow for the legal expressions of the data model or SQL itself. This is a particularly challenging order, as the extent of the data model language and the SQL language is very wide.
 
 ## Contributing
 

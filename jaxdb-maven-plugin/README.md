@@ -1,7 +1,5 @@
 # JAX-DB Maven Plugin
 
-> Maven Plugin for the [JAX-DB][jaxdb] framework.
-
 [![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb-maven-plugin.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb-maven-plugin)
@@ -56,14 +54,14 @@ The `jaxdb:ddlx2sql` goal is bound to the `generate-resources` phase, and is use
 
 ### Configuration Parameters
 
-| Name                           | Type                       | Use                          | Description                                                                                                                                                      |
-|:-------------------------------|:---------------------------|:-----------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `/overwrite¹`<br>&nbsp;        | boolean<br>&nbsp;          | Optional<br>&nbsp;           | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`.                                                                                               |
-| `/destDir¹`                    | String                     | Required                     | Destination path of generated bindings.                                                                                                                          |
-| `/vendor¹`<br>&nbsp;           | String<br>&nbsp;           | Required<br>&nbsp;           | RDBMS vendor:<br>&nbsp;&nbsp;&nbsp;&nbsp;`<Derby\|MariaDB\|MySQL\|Oracle\|PostgreSQL\|SQLite>`.                                                                  |
-| `/rename¹`<br>&nbsp;<br>&nbsp; | String<br>&nbsp;<br>&nbsp; | Optional<br>&nbsp;<br>&nbsp; | Regex pattern specifying the name of the output `.sql` file<br>based on the input `.ddlx` file:<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `/([^.]+).ddlx/$1.sql/`. |
-| `/schemas¹`                    | List                       | Required                     | List of `schema` elements.                                                                                                                                       |
-| `/schemas/schemaⁿ`             | String                     | Required                     | File path of `.ddlx` schema.                                                                                                                                     |
+| Name                                      | Type                       | Use                          | Description                                                                                                                                                      |
+|:------------------------------------------|:---------------------------|:-----------------------------|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <samp>/overwrite¹</samp><br>&nbsp;        | boolean<br>&nbsp;          | Optional<br>&nbsp;           | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`.                                                                                               |
+| <samp>/destDir¹</samp>                    | String                     | Required                     | Destination path of generated bindings.                                                                                                                          |
+| <samp>/vendor¹</samp><br>&nbsp;           | String<br>&nbsp;           | Required<br>&nbsp;           | RDBMS vendor:<br>&nbsp;&nbsp;&nbsp;&nbsp;`<Derby\|MariaDB\|MySQL\|Oracle\|PostgreSQL\|SQLite>`.                                                                  |
+| <samp>/rename¹</samp><br>&nbsp;<br>&nbsp; | String<br>&nbsp;<br>&nbsp; | Optional<br>&nbsp;<br>&nbsp; | Regex pattern specifying the name of the output `.sql` file<br>based on the input `.ddlx` file:<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `/([^.]+).ddlx/$1.sql/`. |
+| <samp>/schemas¹</samp>                    | List                       | Required                     | List of `schema` elements.                                                                                                                                       |
+| <samp>/schemas/schemaⁿ</samp>             | String                     | Required                     | File path of `.ddlx` schema.                                                                                                                                     |
 
 ### `jaxdb:ddlx2sqlx`
 
@@ -95,12 +93,12 @@ The `jaxdb:ddlx2sqlx` goal is bound to the `generate-resources` phase, and is us
 
 ### Configuration Parameters
 
-| Name                    | Type              | Use                | Description                                                                                   |
-|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
-| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
-| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
-| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
-| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+| Name                               | Type              | Use                | Description                                                                                   |
+|:-----------------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| <samp>/overwrite¹</samp><br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| <samp>/destDir¹</samp>             | String            | Required           | Destination path of generated bindings.                                                       |
+| <samp>/schemas¹</samp>             | List              | Required           | List of `schema` elements.                                                                    |
+| <samp>/schemas/schemaⁿ</samp>      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
 ### `jaxdb:ddlx2jsql`
 
@@ -132,12 +130,12 @@ The `jaxdb:ddlx2jsql` goal is bound to the `generate-sources` phase, and is used
 
 ### Configuration Parameters
 
-| Name                    | Type              | Use                | Description                                                                                   |
-|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
-| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
-| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
-| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
-| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+| Name                               | Type              | Use                | Description                                                                                   |
+|:-----------------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| <samp>/overwrite¹</samp><br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| <samp>/destDir¹</samp>             | String            | Required           | Destination path of generated bindings.                                                       |
+| <samp>/schemas¹</samp>             | List              | Required           | List of `schema` elements.                                                                    |
+| <samp>/schemas/schemaⁿ</samp>      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
 ### `jaxdb:ddlx2xsd`
 
@@ -169,12 +167,12 @@ The `jaxdb:ddlx2xsd` goal is bound to the `generate-resources` phase, and is use
 
 ### Configuration Parameters
 
-| Name                    | Type              | Use                | Description                                                                                   |
-|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
-| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
-| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
-| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
-| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+| Name                               | Type              | Use                | Description                                                                                   |
+|:-----------------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| <samp>/overwrite¹</samp><br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| <samp>/destDir¹</samp>             | String            | Required           | Destination path of generated bindings.                                                       |
+| <samp>/schemas¹</samp>             | List              | Required           | List of `schema` elements.                                                                    |
+| <samp>/schemas/schemaⁿ</samp>      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
 ### `jaxdb:sqlx2sql`
 
@@ -206,12 +204,12 @@ The `jaxdb:sqlx2sql` goal is bound to the `generate-resources` phase, and is use
 
 ### Configuration Parameters
 
-| Name                    | Type              | Use                | Description                                                                                   |
-|:------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
-| `/overwrite¹`<br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
-| `/destDir¹`             | String            | Required           | Destination path of generated bindings.                                                       |
-| `/schemas¹`             | List              | Required           | List of `schema` elements.                                                                    |
-| `/schemas/schemaⁿ`      | String            | Required           | File path of `.ddlx` schema.                                                                  |
+| Name                               | Type              | Use                | Description                                                                                   |
+|:-----------------------------------|:------------------|:-------------------|:----------------------------------------------------------------------------------------------|
+| <samp>/overwrite¹</samp><br>&nbsp; | boolean<br>&nbsp; | Optional<br>&nbsp; | Whether existing files are to be overwritten.<br>&nbsp;&nbsp;&nbsp;&nbsp;**Default:** `true`. |
+| <samp>/destDir¹</samp>             | String            | Required           | Destination path of generated bindings.                                                       |
+| <samp>/schemas¹</samp>             | List              | Required           | List of `schema` elements.                                                                    |
+| <samp>/schemas/schemaⁿ</samp>      | String            | Required           | File path of `.ddlx` schema.                                                                  |
 
 ## Contributing
 
@@ -224,7 +222,6 @@ Please make sure to update tests as appropriate.
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
 
 [ddlx-schema]: /ddlx/src/main/resources/ddlx.xsd
-[mvn-plugin]: https://img.shields.io/badge/mvn-plugin-lightgrey.svg
 [jaxdb]: /
 [jsql]: /../../../../jaxdb/jsql
 [sqlx]: /../../../../jaxdb/sqlx
