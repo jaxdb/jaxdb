@@ -97,4 +97,4 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 [jsql]: /jsql
 [maven-archetype-quickstart]: http://maven.apache.org/archetypes/maven-archetype-quickstart
 [maven]: https://maven.apache.org/
-[jaxdb-maven-plugin]: /maven-plugin
+[jaxdb-maven-plugin]: /jaxdb-maven-plugin
