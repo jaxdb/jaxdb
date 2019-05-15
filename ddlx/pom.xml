@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.3.9</version>
+    <version>0.4.0-SNAPSHOT</version>
   </parent>
   <artifactId>ddlx</artifactId>
   <name>JAX-DB DDLX</name>
