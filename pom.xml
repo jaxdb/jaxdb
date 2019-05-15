@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.safris.maven</groupId>
     <artifactId>rootpom</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4-SNAPSHOT</version>
   </parent>
   <groupId>org.jaxdb</groupId>
   <artifactId>jaxdb</artifactId>
@@ -121,7 +121,7 @@
         <plugin>
           <groupId>org.jaxsb</groupId>
           <artifactId>jaxsb-maven-plugin</artifactId>
-          <version>2.1.4</version>
+          <version>2.1.5-SNAPSHOT</version>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -229,7 +229,7 @@
       <dependency>
         <groupId>org.jaxsb</groupId>
         <artifactId>generator</artifactId>
-        <version>2.1.4</version>
+        <version>2.1.5-SNAPSHOT</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

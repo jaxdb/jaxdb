@@ -25,7 +25,6 @@
     <version>0.4.0-SNAPSHOT</version>
   </parent>
   <artifactId>jaxdb-maven-archetype</artifactId>
-  <version>0.3</version>
   <name>JAX-DB Maven Archetype</name>
   <description>
     A quick-start example of how to use the JAX-DB framework.
