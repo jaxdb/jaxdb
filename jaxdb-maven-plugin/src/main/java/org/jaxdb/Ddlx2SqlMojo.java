@@ -33,8 +33,9 @@ import org.jaxdb.ddlx.StatementBatch;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.net.URLs;
 import org.openjax.maven.mojo.GeneratorMojo;
+import org.openjax.maven.mojo.FilterParameter;
+import org.openjax.maven.mojo.FilterType;
 import org.openjax.maven.mojo.MojoUtil;
-import org.openjax.maven.mojo.SourceInput;
 import org.openjax.xml.api.ValidationException;
 
 @Mojo(name="ddlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES)
@@ -46,16 +47,17 @@ public final class Ddlx2SqlMojo extends GeneratorMojo {
   @Parameter(property="vendor", required=true)
   private String vendor;
 
-  @SourceInput
+  @FilterParameter(FilterType.URL)
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
   @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final URL schema : configuration.getSourceInputs("schemas")) {
-        final StatementBatch statementBatch = Generator.createDDL(schema, DBVendor.valueOf(vendor));
-        statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"));
+      for (final String schema : schemas) {
+        final URL url = new URL(schema);
+        final StatementBatch statementBatch = Generator.createDDL(url, DBVendor.valueOf(vendor));
+        statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql"));
       }
     }
     catch (final GeneratorExecutionException | IOException | ValidationException e) {

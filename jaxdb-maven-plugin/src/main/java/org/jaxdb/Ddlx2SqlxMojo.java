@@ -34,7 +34,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.sqlx.SQL;
 import org.libj.net.URLs;
 import org.openjax.maven.mojo.GeneratorMojo;
-import org.openjax.maven.mojo.SourceInput;
+import org.openjax.maven.mojo.FilterParameter;
+import org.openjax.maven.mojo.FilterType;
 
 @Mojo(name="ddlx2sqlx", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
 @Execute(goal="ddlx2sqlx")
@@ -42,16 +43,17 @@ public final class Ddlx2SqlxMojo extends GeneratorMojo {
   @Parameter(defaultValue="${localRepository}")
   private ArtifactRepository localRepository;
 
-  @SourceInput
+  @FilterParameter(FilterType.URL)
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
   @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final URL schema : configuration.getSourceInputs("schemas")) {
-        final File xsd = new File(configuration.getDestDir(), URLs.getName(schema).replaceAll("\\.\\S+$", ".xsd"));
-        SQL.ddlx2sqlx(schema, xsd);
+      for (final String schema : schemas) {
+        final URL url = new URL(schema);
+        final File xsd = new File(configuration.getDestDir(), URLs.getName(url).replaceAll("\\.\\S+$", ".xsd"));
+        SQL.ddlx2sqlx(url, xsd);
       }
     }
     catch (final IOException | TransformerException e) {

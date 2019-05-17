@@ -37,8 +37,9 @@ import org.jaxdb.sqlx.SQL;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.net.URLs;
 import org.openjax.maven.mojo.GeneratorMojo;
+import org.openjax.maven.mojo.FilterParameter;
+import org.openjax.maven.mojo.FilterType;
 import org.openjax.maven.mojo.MojoUtil;
-import org.openjax.maven.mojo.SourceInput;
 import org.xml.sax.SAXException;
 
 @Mojo(name="sqlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES, requiresDependencyResolution=ResolutionScope.TEST)
@@ -50,7 +51,7 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
   @Parameter(property="vendor", required=true)
   private String vendor;
 
-  @SourceInput
+  @FilterParameter(FilterType.URL)
   @Parameter(property="schemas", required=true)
   private List<String> schemas;
 
@@ -62,8 +63,10 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
     try {
       final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
       final File[] classpathFiles = MojoUtil.getExecutionClasspash(project, execution, (PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler);
-      for (final URL schema : configuration.getSourceInputs("schemas"))
-        SQL.sqlx2sql(DBVendor.valueOf(vendor), schema, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(schema, rename) : URLs.getShortName(schema) + ".sql"), classpathFiles);
+      for (final String schema : schemas) {
+        final URL url = new URL(schema);
+        SQL.sqlx2sql(DBVendor.valueOf(vendor), url, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql"), classpathFiles);
+      }
     }
     catch (final DependencyResolutionRequiredException | IOException | SAXException e) {
       throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);

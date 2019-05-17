@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 
 import javax.xml.bind.UnmarshalException;
 
@@ -45,8 +46,7 @@ import org.xml.sax.InputSource;
 
 public abstract class JSQLTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
-    final URL url = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
-    assertNotNull(url);
+    final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();

@@ -192,7 +192,7 @@
     <dependency>
       <groupId>org.openjax.maven</groupId>
       <artifactId>mojo</artifactId>
-      <version>0.3.5</version>
+      <version>0.4.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>

@@ -166,7 +166,7 @@ public class Generator {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
-    final Object[] params = new Object[] {THIS, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
+    final Object[] params = {THIS, column.getName$().text(), audit.isUnique(table, column), audit.isPrimary(table, column), column.getNull$().text()};
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getSqlxGenerateOnInsert$() != null && $Char.GenerateOnInsert$.UUID.text().equals(type.getSqlxGenerateOnInsert$().text()))
@@ -372,7 +372,7 @@ public class Generator {
 
   public String makeTable(final $Table table) {
     final String ext = table.getExtends$() != null ? Identifiers.toClassCase(table.getExtends$().text()) : type.Entity.class.getCanonicalName();
-    String out = "";
+    final StringBuilder out = new StringBuilder();
     String abs = "";
     if (table.getAbstract$().text())
       abs = table.getAbstract$().text() ? " abstract" : "";
@@ -381,120 +381,121 @@ public class Generator {
     final int totalColumnCount = getColumnCount(table, true);
     final int totalPrimaryCount = getPrimaryColumnCount(table, true);
     final int localPrimaryCount = getPrimaryColumnCount(table, false);
-    out += getDoc(table, 1, '\0', '\n');
-    out += "  public static" + abs + " class " + entityName + " extends " + ext + " {\n";
+    out.append(getDoc(table, 1, '\0', '\n'));
+    out.append("  public static").append(abs).append(" class ").append(entityName).append(" extends ").append(ext).append(" {\n");
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
-      out += "    protected static final " + entityName + " identity = new " + entityName + "();\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + String.class.getName() + " name() {\n";
-      out += "      return \"" + table.getName$().text() + "\";\n";
-      out += "    }\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    protected " + entityName + " newInstance() {\n";
-      out += "      return new " + entityName + "(true);\n";
-      out += "    }\n\n";
-      out += "    /** Creates a new {@code " + entityName + "}. */\n";
-      out += "    public " + entityName + "() {\n";
-      out += "      this(false, new " + type.DataType.class.getCanonicalName() + "[" + totalColumnCount + "], new " + type.DataType.class.getCanonicalName() + "[" + totalPrimaryCount + "]);\n";
-      out += "    }\n\n";
-      out += "    protected " + entityName + "(final boolean wasSelected) {\n";
-      out += "      this(wasSelected, new " + type.DataType.class.getCanonicalName() + "[" + totalColumnCount + "], new " + type.DataType.class.getCanonicalName() + "[" + totalPrimaryCount + "]);\n";
-      out += "    }\n\n";
+      out.append("    protected static final ").append(entityName).append(" identity = new ").append(entityName).append("();\n\n");
+      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    protected ").append(String.class.getName()).append(" name() {\n");
+      out.append("      return \"").append(table.getName$().text()).append("\";\n");
+      out.append("    }\n\n");
+      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    protected ").append(entityName).append(" newInstance() {\n");
+      out.append("      return new ").append(entityName).append("(true);\n");
+      out.append("    }\n\n");
+      out.append("    /** Creates a new {@code ").append(entityName).append("}. */\n");
+      out.append("    public ").append(entityName).append("() {\n");
+      out.append("      this(false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("    }\n\n");
+      out.append("    protected ").append(entityName).append("(final boolean wasSelected) {\n");
+      out.append("      this(wasSelected, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
+      out.append("    }\n\n");
 
       // Constructor with primary key columns
-      String set = "";
+      final StringBuilder set = new StringBuilder();
       if (table.getColumn() != null && totalPrimaryCount > 0) {
-        out += "    /** Creates a new {@code " + entityName + "} with the specified primary key. */\n";
-        out += "    public " + entityName + "(";
+        out.append("    /** Creates a new {@code ").append(entityName).append("} with the specified primary key. */\n");
+        out.append("    public ").append(entityName).append("(");
         xLygluGCXYYJc.$Table t = table;
-        String params = "";
+        final StringBuilder params = new StringBuilder();
         do {
           for (int i = 0; i < t.getColumn().size(); ++i) {
             final $Column column = t.getColumn().get(i);
             if (audit.isPrimary(table, column)) {
-              params += ", " + makeParam(t, column);
+              params.append(", ").append(makeParam(t, column));
               final String columnName = Identifiers.toCamelCase(column.getName$().text());
-              set += "\n      this." + columnName + ".set(" + columnName + ");";
+              set.append("\n      this.").append(columnName).append(".set(").append(columnName).append(");");
             }
           }
         }
         while (t.getExtends$() != null && (t = audit.tableNameToTable.get(t.getExtends$().text())) != null);
-        out += params.substring(2) + ") {\n";
-        out += "      this();\n";
-        out += set.substring(1) + "\n    }\n\n";
+        out.append(params.substring(2)).append(") {\n");
+        out.append("      this();\n");
+        out.append(set.substring(1)).append("\n    }\n\n");
       }
 
       // Copy constructor
       if (table.getColumn() == null || table.getColumn().size() == 0)
-        out += "    @" + SuppressWarnings.class.getName() + "(\"unused\")\n";
+        out.append("    @").append(SuppressWarnings.class.getName()).append("(\"unused\")\n");
 
-      out += "    /** Creates a new {@code " + entityName + "} as a copy of the specified {@code " + entityName + "} instance. */\n";
-      out += "    public " + entityName + "(final " + entityName + " copy) {\n";
-      out += "      this();\n";
-      set = "";
+        out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
+        out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
+        out.append("      this();\n");
+      set.setLength(0);
       if (table.getColumn() != null) {
         for (int i = 0; i < table.getColumn().size(); ++i) {
           final $Column column = table.getColumn().get(i);
           final String columnName = Identifiers.toCamelCase(column.getName$().text());
-          set += "\n      this." + columnName + ".set(copy." + columnName + ".get());";
+          set.append("\n      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
         }
 
-        out += set.substring(1) + "\n";
+        out.append(set.substring(1)).append("\n");
       }
 
-      out += "    }\n\n";
+      out.append("    }\n\n");
     }
 
-    String defs = "";
-    out += "    protected " + entityName + "(final boolean wasSelected, final " + type.DataType.class.getCanonicalName() + "<?>[] column, final " + type.DataType.class.getCanonicalName() + "<?>[] primary) {\n";
-    out += "      super(wasSelected, column, primary);\n";
+    out.append("    protected ").append(entityName).append("(final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
+    out.append("      super(wasSelected, column, primary);\n");
 
-    defs = "";
+    final StringBuilder defs = new StringBuilder();
     int primaryIndex = 0;
     if (table.getColumn() != null) {
       for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
         final String columnName = Identifiers.toCamelCase(column.getName$().text());
-        defs += "\n      column[" + (totalColumnCount - (table.getColumn().size() - i)) + "] = ";
-        defs += audit.isPrimary(table, column) ? "primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = " : "";
-        defs += columnName + ";";
+        defs.append("\n      column[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
+        if (audit.isPrimary(table, column))
+          defs.append("primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = ");
+
+        defs.append(columnName).append(';');
       }
 
-      out += defs.substring(1) + "\n";
+      out.append(defs.substring(1)).append("\n");
     }
 
-    out += "    }\n";
+    out.append("    }\n");
 
     if (table.getColumn() != null) {
       for (int i = 0; i < table.getColumn().size(); ++i) {
         final $Column column = table.getColumn().get(i);
-        out += makeColumn(table, column);
+        out.append(makeColumn(table, column));
       }
 
-      out += "\n";
+      out.append("\n");
     }
 
     if (table.getAbstract$().text()) {
-      out += "\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    public abstract " + entityName + " clone();\n";
+      out.append("\n");
+      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    public abstract ").append(entityName).append(" clone();\n");
     }
     else {
-      out += "\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    public " + entityName + " clone() {\n";
-      out += "      return new " + entityName + "(this);\n";
-      out += "    }\n";
+      out.append("\n");
+      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    public ").append(entityName).append(" clone() {\n");
+      out.append("      return new ").append(entityName).append("(this);\n");
+      out.append("    }\n");
     }
 
-    out += "\n";
-    out += "    @" + Override.class.getName() + "\n";
-    out += "    public boolean equals(final " + Object.class.getName() + " obj) {\n";
-    out += "      if (obj == this)\n        return true;\n\n";
-    out += "      if (!(obj instanceof " + entityName + ")" + (table.getExtends$() != null ? " || !super.equals(obj)" : "") + ")\n        return false;\n\n";
+    out.append("\n");
+    out.append("    @").append(Override.class.getName()).append("\n");
+    out.append("    public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
+    out.append("      if (obj == this)\n        return true;\n\n");
+    out.append("      if (!(obj instanceof ").append(entityName).append(")").append((table.getExtends$() != null ? " || !super.equals(obj)" : "")).append(")\n        return false;\n\n");
 
-    String eq = "";
+    final StringBuilder eq = new StringBuilder();
     final List<$Column> primaryColumns = new ArrayList<>();
     final List<$Column> equalsColumns;
     if (table.getColumn() != null) {
@@ -503,46 +504,46 @@ public class Generator {
           primaryColumns.add(column);
 
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table.getColumn();
-      out += "      final " + entityName + " that = (" + entityName + ")obj;\n";
+      out.append("      final ").append(entityName).append(" that = (").append(entityName).append(")obj;\n");
       for (final $Column column : equalsColumns)
-        eq += " && (this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get().equals(that." + Identifiers.toInstanceCase(column.getName$().text()) + ".get()) : that." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() == null)";
+        eq.append(" && (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().equals(that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get()) : that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() == null)");
 
-      out += "      return " + eq.substring(4) + ";";
+      out.append("      return ").append(eq.substring(4)).append(';');
     }
     else {
       equalsColumns = null;
-      out += "      return true;";
+      out.append("      return true;");
     }
-    out += "\n    }";
+    out.append("\n    }");
 
-    eq = "";
+    eq.setLength(0);;
     if (equalsColumns != null && equalsColumns.size() > 0) {
-      out += "\n\n";
-      out += "    @" + Override.class.getName() + "\n";
-      out += "    public int hashCode() {\n";
+      out.append("\n\n");
+      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    public int hashCode() {\n");
       for (final $Column column : equalsColumns)
-        eq += " + (this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get() != null ? this." + Identifiers.toInstanceCase(column.getName$().text()) + ".get().hashCode() : -1)";
-      out += "      return " + eq.substring(3) + ";";
-      out += "\n    }";
+        eq.append(" + (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode() : -1)");
+      out.append("      return ").append(eq.substring(3)).append(';');
+      out.append("\n    }");
     }
 
-    out += "\n\n";
-    out += "    @" + Override.class.getName() + "\n";
-    out += "    public " + String.class.getName() + " toString() {\n";
-    out += "      final " + StringBuilder.class.getName() + " builder = new " + StringBuilder.class.getName() + "(super.toString());\n";
-    out += "      if (builder.charAt(builder.length() - 1) == '}')\n";
-    out += "        builder.setLength(builder.length() - 1);\n";
-    out += "      else\n";
-    out += "        builder.append(\" {\\n\");\n\n";
+    out.append("\n\n");
+    out.append("    @").append(Override.class.getName()).append("\n");
+    out.append("    public ").append(String.class.getName()).append(" toString() {\n");
+    out.append("      final ").append(StringBuilder.class.getName()).append(" builder = new ").append(StringBuilder.class.getName()).append("(super.toString());\n");
+    out.append("      if (builder.charAt(builder.length() - 1) == '}')\n");
+    out.append("        builder.setLength(builder.length() - 1);\n");
+    out.append("      else\n");
+    out.append("        builder.append(\" {\\n\");\n\n");
     if (table.getColumn() != null)
       for (final $Column column : table.getColumn())
-        out += "      builder.append(\"  " + Identifiers.toInstanceCase(column.getName$().text()) + ": \").append(" + Identifiers.toInstanceCase(column.getName$().text()) + ").append(\"\\n\");\n";
-    out += "      return builder.append('}').toString();";
-    out += "\n    }";
+        out.append("      builder.append(\"  ").append(Identifiers.toInstanceCase(column.getName$().text())).append(": \").append(").append(Identifiers.toInstanceCase(column.getName$().text())).append(").append(\"\\n\");\n");
+        out.append("      return builder.append('}').toString();");
+        out.append("\n    }");
 
-    out += "\n  }";
+        out.append("\n  }");
 
-    return out;
+    return out.toString();
   }
 
   public String makeParam(final xLygluGCXYYJc.$Table table, final $Column column) {
