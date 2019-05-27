@@ -123,6 +123,13 @@
           <artifactId>jaxsb-maven-plugin</artifactId>
           <version>2.1.5-SNAPSHOT</version>
         </plugin>
+        <plugin>
+          <groupId>org.safris.maven</groupId>
+          <artifactId>coverallsio-maven-plugin</artifactId>
+          <configuration>
+            <aggregateOnly>true</aggregateOnly>
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
