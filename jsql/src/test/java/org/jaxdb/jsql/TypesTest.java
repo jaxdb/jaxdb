@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.libj.jci.CompilationException;
 import org.openjax.xml.api.ValidationException;
 
-public class TypesTest extends JSQLTest {
+public class TypesTest extends JSqlTest {
   @Test
   public void test() throws CompilationException, IOException, ValidationException {
     createEntities("types");

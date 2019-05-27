@@ -37,10 +37,10 @@ import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
 import org.openjax.xml.api.ValidationException;
 
-public abstract class WorldTest extends JSQLTest {
+public abstract class WorldTest extends JSqlTest {
   private static final String name = "world";
 
-  public static class Test extends JSQLTest {
+  public static class Test extends JSqlTest {
     @org.junit.Test
     public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, ValidationException {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
@@ -63,12 +63,12 @@ public abstract class WorldTest extends JSQLTest {
   @org.junit.Test
   public void testReloadJaxb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, UnmarshalException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
-    JSQLTest.loadEntitiesJaxb(connection, name);
+    JSqlTest.loadEntitiesJaxb(connection, name);
   }
 
   @org.junit.Test
   public void testReloadXsb(final Connection connection) throws ClassNotFoundException, GeneratorExecutionException, IOException, SQLException, ValidationException {
     DDLxTest.recreateSchema(connection, name);
-    JSQLTest.loadEntitiesXsb(connection, name);
+    JSqlTest.loadEntitiesXsb(connection, name);
   }
 }

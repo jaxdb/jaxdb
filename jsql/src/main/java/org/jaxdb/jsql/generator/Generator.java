@@ -80,10 +80,10 @@ public class Generator {
     HEADER_COMMENT = builder.toString();
   }
 
-  private final JSQLAudit audit;
+  private final JSqlAudit audit;
 
   public Generator(final URL url) throws IOException, ValidationException {
-    this.audit = new JSQLAudit(new DDLxAudit(url));
+    this.audit = new JSqlAudit(new DDLxAudit(url));
   }
 
   private static String getDoc(final $Documented documented, final int depth, final char shart, final char end) {

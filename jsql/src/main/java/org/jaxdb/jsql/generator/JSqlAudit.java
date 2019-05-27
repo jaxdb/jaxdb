@@ -31,8 +31,8 @@ import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Float;
 import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Integer;
 import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Time;
 
-public class JSQLAudit extends DDLxAudit {
-  protected JSQLAudit(final DDLxAudit copy) {
+public class JSqlAudit extends DDLxAudit {
+  protected JSqlAudit(final DDLxAudit copy) {
     super(copy);
   }
 

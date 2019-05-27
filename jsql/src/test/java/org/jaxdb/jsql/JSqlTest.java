@@ -44,7 +44,7 @@ import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
 
-public abstract class JSQLTest {
+public abstract class JSqlTest {
   protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
