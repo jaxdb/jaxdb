@@ -25,7 +25,7 @@
     <version>0.4.0-SNAPSHOT</version>
   </parent>
   <artifactId>jsql</artifactId>
-  <name>JAX-DB JSQL</name>
+  <name>JAX-DB jSQL</name>
   <description>
     jSQL is an extension to DDLx, offering a lightweight ORM (Object Relational Mapping) solution
     that runs on the JDBC v4.1 API. The jSQL framework provides strongly-typed semantics for the
