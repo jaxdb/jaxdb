@@ -1,9 +1,9 @@
 # JAX-DB
 
-[![Build Status](https://travis-ci.org/jaxdb/jaxdb.png)](https://travis-ci.org/jaxdb/jaxdb)
-[![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg)](https://coveralls.io/github/jaxdb/jaxdb)
-[![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb.svg)](https://www.javadoc.io/doc/org.jaxdb/jaxdb)
-[![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jaxdb.svg)](https://mvnrepository.com/artifact/org.jaxdb/jaxdb)
+[![Build Status](https://travis-ci.org/jaxdb/jaxdb.svg?1)](https://travis-ci.org/jaxdb/jaxdb)
+[![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg?1)](https://coveralls.io/github/jaxdb/jaxdb)
+[![Javadocs](https://www.javadoc.io/badge/org.jaxdb/jaxdb.svg?1)](https://www.javadoc.io/doc/org.jaxdb/jaxdb)
+[![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/jaxdb.svg?1)](https://mvnrepository.com/artifact/org.jaxdb/jaxdb)
 
 ## Introduction
 
