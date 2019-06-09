@@ -20,11 +20,11 @@ import java.io.IOException;
 
 import org.junit.Test;
 import org.libj.jci.CompilationException;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 public class TypesTest extends JSqlTest {
   @Test
-  public void test() throws CompilationException, IOException, ValidationException {
+  public void test() throws CompilationException, IOException, SAXException {
     createEntities("types");
   }
 }

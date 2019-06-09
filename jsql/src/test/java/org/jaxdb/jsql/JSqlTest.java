@@ -41,11 +41,11 @@ import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
 import org.libj.util.Identifiers;
 import org.openjax.jaxb.xjc.JaxbUtil;
-import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  protected static void createEntities(final String name) throws CompilationException, IOException, ValidationException {
+  protected static void createEntities(final String name) throws CompilationException, IOException, SAXException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);
@@ -59,7 +59,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, ValidationException {
+  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {
@@ -86,7 +86,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SQLException, UnmarshalException, ValidationException {
+  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
       @Override
       public Connection getConnection() throws SQLException {

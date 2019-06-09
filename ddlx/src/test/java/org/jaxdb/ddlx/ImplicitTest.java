@@ -28,7 +28,7 @@ import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 public abstract class ImplicitTest extends DDLxTest {
   @RunWith(VendorRunner.class)
@@ -42,7 +42,7 @@ public abstract class ImplicitTest extends DDLxTest {
   }
 
   @Test
-  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  public void test(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     recreateSchema(connection, "implicit");
   }
 }

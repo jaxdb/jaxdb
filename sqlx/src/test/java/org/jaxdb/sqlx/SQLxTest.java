@@ -34,9 +34,8 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
-import org.libj.util.ClassLoaders;
 import org.libj.util.ArrayUtil;
-import org.openjax.xml.api.ValidationException;
+import org.libj.util.ClassLoaders;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -68,7 +67,7 @@ public abstract class SQLxTest {
     SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
   }
 
-  public static int[] loadData(final Connection connection, final String name) throws IOException, SQLException, ValidationException {
+  public static int[] loadData(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final Schema schema;
     try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
       schema = (Schema)Bindings.parse(new InputSource(in));

@@ -28,16 +28,16 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
-import org.jaxdb.vendor.DBVendor;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
-import org.openjax.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public final class Generator {
   protected static final Logger logger = LoggerFactory.getLogger(Generator.class);
@@ -60,7 +60,7 @@ public final class Generator {
     createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]));
   }
 
-  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, ValidationException {
+  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, SAXException {
     return new StatementBatch(new Generator(DDLxAudit.makeAudit(url)).parse(vendor));
   }
 

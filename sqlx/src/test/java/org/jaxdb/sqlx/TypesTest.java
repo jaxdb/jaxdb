@@ -46,7 +46,7 @@ import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
 import org.libj.util.Hexadecimal;
 import org.libj.util.Strings;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 public abstract class TypesTest extends SQLxTest {
   private static final String name = "types";
@@ -135,7 +135,7 @@ public abstract class TypesTest extends SQLxTest {
   }
 
   @org.junit.Test
-  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(1000, loadData(connection, name).length);
   }

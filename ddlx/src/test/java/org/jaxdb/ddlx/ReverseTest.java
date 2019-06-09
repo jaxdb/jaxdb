@@ -40,7 +40,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.libj.test.AssertXml;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 public abstract class ReverseTest extends DDLxTest {
   @RunWith(VendorRunner.class)
@@ -119,7 +119,7 @@ public abstract class ReverseTest extends DDLxTest {
   }
 
   @Test
-  public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, SQLException, XPathExpressionException, ValidationException {
+  public void testRecreateSchema(final Connection connection) throws GeneratorExecutionException, IOException, MarshalException, SAXException, SQLException, XPathExpressionException {
     final Schema expected = Schemas.flatten(recreateSchema(connection, "reverse", true));
     sort(expected);
 //    logger.info(expected);

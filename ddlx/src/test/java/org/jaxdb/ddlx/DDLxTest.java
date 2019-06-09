@@ -28,15 +28,15 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Decimal;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxsb.runtime.Bindings;
-import org.openjax.xml.api.ValidationException;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public abstract class DDLxTest {
-  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     return recreateSchema(connection, ddlx, false);
   }
 
-  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     final Schema schema;
     try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(ddlx + ".ddlx")) {
       schema = (Schema)Bindings.parse(new InputSource(in));

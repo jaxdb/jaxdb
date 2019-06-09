@@ -28,10 +28,10 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.jaxdb.jsql.generator.Generator;
 import org.libj.net.URLs;
-import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
-import org.openjax.xml.api.ValidationException;
+import org.openjax.maven.mojo.GeneratorMojo;
+import org.xml.sax.SAXException;
 
 @Mojo(name="ddlx2jsql", defaultPhase=LifecyclePhase.GENERATE_SOURCES)
 @Execute(goal="ddlx2jsql")
@@ -48,7 +48,7 @@ public final class Ddlx2JsqlMojo extends GeneratorMojo {
         new Generator(url).generate(URLs.getShortName(url), configuration.getDestDir());
       }
     }
-    catch (final IOException | ValidationException e) {
+    catch (final IOException | SAXException e) {
       throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }

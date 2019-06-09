@@ -33,10 +33,8 @@ import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
-import org.jaxdb.ddlx.runner.VendorRunner.Order;
 import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
-import org.openjax.xml.api.ValidationException;
 import org.xml.sax.SAXException;
 
 public abstract class ClassicModelsTest extends SQLxTest {
@@ -60,14 +58,14 @@ public abstract class ClassicModelsTest extends SQLxTest {
   }
 
   @org.junit.Test
-  @Order(0)
-  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SQLException, ValidationException {
+  @VendorRunner.Order(0)
+  public void testLoadData(final Connection connection) throws GeneratorExecutionException, IOException, SAXException, SQLException {
     DDLxTest.recreateSchema(connection, name);
     assertEquals(3864, loadData(connection, name).length);
   }
 
   @org.junit.Test
-  @Order(1)
+  @VendorRunner.Order(1)
   public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException {
     createSql(connection, name);
   }

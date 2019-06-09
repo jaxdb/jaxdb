@@ -57,10 +57,10 @@ import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Table;
 import org.libj.util.Classes;
 import org.libj.util.Identifiers;
 import org.libj.util.Strings;
-import org.openjax.xml.api.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema;
+import org.xml.sax.SAXException;
 
 public class Generator {
   private static final Logger logger = LoggerFactory.getLogger(Generator.class);
@@ -82,7 +82,7 @@ public class Generator {
 
   private final JSqlAudit audit;
 
-  public Generator(final URL url) throws IOException, ValidationException {
+  public Generator(final URL url) throws IOException, SAXException {
     this.audit = new JSqlAudit(new DDLxAudit(url));
   }
 

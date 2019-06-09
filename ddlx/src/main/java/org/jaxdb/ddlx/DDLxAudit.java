@@ -28,10 +28,10 @@ import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
 import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
 import org.jaxsb.runtime.Bindings;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 public class DDLxAudit {
-  protected static DDLxAudit makeAudit(final URL url) throws IOException, ValidationException {
+  protected static DDLxAudit makeAudit(final URL url) throws IOException, SAXException {
     try (final InputStream in = url.openStream()) {
       return new DDLxAudit(url);
     }
@@ -47,7 +47,7 @@ public class DDLxAudit {
       tableNameToTable.put(table.getName$().text(), table);
   }
 
-  public DDLxAudit(final URL url) throws IOException, ValidationException {
+  public DDLxAudit(final URL url) throws IOException, SAXException {
     this((Schema)Bindings.parse(url));
   }
 

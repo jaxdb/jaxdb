@@ -32,11 +32,11 @@ import org.jaxdb.ddlx.GeneratorExecutionException;
 import org.jaxdb.ddlx.StatementBatch;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.net.URLs;
-import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
+import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.MojoUtil;
-import org.openjax.xml.api.ValidationException;
+import org.xml.sax.SAXException;
 
 @Mojo(name="ddlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES)
 @Execute(goal="ddlx2sql")
@@ -60,7 +60,7 @@ public final class Ddlx2SqlMojo extends GeneratorMojo {
         statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql"));
       }
     }
-    catch (final GeneratorExecutionException | IOException | ValidationException e) {
+    catch (final GeneratorExecutionException | IOException | SAXException e) {
       throw new MojoExecutionException(e.getClass().getSimpleName() + ": " + e.getMessage(), e);
     }
   }
