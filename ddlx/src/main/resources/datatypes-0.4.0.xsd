@@ -47,11 +47,11 @@
   </xs:simpleType>
 
   <xs:simpleType name="date">
-    <xs:restriction base="dt:iso8601LocalDate"/>
+    <xs:restriction base="dt:iso8601eLocalDate"/>
   </xs:simpleType>
 
   <xs:simpleType name="datetime">
-    <xs:restriction base="dt:rfc3339LocalDateTime"/>
+    <xs:restriction base="dt:rfc3339eLocalDateTime"/>
   </xs:simpleType>
 
   <xs:simpleType name="decimal">
@@ -85,7 +85,7 @@
   </xs:simpleType>
 
   <xs:simpleType name="time">
-    <xs:restriction base="dt:iso8601LocalTime"/>
+    <xs:restriction base="dt:iso8601eLocalTime"/>
   </xs:simpleType>
 
   <xs:simpleType name="tinyint">
