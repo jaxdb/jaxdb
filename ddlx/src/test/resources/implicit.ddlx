@@ -15,9 +15,9 @@
   program. If not, see <http://opensource.org/licenses/MIT/>.
 -->
 <schema
-  xmlns="http://www.jaxdb.org/ddlx-0.3.9.xsd"
+  xmlns="http://www.jaxdb.org/ddlx-0.4.0.xsd"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.3.9.xsd http://www.jaxdb.org/ddlx.xsd">
+  xsi:schemaLocation="http://www.jaxdb.org/ddlx-0.4.0.xsd http://www.jaxdb.org/ddlx.xsd">
   <table name="implicit">
     <column name="id" xsi:type="int" unsigned="true" null="false" generateOnInsert="AUTO_INCREMENT"/>
     <column name="bigint_type" xsi:type="bigint" default="100"/>

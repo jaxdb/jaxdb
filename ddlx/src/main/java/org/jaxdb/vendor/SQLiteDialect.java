@@ -18,7 +18,7 @@ package org.jaxdb.vendor;
 
 import java.util.List;
 
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Enum;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Enum;
 
 public class SQLiteDialect extends Dialect {
   @Override

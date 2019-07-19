@@ -16,8 +16,8 @@
 
 package org.jaxdb.jsql;
 
-import org.jaxdb.sqlx_0_3_9.Database;
-import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
+import org.jaxdb.sqlx_0_4_0.Database;
+import org.jaxdb.www.sqlx_0_4_0.xLygluGCXYYJc.$Database;
 
 public class Entities {
   public static <T extends type.Entity>T[] toEntities(final Database database) {

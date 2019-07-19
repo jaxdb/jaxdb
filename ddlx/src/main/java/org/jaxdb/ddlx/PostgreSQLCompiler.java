@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Enum;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Index;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Named;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Column;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Enum;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Index;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Integer;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Named;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Table;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.slf4j.Logger;

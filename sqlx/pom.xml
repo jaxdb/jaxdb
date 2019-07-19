@@ -161,8 +161,8 @@
               <destDir>${project.build.directory}/generated-sources/jaxb</destDir>
               <extension>true</extension>
               <schemas>
-                <!-- FIXME: XJC cannot compile sqlx.xsd, because it says types are already defined in sqlx-0.3.9.xsd -->
-                <schema>src/main/resources/sqlx-0.3.9.xsd</schema>
+                <!-- FIXME: XJC cannot compile sqlx.xsd, because it says types are already defined in sqlx-0.4.0.xsd -->
+                <schema>src/main/resources/sqlx-0.4.0.xsd</schema>
               </schemas>
             </configuration>
           </execution>

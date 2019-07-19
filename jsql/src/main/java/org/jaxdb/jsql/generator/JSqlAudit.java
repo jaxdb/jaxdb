@@ -17,19 +17,19 @@
 package org.jaxdb.jsql.generator;
 
 import org.jaxdb.ddlx.DDLxAudit;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Binary;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Blob;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Boolean;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Char;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Clob;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Date;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Datetime;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Decimal;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Enum;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Float;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.jsql_0_3_9.xLygluGCXYYJc.$Time;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Binary;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Blob;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Boolean;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Char;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Clob;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Date;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Datetime;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Decimal;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Enum;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Float;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Integer;
+import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Time;
 
 public class JSqlAudit extends DDLxAudit {
   protected JSqlAudit(final DDLxAudit copy) {

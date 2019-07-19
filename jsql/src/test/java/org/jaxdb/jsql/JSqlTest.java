@@ -33,9 +33,9 @@ import javax.xml.bind.UnmarshalException;
 
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
-import org.jaxdb.sqlx_0_3_9.Database;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc;
-import org.jaxdb.www.sqlx_0_3_9.xLygluGCXYYJc.$Database;
+import org.jaxdb.sqlx_0_4_0.Database;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc;
+import org.jaxdb.www.sqlx_0_4_0.xLygluGCXYYJc.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;

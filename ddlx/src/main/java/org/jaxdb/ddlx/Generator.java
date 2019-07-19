@@ -29,9 +29,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Column;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.$Table;
-import org.jaxdb.www.ddlx_0_3_9.xLygluGCXYYJc.Schema;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Column;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Table;
+import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.Schema;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
