@@ -14,10 +14,10 @@
 <xs:schema
   elementFormDefault="qualified"
   targetNamespace="http://www.jaxdb.org/datatypes-0.3.9.xsd"
-  xmlns:dt="http://www.openjax.org/xml/datatypes-0.9.2.xsd"
+  xmlns:dt="http://www.openjax.org/xml/datatypes-0.9.3.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.openjax.org/xml/datatypes-0.9.2.xsd" schemaLocation="http://www.openjax.org/xml/datatypes-0.9.2.xsd"/>
+  <xs:import namespace="http://www.openjax.org/xml/datatypes-0.9.3.xsd" schemaLocation="http://www.openjax.org/xml/datatypes-0.9.3.xsd"/>
 
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">
@@ -47,11 +47,11 @@
   </xs:simpleType>
 
   <xs:simpleType name="date">
-    <xs:restriction base="dt:localDate"/>
+    <xs:restriction base="dt:iso8601eLocalDate"/>
   </xs:simpleType>
 
   <xs:simpleType name="datetime">
-    <xs:restriction base="dt:localDateTime"/>
+    <xs:restriction base="dt:iso8601eLocalDateTime"/>
   </xs:simpleType>
 
   <xs:simpleType name="decimal">
@@ -85,7 +85,7 @@
   </xs:simpleType>
 
   <xs:simpleType name="time">
-    <xs:restriction base="dt:localTime"/>
+    <xs:restriction base="dt:iso8601eLocalTime"/>
   </xs:simpleType>
 
   <xs:simpleType name="tinyint">
