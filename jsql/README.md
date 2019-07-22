@@ -96,9 +96,9 @@
 
    ```xml
    <dbcp name="example"
-     xmlns="http://www.openjax.org/dbcp-1.0.4.xsd"
+     xmlns="http://www.openjax.org/dbcp-1.0.xsd"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openjax.org/dbcp-1.0.4.xsd http://www.openjax.org/dbcp.xsd">
+     xsi:schemaLocation="http://www.openjax.org/dbcp-1.0.xsd http://www.openjax.org/dbcp.xsd">
      <jdbc>
        <url>jdbc:postgresql://localhost/example</url>
        <driverClassName>org.postgresql.Driver</driverClassName>
