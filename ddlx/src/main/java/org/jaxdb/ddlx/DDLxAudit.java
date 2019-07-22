@@ -22,11 +22,11 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Columns;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Indexes;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Named;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Table;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.Schema;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Columns;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Indexes;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
 import org.xml.sax.SAXException;
 

@@ -33,27 +33,27 @@ import org.jaxdb.jsql.GenerateOn;
 import org.jaxdb.jsql.Schema;
 import org.jaxdb.jsql.type;
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Bigint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Binary;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Blob;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Boolean;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Char;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Clob;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Column;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Date;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Datetime;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Decimal;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Documented;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Double;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Enum;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Float;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Int;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Smallint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Time;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Tinyint;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Table;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Binary;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Blob;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Clob;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Date;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Documented;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Table;
 import org.libj.util.Classes;
 import org.libj.util.Identifiers;
 import org.libj.util.Strings;
@@ -162,7 +162,7 @@ public class Generator {
 
   private static final Object THIS = new Object();
 
-  private Type getType(final xLygluGCXYYJc.$Table table, final $Column column) {
+  private Type getType(final xLygluGCXAA.$Table table, final $Column column) {
     final Class<?> cls = column.getClass().getSuperclass();
     GenerateOn<?> generateOnInsert = null;
     GenerateOn<?> generateOnUpdate = null;
@@ -351,7 +351,7 @@ public class Generator {
     }
   }
 
-  private int getColumnCount(xLygluGCXYYJc.$Table table, final boolean deep) {
+  private int getColumnCount(xLygluGCXAA.$Table table, final boolean deep) {
     int count = 0;
     do {
       count += table.getColumn() != null ? table.getColumn().size() : 0;
@@ -360,7 +360,7 @@ public class Generator {
     return count;
   }
 
-  private int getPrimaryColumnCount(xLygluGCXYYJc.$Table table, final boolean deep) {
+  private int getPrimaryColumnCount(xLygluGCXAA.$Table table, final boolean deep) {
     int count = 0;
     do {
       if (table.getConstraints() != null && table.getConstraints().getPrimaryKey() != null)
@@ -407,7 +407,7 @@ public class Generator {
       if (table.getColumn() != null && totalPrimaryCount > 0) {
         out.append("    /** Creates a new {@code ").append(entityName).append("} with the specified primary key. */\n");
         out.append("    public ").append(entityName).append("(");
-        xLygluGCXYYJc.$Table t = table;
+        xLygluGCXAA.$Table t = table;
         final StringBuilder params = new StringBuilder();
         do {
           for (int i = 0; i < t.getColumn().size(); ++i) {
@@ -546,7 +546,7 @@ public class Generator {
     return out.toString();
   }
 
-  public String makeParam(final xLygluGCXYYJc.$Table table, final $Column column) {
+  public String makeParam(final xLygluGCXAA.$Table table, final $Column column) {
     final String columnName = Identifiers.toCamelCase(column.getName$().text());
     final Type type = getType(table, column);
     final String rawType;

@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jaxdb.vendor.Dialect;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Index;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Named;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Table;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.BindingList;
 import org.libj.util.ArrayUtil;
 

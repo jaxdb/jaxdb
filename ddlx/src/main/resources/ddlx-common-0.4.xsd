@@ -16,12 +16,12 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://www.jaxdb.org/ddlx-0.3.9.xsd"
-  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.3.9.xsd"
-  xmlns:dt="http://www.jaxdb.org/datatypes-0.3.9.xsd"
+  targetNamespace="http://www.jaxdb.org/ddlx-0.4.xsd"
+  xmlns:ddlx="http://www.jaxdb.org/ddlx-0.4.xsd"
+  xmlns:dt="http://www.jaxdb.org/datatypes-0.4.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.jaxdb.org/datatypes-0.3.9.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.3.9.xsd"/>
+  <xs:import namespace="http://www.jaxdb.org/datatypes-0.4.xsd" schemaLocation="http://www.jaxdb.org/datatypes-0.4.xsd"/>
 
   <xs:simpleType name="name">
     <xs:restriction base="xs:NCName">

@@ -33,9 +33,9 @@ import javax.xml.bind.UnmarshalException;
 
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.jsql.generator.Generator;
-import org.jaxdb.sqlx_0_4_0.Database;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc;
-import org.jaxdb.www.sqlx_0_4_0.xLygluGCXYYJc.$Database;
+import org.jaxdb.sqlx_0_4.Database;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
+import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
@@ -71,9 +71,9 @@ public abstract class JSqlTest {
     assertNotNull(sqlx);
     final $Database database = ($Database)Bindings.parse(sqlx);
 
-    final xLygluGCXYYJc.Schema schema;
+    final xLygluGCXAA.Schema schema;
     try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
-      schema = (xLygluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
+      schema = (xLygluGCXAA.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);
@@ -101,9 +101,9 @@ public abstract class JSqlTest {
       database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Identifiers.toClassCase(name)), sqlx, false);
     }
 
-    final xLygluGCXYYJc.Schema schema;
+    final xLygluGCXAA.Schema schema;
     try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
-      schema = (xLygluGCXYYJc.Schema)Bindings.parse(new InputSource(in));
+      schema = (xLygluGCXAA.Schema)Bindings.parse(new InputSource(in));
     }
 
     Schemas.flatten(schema);

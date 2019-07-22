@@ -27,16 +27,16 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
 
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Bigint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Char;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Check;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Decimal;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Double;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Float;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Int;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$RangeOperator;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Smallint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Tinyint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$RangeOperator;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.openjax.xml.datatype.HexBinary;
 
 public class dt {

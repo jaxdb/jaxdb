@@ -17,26 +17,26 @@
 package org.jaxdb.jsql.generator;
 
 import org.jaxdb.ddlx.DDLxAudit;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Binary;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Blob;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Boolean;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Char;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Clob;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Date;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Datetime;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Decimal;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Enum;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Float;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.jsql_0_4_0.xLygluGCXYYJc.$Time;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Binary;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Blob;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Char;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Clob;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Date;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Enum;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Float;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Time;
 
 public class JSqlAudit extends DDLxAudit {
   protected JSqlAudit(final DDLxAudit copy) {
     super(copy);
   }
 
-  public boolean isKeyForUpdate(final xLygluGCXYYJc.$Column column) {
+  public boolean isKeyForUpdate(final xLygluGCXAA.$Column column) {
     if (column instanceof $Char)
       return (($Char)column).getJsqlKeyForUpdate$().text();
 

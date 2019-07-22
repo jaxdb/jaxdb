@@ -16,7 +16,7 @@
 
 package org.jaxdb.vendor;
 
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Enum;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

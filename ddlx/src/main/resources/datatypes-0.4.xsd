@@ -13,11 +13,11 @@
 -->
 <xs:schema
   elementFormDefault="qualified"
-  targetNamespace="http://www.jaxdb.org/datatypes-0.3.9.xsd"
-  xmlns:dt="http://www.openjax.org/xml/datatypes-0.9.3.xsd"
+  targetNamespace="http://www.jaxdb.org/datatypes-0.4.xsd"
+  xmlns:dt="http://www.openjax.org/xml/datatypes-0.9.xsd"
   xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <xs:import namespace="http://www.openjax.org/xml/datatypes-0.9.3.xsd" schemaLocation="http://www.openjax.org/xml/datatypes-0.9.3.xsd"/>
+  <xs:import namespace="http://www.openjax.org/xml/datatypes-0.9.xsd" schemaLocation="http://www.openjax.org/xml/datatypes-0.9.xsd"/>
 
   <xs:simpleType name="bigint">
     <xs:restriction base="xs:integer">
@@ -51,7 +51,7 @@
   </xs:simpleType>
 
   <xs:simpleType name="datetime">
-    <xs:restriction base="dt:iso8601eLocalDateTime"/>
+    <xs:restriction base="dt:rfc3339eLocalDateTime"/>
   </xs:simpleType>
 
   <xs:simpleType name="decimal">

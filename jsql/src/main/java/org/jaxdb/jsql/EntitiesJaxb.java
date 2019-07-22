@@ -33,9 +33,9 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Schema;
 import org.jaxdb.ddlx.annotation.Table;
-import org.jaxdb.sqlx_0_4_0.Database;
-import org.jaxdb.sqlx_0_4_0.Insert;
-import org.jaxdb.sqlx_0_4_0.Row;
+import org.jaxdb.sqlx_0_4.Database;
+import org.jaxdb.sqlx_0_4.Insert;
+import org.jaxdb.sqlx_0_4.Row;
 import org.libj.util.Identifiers;
 
 final class EntitiesJaxb {

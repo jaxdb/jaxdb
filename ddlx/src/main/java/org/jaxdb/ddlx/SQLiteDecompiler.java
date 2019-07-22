@@ -8,26 +8,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Bigint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Binary;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Blob;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Boolean;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Char;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Check;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Clob;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Column;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Constraints;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Date;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Datetime;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Decimal;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Double;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Float;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Int;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Integer;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Smallint;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Table;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Time;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Tinyint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Binary;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Blob;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Boolean;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Char;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Check;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Clob;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Constraints;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Date;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Datetime;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Double;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Float;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Int;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override

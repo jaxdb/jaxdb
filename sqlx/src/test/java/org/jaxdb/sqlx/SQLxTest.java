@@ -30,8 +30,8 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
 import org.jaxdb.vendor.DBVendor;
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.Schema;
-import org.jaxdb.www.sqlx_0_4_0.xLygluGCXYYJc.$Database;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.util.ArrayUtil;

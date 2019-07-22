@@ -16,7 +16,7 @@
 
 package org.jaxdb.vendor;
 
-import org.jaxdb.www.ddlx_0_4_0.xLygluGCXYYJc.$Enum;
+import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class DB2Dialect extends Dialect {
   @Override
