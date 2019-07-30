@@ -144,16 +144,16 @@ public final class Schemas {
     tables.sort(tableNameComparator);
     final RefDigraph<$Table,String> digraph = new RefDigraph<>(table -> table.getName$().text().toLowerCase());
     for (final $Table table : tables) {
-      digraph.addVertex(table);
+      digraph.add(table);
       for (final $Column column : table.getColumn())
         if (column.getForeignKey() != null)
-          digraph.addEdgeRef(table, column.getForeignKey().getReferences$().text().toLowerCase());
+          digraph.add(table, column.getForeignKey().getReferences$().text().toLowerCase());
     }
 
     if (digraph.hasCycle())
       throw new IllegalStateException("Cycle exists in relational model: " + CollectionUtil.toString(digraph.getCycle(), " -> "));
 
-    final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.getSize());
+    final ListIterator<$Table> topological = digraph.getTopologicalOrder().listIterator(digraph.size());
     while (topological.hasPrevious())
       schema.getTable().add(topological.previous());
 
