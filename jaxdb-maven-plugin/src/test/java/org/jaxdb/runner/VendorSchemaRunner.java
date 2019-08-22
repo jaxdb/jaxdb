@@ -21,16 +21,13 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
-import org.junit.runners.model.FrameworkMethod;
-import org.junit.runners.model.InitializationError;
 import org.jaxdb.ddlx.runner.VendorRunner;
-import org.jaxdb.jsql.Connector;
 import org.jaxdb.jsql.Registry;
 import org.jaxdb.vendor.DBVendor;
+import org.junit.runners.model.FrameworkMethod;
+import org.junit.runners.model.InitializationError;
 import org.libj.util.ArrayUtil;
 
 public class VendorSchemaRunner extends VendorRunner {

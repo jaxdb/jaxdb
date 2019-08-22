@@ -38,7 +38,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.jaxdb.jsql.kind.Numeric.UNSIGNED;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.util.Classes;
