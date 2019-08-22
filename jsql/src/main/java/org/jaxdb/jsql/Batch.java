@@ -112,7 +112,7 @@ public class Batch {
             statement = connection.createStatement();
           }
 
-          statement.addBatch(sql.toString());
+          statement.addBatch(sql);
         }
       }
 

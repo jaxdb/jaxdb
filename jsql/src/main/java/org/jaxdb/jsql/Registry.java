@@ -16,13 +16,10 @@
 
 package org.jaxdb.jsql;
 
-import java.sql.Connection;
-import java.sql.SQLException;
+import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
-
-import javax.sql.DataSource;
 
 import org.libj.sql.AuditConnection;
 import org.libj.util.IdentityHashSet;
@@ -32,12 +29,7 @@ public final class Registry {
     if (dataSource == null)
       throw new IllegalArgumentException("dataSource == null");
 
-    return new Connector() {
-      @Override
-      public Connection getConnection() throws SQLException {
-        return new AuditConnection(dataSource.getConnection());
-      }
-    };
+    return () -> new AuditConnection(dataSource.getConnection());
   }
 
   private static final IdentityHashMap<Class<? extends Schema>,Map<String,Connector>> connectors = new IdentityHashMap<>();

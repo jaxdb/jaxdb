@@ -101,12 +101,7 @@ public abstract class ReverseTest extends DDLxTest {
     builder.assertEqual(true);
   }
 
-  private static final Comparator<Binding> hashCodeComparator = new Comparator<Binding>() {
-    @Override
-    public int compare(final Binding o1, final Binding o2) {
-      return Long.compare(o1.hashCode(), o2.hashCode());
-    }
-  };
+  private static final Comparator<Binding> hashCodeComparator = (o1, o2) -> Long.compare(o1.hashCode(), o2.hashCode());
 
   private static void sort(final Schema schema) {
     for (final $Table table : schema.getTable()) {

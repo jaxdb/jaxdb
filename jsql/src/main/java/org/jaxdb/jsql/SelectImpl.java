@@ -35,12 +35,7 @@ import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.CollectionUtil;
 
 class SelectImpl {
-  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = new Predicate<Compilable>() {
-    @Override
-    public boolean test(final Compilable t) {
-      return (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
-    }
-  };
+  protected static final Predicate<Compilable> entitiesWithOwnerPredicate = t -> (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
 
   private static void compile(final List<AbstractMap.SimpleEntry<type.DataType<?>,Integer>> dataTypes, final Compilable subject) {
     if (subject instanceof type.Entity) {
@@ -401,7 +396,7 @@ class SelectImpl {
         return clone;
       }
 
-      private final RowIterator<T> execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+      private RowIterator<T> execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
         if (entities.size() == 1) {
           final Compilable subject = entities.iterator().next();
           if (subject instanceof type.Entity) {

@@ -12618,7 +12618,7 @@ public final class DML {
   }
 
   public static Predicate BETWEEN(final kind.TIME dataType, final LocalTime a, final kind.TIME b) {
-    return new BetweenPredicates.TimeBetweenPredicate(dataType, (type.TIME)type.DataType.wrap(a), b, true);
+    return new BetweenPredicates.TimeBetweenPredicate(dataType, type.DataType.wrap(a), b, true);
   }
 
   public static <T extends Number>Predicate BETWEEN(final kind.Numeric<?> dataType, final T a, final T b) {
@@ -12674,7 +12674,7 @@ public final class DML {
   }
 
   public static Predicate BETWEEN(final kind.TIME dataType, final LocalTime a, final LocalTime b) {
-    return new BetweenPredicates.TimeBetweenPredicate(dataType, (type.TIME)type.DataType.wrap(a), (type.TIME)type.DataType.wrap(b), true);
+    return new BetweenPredicates.TimeBetweenPredicate(dataType, type.DataType.wrap(a), type.DataType.wrap(b), true);
   }
 
   public static Predicate LIKE(final kind.CHAR a, final CharSequence b) {
@@ -12780,7 +12780,7 @@ public final class DML {
     }
 
     public static Predicate BETWEEN(final kind.TIME dataType, final kind.TIME a, final LocalTime b) {
-      return new BetweenPredicates.TimeBetweenPredicate(dataType, a, (type.TIME)type.DataType.wrap(b), false);
+      return new BetweenPredicates.TimeBetweenPredicate(dataType, a, type.DataType.wrap(b), false);
     }
 
     public static Predicate BETWEEN(final kind.Numeric<?> dataType, final Number a, final kind.Numeric<?> b) {
@@ -12828,7 +12828,7 @@ public final class DML {
     }
 
     public static Predicate BETWEEN(final kind.TIME dataType, final LocalTime a, final kind.TIME b) {
-      return new BetweenPredicates.TimeBetweenPredicate(dataType, (type.TIME)type.DataType.wrap(a), b, false);
+      return new BetweenPredicates.TimeBetweenPredicate(dataType, type.DataType.wrap(a), b, false);
     }
 
     public static Predicate BETWEEN(final kind.Numeric<?> dataType, final Number a, final Number b) {
@@ -12884,7 +12884,7 @@ public final class DML {
     }
 
     public static Predicate BETWEEN(final kind.TIME dataType, final LocalTime a, final LocalTime b) {
-      return new BetweenPredicates.TimeBetweenPredicate(dataType, (type.TIME)type.DataType.wrap(a), (type.TIME)type.DataType.wrap(b), false);
+      return new BetweenPredicates.TimeBetweenPredicate(dataType, type.DataType.wrap(a), type.DataType.wrap(b), false);
     }
 
     public static Predicate LIKE(final kind.CHAR a, final String b) {

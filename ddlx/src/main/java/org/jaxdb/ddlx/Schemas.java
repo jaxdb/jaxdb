@@ -131,12 +131,7 @@ public final class Schemas {
     return counts;
   }
 
-  private static final Comparator<$Table> tableNameComparator = new Comparator<$Table>() {
-    @Override
-    public int compare(final $Table o1, final $Table o2) {
-      return o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
-    }
-  };
+  private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
 
   private static Schema topologicalSort(final Schema schema) {
     final List<$Table> tables = new ArrayList<>(schema.getTable());

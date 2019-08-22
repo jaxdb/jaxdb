@@ -287,7 +287,7 @@ public class Generator {
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + String.valueOf(type.getDefault$().text()), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);
@@ -516,7 +516,7 @@ public class Generator {
     }
     out.append("\n    }");
 
-    eq.setLength(0);;
+    eq.setLength(0);
     if (equalsColumns != null && equalsColumns.size() > 0) {
       out.append("\n\n");
       out.append("    @").append(Override.class.getName()).append("\n");

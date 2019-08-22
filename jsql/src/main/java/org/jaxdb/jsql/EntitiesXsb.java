@@ -70,7 +70,7 @@ final class EntitiesXsb {
       else if ($Datetime.class.isAssignableFrom(type))
         dataType.set(LocalDateTime.parse((String)value));
       else if ($Enum.class.isAssignableFrom(type)) {
-        for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
+        for (final Object constant : dataType.type().getEnumConstants()) {
           if (constant.toString().equals(value)) {
             dataType.set(constant);
             break;

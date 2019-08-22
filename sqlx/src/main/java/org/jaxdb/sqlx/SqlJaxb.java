@@ -27,6 +27,7 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -58,8 +59,8 @@ import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
 import org.libj.net.URLs;
 import org.libj.util.ArrayIntList;
-import org.libj.util.ClassLoaders;
 import org.libj.util.ArrayUtil;
+import org.libj.util.ClassLoaders;
 import org.libj.util.CollectionUtil;
 import org.libj.util.Identifiers;
 import org.libj.util.IntList;
@@ -277,17 +278,14 @@ final class SqlJaxb {
     catch (final ClassNotFoundException e) {
       final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          try {
-            FileUtil.deleteAll(sqlxTempDir.toPath());
-          }
-          catch (final IOException e) {
-            throw new IllegalStateException(e);
-          }
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          FileUtil.deleteAll(sqlxTempDir.toPath());
         }
-      });
+        catch (final IOException e12) {
+          throw new IllegalStateException(e12);
+        }
+      }));
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
@@ -330,7 +328,7 @@ final class SqlJaxb {
 
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(command.getDestDir().toPath())
-      .map(p -> p.toFile())
+      .map(Path::toFile)
       .filter(f -> f.getName().endsWith(".java"))
       .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
 

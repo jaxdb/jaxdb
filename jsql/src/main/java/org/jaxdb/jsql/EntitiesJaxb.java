@@ -71,7 +71,7 @@ final class EntitiesJaxb {
         else if (column instanceof dt.TIME)
           dataType.set(LocalTime.parse((String)value));
         else if (column instanceof dt.ENUM) {
-          for (final Object constant : ((type.ENUM)dataType).type().getEnumConstants()) {
+          for (final Object constant : dataType.type().getEnumConstants()) {
             if (constant.toString().equals(value)) {
               dataType.set(constant);
               break;

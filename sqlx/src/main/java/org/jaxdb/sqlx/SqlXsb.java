@@ -299,17 +299,14 @@ final class SqlXsb {
     catch (final Throwable t) {
       final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          try {
-            FileUtil.deleteAll(sqlxTempDir.toPath());
-          }
-          catch (final IOException e) {
-            throw new IllegalStateException(e);
-          }
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          FileUtil.deleteAll(sqlxTempDir.toPath());
         }
-      });
+        catch (final IOException e) {
+          throw new IllegalStateException(e);
+        }
+      }));
 
       xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
 

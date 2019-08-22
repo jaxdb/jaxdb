@@ -16,8 +16,8 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -25,10 +25,6 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.sql.SQLException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.libj.math.BigDecimals;
-import org.libj.math.SafeMath;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -43,6 +39,10 @@ import org.jaxdb.jsql.types;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.jaxdb.vendor.DBVendor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.libj.math.BigDecimals;
+import org.libj.math.SafeMath;
 
 public abstract class NumericFunctionDynamicTest {
   @RunWith(VendorSchemaRunner.class)
@@ -497,10 +497,10 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(clone.tinyintType.get() == null ? null : (byte)(clone.tinyintType.get() % integer), t.tinyintType.get());
       assertEquals(clone.smallintType.get() == null ? null : (short)(clone.smallintType.get() % integer), t.smallintType.get());
-      assertEquals(clone.intType.get() == null ? null : (int)(clone.intType.get() % integer), t.intType.get());
-      assertEquals(clone.bigintType.get() == null ? null : (long)(clone.bigintType.get() % integer), t.bigintType.get());
-      assertEquals(clone.floatType.get() == null ? null : (float)(clone.floatType.get() % integer), t.floatType.get());
-      assertEquals(clone.doubleType.get() == null ? null : (double)(clone.doubleType.get() % integer), t.doubleType.get());
+      assertEquals(clone.intType.get() == null ? null : clone.intType.get() % integer, t.intType.get());
+      assertEquals(clone.bigintType.get() == null ? null : clone.bigintType.get() % integer, t.bigintType.get());
+      assertEquals(clone.floatType.get() == null ? null : clone.floatType.get() % integer, t.floatType.get());
+      assertEquals(clone.doubleType.get() == null ? null : clone.doubleType.get() % integer, t.doubleType.get());
       assertEquals(clone.decimalType.get() == null ? null : clone.decimalType.get().remainder(BigDecimal.valueOf(integer)), t.decimalType.get());
     }
   }
@@ -541,10 +541,10 @@ public abstract class NumericFunctionDynamicTest {
 
       assertEquals(clone.tinyintType.get() == null ? null : (byte)(clone.tinyintType.get() % clone.tinyintType.get()), t.tinyintType.get());
       assertEquals(clone.smallintType.get() == null ? null : (short)(clone.smallintType.get() % clone.smallintType.get()), t.smallintType.get());
-      assertEquals(clone.intType.get() == null ? null : (int)(clone.intType.get() % clone.intType.get()), t.intType.get());
-      assertEquals(clone.bigintType.get() == null ? null : (long)(clone.bigintType.get() % clone.bigintType.get()), t.bigintType.get());
-      assertEquals(clone.floatType.get() == null ? null : (float)(clone.floatType.get() % clone.floatType.get()), t.floatType.get());
-      assertEquals(clone.doubleType.get() == null ? null : (double)(clone.doubleType.get() % clone.doubleType.get()), t.doubleType.get());
+      assertEquals(clone.intType.get() == null ? null : (clone.intType.get() % clone.intType.get()), t.intType.get());
+      assertEquals(clone.bigintType.get() == null ? null : (clone.bigintType.get() % clone.bigintType.get()), t.bigintType.get());
+      assertEquals(clone.floatType.get() == null ? null : (clone.floatType.get() % clone.floatType.get()), t.floatType.get());
+      assertEquals(clone.doubleType.get() == null ? null : (clone.doubleType.get() % clone.doubleType.get()), t.doubleType.get());
       assertEquals(clone.decimalType.get() == null ? null : clone.decimalType.get().remainder(clone.decimalType.get()), t.decimalType.get());
     }
   }

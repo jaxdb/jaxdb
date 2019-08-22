@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Objects;
@@ -51,7 +52,7 @@ public abstract class JSqlTest {
     new Generator(url).generate(name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(destDir.toPath())
-      .map(p -> p.toFile())
+      .map(Path::toFile)
       .filter(f -> f.getName().endsWith(".java"))
       .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
 
@@ -60,12 +61,7 @@ public abstract class JSqlTest {
 
   @SuppressWarnings("unchecked")
   protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
-    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
-      @Override
-      public Connection getConnection() throws SQLException {
-        return connection;
-      }
-    });
+    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
@@ -87,12 +83,7 @@ public abstract class JSqlTest {
 
   @SuppressWarnings("unchecked")
   protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
-    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), new Connector() {
-      @Override
-      public Connection getConnection() throws SQLException {
-        return connection;
-      }
-    });
+    Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);

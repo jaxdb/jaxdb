@@ -73,7 +73,7 @@ class MySQLCompiler extends Compiler {
         buffer += "DELIMITER";
       }
 
-      statements.add(new CreateStatement(buffer.toString()));
+      statements.add(new CreateStatement(buffer));
     }
 
     statements.addAll(super.triggers(table));

@@ -39,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
@@ -412,26 +411,23 @@ abstract class Compiler {
           column.generateOnUpdate.generate(column);
 
         if (column.indirection != null) {
-          compilation.afterExecute(new Consumer<Boolean>() {
-            @Override
-            public void accept(final Boolean success) {
-              if (success) {
-                final Object evaluated = column.evaluate(new IdentityHashSet<Evaluable>());
-                if (evaluated == null) {
-                  column.value = null;
-                }
-                else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
-                  throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
-                }
-                else if (column.type() != evaluated.getClass()) {
-                  if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
-                    column.value = Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type());
-                  else
-                    throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
-                }
-                else {
-                  column.value = evaluated;
-                }
+          compilation.afterExecute(success -> {
+            if (success) {
+              final Object evaluated = column.evaluate(new IdentityHashSet<Evaluable>());
+              if (evaluated == null) {
+                column.value = null;
+              }
+              else if (column instanceof kind.Numeric.UNSIGNED && ((Number)evaluated).doubleValue() < 0) {
+                throw new IllegalStateException("Attempted to assign negative value to UNSIGNED " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+              }
+              else if (column.type() != evaluated.getClass()) {
+                if (evaluated instanceof Number && Number.class.isAssignableFrom(column.type()))
+                  column.value = Numbers.valueOf((Number)evaluated, (Class<? extends Number>)column.type());
+                else
+                  throw new IllegalStateException("Value exceeds bounds of type " + type.DataType.getShortName(column.getClass()) + ": " + evaluated);
+              }
+              else {
+                column.value = evaluated;
               }
             }
           });
