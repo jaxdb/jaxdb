@@ -45,7 +45,7 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  protected $Column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+  protected $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $Column column;
     if (typeName.startsWith("BIGINT")) {
       final $Bigint type = newColumn($Bigint.class);
@@ -67,7 +67,7 @@ class SQLiteDecompiler extends Decompiler {
       final $Binary type = newColumn($Binary.class);
       final Long length = getLength(typeName);
       if (length != null)
-        type.setLength$(new $Binary.Length$(length.intValue()));
+        type.setLength$(new $Binary.Length$(length));
 
       column = type;
     }
@@ -93,7 +93,7 @@ class SQLiteDecompiler extends Decompiler {
 
       final Long length = getLength(typeName);
       if (length != null)
-        type.setLength$(new $Char.Length$(length.intValue()));
+        type.setLength$(new $Char.Length$(length));
 
       if (_default != null)
         type.setDefault$(new $Char.Default$(_default.substring(1, _default.length() - 1)));

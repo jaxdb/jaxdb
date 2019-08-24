@@ -59,7 +59,7 @@ final class DerbyDecompiler extends Decompiler {
   }
 
   @Override
-  protected $Column makeColumn(final String columnName, final String typeName, final int size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+  protected $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $Column column;
     if ("BIGINT".equals(typeName)) {
       final $Bigint type = newColumn($Bigint.class);
@@ -82,7 +82,7 @@ final class DerbyDecompiler extends Decompiler {
     }
     else if ("BLOB".equals(typeName)) {
       final $Blob type = newColumn($Blob.class);
-      type.setLength$(new $Blob.Length$((long)size));
+      type.setLength$(new $Blob.Length$(size));
       column = type;
     }
     else if ("BOOLEAN".equals(typeName)) {
@@ -105,7 +105,7 @@ final class DerbyDecompiler extends Decompiler {
     }
     else if ("CLOB".equals(typeName)) {
       final $Clob type = newColumn($Clob.class);
-      type.setLength$(new $Clob.Length$((long)size));
+      type.setLength$(new $Clob.Length$(size));
       column = type;
     }
     else if ("DATE".equals(typeName)) {

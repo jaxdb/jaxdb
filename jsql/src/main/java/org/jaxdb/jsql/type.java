@@ -488,10 +488,10 @@ public final class type {
 
     protected static final Class<byte[]> type = byte[].class;
 
-    private final int length;
+    private final long length;
     private final boolean varying;
 
-    protected BINARY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final Integer length, final boolean varying) {
+    protected BINARY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final byte[] _default, final GenerateOn<? super byte[]> generateOnInsert, final GenerateOn<? super byte[]> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       checkLength(length);
       this.length = length;
@@ -504,14 +504,14 @@ public final class type {
       this.varying = copy.varying;
     }
 
-    public BINARY(final int length, final boolean varying) {
+    public BINARY(final long length, final boolean varying) {
       super();
       checkLength(length);
       this.length = length;
       this.varying = varying;
     }
 
-    public BINARY(final int length) {
+    public BINARY(final long length) {
       this(length, false);
     }
 
@@ -522,12 +522,12 @@ public final class type {
       set(value);
     }
 
-    private void checkLength(final int length) {
+    private void checkLength(final long length) {
       if (length <= 0)
         throw new IllegalArgumentException(getShortName(getClass()) + " illegal length: " + length);
     }
 
-    public final int length() {
+    public final long length() {
       return length;
     }
 
@@ -770,7 +770,7 @@ public final class type {
 
     private final boolean varying;
 
-    protected CHAR(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final int length, final boolean varying) {
+    protected CHAR(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final String _default, final GenerateOn<? super String> generateOnInsert, final GenerateOn<? super String> generateOnUpdate, final boolean keyForUpdate, final long length, final boolean varying) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate, length);
       this.varying = varying;
       checkLength(length);
@@ -781,7 +781,7 @@ public final class type {
       this.varying = copy.varying;
     }
 
-    public CHAR(final int length, final boolean varying) {
+    public CHAR(final long length, final boolean varying) {
       super((short)length);
       this.varying = varying;
       checkLength(length);
@@ -806,7 +806,7 @@ public final class type {
       this.varying = true;
     }
 
-    protected final void checkLength(final int length) {
+    protected final void checkLength(final long length) {
       if (length < 0 || (!varying() && length == 0) || length > 65535)
         throw new IllegalArgumentException(getShortName(getClass()) + " length [1, 65535] exceeded: " + length);
     }
@@ -820,7 +820,7 @@ public final class type {
       if (length() == null)
         throw new UnsupportedOperationException("Cannot declare a CHAR with null length");
 
-      return vendor.getDialect().compileChar(varying, length());
+      return vendor.getDialect().compileChar(varying, length() == null ? 1l : length());
     }
 
     @Override
@@ -3316,7 +3316,7 @@ public final class type {
   public static abstract class Textual<T extends Comparable<?>> extends DataType<T> implements kind.Textual<T>, Comparable<Textual<?>> {
     private final Short length;
 
-    protected Textual(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final int length) {
+    protected Textual(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate, final long length) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
       this.length = (short)length;
     }

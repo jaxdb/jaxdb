@@ -191,7 +191,7 @@
     <xs:attribute name="default" type="dt:char"/>
     <xs:attribute name="length" use="required">
       <xs:simpleType>
-        <xs:restriction base="xs:positiveInteger">
+        <xs:restriction base="xs:unsignedInt">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="4294967295"/>
         </xs:restriction>
@@ -213,7 +213,7 @@
   <xs:attributeGroup name="clob">
     <xs:attribute name="length">
       <xs:simpleType>
-        <xs:restriction base="xs:long">
+        <xs:restriction base="xs:unsignedInt">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="4294967295"/>
         </xs:restriction>
@@ -237,7 +237,7 @@
   <xs:attributeGroup name="binary">
     <xs:attribute name="length" use="required">
       <xs:simpleType>
-        <xs:restriction base="xs:positiveInteger">
+        <xs:restriction base="xs:unsignedInt">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="2000000000"/>
         </xs:restriction>
@@ -250,7 +250,7 @@
   <xs:attributeGroup name="blob">
     <xs:attribute name="length">
       <xs:simpleType>
-        <xs:restriction base="xs:long">
+        <xs:restriction base="xs:unsignedInt">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="4294967295"/>
         </xs:restriction>

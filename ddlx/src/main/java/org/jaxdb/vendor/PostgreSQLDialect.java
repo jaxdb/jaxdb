@@ -109,7 +109,7 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return "BYTEA";
   }
 
@@ -129,7 +129,7 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 

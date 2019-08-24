@@ -216,7 +216,7 @@ abstract class Decompiler {
   }
 
   protected abstract DBVendor getVendor();
-  protected abstract $Column makeColumn(String columnName, String typeName, int size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
+  protected abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
   protected abstract Map<String,List<$Check>> getCheckConstraints(Connection connection) throws SQLException;
   protected abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
   protected abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;

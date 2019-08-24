@@ -102,10 +102,10 @@ public abstract class Dialect {
 
   public abstract boolean allowsUnsignedNumeric();
 
-  protected abstract String declareBinary(boolean varying, int length);
+  protected abstract String declareBinary(boolean varying, long length);
   protected abstract Integer binaryMaxLength();
-  public String compileBinary(final boolean varying, final Integer length) {
-    if (length != null && binaryMaxLength() != null && length > binaryMaxLength())
+  public String compileBinary(final boolean varying, final long length) {
+    if (binaryMaxLength() != null && length > binaryMaxLength())
       throw new IllegalArgumentException("BINARY length of " + length + " exceeds max of " + binaryMaxLength() + " allowed by " + getVendor());
 
     return declareBinary(varying, length);
@@ -122,13 +122,13 @@ public abstract class Dialect {
 
   public abstract String declareBoolean();
 
-  protected abstract String declareChar(boolean varying, int length);
+  protected abstract String declareChar(boolean varying, long length);
   protected abstract Integer charMaxLength();
-  public String compileChar(final boolean varying, final int length) {
-    if (charMaxLength() != null && length > charMaxLength())
+  public String compileChar(final boolean varying, final Long length) {
+    if (length != null && charMaxLength() != null && length > charMaxLength())
       throw new IllegalArgumentException("CHAR length of " + length + " exceeds max of " + charMaxLength() + " allowed by " + getVendor());
 
-    return declareChar(varying, length);
+    return declareChar(varying, length == null ? 1l : length);
   }
 
   protected abstract String declareClob(Long length);

@@ -116,7 +116,7 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
   }
 
@@ -142,7 +142,7 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 

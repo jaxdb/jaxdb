@@ -109,7 +109,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return "VARBINARY" + "(" + length + ")";
   }
 
@@ -131,7 +131,7 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return varying && length <= 255 ? "CHAR(" + length + ")" : "VARCHAR(" + length + ")";
   }
 

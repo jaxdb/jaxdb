@@ -111,7 +111,7 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return (varying ? "VAR" : "") + "CHAR(" + length + ") FOR BIT DATA";
   }
 
@@ -133,7 +133,7 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 

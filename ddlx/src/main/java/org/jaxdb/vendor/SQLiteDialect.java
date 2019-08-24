@@ -108,7 +108,7 @@ public class SQLiteDialect extends Dialect {
 
   // FIXME: Could not find a definitive spec for BINARY/BLOB
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return "BINARY" + "(" + length + ")";
   }
 
@@ -129,7 +129,7 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHARACTER") + "(" + length + ")";
   }
 

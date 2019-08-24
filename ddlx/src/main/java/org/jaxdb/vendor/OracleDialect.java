@@ -110,7 +110,7 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final int length) {
+  protected String declareBinary(final boolean varying, final long length) {
     return (length > 2000 ? "LONG RAW" : "RAW") + "(" + length + ")";
   }
 
@@ -132,7 +132,7 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  protected String declareChar(final boolean varying, final int length) {
+  protected String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR2" : "CHAR") + "(" + (length == 1 ? 2 : length) + " CHAR)";
   }
 
