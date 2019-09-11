@@ -102,7 +102,7 @@ final class OracleCompiler extends Compiler {
           final $Integer type = ($Integer)column;
           if (isAutoIncrement(type)) {
             final String sequenceName = SQLDataTypes.getSequenceName(table, type);
-            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + sequenceName + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
+            statements.add(0, new CreateStatement("CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(table, type)) + " BEFORE INSERT ON " + q(table.getName$().text()) + " FOR EACH ROW when (" + "new." + q(column.getName$().text()) + " IS NULL) BEGIN SELECT " + q(sequenceName) + ".NEXTVAL INTO " + ":new." + q(column.getName$().text()) + " FROM dual; END;"));
           }
         }
       }
