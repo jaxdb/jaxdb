@@ -37,7 +37,7 @@ public class MySQL implements Vendor {
   public synchronized void init() throws IOException, SQLException {
 //  CREATE USER jaxdb;
 //  CREATE DATABASE jaxdb;
-//  GRANT ALL ON jaxdb.* TO 'jaxdb'@'localhost' IDENTIFIED BY 'jaxdb';
+//  GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
     new Driver();
   }
 
