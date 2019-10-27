@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx.runner;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,13 +25,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
 public class Oracle implements Vendor {
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.ORACLE;
-  }
-
-  @Override
-  public synchronized void init() throws IOException, SQLException {
+  public Oracle() {
     // NOTE: If TimeZone.setDefault() is not called:
     // NOTE: ORA-00604: error occurred at recursive SQL level 1
     // NOTE: ORA-01882: timezone region not found
@@ -49,5 +42,10 @@ public class Oracle implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.ORACLE;
   }
 }

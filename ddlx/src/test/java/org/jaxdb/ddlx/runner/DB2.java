@@ -28,14 +28,8 @@ import com.ibm.db2.jcc.DB2BaseDataSource;
 import com.ibm.db2.jcc.DB2Driver;
 
 public class DB2 implements Vendor {
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.DB2;
-  }
-
-  @Override
   @SuppressWarnings("unused")
-  public synchronized void init() throws IOException, SQLException {
+  public DB2() throws IOException, SQLException {
     new DB2Driver();
   }
 
@@ -46,5 +40,10 @@ public class DB2 implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.DB2;
   }
 }

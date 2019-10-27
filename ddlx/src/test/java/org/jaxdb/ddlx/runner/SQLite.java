@@ -34,13 +34,7 @@ import org.libj.util.zip.ZipFiles;
 public class SQLite implements Vendor {
   private static final File db = new File("target/generated-test-resources/jaxdb/sqlite.db");
 
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.SQLITE;
-  }
-
-  @Override
-  public synchronized void init() throws IOException, SQLException {
+  public SQLite() throws IOException {
     final File classes = new File("target/classes/sqlite.db");
     if (classes.exists() && !FileUtil.deleteAll(classes.toPath()))
       throw new IOException("Unable to delete " + db.getPath());
@@ -78,5 +72,10 @@ public class SQLite implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.SQLITE;
   }
 }

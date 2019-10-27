@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx.runner;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -28,13 +27,7 @@ import com.mysql.cj.jdbc.Driver;
 
 @SuppressWarnings("unused")
 public class MySQL implements Vendor {
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.MY_SQL;
-  }
-
-  @Override
-  public synchronized void init() throws IOException, SQLException {
+  public MySQL() throws SQLException {
 //  CREATE USER jaxdb;
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
@@ -49,5 +42,10 @@ public class MySQL implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.MY_SQL;
   }
 }

@@ -36,49 +36,49 @@ import org.slf4j.LoggerFactory;
 
 public class Derby implements Vendor {
   protected static final Logger logger = LoggerFactory.getLogger(Derby.class);
-  private static final File db = new File("target/generated-test-resources/jaxdb/derby.db");
-  private static final File[] dbPaths = new File[] {new File("target/classes/derby.db"), new File("target/classes/derby.db")};
+  private static final File[] dbPaths = new File[] {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
 
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.DERBY;
+  private final File location;
+
+  public Derby() throws IOException, SQLException {
+    this(new File("target/generated-test-resources/jaxdb/derby.db"), false);
   }
 
-  @Override
   @SuppressWarnings("unused")
-  public synchronized void init() throws IOException, SQLException {
+  public Derby(final File location, final boolean forceCreate) throws IOException, SQLException {
+    this.location = location;
     new EmbeddedDriver();
     for (final File dbPath : dbPaths)
       if (dbPath.exists() && !FileUtil.deleteAll(dbPath.toPath()))
         throw new IOException("Unable to delete " + dbPath.getPath());
 
-    if (db.exists() && new File(db, "seg0").exists())
+    if (location.exists() && new File(location, "seg0").exists())
       return;
 
-    final URL url = ClassLoader.getSystemClassLoader().getResource("derby.db");
-    if (url != null) {
+    final URL url;
+    if (!forceCreate && (url = ClassLoader.getSystemClassLoader().getResource("derby.db")) != null) {
       logger.info("Copying Derby DB from: " + url);
-      db.getParentFile().mkdirs();
+      location.getParentFile().mkdirs();
       if (URLs.isJar(url)) {
         final JarFile jarFile = new JarFile(URLs.getJarURL(url).getPath());
         final String path = URLs.getJarPath(url);
-        ZipFiles.extract(jarFile, db.getParentFile(), f -> f.getName().startsWith(path));
+        ZipFiles.extract(jarFile, location.getParentFile(), f -> f.getName().startsWith(path));
       }
       else {
-        FileUtil.copyAll(new File(url.getPath()).toPath(), db.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        FileUtil.copyAll(new File(url.getPath()).toPath(), location.toPath(), StandardCopyOption.REPLACE_EXISTING);
       }
     }
     else {
       logger.info("Creating new Derby DB");
-      new AuditConnection(DriverManager.getConnection("jdbc:derby:" + db.getPath() + ";create=true"));
+      new AuditConnection(DriverManager.getConnection("jdbc:derby:" + location.getPath() + ";create=true"));
     }
 
-    new File(db, "tmp").mkdir();
+    new File(location, "tmp").mkdir();
   }
 
   @Override
   public Connection getConnection() throws IOException, SQLException {
-    return new AuditConnection(DriverManager.getConnection("jdbc:derby:" + db.getPath()));
+    return new AuditConnection(DriverManager.getConnection("jdbc:derby:" + location.getPath()));
   }
 
   @Override
@@ -94,5 +94,10 @@ public class Derby implements Vendor {
     }
 
     new File("derby.log").deleteOnExit();
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.DERBY;
   }
 }

@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx.runner;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,15 +24,8 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 import org.postgresql.Driver;
 
-@SuppressWarnings("unused")
 public class PostgreSQL implements Vendor {
-  @Override
-  public DBVendor getDBVendor() {
-    return DBVendor.POSTGRE_SQL;
-  }
-
-  @Override
-  public synchronized void init() throws IOException, SQLException {
+  public PostgreSQL() {
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
@@ -47,5 +39,10 @@ public class PostgreSQL implements Vendor {
 
   @Override
   public void destroy() throws SQLException {
+  }
+
+  @Override
+  public DBVendor getDBVendor() {
+    return DBVendor.POSTGRE_SQL;
   }
 }

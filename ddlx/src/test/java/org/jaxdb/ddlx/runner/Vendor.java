@@ -24,7 +24,6 @@ import org.jaxdb.vendor.DBVendor;
 
 public interface Vendor {
   DBVendor getDBVendor();
-  void init() throws IOException, SQLException;
   Connection getConnection() throws IOException, SQLException;
   void destroy() throws IOException, SQLException;
 }

@@ -92,10 +92,8 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   protected org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
     org.jaxdb.ddlx.runner.Vendor vendor = vendors.get(vendorClass);
-    if (vendor == null) {
+    if (vendor == null)
       vendors.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());
-      vendor.init();
-    }
 
     return vendor;
   }
