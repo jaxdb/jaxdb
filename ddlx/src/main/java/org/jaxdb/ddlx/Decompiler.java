@@ -55,21 +55,23 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
+import org.libj.util.function.Throwing;
 
 abstract class Decompiler {
   private static final Decompiler[] decompilers = new Decompiler[DBVendor.values().length];
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage());
-      for (final Class<?> cls : classes) {
-        if (Decompiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Decompiler decompiler = (Decompiler)cls.getDeclaredConstructor().newInstance();
+      PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage(), Throwing.<Class<?>>rethrow((c) -> {
+        if (Decompiler.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
+          final Decompiler decompiler = (Decompiler)c.getDeclaredConstructor().newInstance();
           decompilers[decompiler.getVendor().ordinal()] = decompiler;
         }
-      }
+
+        return false;
+      }));
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IOException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }

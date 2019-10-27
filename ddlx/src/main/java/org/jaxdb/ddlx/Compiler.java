@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,7 +26,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
@@ -60,21 +58,23 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.Numbers;
+import org.libj.util.function.Throwing;
 
 abstract class Compiler {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
     try {
-      final Set<Class<?>> classes = PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage());
-      for (final Class<?> cls : classes) {
-        if (Compiler.class.isAssignableFrom(cls) && !Modifier.isAbstract(cls.getModifiers())) {
-          final Compiler compiler = (Compiler)cls.getDeclaredConstructor().newInstance();
+      PackageLoader.getContextPackageLoader().loadPackage(Compiler.class.getPackage(), Throwing.<Class<?>>rethrow((c) -> {
+        if (Compiler.class.isAssignableFrom(c) && !Modifier.isAbstract(c.getModifiers())) {
+          final Compiler compiler = (Compiler)c.getDeclaredConstructor().newInstance();
           compilers[compiler.getVendor().ordinal()] = compiler;
         }
-      }
+
+        return false;
+      }));
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IOException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
     }
   }
