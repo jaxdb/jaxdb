@@ -102,6 +102,13 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
+  protected void onConnect(final Connection connection) throws SQLException {
+    try (final Statement statement = connection.createStatement()) {
+      statement.execute("SET SCHEMA APP");
+    }
+  }
+
+  @Override
   protected void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       createFunction(statement, "CREATE FUNCTION LOG(b DOUBLE, n DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");

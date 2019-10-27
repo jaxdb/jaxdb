@@ -142,6 +142,8 @@ abstract class Compiler {
 
   protected abstract void onRegister(Connection connection) throws SQLException;
 
+  protected abstract void onConnect(Connection connection) throws SQLException;
+
   protected static <T extends kind.DataType<?>> Compilable compilable(final T kind) {
     return (Compilable)kind;
   }

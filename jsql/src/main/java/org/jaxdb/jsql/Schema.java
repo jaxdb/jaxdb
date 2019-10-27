@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.WeakHashMap;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.exception.SQLExceptions;
@@ -25,7 +26,8 @@ import org.libj.sql.exception.SQLInvalidSchemaNameException;
 import org.libj.util.ConcurrentHashSet;
 
 public abstract class Schema {
-  private static final ConcurrentHashSet<Class<? extends Schema>> inited = new ConcurrentHashSet<>();
+  private static final ConcurrentHashSet<Class<? extends Schema>> registered = new ConcurrentHashSet<>();
+  private static final WeakHashMap<Connection,Boolean> connected = new WeakHashMap<>();
 
   protected static DBVendor getDBVendor(final Connection connection) throws SQLException {
     if (connection == null)
@@ -67,12 +69,21 @@ public abstract class Schema {
 
     try {
       final Connection connection = dataSource.getConnection();
+      if (!connected.containsKey(connection)) {
+        synchronized (connection) {
+          if (!connected.containsKey(connection)) {
+            Compiler.getCompiler(getDBVendor(connection)).onConnect(connection);
+            connected.put(connection, Boolean.TRUE);
+          }
+        }
+      }
+
       final Class<? extends Schema> key = schema != null ? schema : NULL;
-      if (!inited.contains(key)) {
+      if (!registered.contains(key)) {
         synchronized (key) {
-          if (!inited.contains(key)) {
+          if (!registered.contains(key)) {
             Compiler.getCompiler(getDBVendor(connection)).onRegister(connection);
-            inited.add(key);
+            registered.add(key);
           }
         }
       }

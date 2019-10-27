@@ -42,6 +42,10 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
+  protected void onConnect(final Connection connection) throws SQLException {
+  }
+
+  @Override
   protected void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       final StringBuilder modulus = new StringBuilder("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");

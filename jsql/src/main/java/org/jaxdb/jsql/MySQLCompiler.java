@@ -35,6 +35,10 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
+  protected void onConnect(final Connection connection) throws SQLException {
+  }
+
+  @Override
   protected void onRegister(final Connection connection) throws SQLException {
   }
 
