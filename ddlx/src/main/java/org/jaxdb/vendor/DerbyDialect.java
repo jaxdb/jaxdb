@@ -111,8 +111,8 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
-    return (varying ? "VAR" : "") + "CHAR(" + length + ") FOR BIT DATA";
+  protected String declareBinary(boolean varying, final long length) {
+    return declareChar(varying || length > CHAR_MAX_LENGTH, length) + " FOR BIT DATA";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj30118.html
@@ -132,9 +132,18 @@ public class DerbyDialect extends Dialect {
     return 2147483647l;
   }
 
+  // https://builds.apache.org/job/Derby-docs/lastSuccessfulBuild/artifact/trunk/out/ref/rrefstringlimits.html
+  private static final int VARCHAR_MAX_LENGTH = 32672;
+  private static final int CHAR_MAX_LENGTH = 254;
+
   @Override
   protected String declareChar(final boolean varying, final long length) {
-    return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
+    final String type = varying ? "VARCHAR" : "CHAR";
+    final int maxLength = varying ? VARCHAR_MAX_LENGTH : CHAR_MAX_LENGTH;
+    if (length > maxLength)
+      throw new IllegalArgumentException("Maximum length of " + type + " (" + maxLength + ") exceeded: " + length);
+
+    return type + "(" + length + ")";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj41207.html
@@ -145,7 +154,13 @@ public class DerbyDialect extends Dialect {
 
   @Override
   protected String declareClob(final Long length) {
-    return "CLOB" + (length != null ? "(" + length + ")" : "");
+    if (length == null)
+      return "CLOB";
+
+    if (length > 2147483647)
+      throw new IllegalArgumentException("Maximum length of CLOB (2147483647) exceeded: " + length);
+
+    return "CLOB" + "(" + length + ")";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
