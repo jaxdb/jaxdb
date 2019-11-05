@@ -491,7 +491,7 @@
               </xsl:for-each>
             </xs:key>
           </xsl:if>
-          <xsl:for-each select="ddlx:constraints/ddlx:unique">
+          <xsl:for-each select="ddlx:constraints/ddlx:unique | ddlx:column/ddlx:index[@unique='true']">
             <xsl:variable name="index" select="position()"/>
             <xs:unique>
               <xsl:attribute name="name">
@@ -502,13 +502,22 @@
                   <xsl:value-of select="concat('ns:insert/ns:', function:instance-case($tableName))"/>
                 </xsl:attribute>
               </xs:selector>
-              <xsl:for-each select="ddlx:column">
+              <xsl:if test="ddlx:column">
+                <xsl:for-each select="ddlx:column">
+                  <xs:field>
+                    <xsl:attribute name="xpath">
+                      <xsl:value-of select="concat('@', function:instance-case(@name))"/>
+                    </xsl:attribute>
+                  </xs:field>
+                </xsl:for-each>
+              </xsl:if>
+              <xsl:if test="local-name()='index'">
                 <xs:field>
                   <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('@', function:instance-case(@name))"/>
+                    <xsl:value-of select="concat('@', function:instance-case(../@name))"/>
                   </xsl:attribute>
                 </xs:field>
-              </xsl:for-each>
+              </xsl:if>
             </xs:unique>
           </xsl:for-each>
           <xsl:for-each select="ddlx:column">
