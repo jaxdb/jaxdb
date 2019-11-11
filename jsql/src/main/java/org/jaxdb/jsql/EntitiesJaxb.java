@@ -34,7 +34,6 @@ import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Schema;
 import org.jaxdb.ddlx.annotation.Table;
 import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Insert;
 import org.jaxdb.sqlx_0_4.Row;
 import org.libj.util.Identifiers;
 
@@ -92,11 +91,11 @@ final class EntitiesJaxb {
   @SuppressWarnings("unchecked")
   public static <T extends type.Entity>T[] toEntities(final Database database) {
     try {
+      final Class<?> cls = database.getClass();
       final List<type.Entity> entities = new ArrayList<>();
-      final Insert insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
-      final XmlType xmlType = insert.getClass().getAnnotation(XmlType.class);
+      final XmlType xmlType = cls.getAnnotation(XmlType.class);
       for (final String tableName : xmlType.propOrder())
-        for (final Row row : (List<Row>)insert.getClass().getMethod("get" + Identifiers.toClassCase(tableName)).invoke(insert))
+        for (final Row row : (List<Row>)cls.getMethod("get" + Identifiers.toClassCase(tableName)).invoke(database))
           entities.add(toEntity(database, row));
 
       return (T[])entities.toArray(new type.Entity[entities.size()]);

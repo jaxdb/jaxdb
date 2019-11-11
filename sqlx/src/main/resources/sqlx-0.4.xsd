@@ -140,8 +140,13 @@
 
   <xs:complexType name="row" abstract="true"/>
 
-  <xs:complexType name="insert"/>
-
-  <xs:complexType name="database"/>
+  <xs:complexType name="database" abstract="true">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element ref="sqlx:database"/>
+    </xs:sequence>
+    <xs:anyAttribute namespace="http://www.w3.org/XML/1998/namespace" processContents="skip"/>
+  </xs:complexType>
+  
+  <xs:element name="database" type="sqlx:database"/>
 
 </xs:schema>

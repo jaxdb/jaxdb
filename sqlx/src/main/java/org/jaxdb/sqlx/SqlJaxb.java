@@ -37,7 +37,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
@@ -51,7 +50,6 @@ import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
 import org.jaxdb.ddlx.annotation.Table;
 import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Insert;
 import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.io.FileUtil;
@@ -62,13 +60,13 @@ import org.libj.util.ArrayIntList;
 import org.libj.util.ArrayUtil;
 import org.libj.util.ClassLoaders;
 import org.libj.util.CollectionUtil;
+import org.libj.util.FlatIterableIterator;
 import org.libj.util.Identifiers;
 import org.libj.util.IntList;
 import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.jaxb.xjc.XJCompiler;
-import org.openjax.xml.sax.XMLDocument;
-import org.openjax.xml.sax.XMLDocuments;
-import org.xml.sax.SAXException;
+import org.openjax.xml.sax.XMLCatalogHandler;
+import org.openjax.xml.sax.XMLCatalogParser;
 
 final class SqlJaxb {
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
@@ -144,60 +142,60 @@ final class SqlJaxb {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + dataType.getCanonicalName());
   }
 
-  protected static class RowIterator implements Iterator<Row> {
-    private final Insert insert;
-    private final String[] tableNames;
-    private Iterator<Row> rows;
-    private int index = 0;
-
-    public RowIterator(final Insert insert) {
-      this.insert = insert;
-      this.tableNames = insert.getClass().getAnnotation(XmlType.class).propOrder();
-      nextRows();
-    }
-
+  protected static class RowIterator extends FlatIterableIterator<Database,Row> {
     public RowIterator(final Database database) {
-      try {
-        this.insert = (Insert)database.getClass().getMethod("getInsert").invoke(database);
-        this.tableNames = insert.getClass().getAnnotation(XmlType.class).propOrder();
-        nextRows();
-      }
-      catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-        throw new UnsupportedOperationException(e);
-      }
+      super(database);
     }
 
-    @SuppressWarnings("unchecked")
-    private void nextRows() {
-      if (index >= tableNames.length)
-        return;
+    @Override
+    protected Iterator<?> iterator(final Database obj) {
+      return new Iterator<Row>() {
+        private final Database database = obj;
+        private final String[] tableNames = database.getClass().getAnnotation(XmlType.class).propOrder();
+        private Iterator<Row> rows = nextRows();
+        private int index = 0;
 
-      try {
-        do {
-          this.rows = ((List<Row>)insert.getClass().getMethod("get" + Identifiers.toClassCase(tableNames[index++])).invoke(insert)).iterator();
+        @SuppressWarnings("unchecked")
+        private Iterator<Row> nextRows() {
+          if (index == tableNames.length)
+            return null;
+
+          Iterator<Row> rows;
+          try {
+            do {
+              rows = ((Iterable<Row>)database.getClass().getMethod("get" + Identifiers.toClassCase(tableNames[index++])).invoke(database)).iterator();
+            }
+            while (!rows.hasNext() && index < tableNames.length);
+          }
+          catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new UnsupportedOperationException(e);
+          }
+
+          return rows;
         }
-        while (!this.rows.hasNext() && index < tableNames.length);
-      }
-      catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-        throw new UnsupportedOperationException(e);
-      }
+
+        @Override
+        public boolean hasNext() {
+          return rows != null && rows.hasNext();
+        }
+
+        @Override
+        public Row next() {
+          if (rows == null)
+            throw new NoSuchElementException();
+
+          final Row row = rows.next();
+          if (!rows.hasNext())
+            rows = nextRows();
+
+          return row;
+        }
+      };
     }
 
     @Override
-    public boolean hasNext() {
-      return rows != null && rows.hasNext();
-    }
-
-    @Override
-    public Row next() {
-      if (rows == null)
-        throw new NoSuchElementException();
-
-      final Row row = rows.next();
-      if (!rows.hasNext())
-        nextRows();
-
-      return row;
+    protected boolean isIterable(final Object obj) {
+      return obj instanceof Database;
     }
   }
 
@@ -238,38 +236,38 @@ final class SqlJaxb {
     return builder.toString();
   }
 
-  protected static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
+  static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final IntList counts = new ArrayIntList();
 
     try {
       if (!iterator.hasNext())
         return new int[0];
 
+      final IntList counts = new ArrayIntList();
       // TODO: Implement batch.
       while (iterator.hasNext()) {
         try (final Statement statement = connection.createStatement()) {
           counts.add(statement.executeUpdate(loadRow(vendor, iterator.next())));
         }
       }
+
+      return counts.toArray();
     }
     catch (final IllegalAccessException | InvocationTargetException e) {
       throw new UnsupportedOperationException(e);
     }
+  }
 
-    final int[] array = new int[counts.size()];
-    for (int i = 0; i < counts.size(); ++i)
-      array[i] = counts.get(i);
-
-    return array;
+  public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
+    return INSERT(connection, new RowIterator(database));
   }
 
   @SuppressWarnings("unchecked")
-  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, SAXException, UnmarshalException {
+  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, UnmarshalException {
     sqlFile.getParentFile().mkdirs();
 
-    final XMLDocument xmlDocument = XMLDocuments.parse(sqlxFile, false, true);
-    final QName rootElement = xmlDocument.getRootElement();
+    final XMLCatalogHandler handler = XMLCatalogParser.parse(sqlxFile);
+    final QName rootElement = handler.getRootElement();
 
     Class<Database> bindingClass;
     try {
@@ -289,7 +287,7 @@ final class SqlJaxb {
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
-        xsd2jaxb(tempDir, tempDir, xmlDocument.getSchemaLocation());
+        xsd2jaxb(tempDir, tempDir, handler.getImports().get(handler.getRootElement().getNamespaceURI()));
         final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
@@ -298,9 +296,9 @@ final class SqlJaxb {
       }
     }
 
+    final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
+    final RowIterator iterator = new RowIterator(database);
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
-      final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
-      final RowIterator iterator = new RowIterator(database);
       for (int i = 0; iterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');

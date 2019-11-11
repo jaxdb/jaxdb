@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -37,11 +38,7 @@ public abstract class DDLxTest {
   }
 
   public static Schema recreateSchema(final Connection connection, final String ddlx, final boolean unaltered) throws GeneratorExecutionException, IOException, SAXException, SQLException {
-    final Schema schema;
-    try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(ddlx + ".ddlx")) {
-      schema = (Schema)Bindings.parse(new InputSource(in));
-    }
-
+    final Schema schema = (Schema)Bindings.parse(ClassLoader.getSystemClassLoader().getResource(ddlx + ".ddlx"));
     if (!unaltered) {
       final Dialect dialect = DBVendor.valueOf(connection.getMetaData()).getDialect();
       for (final $Table table : schema.getTable())

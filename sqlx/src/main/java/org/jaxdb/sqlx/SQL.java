@@ -29,11 +29,9 @@ import javax.xml.transform.TransformerException;
 
 import org.jaxdb.sqlx.SqlJaxb.RowIterator;
 import org.jaxdb.sqlx_0_4.Database;
-import org.jaxdb.sqlx_0_4.Insert;
 import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Insert;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
 import org.libj.jci.CompilationException;
 import org.openjax.xml.transform.Transformer;
@@ -49,10 +47,6 @@ public final class SQL {
     return SqlJaxb.INSERT(connection, new RowIterator(database));
   }
 
-  public static int[] INSERT(final Connection connection, final Insert insert) throws SQLException {
-    return SqlJaxb.INSERT(connection, new RowIterator(insert));
-  }
-
   public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
     SqlJaxb.xsd2jaxb(sourcesDestDir, classedDestDir, xsds);
   }
@@ -63,10 +57,6 @@ public final class SQL {
 
   public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
     return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(database));
-  }
-
-  public static int[] INSERT(final Connection connection, final $Insert insert) throws SQLException {
-    return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(insert));
   }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {

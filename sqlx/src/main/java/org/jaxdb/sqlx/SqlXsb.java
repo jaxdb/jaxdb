@@ -19,7 +19,6 @@ package org.jaxdb.sqlx;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -30,7 +29,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -53,13 +51,11 @@ import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Smallint;
 import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Time;
 import org.jaxdb.www.datatypes_0_4.xL3gluGCXAA.$Tinyint;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
-import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Insert;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
 import org.jaxsb.compiler.processor.GeneratorContext;
 import org.jaxsb.compiler.processor.reference.SchemaReference;
 import org.jaxsb.generator.Generator;
 import org.jaxsb.runtime.Attribute;
-import org.jaxsb.runtime.Binding;
 import org.jaxsb.runtime.Bindings;
 import org.jaxsb.runtime.Id;
 import org.libj.io.FileUtil;
@@ -68,9 +64,10 @@ import org.libj.util.ArrayIntList;
 import org.libj.util.ArrayUtil;
 import org.libj.util.ClassLoaders;
 import org.libj.util.Classes;
+import org.libj.util.FlatIterableIterator;
 import org.libj.util.IntList;
-import org.openjax.xml.sax.XMLDocument;
-import org.openjax.xml.sax.XMLDocuments;
+import org.openjax.xml.sax.XMLCatalogHandler;
+import org.openjax.xml.sax.XMLCatalogParser;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.xml.sax.SAXException;
 
@@ -149,41 +146,19 @@ final class SqlXsb {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 
-  protected static class RowIterator implements Iterator<$Row> {
-    private static $Insert getInsert(final $Database database) {
-      final Iterator<Binding> interator = database.elementIterator();
-      if (interator.hasNext()) {
-        final Binding binding = interator.next();
-        if (binding instanceof $Insert)
-          return ($Insert)binding;
-
-        throw new UnsupportedOperationException("Unsupported element: " + binding.name());
-      }
-
-      return null;
-    }
-
-    private Iterator<Binding> rows;
-
-    public RowIterator(final $Insert insert) {
-      this.rows = insert.elementIterator();
-    }
-
+  protected static class RowIterator extends FlatIterableIterator<$Database,$Row> {
     public RowIterator(final $Database database) {
-      this(getInsert(database));
+      super(database);
     }
 
     @Override
-    public boolean hasNext() {
-      return rows != null && rows.hasNext();
+    protected Iterator<?> iterator(final $Database obj) {
+      return obj.elementIterator();
     }
 
     @Override
-    public $Row next() {
-      if (rows == null)
-        throw new NoSuchElementException();
-
-      return ($Row)rows.next();
+    protected boolean isIterable(final Object obj) {
+      return obj instanceof $Database;
     }
   }
 
@@ -243,13 +218,13 @@ final class SqlXsb {
     }
   }
 
-  protected static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
+  static int[] INSERT(final Connection connection, final RowIterator iterator) throws SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final IntList counts = new ArrayIntList();
 
     if (!iterator.hasNext())
       return new int[0];
 
+    final IntList counts = new ArrayIntList();
     // TODO: Implement batch.
     while (iterator.hasNext()) {
       try (final Statement statement = connection.createStatement()) {
@@ -257,19 +232,11 @@ final class SqlXsb {
       }
     }
 
-    final int[] array = new int[counts.size()];
-    for (int i = 0; i < counts.size(); ++i)
-      array[i] = counts.get(i);
-
-    return array;
+    return counts.toArray();
   }
 
   public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
     return INSERT(connection, new RowIterator(database));
-  }
-
-  public static int[] INSERT(final Connection connection, final $Insert insert) throws SQLException {
-    return INSERT(connection, new RowIterator(insert));
   }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
@@ -277,7 +244,7 @@ final class SqlXsb {
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
   public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
@@ -285,16 +252,16 @@ final class SqlXsb {
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
-    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null);
+    Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
   public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile, final File[] classpathFiles) throws IOException, SAXException {
     sqlFile.getParentFile().mkdirs();
 
-    final XMLDocument xmlDocument = XMLDocuments.parse(sqlxFile, false, true);
     $Database database;
-    try (final InputStream in = xmlDocument.getURL().openStream()) {
-      database = ($Database)Bindings.parse(in);
+    final XMLCatalogHandler handler = XMLCatalogParser.parse(sqlxFile);
+    try {
+      database = ($Database)Bindings.parse(sqlxFile);
     }
     catch (final Throwable t) {
       final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
@@ -304,25 +271,22 @@ final class SqlXsb {
           FileUtil.deleteAll(sqlxTempDir.toPath());
         }
         catch (final IOException e) {
-          throw new IllegalStateException(e);
         }
       }));
 
-      xsd2xsb(sqlxTempDir, sqlxTempDir, xmlDocument.getSchemaLocation());
+      xsd2xsb(sqlxTempDir, sqlxTempDir, handler.getImports().get(handler.getRootElement().getNamespaceURI()));
 
       final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
-      try (final InputStream in = xmlDocument.getURL().openStream()) {
-        database = ($Database)Bindings.parse(in, classLoader);
-      }
+      database = ($Database)Bindings.parse(sqlxFile, classLoader);
     }
 
+    final RowIterator rowIterator = new RowIterator(database);
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
-      final RowIterator iterator = new RowIterator(database);
-      for (int i = 0; iterator.hasNext(); ++i) {
+      for (int i = 0; rowIterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');
 
-        out.append(loadRow(vendor, iterator.next())).append(';');
+        out.append(loadRow(vendor, rowIterator.next())).append(';');
       }
     }
   }

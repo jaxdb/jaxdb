@@ -37,7 +37,7 @@
   </xsl:variable>
 
   <xsl:variable name="namespace">
-    <xsl:value-of select="concat('sqlx.', $database)"/>
+    <xsl:value-of select="concat('urn:jaxdb:sqlx:', $database)"/>
   </xsl:variable>
 
   <xsl:variable name="xmlns">
@@ -414,10 +414,25 @@
         </xs:complexType>
       </xsl:for-each>
 
-      <xs:complexType name="insert">
+      <xs:complexType>
+        <xsl:attribute name="name">
+          <xsl:value-of select="$database"/>
+        </xsl:attribute>
+        <xs:annotation>
+          <xs:appinfo>
+            <annox:annotate>
+              <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
+            </annox:annotate>
+          </xs:appinfo>
+        </xs:annotation>
         <xs:complexContent>
-          <xs:extension base="sqlx:insert">
+          <xs:extension base="sqlx:database">
             <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="unbounded">
+                <xsl:attribute name="ref">
+                  <xsl:value-of select="concat('ns:', $database)"/>
+                </xsl:attribute>
+              </xs:element>
               <xsl:for-each select="ddlx:table">
                 <xsl:sort select="function:computeWeight(., 0)" data-type="number"/>
                 <xsl:if test="not(@abstract='true')">
@@ -435,26 +450,6 @@
                 </xsl:if>
               </xsl:for-each>
             </xs:sequence>
-          </xs:extension>
-        </xs:complexContent>
-      </xs:complexType>
-
-      <xs:complexType>
-        <xsl:attribute name="name">
-          <xsl:value-of select="$database"/>
-        </xsl:attribute>
-        <xs:annotation>
-          <xs:appinfo>
-            <annox:annotate>
-              <xsl:value-of select="concat('@org.jaxdb.ddlx.annotation.Schema(name = &quot;', $database, '&quot;)')"/>
-            </annox:annotate>
-          </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-          <xs:extension base="sqlx:database">
-          <xs:sequence>
-            <xs:element name="insert" type="ns:insert" minOccurs="0" maxOccurs="1"/>
-          </xs:sequence>
           </xs:extension>
         </xs:complexContent>
       </xs:complexType>
@@ -479,7 +474,7 @@
               </xsl:attribute>
               <xs:selector>
                 <xsl:attribute name="xpath">
-                  <xsl:value-of select="concat('ns:insert/ns:', function:instance-case($tableName))"/>
+                  <xsl:value-of select="concat('.//ns:', function:instance-case($tableName))"/>
                 </xsl:attribute>
               </xs:selector>
               <xsl:for-each select="$primaryKey/ddlx:column">
@@ -499,7 +494,7 @@
               </xsl:attribute>
               <xs:selector>
                 <xsl:attribute name="xpath">
-                  <xsl:value-of select="concat('ns:insert/ns:', function:instance-case($tableName))"/>
+                  <xsl:value-of select="concat('.//ns:', function:instance-case($tableName))"/>
                 </xsl:attribute>
               </xs:selector>
               <xsl:if test="ddlx:column">
@@ -531,7 +526,7 @@
                 </xsl:attribute>
                 <xs:selector>
                   <xsl:attribute name="xpath">
-                    <xsl:value-of select="concat('ns:insert/ns:', function:instance-case(../@name))"/>
+                    <xsl:value-of select="concat('.//ns:', function:instance-case(../@name))"/>
                   </xsl:attribute>
                 </xs:selector>
                 <xs:field>

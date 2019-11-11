@@ -75,7 +75,7 @@ public abstract class TypesTest extends SQLxTest {
 
   private static void createTypeData(final OutputStreamWriter out) throws IOException {
     final String[] values = {"ZERO", "ONE", "TWO", "THREE", "FOUR", "FIVE", "SIX", "SEVEN", "EIGHT", "NINE"};
-    out.write("<types xmlns=\"sqlx.types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"sqlx.types types.xsd\">\n  <insert>\n");
+    out.write("<types xmlns=\"urn:jaxdb:sqlx:types\"\n  xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n  xsi:schemaLocation=\"urn:jaxdb:sqlx:types types.xsd\">\n\n");
     for (int i = 0; i < 1000; ++i) {
       final String bigintType = (Math.random() < .5 ? "-" : "") + Strings.getRandomNumeric((int)(Math.random() * 18) + 1);
       final String binaryType = new Hexadecimal(Strings.getRandomAlphaNumeric(255).getBytes()).toString().toUpperCase();
@@ -130,7 +130,7 @@ public abstract class TypesTest extends SQLxTest {
       out.write(("/>\n"));
     }
 
-    out.write("  </insert>\n</types>");
+    out.write("</types>");
     out.flush();
   }
 

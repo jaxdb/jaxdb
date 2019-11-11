@@ -1,0 +1,228 @@
+<!--
+  Copyright (c) 2016 JAX-DB
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  You should have received a copy of The MIT License (MIT) along with this
+  program. If not, see <http://opensource.org/licenses/MIT/>.
+-->
+<classicmodels xmlns="urn:jaxdb:sqlx:classicmodels"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="urn:jaxdb:sqlx:classicmodels ../../../target/generated-test-resources/jaxdb/classicmodels.xsd">
+  <xi:include href="office.sqlx"/>
+  <employee
+    employeeNumber="1002"
+    lastName="Murphy"
+    firstName="Diane"
+    extension="5800"
+    email="dmurphy@classicmodelcars.com"
+    officeCode="1"
+    jobTitle="President"/>
+  <employee
+    employeeNumber="1056"
+    lastName="Patterson"
+    firstName="Mary"
+    extension="4611"
+    email="mpatterso@classicmodelcars.com"
+    officeCode="1"
+    reportsTo="1002"
+    jobTitle="VP Sales"/>
+  <employee
+    employeeNumber="1076"
+    lastName="Firrelli"
+    firstName="Jeff"
+    extension="9273"
+    email="jfirrelli@classicmodelcars.com"
+    officeCode="1"
+    reportsTo="1002"
+    jobTitle="VP Marketing"/>
+  <employee
+    employeeNumber="1088"
+    lastName="Patterson"
+    firstName="William"
+    extension="4871"
+    email="wpatterson@classicmodelcars.com"
+    officeCode="6"
+    reportsTo="1056"
+    jobTitle="Sales Manager (APAC)"/>
+  <employee
+    employeeNumber="1102"
+    lastName="Bondur"
+    firstName="Gerard"
+    extension="5408"
+    email="gbondur@classicmodelcars.com"
+    officeCode="4"
+    reportsTo="1056"
+    jobTitle="Sale Manager (EMEA)"/>
+  <employee
+    employeeNumber="1143"
+    lastName="Bow"
+    firstName="Anthony"
+    extension="5428"
+    email="abow@classicmodelcars.com"
+    officeCode="1"
+    reportsTo="1056"
+    jobTitle="Sales Manager (NA)"/>
+  <employee
+    employeeNumber="1165"
+    lastName="Jennings"
+    firstName="Leslie"
+    extension="3291"
+    email="ljennings@classicmodelcars.com"
+    officeCode="1"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1166"
+    lastName="Thompson"
+    firstName="Leslie"
+    extension="4065"
+    email="lthompson@classicmodelcars.com"
+    officeCode="1"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1188"
+    lastName="Firrelli"
+    firstName="Julie"
+    extension="2173"
+    email="jfirrelli@classicmodelcars.com"
+    officeCode="2"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1216"
+    lastName="Patterson"
+    firstName="Steve"
+    extension="4334"
+    email="spatterson@classicmodelcars.com"
+    officeCode="2"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1286"
+    lastName="Tseng"
+    firstName="Foon Yue"
+    extension="2248"
+    email="ftseng@classicmodelcars.com"
+    officeCode="3"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1323"
+    lastName="Vanauf"
+    firstName="George"
+    extension="4102"
+    email="gvanauf@classicmodelcars.com"
+    officeCode="3"
+    reportsTo="1143"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1337"
+    lastName="Bondur"
+    firstName="Loui"
+    extension="6493"
+    email="lbondur@classicmodelcars.com"
+    officeCode="4"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1370"
+    lastName="Hernandez"
+    firstName="Gerard"
+    extension="2028"
+    email="ghernande@classicmodelcars.com"
+    officeCode="4"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1401"
+    lastName="Castillo"
+    firstName="Pamela"
+    extension="2759"
+    email="pcastillo@classicmodelcars.com"
+    officeCode="4"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1501"
+    lastName="Bott"
+    firstName="Larry"
+    extension="2311"
+    email="lbott@classicmodelcars.com"
+    officeCode="7"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1504"
+    lastName="Jones"
+    firstName="Barry"
+    extension="102"
+    email="bjones@classicmodelcars.com"
+    officeCode="7"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1611"
+    lastName="Fixter"
+    firstName="Andy"
+    extension="101"
+    email="afixter@classicmodelcars.com"
+    officeCode="6"
+    reportsTo="1088"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1612"
+    lastName="Marsh"
+    firstName="Peter"
+    extension="102"
+    email="pmarsh@classicmodelcars.com"
+    officeCode="6"
+    reportsTo="1088"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1619"
+    lastName="King"
+    firstName="Tom"
+    extension="103"
+    email="tking@classicmodelcars.com"
+    officeCode="6"
+    reportsTo="1088"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1621"
+    lastName="Nishi"
+    firstName="Mami"
+    extension="101"
+    email="mnishi@classicmodelcars.com"
+    officeCode="5"
+    reportsTo="1056"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1625"
+    lastName="Kato"
+    firstName="Yoshimi"
+    extension="102"
+    email="ykato@classicmodelcars.com"
+    officeCode="5"
+    reportsTo="1621"
+    jobTitle="Sales Rep"/>
+  <employee
+    employeeNumber="1702"
+    lastName="Gerard"
+    firstName="Martin"
+    extension="2312"
+    email="mgerard@classicmodelcars.com"
+    officeCode="4"
+    reportsTo="1102"
+    jobTitle="Sales Rep"/>
+</classicmodels>

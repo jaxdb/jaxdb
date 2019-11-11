@@ -1,3 +1,19 @@
+/* Copyright (c) 2017 JAX-DB
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * You should have received a copy of The MIT License (MIT) along with this
+ * program. If not, see <http://opensource.org/licenses/MIT/>.
+ */
+
 package org.jaxdb.jsql;
 
 import java.io.ByteArrayInputStream;
@@ -98,13 +114,13 @@ final class EntitiesXsb {
   @SuppressWarnings("unchecked")
   public static <T extends type.Entity>T[] toEntities(final $Database database) {
     try {
-      final List<type.Entity> entities = new ArrayList<>();
-      final Iterator<$Row> rowIterator = SQL.newRowIterator(database);
-      if (!rowIterator.hasNext())
+      final Iterator<$Row> iterator = SQL.newRowIterator(database);
+      if (!iterator.hasNext())
         return (T[])new type.Entity[0];
 
-      while (rowIterator.hasNext())
-        entities.add(toEntity(database, rowIterator.next()));
+      final List<type.Entity> entities = new ArrayList<>();
+      while (iterator.hasNext())
+        entities.add(toEntity(database, iterator.next()));
 
       return (T[])entities.toArray(new type.Entity[entities.size()]);
     }

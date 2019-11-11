@@ -87,10 +87,7 @@ public abstract class JSqlTest {
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
-    final Database database;
-    try (final InputStream in = sqlx.openStream()) {
-      database = (Database)JaxbUtil.parse(Class.forName(name + ".sqlx." + Identifiers.toClassCase(name)), sqlx, false);
-    }
+    final Database database = (Database)JaxbUtil.parse(Class.forName("jaxdb.sqlx." + name + "." + Identifiers.toClassCase(name)), sqlx, false);
 
     final xLygluGCXAA.Schema schema;
     try (final InputStream in = ClassLoader.getSystemClassLoader().getResourceAsStream(name + ".ddlx")) {
