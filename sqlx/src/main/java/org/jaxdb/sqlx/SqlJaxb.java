@@ -65,8 +65,8 @@ import org.libj.util.Identifiers;
 import org.libj.util.IntList;
 import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.jaxb.xjc.XJCompiler;
-import org.openjax.xml.sax.XMLCatalogHandler;
-import org.openjax.xml.sax.XMLCatalogParser;
+import org.openjax.xml.sax.XMLManifest;
+import org.openjax.xml.sax.XMLManifestParser;
 
 final class SqlJaxb {
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
@@ -266,8 +266,8 @@ final class SqlJaxb {
   public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, UnmarshalException {
     sqlFile.getParentFile().mkdirs();
 
-    final XMLCatalogHandler handler = XMLCatalogParser.parse(sqlxFile);
-    final QName rootElement = handler.getRootElement();
+    final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
+    final QName rootElement = manifest.getRootElement();
 
     Class<Database> bindingClass;
     try {
@@ -287,7 +287,7 @@ final class SqlJaxb {
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
-        xsd2jaxb(tempDir, tempDir, handler.getImports().get(handler.getRootElement().getNamespaceURI()));
+        xsd2jaxb(tempDir, tempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
         final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }

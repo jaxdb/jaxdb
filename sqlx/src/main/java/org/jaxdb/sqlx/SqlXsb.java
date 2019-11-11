@@ -66,8 +66,8 @@ import org.libj.util.ClassLoaders;
 import org.libj.util.Classes;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.IntList;
-import org.openjax.xml.sax.XMLCatalogHandler;
-import org.openjax.xml.sax.XMLCatalogParser;
+import org.openjax.xml.sax.XMLManifest;
+import org.openjax.xml.sax.XMLManifestParser;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 import org.xml.sax.SAXException;
 
@@ -259,7 +259,7 @@ final class SqlXsb {
     sqlFile.getParentFile().mkdirs();
 
     $Database database;
-    final XMLCatalogHandler handler = XMLCatalogParser.parse(sqlxFile);
+    final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
     try {
       database = ($Database)Bindings.parse(sqlxFile);
     }
@@ -274,7 +274,7 @@ final class SqlXsb {
         }
       }));
 
-      xsd2xsb(sqlxTempDir, sqlxTempDir, handler.getImports().get(handler.getRootElement().getNamespaceURI()));
+      xsd2xsb(sqlxTempDir, sqlxTempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
 
       final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       database = ($Database)Bindings.parse(sqlxFile, classLoader);
