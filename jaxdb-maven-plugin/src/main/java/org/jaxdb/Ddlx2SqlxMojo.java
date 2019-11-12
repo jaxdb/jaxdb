@@ -19,6 +19,7 @@ package org.jaxdb;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
@@ -33,10 +34,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.sqlx.SQL;
 import org.libj.net.URLs;
-import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
+import org.openjax.maven.mojo.GeneratorMojo;
 
+// FIXME: The name of this goal is confusing. It should be something like ddlx2sqlxSchema, cause an XSD is created.
 @Mojo(name="ddlx2sqlx", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
 @Execute(goal="ddlx2sqlx")
 public final class Ddlx2SqlxMojo extends GeneratorMojo {
@@ -50,7 +52,7 @@ public final class Ddlx2SqlxMojo extends GeneratorMojo {
   @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final String schema : schemas) {
+      for (final String schema : new LinkedHashSet<>(schemas)) {
         final URL url = new URL(schema);
         final File xsd = new File(configuration.getDestDir(), URLs.getName(url).replaceAll("\\.\\S+$", ".xsd"));
         SQL.ddlx2sqlx(url, xsd);

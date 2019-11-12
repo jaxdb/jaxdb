@@ -19,6 +19,8 @@ package org.jaxdb;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -41,6 +43,8 @@ import org.xml.sax.SAXException;
 @Mojo(name="ddlx2sql", defaultPhase=LifecyclePhase.GENERATE_RESOURCES)
 @Execute(goal="ddlx2sql")
 public final class Ddlx2SqlMojo extends GeneratorMojo {
+  private static final HashMap<String,File> schemaToSql = new HashMap<>();
+
   @Parameter(property="rename")
   private String rename;
 
@@ -54,10 +58,12 @@ public final class Ddlx2SqlMojo extends GeneratorMojo {
   @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final String schema : schemas) {
+      for (final String schema : new LinkedHashSet<>(schemas)) {
         final URL url = new URL(schema);
         final StatementBatch statementBatch = Generator.createDDL(url, DBVendor.valueOf(vendor));
-        statementBatch.writeOutput(new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql"));
+        final File file = new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql");
+        statementBatch.writeOutput(file);
+        schemaToSql.put(schema, file);
       }
     }
     catch (final GeneratorExecutionException | IOException | SAXException e) {

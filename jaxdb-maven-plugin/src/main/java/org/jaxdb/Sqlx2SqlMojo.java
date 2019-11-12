@@ -19,6 +19,7 @@ package org.jaxdb;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -63,7 +64,7 @@ public final class Sqlx2SqlMojo extends GeneratorMojo {
     try {
       final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
       final File[] classpathFiles = MojoUtil.getExecutionClasspash(project, execution, (PluginDescriptor)this.getPluginContext().get("pluginDescriptor"), localRepository, artifactHandler);
-      for (final String schema : schemas) {
+      for (final String schema : new LinkedHashSet<>(schemas)) {
         final URL url = new URL(schema);
         SQL.sqlx2sql(DBVendor.valueOf(vendor), url, new File(configuration.getDestDir(), rename != null ? MojoUtil.getRenamedFileName(url, rename) : URLs.getShortName(url) + ".sql"), classpathFiles);
       }

@@ -32,10 +32,11 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jaxdb.sqlx.SQL;
 import org.libj.net.URLs;
-import org.openjax.maven.mojo.GeneratorMojo;
 import org.openjax.maven.mojo.FilterParameter;
 import org.openjax.maven.mojo.FilterType;
+import org.openjax.maven.mojo.GeneratorMojo;
 
+// FIXME: The name of this goal is confusing.
 @Mojo(name="ddlx2xsd", defaultPhase=LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution=ResolutionScope.TEST)
 @Execute(goal="ddlx2xsd")
 public final class Ddlx2XsdMojo extends GeneratorMojo {
@@ -50,7 +51,7 @@ public final class Ddlx2XsdMojo extends GeneratorMojo {
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
       final LinkedHashSet<URL> xsds = new LinkedHashSet<>();
-      for (final String schema : schemas) {
+      for (final String schema : new LinkedHashSet<>(schemas)) {
         final File xsd = new File(configuration.getDestDir(), URLs.getName(new URL(schema)).replaceAll("\\.\\S+$", ".xsd"));
         xsds.add(xsd.toURI().toURL());
       }

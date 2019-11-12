@@ -18,6 +18,7 @@ package org.jaxdb;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,7 +44,7 @@ public final class Ddlx2JsqlMojo extends GeneratorMojo {
   @Override
   public void execute(final Configuration configuration) throws MojoExecutionException, MojoFailureException {
     try {
-      for (final String schema : schemas) {
+      for (final String schema : new LinkedHashSet<>(schemas)) {
         final URL url = new URL(schema);
         new Generator(url).generate(URLs.getShortName(url), configuration.getDestDir());
       }
