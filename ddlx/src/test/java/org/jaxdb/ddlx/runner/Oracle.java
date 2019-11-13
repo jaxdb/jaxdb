@@ -24,7 +24,7 @@ import java.util.TimeZone;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-public class Oracle implements Vendor {
+public class Oracle extends Vendor {
   public Oracle() {
     // NOTE: If TimeZone.setDefault() is not called:
     // NOTE: ORA-00604: error occurred at recursive SQL level 1

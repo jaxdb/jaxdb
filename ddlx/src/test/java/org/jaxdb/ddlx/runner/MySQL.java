@@ -23,15 +23,11 @@ import java.sql.SQLException;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-import com.mysql.cj.jdbc.Driver;
-
-@SuppressWarnings("unused")
-public class MySQL implements Vendor {
-  public MySQL() throws SQLException {
+public class MySQL extends Vendor {
+  public MySQL() {
 //  CREATE USER jaxdb;
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
-    new Driver();
   }
 
   @Override

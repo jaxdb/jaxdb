@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -32,12 +31,12 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.jaxsb.runtime.Bindings;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 public final class Generator {
   protected static final Logger logger = LoggerFactory.getLogger(Generator.class);
@@ -57,11 +56,11 @@ public final class Generator {
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
     }
 
-    createDDL(new File(args[1]).toURI().toURL(), DBVendor.valueOf(args[0]));
+    createDDL((Schema)Bindings.parse(new URL("file", "", args[1])), DBVendor.valueOf(args[0]));
   }
 
-  public static StatementBatch createDDL(final URL url, final DBVendor vendor) throws GeneratorExecutionException, IOException, SAXException {
-    return new StatementBatch(new Generator(DDLxAudit.makeAudit(url)).parse(vendor));
+  public static StatementBatch createDDL(final Schema schema, final DBVendor vendor) throws GeneratorExecutionException {
+    return new StatementBatch(new Generator(new DDLxAudit(schema)).parse(vendor));
   }
 
   private static String checkNameViolation(String string) {

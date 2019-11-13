@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Column;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$ForeignKey.OnDelete$;
@@ -29,7 +30,6 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Index;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
-import org.jaxdb.vendor.DBVendor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

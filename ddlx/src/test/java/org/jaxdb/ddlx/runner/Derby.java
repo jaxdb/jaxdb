@@ -34,7 +34,7 @@ import org.libj.util.zip.ZipFiles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Derby implements Vendor {
+public class Derby extends Vendor {
   protected static final Logger logger = LoggerFactory.getLogger(Derby.class);
   private static final File[] dbPaths = new File[] {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
 

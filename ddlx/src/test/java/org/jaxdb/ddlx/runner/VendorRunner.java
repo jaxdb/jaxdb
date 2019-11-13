@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx.runner;
 
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -90,7 +89,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
 
   private final Map<Class<? extends org.jaxdb.ddlx.runner.Vendor>,org.jaxdb.ddlx.runner.Vendor> vendors = new HashMap<>();
 
-  protected org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, IOException, NoSuchMethodException, SQLException {
+  protected org.jaxdb.ddlx.runner.Vendor getVendor(final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass) throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
     org.jaxdb.ddlx.runner.Vendor vendor = vendors.get(vendorClass);
     if (vendor == null)
       vendors.put(vendorClass, vendor = vendorClass.getDeclaredConstructor().newInstance());

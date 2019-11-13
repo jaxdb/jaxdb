@@ -17,8 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,7 +27,6 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Decimal;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.jaxsb.runtime.Bindings;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class DDLxTest {

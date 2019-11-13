@@ -16,9 +16,6 @@
 
 package org.jaxdb.ddlx;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,28 +24,16 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Indexes;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Named;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
-import org.jaxsb.runtime.Bindings;
-import org.xml.sax.SAXException;
 
 public class DDLxAudit {
-  protected static DDLxAudit makeAudit(final URL url) throws IOException, SAXException {
-    try (final InputStream in = url.openStream()) {
-      return new DDLxAudit(url);
-    }
-  }
-
   public final Map<String,$Table> tableNameToTable;
   private final Schema schema;
 
-  protected DDLxAudit(final Schema schema) {
+  public DDLxAudit(final Schema schema) {
     this.schema = schema;
     this.tableNameToTable = new HashMap<>();
     for (final $Table table : schema.getTable())
       tableNameToTable.put(table.getName$().text(), table);
-  }
-
-  public DDLxAudit(final URL url) throws IOException, SAXException {
-    this((Schema)Bindings.parse(url));
   }
 
   protected DDLxAudit(final DDLxAudit copy) {

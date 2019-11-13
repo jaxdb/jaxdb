@@ -31,7 +31,7 @@ import org.libj.net.URLs;
 import org.libj.sql.AuditConnection;
 import org.libj.util.zip.ZipFiles;
 
-public class SQLite implements Vendor {
+public class SQLite extends Vendor {
   private static final File db = new File("target/generated-test-resources/jaxdb/sqlite.db");
 
   public SQLite() throws IOException {

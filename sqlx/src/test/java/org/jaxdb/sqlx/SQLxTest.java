@@ -22,20 +22,30 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.UnmarshalException;
+import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
 
 import org.jaxdb.ddlx.Schemas;
+import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
+import org.libj.io.FileUtil;
 import org.libj.jci.CompilationException;
+import org.libj.net.URLs;
 import org.libj.util.ArrayUtil;
 import org.libj.util.ClassLoaders;
+import org.libj.util.Identifiers;
+import org.openjax.jaxb.xjc.JaxbUtil;
+import org.openjax.xml.sax.XMLManifest;
+import org.openjax.xml.sax.XMLManifestParser;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -44,27 +54,84 @@ public abstract class SQLxTest {
   private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/jaxdb");
   protected static final File testClassesDir = new File("target/test-classes");
-  private static final File[] classpath;
+//  private static final File[] classpath;
 
   static {
-    final File[] testClassPath = ClassLoaders.getTestClassPath();
-    classpath = testClassPath != null ? ArrayUtil.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
+//    final File[] testClassPath = ClassLoaders.getTestClassPath();
+//    classpath = testClassPath != null ? ArrayUtil.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
+  }
+
+  private static $Database to$Database(final URL sqlxFile) throws IOException, SAXException {
+    try {
+      return ($Database)Bindings.parse(sqlxFile);
+    }
+    catch (final Throwable t) {
+      final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
+      // FIXME: Files.deleteAllOnExit() is not working!
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          FileUtil.deleteAll(sqlxTempDir.toPath());
+        }
+        catch (final IOException e) {
+        }
+      }));
+
+      final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
+      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
+
+      final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
+      return ($Database)Bindings.parse(sqlxFile, classLoader);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Database toDatabase(final URL sqlxFile) throws IOException, UnmarshalException {
+    final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
+    final QName rootElement = manifest.getRootElement();
+    Class<Database> bindingClass;
+    try {
+      bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()));
+    }
+    catch (final ClassNotFoundException e) {
+      final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
+      // FIXME: Files.deleteAllOnExit() is not working!
+      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+        try {
+          FileUtil.deleteAll(sqlxTempDir.toPath());
+        }
+        catch (final IOException e12) {
+          throw new IllegalStateException(e12);
+        }
+      }));
+      sqlxTempDir.deleteOnExit();
+      final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
+      try {
+        SqlJaxb.xsd2jaxb(tempDir, tempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
+        final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
+        bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
+      }
+      catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
+        throw new UnsupportedOperationException(e1);
+      }
+    }
+
+    return JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
   }
 
   public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
     final URL ddlx = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
     assertNotNull(ddlx);
     final File destFile = new File(resourcesDestDir, name + ".xsd");
-    SQL.ddlx2sqlx(ddlx, destFile);
-    SQL.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI().toURL());
-    SQL.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI().toURL());
+    SQL.ddlx2sqlXsd(ddlx, destFile);
+    SqlXsb.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI().toURL());
+    SqlJaxb.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI().toURL());
   }
 
   public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);
-    SqlXsb.sqlx2sql(vendor, sqlx, new File(resourcesDestDir, name + "-" + vendor + ".sql"), classpath);
+    SqlXsb.sqlx2sql(vendor, to$Database(sqlx), new File(resourcesDestDir, name + "-" + vendor + ".sql"));
   }
 
   public static int[] loadData(final Connection connection, final String name) throws IOException, SAXException, SQLException {

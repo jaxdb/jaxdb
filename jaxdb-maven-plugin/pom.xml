@@ -101,25 +101,13 @@
             <version>${project.version}</version>
             <executions>
               <execution>
-                <id>ddlx2jsql</id>
-                <phase>generate-test-sources</phase>
-                <goals>
-                  <goal>ddlx2jsql</goal>
-                </goals>
-                <configuration>
-                  <destDir>${project.build.directory}/generated-test-sources/jaxdb</destDir>
-                  <schemas>
-                    <schema>src/test/resources/survey.ddlx</schema>
-                  </schemas>
-                </configuration>
-              </execution>
-              <execution>
                 <id>ddlx2sql</id>
                 <phase>generate-test-resources</phase>
                 <goals>
-                  <goal>ddlx2sql</goal>
+                  <goal>ddlx</goal>
                 </goals>
                 <configuration>
+                  <produce>sql</produce>
                   <vendor>MySQL</vendor>
                   <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
                   <schemas>
@@ -128,16 +116,31 @@
                 </configuration>
               </execution>
               <execution>
-                <id>ddlx2sqlx</id>
+                <id>ddlx2sqlxsd</id>
                 <phase>generate-test-resources</phase>
                 <goals>
-                  <goal>ddlx2sqlx</goal>
+                  <goal>ddlx</goal>
                 </goals>
                 <configuration>
+                  <produce>sqlxsd</produce>
                   <vendor>MySQL</vendor>
                   <destDir>${project.build.directory}/generated-test-resources/jaxdb</destDir>
                   <schemas>
                     <schema>src/test/resources/hospital.ddlx</schema>
+                  </schemas>
+                </configuration>
+              </execution>
+              <execution>
+                <id>ddlx2jsql</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                  <goal>ddlx</goal>
+                </goals>
+                <configuration>
+                  <produce>jsql</produce>
+                  <destDir>${project.build.directory}/generated-test-sources/jaxdb</destDir>
+                  <schemas>
+                    <schema>src/test/resources/survey.ddlx</schema>
                   </schemas>
                 </configuration>
               </execution>

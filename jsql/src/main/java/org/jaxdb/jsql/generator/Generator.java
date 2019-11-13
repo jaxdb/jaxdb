@@ -56,6 +56,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Table;
+import org.jaxsb.runtime.Bindings;
 import org.libj.util.Classes;
 import org.libj.util.Identifiers;
 import org.libj.util.Strings;
@@ -84,7 +85,7 @@ public class Generator {
   private final JSqlAudit audit;
 
   public Generator(final URL url) throws IOException, SAXException {
-    this.audit = new JSqlAudit(new DDLxAudit(url));
+    this.audit = new JSqlAudit(new DDLxAudit((xLygluGCXAA.Schema)Bindings.parse(url)));
   }
 
   private static String getDoc(final $Documented documented, final int depth, final char shart, final char end) {

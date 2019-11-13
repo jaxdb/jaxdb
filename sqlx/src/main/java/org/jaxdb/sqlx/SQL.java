@@ -35,10 +35,9 @@ import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
 import org.libj.jci.CompilationException;
 import org.openjax.xml.transform.Transformer;
-import org.xml.sax.SAXException;
 
 public final class SQL {
-  public static void ddlx2sqlx(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
+  public static void ddlx2sqlXsd(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
     Transformer.transform(Thread.currentThread().getContextClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
   }
@@ -47,28 +46,28 @@ public final class SQL {
     return SqlJaxb.INSERT(connection, new RowIterator(database));
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
-    SqlJaxb.xsd2jaxb(sourcesDestDir, classedDestDir, xsds);
+  public static void xsd2jaxb(final File destDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
+    SqlJaxb.xsd2jaxb(destDir, xsds);
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
-    SqlJaxb.xsd2jaxb(sourcesDestDir, classedDestDir, xsds);
+  public static void xsd2jaxb(final File destDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
+    SqlJaxb.xsd2jaxb(destDir, xsds);
   }
 
   public static int[] INSERT(final Connection connection, final $Database database) throws SQLException {
     return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(database));
   }
 
-  public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
-    SqlXsb.xsd2xsb(sourcesDestDir, classedDestDir, xsds);
+  public static void xsd2xsb(final File destDir, final URL ... xsds) {
+    SqlXsb.xsd2xsb(destDir, xsds);
   }
 
-  public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
-    SqlXsb.xsd2xsb(sourcesDestDir, classedDestDir, xsds);
+  public static void xsd2xsb(final File destDir, final Set<URL> xsds) {
+    SqlXsb.xsd2xsb(destDir, xsds);
   }
 
-  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile, final File[] classpathFiles) throws IOException, SAXException {
-    SqlXsb.sqlx2sql(vendor, sqlxFile, sqlFile, classpathFiles);
+  public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
+    SqlXsb.sqlx2sql(vendor, database, sqlOutputFile);
   }
 
   public static Iterator<Row> newRowIterator(final Database database) {

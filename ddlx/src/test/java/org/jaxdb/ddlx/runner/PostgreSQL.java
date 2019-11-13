@@ -22,14 +22,12 @@ import java.sql.SQLException;
 
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
-import org.postgresql.Driver;
 
-public class PostgreSQL implements Vendor {
+public class PostgreSQL extends Vendor {
   public PostgreSQL() {
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
-    new Driver();
   }
 
   @Override

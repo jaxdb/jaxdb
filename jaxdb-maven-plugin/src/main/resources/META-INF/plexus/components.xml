@@ -23,8 +23,8 @@
       <configuration>
         <id>jaxdb</id>
         <default-phases>
-          <generate-sources>org.jaxdb:jaxdb-maven-plugin:ddlx2jsql,org.jaxdb:jaxdb-maven-plugin:ddlx2sqlx,org.jaxdb:jaxdb-maven-plugin:ddlx2xsd</generate-sources>
-          <generate-resources>org.jaxdb:jaxdb-maven-plugin:ddlx2sql,org.jaxdb:jaxdb-maven-plugin:sqlx2sql</generate-resources>
+          <generate-sources>org.jaxdb:jaxdb-maven-plugin:ddlx,org.jaxdb:jaxdb-maven-plugin:sqlxsd</generate-sources>
+          <generate-resources>org.jaxdb:jaxdb-maven-plugin:sqlx</generate-resources>
         </default-phases>
       </configuration>
     </component>
@@ -35,18 +35,14 @@
       <configuration>
         <id>jaxdb</id>
         <phases>
-          <phase>ddlx2jsql</phase>
-          <phase>ddlx2sql</phase>
-          <phase>ddlx2sqlx</phase>
-          <phase>ddlx2xsd</phase>
-          <phase>sqlx2sql</phase>
+          <phase>ddlx</phase>
+          <phase>sqlxsd</phase>
+          <phase>sqlx</phase>
         </phases>
         <default-phases>
-          <ddlx2jsql>org.jaxdb:jaxdb-maven-plugin:ddlx2jsql</ddlx2jsql>
-          <ddlx2sql>org.jaxdb:jaxdb-maven-plugin:ddlx2sql</ddlx2sql>
-          <ddlx2sqlx>org.jaxdb:jaxdb-maven-plugin:ddlx2sqlx</ddlx2sqlx>
-          <ddlx2xsd>org.jaxdb:jaxdb-maven-plugin:ddlx2xsd</ddlx2xsd>
-          <sqlx2sql>org.jaxdb:jaxdb-maven-plugin:sqlx2sql</sqlx2sql>
+          <ddlx>org.jaxdb:jaxdb-maven-plugin:ddlx</ddlx>
+          <sqlxsd>org.jaxdb:jaxdb-maven-plugin:sqlxsd</sqlxsd>
+          <sqlx>org.jaxdb:jaxdb-maven-plugin:sqlx</sqlx>
         </default-phases>
       </configuration>
     </component>

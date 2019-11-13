@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2019 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,25 +14,20 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.ddlx.runner;
+package org.jaxdb;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
+abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration> {
+  private static int index = 0;
+  static final SQLxProduce[] values = new SQLxProduce[1];
 
-import org.jaxdb.vendor.DBVendor;
-
-public abstract class Vendor {
-  public Vendor() {
-    try {
-      getDBVendor().loadDriver();
-    }
-    catch (final ClassNotFoundException e) {
-      throw new IllegalStateException(e);
-    }
+  private SQLxProduce(final String name) {
+    super(name, values, index++);
   }
 
-  public abstract DBVendor getDBVendor();
-  public abstract Connection getConnection() throws IOException, SQLException;
-  public abstract void destroy() throws IOException, SQLException;
+  static final SQLxProduce SQL = new SQLxProduce("sql") {
+    @Override
+    void execute(final JaxDbMojo<?>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws Exception {
+      sqlMojo.executeStaged(configuration);
+    }
+  };
 }

@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -42,9 +41,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.namespace.QName;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.ddlx.annotation.Column;
@@ -52,21 +49,14 @@ import org.jaxdb.ddlx.annotation.Table;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.io.FileUtil;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
-import org.libj.net.URLs;
 import org.libj.util.ArrayIntList;
-import org.libj.util.ArrayUtil;
-import org.libj.util.ClassLoaders;
 import org.libj.util.CollectionUtil;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.Identifiers;
 import org.libj.util.IntList;
-import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.jaxb.xjc.XJCompiler;
-import org.openjax.xml.sax.XMLManifest;
-import org.openjax.xml.sax.XMLManifestParser;
 
 final class SqlJaxb {
   private static String getValue(final Compiler compiler, final dt.DataType<?> value) {
@@ -262,41 +252,9 @@ final class SqlJaxb {
     return INSERT(connection, new RowIterator(database));
   }
 
-  @SuppressWarnings("unchecked")
-  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile) throws IOException, UnmarshalException {
+  public static void sqlx2sql(final DBVendor vendor, final Database database, final File sqlFile) throws IOException {
     sqlFile.getParentFile().mkdirs();
 
-    final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
-    final QName rootElement = manifest.getRootElement();
-
-    Class<Database> bindingClass;
-    try {
-      bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()));
-    }
-    catch (final ClassNotFoundException e) {
-      final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
-      // FIXME: Files.deleteAllOnExit() is not working!
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        try {
-          FileUtil.deleteAll(sqlxTempDir.toPath());
-        }
-        catch (final IOException e12) {
-          throw new IllegalStateException(e12);
-        }
-      }));
-      sqlxTempDir.deleteOnExit();
-      final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
-      try {
-        xsd2jaxb(tempDir, tempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
-        final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
-        bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
-      }
-      catch (final ClassNotFoundException | CompilationException | JAXBException e1) {
-        throw new UnsupportedOperationException(e1);
-      }
-    }
-
-    final Database database = JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
     final RowIterator iterator = new RowIterator(database);
     try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
       for (int i = 0; iterator.hasNext(); ++i) {
@@ -311,7 +269,11 @@ final class SqlJaxb {
     }
   }
 
-  private static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final LinkedHashSet<URL> xsds) throws CompilationException, IOException, JAXBException {
+  public static void xsd2jaxb(final File sourcesDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
+    xsd2jaxb(sourcesDestDir, null, new LinkedHashSet<>(xsds));
+  }
+
+  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final LinkedHashSet<URL> xsds) throws CompilationException, IOException, JAXBException {
     final XJCompiler.Command command = new XJCompiler.Command();
     command.setExtension(true);
     command.setDestDir(sourcesDestDir);
@@ -333,12 +295,12 @@ final class SqlJaxb {
     compiler.compile(new ArrayList<>(command.getClasspath()), classedDestDir);
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, classedDestDir, new LinkedHashSet<>(xsds));
+  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
+    xsd2jaxb(sourcesDestDir, classedDestDir, CollectionUtil.asCollection(new LinkedHashSet<URL>(), xsds));
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, classedDestDir, CollectionUtil.asCollection(new LinkedHashSet<URL>(), xsds));
+  public static void xsd2jaxb(final File sourcesDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
+    xsd2jaxb(sourcesDestDir, null, CollectionUtil.asCollection(new LinkedHashSet<URL>(), xsds));
   }
 
   private SqlJaxb() {

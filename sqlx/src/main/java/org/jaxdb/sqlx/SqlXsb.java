@@ -23,7 +23,6 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -56,20 +55,12 @@ import org.jaxsb.compiler.processor.GeneratorContext;
 import org.jaxsb.compiler.processor.reference.SchemaReference;
 import org.jaxsb.generator.Generator;
 import org.jaxsb.runtime.Attribute;
-import org.jaxsb.runtime.Bindings;
 import org.jaxsb.runtime.Id;
-import org.libj.io.FileUtil;
-import org.libj.net.URLs;
 import org.libj.util.ArrayIntList;
-import org.libj.util.ArrayUtil;
-import org.libj.util.ClassLoaders;
 import org.libj.util.Classes;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.IntList;
-import org.openjax.xml.sax.XMLManifest;
-import org.openjax.xml.sax.XMLManifestParser;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
-import org.xml.sax.SAXException;
 
 final class SqlXsb {
   private static String getValue(final Compiler compiler, final $AnySimpleType value) {
@@ -239,7 +230,11 @@ final class SqlXsb {
     return INSERT(connection, new RowIterator(database));
   }
 
-  public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
+  public static void xsd2xsb(final File destDir, final URL ... xsds) {
+    xsd2xsb(destDir, null, xsds);
+  }
+
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
     final Set<SchemaReference> schemas = new HashSet<>();
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
@@ -247,7 +242,11 @@ final class SqlXsb {
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  public static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
+  public static void xsd2xsb(final File destDir, final Set<URL> xsds) {
+    xsd2xsb(destDir, null, xsds);
+  }
+
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
     final Set<SchemaReference> schemas = new HashSet<>();
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
@@ -255,33 +254,11 @@ final class SqlXsb {
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  public static void sqlx2sql(final DBVendor vendor, final URL sqlxFile, final File sqlFile, final File[] classpathFiles) throws IOException, SAXException {
-    sqlFile.getParentFile().mkdirs();
-
-    $Database database;
-    final XMLManifest manifest = XMLManifestParser.parse(sqlxFile);
-    try {
-      database = ($Database)Bindings.parse(sqlxFile);
-    }
-    catch (final Throwable t) {
-      final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
-      // FIXME: Files.deleteAllOnExit() is not working!
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        try {
-          FileUtil.deleteAll(sqlxTempDir.toPath());
-        }
-        catch (final IOException e) {
-        }
-      }));
-
-      xsd2xsb(sqlxTempDir, sqlxTempDir, manifest.getImports().get(manifest.getRootElement().getNamespaceURI()));
-
-      final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
-      database = ($Database)Bindings.parse(sqlxFile, classLoader);
-    }
+  public static void sqlx2sql(final DBVendor vendor, final $Database database, final File sqlOutputFile) throws IOException {
+    sqlOutputFile.getParentFile().mkdirs();
 
     final RowIterator rowIterator = new RowIterator(database);
-    try (final OutputStreamWriter out = new FileWriter(sqlFile)) {
+    try (final OutputStreamWriter out = new FileWriter(sqlOutputFile)) {
       for (int i = 0; rowIterator.hasNext(); ++i) {
         if (i > 0)
           out.write('\n');

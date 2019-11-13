@@ -16,7 +16,6 @@
 
 package org.jaxdb.ddlx.runner;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -25,14 +24,8 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
 import com.ibm.db2.jcc.DB2BaseDataSource;
-import com.ibm.db2.jcc.DB2Driver;
 
-public class DB2 implements Vendor {
-  @SuppressWarnings("unused")
-  public DB2() throws IOException, SQLException {
-    new DB2Driver();
-  }
-
+public class DB2 extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {
     return new AuditConnection(DriverManager.getConnection("jdbc:db2://localhost:50001/jaxdb:user=jaxdb;password=jaxdb;traceLevel=" + DB2BaseDataSource.TRACE_ALL + ";"));
