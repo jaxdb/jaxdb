@@ -44,7 +44,7 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
 
   final void executeStaged(final JaxDbMojo<?>.Configuration configuration) throws Exception {
     if (vendor == null || vendor.length() == 0)
-      throw new MojoExecutionException("The parameter 'vendor' is required for goal " + execution.getGoal());
+      throw new MojoExecutionException("The parameter 'vendor' is required for goal " + execution.getGoal() + "@" + execution.getExecutionId());
 
     final DBVendor dbVendor = DBVendor.valueOf(vendor);
     if (dbVendor == null)
