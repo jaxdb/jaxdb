@@ -58,11 +58,11 @@ public final class SQL {
     return SqlXsb.INSERT(connection, new SqlXsb.RowIterator(database));
   }
 
-  public static void xsd2xsb(final File destDir, final URL ... xsds) {
+  public static void xsd2xsb(final File destDir, final URL ... xsds) throws IOException {
     SqlXsb.xsd2xsb(destDir, xsds);
   }
 
-  public static void xsd2xsb(final File destDir, final Set<URL> xsds) {
+  public static void xsd2xsb(final File destDir, final Set<URL> xsds) throws IOException {
     SqlXsb.xsd2xsb(destDir, xsds);
   }
 

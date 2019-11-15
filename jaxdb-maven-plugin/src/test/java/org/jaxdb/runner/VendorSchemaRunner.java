@@ -29,6 +29,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.libj.util.ArrayUtil;
+import org.libj.util.function.Throwing;
 
 public class VendorSchemaRunner extends VendorRunner {
   @Target({ElementType.TYPE, ElementType.METHOD})
@@ -61,7 +62,8 @@ public class VendorSchemaRunner extends VendorRunner {
             return vendor.getConnection();
           }
           catch (final IOException e) {
-            throw new IllegalStateException(e);
+            Throwing.rethrow(e);
+            return null;
           }
         });
       }

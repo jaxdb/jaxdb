@@ -230,11 +230,11 @@ final class SqlXsb {
     return INSERT(connection, new RowIterator(database));
   }
 
-  public static void xsd2xsb(final File destDir, final URL ... xsds) {
+  public static void xsd2xsb(final File destDir, final URL ... xsds) throws IOException {
     xsd2xsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) {
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws IOException {
     final Set<SchemaReference> schemas = new HashSet<>();
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
@@ -242,11 +242,11 @@ final class SqlXsb {
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  public static void xsd2xsb(final File destDir, final Set<URL> xsds) {
+  public static void xsd2xsb(final File destDir, final Set<URL> xsds) throws IOException {
     xsd2xsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) {
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws IOException {
     final Set<SchemaReference> schemas = new HashSet<>();
     for (final URL xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));

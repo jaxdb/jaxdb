@@ -43,13 +43,17 @@ import org.libj.net.URLs;
 import org.libj.util.ArrayUtil;
 import org.libj.util.ClassLoaders;
 import org.libj.util.Identifiers;
+import org.libj.util.function.Throwing;
 import org.openjax.jaxb.xjc.JaxbUtil;
 import org.openjax.xml.sax.XMLManifest;
 import org.openjax.xml.sax.XMLManifestParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class SQLxTest {
+  private static final Logger logger = LoggerFactory.getLogger(SQLxTest.class);
   private static final File sourcesXsbDestDir = new File("target/generated-test-sources/jaxsb");
   private static final File sourcesJaxbDestDir = new File("target/generated-test-sources/jaxb");
   protected static final File resourcesDestDir = new File("target/generated-test-resources/jaxdb");
@@ -73,6 +77,7 @@ public abstract class SQLxTest {
           FileUtil.deleteAll(sqlxTempDir.toPath());
         }
         catch (final IOException e) {
+          logger.info(e.getMessage(), e);
         }
       }));
 
@@ -100,7 +105,7 @@ public abstract class SQLxTest {
           FileUtil.deleteAll(sqlxTempDir.toPath());
         }
         catch (final IOException e12) {
-          throw new IllegalStateException(e12);
+          Throwing.rethrow(e12);
         }
       }));
       sqlxTempDir.deleteOnExit();
