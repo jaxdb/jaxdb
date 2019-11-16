@@ -18,8 +18,6 @@ package org.jaxdb.sqlx;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
-import org.libj.util.Bytes;
-import org.libj.util.Hexadecimal;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
@@ -27,22 +25,17 @@ final class PostgreSQLCompiler extends Compiler {
     return DBVendor.POSTGRE_SQL;
   }
 
-  private static String toOctalString(final Hexadecimal hex) {
-    final short[] octals = Bytes.toOctal(hex.getData());
-    final StringBuilder builder = new StringBuilder();
-    for (final short octal : octals)
-      builder.append("\\\\").append(octal);
-
-    return "'" + builder + "'::BYTEA";
+  private static String toHexString(final String hex) {
+    return "'\\x" + hex + "'";
   }
 
   @Override
   protected String compile(final dt.BINARY value) {
-    return toOctalString(new Hexadecimal(value.get()));
+    return toHexString(value.get());
   }
 
   @Override
   protected String compile(final dt.BLOB value) {
-    return toOctalString(new Hexadecimal(value.get()));
+    return toHexString(value.get());
   }
 }
