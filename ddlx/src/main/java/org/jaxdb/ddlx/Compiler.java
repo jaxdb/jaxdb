@@ -108,12 +108,12 @@ abstract class Compiler {
   }
 
   /**
-   * Create a "SchemaIfNotExists" {@code CreateStatement} for the specified
-   * {@code Schema}.
+   * Create a "SchemaIfNotExists" {@link CreateStatement} for the specified
+   * {@link Schema}.
    *
-   * @param schema The {@code Schema}.
-   * @return A "SchemaIfNotExists" {@code CreateStatement} for the specified
-   *         {@code Schema}.
+   * @param schema The {@link Schema}.
+   * @return A "SchemaIfNotExists" {@link CreateStatement} for the specified
+   *         {@link Schema}.
    */
   protected CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
@@ -434,10 +434,10 @@ abstract class Compiler {
   }
 
   /**
-   * Returns the "CHECK" keyword for the specified {@code $Table}.
+   * Returns the "CHECK" keyword for the specified {@link $Table}.
    *
-   * @param table The {@code $Table}.
-   * @return The "CHECK" keyword for the specified {@code $Table}.
+   * @param table The {@link $Table}.
+   * @return The "CHECK" keyword for the specified {@link $Table}.
    */
   protected String check(final $Table table) {
     return "CHECK";
@@ -461,20 +461,20 @@ abstract class Compiler {
   }
 
   /**
-   * Returns the "FOREIGN KEY" keyword for the specified {@code $Table}.
+   * Returns the "FOREIGN KEY" keyword for the specified {@link $Table}.
    *
-   * @param table The {@code $Table}.
-   * @return The "FOREIGN KEY" keyword for the specified {@code $Table}.
+   * @param table The {@link $Table}.
+   * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
   protected String foreignKey(final $Table table) {
     return "FOREIGN KEY";
   }
 
   /**
-   * Returns the "PRIMARY KEY" keyword for the specified {@code $Table}.
+   * Returns the "PRIMARY KEY" keyword for the specified {@link $Table}.
    *
-   * @param table The {@code $Table}.
-   * @return The "PRIMARY KEY" keyword for the specified {@code $Table}.
+   * @param table The {@link $Table}.
+   * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
   protected String primaryKey(final $Table table) {
     return "PRIMARY KEY";
@@ -539,12 +539,12 @@ abstract class Compiler {
   }
 
   /**
-   * Returns a list of {@code CreateStatement} objects for the creation of types
-   * for the specified {@code $Table}.
+   * Returns a list of {@link CreateStatement} objects for the creation of types
+   * for the specified {@link $Table}.
    *
-   * @param table The {@code $Table}.
-   * @return A list of {@code CreateStatement} objects for the creation of types
-   *         for the specified {@code $Table}.
+   * @param table The {@link $Table}.
+   * @return A list of {@link CreateStatement} objects for the creation of types
+   *         for the specified {@link $Table}.
    */
   protected List<CreateStatement> types(final $Table table) {
     return new ArrayList<>();
@@ -577,12 +577,12 @@ abstract class Compiler {
   }
 
   /**
-   * Returns a list of {@code DropStatement} objects for the dropping of types
-   * for the specified {@code $Table}.
+   * Returns a list of {@link DropStatement} objects for the dropping of types
+   * for the specified {@link $Table}.
    *
-   * @param table The {@code $Table}.
-   * @return A list of {@code DropStatement} objects for the dropping of types
-   *         for the specified {@code $Table}.
+   * @param table The {@link $Table}.
+   * @return A list of {@link DropStatement} objects for the dropping of types
+   *         for the specified {@link $Table}.
    */
   protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
     return new LinkedHashSet<>();

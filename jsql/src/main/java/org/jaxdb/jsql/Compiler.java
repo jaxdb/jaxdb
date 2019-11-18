@@ -153,9 +153,9 @@ abstract class Compiler {
   }
 
   /**
-   * Get the parameter mark for {@code PreparedStatement}s.
+   * Get the parameter mark for {@link PreparedStatement}s.
    *
-   * @param dataType The {@code type.DataType} for the requested mark.
+   * @param dataType The {@link type.DataType} for the requested mark.
    * @return The mark.
    */
   protected String getPreparedStatementMark(final type.DataType<?> dataType) {
@@ -594,10 +594,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the specified {@code Alias}, and append to the provided {@code Compilation}.
+   * Compile the specified {@link Alias}, and append to the provided {@link Compilation}.
    *
-   * @param alias The {@code Alias}.
-   * @param compilation The target {@code Compilation}.
+   * @param alias The {@link Alias}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final Alias alias, final Compilation compilation) {
     compilation.append(alias.name);
@@ -728,20 +728,20 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the PI function, and append to the provided {@code Compilation}.
+   * Compile the PI function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Pi function, final Compilation compilation) {
     compilation.append("PI()");
   }
 
   /**
-   * Compile the ABS function, and append to the provided {@code Compilation}.
+   * Compile the ABS function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Abs function, final Compilation compilation) throws IOException {
     compilation.append("ABS(");
@@ -750,10 +750,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the SIGN function, and append to the provided {@code Compilation}.
+   * Compile the SIGN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Sign function, final Compilation compilation) throws IOException {
     compilation.append("SIGN(");
@@ -762,10 +762,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the ROUND function, and append to the provided {@code Compilation}.
+   * Compile the ROUND function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
@@ -776,10 +776,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the FLOOR function, and append to the provided {@code Compilation}.
+   * Compile the FLOOR function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Floor function, final Compilation compilation) throws IOException {
     compilation.append("FLOOR(");
@@ -788,10 +788,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the CEIL function, and append to the provided {@code Compilation}.
+   * Compile the CEIL function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Ceil function, final Compilation compilation) throws IOException {
     compilation.append("CEIL(");
@@ -800,10 +800,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the SQRT function, and append to the provided {@code Compilation}.
+   * Compile the SQRT function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
@@ -812,10 +812,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the POW function, and append to the provided {@code Compilation}.
+   * Compile the POW function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Pow function, final Compilation compilation) throws IOException {
     compilation.append("POWER(");
@@ -826,10 +826,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the MOD function, and append to the provided {@code Compilation}.
+   * Compile the MOD function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MOD(");
@@ -840,10 +840,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the SIN function, and append to the provided {@code Compilation}.
+   * Compile the SIN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Sin function, final Compilation compilation) throws IOException {
     compilation.append("SIN(");
@@ -852,10 +852,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the ASIN function, and append to the provided {@code Compilation}.
+   * Compile the ASIN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Asin function, final Compilation compilation) throws IOException {
     compilation.append("ASIN(");
@@ -864,10 +864,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the COS function, and append to the provided {@code Compilation}.
+   * Compile the COS function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Cos function, final Compilation compilation) throws IOException {
     compilation.append("COS(");
@@ -876,10 +876,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the ACOS function, and append to the provided {@code Compilation}.
+   * Compile the ACOS function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Acos function, final Compilation compilation) throws IOException {
     compilation.append("ACOS(");
@@ -888,10 +888,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the TAN function, and append to the provided {@code Compilation}.
+   * Compile the TAN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Tan function, final Compilation compilation) throws IOException {
     compilation.append("TAN(");
@@ -900,10 +900,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the ATAN function, and append to the provided {@code Compilation}.
+   * Compile the ATAN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Atan function, final Compilation compilation) throws IOException {
     compilation.append("ATAN(");
@@ -912,10 +912,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the ATAN2 function, and append to the provided {@code Compilation}.
+   * Compile the ATAN2 function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
     compilation.append("ATAN2(");
@@ -926,10 +926,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the EXP function, and append to the provided {@code Compilation}.
+   * Compile the EXP function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Exp function, final Compilation compilation) throws IOException {
     compilation.append("EXP(");
@@ -938,10 +938,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the LN function, and append to the provided {@code Compilation}.
+   * Compile the LN function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LN(");
@@ -950,10 +950,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the LOG function, and append to the provided {@code Compilation}.
+   * Compile the LOG function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
@@ -964,10 +964,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the LOG2 function, and append to the provided {@code Compilation}.
+   * Compile the LOG2 function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG2(");
@@ -976,10 +976,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the LOG10 function, and append to the provided {@code Compilation}.
+   * Compile the LOG10 function, and append to the provided {@link Compilation}.
    *
    * @param function The function to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG10(");
@@ -988,10 +988,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the COUNT expression, and append to the provided {@code Compilation}.
+   * Compile the COUNT expression, and append to the provided {@link Compilation}.
    *
    * @param expression The expression to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final expression.Count expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');
@@ -1009,10 +1009,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the SET expression, and append to the provided {@code Compilation}.
+   * Compile the SET expression, and append to the provided {@link Compilation}.
    *
    * @param expression The expression to compile.
-   * @param compilation The target {@code Compilation}.
+   * @param compilation The target {@link Compilation}.
    */
   protected void compile(final expression.Set expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');

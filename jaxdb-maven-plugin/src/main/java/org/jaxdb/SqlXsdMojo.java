@@ -36,6 +36,7 @@ public class SqlXsdMojo extends JaxDbMojo<SqlXsdProduce> {
       this(configuration, configuration.xsds);
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     Configuration(final JaxDbMojo.Configuration configuration, final LinkedHashSet<URL> xsds) {
       super(configuration);
       this.xsds = xsds;
