@@ -39,7 +39,7 @@ import org.openjax.xml.transform.Transformer;
 public final class SQL {
   public static void ddlx2sqlXsd(final URL ddlxFile, final File xsdFile) throws IOException, TransformerException {
     xsdFile.getParentFile().mkdirs();
-    Transformer.transform(Thread.currentThread().getContextClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
+    Transformer.transform(SQL.class.getClassLoader().getResource("sqlx.xsl"), ddlxFile, xsdFile);
   }
 
   public static int[] INSERT(final Connection connection, final Database database) throws SQLException {
