@@ -45,8 +45,8 @@ import org.libj.util.ClassLoaders;
 import org.libj.util.Identifiers;
 import org.libj.util.function.Throwing;
 import org.openjax.jaxb.xjc.JaxbUtil;
-import org.openjax.xml.sax.XmlAudit;
-import org.openjax.xml.sax.XmlAuditParser;
+import org.openjax.xml.sax.XmlPreview;
+import org.openjax.xml.sax.XmlPreviewParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -81,8 +81,8 @@ public abstract class SQLxTest {
         }
       }));
 
-      final XmlAudit xmlAudit = XmlAuditParser.parse(sqlxFile);
-      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, xmlAudit.getImports().get(xmlAudit.getRootElement().getNamespaceURI()));
+      final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
+      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()));
 
       final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       return ($Database)Bindings.parse(sqlxFile, classLoader);
@@ -91,8 +91,8 @@ public abstract class SQLxTest {
 
   @SuppressWarnings("unchecked")
   private static Database toDatabase(final URL sqlxFile) throws IOException, UnmarshalException {
-    final XmlAudit xmlAudit = XmlAuditParser.parse(sqlxFile);
-    final QName rootElement = xmlAudit.getRootElement();
+    final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
+    final QName rootElement = preview.getRootElement();
     Class<Database> bindingClass;
     try {
       bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()));
@@ -111,7 +111,7 @@ public abstract class SQLxTest {
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
-        SqlJaxb.xsd2jaxb(tempDir, tempDir, xmlAudit.getImports().get(xmlAudit.getRootElement().getNamespaceURI()));
+        SqlJaxb.xsd2jaxb(tempDir, tempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()));
         final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
