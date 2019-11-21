@@ -123,6 +123,7 @@ public class Generator {
     final StringBuilder codeBuilder = new StringBuilder(HEADER_COMMENT);
     codeBuilder.append("package ").append(pkg).append(";\n\n");
     codeBuilder.append(getDoc(audit.schema(), 0, '\0', '\n'));
+    codeBuilder.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
     codeBuilder.append('@').append(Generated.class.getName()).append("(value=\"" + GENERATED_VALUE + "\", date=\"" + GENERATED_DATE + "\")\n");
     codeBuilder.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
 

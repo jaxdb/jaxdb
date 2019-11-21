@@ -288,8 +288,8 @@ final class SqlJaxb {
 
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(command.getDestDir().toPath())
+      .filter(p -> p.getFileName().toString().endsWith(".java"))
       .map(Path::toFile)
-      .filter(f -> f.getName().endsWith(".java"))
       .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
 
     compiler.compile(new ArrayList<>(command.getClasspath()), classedDestDir);

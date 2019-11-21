@@ -52,8 +52,8 @@ public abstract class JSqlTest {
     new Generator(url).generate(name, destDir);
     final InMemoryCompiler compiler = new InMemoryCompiler();
     Files.walk(destDir.toPath())
+      .filter(p -> p.getFileName().toString().endsWith(".java"))
       .map(Path::toFile)
-      .filter(f -> f.getName().endsWith(".java"))
       .forEach(rethrow((File f) -> compiler.addSource(new String(Files.readAllBytes(f.toPath())))));
 
     compiler.compile(destDir, "-g");

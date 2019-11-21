@@ -1,11 +1,10 @@
 <jxb:bindings
   jxb:version="2.1"
   jxb:extensionBindingPrefixes="annox"
-  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema"
-  xmlns:dt="http://www.jaxdb.org/datatypes-0.4.xsd"
   xmlns:annox="http://annox.dev.java.net"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+  xmlns:dt="http://www.jaxdb.org/datatypes-0.4.xsd"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
   <jxb:bindings schemaLocation="http://www.jaxdb.org/datatypes-0.4.xsd" node="/xs:schema">
     <jxb:globalBindings>
       <jxb:javaType name="org.jaxdb.ddlx.dt.BOOLEAN" xmlType="dt:boolean"/>
