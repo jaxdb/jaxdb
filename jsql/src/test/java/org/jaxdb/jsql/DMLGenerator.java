@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.libj.util.Classes;
 
+@SuppressWarnings("unused")
 public class DMLGenerator {
   public static class Args {
     public final Class<?> a;

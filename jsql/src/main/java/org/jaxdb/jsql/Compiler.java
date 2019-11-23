@@ -144,7 +144,7 @@ abstract class Compiler {
 
   protected abstract void onConnect(Connection connection) throws SQLException;
 
-  protected static <T extends kind.DataType<?>> Compilable compilable(final T kind) {
+  protected static <T extends kind.DataType<?>>Compilable compilable(final T kind) {
     return (Compilable)kind;
   }
 
@@ -162,15 +162,41 @@ abstract class Compiler {
     return "?";
   }
 
+  /**
+   * Compile the specified parameters, and append to the provided
+   * {@link Compilation}.
+   *
+   * @param case_ The {@link CaseImpl.Simple.CASE}.
+   * @param _else The {@link CaseImpl.ELSE}.
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   */
   protected void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
     case_.variable.compile(compilation);
   }
 
-  protected void compile(final CaseImpl.Search.WHEN<?> case_, final Compilation compilation) {
+  /**
+   * Compile the specified parameters, and append to the provided
+   * {@link Compilation}.
+   *
+   * @param when The {@link CaseImpl.WHEN}.
+   * @param compilation The target {@link Compilation}.
+   */
+  protected void compile(final CaseImpl.Search.WHEN<?> when, final Compilation compilation) {
     compilation.append("CASE");
   }
 
+  /**
+   * Compile the specified parameters, and append to the provided
+   * {@link Compilation}.
+   *
+   * @param when The {@link CaseImpl.WHEN}.
+   * @param then The {@link CaseImpl.THEN}.
+   * @param _else The {@link CaseImpl.ELSE}.
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   */
   protected void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" WHEN ");
     when.condition.compile(compilation);
@@ -178,6 +204,14 @@ abstract class Compiler {
     then.value.compile(compilation);
   }
 
+  /**
+   * Compile the specified parameters, and append to the provided
+   * {@link Compilation}.
+   *
+   * @param _else The {@link CaseImpl.ELSE}.
+   * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
+   */
   protected void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
     _else.value.compile(compilation);
@@ -603,6 +637,11 @@ abstract class Compiler {
     compilation.append(alias.name);
   }
 
+  /**
+   * Compile the specified {@link As}.
+   *
+   * @param as The {@link As}.
+   */
   protected String compile(final As<?> as) {
     return "AS";
   }
@@ -1163,6 +1202,15 @@ abstract class Compiler {
         compilation.registerAlias(join.table);
   }
 
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     if (dataType.get() != null)
       statement.setString(parameterIndex, dataType.get());
@@ -1170,11 +1218,31 @@ abstract class Compiler {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getString(columnIndex);
   }
 
-  @SuppressWarnings("unused")
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setClob(parameterIndex, dataType.get());
@@ -1182,12 +1250,32 @@ abstract class Compiler {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected Reader getParameter(final type.CLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Clob value = resultSet.getClob(columnIndex);
     return value == null ? null : value.getCharacterStream();
   }
 
-  @SuppressWarnings("unused")
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws IOException If an I/O error has occurred.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
     if (dataType.get() != null)
       statement.setBlob(parameterIndex, dataType.get());
@@ -1195,10 +1283,30 @@ abstract class Compiler {
       statement.setNull(parameterIndex, Types.BLOB);
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected InputStream getParameter(final type.BLOB dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     return resultSet.getBinaryStream(columnIndex);
   }
 
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   @SuppressWarnings("deprecation")
   protected void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDate value = dataType.get();
@@ -1208,12 +1316,32 @@ abstract class Compiler {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   @SuppressWarnings("deprecation")
   protected LocalDate getParameter(final type.DATE dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Date value = resultSet.getDate(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDate.of(value.getYear() + 1900, value.getMonth() + 1, value.getDate());
   }
 
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
@@ -1222,11 +1350,31 @@ abstract class Compiler {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     return resultSet.wasNull() || value == null ? null : value.toLocalDateTime().toLocalTime();
   }
 
+  /**
+   * Sets the specified {@link type.DataType} as a parameter in the provided
+   * {@link PreparedStatement} at the given parameter index.
+   *
+   * @param dataType The data type.
+   * @param statement The {@link PreparedStatement}.
+   * @param parameterIndex The parameter index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
@@ -1235,6 +1383,17 @@ abstract class Compiler {
       statement.setNull(parameterIndex, dataType.sqlType());
   }
 
+  /**
+   * Returns the parameter of the specified {@link type.DataType} from the
+   * provided {@link ResultSet} at the given column index.
+   *
+   * @param dataType The data type.
+   * @param resultSet The {@link ResultSet}.
+   * @param columnIndex The column index.
+   * @return The parameter of the specified {@code dataType} from the provided
+   *         {@link ResultSet} at the given column index.
+   * @throws SQLException If a SQL error has occurred.
+   */
   @SuppressWarnings("deprecation")
   protected LocalDateTime getParameter(final type.DATETIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
