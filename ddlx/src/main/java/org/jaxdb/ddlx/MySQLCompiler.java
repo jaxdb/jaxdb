@@ -62,7 +62,7 @@ class MySQLCompiler extends Compiler {
           if (c == '\n' || c == '\r')
             continue;
 
-          j++;
+          ++j;
           if (c != ' ' && c != '\t')
             break;
         }

@@ -638,9 +638,10 @@ abstract class Compiler {
   }
 
   /**
-   * Compile the specified {@link As}.
+   * Returns the string representation of the specified {@link As}.
    *
    * @param as The {@link As}.
+   * @return The string representation of the specified {@link As}.
    */
   protected String compile(final As<?> as) {
     return "AS";
@@ -781,6 +782,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Abs function, final Compilation compilation) throws IOException {
     compilation.append("ABS(");
@@ -793,6 +795,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Sign function, final Compilation compilation) throws IOException {
     compilation.append("SIGN(");
@@ -805,6 +808,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
@@ -819,6 +823,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Floor function, final Compilation compilation) throws IOException {
     compilation.append("FLOOR(");
@@ -831,6 +836,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Ceil function, final Compilation compilation) throws IOException {
     compilation.append("CEIL(");
@@ -843,6 +849,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Sqrt function, final Compilation compilation) throws IOException {
     compilation.append("SQRT(");
@@ -855,6 +862,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Pow function, final Compilation compilation) throws IOException {
     compilation.append("POWER(");
@@ -869,6 +877,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MOD(");
@@ -883,6 +892,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Sin function, final Compilation compilation) throws IOException {
     compilation.append("SIN(");
@@ -895,6 +905,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Asin function, final Compilation compilation) throws IOException {
     compilation.append("ASIN(");
@@ -907,6 +918,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Cos function, final Compilation compilation) throws IOException {
     compilation.append("COS(");
@@ -919,6 +931,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Acos function, final Compilation compilation) throws IOException {
     compilation.append("ACOS(");
@@ -931,6 +944,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Tan function, final Compilation compilation) throws IOException {
     compilation.append("TAN(");
@@ -943,6 +957,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Atan function, final Compilation compilation) throws IOException {
     compilation.append("ATAN(");
@@ -955,6 +970,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Atan2 function, final Compilation compilation) throws IOException {
     compilation.append("ATAN2(");
@@ -969,6 +985,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Exp function, final Compilation compilation) throws IOException {
     compilation.append("EXP(");
@@ -981,6 +998,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LN(");
@@ -993,6 +1011,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
@@ -1007,6 +1026,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG2(");
@@ -1019,6 +1039,7 @@ abstract class Compiler {
    *
    * @param function The function to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG10(");
@@ -1031,6 +1052,7 @@ abstract class Compiler {
    *
    * @param expression The expression to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final expression.Count expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');
@@ -1052,6 +1074,7 @@ abstract class Compiler {
    *
    * @param expression The expression to compile.
    * @param compilation The target {@link Compilation}.
+   * @throws IOException If an I/O error has occurred.
    */
   protected void compile(final expression.Set expression, final Compilation compilation) throws IOException {
     compilation.append(expression.function).append('(');
