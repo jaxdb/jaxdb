@@ -175,7 +175,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
         try {
           run(vendorClass, method, test);
         }
-        catch (final Throwable e) {
+        catch (final Throwable t) {
           DeferredLogger.flush();
           final Unsupported unsupported = method.getMethod().getAnnotation(Unsupported.class);
           if (unsupported != null) {
@@ -188,7 +188,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
           }
 
           logger.error(vendorClass.getSimpleName());
-          throw e instanceof SQLException ? flatten((SQLException)e) : e;
+          throw t instanceof SQLException ? flatten((SQLException)t) : t;
         }
       }
     };
