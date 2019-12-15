@@ -488,7 +488,6 @@ public class Generator {
     out.append("      if (obj == this)\n        return true;\n\n");
     out.append("      if (!(obj instanceof ").append(entityName).append(")").append((table.getExtends$() != null ? " || !super.equals(obj)" : "")).append(")\n        return false;\n\n");
 
-    final StringBuilder eq = new StringBuilder();
     final List<$Column> primaryColumns = new ArrayList<>();
     final List<$Column> equalsColumns;
     if (table.getColumn() != null) {
@@ -497,11 +496,11 @@ public class Generator {
           primaryColumns.add(column);
 
       equalsColumns = primaryColumns.size() > 0 ? primaryColumns : table.getColumn();
-      out.append("      final ").append(entityName).append(" that = (").append(entityName).append(")obj;\n");
+      out.append("      final ").append(entityName).append(" that = (").append(entityName).append(")obj;");
       for (final $Column column : equalsColumns)
-        eq.append(" && (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().equals(that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get()) : that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() == null)");
+        out.append("\n      if (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? !this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().equals(that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get()) : that.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null)\n        return false;\n");
 
-      out.append("      return ").append(eq.substring(4)).append(';');
+      out.append("\n      return true;");
     }
     else {
       equalsColumns = null;
@@ -509,14 +508,14 @@ public class Generator {
     }
     out.append("\n    }");
 
-    eq.setLength(0);
     if (equalsColumns != null && equalsColumns.size() > 0) {
       out.append("\n\n");
       out.append("    @").append(Override.class.getName()).append("\n");
       out.append("    public int hashCode() {\n");
+      out.append("      int hashCode = 1;");
       for (final $Column column : equalsColumns)
-        eq.append(" + (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null ? this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode() : -1)");
-      out.append("      return ").append(eq.substring(3)).append(';');
+        out.append("\n      hashCode = 31 * hashCode + (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() == null ? 0 : this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode());");
+      out.append("\n      return hashCode;");
       out.append("\n    }");
     }
 

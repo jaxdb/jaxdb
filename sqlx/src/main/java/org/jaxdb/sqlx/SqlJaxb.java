@@ -51,11 +51,11 @@ import org.jaxdb.sqlx_0_4.Row;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
-import org.libj.util.ArrayIntList;
 import org.libj.util.CollectionUtil;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.Identifiers;
-import org.libj.util.IntList;
+import org.libj.util.primitive.ArrayIntList;
+import org.libj.util.primitive.IntList;
 import org.openjax.jaxb.xjc.XJCompiler;
 
 final class SqlJaxb {

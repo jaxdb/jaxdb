@@ -56,10 +56,10 @@ import org.jaxsb.compiler.processor.reference.SchemaReference;
 import org.jaxsb.generator.Generator;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
-import org.libj.util.ArrayIntList;
 import org.libj.util.Classes;
 import org.libj.util.FlatIterableIterator;
-import org.libj.util.IntList;
+import org.libj.util.primitive.ArrayIntList;
+import org.libj.util.primitive.IntList;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 final class SqlXsb {

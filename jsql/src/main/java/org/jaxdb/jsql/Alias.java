@@ -37,7 +37,7 @@ final class Alias extends Compilable {
 
   @Override
   public int hashCode() {
-    return 199 * name.hashCode();
+    return 31 + name.hashCode();
   }
 
   @Override

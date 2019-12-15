@@ -1189,7 +1189,7 @@ public final class type {
     @Override
     public int hashCode() {
       final T get = get();
-      return name.hashCode() + (get == null ? 0 : get.hashCode());
+      return 31 * name.hashCode() + (get == null ? 0 : get.hashCode());
     }
 
     @Override

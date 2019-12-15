@@ -43,7 +43,7 @@ public abstract class Statement {
 
   @Override
   public int hashCode() {
-    return sql.hashCode() ^ 7;
+    return 31 + sql.hashCode();
   }
 
   @Override

@@ -29,7 +29,7 @@ import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Update.UPDATE;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.ArrayIntList;
+import org.libj.util.primitive.ArrayIntList;
 
 public class Batch {
   private final List<ExecuteUpdate> executeUpdates = new ArrayList<>();
@@ -147,6 +147,6 @@ public class Batch {
 
   @Override
   public int hashCode() {
-    return executeUpdates.hashCode();
+    return 31 + executeUpdates.hashCode();
   }
 }
