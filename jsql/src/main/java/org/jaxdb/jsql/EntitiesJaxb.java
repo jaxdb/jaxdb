@@ -35,7 +35,7 @@ import org.jaxdb.ddlx.annotation.Schema;
 import org.jaxdb.ddlx.annotation.Table;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.sqlx_0_4.Row;
-import org.libj.util.Identifiers;
+import org.libj.lang.Identifiers;
 
 final class EntitiesJaxb {
   @SuppressWarnings({"rawtypes", "unchecked"})

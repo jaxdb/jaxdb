@@ -40,7 +40,7 @@ import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxsb.runtime.Bindings;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
-import org.libj.util.Identifiers;
+import org.libj.lang.Identifiers;
 import org.openjax.jaxb.xjc.JaxbUtil;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;

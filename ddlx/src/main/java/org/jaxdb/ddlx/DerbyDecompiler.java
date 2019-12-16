@@ -50,7 +50,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$RangeOperator;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Smallint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
-import org.libj.util.Strings;
+import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override

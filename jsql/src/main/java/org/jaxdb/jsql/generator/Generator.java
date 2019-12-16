@@ -57,9 +57,9 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Table;
 import org.jaxsb.runtime.Bindings;
+import org.libj.lang.Identifiers;
+import org.libj.lang.Strings;
 import org.libj.util.Classes;
-import org.libj.util.Identifiers;
-import org.libj.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3.www._2001.XMLSchema;
@@ -124,7 +124,7 @@ public class Generator {
     codeBuilder.append("package ").append(pkg).append(";\n\n");
     codeBuilder.append(getDoc(audit.schema(), 0, '\0', '\n'));
     codeBuilder.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
-    codeBuilder.append('@').append(Generated.class.getName()).append("(value=\"" + GENERATED_VALUE + "\", date=\"" + GENERATED_DATE + "\")\n");
+    codeBuilder.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
     codeBuilder.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
 
     final StringBuilder tablesBuilder = new StringBuilder();

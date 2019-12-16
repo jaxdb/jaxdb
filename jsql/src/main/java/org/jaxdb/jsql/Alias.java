@@ -16,7 +16,7 @@
 
 package org.jaxdb.jsql;
 
-import org.libj.util.Strings;
+import org.libj.lang.Strings;
 
 final class Alias extends Compilable {
   protected final String name;
