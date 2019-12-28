@@ -196,9 +196,9 @@ abstract class Compiler {
       ddl.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
-    final String defaultFragement = $default(column);
-    if (defaultFragement != null && defaultFragement.length() > 0)
-      ddl.append(" DEFAULT ").append(defaultFragement);
+    final String defaultFragment = $default(column);
+    if (defaultFragment != null && defaultFragment.length() > 0)
+      ddl.append(" DEFAULT ").append(defaultFragment);
 
     final String nullFragment = $null(table, column);
     if (nullFragment != null && nullFragment.length() > 0)
@@ -238,7 +238,7 @@ abstract class Compiler {
   }
 
   private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
-    final StringBuilder contraintsBuilder = new StringBuilder();
+    final StringBuilder constraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
 
@@ -263,7 +263,7 @@ abstract class Compiler {
           builder.setLength(0);
         }
 
-        contraintsBuilder.append(uniqueString);
+        constraintsBuilder.append(uniqueString);
       }
 
       // check constraint
@@ -275,32 +275,32 @@ abstract class Compiler {
           checkString.append(",\n  CHECK ").append(checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
         }
 
-        contraintsBuilder.append(checkString);
+        constraintsBuilder.append(checkString);
       }
 
       // primary key constraint
       final String primaryKeyConstraint = blockPrimaryKey(table, constraints, columnNameToColumn);
       if (primaryKeyConstraint != null)
-        contraintsBuilder.append(primaryKeyConstraint);
+        constraintsBuilder.append(primaryKeyConstraint);
     }
 
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
         if (column.getForeignKey() != null) {
           final $ForeignKey foreignKey = column.getForeignKey();
-          contraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
-          contraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
-          contraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
+          constraintsBuilder.append(",\n  ").append(foreignKey(table)).append(" (").append(q(column.getName$().text()));
+          constraintsBuilder.append(") REFERENCES ").append(q(foreignKey.getReferences$().text()));
+          constraintsBuilder.append(" (").append(q(foreignKey.getColumn$().text())).append(')');
           if (foreignKey.getOnDelete$() != null) {
             final String onDelete = onDelete(foreignKey.getOnDelete$());
             if (onDelete != null)
-              contraintsBuilder.append(' ').append(onDelete);
+              constraintsBuilder.append(' ').append(onDelete);
           }
 
           if (foreignKey.getOnUpdate$() != null) {
             final String onUpdate = onUpdate(foreignKey.getOnUpdate$());
             if (onUpdate != null)
-              contraintsBuilder.append(' ').append(onUpdate);
+              constraintsBuilder.append(' ').append(onUpdate);
           }
         }
       }
@@ -358,12 +358,12 @@ abstract class Compiler {
 
         if (minCheck != null) {
           if (maxCheck != null)
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(" AND ").append(maxCheck).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(" AND ").append(maxCheck).append(')');
           else
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(minCheck).append(')');
         }
         else if (maxCheck != null) {
-          contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(maxCheck).append(')');
+          constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(maxCheck).append(')');
         }
       }
 
@@ -430,7 +430,7 @@ abstract class Compiler {
 
         if (operator != null) {
           if (condition != null)
-            contraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(q(column.getName$().text())).append(' ').append(operator).append(' ').append(condition).append(')');
+            constraintsBuilder.append(",\n  ").append(check(table)).append(" (").append(q(column.getName$().text())).append(' ').append(operator).append(' ').append(condition).append(')');
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
@@ -440,7 +440,7 @@ abstract class Compiler {
       }
     }
 
-    return new CreateStatement(contraintsBuilder.toString());
+    return new CreateStatement(constraintsBuilder.toString());
   }
 
   /**

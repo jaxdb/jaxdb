@@ -84,7 +84,7 @@ public class Generator {
     this.audit = new JSqlAudit(new DDLxAudit((xLygluGCXAA.Schema)Bindings.parse(url)));
   }
 
-  private static String getDoc(final $Documented documented, final int depth, final char shart, final char end) {
+  private static String getDoc(final $Documented documented, final int depth, final char start, final char end) {
     final XMLSchema.yAA.$String documentation = documented.getDocumentation();
     if (documentation == null)
       return "";
@@ -95,8 +95,8 @@ public class Generator {
 
     final String indent = Strings.repeat(" ", depth * 2);
     final StringBuilder builder = new StringBuilder();
-    if (shart != '\0')
-      builder.append(shart);
+    if (start != '\0')
+      builder.append(start);
 
     builder.append(indent).append("/** ").append(doc).append(" */");
     if (end != '\0')
@@ -181,7 +181,7 @@ public class Generator {
 
     if (column instanceof $Integer) {
       final $Integer type = ($Integer)column;
-      // no autogenerator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
+      // no auto-generator is necessary for ddlx_integer._generateOnInsert$.AUTO_5FINCREMENT
       if (type.getSqlxGenerateOnUpdate$() != null)
         if ($Integer.GenerateOnUpdate$.INCREMENT.text().equals(type.getSqlxGenerateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.INCREMENT;
