@@ -22,43 +22,43 @@ import org.libj.util.Hexadecimal;
 
 final class OracleCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 
   @Override
-  protected String compile(final dt.BINARY value) {
+  String compile(final dt.BINARY value) {
     return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
   }
 
   @Override
-  protected String compile(final dt.BLOB value) {
+  String compile(final dt.BLOB value) {
     return "HEXTORAW('" + new Hexadecimal(value.get()) + "')";
   }
 
   @Override
-  protected String compile(final dt.BOOLEAN value) {
+  String compile(final dt.BOOLEAN value) {
     return value.get() ? "1" : "0";
   }
 
   @Override
-  protected String compile(final dt.CHAR value) {
+  String compile(final dt.CHAR value) {
     final String string = value.get().replace("'", "''");
     return string.length() == 0 || string.charAt(0) == ' ' ? "' " + string + "'" : "'" + string + "'";
   }
 
   @Override
-  protected String compile(final dt.DATE value) {
+  String compile(final dt.DATE value) {
     return "TO_DATE('" + value + "','YYYY-MM-DD')";
   }
 
   @Override
-  protected String compile(final dt.DATETIME value) {
+  String compile(final dt.DATETIME value) {
     return "TO_TIMESTAMP('" + value + "', 'YYYY-MM-DD HH24:MI:SS.FF')";
   }
 
   @Override
-  protected String compile(final dt.TIME value) {
+  String compile(final dt.TIME value) {
     return "'0 " + value + "'";
   }
 }

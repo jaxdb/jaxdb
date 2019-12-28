@@ -39,23 +39,23 @@ public final class Interval extends Compilable implements TemporalAmount {
   public static final class Unit implements TemporalUnit {
     private static final Map<String,Unit> units = new HashMap<>();
 
-    protected static Unit valueOf(final String string) {
+    static Unit valueOf(final String string) {
       return units.get(string.toLowerCase());
     }
 
-    public static Unit MICROS = new Unit(ChronoUnit.MICROS);
-    public static Unit MILLIS = new Unit(ChronoUnit.MILLIS);
-    public static Unit SECONDS = new Unit(ChronoUnit.SECONDS);
-    public static Unit MINUTES = new Unit(ChronoUnit.MINUTES);
-    public static Unit HOURS = new Unit(ChronoUnit.HOURS);
-    public static Unit DAYS = new Unit(ChronoUnit.DAYS);
-    public static Unit WEEKS = new Unit(ChronoUnit.WEEKS);
-    public static Unit MONTHS = new Unit(ChronoUnit.MONTHS);
-    public static Unit QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS");
-    public static Unit YEARS = new Unit(ChronoUnit.YEARS);
-    public static Unit DECADES = new Unit(ChronoUnit.DECADES);
-    public static Unit CENTURIES = new Unit(ChronoUnit.CENTURIES);
-    public static Unit MILLENNIA = new Unit(ChronoUnit.MILLENNIA);
+    public static final Unit MICROS = new Unit(ChronoUnit.MICROS);
+    public static final Unit MILLIS = new Unit(ChronoUnit.MILLIS);
+    public static final Unit SECONDS = new Unit(ChronoUnit.SECONDS);
+    public static final Unit MINUTES = new Unit(ChronoUnit.MINUTES);
+    public static final Unit HOURS = new Unit(ChronoUnit.HOURS);
+    public static final Unit DAYS = new Unit(ChronoUnit.DAYS);
+    public static final Unit WEEKS = new Unit(ChronoUnit.WEEKS);
+    public static final Unit MONTHS = new Unit(ChronoUnit.MONTHS);
+    public static final Unit QUARTERS = new Unit(IsoFields.QUARTER_YEARS, "QUARTERS");
+    public static final Unit YEARS = new Unit(ChronoUnit.YEARS);
+    public static final Unit DECADES = new Unit(ChronoUnit.DECADES);
+    public static final Unit CENTURIES = new Unit(ChronoUnit.CENTURIES);
+    public static final Unit MILLENNIA = new Unit(ChronoUnit.MILLENNIA);
 
     private final TemporalUnit unit;
     private final String name;
@@ -129,7 +129,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   public Interval and(final long value, final Unit unit) {
-    final long newValue = intervals.getOrDefault(unit, 0l) + value;
+    final long newValue = intervals.getOrDefault(unit, 0L) + value;
     if (newValue != 0)
       intervals.put(unit, newValue);
     else
@@ -278,7 +278,7 @@ public final class Interval extends Compilable implements TemporalAmount {
   }
 
   @Override
-  protected void compile(final Compilation compilation) {
+  void compile(final Compilation compilation) {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

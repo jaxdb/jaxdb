@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
@@ -36,21 +35,21 @@ final class SQLiteCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
   @Override
-  protected void init(final Connection connection) throws SQLException {
+  void init(final Connection connection) {
   }
 
   @Override
-  protected String $null(final $Table table, final $Column column) {
+  String $null(final $Table table, final $Column column) {
     return column.getNull$() != null && !column.getNull$().text() ? "NOT NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final $Table table, final $Integer column) {
     if (!isAutoIncrement(column))
       return null;
 
@@ -74,7 +73,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String createIntegerColumn(final $Integer column) {
+  String createIntegerColumn(final $Integer column) {
     if (isAutoIncrement(column)) {
       if (!(column instanceof $Int))
         logger.warn("AUTOINCREMENT is only allowed on an INT column type -- Overriding to INT.");
@@ -86,7 +85,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
     final $Columns primaryKey = constraints.getPrimaryKey();
     if (primaryKey != null && primaryKey.getColumn().size() == 1) {
       final $Column column = columnNameToColumn.get(primaryKey.getColumn().get(0).getName$().text());
@@ -98,12 +97,12 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected String dropIndexOnClause(final $Table table) {
+  String dropIndexOnClause(final $Table table) {
     return " ON " + q(table.getName$().text());
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by SQLite's CREATE INDEX syntax. Creating index with default type.");
 

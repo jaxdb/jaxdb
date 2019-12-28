@@ -28,9 +28,9 @@ public final class GeneratorUtil {
     if (object == null)
       return "null";
 
-    String out = "";
+    final StringBuilder out = new StringBuilder();
     for (final Object item : object)
-      out += ", " + compile(item);
+      out.append(", ").append(compile(item));
 
     return "new " + object.getClass().getComponentType().getName() + "[] {" + out.substring(2) + "}";
   }
@@ -58,7 +58,7 @@ public final class GeneratorUtil {
       return "new " + BigDecimal.class.getName() + "(\"" + object + "\")";
 
     if (object instanceof Long)
-      return object + "l";
+      return object + "L";
 
     if (object instanceof GenerateOn<?>) {
       try {

@@ -49,7 +49,7 @@ public class SQLxMojo extends SqlMojo<SQLxProduce,$Database> {
   }
 
   @Override
-  void makeSql(final Reserve<$Database> reserve, final DBVendor dbVendor, final File sqlFile) throws IOException {
+  void makeSql(final Reserve<? extends $Database> reserve, final DBVendor dbVendor, final File sqlFile) throws IOException {
     SQL.sqlx2sql(dbVendor, reserve.obj, sqlFile);
   }
 

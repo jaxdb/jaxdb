@@ -21,41 +21,41 @@ import java.io.IOException;
 import org.jaxdb.vendor.DBVendor;
 
 final class ComparisonPredicate<T> extends type.BOOLEAN {
-  protected final operator.Logical<?> operator;
-  protected final Compilable a;
-  protected final Compilable b;
+  final operator.Logical<?> operator;
+  final Compilable a;
+  final Compilable b;
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
+  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final T b) {
     this.operator = operator;
     this.a = Compiler.compilable(a);
     this.b = org.jaxdb.jsql.type.DataType.wrap(b);
   }
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
+  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final QuantifiedComparisonPredicate<?> b) {
     this.operator = operator;
     this.a = Compiler.compilable(a);
     this.b = b;
   }
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final T a, final kind.DataType<?> b) {
+  ComparisonPredicate(final operator.Logical<?> operator, final T a, final kind.DataType<?> b) {
     this.operator = operator;
     this.a = org.jaxdb.jsql.type.DataType.wrap(a);
     this.b = Compiler.compilable(b);
   }
 
-  protected ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final kind.DataType<?> b) {
+  ComparisonPredicate(final operator.Logical<?> operator, final kind.DataType<?> a, final kind.DataType<?> b) {
     this.operator = operator;
     this.a = Compiler.compilable(a);
     this.b = Compiler.compilable(b);
   }
 
   @Override
-  protected final String compile(final DBVendor vendor) {
+  final String compile(final DBVendor vendor) {
     return operator.toString();
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

@@ -21,8 +21,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public interface EntityEnum {
-  @Target({ElementType.TYPE})
+public interface EntityEnum extends CharSequence {
+  @Target(ElementType.TYPE)
   @Retention(RetentionPolicy.RUNTIME)
   @interface Spec {
     String table();

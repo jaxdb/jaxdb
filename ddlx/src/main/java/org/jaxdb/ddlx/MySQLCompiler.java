@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,50 +29,51 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 
 class MySQLCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 
   @Override
-  protected void init(final Connection connection) throws SQLException {
+  void init(final Connection connection) {
   }
 
   @Override
-  protected List<CreateStatement> triggers(final $Table table) {
+  List<CreateStatement> triggers(final $Table table) {
     if (table.getTriggers() == null)
       return super.triggers(table);
 
     final String tableName = table.getName$().text();
     final List<$Table.Triggers.Trigger> triggers = table.getTriggers().getTrigger();
     final List<CreateStatement> statements = new ArrayList<>();
+    final StringBuilder builder = new StringBuilder();
     for (final $Table.Triggers.Trigger trigger : triggers) {
-      String buffer = "";
       for (final String action : trigger.getActions$().text()) {
-        buffer += "DELIMITER |\n";
-        buffer += "CREATE TRIGGER " + q(SQLDataTypes.getTriggerName(tableName, trigger, action)) + " " + trigger.getTime$().text() + " " + action + " ON " + q(tableName) + "\n";
-        buffer += "  FOR EACH ROW\n";
-        buffer += "  BEGIN\n";
+        builder.append("DELIMITER |\n");
+        builder.append("CREATE TRIGGER ").append(q(SQLDataTypes.getTriggerName(tableName, trigger, action))).append(" ").append(trigger.getTime$().text()).append(" ").append(action).append(" ON ").append(q(tableName)).append('\n');
+        builder.append("  FOR EACH ROW\n");
+        builder.append("  BEGIN\n");
 
         final String text = trigger.text().toString();
         // FIXME: This does not work because the whitespace is trimmed before we can check it
-        int i = 0, j = -1;
-        while (i < text.length()) {
-          char c = text.charAt(i++);
-          if (c == '\n' || c == '\r')
+        int j = -1;
+        for (int i = 0; i < text.length();) {
+          final char ch = text.charAt(i++);
+          if (ch == '\n' || ch == '\r')
             continue;
 
           ++j;
-          if (c != ' ' && c != '\t')
+          if (ch != ' ' && ch != '\t')
             break;
         }
 
-        buffer += "    " + text.trim().replace("\n" + text.substring(0, j), "\n    ") + "\n";
-        buffer += "  END;\n";
-        buffer += "|\n";
-        buffer += "DELIMITER";
+        builder.append("    ").append(text.trim().replace("\n" + text.substring(0, j), "\n    ")).append('\n');
+        builder.append("  END;\n");
+        builder.append("|\n");
+        builder.append("DELIMITER");
       }
 
-      statements.add(new CreateStatement(buffer));
+      statements.add(new CreateStatement(builder.toString()));
+      builder.setLength(0);
     }
 
     statements.addAll(super.triggers(table));
@@ -81,22 +81,22 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $Table table, final $Column column) {
+  String $null(final $Table table, final $Column column) {
     return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final $Table table, final $Integer column) {
     return isAutoIncrement(column) ? $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text() : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $Table table) {
+  String dropIndexOnClause(final $Table table) {
     return " ON " + q(table.getName$().text());
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 }

@@ -34,7 +34,7 @@ import org.libj.sql.DateTimes;
 final class DerbyCompiler extends Compiler {
   public static final class Function {
     public static Double power(final Double a, final Double b) {
-      return a == null || b == null ? null : Math.pow(a, b);
+      return a == null || b == null ? null : StrictMath.pow(a, b);
     }
 
     public static Double round(final Double a, final Integer b) {
@@ -46,11 +46,11 @@ final class DerbyCompiler extends Compiler {
     }
 
     public static Double log(final Double a, final Double b) {
-      return a == null || b == null ? null : Math.log(b) / Math.log(a);
+      return a == null || b == null ? null : StrictMath.log(b) / StrictMath.log(a);
     }
 
     public static Double log2(final Double a) {
-      return a == null ? null : Math.log(a) / Constants.LOG_2;
+      return a == null ? null : StrictMath.log(a) / Constants.LOG_2;
     }
 
     public static Timestamp now() {
@@ -86,7 +86,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 
@@ -102,14 +102,14 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void onConnect(final Connection connection) throws SQLException {
+  void onConnect(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       statement.execute("SET SCHEMA APP");
     }
   }
 
   @Override
-  protected void onRegister(final Connection connection) throws SQLException {
+  void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       createFunction(statement, "CREATE FUNCTION LOG(b DOUBLE, n DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log'");
       createFunction(statement, "CREATE FUNCTION LOG2(a DOUBLE) RETURNS DOUBLE PARAMETER STYLE JAVA NO SQL LANGUAGE JAVA EXTERNAL NAME '" + Function.class.getName() + ".log2'");
@@ -127,7 +127,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
+  void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
     if (from != null)
       super.compile(from, compilation);
     else
@@ -135,7 +135,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Interval interval, final Compilation compilation) {
+  void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     // FIXME:...
@@ -149,7 +149,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     if (expression.a instanceof type.DATE)
       compilation.append("DATE");
     else if (expression.a instanceof type.TIME)
@@ -167,16 +167,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.Numeric expression, final Compilation compilation) throws IOException {
-    compilation.append("((");
-    compilable(expression.a).compile(compilation);
-    compilation.append(") ").append(expression.operator.toString()).append(" (");
-    compilable(expression.b).compile(compilation);
-    compilation.append("))");
-  }
-
-  @Override
-  protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("DMOD(");
     function.a.compile(compilation);
     compilation.append(", ");
@@ -186,7 +177,7 @@ final class DerbyCompiler extends Compiler {
 
   @Override
   @SuppressWarnings({"rawtypes", "unchecked"})
-  protected void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
+  void compile(final SelectImpl.untyped.HAVING<?> having, final Compilation compilation) throws IOException {
     if (having != null) {
       final SelectImpl.untyped.SELECT<?> select = ((SelectCommand)compilation.command.peek()).select();
       final SelectCommand command = (SelectCommand)compilation.command.peek();
@@ -201,7 +192,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
+  void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
       if (offset != null)
         compilation.append(" OFFSET ").append(offset.rows).append(" ROWS");

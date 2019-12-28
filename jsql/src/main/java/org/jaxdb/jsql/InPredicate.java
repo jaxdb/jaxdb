@@ -23,15 +23,15 @@ import java.util.Iterator;
 import java.util.Set;
 
 final class InPredicate extends Predicate {
-  protected final boolean positive;
-  protected final Compilable[] values;
+  final boolean positive;
+  final Compilable[] values;
 
   @SafeVarargs
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
+  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Object ... values) {
     this(dataType, positive, Arrays.asList(values));
   }
 
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Collection<?> values) {
+  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Collection<?> values) {
     super(dataType);
     this.positive = positive;
     final Iterator<?> iterator = values.iterator();
@@ -40,19 +40,19 @@ final class InPredicate extends Predicate {
       this.values[i] = org.jaxdb.jsql.type.DataType.wrap(iterator.next());
   }
 
-  protected InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
+  InPredicate(final kind.DataType<?> dataType, final boolean positive, final Select.untyped.SELECT<? extends type.DataType<?>> query) {
     super(dataType);
     this.positive = positive;
     this.values = new Compilable[] {(Compilable)query};
   }
 
   @Override
-  protected Object evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("IN cannot be evaluated outside the DB");
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

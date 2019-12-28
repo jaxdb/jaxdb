@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,16 +36,16 @@ final class PostgreSQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
   @Override
-  protected void init(final Connection connection) throws SQLException {
+  void init(final Connection connection) {
   }
 
   @Override
-  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+  LinkedHashSet<DropStatement> dropTypes(final $Table table) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -66,7 +65,7 @@ final class PostgreSQLCompiler extends Compiler {
 
 
   @Override
-  protected List<CreateStatement> types(final $Table table) {
+  List<CreateStatement> types(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -97,22 +96,22 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $Table table, final $Column column) {
+  String $null(final $Table table, final $Column column) {
     return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final $Table table, final $Integer column) {
     return isAutoIncrement(column) ? "DEFAULT nextval('" + SQLDataTypes.getSequenceName(table, column) + "')" : "";
   }
 
   @Override
-  protected String dropIndexOnClause(final $Table table) {
+  String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     final String uniqueClause;
     if ($Index.Type$.HASH.text().equals(type.text())) {
       if (columns.length > 1) {

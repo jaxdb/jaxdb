@@ -58,18 +58,18 @@ public abstract class NumericFunctionDynamicTest {
   }
 
   private static final MathContext mc = new MathContext(65, RoundingMode.HALF_UP);
-  private static int rowNum = 0;
+  private static int rowNum;
 
-  protected static <E extends type.Entity>RowIterator<E> selectEntity(final E entity, final Condition<?> condition, final Transaction transaction) throws IOException, SQLException {
+  static <E extends type.Entity>RowIterator<E> selectEntity(final E entity, final Condition<?> condition, final Transaction transaction) throws IOException, SQLException {
     final FROM<E> from = SELECT(entity).FROM(entity);
     return condition != null ? from.WHERE(condition).execute(transaction) : from.execute(transaction);
   }
 
-  protected static <E extends type.Entity>RowIterator<E> selectEntity(final E entity, final Transaction transaction) throws IOException, SQLException {
+  static <E extends type.Entity>RowIterator<E> selectEntity(final E entity, final Transaction transaction) throws IOException, SQLException {
     return selectEntity(entity, null, transaction);
   }
 
-  protected static <E extends type.Entity>E getNthRow(final RowIterator<E> rows, final int rowNum) throws SQLException {
+  static <E extends type.Entity>E getNthRow(final RowIterator<E> rows, final int rowNum) throws SQLException {
     E row = null;
     for (int i = 0; i <= rowNum && rows.nextRow(); ++i)
       row = rows.nextEntity();
@@ -1246,7 +1246,7 @@ public abstract class NumericFunctionDynamicTest {
       t.doubleType.set(LOG2(t.doubleType));
 
       assertEquals(1, UPDATE(t).execute(transaction));
-      final double expected = Double.valueOf(SafeMath.log(2, clone.doubleType.get()));
+      final double expected = SafeMath.log(2, clone.doubleType.get());
       assertEquals(expected, t.doubleType.get(), 10 * Math.ulp(expected));
 
       t = getNthRow(selectEntity(t, AND(

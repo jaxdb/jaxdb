@@ -22,18 +22,18 @@ import java.util.Set;
 final class NullPredicate extends Predicate {
   final boolean positive;
 
-  protected NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
+  NullPredicate(final kind.DataType<?> dataType, final boolean positive) {
     super(dataType);
     this.positive = positive;
   }
 
   @Override
-  protected Boolean evaluate(final Set<Evaluable> visited) {
+  Boolean evaluate(final Set<Evaluable> visited) {
     return (get() == null) == positive ? Boolean.TRUE : Boolean.FALSE;
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

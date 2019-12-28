@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -37,16 +36,16 @@ final class OracleCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 
   @Override
-  protected void init(final Connection connection) throws SQLException {
+  void init(final Connection connection) {
   }
 
   @Override
-  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+  LinkedHashSet<DropStatement> dropTypes(final $Table table) {
     final LinkedHashSet<DropStatement> statements = super.dropTypes(table);
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -64,18 +63,18 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String $null(final $Table table, final $Column column) {
+  String $null(final $Table table, final $Column column) {
     return column.getNull$() != null ? !column.getNull$().text() ? "NOT NULL" : "NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final $Table table, final $Integer column) {
     // NOTE: Oracle's AUTO INCREMENT semantics are expressed via the CREATE SEQUENCE and CREATE TRIGGER statements, and nothing is needed in the CREATE TABLE statement
     return null;
   }
 
   @Override
-  protected List<CreateStatement> types(final $Table table) {
+  List<CreateStatement> types(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -94,7 +93,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected List<CreateStatement> triggers(final $Table table) {
+  List<CreateStatement> triggers(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
       for (final $Column column : table.getColumn()) {
@@ -113,65 +112,65 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final $Table table) {
     return new DropStatement("BEGIN EXECUTE IMMEDIATE 'DROP TABLE " + q(table.getName$().text()) + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; END IF; END;");
   }
 
   @Override
-  protected String dropIndexOnClause(final $Table table) {
+  String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     if ($Index.Type$.HASH.text().equals(type.text()))
       logger.warn("HASH index type specification is not explicitly supported by Oracle's CREATE INDEX syntax. Creating index with default type.");
 
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 
-  private int foreignKeys = 0;
-  private int primaryKeys = 0;
-  private int checkConstraints = 0;
+  private int foreignKeys;
+  private int primaryKeys;
+  private int checkConstraints;
 
   @Override
-  protected String check(final $Table table) {
+  String check(final $Table table) {
     return "CONSTRAINT " + q(table.getName$().text() + "_ck" + ++checkConstraints) + " CHECK";
   }
 
   @Override
-  protected String primaryKey(final $Table table) {
+  String primaryKey(final $Table table) {
     return "CONSTRAINT " + q(table.getName$().text() + "_pk" + ++primaryKeys) + " PRIMARY KEY";
   }
 
   @Override
-  protected String foreignKey(final $Table table) {
+  String foreignKey(final $Table table) {
     return "CONSTRAINT " + q(table.getName$().text() + "_fk" + ++foreignKeys) + " FOREIGN KEY";
   }
 
   @Override
-  protected String onDelete(final OnDelete$ onDelete) {
+  String onDelete(final OnDelete$ onDelete) {
     return "RESTRICT".equals(onDelete.text()) ? null : super.onDelete(onDelete);
   }
 
   @Override
-  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     logger.warn("ON UPDATE is not supported");
     return null;
   }
 
   @Override
-  protected String compileDate(final String value) {
+  String compileDate(final String value) {
     return "(date'" + value + "')";
   }
 
   @Override
-  protected String compileDateTime(final String value) {
+  String compileDateTime(final String value) {
     return "(timestamp'" + value + "')";
   }
 
   @Override
-  protected String compileTime(final String value) {
+  String compileTime(final String value) {
     return "INTERVAL '" + value + "' HOUR TO SECOND";
   }
 }

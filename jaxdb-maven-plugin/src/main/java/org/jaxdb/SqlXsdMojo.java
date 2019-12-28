@@ -17,6 +17,7 @@
 package org.jaxdb;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedHashSet;
 
@@ -47,10 +48,10 @@ public class SqlXsdMojo extends JaxDbMojo<SqlXsdProduce> {
     }
   }
 
-  final Configuration configure(final JaxDbMojo<?>.Configuration configuration) throws Exception {
+  final Configuration configure(final JaxDbMojo<?>.Configuration configuration) throws MalformedURLException {
     final LinkedHashSet<URL> xsds = new LinkedHashSet<>();
     for (final URL schema : configuration.getSchemas()) {
-      final File xsd = new File(configuration.getDestDir(), URLs.getName(schema).replaceAll("\\.\\S+$", ".xsd"));
+      final File xsd = new File(configuration.getDestDir(), EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd"));
       xsds.add(xsd.toURI().toURL());
     }
 

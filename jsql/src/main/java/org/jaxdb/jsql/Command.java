@@ -17,5 +17,5 @@
 package org.jaxdb.jsql;
 
 abstract class Command extends Compilable {
-  protected abstract Class<? extends Schema> getSchema();
+  abstract Class<? extends Schema> getSchema();
 }

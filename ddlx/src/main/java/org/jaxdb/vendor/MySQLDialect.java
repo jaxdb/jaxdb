@@ -22,7 +22,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class MySQLDialect extends Dialect {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 
@@ -85,22 +85,22 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return 30;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     return "TINYINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     return "SMALLINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     if (unsigned && precision < 9)
       return "MEDIUMINT(" + precision + ") UNSIGNED";
 
@@ -111,24 +111,24 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT(" + precision + (unsigned ? ") UNSIGNED" : ")");
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return (varying ? "VAR" : "") + "BINARY" + "(" + length + ")";
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/char.html
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return 65535;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
-    if (length != null && length >= 4294967296l)
+  String declareBlob(final Long length) {
+    if (length != null && length >= 4294967296L)
       throw new IllegalArgumentException("Length of " + length + " is illegal for TINYBLOB, BLOB, MEDIUMBLOB, or LONGBLOB in " + getVendor());
 
     return length == null ? "LONGBLOB" : length < 256 ? "TINYBLOB" : length < 65536 ? "BLOB" : length < 16777216 ? "MEDIUMBLOB" : "LONGBLOB";
@@ -137,24 +137,24 @@ public class MySQLDialect extends Dialect {
   // https://dev.mysql.com/doc/refman/5.7/en/blob.html
   // TINYBLOB = 256B, BLOB = 64KB, MEDIUMBLOB = 16MB and LONGBLOB = 4GB
   @Override
-  protected Long blobMaxLength() {
-    return 4294967296l;
+  Long blobMaxLength() {
+    return 4294967296L;
   }
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 
   // https://dev.mysql.com/doc/refman/5.7/en/char.html
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return 65535;
   }
 
   @Override
-  protected String declareClob(final Long length) {
-    if (length != null && length >= 4294967296l)
+  String declareClob(final Long length) {
+    if (length != null && length >= 4294967296L)
       throw new IllegalArgumentException("Length of " + length + " is illegal for TINYTEXT, TEXT, MEDIUMTEXT, or LONGTEXT in " + getVendor());
 
     return length == null ? "LONGTEXT" : length < 256 ? "TINYTEXT" : length < 65536 ? "TEXT" : length < 16777216 ? "MEDIUMTEXT" : "LONGTEXT";
@@ -163,8 +163,8 @@ public class MySQLDialect extends Dialect {
   // https://dev.mysql.com/doc/refman/5.7/en/blob.html
   // TINYTEXT = 256B, TEXT = 64KB, MEDIUMTEXT = 16MB and LONGTEXT = 4GB
   @Override
-  protected Long clobMaxLength() {
-    return 4294967296l;
+  Long clobMaxLength() {
+    return 4294967296L;
   }
 
   @Override

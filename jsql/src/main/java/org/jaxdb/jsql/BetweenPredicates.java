@@ -24,7 +24,7 @@ import org.libj.util.Numbers;
 import org.libj.util.Temporals;
 
 final class BetweenPredicates {
-  protected static abstract class BetweenPredicate extends Predicate {
+  abstract static class BetweenPredicate extends Predicate {
     final boolean positive;
 
     BetweenPredicate(final kind.DataType<?> dataType, final boolean positive) {
@@ -32,37 +32,37 @@ final class BetweenPredicates {
       this.positive = positive;
     }
 
-    protected abstract Compilable a();
-    protected abstract Compilable b();
+    abstract Compilable a();
+    abstract Compilable b();
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
-  protected static class NumericBetweenPredicate extends BetweenPredicate {
-    protected final Compilable a;
-    protected final Compilable b;
+  static class NumericBetweenPredicate extends BetweenPredicate {
+    final Compilable a;
+    final Compilable b;
 
-    protected NumericBetweenPredicate(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b, final boolean positive) {
+    NumericBetweenPredicate(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
     @Override
-    protected Compilable a() {
+    Compilable a() {
       return a;
     }
 
     @Override
-    protected Compilable b() {
+    Compilable b() {
       return b;
     }
 
     @Override
-    protected Boolean evaluate(final Set<Evaluable> visited) {
+    Boolean evaluate(final Set<Evaluable> visited) {
       if (dataType == null || a == null || b == null || !(dataType instanceof Evaluable) || !(a instanceof Evaluable) || !(b instanceof Evaluable))
         return null;
 
@@ -73,28 +73,28 @@ final class BetweenPredicates {
     }
   }
 
-  protected static class TemporalBetweenPredicate extends BetweenPredicate {
-    protected final Compilable a;
-    protected final Compilable b;
+  static class TemporalBetweenPredicate extends BetweenPredicate {
+    final Compilable a;
+    final Compilable b;
 
-    protected TemporalBetweenPredicate(final kind.Temporal<?> dataType, final kind.Temporal<?> a, final kind.Temporal<?> b, final boolean positive) {
+    TemporalBetweenPredicate(final kind.Temporal<?> dataType, final kind.Temporal<?> a, final kind.Temporal<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
     @Override
-    protected Compilable a() {
+    Compilable a() {
       return a;
     }
 
     @Override
-    protected Compilable b() {
+    Compilable b() {
       return b;
     }
 
     @Override
-    protected Boolean evaluate(final Set<Evaluable> visited) {
+    Boolean evaluate(final Set<Evaluable> visited) {
       if (dataType == null || a == null || b == null || !(dataType instanceof Evaluable) || !(a instanceof Evaluable) || !(b instanceof Evaluable))
         return null;
 
@@ -105,28 +105,28 @@ final class BetweenPredicates {
     }
   }
 
-  protected static class TimeBetweenPredicate extends BetweenPredicate {
-    protected final Compilable a;
-    protected final Compilable b;
+  static class TimeBetweenPredicate extends BetweenPredicate {
+    final Compilable a;
+    final Compilable b;
 
-    protected TimeBetweenPredicate(final kind.TIME dataType, final kind.TIME a, final kind.TIME b, final boolean positive) {
+    TimeBetweenPredicate(final kind.TIME dataType, final kind.TIME a, final kind.TIME b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
     @Override
-    protected Compilable a() {
+    Compilable a() {
       return a;
     }
 
     @Override
-    protected Compilable b() {
+    Compilable b() {
       return b;
     }
 
     @Override
-    protected Boolean evaluate(final Set<Evaluable> visited) {
+    Boolean evaluate(final Set<Evaluable> visited) {
       if (dataType == null || a == null || b == null || !(dataType instanceof Evaluable) || !(a instanceof Evaluable) || !(b instanceof Evaluable))
         return null;
 
@@ -137,28 +137,28 @@ final class BetweenPredicates {
     }
   }
 
-  protected static class TextualBetweenPredicate extends BetweenPredicate {
-    protected final Compilable a;
-    protected final Compilable b;
+  static class TextualBetweenPredicate extends BetweenPredicate {
+    final Compilable a;
+    final Compilable b;
 
-    protected TextualBetweenPredicate(final kind.Textual<?> dataType, final kind.Textual<?> a, final kind.Textual<?> b, final boolean positive) {
+    TextualBetweenPredicate(final kind.Textual<?> dataType, final kind.Textual<?> a, final kind.Textual<?> b, final boolean positive) {
       super(dataType, positive);
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
     @Override
-    protected Compilable a() {
+    Compilable a() {
       return a;
     }
 
     @Override
-    protected Compilable b() {
+    Compilable b() {
       return b;
     }
 
     @Override
-    protected Boolean evaluate(final Set<Evaluable> visited) {
+    Boolean evaluate(final Set<Evaluable> visited) {
       if (dataType == null || a == null || b == null || !(dataType instanceof Evaluable) || !(a instanceof Evaluable) || !(b instanceof Evaluable))
         return null;
 

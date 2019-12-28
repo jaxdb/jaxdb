@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public final class DBVendor {
-  private static int index = 0;
+  private static int index;
   private static final DBVendor[] instances = new DBVendor[7];
   private static final Map<String,DBVendor> map = new HashMap<>();
 
@@ -44,7 +44,7 @@ public final class DBVendor {
       if (vendorName.contains(vendor.name.toLowerCase()))
         return vendor;
 
-    return null;
+    throw new UnsupportedOperationException("Unsupported DB vendor: " + metaData.getDatabaseProductName());
   }
 
   public static DBVendor valueOf(final String string) {

@@ -3,7 +3,6 @@ package org.jaxdb.ddlx;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +30,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
@@ -45,7 +44,7 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  protected $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+  $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $Column column;
     if (typeName.startsWith("BIGINT")) {
       final $Bigint type = newColumn($Bigint.class);
@@ -127,7 +126,7 @@ class SQLiteDecompiler extends Decompiler {
     }
     else if (typeName.startsWith("DECIMAL")) {
       final $Decimal type = newColumn($Decimal.class);
-      if (!typeName.equals("DECIMAL(15, 0)")) {
+      if (!"DECIMAL(15, 0)".equals(typeName)) {
         final int open = typeName.indexOf('(');
         if (open > 0) {
           final int comma = typeName.indexOf(',', open + 1);
@@ -228,17 +227,17 @@ class SQLiteDecompiler extends Decompiler {
   }
 
   @Override
-  protected Map<String,List<$Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  Map<String,List<$Constraints.Unique>> getUniqueConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
+  Map<String,List<$Check>> getCheckConstraints(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
+  Map<String,$Table.Indexes> getIndexes(final Connection connection) {
     throw new UnsupportedOperationException();
   }
 }

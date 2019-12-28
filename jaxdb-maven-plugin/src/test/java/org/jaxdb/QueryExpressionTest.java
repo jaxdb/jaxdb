@@ -84,7 +84,7 @@ public abstract class QueryExpressionTest {
       SELECT(o.address1, o.latitude).
       FROM(o).
       WHERE(AND(
-        EQ(o.phone, 81332245000l),
+        EQ(o.phone, 81332245000L),
         OR(GT(o.latitude, 20d),
           LT(o.longitude, 100d)))).
       execute()) {

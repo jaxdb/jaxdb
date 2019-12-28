@@ -21,10 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PostgreSQLDialect extends Dialect {
-  protected static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
+  static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
@@ -84,67 +84,67 @@ public class PostgreSQLDialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return null;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     return "INT";
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT";
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return "BYTEA";
   }
 
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
+  String declareBlob(final Long length) {
     return "BYTEA";
   }
 
   @Override
-  protected Long blobMaxLength() {
+  Long blobMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHAR") + "(" + length + ")";
   }
 
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareClob(final Long length) {
+  String declareClob(final Long length) {
     return "TEXT";
   }
 
   @Override
-  protected Long clobMaxLength() {
+  Long clobMaxLength() {
     return null;
   }
 

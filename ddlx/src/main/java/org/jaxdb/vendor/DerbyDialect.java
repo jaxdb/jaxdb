@@ -22,7 +22,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class DerbyDialect extends Dialect {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 
@@ -86,50 +86,50 @@ public class DerbyDialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return null;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     return unsigned ? "INTEGER" : "SMALLINT";
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     return unsigned ? "BIGINT" : "INTEGER";
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT";
   }
 
   @Override
-  protected String declareBinary(boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return declareChar(varying || length > CHAR_MAX_LENGTH, length) + " FOR BIT DATA";
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj30118.html
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return 32700;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
+  String declareBlob(final Long length) {
     return "BLOB" + (length != null ? "(" + length + ")" : "");
   }
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
   @Override
-  protected Long blobMaxLength() {
-    return 2147483647l;
+  Long blobMaxLength() {
+    return 2147483647L;
   }
 
   // https://builds.apache.org/job/Derby-docs/lastSuccessfulBuild/artifact/trunk/out/ref/rrefstringlimits.html
@@ -137,7 +137,7 @@ public class DerbyDialect extends Dialect {
   private static final int CHAR_MAX_LENGTH = 254;
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     final String type = varying ? "VARCHAR" : "CHAR";
     final int maxLength = varying ? VARCHAR_MAX_LENGTH : CHAR_MAX_LENGTH;
     if (length > maxLength)
@@ -148,12 +148,12 @@ public class DerbyDialect extends Dialect {
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefsqlj41207.html
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return 32672;
   }
 
   @Override
-  protected String declareClob(final Long length) {
+  String declareClob(final Long length) {
     if (length == null)
       return "CLOB";
 
@@ -165,8 +165,8 @@ public class DerbyDialect extends Dialect {
 
   // https://db.apache.org/derby/docs/10.2/ref/rrefblob.html
   @Override
-  protected Long clobMaxLength() {
-    return 2147483647l;
+  Long clobMaxLength() {
+    return 2147483647L;
   }
 
   @Override

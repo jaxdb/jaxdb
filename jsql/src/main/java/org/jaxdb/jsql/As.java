@@ -24,37 +24,37 @@ final class As<T> extends type.Subject<T> {
   private final type.Subject<?> variable;
   private final boolean explicit;
 
-  protected As(final Keyword<? extends type.Subject<?>> parent, final type.Subject<?> variable, final boolean explicit) {
+  As(final Keyword<? extends type.Subject<?>> parent, final type.Subject<?> variable, final boolean explicit) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = explicit;
   }
 
-  protected As(final type.Subject<T> parent, final type.Subject<?> variable) {
+  As(final type.Subject<T> parent, final type.Subject<?> variable) {
     this.parent = parent;
     this.variable = variable;
     this.explicit = true;
   }
 
-  protected Evaluable parent() {
+  Evaluable parent() {
     return parent;
   }
 
-  protected type.Subject<?> getVariable() {
+  type.Subject<?> getVariable() {
     return variable;
   }
 
-  protected boolean isExplicit() {
+  boolean isExplicit() {
     return this.explicit;
   }
 
   @Override
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 
   @Override
-  protected Object evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     return variable.evaluate(visited);
   }
 }

@@ -40,9 +40,9 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.openjax.xml.datatype.HexBinary;
 
 public class dt {
-  public static abstract class DataType<T> implements Serializable {
+  public abstract static class DataType<T extends Serializable> implements Serializable {
     private static final long serialVersionUID = 5744263596183372559L;
-    protected final T value;
+    final T value;
 
     public DataType(final T value) {
       this.value = value;
@@ -81,7 +81,7 @@ public class dt {
   public static class BIGINT extends DataType<BigInteger> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $Bigint addCheck(final $Bigint column, final $Check check) {
+    static $Bigint addCheck(final $Bigint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Bigint.Max$(new BigInteger(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -160,7 +160,7 @@ public class dt {
   public static class CHAR extends DataType<String> {
     private static final long serialVersionUID = 4342711843352764121L;
 
-    protected static $Char addCheck(final $Char column, final $Check check) {
+    static $Char addCheck(final $Char column, final $Check check) {
       final $Char.Check typedCheck = new $Char.Check();
       typedCheck.setCondition$(new $Char.Check.Condition$(check.getValue().text()));
       typedCheck.setOperator$(new $Char.Check.Operator$($Char.Check.Operator$.Enum.valueOf(check.getOperator().text())));
@@ -261,7 +261,7 @@ public class dt {
   public static class DECIMAL extends DataType<BigDecimal> {
     private static final long serialVersionUID = -7880579934877572719L;
 
-    protected static $Decimal addCheck(final $Decimal column, final $Check check) {
+    static $Decimal addCheck(final $Decimal column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Decimal.Max$(new BigDecimal(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -305,7 +305,7 @@ public class dt {
   public static class DOUBLE extends DataType<java.lang.Double> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    protected static $Double addCheck(final $Double column, final $Check check) {
+    static $Double addCheck(final $Double column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Double.Max$(Double.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -360,7 +360,7 @@ public class dt {
   public static class FLOAT extends DataType<java.lang.Float> {
     private static final long serialVersionUID = 8510411838107614004L;
 
-    protected static $Float addCheck(final $Float column, final $Check check) {
+    static $Float addCheck(final $Float column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Float.Max$(Float.valueOf(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -399,7 +399,7 @@ public class dt {
   public static class INT extends DataType<Long> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $Int addCheck(final $Int column, final $Check check) {
+    static $Int addCheck(final $Int column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Int.Max$(new BigInteger(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -438,7 +438,7 @@ public class dt {
   public static class SMALLINT extends DataType<java.lang.Integer> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $Smallint addCheck(final $Smallint column, final $Check check) {
+    static $Smallint addCheck(final $Smallint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Smallint.Max$(new BigInteger(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))
@@ -503,7 +503,7 @@ public class dt {
   public static class TINYINT extends DataType<Short> {
     private static final long serialVersionUID = -7869441789524610043L;
 
-    protected static $Tinyint addCheck(final $Tinyint column, final $Check check) {
+    static $Tinyint addCheck(final $Tinyint column, final $Check check) {
       if ($RangeOperator.lte.text().equals(check.getOperator().text()))
         column.setMax$(new $Tinyint.Max$(new BigInteger(check.getValue().text())));
       else if ($RangeOperator.gte.text().equals(check.getOperator().text()))

@@ -19,5 +19,5 @@ package org.jaxdb.jsql;
 import java.util.Set;
 
 abstract class Evaluable extends Compilable {
-  protected abstract Object evaluate(Set<Evaluable> visited);
+  abstract Object evaluate(Set<Evaluable> visited);
 }

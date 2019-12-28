@@ -27,7 +27,7 @@ import org.libj.net.URLs;
 import org.xml.sax.SAXException;
 
 abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration> {
-  private static int index = 0;
+  private static int index;
   static final DDLxProduce[] values = new DDLxProduce[5];
 
   private DDLxProduce(final String name) {
@@ -50,11 +50,11 @@ abstract class DDLxProduce extends Produce<JaxDbMojo<DDLxProduce>.Configuration>
     }
   };
 
-  static DDLxProduce SQL_XSD = new DDLxProduce("sqlxsd") {
+  static final DDLxProduce SQL_XSD = new DDLxProduce("sqlxsd") {
     @Override
     void execute(final JaxDbMojo<DDLxProduce>.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws IOException, SAXException, TransformerException {
       for (final URL schema : configuration.getSchemas()) {
-        final File xsd = new File(configuration.getDestDir(), URLs.getName(schema).replaceAll("\\.\\S+$", ".xsd"));
+        final File xsd = new File(configuration.getDestDir(), JaxDbMojo.EXTENSION_PATTERN.matcher(URLs.getName(schema)).replaceAll(".xsd"));
         org.jaxdb.sqlx.SQL.ddlx2sqlXsd(schema, xsd);
       }
     }

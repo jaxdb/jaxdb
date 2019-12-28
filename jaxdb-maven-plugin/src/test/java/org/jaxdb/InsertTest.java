@@ -16,8 +16,8 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,8 +28,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -39,6 +37,8 @@ import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class InsertTest {
   @RunWith(VendorSchemaRunner.class)
@@ -57,7 +57,7 @@ public abstract class InsertTest {
   public void testInsertEntity() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t = new types.Type();
-      t.bigintType.set(8493l);
+      t.bigintType.set(8493L);
       t.binaryType.set("abc".getBytes());
       t.blobType.set(new ByteArrayInputStream("abc".getBytes()));
       t.booleanType.set(false);
@@ -82,7 +82,7 @@ public abstract class InsertTest {
   public void testInsertEntities() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t1 = new types.Type();
-      t1.bigintType.set(8493l);
+      t1.bigintType.set(8493L);
       t1.binaryType.set("abc".getBytes());
       t1.blobType.set(new ByteArrayInputStream("abc".getBytes()));
       t1.booleanType.set(false);
@@ -100,7 +100,7 @@ public abstract class InsertTest {
       t1.timeType.set(LocalTime.now());
 
       final types.Type t2 = new types.Type();
-      t2.bigintType.set(843l);
+      t2.bigintType.set(843L);
       t2.binaryType.set("abcd".getBytes());
       t2.blobType.set(new ByteArrayInputStream("abcd".getBytes()));
       t2.booleanType.set(true);
@@ -128,7 +128,7 @@ public abstract class InsertTest {
   public void testInsertColumns() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(types.class)) {
       final types.Type t = new types.Type();
-      t.bigintType.set(8493l);
+      t.bigintType.set(8493L);
       t.charType.set("hello");
       t.doubleType.set(32d);
       t.tinyintType.set((byte)127);

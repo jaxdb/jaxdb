@@ -21,12 +21,12 @@ import org.jaxdb.vendor.DBVendor;
 
 final class SQLiteCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
   @Override
-  protected String compile(final dt.BOOLEAN value) {
+  String compile(final dt.BOOLEAN value) {
     return value.get() ? "1" : "0";
   }
 }

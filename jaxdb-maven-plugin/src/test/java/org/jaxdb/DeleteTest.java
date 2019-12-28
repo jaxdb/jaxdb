@@ -16,16 +16,14 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -36,6 +34,8 @@ import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class DeleteTest {
   @RunWith(VendorSchemaRunner.class)
@@ -54,7 +54,7 @@ public abstract class DeleteTest {
   public void testDeleteEntity() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10102l);
+      p.purchaseNumber.set(10102L);
       p.customerNumber.set(181);
 
       final int results =
@@ -68,7 +68,7 @@ public abstract class DeleteTest {
   public void testDeleteEntities() throws IOException, SQLException {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.Purchase p = new classicmodels.Purchase();
-      p.purchaseNumber.set(10100l);
+      p.purchaseNumber.set(10100L);
       p.customerNumber.set(363);
 
       final classicmodels.Payment pa = new classicmodels.Payment();

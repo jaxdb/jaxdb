@@ -137,8 +137,8 @@ final class SqlXsb {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + type.getCanonicalName());
   }
 
-  protected static class RowIterator extends FlatIterableIterator<$Database,$Row> {
-    public RowIterator(final $Database database) {
+  static class RowIterator extends FlatIterableIterator<$Database,$Row> {
+    RowIterator(final $Database database) {
       super(database);
     }
 

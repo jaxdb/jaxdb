@@ -19,14 +19,14 @@ package org.jaxdb.jsql;
 import org.jaxdb.vendor.DBVendor;
 
 abstract class Predicate extends type.BOOLEAN {
-  protected final kind.DataType<?> dataType;
+  final kind.DataType<?> dataType;
 
-  protected Predicate(final kind.DataType<?> dataType) {
+  Predicate(final kind.DataType<?> dataType) {
     this.dataType = dataType;
   }
 
   @Override
-  protected final String compile(final DBVendor vendor) {
+  final String compile(final DBVendor vendor) {
     throw new UnsupportedOperationException();
   }
 }

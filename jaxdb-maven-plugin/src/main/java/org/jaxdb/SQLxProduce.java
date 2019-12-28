@@ -17,7 +17,7 @@
 package org.jaxdb;
 
 abstract class SQLxProduce extends Produce<JaxDbMojo<?>.Configuration> {
-  private static int index = 0;
+  private static int index;
   static final SQLxProduce[] values = new SQLxProduce[1];
 
   private SQLxProduce(final String name) {

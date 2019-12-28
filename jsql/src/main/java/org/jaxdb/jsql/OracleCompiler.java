@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -48,25 +49,25 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 
   @Override
-  protected void onConnect(final Connection connection) throws SQLException {
+  void onConnect(final Connection connection) {
   }
 
   @Override
-  protected void onRegister(final Connection connection) throws SQLException {
+  void onRegister(final Connection connection) {
   }
 
   @Override
-  protected String compile(final As<?> as) {
+  String compile(final As<?> as) {
     return null;
   }
 
   @Override
-  protected void compile(final SelectCommand command, final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
+  void compile(final SelectCommand command, final SelectImpl.untyped.SELECT<?> select, final Compilation compilation) throws IOException {
     if (command.limit() != null) {
       compilation.append("SELECT * FROM (");
       if (command.offset() != null) {
@@ -79,7 +80,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
+  void compile(final SelectImpl.untyped.FROM<?> from, final Compilation compilation) throws IOException {
     if (from != null)
       super.compile(from, compilation);
     else
@@ -87,7 +88,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
+  void compile(final SelectImpl.untyped.LIMIT<?> limit, final SelectImpl.untyped.OFFSET<?> offset, final Compilation compilation) {
     if (limit != null) {
       compilation.append(") r WHERE ROWNUM <= ");
       if (offset != null)
@@ -98,26 +99,26 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Pi function, final Compilation compilation) {
+  void compile(final function.Pi function, final Compilation compilation) {
     compilation.append("ACOS(-1)");
   }
 
   @Override
-  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(2, ");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
   @Override
-  protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(10, ");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
   @Override
-  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     expression.a.compile(compilation);
     compilation.append(' ');
     final Interval interval = expression.b;
@@ -136,17 +137,17 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Interval interval, final Compilation compilation) {
+  void compile(final Interval interval, final Compilation compilation) {
     // FIXME: This can be fixed with nested interval semantics
     if (interval.getUnits().size() > 1)
       throw new UnsupportedOperationException("Interval classes with only 1 Interval.Unit are supported");
 
     final TemporalUnit unit = interval.getUnits().iterator().next();
     if (unit == Interval.Unit.MICROS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000000l))).append("' SECOND");
+      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000000L), RoundingMode.HALF_UP)).append("' SECOND");
     }
     else if (unit == Interval.Unit.MILLIS) {
-      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000l))).append("' SECOND");
+      compilation.append("INTERVAL '").append(BigDecimal.valueOf(interval.get(unit)).divide(BigDecimal.valueOf(1000L), RoundingMode.HALF_UP)).append("' SECOND");
     }
     else if (unit == Interval.Unit.WEEKS) {
       compilation.append("INTERVAL '").append(interval.get(unit) * 7).append("' DAY");
@@ -164,7 +165,7 @@ final class OracleCompiler extends Compiler {
       compilation.append("NUMTOYMINTERVAL(").append(interval.get(unit) * 1000).append(", 'YEAR')");
     }
     else if (unit.toString().endsWith("S")) {
-      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString().substring(0, unit.toString().length() - 1));
+      compilation.append("INTERVAL '").append(interval.get(unit)).append("' ").append(unit.toString(), 0, unit.toString().length() - 1);
     }
     else {
       throw new UnsupportedOperationException("Unsupported Interval.Unit: " + unit);
@@ -172,13 +173,13 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final type.CHAR dataType) {
+  String compile(final type.CHAR dataType) {
     final String value = dataType.get().replace("'", "''");
     return value.length() == 0 || value.charAt(0) == ' ' ? "' " + value + "'" : "'" + value + "'";
   }
 
   @Override
-  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof kind.BINARY) {
       compilation.append("UTL_RAW.CAST_TO_RAW((");
       compilable(as.dataType).compile(compilation);
@@ -229,7 +230,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final type.CHAR dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final String value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.length() == 0 || value.charAt(0) == ' ' ? " " + value : value);
@@ -238,13 +239,13 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  String getParameter(final type.CHAR dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value != null && value.startsWith(" ") ? value.substring(1) : value;
   }
 
   @Override
-  protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
       statement.setObject(parameterIndex, newINTERVALDS("+0 " + value.format(Dialect.TIME_FORMAT)));
@@ -253,7 +254,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Object value = resultSet.getObject(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
@@ -263,7 +264,7 @@ final class OracleCompiler extends Compiler {
   }
 
   @Override
-  protected void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
+  void compileNextSubject(final Compilable subject, final int index, final Keyword<?> source, final Map<Integer,type.ENUM<?>> translateTypes, final Compilation compilation) throws IOException {
     if (source instanceof SelectImpl.untyped.SELECT && (subject instanceof ComparisonPredicate || subject instanceof BooleanTerm || subject instanceof Predicate)) {
       compilation.append("CASE WHEN ");
       super.compileNextSubject(subject, index, source, translateTypes, compilation);

@@ -23,13 +23,10 @@ import java.sql.SQLException;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-public class PostgreSQL extends Vendor {
-  public PostgreSQL() {
 //  CREATE USER jaxdb WITH PASSWORD 'jaxdb';
 //  CREATE DATABASE jaxdb;
 //  GRANT ALL PRIVILEGES ON DATABASE jaxdb TO jaxdb;
-  }
-
+public class PostgreSQL extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {
     return new AuditConnection(DriverManager.getConnection("jdbc:postgresql://localhost/jaxdb?user=jaxdb&password=jaxdb"));

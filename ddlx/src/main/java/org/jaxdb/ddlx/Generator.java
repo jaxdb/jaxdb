@@ -17,6 +17,7 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,9 +38,10 @@ import org.libj.lang.PackageNotFoundException;
 import org.libj.util.ArrayUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public final class Generator {
-  protected static final Logger logger = LoggerFactory.getLogger(Generator.class);
+  static final Logger logger = LoggerFactory.getLogger(Generator.class);
 
   static {
     try {
@@ -50,7 +52,7 @@ public final class Generator {
     }
   }
 
-  public static void main(final String[] args) throws Exception {
+  public static void main(final String[] args) throws GeneratorExecutionException, IOException, MalformedURLException, SAXException {
     if (args.length != 2) {
       final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
@@ -79,15 +81,15 @@ public final class Generator {
     return message.toString();
   }
 
-  protected final DDLxAudit audit;
-  protected final Schema schema;
+  final DDLxAudit audit;
+  final Schema schema;
 
-  protected Generator(final DDLxAudit audit) {
+  Generator(final DDLxAudit audit) {
     this.audit = audit;
     this.schema = Schemas.flatten(audit.schema());
 
     final List<String> errors = getErrors();
-    if (errors != null && errors.size() > 0)
+    if (errors.size() > 0)
       for (final String error : errors)
         logger.warn(error);
   }
@@ -117,7 +119,7 @@ public final class Generator {
     return columnCount;
   }
 
-  private static void registerColumns(final Set<String> tableNames, final Map<String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
+  private static void registerColumns(final Set<? super String> tableNames, final Map<? super String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final String tableName = table.getName$().text();
     final List<String> violations = new ArrayList<>();
     String nameViolation = checkNameViolation(tableName);
@@ -147,7 +149,7 @@ public final class Generator {
       violations.forEach(logger::warn);
   }
 
-  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<String> tableNames) throws GeneratorExecutionException {
+  private LinkedHashSet<CreateStatement> parseTable(final DBVendor vendor, final $Table table, final Set<? super String> tableNames) throws GeneratorExecutionException {
     // Next, register the column names to be referenceable by the @primaryKey element
     final Map<String,$Column> columnNameToColumn = new HashMap<>();
     registerColumns(tableNames, columnNameToColumn, table);

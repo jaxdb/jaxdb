@@ -17,15 +17,15 @@
 package org.jaxdb.jsql;
 
 public abstract class Condition<T> extends type.DataType<T> {
-  protected Condition(final type.Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
+  Condition(final type.Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T _default, final GenerateOn<? super T> generateOnInsert, final GenerateOn<? super T> generateOnUpdate, final boolean keyForUpdate) {
     super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
   }
 
-  protected Condition(final Condition<T> copy) {
+  Condition(final Condition<T> copy) {
     super(copy);
   }
 
-  protected Condition() {
+  Condition() {
     super();
   }
 }

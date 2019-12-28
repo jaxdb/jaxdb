@@ -132,8 +132,8 @@ final class SqlJaxb {
     throw new UnsupportedOperationException("Unsupported generateOnInsert=" + generateOnInsert + " spec for " + dataType.getCanonicalName());
   }
 
-  protected static class RowIterator extends FlatIterableIterator<Database,Row> {
-    public RowIterator(final Database database) {
+  static class RowIterator extends FlatIterableIterator<Database,Row> {
+    RowIterator(final Database database) {
       super(database);
     }
 
@@ -143,7 +143,7 @@ final class SqlJaxb {
         private final Database database = obj;
         private final String[] tableNames = database.getClass().getAnnotation(XmlType.class).propOrder();
         private Iterator<Row> rows = nextRows();
-        private int index = 0;
+        private int index;
 
         @SuppressWarnings("unchecked")
         private Iterator<Row> nextRows() {
@@ -296,11 +296,11 @@ final class SqlJaxb {
   }
 
   static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, classedDestDir, CollectionUtil.asCollection(new LinkedHashSet<URL>(), xsds));
+    xsd2jaxb(sourcesDestDir, classedDestDir, CollectionUtil.asCollection(new LinkedHashSet<>(), xsds));
   }
 
   public static void xsd2jaxb(final File sourcesDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
-    xsd2jaxb(sourcesDestDir, null, CollectionUtil.asCollection(new LinkedHashSet<URL>(), xsds));
+    xsd2jaxb(sourcesDestDir, null, CollectionUtil.asCollection(new LinkedHashSet<>(), xsds));
   }
 
   private SqlJaxb() {

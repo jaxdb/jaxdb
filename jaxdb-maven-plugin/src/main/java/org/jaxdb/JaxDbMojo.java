@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,6 +32,7 @@ import org.openjax.maven.mojo.FilterType;
 import org.openjax.maven.mojo.GeneratorMojo;
 
 abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
+  static final Pattern EXTENSION_PATTERN = Pattern.compile("\\.\\S+$");
   class Configuration extends GeneratorMojo.Configuration {
     private final LinkedHashSet<URL> schemas;
     private final P[] produce;
@@ -75,7 +77,7 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
         }
       }
 
-      throw new MojoExecutionException("The value '" + produce + "' in parameter <produce>" + this.produce + "</produce> does not match supported values: " + Arrays.toString(values()));
+      throw new MojoExecutionException("The value '" + Arrays.toString(produce) + "' in parameter <produce>" + this.produce + "</produce> does not match supported values: " + Arrays.toString(values()));
     }
 
     try {

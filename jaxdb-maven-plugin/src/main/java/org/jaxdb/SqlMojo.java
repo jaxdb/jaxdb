@@ -82,6 +82,6 @@ abstract class SqlMojo<P extends Produce<?>,T> extends JaxDbMojo<P> {
 
   abstract HashMap<URL,Reserve<T>> schemaToReserve();
   abstract Reserve<T> newReserve(final URL schema) throws IOException, SAXException;
-  abstract void makeSql(final Reserve<T> reserve, final DBVendor dbVendor, final File sqlFile) throws Exception;
+  abstract void makeSql(final Reserve<? extends T> reserve, final DBVendor dbVendor, final File sqlFile) throws Exception;
   abstract void loadSql(final Connection connection, final T reserve) throws Exception;
 }

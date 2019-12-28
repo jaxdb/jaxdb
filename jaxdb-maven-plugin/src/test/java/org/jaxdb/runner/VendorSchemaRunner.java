@@ -43,7 +43,7 @@ public class VendorSchemaRunner extends VendorRunner {
   }
 
   @Override
-  protected void checkParameters(final FrameworkMethod method, final List<Throwable> errors) {
+  protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != DBVendor.class)
       errors.add(new Exception("Method " + method.getName() + " accepts a " + DBVendor.class.getName() + " parameter"));
   }

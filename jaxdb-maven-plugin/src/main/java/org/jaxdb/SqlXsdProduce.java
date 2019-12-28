@@ -22,10 +22,9 @@ import javax.xml.bind.JAXBException;
 
 import org.jaxdb.sqlx.SQL;
 import org.libj.jci.CompilationException;
-import org.xml.sax.SAXException;
 
 abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
-  private static int index = 0;
+  private static int index;
   static final SqlXsdProduce[] values = new SqlXsdProduce[2];
 
   private SqlXsdProduce(final String name) {
@@ -34,14 +33,14 @@ abstract class SqlXsdProduce extends Produce<SqlXsdMojo.Configuration> {
 
   static final SqlXsdProduce JAXB = new SqlXsdProduce("jaxb") {
     @Override
-    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws CompilationException, IOException, JAXBException, SAXException {
+    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws CompilationException, IOException, JAXBException {
       SQL.xsd2jaxb(configuration.getDestDir(), configuration.getXsds());
     }
   };
 
   static final SqlXsdProduce JAXSB = new SqlXsdProduce("jaxsb") {
     @Override
-    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws IOException, SAXException {
+    void execute(final SqlXsdMojo.Configuration configuration, final SqlMojo<?,?> sqlMojo) throws IOException {
       SQL.xsd2xsb(configuration.getDestDir(), configuration.getXsds());
     }
   };

@@ -20,7 +20,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class DB2Dialect extends Dialect {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DB2;
   }
 
@@ -84,72 +84,72 @@ public class DB2Dialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return null;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return "VARBINARY" + "(" + length + ")";
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_10.0.0/sqlref/src/tpc/db2z_bif_varbinary.html
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return 32704;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
+  String declareBlob(final Long length) {
     return "BLOB" + (length != null ? "(" + length + ")" : "");
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
   @Override
-  protected Long blobMaxLength() {
-    return 2147483647l;
+  Long blobMaxLength() {
+    return 2147483647L;
   }
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     return varying && length <= 255 ? "CHAR(" + length + ")" : "VARCHAR(" + length + ")";
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPEK_11.0.0/intro/src/tpc/db2z_stringdatatypes.html
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return 32704;
   }
 
   @Override
-  protected String declareClob(final Long length) {
+  String declareClob(final Long length) {
     return "CLOB" + (length != null ? "(" + length + ")" : "");
   }
 
   // https://www.ibm.com/support/knowledgecenter/en/SSEPGG_9.7.0/com.ibm.db2.luw.sql.ref.doc/doc/r0001029.html
   @Override
-  protected Long clobMaxLength() {
-    return 2147483647l;
+  Long clobMaxLength() {
+    return 2147483647L;
   }
 
   @Override

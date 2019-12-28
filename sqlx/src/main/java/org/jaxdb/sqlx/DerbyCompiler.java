@@ -21,12 +21,12 @@ import org.jaxdb.vendor.DBVendor;
 
 final class DerbyCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 
   @Override
-  protected final String compile(final dt.BLOB value) {
+  final String compile(final dt.BLOB value) {
     return "CAST(X'" + value + "' AS BLOB)";
   }
 }

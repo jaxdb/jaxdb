@@ -25,7 +25,7 @@ final class DeleteCommand extends Command {
   private final DELETE delete;
   private WHERE where;
 
-  public DeleteCommand(final DELETE delete) {
+  DeleteCommand(final DELETE delete) {
     this.delete = delete;
   }
 
@@ -42,12 +42,12 @@ final class DeleteCommand extends Command {
   }
 
   @Override
-  protected Class<? extends Schema> getSchema() {
+  Class<? extends Schema> getSchema() {
     return delete().entity.schema();
   }
 
   @Override
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (where() != null)
       compiler.compile(delete(), where(), compilation);

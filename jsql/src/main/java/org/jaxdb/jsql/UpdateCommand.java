@@ -29,40 +29,40 @@ final class UpdateCommand extends Command {
   private List<SET> set;
   private WHERE where;
 
-  protected UpdateCommand(final UPDATE update) {
+  UpdateCommand(final UPDATE update) {
     this.update = update;
   }
 
-  protected UPDATE update() {
+  UPDATE update() {
     return update;
   }
 
-  protected List<SET> set() {
+  List<SET> set() {
     return set;
   }
 
-  protected void add(final SET set) {
+  void add(final SET set) {
     if (this.set == null)
       this.set = new ArrayList<>();
 
     this.set.add(set);
   }
 
-  protected WHERE where() {
+  WHERE where() {
     return where;
   }
 
-  protected void add(final WHERE where) {
+  void add(final WHERE where) {
     this.where = where;
   }
 
   @Override
-  protected Class<? extends Schema> getSchema() {
+  Class<? extends Schema> getSchema() {
     return update.entity.schema();
   }
 
   @Override
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (set() != null)
       compiler.compile(update(), set(), where(), compilation);

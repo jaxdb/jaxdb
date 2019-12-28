@@ -35,48 +35,48 @@ final class Compilation {
   private final List<type.DataType<?>> parameters = new ArrayList<>();
   private final boolean prepared;
   private Consumer<Boolean> afterExecute;
-  private boolean closed = false;
+  private boolean closed;
 
-  protected final Stack<Command> command = new Stack<>();
-  protected final DBVendor vendor;
-  protected final Compiler compiler;
+  final Stack<Command> command = new Stack<>();
+  final DBVendor vendor;
+  final Compiler compiler;
 
-  private boolean skipFirstColumn = false;
+  private boolean skipFirstColumn;
 
-  protected Compilation(final Command command, final DBVendor vendor, final boolean prepared) {
+  Compilation(final Command command, final DBVendor vendor, final boolean prepared) {
     this.command.add(command);
     this.vendor = vendor;
     this.prepared = prepared;
     this.compiler = Compiler.getCompiler(vendor);
   }
 
-  protected void close() {
+  void close() {
     closed = true;
   }
 
-  protected boolean isPrepared() {
+  boolean isPrepared() {
     return this.prepared;
   }
 
-  protected String getSQL() {
+  String getSQL() {
     return builder.toString();
   }
 
-  protected List<type.DataType<?>> getParameters() {
+  List<type.DataType<?>> getParameters() {
     return this.parameters;
   }
 
-  protected boolean skipFirstColumn() {
+  boolean skipFirstColumn() {
     return skipFirstColumn;
   }
 
-  protected void skipFirstColumn(final boolean skipFirstColumn) {
+  void skipFirstColumn(final boolean skipFirstColumn) {
     this.skipFirstColumn = skipFirstColumn;
   }
 
   private final Map<type.Subject<?>,Alias> aliases = new IdentityHashMap<>();
 
-  protected Alias registerAlias(final type.Subject<?> subject) {
+  Alias registerAlias(final type.Subject<?> subject) {
     Alias alias = aliases.get(subject);
     if (alias == null)
       aliases.put(subject, alias = new Alias(aliases.size()));
@@ -84,25 +84,29 @@ final class Compilation {
     return alias;
   }
 
-  protected Alias getAlias(final type.Subject<?> subject) {
+  Alias getAlias(final type.Subject<?> subject) {
     return aliases.get(subject);
   }
 
-  protected StringBuilder append(final CharSequence seq) {
+  StringBuilder append(final Object object) {
+    return append(object.toString());
+  }
+
+  StringBuilder append(final CharSequence seq) {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
     return builder.append(seq);
   }
 
-  protected StringBuilder append(final char ch) {
+  StringBuilder append(final char ch) {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
     return builder.append(ch);
   }
 
-  protected void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  void addCondition(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     append(vendor.getDialect().quoteIdentifier(dataType.name));
     if (dataType.get() == null) {
       append(" IS NULL");
@@ -113,7 +117,7 @@ final class Compilation {
     }
   }
 
-  protected void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
+  void addParameter(final type.DataType<?> dataType, final boolean considerIndirection) throws IOException {
     if (closed)
       throw new IllegalStateException("Compilation closed");
 
@@ -129,16 +133,16 @@ final class Compilation {
     }
   }
 
-  protected void afterExecute(final Consumer<Boolean> consumer) {
+  void afterExecute(final Consumer<Boolean> consumer) {
     this.afterExecute = this.afterExecute == null ? consumer : this.afterExecute.andThen(consumer);
   }
 
-  protected void afterExecute(final boolean success) {
+  void afterExecute(final boolean success) {
     if (this.afterExecute != null)
       this.afterExecute.accept(success);
   }
 
-  protected ResultSet executeQuery(final Connection connection) throws IOException, SQLException {
+  ResultSet executeQuery(final Connection connection) throws IOException, SQLException {
     if (prepared) {
       final PreparedStatement statement = connection.prepareStatement(builder.toString());
       for (int i = 0; i < parameters.size(); ++i)
@@ -147,11 +151,10 @@ final class Compilation {
       return statement.executeQuery();
     }
 
-    final java.sql.Statement statement = connection.createStatement();
-    return statement.executeQuery(builder.toString());
+    return connection.createStatement().executeQuery(builder.toString());
   }
 
-  protected int execute(final Connection connection) throws IOException, SQLException {
+  int execute(final Connection connection) throws IOException, SQLException {
     if (prepared) {
 //      if (batching) {
 //        final IntArrayList results = new IntArrayList(statements.size());
@@ -197,8 +200,7 @@ final class Compilation {
 //    }
 
 //    final Statement batch = statements.get(i);
-    final java.sql.Statement statement = connection.createStatement();
-    return statement.executeUpdate(builder.toString());
+    return connection.createStatement().executeUpdate(builder.toString());
 //    }
 //
 //    return results;

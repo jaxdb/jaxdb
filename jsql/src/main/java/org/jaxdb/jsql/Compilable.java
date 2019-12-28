@@ -19,5 +19,5 @@ package org.jaxdb.jsql;
 import java.io.IOException;
 
 abstract class Compilable {
-  protected abstract void compile(Compilation compilation) throws IOException;
+  abstract void compile(Compilation compilation) throws IOException;
 }

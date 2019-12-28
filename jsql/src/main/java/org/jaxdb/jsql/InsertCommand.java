@@ -25,7 +25,7 @@ final class InsertCommand extends Command {
   private final INSERT<?> insert;
   private VALUES<?> values;
 
-  public InsertCommand(final INSERT<?> insert) {
+  InsertCommand(final INSERT<?> insert) {
     this.insert = insert;
   }
 
@@ -44,7 +44,7 @@ final class InsertCommand extends Command {
   private Class<? extends Schema> schema;
 
   @Override
-  protected Class<? extends Schema> getSchema() {
+  Class<? extends Schema> getSchema() {
     if (schema != null)
       return schema;
 
@@ -58,7 +58,7 @@ final class InsertCommand extends Command {
   }
 
   @Override
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (values() != null)
       compiler.compile(insert(), values(), compilation);

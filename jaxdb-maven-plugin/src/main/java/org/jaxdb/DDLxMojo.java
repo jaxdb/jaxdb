@@ -51,7 +51,7 @@ public class DDLxMojo extends SqlMojo<DDLxProduce,Schema> {
   }
 
   @Override
-  void makeSql(final Reserve<Schema> reserve, final DBVendor dbVendor, final File sqlFile) throws GeneratorExecutionException, IOException {
+  void makeSql(final Reserve<? extends Schema> reserve, final DBVendor dbVendor, final File sqlFile) throws GeneratorExecutionException, IOException {
     final StatementBatch statementBatch = org.jaxdb.ddlx.Generator.createDDL(reserve.obj, dbVendor);
     statementBatch.writeOutput(sqlFile);
   }

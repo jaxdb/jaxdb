@@ -23,13 +23,10 @@ import java.sql.SQLException;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
+// CREATE USER jaxdb;
+// CREATE DATABASE jaxdb;
+// GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
 public class MySQL extends Vendor {
-  public MySQL() {
-//  CREATE USER jaxdb;
-//  CREATE DATABASE jaxdb;
-//  GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
-  }
-
   @Override
   public Connection getConnection() throws SQLException {
     // NOTE: for some reason, "127.0.0.1" works if you tunnel the local 3306 port to a remote machine, and "localhost" fails to connect

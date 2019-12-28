@@ -16,14 +16,12 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -37,6 +35,8 @@ import org.jaxdb.jsql.types;
 import org.jaxdb.jsql.world;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class UncorrelatedSubQueryTest {
   @RunWith(VendorSchemaRunner.class)
@@ -53,8 +53,9 @@ public abstract class UncorrelatedSubQueryTest {
 
   @Test
   public void testAdd() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+    final types.Type t = new types.Type();
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<? extends type.Numeric<?>> rows =
         SELECT(
           ADD(t.tinyintType, SELECT(MIN(t.bigintType)).FROM(t)),
@@ -67,7 +68,7 @@ public abstract class UncorrelatedSubQueryTest {
         ).
         FROM(t).
         execute(transaction);
-
+    ) {
       assertTrue(rows.nextRow());
     }
   }

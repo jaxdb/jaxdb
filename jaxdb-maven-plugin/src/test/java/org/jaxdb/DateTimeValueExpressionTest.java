@@ -31,6 +31,7 @@ import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.Condition;
+import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.Interval;
 import org.jaxdb.jsql.Interval.Unit;
 import org.jaxdb.jsql.RowIterator;
@@ -65,13 +66,14 @@ public abstract class DateTimeValueExpressionTest {
     testInterval(interval, new types.Type(), null, skipTimeAssert);
   }
 
-  private static void testInterval(final Interval interval, types.Type p, final Condition<?> condition) throws IOException, SQLException {
+  private static void testInterval(final Interval interval, final types.Type p, final Condition<?> condition) throws IOException, SQLException {
     testInterval(interval, p, condition, null);
   }
 
   private static void testInterval(final Interval interval, types.Type p, final Condition<?> condition, final Boolean testDate) throws IOException, SQLException {
     final Condition<?> notNull = AND(IS.NOT.NULL(p.datetimeType), IS.NOT.NULL(p.dateType), IS.NOT.NULL(p.timeType));
-    try (final Transaction transaction = new TestTransaction(types.class)) {
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<type.Subject<?>> rows =
         SELECT(
           p,
@@ -85,7 +87,7 @@ public abstract class DateTimeValueExpressionTest {
         WHERE(condition != null ? AND(condition, notNull) : notNull).
         LIMIT(1).
         execute(transaction);
-
+    ) {
       assertTrue(rows.nextRow());
       p = (types.Type)rows.nextEntity();
 

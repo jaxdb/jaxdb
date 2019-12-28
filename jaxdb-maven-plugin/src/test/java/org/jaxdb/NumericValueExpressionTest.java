@@ -20,6 +20,7 @@ import static org.jaxdb.jsql.DML.*;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.sql.SQLException;
 
 import org.jaxdb.ddlx.runner.Derby;
@@ -27,6 +28,7 @@ import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
 import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
+import org.jaxdb.jsql.DML.IS;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.Transaction;
 import org.jaxdb.jsql.classicmodels;
@@ -205,7 +207,7 @@ public abstract class NumericValueExpressionTest {
       assertEquals(Long.valueOf(clone.bigintType.get() / clone.bigintType.get()), t.bigintType.get());
       assertEquals(Float.valueOf(clone.floatType.get() / clone.floatType.get()), t.floatType.get());
       assertEquals(Double.valueOf((clone.doubleType.get() / clone.doubleType.get())), t.doubleType.get());
-      assertEquals(clone.decimalType.get().divide(clone.decimalType.get()), t.decimalType.get());
+      assertEquals(clone.decimalType.get().divide(clone.decimalType.get(), RoundingMode.HALF_UP), t.decimalType.get());
     }
   }
 
@@ -226,7 +228,7 @@ public abstract class NumericValueExpressionTest {
       assertEquals(1, UPDATE(c).execute(transaction));
 
       final long version = c.version.get();
-      c.version.set(0l);
+      c.version.set(0L);
       assertEquals(0, UPDATE(c).execute(transaction));
 
       c.version.set(version);

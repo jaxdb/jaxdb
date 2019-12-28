@@ -74,7 +74,7 @@ abstract class Decompiler {
     }
   }
 
-  protected static Decompiler getDecompiler(final DBVendor vendor) {
+  static Decompiler getDecompiler(final DBVendor vendor) {
     final Decompiler decompiler = decompilers[vendor.ordinal()];
     if (decompiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -86,108 +86,117 @@ abstract class Decompiler {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final Decompiler decompiler = Decompiler.getDecompiler(vendor);
     final DatabaseMetaData metaData = connection.getMetaData();
-    final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"});
-    final Schema schema = new Schema();
-    final Map<String,List<$Check>> tableNameToChecks = decompiler.getCheckConstraints(connection);
-    final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
-    final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
-    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
-    while (tableRows.next()) {
-      final String tableName = tableRows.getString(3);
-      final $Table table = new Schema.Table();
-      table.setName$(new $Named.Name$(tableName.toLowerCase()));
-      schema.addTable(table);
-
-      final ResultSet columnRows = metaData.getColumns(null, null, tableName, null);
+    try (final ResultSet tableRows = metaData.getTables(null, null, null, new String[] {"TABLE"})) {
+      final Schema schema = new Schema();
+      final Map<String,List<$Check>> tableNameToChecks = decompiler.getCheckConstraints(connection);
+      final Map<String,List<$Table.Constraints.Unique>> tableNameToUniques = decompiler.getUniqueConstraints(connection);
+      final Map<String,$Table.Indexes> tableNameToIndexes = decompiler.getIndexes(connection);
+      final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = decompiler.getForeignKeys(connection);
       final Map<String,$Column> columnNameToColumn = new HashMap<>();
       final Map<Integer,$Column> columnNumberToColumn = new TreeMap<>();
-      while (columnRows.next()) {
-        final String columnName = columnRows.getString("COLUMN_NAME").toLowerCase();
-        final String typeName = columnRows.getString("TYPE_NAME");
-        final int columnSize = columnRows.getInt("COLUMN_SIZE");
-        final String _default = columnRows.getString("COLUMN_DEF");
-        final int index = columnRows.getInt("ORDINAL_POSITION");
-        final String nullable = columnRows.getString("IS_NULLABLE");
-        final String autoIncrement = columnRows.getString("IS_AUTOINCREMENT");
-        final int decimalDigits = columnRows.getInt("DECIMAL_DIGITS");
-        final $Column column = decompiler.makeColumn(columnName.toLowerCase(), typeName, columnSize, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
-        columnNameToColumn.put(columnName, column);
-        columnNumberToColumn.put(index, column);
-      }
-
-      columnNumberToColumn.values().forEach(table::addColumn);
-
-      final ResultSet primaryKeyRows = metaData.getPrimaryKeys(null, null, tableName);
-      while (primaryKeyRows.next()) {
-        final String columnName = primaryKeyRows.getString("COLUMN_NAME").toLowerCase();
-        if (table.getConstraints() == null)
-          table.setConstraints(new $Table.Constraints());
-
-        if (table.getConstraints().getPrimaryKey() == null)
-          table.getConstraints().setPrimaryKey(new $Table.Constraints.PrimaryKey());
-
-        final $Table.Constraints.PrimaryKey.Column column = new $Table.Constraints.PrimaryKey.Column();
-        column.setName$(new $Table.Constraints.PrimaryKey.Column.Name$(columnName));
-        table.getConstraints().getPrimaryKey().addColumn(column);
-      }
-
-      final List<$Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
-      if (uniques != null && uniques.size() > 0) {
-        if (table.getConstraints() == null)
-          table.setConstraints(new $Table.Constraints());
-
-        for (final $Table.Constraints.Unique unique : uniques)
-          table.getConstraints().addUnique(unique);
-      }
-
-      final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true);
       final Map<String,TreeMap<Short,String>> indexNameToIndex = new HashMap<>();
       final Map<String,String> indexNameToType = new HashMap<>();
       final Map<String,Boolean> indexNameToUnique = new HashMap<>();
-      while (indexRows.next()) {
-        final String columnName = indexRows.getString("COLUMN_NAME").toLowerCase();
-        if (columnName == null)
-          continue;
+      while (tableRows.next()) {
+        final String tableName = tableRows.getString(3);
+        final $Table table = new Schema.Table();
+        table.setName$(new $Named.Name$(tableName.toLowerCase()));
+        schema.addTable(table);
 
-        final String indexName = indexRows.getString("INDEX_NAME").toLowerCase();
-        TreeMap<Short,String> indexes = indexNameToIndex.get(indexName);
-        if (indexes == null)
-          indexNameToIndex.put(indexName, indexes = new TreeMap<>());
+        try (final ResultSet columnRows = metaData.getColumns(null, null, tableName, null)) {
+          while (columnRows.next()) {
+            final String columnName = columnRows.getString("COLUMN_NAME").toLowerCase();
+            final String typeName = columnRows.getString("TYPE_NAME");
+            final int columnSize = columnRows.getInt("COLUMN_SIZE");
+            final String _default = columnRows.getString("COLUMN_DEF");
+            final int index = columnRows.getInt("ORDINAL_POSITION");
+            final String nullable = columnRows.getString("IS_NULLABLE");
+            final String autoIncrement = columnRows.getString("IS_AUTOINCREMENT");
+            final int decimalDigits = columnRows.getInt("DECIMAL_DIGITS");
+            final $Column column = decompiler.makeColumn(columnName.toLowerCase(), typeName, columnSize, decimalDigits, _default, nullable.length() == 0 ? null : "YES".equals(nullable), autoIncrement.length() == 0 ? null : "YES".equals(autoIncrement));
+            columnNameToColumn.put(columnName, column);
+            columnNumberToColumn.put(index, column);
+          }
 
-        final short ordinalPosition = indexRows.getShort("ORDINAL_POSITION");
-        indexes.put(ordinalPosition, columnName);
+          columnNumberToColumn.values().forEach(table::addColumn);
 
-        final String type = getType(indexRows.getShort("TYPE"));
-        final String currentType = indexNameToType.get(indexName);
-        if (currentType == null)
-          indexNameToType.put(indexName, type);
-        else if (!type.equals(currentType))
-          throw new IllegalStateException("Expected " + type + " = " + currentType);
+          try (final ResultSet primaryKeyRows = metaData.getPrimaryKeys(null, null, tableName)) {
+            while (primaryKeyRows.next()) {
+              final String columnName = primaryKeyRows.getString("COLUMN_NAME").toLowerCase();
+              if (table.getConstraints() == null)
+                table.setConstraints(new $Table.Constraints());
 
-        final boolean unique = !indexRows.getBoolean("NON_UNIQUE");
-        final Boolean currentUnique = indexNameToUnique.get(indexName);
-        if (currentUnique == null)
-          indexNameToUnique.put(indexName, unique);
-        else if (unique != currentUnique)
-          throw new IllegalStateException("Expected " + unique + " = " + currentType);
+              if (table.getConstraints().getPrimaryKey() == null)
+                table.getConstraints().setPrimaryKey(new $Table.Constraints.PrimaryKey());
+
+              final $Table.Constraints.PrimaryKey.Column column = new $Table.Constraints.PrimaryKey.Column();
+              column.setName$(new $Table.Constraints.PrimaryKey.Column.Name$(columnName));
+              table.getConstraints().getPrimaryKey().addColumn(column);
+            }
+          }
+
+          final List<$Table.Constraints.Unique> uniques = tableNameToUniques == null ? null : tableNameToUniques.get(tableName);
+          if (uniques != null && uniques.size() > 0) {
+            if (table.getConstraints() == null)
+              table.setConstraints(new $Table.Constraints());
+
+            for (final $Table.Constraints.Unique unique : uniques)
+              table.getConstraints().addUnique(unique);
+          }
+
+          try (final ResultSet indexRows = metaData.getIndexInfo(null, null, tableName, false, true)) {
+            while (indexRows.next()) {
+              final String columnName = indexRows.getString("COLUMN_NAME").toLowerCase();
+              if (columnName == null)
+                continue;
+
+              final String indexName = indexRows.getString("INDEX_NAME").toLowerCase();
+              TreeMap<Short,String> indexes = indexNameToIndex.get(indexName);
+              if (indexes == null)
+                indexNameToIndex.put(indexName, indexes = new TreeMap<>());
+
+              final short ordinalPosition = indexRows.getShort("ORDINAL_POSITION");
+              indexes.put(ordinalPosition, columnName);
+
+              final String type = getType(indexRows.getShort("TYPE"));
+              final String currentType = indexNameToType.get(indexName);
+              if (currentType == null)
+                indexNameToType.put(indexName, type);
+              else if (!type.equals(currentType))
+                throw new IllegalStateException("Expected " + type + " = " + currentType);
+
+              final boolean unique = !indexRows.getBoolean("NON_UNIQUE");
+              final Boolean currentUnique = indexNameToUnique.get(indexName);
+              if (currentUnique == null)
+                indexNameToUnique.put(indexName, unique);
+              else if (unique != currentUnique)
+                throw new IllegalStateException("Expected " + unique + " = " + currentType);
+            }
+          }
+
+          final $Table.Indexes indexes = tableNameToIndexes == null ? null : tableNameToIndexes.get(tableName);
+          if (indexes != null)
+            table.setIndexes(indexes);
+
+          final List<$Check> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
+          if (checks != null)
+            for (final $Check check : checks)
+              addCheck(columnNameToColumn.get(check.getColumn(0).text()), check);
+
+          final Map<String,$ForeignKey> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
+          if (foreignKeys != null)
+            for (final Map.Entry<String,$ForeignKey> entry : foreignKeys.entrySet())
+              columnNameToColumn.get(entry.getKey().toLowerCase()).setForeignKey(entry.getValue());
+        }
+
+        columnNameToColumn.clear();
+        columnNumberToColumn.clear();
+        indexNameToIndex.clear();
+        indexNameToType.clear();
       }
 
-      final $Table.Indexes indexes = tableNameToIndexes == null ? null : tableNameToIndexes.get(tableName);
-      if (indexes != null)
-        table.setIndexes(indexes);
-
-      final List<$Check> checks = tableNameToChecks == null ? null : tableNameToChecks.get(tableName);
-      if (checks != null)
-        for (final $Check check : checks)
-          addCheck(columnNameToColumn.get(check.getColumn(0).text()), check);
-
-      final Map<String,$ForeignKey> foreignKeys = tableNameToForeignKeys == null ? null : tableNameToForeignKeys.get(tableName);
-      if (foreignKeys != null)
-        for (final Map.Entry<String,$ForeignKey> entry : foreignKeys.entrySet())
-          columnNameToColumn.get(entry.getKey().toLowerCase()).setForeignKey(entry.getValue());
+      return schema;
     }
-
-    return schema;
   }
 
   private static String getType(final short type) {
@@ -215,11 +224,11 @@ abstract class Decompiler {
       throw new UnsupportedOperationException("Unsupported check for column type: " + column.getClass().getName());
   }
 
-  protected abstract DBVendor getVendor();
-  protected abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
-  protected abstract Map<String,List<$Check>> getCheckConstraints(Connection connection) throws SQLException;
-  protected abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
-  protected abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
+  abstract DBVendor getVendor();
+  abstract $Column makeColumn(String columnName, String typeName, long size, int decimalDigits, String _default, Boolean nullable, Boolean autoIncrement);
+  abstract Map<String,List<$Check>> getCheckConstraints(Connection connection) throws SQLException;
+  abstract Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(Connection connection) throws SQLException;
+  abstract Map<String,$Table.Indexes> getIndexes(Connection connection) throws SQLException;
 
   private static $ChangeRule.Enum toBinding(final short rule) {
     if (rule == 1)
@@ -240,44 +249,45 @@ abstract class Decompiler {
     throw new UnsupportedOperationException("Unsupported change rule: " + rule);
   }
 
-  protected Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
+  Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
     final DatabaseMetaData metaData = connection.getMetaData();
-    final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null);
-    final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
-    String lastTable = null;
-    Map<String,$ForeignKey> columnNameToForeignKey = null;
-    while (foreignKeyRows.next()) {
-      final String tableName = foreignKeyRows.getString("FKTABLE_NAME").toLowerCase();
-      if (!tableName.equals(lastTable)) {
-        lastTable = tableName;
-        tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<>());
+    try (final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null)) {
+      final Map<String,Map<String,$ForeignKey>> tableNameToForeignKeys = new HashMap<>();
+      String lastTable = null;
+      Map<String,$ForeignKey> columnNameToForeignKey = null;
+      while (foreignKeyRows.next()) {
+        final String tableName = foreignKeyRows.getString("FKTABLE_NAME").toLowerCase();
+        if (!tableName.equals(lastTable)) {
+          lastTable = tableName;
+          tableNameToForeignKeys.put(tableName, columnNameToForeignKey = new HashMap<>());
+        }
+
+        final String primaryTable = foreignKeyRows.getString("PKTABLE_NAME").toLowerCase();
+        final String primaryColumn = foreignKeyRows.getString("PKCOLUMN_NAME").toLowerCase();
+        final String columnName = foreignKeyRows.getString("FKCOLUMN_NAME").toLowerCase();
+        final short updateRule = foreignKeyRows.getShort("UPDATE_RULE");
+        final short deleteRule = foreignKeyRows.getShort("DELETE_RULE");
+        final $ForeignKey foreignKey = new $Column.ForeignKey();
+        foreignKey.setReferences$(new $ForeignKey.References$(primaryTable));
+        foreignKey.setColumn$(new $ForeignKey.Column$(primaryColumn));
+
+        final $ChangeRule.Enum onUpdate = toBinding(updateRule);
+        if (onUpdate != null)
+          foreignKey.setOnUpdate$(new $ForeignKey.OnUpdate$(onUpdate));
+
+        final $ChangeRule.Enum onDelete = toBinding(deleteRule);
+        if (onDelete != null)
+          foreignKey.setOnDelete$(new $ForeignKey.OnDelete$(onDelete));
+
+        columnNameToForeignKey.put(columnName, foreignKey);
       }
 
-      final String primaryTable = foreignKeyRows.getString("PKTABLE_NAME").toLowerCase();
-      final String primaryColumn = foreignKeyRows.getString("PKCOLUMN_NAME").toLowerCase();
-      final String columnName = foreignKeyRows.getString("FKCOLUMN_NAME").toLowerCase();
-      final short updateRule = foreignKeyRows.getShort("UPDATE_RULE");
-      final short deleteRule = foreignKeyRows.getShort("DELETE_RULE");
-      final $ForeignKey foreignKey = new $Column.ForeignKey();
-      foreignKey.setReferences$(new $ForeignKey.References$(primaryTable));
-      foreignKey.setColumn$(new $ForeignKey.Column$(primaryColumn));
-
-      final $ChangeRule.Enum onUpdate = toBinding(updateRule);
-      if (onUpdate != null)
-        foreignKey.setOnUpdate$(new $ForeignKey.OnUpdate$(onUpdate));
-
-      final $ChangeRule.Enum onDelete = toBinding(deleteRule);
-      if (onDelete != null)
-        foreignKey.setOnDelete$(new $ForeignKey.OnDelete$(onDelete));
-
-      columnNameToForeignKey.put(columnName, foreignKey);
+      return tableNameToForeignKeys;
     }
-
-    return tableNameToForeignKeys;
   }
 
   @SuppressWarnings("unchecked")
-  protected static <T extends $Column>T newColumn(final Class<T> type) {
+  static <T extends $Column>T newColumn(final Class<T> type) {
     if (type == $Bigint.class)
       return (T)new $Bigint() {
         private static final long serialVersionUID = 8340538426557873933L;
@@ -438,6 +448,6 @@ abstract class Decompiler {
         }
       };
 
-    throw new UnsupportedOperationException("Unsupported column type: " + type.getClass().getName());
+    throw new UnsupportedOperationException("Unsupported column type: " + type.getName());
   }
 }

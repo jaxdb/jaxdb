@@ -18,7 +18,6 @@ package org.jaxdb.jsql;
 
 import java.sql.Array;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Map;
 
 import org.libj.util.ArrayUtil;
@@ -26,61 +25,61 @@ import org.libj.util.ArrayUtil;
 final class SQLArray<T> implements Array {
   private final type.ARRAY<T> array;
 
-  public SQLArray(final type.ARRAY<T> array) {
+  SQLArray(final type.ARRAY<T> array) {
     this.array = array;
   }
 
   @Override
-  public String getBaseTypeName() throws SQLException {
+  public String getBaseTypeName() {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public int getBaseType() throws SQLException {
+  public int getBaseType() {
     return array.dataType.sqlType();
   }
 
   @Override
-  public Object getArray() throws SQLException {
+  public Object getArray() {
     return array.value;
   }
 
   @Override
-  public Object getArray(final Map<String,Class<?>> map) throws SQLException {
+  public Object getArray(final Map<String,Class<?>> map) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public Object getArray(final long index, final int count) throws SQLException {
+  public Object getArray(final long index, final int count) {
     return ArrayUtil.subArray(array.value, (int)(index - 1), (int)(index - 1 + count));
   }
 
   @Override
-  public Object getArray(final long index, final int count, final Map<String,Class<?>> map) throws SQLException {
+  public Object getArray(final long index, final int count, final Map<String,Class<?>> map) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public ResultSet getResultSet() throws SQLException {
+  public ResultSet getResultSet() {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public ResultSet getResultSet(final Map<String,Class<?>> map) throws SQLException {
+  public ResultSet getResultSet(final Map<String,Class<?>> map) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public ResultSet getResultSet(final long index, final int count) throws SQLException {
+  public ResultSet getResultSet(final long index, final int count) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public ResultSet getResultSet(final long index, final int count, final Map<String,Class<?>> map) throws SQLException {
+  public ResultSet getResultSet(final long index, final int count, final Map<String,Class<?>> map) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public void free() throws SQLException {
+  public void free() {
   }
 }

@@ -22,7 +22,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class SQLiteDialect extends Dialect {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
@@ -82,70 +82,70 @@ public class SQLiteDialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return null;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     return "TINYINT";
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     return "SMALLINT";
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     return precision < 8 ? "MEDIUMINT" : "INT";
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     return "BIGINT" + (unsigned ? " UNSIGNED" : "");
   }
 
   // FIXME: Could not find a definitive spec for BINARY/BLOB
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return "BINARY" + "(" + length + ")";
   }
 
   // https://sqlite.org/limits.html#max_length
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
+  String declareBlob(final Long length) {
     return "BLOB" + (length != null ? "(" + length + ")" : "");
   }
 
   @Override
-  protected Long blobMaxLength() {
+  Long blobMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR" : "CHARACTER") + "(" + length + ")";
   }
 
   // QLite does not impose any length restrictions (other than the large global SQLITE_MAX_LENGTH limit) on the length of strings, BLOBs or numeric values.
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return null;
   }
 
   @Override
-  protected String declareClob(final Long length) {
+  String declareClob(final Long length) {
     return "TEXT" + (length != null ? "(" + length + ")" : "");
   }
 
   @Override
-  protected Long clobMaxLength() {
+  Long clobMaxLength() {
     return null;
   }
 

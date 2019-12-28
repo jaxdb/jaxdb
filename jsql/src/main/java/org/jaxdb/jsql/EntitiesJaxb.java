@@ -89,7 +89,7 @@ final class EntitiesJaxb {
   }
 
   @SuppressWarnings("unchecked")
-  public static <T extends type.Entity>T[] toEntities(final Database database) {
+  public static type.Entity[] toEntities(final Database database) {
     try {
       final Class<?> cls = database.getClass();
       final List<type.Entity> entities = new ArrayList<>();
@@ -98,7 +98,7 @@ final class EntitiesJaxb {
         for (final Row row : (List<Row>)cls.getMethod("get" + Identifiers.toClassCase(tableName)).invoke(database))
           entities.add(toEntity(database, row));
 
-      return (T[])entities.toArray(new type.Entity[entities.size()]);
+      return entities.toArray(new type.Entity[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchFieldException | NoSuchMethodException e) {
       throw new UnsupportedOperationException(e);

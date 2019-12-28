@@ -16,10 +16,11 @@
 
 package org.jaxdb.jsql;
 
-import javax.sql.DataSource;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.libj.sql.AuditConnection;
 import org.libj.util.IdentityHashSet;
@@ -89,12 +90,12 @@ public final class Registry {
       Registry.prepared.add(schema);
   }
 
-  protected static Connector getDataSource(final Class<? extends Schema> schema, final String id) {
+  static Connector getDataSource(final Class<? extends Schema> schema, final String id) {
     final Map<String,Connector> idToConnector = connectors.get(schema);
     return idToConnector == null ? null : idToConnector.get(id);
   }
 
-  protected static boolean isPrepared(final Class<? extends Schema> schema) {
+  static boolean isPrepared(final Class<? extends Schema> schema) {
     return prepared.contains(schema);
   }
 

@@ -842,7 +842,7 @@ public final class DML {
   }
 
   @SafeVarargs
-  public static <T extends Comparable<?>>Select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) {
+  public static <T extends CharSequence & Comparable<?>>Select.Textual._SELECT<type.Textual<T>> SELECT(final kind.Textual<? extends T> ... entities) {
     return new SelectImpl.Textual.SELECT<>(false, entities);
   }
 
@@ -866,7 +866,10 @@ public final class DML {
     return new SelectImpl.Entity.SELECT<>(false, entities);
   }
 
-  public static class SELECT {
+  public static final class SELECT {
+    private SELECT() {
+    }
+
     @SafeVarargs
     public static <T>Select.ARRAY._SELECT<type.ARRAY<T>> DISTINCT(final kind.ARRAY<? extends T> ... entities) {
       return new SelectImpl.ARRAY.SELECT<>(true, entities);
@@ -993,7 +996,7 @@ public final class DML {
     }
 
     @SafeVarargs
-    public static <T extends Comparable<?>>Select.Textual._SELECT<type.Textual<T>> DISTINCT(final kind.Textual<? extends T> ... entities) {
+    public static <T extends CharSequence & Comparable<?>>Select.Textual._SELECT<type.Textual<T>> DISTINCT(final kind.Textual<? extends T> ... entities) {
       return new SelectImpl.Textual.SELECT<>(true, entities);
     }
 
@@ -1020,7 +1023,10 @@ public final class DML {
 
   /* CASE */
 
-  public static class CASE {
+  public static final class CASE {
+    private CASE() {
+    }
+
     public static <T>Case.search.WHEN<T> WHEN(final Condition<T> condition) {
       return new CaseImpl.Search.WHEN<>(null, condition);
     }
@@ -1038,7 +1044,7 @@ public final class DML {
     return new CaseImpl.Simple.CASE<T,type.Temporal<T>>(temporal);
   }
 
-  public static <T extends Comparable<?>>Case.simple.CASE<T> CASE(final type.Textual<T> textual) {
+  public static <T extends CharSequence & Comparable<?>>Case.simple.CASE<T> CASE(final type.Textual<T> textual) {
     return new CaseImpl.Simple.CASE<T,type.Textual<T>>(textual);
   }
 
@@ -12330,7 +12336,10 @@ public final class DML {
     return new type.INT(10).wrapper(new expression.Count(dataType, false));
   }
 
-  public static class COUNT {
+  public static final class COUNT {
+    private COUNT() {
+    }
+
     public static type.INT DISTINCT(final type.DataType<?> dataType) {
       return new type.INT(10).wrapper(new expression.Count(dataType, true));
     }
@@ -12342,7 +12351,10 @@ public final class DML {
     return (Numeric)a.clone().wrapper(new expression.Set("SUM", a, false));
   }
 
-  public static class SUM {
+  public static final class SUM {
+    private SUM() {
+    }
+
     @SuppressWarnings("unchecked")
     public static <Numeric extends type.Numeric<T>,T extends java.lang.Number>Numeric DISTINCT(final Numeric a) {
       return (Numeric)a.clone().wrapper(new expression.Set("SUM", a, true));
@@ -12355,7 +12367,10 @@ public final class DML {
     return (Numeric)a.clone().wrapper(new expression.Set("AVG", a, false));
   }
 
-  public static class AVG {
+  public static final class AVG {
+    private AVG() {
+    }
+
     @SuppressWarnings("unchecked")
     public static <Numeric extends type.Numeric<T>,T extends java.lang.Number>Numeric DISTINCT(final Numeric a) {
       return (Numeric)a.clone().wrapper(new expression.Set("AVG", a, true));
@@ -12367,7 +12382,10 @@ public final class DML {
     return (DataType)a.clone().wrapper(new expression.Set("MAX", a, false));
   }
 
-  public static class MAX {
+  public static final class MAX {
+    private MAX() {
+    }
+
     @SuppressWarnings("unchecked")
     public static <DataType extends type.DataType<T>,T>DataType DISTINCT(final DataType a) {
       return (DataType)a.clone().wrapper(new expression.Set("MAX", a, true));
@@ -12379,7 +12397,10 @@ public final class DML {
     return (DataType)a.clone().wrapper(new expression.Set("MIN", a, false));
   }
 
-  public static class MIN {
+  public static final class MIN {
+    private MIN() {
+    }
+
     @SuppressWarnings("unchecked")
     public static <DataType extends type.DataType<T>,T>DataType DISTINCT(final DataType a) {
       return (DataType)a.clone().wrapper(new expression.Set("MIN", a, true));
@@ -12389,11 +12410,11 @@ public final class DML {
   /* End Aggregates */
 
   private static class NOW extends type.DATETIME {
-    protected NOW() {
+    NOW() {
       super(10);
       this.wrapper(new function.Temporal("NOW") {
         @Override
-        protected Object evaluate(final Set<Evaluable> visited) {
+        Object evaluate(final Set<Evaluable> visited) {
           return LocalDateTime.now();
         }
       });
@@ -12412,7 +12433,7 @@ public final class DML {
   }
 
   private static class PI extends type.DOUBLE {
-    protected PI() {
+    PI() {
       super();
       this.wrapper(new function.Pi());
     }
@@ -12487,20 +12508,20 @@ public final class DML {
 
   /* Predicate */
 
-  protected static final class ALL<T> extends QuantifiedComparisonPredicate<T> {
-    protected ALL(final Select.untyped.SELECT<?> subQuery) {
+  static final class ALL<T> extends QuantifiedComparisonPredicate<T> {
+    ALL(final Select.untyped.SELECT<?> subQuery) {
       super("ALL", subQuery);
     }
   }
 
-  protected static final class ANY<T> extends QuantifiedComparisonPredicate<T> {
-    protected ANY(final Select.untyped.SELECT<?> subQuery) {
+  static final class ANY<T> extends QuantifiedComparisonPredicate<T> {
+    ANY(final Select.untyped.SELECT<?> subQuery) {
       super("ANY", subQuery);
     }
   }
 
-  protected static final class SOME<T> extends QuantifiedComparisonPredicate<T> {
-    protected SOME(final Select.untyped.SELECT<?> subQuery) {
+  static final class SOME<T> extends QuantifiedComparisonPredicate<T> {
+    SOME(final Select.untyped.SELECT<?> subQuery) {
       super("SOME", subQuery);
     }
   }
@@ -12698,7 +12719,10 @@ public final class DML {
     return new ExistsPredicate(subQuery);
   }
 
-  public static class NOT {
+  public static final class NOT {
+    private NOT() {
+    }
+
     public static Predicate BETWEEN(final kind.Numeric<?> dataType, final kind.Numeric<?> a, final kind.Numeric<?> b) {
       return new BetweenPredicates.NumericBetweenPredicate(dataType, a, b, false);
     }
@@ -12905,8 +12929,14 @@ public final class DML {
     }
   }
 
-  public static class IS {
-    public static class NOT {
+  public static final class IS {
+    private IS() {
+    }
+
+    public static final class NOT {
+      private NOT() {
+      }
+
       public static Predicate NULL(final kind.DataType<?> dataType) {
         return new NullPredicate(dataType, false);
       }

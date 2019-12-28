@@ -20,27 +20,27 @@ import java.io.IOException;
 import java.util.Set;
 
 public final class Cast {
-  protected static final class AS extends Provision {
-    protected final kind.DataType<?> dataType;
-    protected final type.DataType<?> cast;
-    protected final Integer length;
-    protected final Integer scale;
+  static final class AS extends Provision {
+    final kind.DataType<?> dataType;
+    final type.DataType<?> cast;
+    final Integer length;
+    final Integer scale;
 
-    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
+    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = length;
       this.scale = null;
     }
 
-    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs) {
+    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = null;
       this.scale = null;
     }
 
-    protected AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
+    AS(final kind.DataType<?> dataType, final type.DataType<?> castAs, final int length, final int scale) {
       this.dataType = dataType;
       this.cast = castAs;
       this.length = length;
@@ -48,12 +48,12 @@ public final class Cast {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
     @Override
-    protected Object evaluate(final Set<Evaluable> visited) {
+    Object evaluate(final Set<Evaluable> visited) {
       return dataType instanceof Evaluable ? ((Evaluable)dataType).evaluate(visited) : null;
     }
   }

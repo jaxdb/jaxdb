@@ -16,8 +16,8 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -26,8 +26,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -40,6 +38,8 @@ import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.types;
 import org.jaxdb.runner.TestTransaction;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class UpdateTest {
   @RunWith(VendorSchemaRunner.class)
@@ -56,18 +56,19 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateEntity() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      classicmodels.Product p = new classicmodels.Product();
+    classicmodels.Product p = new classicmodels.Product();
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<classicmodels.Product> rows =
         SELECT(p).
         FROM(p).
         LIMIT(1).
         execute(transaction);
-
+    ) {
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
 
-      p.price.set(BigDecimal.valueOf(20l));
+      p.price.set(BigDecimal.valueOf(20L));
 
       final int results = UPDATE(p).execute(transaction);
       assertEquals(1, results);
@@ -76,14 +77,15 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateEntities() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      classicmodels.Product p = new classicmodels.Product();
+    classicmodels.Product p = new classicmodels.Product();
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<classicmodels.Product> rows1 =
         SELECT(p).
         FROM(p).
         LIMIT(1).
         execute(transaction);
-
+    ) {
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
 
@@ -112,14 +114,15 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateSetWhere() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+    types.Type t = new types.Type();
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
         LIMIT(1).
         execute(transaction);
-
+    ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
@@ -135,14 +138,15 @@ public abstract class UpdateTest {
 
   @Test
   public void testUpdateSet() throws IOException, SQLException {
-    try (final Transaction transaction = new TestTransaction(types.class)) {
-      types.Type t = new types.Type();
+    types.Type t = new types.Type();
+    try (
+      final Transaction transaction = new TestTransaction(types.class);
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
         LIMIT(1).
         execute(transaction);
-
+    ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 

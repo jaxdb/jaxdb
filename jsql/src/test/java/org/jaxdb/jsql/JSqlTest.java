@@ -46,7 +46,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public abstract class JSqlTest {
-  protected static void createEntities(final String name) throws CompilationException, IOException, SAXException {
+  static void createEntities(final String name) throws CompilationException, IOException, SAXException {
     final URL url = Objects.requireNonNull(ClassLoader.getSystemClassLoader().getResource(name + ".ddlx"));
     final File destDir = new File("target/generated-test-sources/jaxdb");
     new Generator(url).generate(name, destDir);
@@ -60,7 +60,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
+  static int[] loadEntitiesXsb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
@@ -82,7 +82,7 @@ public abstract class JSqlTest {
   }
 
   @SuppressWarnings("unchecked")
-  protected static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
+  static int[] loadEntitiesJaxb(final Connection connection, final String name) throws ClassNotFoundException, IOException, SAXException, SQLException, UnmarshalException {
     Registry.registerPrepared((Class<? extends Schema>)Class.forName(Entities.class.getPackage().getName() + "." + name), () -> connection);
 
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");

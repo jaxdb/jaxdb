@@ -30,20 +30,20 @@ import org.libj.util.Temporals;
 
 class MySQLCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 
   @Override
-  protected void onConnect(final Connection connection) throws SQLException {
+  void onConnect(final Connection connection) {
   }
 
   @Override
-  protected void onRegister(final Connection connection) throws SQLException {
+  void onRegister(final Connection connection) {
   }
 
   @Override
-  protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
@@ -56,7 +56,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     final String function;
     if (expression.operator == operator.Arithmetic.PLUS)
       function = "DATE_ADD";
@@ -73,7 +73,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Interval interval, final Compilation compilation) {
+  void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final TemporalUnit unit : units) {
@@ -114,7 +114,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof type.Temporal || as.cast instanceof type.Textual || as.cast instanceof type.BINARY) {
       super.compile(as, compilation);
     }
@@ -137,7 +137,7 @@ class MySQLCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final type.TIME dataType, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final Timestamp value = resultSet.getTimestamp(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;

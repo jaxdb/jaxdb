@@ -23,7 +23,7 @@ import java.sql.SQLException;
 import org.libj.sql.exception.SQLExceptions;
 
 abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
-  protected BatchableKeyword(final BatchableKeyword<T> parent) {
+  BatchableKeyword(final BatchableKeyword<T> parent) {
     super(parent);
   }
 

@@ -22,7 +22,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class OracleDialect extends Dialect {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 
@@ -85,72 +85,72 @@ public class OracleDialect extends Dialect {
   }
 
   @Override
-  protected Integer decimalMaxScale() {
+  Integer decimalMaxScale() {
     return null;
   }
 
   @Override
-  protected String declareInt8(final byte precision, final boolean unsigned) {
+  String declareInt8(final byte precision, final boolean unsigned) {
     return "NUMBER(" + precision + ")";
   }
 
   @Override
-  protected String declareInt16(final byte precision, final boolean unsigned) {
+  String declareInt16(final byte precision, final boolean unsigned) {
     return "NUMBER(" + precision + ")";
   }
 
   @Override
-  protected String declareInt32(final byte precision, final boolean unsigned) {
+  String declareInt32(final byte precision, final boolean unsigned) {
     return "NUMBER(" + precision + ")";
   }
 
   @Override
-  protected String declareInt64(final byte precision, final boolean unsigned) {
+  String declareInt64(final byte precision, final boolean unsigned) {
     return "NUMBER(" + precision + ")";
   }
 
   @Override
-  protected String declareBinary(final boolean varying, final long length) {
+  String declareBinary(final boolean varying, final long length) {
     return (length > 2000 ? "LONG RAW" : "RAW") + "(" + length + ")";
   }
 
   // http://www.orafaq.com/wiki/RAW
   @Override
-  protected Integer binaryMaxLength() {
+  Integer binaryMaxLength() {
     return 2000000000;
   }
 
   @Override
-  protected String declareBlob(final Long length) {
+  String declareBlob(final Long length) {
     return "BLOB";
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefblob.html
   @Override
-  protected Long blobMaxLength() {
-    return 4294967296l;
+  Long blobMaxLength() {
+    return 4294967296L;
   }
 
   @Override
-  protected String declareChar(final boolean varying, final long length) {
+  String declareChar(final boolean varying, final long length) {
     return (varying ? "VARCHAR2" : "CHAR") + "(" + (length == 1 ? 2 : length) + " CHAR)";
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefsqlj41207.html
   @Override
-  protected Integer charMaxLength() {
+  Integer charMaxLength() {
     return 32672;
   }
 
   @Override
-  protected String declareClob(final Long length) {
+  String declareClob(final Long length) {
     return "CLOB";
   }
 
   // http://docs.oracle.com/javadb/10.6.2.1/ref/rrefclob.html
   @Override
-  protected Long clobMaxLength() {
-    return 4294967296l;
+  Long clobMaxLength() {
+    return 4294967296L;
   }
 
   @Override

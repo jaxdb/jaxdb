@@ -31,29 +31,29 @@ final class CaseCommand extends Command {
   private final List<THEN<?,?>> then = new ArrayList<>();
   private ELSE<?> _else;
 
-  protected CaseCommand(final Simple.CASE<?,?> simpleCase) {
+  CaseCommand(final Simple.CASE<?,?> simpleCase) {
     this.simpleCase = simpleCase;
     this.searchCase = null;
   }
 
-  protected CaseCommand(final Search.WHEN<?> searchCase) {
+  CaseCommand(final Search.WHEN<?> searchCase) {
     this.searchCase = searchCase;
     this.simpleCase = null;
   }
 
-  protected List<THEN<?,?>> then() {
+  List<THEN<?,?>> then() {
     return then;
   }
 
-  protected void add(final THEN<?,?> then) {
+  void add(final THEN<?,?> then) {
     this.then.add(then);
   }
 
-  protected ELSE<?> else_() {
+  ELSE<?> else_() {
     return _else;
   }
 
-  protected void add(final ELSE<?> _else) {
+  void add(final ELSE<?> _else) {
     if (this._else != null)
       throw new IllegalStateException("Attempted to reassign ELSE");
 
@@ -61,13 +61,13 @@ final class CaseCommand extends Command {
   }
 
   @Override
-  protected Class<? extends Schema> getSchema() {
+  Class<? extends Schema> getSchema() {
     throw new UnsupportedOperationException();
   }
 
   @Override
   @SuppressWarnings("rawtypes")
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     if (simpleCase != null)
       compiler.compile(simpleCase, else_(), compilation);

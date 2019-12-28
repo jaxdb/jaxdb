@@ -21,7 +21,7 @@ import org.jaxdb.vendor.DBVendor;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
@@ -30,12 +30,12 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final dt.BINARY value) {
+  String compile(final dt.BINARY value) {
     return toHexString(value.get());
   }
 
   @Override
-  protected String compile(final dt.BLOB value) {
+  String compile(final dt.BLOB value) {
     return toHexString(value.get());
   }
 }

@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.sql.Connection;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
@@ -36,21 +38,23 @@ import org.libj.io.Readers;
 import org.libj.io.Streams;
 
 final class SQLiteCompiler extends Compiler {
+  private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
+
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
   @Override
-  protected void onConnect(final Connection connection) throws SQLException {
+  void onConnect(final Connection connection) {
   }
 
   @Override
-  protected void onRegister(final Connection connection) throws SQLException {
+  void onRegister(final Connection connection) {
   }
 
   @Override
-  protected void compile(final Cast.AS as, final Compilation compilation) throws IOException {
+  void compile(final Cast.AS as, final Compilation compilation) throws IOException {
     if (as.cast instanceof type.Temporal) {
       compilation.append("STRFTIME(\"");
       if (as.cast instanceof type.DATE) {
@@ -78,7 +82,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Temporal expression, final Compilation compilation) throws IOException {
     if (expression.a instanceof type.DATE)
       compilation.append("DATE(");
     else if (expression.a instanceof type.TIME)
@@ -95,7 +99,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Interval interval, final Compilation compilation) {
+  void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final TemporalUnit unit : units) {
@@ -133,7 +137,7 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append('(');
     function.a.compile(compilation);
     compilation.append(" % ");
@@ -142,14 +146,14 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
+  void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
     function.a.compile(compilation);
     compilation.append(')');
   }
 
   @Override
-  protected void compile(final function.Log function, final Compilation compilation) throws IOException {
+  void compile(final function.Log function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
     function.b.compile(compilation);
     compilation.append(") / LOG(");
@@ -158,28 +162,30 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compilation.append("LOG(");
     function.a.compile(compilation);
     compilation.append(") / 0.6931471805599453");
   }
 
   @Override
-  protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    if (dataType.get() != null)
-      statement.setString(parameterIndex, Readers.readFully(dataType.get()));
-    else
-      statement.setNull(parameterIndex, dataType.sqlType());
+  void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final Reader in = dataType.get()) {
+      if (in != null)
+        statement.setString(parameterIndex, Readers.readFully(in));
+      else
+        statement.setNull(parameterIndex, dataType.sqlType());
+    }
   }
 
   @Override
-  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value == null ? null : new StringReader(value);
   }
 
   @Override
-  protected void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final type.DATE dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDate value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, Dialect.DATE_FORMAT.format(value));
@@ -188,19 +194,19 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalDate getParameter(final type.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDate getParameter(final type.DATE date, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
 
-    if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?"))
+    if (dateTimePattern.matcher(value).matches())
       return LocalDate.parse(value, Dialect.DATETIME_FORMAT);
 
     return LocalDate.parse(value, Dialect.DATE_FORMAT);
   }
 
   @Override
-  protected void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final type.TIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalTime value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.format(Dialect.TIME_FORMAT));
@@ -209,19 +215,19 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalTime getParameter(final type.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalTime getParameter(final type.TIME time, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     if (resultSet.wasNull() || value == null)
       return null;
 
-    if (value.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?"))
+    if (dateTimePattern.matcher(value).matches())
       return LocalTime.parse(value, Dialect.DATETIME_FORMAT);
 
     return LocalTime.parse(value, Dialect.TIME_FORMAT);
   }
 
   @Override
-  protected void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
+  void setParameter(final type.DATETIME dataType, final PreparedStatement statement, final int parameterIndex) throws SQLException {
     final LocalDateTime value = dataType.get();
     if (value != null)
       statement.setString(parameterIndex, value.format(Dialect.DATETIME_FORMAT));
@@ -230,16 +236,18 @@ final class SQLiteCompiler extends Compiler {
   }
 
   @Override
-  protected LocalDateTime getParameter(final type.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  LocalDateTime getParameter(final type.DATETIME dateTime, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return resultSet.wasNull() || value == null ? null : LocalDateTime.parse(value, Dialect.DATETIME_FORMAT);
   }
 
   @Override
-  protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    if (dataType.get() != null)
-      statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
-    else
-      statement.setNull(parameterIndex, dataType.sqlType());
+  void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final InputStream in = dataType.get()) {
+      if (in != null)
+        statement.setBytes(parameterIndex, Streams.readBytes(in));
+      else
+        statement.setNull(parameterIndex, dataType.sqlType());
+    }
   }
 }

@@ -22,17 +22,16 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 final class expression {
-  protected static abstract class Generic<T> extends type.Subject<T> {
+  abstract static class Generic<T> extends type.Subject<T> {
   }
 
-  protected static final class Count extends Generic<Long> {
-    protected static final Count STAR  = new Count();
+  static final class Count extends Generic<Long> {
+    static final Count STAR  = new Count();
 
-    protected final boolean distinct;
-    protected final java.lang.String function = "COUNT";
-    protected final kind.DataType<?> column;
+    final boolean distinct;
+    final kind.DataType<?> column;
 
-    protected Count(final kind.DataType<?> column, final boolean distinct) {
+    Count(final kind.DataType<?> column, final boolean distinct) {
       this.column = column;
       this.distinct = distinct;
     }
@@ -43,46 +42,46 @@ final class expression {
     }
 
     @Override
-    protected Object evaluate(final java.util.Set<Evaluable> visited) {
+    Object evaluate(final java.util.Set<Evaluable> visited) {
       throw new UnsupportedOperationException("COUNT(?) cannot be evaluated outside the DB");
     }
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
-  protected static final class Numeric extends Generic<Number> {
-    protected final operator.Arithmetic operator;
-    protected final kind.Numeric<?> a;
-    protected final kind.Numeric<?> b;
+  static final class Numeric extends Generic<Number> {
+    final operator.Arithmetic operator;
+    final kind.Numeric<?> a;
+    final kind.Numeric<?> b;
 
-    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final kind.Numeric<?> b) {
       this.operator = operator;
       this.a = a;
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final Number a, final kind.Numeric<?> b) {
+    Numeric(final operator.Arithmetic operator, final Number a, final kind.Numeric<?> b) {
       this.operator = operator;
       this.a = (type.Numeric<?>)type.DataType.wrap(a);
       this.b = b;
     }
 
-    protected Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final Number b) {
+    Numeric(final operator.Arithmetic operator, final kind.Numeric<?> a, final Number b) {
       this.operator = operator;
       this.a = a;
       this.b = (type.Numeric<?>)type.DataType.wrap(b);
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
     @Override
-    protected Number evaluate(final java.util.Set<Evaluable> visited) {
+    Number evaluate(final java.util.Set<Evaluable> visited) {
       if (!(this.a instanceof Evaluable) || !(this.b instanceof Evaluable))
         return null;
 
@@ -98,19 +97,19 @@ final class expression {
     }
   }
 
-  protected static class Temporal extends Generic<java.time.temporal.Temporal> {
-    protected final operator.ArithmeticPlusMinus operator;
-    protected final type.Temporal<?> a;
-    protected final Interval b;
+  static class Temporal extends Generic<java.time.temporal.Temporal> {
+    final operator.ArithmeticPlusMinus operator;
+    final type.Temporal<?> a;
+    final Interval b;
 
-    protected Temporal(final operator.ArithmeticPlusMinus operator, final type.Temporal<?> a, final Interval b) {
+    Temporal(final operator.ArithmeticPlusMinus operator, final type.Temporal<?> a, final Interval b) {
       this.operator = operator;
       this.a = a;
       this.b = b;
     }
 
     @Override
-    protected java.time.temporal.Temporal evaluate(final java.util.Set<Evaluable> visited) {
+    java.time.temporal.Temporal evaluate(final java.util.Set<Evaluable> visited) {
       if (a == null || b == null)
         return null;
 
@@ -131,7 +130,7 @@ final class expression {
     }
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       final Interval interval = a instanceof type.TIME ? b.toTimeInterval() : a instanceof type.DATE ? b.toDateInterval() : b;
       if (interval == null)
         Compiler.getCompiler(compilation.vendor).compile(a, compilation);
@@ -140,88 +139,88 @@ final class expression {
     }
   }
 
-  protected static abstract class String extends Generic<java.lang.String> {
+  abstract static class String extends Generic<java.lang.String> {
   }
 
-  protected static final class ChangeCase extends String {
-    protected final operator.String1 operator;
-    protected final kind.DataType<?> arg;
+  static final class ChangeCase extends String {
+    final operator.String1 operator;
+    final kind.DataType<?> arg;
 
-    protected ChangeCase(final operator.String1 operator, final kind.DataType<?> a) {
+    ChangeCase(final operator.String1 operator, final kind.DataType<?> a) {
       this.operator = operator;
       this.arg = a;
     }
 
-    protected ChangeCase(final operator.String1 operator, final CharSequence a) {
+    ChangeCase(final operator.String1 operator, final CharSequence a) {
       this.operator = operator;
       this.arg = type.DataType.wrap(a);
     }
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
     @Override
-    protected final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
+    final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       return arg == null || !(arg instanceof Evaluable) ? null : operator.evaluate((java.lang.String)((Evaluable)arg).evaluate(visited));
     }
   }
 
-  protected static final class Concat extends String {
-    protected final kind.DataType<?>[] args;
+  static final class Concat extends String {
+    final kind.DataType<?>[] args;
 
-    protected Concat(final kind.DataType<?> a, final kind.DataType<?> b) {
+    Concat(final kind.DataType<?> a, final kind.DataType<?> b) {
       this.args = new kind.DataType[] {a, b};
     }
 
-    protected Concat(final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
+    Concat(final kind.DataType<?> a, final kind.DataType<?> b, final CharSequence c) {
       this.args = new kind.DataType[] {a, b, type.DataType.wrap(c)};
     }
 
-    protected Concat(final kind.DataType<?> a, final CharSequence b) {
+    Concat(final kind.DataType<?> a, final CharSequence b) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b)};
     }
 
-    protected Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
+    Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b), c};
     }
 
-    protected Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
+    Concat(final kind.DataType<?> a, final CharSequence b, final kind.DataType<?> c, final CharSequence d) {
       this.args = new kind.DataType[] {a, type.DataType.wrap(b), c, type.DataType.wrap(d)};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b) {
+    Concat(final CharSequence a, final kind.DataType<?> b) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
+    Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, c};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
+    Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c)};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
+    Concat(final CharSequence a, final kind.DataType<?> b, final kind.DataType<?> c, final CharSequence d) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, c, type.DataType.wrap(d)};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
+    Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d};
     }
 
-    protected Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
+    Concat(final CharSequence a, final kind.DataType<?> b, final CharSequence c, final kind.DataType<?> d, final CharSequence e) {
       this.args = new kind.DataType[] {type.DataType.wrap(a), b, type.DataType.wrap(c), d, type.DataType.wrap(e)};
     }
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
     @Override
-    protected final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
+    final java.lang.String evaluate(final java.util.Set<Evaluable> visited) {
       final StringBuilder builder = new StringBuilder();
       for (final kind.DataType<?> arg : args) {
         if (!(arg instanceof Evaluable))
@@ -234,24 +233,24 @@ final class expression {
     }
   }
 
-  protected static final class Set extends Generic<Object> {
-    protected final java.lang.String function;
-    protected final boolean distinct;
-    protected final type.Subject<?> a;
+  static final class Set extends Generic<Object> {
+    final java.lang.String function;
+    final boolean distinct;
+    final type.Subject<?> a;
 
-    protected Set(final java.lang.String function, final type.Subject<?> subject, final boolean distinct) {
+    Set(final java.lang.String function, final type.Subject<?> subject, final boolean distinct) {
       this.function = function;
       this.a = subject;
       this.distinct = distinct;
     }
 
     @Override
-    protected final void compile(final Compilation compilation) throws IOException {
+    final void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
 
     @Override
-    protected Object evaluate(final java.util.Set<Evaluable> visited) {
+    Object evaluate(final java.util.Set<Evaluable> visited) {
       throw new UnsupportedOperationException("SetFunction cannot be evaluated outside the DB");
     }
   }

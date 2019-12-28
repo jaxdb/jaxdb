@@ -34,22 +34,22 @@ class DB2Compiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(DB2Compiler.class);
 
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DB2;
   }
 
   @Override
-  protected CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
+  CreateStatement createIndex(final boolean unique, final String indexName, final $Index.Type$ type, final String tableName, final $Named ... columns) {
     return new CreateStatement("CREATE " + (unique ? "UNIQUE " : "") + "INDEX " + q(indexName) + " USING " + type.text() + " ON " + q(tableName) + " (" + SQLDataTypes.csvNames(getVendor().getDialect(), columns) + ")");
   }
 
   @Override
-  protected DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final $Table table) {
     return new DropStatement("CALL db2perf_quiet_drop('TABLE " + q(table.getName$().text()) + "')");
   }
 
   @Override
-  protected void init(final Connection connection) throws SQLException {
+  void init(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       statement.execute("CREATE PROCEDURE db2perf_quiet_drop(IN statement VARCHAR(1000)) LANGUAGE SQL BEGIN DECLARE SQLSTATE CHAR(5); DECLARE NotThere CONDITION FOR SQLSTATE '42704'; DECLARE NotThereSig CONDITION FOR SQLSTATE '42883'; DECLARE EXIT HANDLER FOR NotThere, NotThereSig SET SQLSTATE = ' '; SET statement = 'DROP ' || statement; EXECUTE IMMEDIATE statement; END");
     }
@@ -60,22 +60,22 @@ class DB2Compiler extends Compiler {
   }
 
   @Override
-  protected String dropIndexOnClause(final $Table table) {
+  String dropIndexOnClause(final $Table table) {
     return "";
   }
 
   @Override
-  protected String $null(final $Table table, final $Column column) {
+  String $null(final $Table table, final $Column column) {
     return column.getNull$() != null && !column.getNull$().text() ? "NOT NULL" : "";
   }
 
   @Override
-  protected String $autoIncrement(final $Table table, final $Integer column) {
+  String $autoIncrement(final $Table table, final $Integer column) {
     return isAutoIncrement(column) ? "GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1)" : "";
   }
 
   @Override
-  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     if ($ForeignKey.OnUpdate$.CASCADE.text().equals(onUpdate.text())) {
       logger.warn("ON UPDATE CASCADE is not supported");
       return null;

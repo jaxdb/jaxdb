@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 public class VendorRunner extends BlockJUnit4ClassRunner {
-  protected static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
+  static final Logger logger = LoggerFactory.getLogger(VendorRunner.class);
 
   static {
     DeferredLogger.defer(LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME), Level.DEBUG);
@@ -108,7 +108,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     }
   }
 
-  protected void checkParameters(final FrameworkMethod method, final List<Throwable> errors) {
+  protected void checkParameters(final FrameworkMethod method, final List<? super Throwable> errors) {
     if (method.getMethod().getParameterTypes().length > 0 && method.getMethod().getParameterTypes()[0] != Connection.class)
       errors.add(new Exception("Method " + method.getName() + " must declare no parameters or one parameter of type: " + Connection.class.getName()));
   }
@@ -194,7 +194,7 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     };
   }
 
-  private ThreadLocal<Class<? extends org.jaxdb.ddlx.runner.Vendor>> localVendor = new ThreadLocal<>();
+  private final ThreadLocal<Class<? extends org.jaxdb.ddlx.runner.Vendor>> localVendor = new ThreadLocal<>();
 
   private Statement evaluate(final List<FrameworkMethod> befores, final Object target, final Statement statement) {
     final Statement vendorStatement = new Statement() {
@@ -217,12 +217,12 @@ public class VendorRunner extends BlockJUnit4ClassRunner {
     };
   }
 
-  private void evaluateVendors(final Class<? extends org.jaxdb.ddlx.runner.Vendor>[] vendorClasses, final List<FrameworkMethod> befores, final Object target, final Statement statement) throws Throwable {
+  private void evaluateVendors(final Class<? extends org.jaxdb.ddlx.runner.Vendor>[] vendorClasses, final List<? extends FrameworkMethod> befores, final Object target, final Statement statement) throws Throwable {
     for (final Class<? extends org.jaxdb.ddlx.runner.Vendor> vendorClass : vendorClasses) {
       localVendor.set(vendorClass);
       if (!befores.isEmpty())
         for (final FrameworkMethod before : befores)
-          VendorRunner.this.run(vendorClass, before, target);
+          run(vendorClass, before, target);
 
       statement.evaluate();
     }

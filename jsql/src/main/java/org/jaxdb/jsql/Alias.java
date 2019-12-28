@@ -19,14 +19,14 @@ package org.jaxdb.jsql;
 import org.libj.lang.Strings;
 
 final class Alias extends Compilable {
-  protected final String name;
+  final String name;
 
-  public Alias(final int index) {
+  Alias(final int index) {
     this.name = Strings.getAlpha(index);
   }
 
   @Override
-  protected final void compile(final Compilation compilation) {
+  void compile(final Compilation compilation) {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 

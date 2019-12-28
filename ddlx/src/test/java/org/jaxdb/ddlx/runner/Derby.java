@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Derby extends Vendor {
-  protected static final Logger logger = LoggerFactory.getLogger(Derby.class);
-  private static final File[] dbPaths = new File[] {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
+  static final Logger logger = LoggerFactory.getLogger(Derby.class);
+  private static final File[] dbPaths = {new File("target/classes/derby.db"), new File("target/test-classes/derby.db")};
 
   private final File location;
 
@@ -86,7 +86,7 @@ public class Derby extends Vendor {
   public void destroy() throws SQLException {
     try {
       new EmbeddedDriver();
-      DriverManager.getConnection("jdbc:derby:;shutdown=true");
+      DriverManager.getConnection("jdbc:derby:;shutdown=true").close();
     }
     catch (final SQLException e) {
       if (!"XJ015".equals(e.getSQLState()) && !"08001".equals(e.getSQLState()))

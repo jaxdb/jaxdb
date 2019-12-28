@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -25,10 +26,10 @@ import java.time.LocalTime;
 import org.jaxdb.jsql.type.DataType;
 
 final class operator {
-  public static abstract class Generic {
+  abstract static class Generic {
     private final java.lang.String symbol;
 
-    protected Generic(final java.lang.String symbol) {
+    Generic(final java.lang.String symbol) {
       this.symbol = symbol;
     }
 
@@ -38,217 +39,220 @@ final class operator {
     }
   }
 
-  static abstract class ArithmeticPlusMinus extends Arithmetic {
-    protected ArithmeticPlusMinus(final java.lang.String symbol) {
+  abstract static class ArithmeticPlusMinus extends Arithmetic {
+    ArithmeticPlusMinus(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected abstract LocalDate evaluate(LocalDate a, Interval b);
-    protected abstract LocalDateTime evaluate(LocalDateTime a, Interval b);
-    protected abstract LocalTime evaluate(LocalTime a, Interval b);
+    abstract LocalDate evaluate(LocalDate a, Interval b);
+    abstract LocalDateTime evaluate(LocalDateTime a, Interval b);
+    abstract LocalTime evaluate(LocalTime a, Interval b);
   }
 
-  static abstract class Arithmetic extends Generic {
-    public static final ArithmeticPlusMinus PLUS = new ArithmeticPlusMinus("+") {
+  abstract static class Arithmetic extends Generic {
+    static final ArithmeticPlusMinus PLUS = new ArithmeticPlusMinus("+") {
       @Override
-      protected float evaluate(final float a, final float b) {
+      float evaluate(final float a, final float b) {
         return a + b;
       }
 
       @Override
-      protected double evaluate(final double a, final double b) {
+      double evaluate(final double a, final double b) {
         return a + b;
       }
 
       @Override
-      protected Number evaluate(final byte a, final byte b) {
+      Number evaluate(final byte a, final byte b) {
         return a + b;
       }
 
       @Override
-      protected Number evaluate(final short a, final short b) {
+      Number evaluate(final short a, final short b) {
         return a + b;
       }
 
       @Override
-      protected Number evaluate(final int a, final int b) {
+      Number evaluate(final int a, final int b) {
         return a + b;
       }
 
       @Override
-      protected Number evaluate(final long a, final long b) {
+      Number evaluate(final long a, final long b) {
         return a + b;
       }
 
       @Override
-      protected Number evaluate(final BigInteger a, final BigInteger b) {
+      Number evaluate(final BigInteger a, final BigInteger b) {
         return a.add(b);
       }
 
       @Override
-      protected Number evaluate(final BigDecimal a, final BigDecimal b) {
+      Number evaluate(final BigDecimal a, final BigDecimal b) {
         return a.add(b);
       }
 
       @Override
-      protected LocalDate evaluate(final LocalDate a, final Interval b) {
+      LocalDate evaluate(final LocalDate a, final Interval b) {
         return b.addTo(a);
       }
 
       @Override
-      protected LocalDateTime evaluate(final LocalDateTime a, final Interval b) {
+      LocalDateTime evaluate(final LocalDateTime a, final Interval b) {
         return b.addTo(a);
       }
 
       @Override
-      protected LocalTime evaluate(final LocalTime a, final Interval b) {
+      LocalTime evaluate(final LocalTime a, final Interval b) {
         return b.addTo(a);
       }
     };
-    public static final ArithmeticPlusMinus MINUS = new ArithmeticPlusMinus("-") {
+
+    static final ArithmeticPlusMinus MINUS = new ArithmeticPlusMinus("-") {
       @Override
-      protected float evaluate(final float a, final float b) {
+      float evaluate(final float a, final float b) {
         return a - b;
       }
 
       @Override
-      protected double evaluate(final double a, final double b) {
+      double evaluate(final double a, final double b) {
         return a - b;
       }
 
       @Override
-      protected Number evaluate(final byte a, final byte b) {
+      Number evaluate(final byte a, final byte b) {
         return a - b;
       }
 
       @Override
-      protected Number evaluate(final short a, final short b) {
+      Number evaluate(final short a, final short b) {
         return a - b;
       }
 
       @Override
-      protected Number evaluate(final int a, final int b) {
+      Number evaluate(final int a, final int b) {
         return a - b;
       }
 
       @Override
-      protected Number evaluate(final long a, final long b) {
+      Number evaluate(final long a, final long b) {
         return a - b;
       }
 
       @Override
-      protected Number evaluate(final BigInteger a, final BigInteger b) {
+      Number evaluate(final BigInteger a, final BigInteger b) {
         return a.subtract(b);
       }
 
       @Override
-      protected Number evaluate(final BigDecimal a, final BigDecimal b) {
+      Number evaluate(final BigDecimal a, final BigDecimal b) {
         return a.subtract(b);
       }
 
       @Override
-      protected LocalDate evaluate(final LocalDate a, final Interval b) {
+      LocalDate evaluate(final LocalDate a, final Interval b) {
         return b.subtractFrom(a);
       }
 
       @Override
-      protected LocalDateTime evaluate(final LocalDateTime a, final Interval b) {
+      LocalDateTime evaluate(final LocalDateTime a, final Interval b) {
         return b.subtractFrom(a);
       }
 
       @Override
-      protected LocalTime evaluate(final LocalTime a, final Interval b) {
+      LocalTime evaluate(final LocalTime a, final Interval b) {
         return b.subtractFrom(a);
       }
     };
-    public static final Arithmetic MULTIPLY = new Arithmetic("*") {
+
+    static final Arithmetic MULTIPLY = new Arithmetic("*") {
       @Override
-      protected float evaluate(final float a, final float b) {
+      float evaluate(final float a, final float b) {
         return a * b;
       }
 
       @Override
-      protected double evaluate(final double a, final double b) {
+      double evaluate(final double a, final double b) {
         return a * b;
       }
 
       @Override
-      protected Number evaluate(final byte a, final byte b) {
+      Number evaluate(final byte a, final byte b) {
         return a * b;
       }
 
       @Override
-      protected Number evaluate(final short a, final short b) {
+      Number evaluate(final short a, final short b) {
         return a * b;
       }
 
       @Override
-      protected Number evaluate(final int a, final int b) {
+      Number evaluate(final int a, final int b) {
         return a * b;
       }
 
       @Override
-      protected Number evaluate(final long a, final long b) {
+      Number evaluate(final long a, final long b) {
         return a * b;
       }
 
       @Override
-      protected Number evaluate(final BigInteger a, final BigInteger b) {
+      Number evaluate(final BigInteger a, final BigInteger b) {
         return a.multiply(b);
       }
 
       @Override
-      protected Number evaluate(final BigDecimal a, final BigDecimal b) {
+      Number evaluate(final BigDecimal a, final BigDecimal b) {
         return a.multiply(b);
       }
     };
-    public static final Arithmetic DIVIDE = new Arithmetic("/") {
+
+    static final Arithmetic DIVIDE = new Arithmetic("/") {
       @Override
-      protected float evaluate(final float a, final float b) {
+      float evaluate(final float a, final float b) {
         return a / b;
       }
 
       @Override
-      protected double evaluate(final double a, final double b) {
+      double evaluate(final double a, final double b) {
         return a / b;
       }
 
       @Override
-      protected Number evaluate(final byte a, final byte b) {
+      Number evaluate(final byte a, final byte b) {
         return a / b;
       }
 
       @Override
-      protected Number evaluate(final short a, final short b) {
+      Number evaluate(final short a, final short b) {
         return a / b;
       }
 
       @Override
-      protected Number evaluate(final int a, final int b) {
+      Number evaluate(final int a, final int b) {
         return a / b;
       }
 
       @Override
-      protected Number evaluate(final long a, final long b) {
+      Number evaluate(final long a, final long b) {
         return a / b;
       }
 
       @Override
-      protected Number evaluate(final BigInteger a, final BigInteger b) {
+      Number evaluate(final BigInteger a, final BigInteger b) {
         return a.divide(b);
       }
 
       @Override
-      protected Number evaluate(final BigDecimal a, final BigDecimal b) {
-        return a.divide(b);
+      Number evaluate(final BigDecimal a, final BigDecimal b) {
+        return a.divide(b, RoundingMode.HALF_UP);
       }
     };
 
-    protected Arithmetic(final java.lang.String symbol) {
+    Arithmetic(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a == null || b == null)
         return null;
 
@@ -397,7 +401,7 @@ final class operator {
           return evaluate(new BigDecimal((BigInteger)a), (BigDecimal)b);
 
         if (b instanceof Float || b instanceof Double)
-          return evaluate((BigDecimal)a, BigDecimal.valueOf(b.doubleValue()));
+          return evaluate(a, BigDecimal.valueOf(b.doubleValue()));
 
         if (b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return evaluate((BigInteger)a, BigInteger.valueOf(b.longValue()));
@@ -408,126 +412,126 @@ final class operator {
       throw new UnsupportedOperationException("Unsupported Number type: " + b.getClass().getName());
     }
 
-    protected abstract float evaluate(float a, float b);
-    protected abstract double evaluate(double a, double b);
-    protected abstract Number evaluate(byte a, byte b);
-    protected abstract Number evaluate(short a, short b);
-    protected abstract Number evaluate(int a, int b);
-    protected abstract Number evaluate(long a, long b);
-    protected abstract Number evaluate(BigInteger a, BigInteger b);
-    protected abstract Number evaluate(BigDecimal a, BigDecimal b);
+    abstract float evaluate(float a, float b);
+    abstract double evaluate(double a, double b);
+    abstract Number evaluate(byte a, byte b);
+    abstract Number evaluate(short a, short b);
+    abstract Number evaluate(int a, int b);
+    abstract Number evaluate(long a, long b);
+    abstract Number evaluate(BigInteger a, BigInteger b);
+    abstract Number evaluate(BigDecimal a, BigDecimal b);
   }
 
-  static abstract class Boolean extends Generic {
-    public static final Boolean AND = new Boolean("AND") {
+  abstract static class Boolean extends Generic {
+    static final Boolean AND = new Boolean("AND") {
       @Override
-      protected java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
+      java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
         return a == null || b == null || a.value == null || b.value == null ? null : a.value && b.value;
       }
     };
-    public static final Boolean OR = new Boolean("OR") {
+    static final Boolean OR = new Boolean("OR") {
       @Override
-      protected java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
+      java.lang.Boolean evaluate(final Condition<java.lang.Boolean> a, final Condition<java.lang.Boolean> b) {
         return a == null || b == null || a.value == null || b.value == null ? null : a.value || b.value;
       }
     };
 
-    protected Boolean(final java.lang.String symbol) {
+    Boolean(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected abstract java.lang.Boolean evaluate(Condition<java.lang.Boolean> a, Condition<java.lang.Boolean> b);
+    abstract java.lang.Boolean evaluate(Condition<java.lang.Boolean> a, Condition<java.lang.Boolean> b);
   }
 
-  static abstract class Logical<D> extends Generic {
-    public static final Logical<type.DataType<?>> EQ = new Logical<type.DataType<?>>("=") {
+  abstract static class Logical<D> extends Generic {
+    static final Logical<type.DataType<?>> EQ = new Logical<type.DataType<?>>("=") {
       @Override
-      protected java.lang.Boolean evaluate(final DataType<?> a, final DataType<?> b) {
+      java.lang.Boolean evaluate(final DataType<?> a, final DataType<?> b) {
         return a == null || b == null ? null : a.equals(b);
       }
     };
-    public static final Logical<Comparable<Object>> LT = new Logical<Comparable<Object>>("<") {
+    static final Logical<Comparable<Object>> LT = new Logical<Comparable<Object>>("<") {
       @Override
-      protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
+      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return a == null || b == null ? null : a.compareTo(b) < 0;
       }
     };
-    public static final Logical<Comparable<Object>> LTE = new Logical<Comparable<Object>>("<=") {
+    static final Logical<Comparable<Object>> LTE = new Logical<Comparable<Object>>("<=") {
       @Override
-      protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
+      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return a != null && a.compareTo(b) <= 0;
       }
     };
-    public static final Logical<Comparable<Object>> GT = new Logical<Comparable<Object>>(">") {
+    static final Logical<Comparable<Object>> GT = new Logical<Comparable<Object>>(">") {
       @Override
-      protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
+      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return LT.evaluate(b, a);
       }
     };
-    public static final Logical<Comparable<Object>> GTE = new Logical<Comparable<Object>>(">=") {
+    static final Logical<Comparable<Object>> GTE = new Logical<Comparable<Object>>(">=") {
       @Override
-      protected java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
+      java.lang.Boolean evaluate(final Comparable<Object> a, final Comparable<Object> b) {
         return LTE.evaluate(b, a);
       }
     };
-    public static final Logical<type.DataType<?>> NE = new Logical<type.DataType<?>>("<>") {
+    static final Logical<type.DataType<?>> NE = new Logical<type.DataType<?>>("<>") {
       @Override
-      protected java.lang.Boolean evaluate(final type.DataType<?> a, final type.DataType<?> b) {
+      java.lang.Boolean evaluate(final type.DataType<?> a, final type.DataType<?> b) {
         return !EQ.evaluate(a, b);
       }
     };
 
-    protected Logical(final java.lang.String symbol) {
+    Logical(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected abstract java.lang.Boolean evaluate(D a, D b);
+    abstract java.lang.Boolean evaluate(D a, D b);
   }
 
-  static abstract class String extends Generic {
-    public static final String1 LOWER_CASE = new String1("LOWER") {
+  abstract static class String extends Generic {
+    static final String1 LOWER_CASE = new String1("LOWER") {
       @Override
-      protected java.lang.String evaluate(final java.lang.String a) {
+      java.lang.String evaluate(final java.lang.String a) {
         return a == null ? null : a.toLowerCase();
       }
     };
 
-    public static final String1 UPPER_CASE = new String1("UPPER") {
+    static final String1 UPPER_CASE = new String1("UPPER") {
       @Override
-      protected java.lang.String evaluate(final java.lang.String a) {
+      java.lang.String evaluate(final java.lang.String a) {
         return a == null ? null : a.toUpperCase();
       }
     };
 
-    protected String(final java.lang.String symbol) {
+    String(final java.lang.String symbol) {
       super(symbol);
     }
   }
 
-  static abstract class String1 extends String {
-    protected String1(final java.lang.String symbol) {
+  abstract static class String1 extends String {
+    String1(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected abstract java.lang.String evaluate(java.lang.String a);
+    abstract java.lang.String evaluate(java.lang.String a);
   }
 
-  static abstract class StringN extends String {
-    protected StringN(final java.lang.String symbol) {
+  abstract static class StringN extends String {
+    StringN(final java.lang.String symbol) {
       super(symbol);
     }
 
-    protected abstract java.lang.String evaluate(java.lang.String ... strings);
+    abstract java.lang.String evaluate(java.lang.String ... strings);
   }
 
-  public static class Ordering extends Generic {
-    public static final Ordering IS = new Ordering("IS");
-    public static final Ordering NOT = new Ordering("IS NOT");
+  static class Ordering extends Generic {
+    static final Ordering IS = new Ordering("IS");
+    static final Ordering NOT = new Ordering("IS NOT");
 
-    public static final Ordering ASC = new Ordering("ASC");
-    public static final Ordering DESC = new Ordering("DESC");
+    static final Ordering ASC = new Ordering("ASC");
+    static final Ordering DESC = new Ordering("DESC");
 
-    protected Ordering(final java.lang.String symbol) {
+    Ordering(final java.lang.String symbol) {
       super(symbol);
     }
   }

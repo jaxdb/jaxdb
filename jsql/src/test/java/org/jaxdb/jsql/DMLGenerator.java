@@ -29,6 +29,9 @@ import org.libj.util.Classes;
 
 @SuppressWarnings("unused")
 public class DMLGenerator {
+  private DMLGenerator() {
+  }
+
   public static class Args {
     public final Class<?> a;
     public final Class<?> b;
@@ -75,7 +78,7 @@ public class DMLGenerator {
   private static final Map<Args,Class<?>> directMap = new HashMap<>();
   private static final Map<Class<?>,Class<?>> singleMap = new LinkedHashMap<>();
 
-  private static void put(final Map<Args,Class<?>> map, final Class<?> r, final Class<?> a, final Class<?> b) {
+  private static void put(final Map<? super Args,? super Class<?>> map, final Class<?> r, final Class<?> a, final Class<?> b) {
     final Args args = new Args(a, b);
 //    final Class<?> exists = map.get(args);
 //    if (exists != null && exists != r)
@@ -131,7 +134,7 @@ public class DMLGenerator {
 
   private static Class<?> getUnsignedClass(final Class<?> cls) {
     final Class<?> unsignedClass = cls.getClasses()[0];
-    assert(unsignedClass.getSimpleName().equals("UNSIGNED"));
+    assert("UNSIGNED".equals(unsignedClass.getSimpleName()));
     return unsignedClass;
   }
 
@@ -210,7 +213,7 @@ public class DMLGenerator {
     putDirect(type.BIGINT.class, type.BIGINT.class, type.BIGINT.class);
   }
 
-  private static final String[] singleParamFunctions = new String[] {
+  private static final String[] singleParamFunctions = {
     "$1 ROUND(final $2 a) {\n  return ($1)$n1.wrapper(new function.Round(a, 0));\n}",
     "$1 ROUND(final $2 a, final int scale) {\n  return ($1)$n1.wrapper(new function.Round(a, scale));\n}",
     "$1 ABS(final $2 a) {\n  return ($1)$n1.wrapper(new function.Abs(a));\n}",
@@ -229,20 +232,20 @@ public class DMLGenerator {
     "$1 ATAN(final $2 a) {\n  return ($1)$n1.wrapper(new function.Atan(a));\n}"
   };
 
-  private static final String[] doubleParamFunctions = new String[] {
+  private static final String[] doubleParamFunctions = {
     "$1 POW(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Pow(a, b));\n}",
     "$1 MOD(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Mod(a, b));\n}",
     "$1 LOG(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Log(a, b));\n}",
     "$1 ATAN2(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new function.Atan2(a, b));\n}"
   };
 
-  private static final String[] numericExpressionsDirect = new String[] {
+  private static final String[] numericExpressionsDirect = {
     "$1 ADD(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new NumericExpression(Operator.PLUS, a, b));\n}",
     "$1 SUB(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new NumericExpression(Operator.MINUS, a, b));\n}",
     "$1 MUL(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new NumericExpression(Operator.MULTIPLY, a, b));\n}"
   };
 
-  private static final String[] numericExpressionsScaled = new String[] {
+  private static final String[] numericExpressionsScaled = {
     "$1 DIV(final $2 a, final $3 b) {\n  return ($1)$n1.wrapper(new NumericExpression(Operator.DIVIDE, a, b));\n}"
   };
 

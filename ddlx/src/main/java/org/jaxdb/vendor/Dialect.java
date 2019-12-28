@@ -30,15 +30,15 @@ import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
 public abstract class Dialect {
-  private static abstract class BindingProxy extends Binding {
+  private abstract static class BindingProxy extends Binding {
     private static final long serialVersionUID = -5727439225507675790L;
 
-    public static $AnySimpleType owner(final Binding binding) {
+    protected static $AnySimpleType owner(final Binding binding) {
       return Binding.owner(binding);
     }
   }
 
-  protected void assertValidDecimal(final Short precision, final Short scale) {
+  void assertValidDecimal(final Short precision, final Short scale) {
     if (precision != null && precision > decimalMaxPrecision())
       throw new IllegalArgumentException("DECIMAL precision of " + precision + " exceeds max of " + decimalMaxPrecision() + " allowed by " + getVendor());
 
@@ -63,7 +63,7 @@ public abstract class Dialect {
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
     for (int i = 0; i < chars.length; i++) {
-      char ch = chars[i];
+      final char ch = chars[i];
       if (ch == '\\') {
         escaped = true;
       }
@@ -86,7 +86,7 @@ public abstract class Dialect {
   public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
 
-  protected abstract DBVendor getVendor();
+  abstract DBVendor getVendor();
 
   /**
    * Quote a named identifier.
@@ -102,8 +102,8 @@ public abstract class Dialect {
 
   public abstract boolean allowsUnsignedNumeric();
 
-  protected abstract String declareBinary(boolean varying, long length);
-  protected abstract Integer binaryMaxLength();
+  abstract String declareBinary(boolean varying, long length);
+  abstract Integer binaryMaxLength();
   public String compileBinary(final boolean varying, final long length) {
     if (binaryMaxLength() != null && length > binaryMaxLength())
       throw new IllegalArgumentException("BINARY length of " + length + " exceeds max of " + binaryMaxLength() + " allowed by " + getVendor());
@@ -111,8 +111,8 @@ public abstract class Dialect {
     return declareBinary(varying, length);
   }
 
-  protected abstract String declareBlob(Long length);
-  protected abstract Long blobMaxLength();
+  abstract String declareBlob(Long length);
+  abstract Long blobMaxLength();
   public String compileBlob(final Long length) {
     if (length != null && blobMaxLength() != null && length > blobMaxLength())
       throw new IllegalArgumentException("BLOB length of " + length + " exceeds max of " + blobMaxLength() + " allowed by " + getVendor());
@@ -122,17 +122,17 @@ public abstract class Dialect {
 
   public abstract String declareBoolean();
 
-  protected abstract String declareChar(boolean varying, long length);
-  protected abstract Integer charMaxLength();
+  abstract String declareChar(boolean varying, long length);
+  abstract Integer charMaxLength();
   public String compileChar(final boolean varying, final Long length) {
     if (length != null && charMaxLength() != null && length > charMaxLength())
       throw new IllegalArgumentException("CHAR length of " + length + " exceeds max of " + charMaxLength() + " allowed by " + getVendor());
 
-    return declareChar(varying, length == null ? 1l : length);
+    return declareChar(varying, length == null ? 1L : length);
   }
 
-  protected abstract String declareClob(Long length);
-  protected abstract Long clobMaxLength();
+  abstract String declareClob(Long length);
+  abstract Long clobMaxLength();
   public String compileClob(final Long length) {
     if (length != null && clobMaxLength() != null && length > clobMaxLength())
       throw new IllegalArgumentException("CLOB length of " + length + " exceeds max of " + clobMaxLength() + " allowed by " + getVendor());
@@ -146,15 +146,15 @@ public abstract class Dialect {
 
   public abstract String declareDecimal(Short precision, Short scale, boolean unsigned);
   public abstract short decimalMaxPrecision();
-  protected abstract Integer decimalMaxScale();
+  abstract Integer decimalMaxScale();
 
   public abstract String declareFloat(boolean unsigned);
 
   public abstract String declareDouble(boolean unsigned);
 
-  protected abstract String declareInt8(byte precision, boolean unsigned);
-  protected static final byte int8SignedMaxPrecision = 3;
-  protected static final byte int8UnsignedMaxPrecision = 3;
+  abstract String declareInt8(byte precision, boolean unsigned);
+  static final byte int8SignedMaxPrecision = 3;
+  static final byte int8UnsignedMaxPrecision = 3;
   public String compileInt8(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int8UnsignedMaxPrecision : Dialect.int8SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -163,9 +163,9 @@ public abstract class Dialect {
     return declareInt8(precision, unsigned);
   }
 
-  protected abstract String declareInt16(byte precision, boolean unsigned);
-  protected static final byte int16SignedMaxPrecision = 5;
-  protected static final byte int16UnsignedMaxPrecision = 5;
+  abstract String declareInt16(byte precision, boolean unsigned);
+  static final byte int16SignedMaxPrecision = 5;
+  static final byte int16UnsignedMaxPrecision = 5;
   public String compileInt16(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int16UnsignedMaxPrecision : Dialect.int16SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -174,9 +174,9 @@ public abstract class Dialect {
     return declareInt16(precision, unsigned);
   }
 
-  protected abstract String declareInt32(byte precision, boolean unsigned);
-  protected static final byte int32SignedMaxPrecision = 10;
-  protected static final byte int32UnsignedMaxPrecision = 10;
+  abstract String declareInt32(byte precision, boolean unsigned);
+  static final byte int32SignedMaxPrecision = 10;
+  static final byte int32UnsignedMaxPrecision = 10;
   public String compileInt32(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int32UnsignedMaxPrecision : Dialect.int32SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -185,9 +185,9 @@ public abstract class Dialect {
     return declareInt32(precision, unsigned);
   }
 
-  protected abstract String declareInt64(byte precision, boolean unsigned);
-  protected static final byte int64SignedMaxPrecision = 19;
-  protected static final byte int64UnsignedMaxPrecision = 20;
+  abstract String declareInt64(byte precision, boolean unsigned);
+  static final byte int64SignedMaxPrecision = 19;
+  static final byte int64UnsignedMaxPrecision = 20;
   public String compileInt64(Byte precision, final boolean unsigned) {
     if (unsigned) {
       final byte maxPrecision = allowsUnsignedNumeric() ? Dialect.int64UnsignedMaxPrecision : Dialect.int64SignedMaxPrecision;

@@ -20,7 +20,7 @@ import org.jaxdb.vendor.DBVendor;
 
 class MySQLCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 }

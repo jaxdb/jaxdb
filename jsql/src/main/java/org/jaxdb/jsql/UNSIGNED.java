@@ -17,11 +17,11 @@
 package org.jaxdb.jsql;
 
 public final class UNSIGNED {
-  protected static abstract class UnsignedNumber<N extends Number> extends Number {
+  abstract static class UnsignedNumber<N extends Number> extends Number {
     private static final long serialVersionUID = 7628853114521559991L;
 
-    protected abstract N value();
-    protected abstract Class<? extends type.DataType<?>> getTypeClass();
+    abstract N value();
+    abstract Class<? extends type.DataType<?>> getTypeClass();
   }
 
   public static UnsignedNumber<?> toUnsigned(final Number number) {
@@ -65,12 +65,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.lang.Float value() {
+    java.lang.Float value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.FLOAT.UNSIGNED.class;
     }
 
@@ -105,12 +105,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.lang.Double value() {
+    java.lang.Double value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.DOUBLE.UNSIGNED.class;
     }
 
@@ -146,12 +146,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.math.BigDecimal value() {
+    java.math.BigDecimal value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.DECIMAL.UNSIGNED.class;
     }
 
@@ -186,12 +186,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.lang.Short value() {
+    java.lang.Short value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.TINYINT.UNSIGNED.class;
     }
 
@@ -226,12 +226,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.lang.Integer value() {
+    java.lang.Integer value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.SMALLINT.UNSIGNED.class;
     }
 
@@ -266,12 +266,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.lang.Long value() {
+    java.lang.Long value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.INT.UNSIGNED.class;
     }
 
@@ -307,12 +307,12 @@ public final class UNSIGNED {
     }
 
     @Override
-    protected java.math.BigInteger value() {
+    java.math.BigInteger value() {
       return value;
     }
 
     @Override
-    protected Class<? extends type.DataType<?>> getTypeClass() {
+    Class<? extends type.DataType<?>> getTypeClass() {
       return type.BIGINT.UNSIGNED.class;
     }
 
@@ -335,5 +335,8 @@ public final class UNSIGNED {
     public double doubleValue() {
       return value.doubleValue();
     }
+  }
+
+  private UNSIGNED() {
   }
 }

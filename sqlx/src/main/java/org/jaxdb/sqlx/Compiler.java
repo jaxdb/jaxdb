@@ -44,7 +44,7 @@ abstract class Compiler {
     }
   }
 
-  protected static Compiler getCompiler(final DBVendor vendor) {
+  static Compiler getCompiler(final DBVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
     if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -52,69 +52,69 @@ abstract class Compiler {
     return compiler;
   }
 
-  protected abstract DBVendor getVendor();
+  abstract DBVendor getVendor();
 
-  protected String compile(final dt.BIGINT value) {
+  String compile(final dt.BIGINT value) {
     return value.toString();
   }
 
-  protected String compile(final dt.BINARY value) {
+  String compile(final dt.BINARY value) {
     return "X'" + value + "'";
   }
 
-  protected String compile(final dt.BLOB value) {
+  String compile(final dt.BLOB value) {
     return "X'" + value + "'";
   }
 
-  protected String compile(final dt.BOOLEAN value) {
+  String compile(final dt.BOOLEAN value) {
     return value.toString();
   }
 
-  protected String compile(final dt.CHAR value) {
+  String compile(final dt.CHAR value) {
     return "'" + value.get().replace("'", "''") + "'";
   }
 
-  protected String compile(final dt.CLOB value) {
+  String compile(final dt.CLOB value) {
     return "'" + value.get().replace("'", "''") + "'";
   }
 
-  protected String compile(final dt.DATE value) {
+  String compile(final dt.DATE value) {
     return "'" + value + "'";
   }
 
-  protected String compile(final dt.DATETIME value) {
+  String compile(final dt.DATETIME value) {
     return "'" + value + "'";
   }
 
-  protected String compile(final dt.DECIMAL value) {
+  String compile(final dt.DECIMAL value) {
     return value.toString();
   }
 
-  protected String compile(final dt.DOUBLE value) {
+  String compile(final dt.DOUBLE value) {
     return value.toString();
   }
 
-  protected String compile(final dt.ENUM value) {
+  String compile(final dt.ENUM value) {
     return "'" + value + "'";
   }
 
-  protected String compile(final dt.FLOAT value) {
+  String compile(final dt.FLOAT value) {
     return value.toString();
   }
 
-  protected String compile(final dt.INT value) {
+  String compile(final dt.INT value) {
     return value.toString();
   }
 
-  protected String compile(final dt.SMALLINT value) {
+  String compile(final dt.SMALLINT value) {
     return value.toString();
   }
 
-  protected String compile(final dt.TIME value) {
+  String compile(final dt.TIME value) {
     return "'" + value + "'";
   }
 
-  protected String compile(final dt.TINYINT value) {
+  String compile(final dt.TINYINT value) {
     return value.toString();
   }
 }

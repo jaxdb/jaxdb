@@ -32,39 +32,39 @@ final class function {
   private static final BigDecimal LOG_2 = SafeMath.log(BigDecimals.TWO, mc);
   private static final BigDecimal LOG_10 = SafeMath.log(BigDecimal.TEN, mc);
 
-  protected static abstract class Generic extends expression.Generic<Number> {
-    protected final Compilable a;
-    protected final Compilable b;
+  abstract static class Generic extends expression.Generic<Number> {
+    final Compilable a;
+    final Compilable b;
 
-    protected Generic(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Generic(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       this.a = (Compilable)a;
       this.b = (Compilable)b;
     }
 
-    protected Generic(final kind.Numeric<?> a, final Number b) {
+    Generic(final kind.Numeric<?> a, final Number b) {
       this.a = (Compilable)a;
       this.b = type.DataType.wrap(b);
     }
 
-    protected Generic(final Number a, final kind.Numeric<?> b) {
+    Generic(final Number a, final kind.Numeric<?> b) {
       this.a = type.DataType.wrap(a);
       this.b = (Compilable)b;
     }
   }
 
-  protected static abstract class Function0 extends Generic {
-    protected Function0() {
+  abstract static class Function0 extends Generic {
+    Function0() {
       super((kind.Numeric<?>)null, (kind.Numeric<?>)null);
     }
   }
 
-  protected static abstract class Function1 extends Generic {
-    protected Function1(final kind.Numeric<?> dataType) {
+  abstract static class Function1 extends Generic {
+    Function1(final kind.Numeric<?> dataType) {
       super(dataType, (kind.Numeric<?>)null);
     }
 
     @Override
-    protected final Number evaluate(final Set<Evaluable> visited) {
+    final Number evaluate(final Set<Evaluable> visited) {
       if (a == null || !(a instanceof Evaluable))
         return null;
 
@@ -72,24 +72,24 @@ final class function {
       return evaluated == null ? null : evaluate(evaluated);
     }
 
-    protected abstract Number evaluate(Number a);
+    abstract Number evaluate(Number a);
   }
 
-  protected static abstract class Function2 extends Generic {
-    protected Function2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+  abstract static class Function2 extends Generic {
+    Function2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Function2(final kind.Numeric<?> a, final Number b) {
+    Function2(final kind.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Function2(final Number a, final kind.Numeric<?> b) {
+    Function2(final Number a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
     @Override
-    protected final Number evaluate(final Set<Evaluable> visited) {
+    final Number evaluate(final Set<Evaluable> visited) {
       if (a == null || b == null || !(a instanceof Evaluable) || !(b instanceof Evaluable))
         return null;
 
@@ -104,32 +104,28 @@ final class function {
       return evaluate(a, b);
     }
 
-    protected abstract Number evaluate(Number a, Number b);
+    abstract Number evaluate(Number a, Number b);
   }
 
   static final class Pi extends Function0 {
-    protected Pi() {
-      super();
-    }
-
     @Override
-    protected Number evaluate(final Set<Evaluable> visited) {
+    Number evaluate(final Set<Evaluable> visited) {
       return Math.PI;
     }
 
     @Override
-    protected void compile(final Compilation compilation) {
+    void compile(final Compilation compilation) {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Abs extends Function1 {
-    protected Abs(final kind.Numeric<?> a) {
+    Abs(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return SafeMath.abs(a.floatValue());
 
@@ -152,18 +148,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Sign extends Function1 {
-    protected Sign(final kind.Numeric<?> a) {
+    Sign(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return SafeMath.signum(a.floatValue());
 
@@ -192,22 +188,22 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Round extends Function2 {
-    protected Round(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Round(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Round(final kind.Numeric<?> a, final Number b) {
+    Round(final kind.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
     @Override
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
         return a;
 
@@ -224,18 +220,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Floor extends Function1 {
-    protected Floor(final kind.Numeric<?> a) {
+    Floor(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
         return a;
 
@@ -252,18 +248,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Ceil extends Function1 {
-    protected Ceil(final kind.Numeric<?> a) {
+    Ceil(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long || a instanceof BigInteger)
         return a;
 
@@ -280,18 +276,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Sqrt extends Function1 {
-    protected Sqrt(final kind.Numeric<?> a) {
+    Sqrt(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.sqrt(a.floatValue());
 
@@ -320,26 +316,26 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Pow extends Function2 {
-    protected Pow(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Pow(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Pow(final kind.Numeric<?> a, final Number b) {
+    Pow(final kind.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Pow(final Number a, final kind.Numeric<?> b) {
+    Pow(final Number a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
     @Override
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long) {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.pow(a.doubleValue(), b.doubleValue());
@@ -377,26 +373,26 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Mod extends Function2 {
-    protected Mod(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Mod(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Mod(final kind.Numeric<?> a, final Number b) {
+    Mod(final kind.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Mod(final Number a, final kind.Numeric<?> b) {
+    Mod(final Number a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
     @Override
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a instanceof Float) {
         if (b instanceof Float)
           return a.floatValue() % b.floatValue();
@@ -625,18 +621,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Sin extends Function1 {
-    protected Sin(final kind.Numeric<?> a) {
+    Sin(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.sin(a.floatValue());
 
@@ -665,18 +661,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Asin extends Function1 {
-    protected Asin(final kind.Numeric<?> a) {
+    Asin(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.asin(a.floatValue());
 
@@ -705,18 +701,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Cos extends Function1 {
-    protected Cos(final kind.Numeric<?> a) {
+    Cos(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.cos(a.floatValue());
 
@@ -745,18 +741,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Acos extends Function1 {
-    protected Acos(final kind.Numeric<?> a) {
+    Acos(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.acos(a.floatValue());
 
@@ -785,18 +781,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Tan extends Function1 {
-    protected Tan(final kind.Numeric<?> a) {
+    Tan(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.tan(a.floatValue());
 
@@ -825,18 +821,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Atan extends Function1 {
-    protected Atan(final kind.Numeric<?> a) {
+    Atan(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.atan(a.floatValue());
 
@@ -865,26 +861,26 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Atan2 extends Function2 {
-    protected Atan2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
+    Atan2(final kind.Numeric<?> a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
-    protected Atan2(final kind.Numeric<?> a, final Number b) {
+    Atan2(final kind.Numeric<?> a, final Number b) {
       super(a, b);
     }
 
-    protected Atan2(final Number a, final kind.Numeric<?> b) {
+    Atan2(final Number a, final kind.Numeric<?> b) {
       super(a, b);
     }
 
     @Override
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long) {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.atan2(a.doubleValue(), b.doubleValue());
@@ -928,18 +924,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Exp extends Function1 {
-    protected Exp(final kind.Numeric<?> a) {
+    Exp(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float)
         return (float)SafeMath.exp(a.floatValue());
 
@@ -968,18 +964,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Ln extends Function1 {
-    protected Ln(final kind.Numeric<?> a) {
+    Ln(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
         return SafeMath.log(a.doubleValue());
 
@@ -993,26 +989,26 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Log extends Function2 {
-    protected Log(final kind.Numeric<?> b, final kind.Numeric<?> n) {
+    Log(final kind.Numeric<?> b, final kind.Numeric<?> n) {
       super(b, n);
     }
 
-    protected Log(final kind.Numeric<?> b, final Number n) {
+    Log(final kind.Numeric<?> b, final Number n) {
       super(b, n);
     }
 
-    protected Log(final Number b, final kind.Numeric<?> n) {
+    Log(final Number b, final kind.Numeric<?> n) {
       super(b, n);
     }
 
     @Override
-    protected Number evaluate(final Number a, final Number b) {
+    Number evaluate(final Number a, final Number b) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long) {
         if (b instanceof Float || b instanceof Double || b instanceof Byte || b instanceof Short || b instanceof Integer || b instanceof Long)
           return SafeMath.log(a.doubleValue(), b.doubleValue());
@@ -1056,18 +1052,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Log2 extends Function1 {
-    protected Log2(final kind.Numeric<?> a) {
+    Log2(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
         return SafeMath.log(a.doubleValue()) / Numbers.LOG_2;
 
@@ -1081,18 +1077,18 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
   static final class Log10 extends Function1 {
-    protected Log10(final kind.Numeric<?> a) {
+    Log10(final kind.Numeric<?> a) {
       super(a);
     }
 
     @Override
-    protected Number evaluate(final Number a) {
+    Number evaluate(final Number a) {
       if (a instanceof Float || a instanceof Double || a instanceof Byte || a instanceof Short || a instanceof Integer || a instanceof Long)
         return SafeMath.log(a.doubleValue()) / Numbers.LOG_10;
 
@@ -1106,20 +1102,20 @@ final class function {
     }
 
     @Override
-    protected void compile(final Compilation compilation) throws IOException {
+    void compile(final Compilation compilation) throws IOException {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }
 
-  protected static abstract class Temporal extends expression.Generic<java.time.temporal.Temporal> {
-    protected final String function;
+  abstract static class Temporal extends expression.Generic<java.time.temporal.Temporal> {
+    final String function;
 
-    protected Temporal(final String function) {
+    Temporal(final String function) {
       this.function = function;
     }
 
     @Override
-    protected final void compile(final Compilation compilation) {
+    final void compile(final Compilation compilation) {
       Compiler.getCompiler(compilation.vendor).compile(this, compilation);
     }
   }

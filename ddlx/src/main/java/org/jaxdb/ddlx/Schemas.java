@@ -54,7 +54,7 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, false, false);
   }
 
-  public static int[] drop(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] drop(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, false, false);
   }
 
@@ -66,7 +66,7 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, false, true);
   }
 
-  public static int[] dropBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] dropBatched(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, false, true);
   }
 
@@ -78,7 +78,7 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), false, true, false);
   }
 
-  public static int[] create(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] create(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, false, true, false);
   }
 
@@ -90,7 +90,7 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), false, true, true);
   }
 
-  public static int[] createBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] createBatched(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, false, true, true);
   }
 
@@ -102,7 +102,7 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, true, false);
   }
 
-  public static int[] recreate(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreate(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, true, false);
   }
 
@@ -114,11 +114,11 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, true, true);
   }
 
-  public static int[] recreateBatched(final Connection connection, final Collection<Schema> schemas) throws GeneratorExecutionException, SQLException {
+  public static int[] recreateBatched(final Connection connection, final Collection<? extends Schema> schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, schemas, true, true, true);
   }
 
-  private static int[] exec(final Connection connection, final Collection<Schema> schemas, final boolean drop, final boolean create, final boolean batched) throws GeneratorExecutionException, SQLException {
+  private static int[] exec(final Connection connection, final Collection<? extends Schema> schemas, final boolean drop, final boolean create, final boolean batched) throws GeneratorExecutionException, SQLException {
     if (!drop && !create)
       return null;
 
@@ -156,7 +156,7 @@ public final class Schemas {
     return counts;
   }
 
-  private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? (o2 == null ? 0 : 1) : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
+  private static final Comparator<$Table> tableNameComparator = (o1, o2) -> o1 == null ? o2 == null ? 0 : 1 : o2 == null ? -1 : o1.getName$().text().compareTo(o2.getName$().text());
 
   private static Schema topologicalSort(final Schema schema) {
     final List<$Table> tables = new ArrayList<>(schema.getTable());
@@ -217,7 +217,7 @@ public final class Schemas {
     } : column.clone();
   }
 
-  private static void flattenTable(final $Table table, final Map<String,$Table> tableNameToTable, final Set<String> flatTables) {
+  private static void flattenTable(final $Table table, final Map<String,? extends $Table> tableNameToTable, final Set<? super String> flatTables) {
     if (flatTables.contains(table.getName$().text()))
       return;
 
@@ -269,8 +269,7 @@ public final class Schemas {
   }
 
   public static int[] truncate(final Connection connection, final Collection<? extends $Table> tables) throws SQLException {
-    final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
-    final Compiler compiler = Compiler.getCompiler(vendor);
+    final Compiler compiler = Compiler.getCompiler(DBVendor.valueOf(connection.getMetaData()));
     final java.sql.Statement statement = connection.createStatement();
     for (final $Table table : tables)
       statement.addBatch(compiler.truncate(table.getName$().text()));

@@ -20,21 +20,21 @@ import java.io.IOException;
 import java.util.Set;
 
 class QuantifiedComparisonPredicate<T> extends type.Subject<T> {
-  protected final String qualifier;
-  protected final Compilable subQuery;
+  final String qualifier;
+  final Compilable subQuery;
 
-  protected QuantifiedComparisonPredicate(final String qualifier, final Select.untyped.SELECT<?> subQuery) {
+  QuantifiedComparisonPredicate(final String qualifier, final Select.untyped.SELECT<?> subQuery) {
     this.qualifier = qualifier;
     this.subQuery = (Compilable)subQuery;
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 
   @Override
-  protected Object evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("QuantifiedComparisonPredicate cannot be evaluated outside the DB");
   }
 }

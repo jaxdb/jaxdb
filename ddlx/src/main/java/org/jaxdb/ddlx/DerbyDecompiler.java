@@ -54,12 +54,12 @@ import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 
   @Override
-  protected $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
+  $Column makeColumn(final String columnName, final String typeName, final long size, final int decimalDigits, final String _default, final Boolean nullable, final Boolean autoIncrement) {
     final $Column column;
     if ("BIGINT".equals(typeName)) {
       final $Bigint type = newColumn($Bigint.class);
@@ -241,7 +241,7 @@ final class DerbyDecompiler extends Decompiler {
 //    .append("WHERE t.tabletype = 'T' ")
 //    .append("ORDER BY s.schemaname, t.tablename, c.columnnumber ").toString();
 //
-//  protected Map<String,List<$Column>> getColumns(final Connection connection) throws SQLException {
+//  Map<String,List<$Column>> getColumns(final Connection connection) throws SQLException {
 //    final Map<String,List<$Column>> nameToColumn = new HashMap<String,List<$Column>>();
 //    final PreparedStatement statement = connection.prepareStatement(tablesSql);
 //    final ResultSet rows = statement.executeQuery();
@@ -275,7 +275,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename").toString();
 
   @Override
-  protected Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
+  Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
     final ResultSet rows = statement.executeQuery();
@@ -368,7 +368,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename ").toString();
 
   @Override
-  protected Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
+  Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(checkSql);
     final ResultSet rows = statement.executeQuery();
     final Map<String,List<$Check>> tableNameToChecks = new HashMap<>();
@@ -403,7 +403,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename ").toString();
 
   @Override
-  protected Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
+  Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(indexSql);
     final ResultSet rows = statement.executeQuery();
@@ -461,7 +461,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, ft.tablename").toString();
 
   @Override
-  protected Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
+  Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(foreignKeySql);
     final ResultSet rows = statement.executeQuery();

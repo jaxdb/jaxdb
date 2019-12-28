@@ -23,14 +23,14 @@ final class LikePredicate extends Predicate {
   final boolean positive;
   final CharSequence pattern;
 
-  protected LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
+  LikePredicate(final kind.Textual<?> dataType, final boolean positive, final CharSequence pattern) {
     super(dataType);
     this.positive = positive;
     this.pattern = pattern;
   }
 
   @Override
-  protected String evaluate(final Set<Evaluable> visited) {
+  String evaluate(final Set<Evaluable> visited) {
     if (dataType == null || pattern == null || !(dataType instanceof Evaluable))
       return null;
 
@@ -43,7 +43,7 @@ final class LikePredicate extends Predicate {
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

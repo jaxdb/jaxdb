@@ -20,20 +20,20 @@ import java.io.IOException;
 import java.util.Set;
 
 final class ExistsPredicate extends Predicate {
-  protected final Compilable subQuery;
+  final Compilable subQuery;
 
-  protected ExistsPredicate(final Select.untyped.SELECT<?> query) {
+  ExistsPredicate(final Select.untyped.SELECT<?> query) {
     super(null);
     this.subQuery = (Compilable)query;
   }
 
   @Override
-  protected Object evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException("EXISTS cannot be evaluated outside the DB");
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

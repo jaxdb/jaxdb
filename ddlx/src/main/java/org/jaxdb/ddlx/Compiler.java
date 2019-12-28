@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -79,7 +80,7 @@ abstract class Compiler {
     }
   }
 
-  protected static Compiler getCompiler(final DBVendor vendor) {
+  static Compiler getCompiler(final DBVendor vendor) {
     final Compiler compiler = compilers[vendor.ordinal()];
     if (compiler == null)
       throw new UnsupportedOperationException("Vendor " + vendor + " is not supported");
@@ -87,15 +88,15 @@ abstract class Compiler {
     return compiler;
   }
 
-  protected static boolean isAutoIncrement(final $Integer column) {
+  static boolean isAutoIncrement(final $Integer column) {
     return column.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(column.getGenerateOnInsert$().text());
   }
 
-  protected abstract DBVendor getVendor();
+  abstract DBVendor getVendor();
 
-  protected abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
+  abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
 
-  protected abstract void init(Connection connection) throws SQLException;
+  abstract void init(Connection connection) throws SQLException;
 
   /**
    * Quote a named identifier.
@@ -103,7 +104,7 @@ abstract class Compiler {
    * @param identifier The identifier.
    * @return The quoted identifier.
    */
-  protected final String q(final String identifier) {
+  final String q(final String identifier) {
     return getVendor().getDialect().quoteIdentifier(identifier);
   }
 
@@ -115,11 +116,11 @@ abstract class Compiler {
    * @return A "SchemaIfNotExists" {@link CreateStatement} for the specified
    *         {@link Schema}.
    */
-  protected CreateStatement createSchemaIfNotExists(final Schema schema) {
+  CreateStatement createSchemaIfNotExists(final Schema schema) {
     return null;
   }
 
-  protected CreateStatement createTableIfNotExists(final $Table table, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
+  CreateStatement createTableIfNotExists(final $Table table, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
     final StringBuilder builder = new StringBuilder();
     final String tableName = table.getName$().text();
     builder.append("CREATE TABLE ").append(q(tableName)).append(" (\n");
@@ -145,6 +146,7 @@ abstract class Compiler {
   private CreateStatement createColumn(final $Table table, final $Column column) {
     final StringBuilder ddl = new StringBuilder();
     ddl.append(q(column.getName$().text())).append(' ');
+    // FIXME: Passing null to compile*() methods will throw a NPE
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       ddl.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
@@ -211,7 +213,7 @@ abstract class Compiler {
     return new CreateStatement(ddl.toString());
   }
 
-  protected String createIntegerColumn(final $Integer column) {
+  String createIntegerColumn(final $Integer column) {
     if (column instanceof $Tinyint) {
       final $Tinyint type = ($Tinyint)column;
       return getVendor().getDialect().compileInt8(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getUnsigned$().text());
@@ -235,7 +237,7 @@ abstract class Compiler {
     throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
   }
 
-  private CreateStatement createConstraints(final Map<String,$Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
+  private CreateStatement createConstraints(final Map<String,? extends $Column> columnNameToColumn, final $Table table) throws GeneratorExecutionException {
     final StringBuilder contraintsBuilder = new StringBuilder();
     if (table.getConstraints() != null) {
       final $Constraints constraints = table.getConstraints();
@@ -243,15 +245,22 @@ abstract class Compiler {
       // unique constraint
       final List<$Columns> uniques = constraints.getUnique();
       if (uniques != null) {
-        StringBuilder uniqueString = new StringBuilder();
+        final StringBuilder uniqueString = new StringBuilder();
         int uniqueIndex = 1;
+        final StringBuilder builder = new StringBuilder();
         for (final $Columns unique : uniques) {
           final List<$Named> columns = unique.getColumn();
-          StringBuilder columnsString = new StringBuilder();
-          for (final $Named column : columns)
-            columnsString.append(", ").append(q(column.getName$().text()));
+          final Iterator<$Named> iterator = columns.iterator();
+          for (int i = 0; iterator.hasNext(); ++i) {
+            if (i > 0)
+              builder.append(", ");
 
-          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(columnsString.substring(2)).append(')');
+            final $Named column = iterator.next();
+            builder.append(q(column.getName$().text()));
+          }
+
+          uniqueString.append(",\n  CONSTRAINT ").append(q(table.getName$().text() + "_unique_" + uniqueIndex++)).append(" UNIQUE (").append(builder).append(')');
+          builder.setLength(0);
         }
 
         contraintsBuilder.append(uniqueString);
@@ -260,10 +269,10 @@ abstract class Compiler {
       // check constraint
       final List<$Check> checks = constraints.getCheck();
       if (checks != null) {
-        String checkString = "";
+        final StringBuilder checkString = new StringBuilder();
         for (final $Check check : checks) {
           final String checkClause = recurseCheckRule(check);
-          checkString += ",\n  CHECK " + (checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
+          checkString.append(",\n  CHECK ").append(checkClause.startsWith("(") ? checkClause : "(" + checkClause + ")");
         }
 
         contraintsBuilder.append(checkString);
@@ -425,8 +434,9 @@ abstract class Compiler {
           else
             throw new UnsupportedOperationException("Unsupported 'null' condition encountered on column '" + column.getName$().text());
         }
-        else if (condition != null)
+        else if (condition != null) {
           throw new UnsupportedOperationException("Unsupported 'null' operator encountered on column '" + column.getName$().text());
+        }
       }
     }
 
@@ -439,11 +449,11 @@ abstract class Compiler {
    * @param table The {@link $Table}.
    * @return The "CHECK" keyword for the specified {@link $Table}.
    */
-  protected String check(final $Table table) {
+  String check(final $Table table) {
     return "CHECK";
   }
 
-  protected String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,$Column> columnNameToColumn) throws GeneratorExecutionException {
+  String blockPrimaryKey(final $Table table, final $Constraints constraints, final Map<String,? extends $Column> columnNameToColumn) throws GeneratorExecutionException {
     if (constraints.getPrimaryKey() == null)
       return "";
 
@@ -466,7 +476,7 @@ abstract class Compiler {
    * @param table The {@link $Table}.
    * @return The "FOREIGN KEY" keyword for the specified {@link $Table}.
    */
-  protected String foreignKey(final $Table table) {
+  String foreignKey(final $Table table) {
     return "FOREIGN KEY";
   }
 
@@ -476,19 +486,19 @@ abstract class Compiler {
    * @param table The {@link $Table}.
    * @return The "PRIMARY KEY" keyword for the specified {@link $Table}.
    */
-  protected String primaryKey(final $Table table) {
+  String primaryKey(final $Table table) {
     return "PRIMARY KEY";
   }
 
-  protected String onDelete(final $ForeignKey.OnDelete$ onDelete) {
+  String onDelete(final $ForeignKey.OnDelete$ onDelete) {
     return "ON DELETE " + changeRule(onDelete);
   }
 
-  protected String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
+  String onUpdate(final $ForeignKey.OnUpdate$ onUpdate) {
     return "ON UPDATE " + changeRule(onUpdate);
   }
 
-  protected String changeRule(final $ChangeRule changeRule) {
+  String changeRule(final $ChangeRule changeRule) {
     return changeRule.text();
   }
 
@@ -511,11 +521,11 @@ abstract class Compiler {
     return clause;
   }
 
-  protected List<CreateStatement> triggers(final $Table table) {
+  List<CreateStatement> triggers(final $Table table) {
     return new ArrayList<>();
   }
 
-  protected List<CreateStatement> indexes(final $Table table) {
+  List<CreateStatement> indexes(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getIndexes() != null) {
       for (final $Table.Indexes.Index index : table.getIndexes().getIndex()) {
@@ -546,13 +556,13 @@ abstract class Compiler {
    * @return A list of {@link CreateStatement} objects for the creation of types
    *         for the specified {@link $Table}.
    */
-  protected List<CreateStatement> types(final $Table table) {
+  List<CreateStatement> types(final $Table table) {
     return new ArrayList<>();
   }
 
-  protected abstract String dropIndexOnClause($Table table);
+  abstract String dropIndexOnClause($Table table);
 
-  protected final LinkedHashSet<DropStatement> dropTable(final $Table table) {
+  final LinkedHashSet<DropStatement> dropTable(final $Table table) {
     final LinkedHashSet<DropStatement> statements = new LinkedHashSet<>();
     // FIXME: Explicitly dropping indexes on tables that may not exist will throw errors!
 //    if (table.getIndexes() != null)
@@ -584,15 +594,15 @@ abstract class Compiler {
    * @return A list of {@link DropStatement} objects for the dropping of types
    *         for the specified {@link $Table}.
    */
-  protected LinkedHashSet<DropStatement> dropTypes(final $Table table) {
+  LinkedHashSet<DropStatement> dropTypes(final $Table table) {
     return new LinkedHashSet<>();
   }
 
-  protected DropStatement dropTableIfExists(final $Table table) {
+  DropStatement dropTableIfExists(final $Table table) {
     return new DropStatement("DROP TABLE IF EXISTS " + q(table.getName$().text()));
   }
 
-  protected DropStatement dropIndexIfExists(final String indexName) {
+  DropStatement dropIndexIfExists(final String indexName) {
     return new DropStatement("DROP INDEX IF EXISTS " + q(indexName));
   }
 
@@ -612,7 +622,7 @@ abstract class Compiler {
     }
   }
 
-  protected String $default(final $Column column) {
+  String $default(final $Column column) {
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
       if (type.getDefault$() == null)
@@ -749,26 +759,26 @@ abstract class Compiler {
     throw new UnsupportedOperationException("Unknown type: " + column.getClass().getName());
   }
 
-  protected String truncate(final String tableName) {
+  String truncate(final String tableName) {
     return "DELETE FROM " + q(tableName);
   }
 
-  protected abstract String $null($Table table, $Column column);
-  protected abstract String $autoIncrement($Table table, $Integer column);
+  abstract String $null($Table table, $Column column);
+  abstract String $autoIncrement($Table table, $Integer column);
 
-  protected String compileBinary(final String value) {
+  String compileBinary(final String value) {
     return "X'" + value + "'";
   }
 
-  protected String compileDate(final String value) {
+  String compileDate(final String value) {
     return "'" + value + "'";
   }
 
-  protected String compileDateTime(final String value) {
+  String compileDateTime(final String value) {
     return "'" + value + "'";
   }
 
-  protected String compileTime(final String value) {
+  String compileTime(final String value) {
     return "'" + value + "'";
   }
 }

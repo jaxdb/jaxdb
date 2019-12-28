@@ -20,8 +20,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public abstract class RowIterator<T extends type.Subject<?>> implements AutoCloseable {
-  protected final ArrayList<T[]> rows = new ArrayList<>();
-  protected int rowIndex = -1;
+  final ArrayList<T[]> rows = new ArrayList<>();
+  int rowIndex = -1;
 
   private T[] entities;
   private int entityIndex = -1;
@@ -37,7 +37,7 @@ public abstract class RowIterator<T extends type.Subject<?>> implements AutoClos
 
   public abstract boolean nextRow() throws SQLException;
 
-  protected void resetEntities() {
+  void resetEntities() {
     entities = rows.get(rowIndex);
     entityIndex = -1;
   }

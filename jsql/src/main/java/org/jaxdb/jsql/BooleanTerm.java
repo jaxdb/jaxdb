@@ -22,13 +22,13 @@ import java.util.Set;
 import org.jaxdb.vendor.DBVendor;
 
 final class BooleanTerm extends type.BOOLEAN {
-  protected final operator.Boolean operator;
-  protected final Condition<?> a;
-  protected final Condition<?> b;
-  protected final Condition<?>[] conditions;
+  final operator.Boolean operator;
+  final Condition<?> a;
+  final Condition<?> b;
+  final Condition<?>[] conditions;
 
   @SafeVarargs
-  protected BooleanTerm(final operator.Boolean operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
+  BooleanTerm(final operator.Boolean operator, final Condition<?> a, final Condition<?> b, final Condition<?> ... conditions) {
     this.operator = operator;
     this.a = a;
     this.b = b;
@@ -36,7 +36,7 @@ final class BooleanTerm extends type.BOOLEAN {
   }
 
   @Override
-  protected final Boolean evaluate(final Set<Evaluable> visited) {
+  final Boolean evaluate(final Set<Evaluable> visited) {
     if (a == null || b == null || a.evaluate(visited) == null || b.evaluate(visited) == null)
       return null;
 
@@ -60,12 +60,12 @@ final class BooleanTerm extends type.BOOLEAN {
   }
 
   @Override
-  protected final String compile(final DBVendor vendor) {
+  final String compile(final DBVendor vendor) {
     return operator.toString();
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     Compiler.getCompiler(compilation.vendor).compile(this, compilation);
   }
 }

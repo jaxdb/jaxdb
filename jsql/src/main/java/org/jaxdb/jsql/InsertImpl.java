@@ -17,38 +17,38 @@
 package org.jaxdb.jsql;
 
 final class InsertImpl {
-  protected static final class VALUES<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert.VALUES<T> {
-    protected final Select.untyped.SELECT<?> select;
+  static final class VALUES<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert.VALUES<T> {
+    final Select.untyped.SELECT<?> select;
 
-    protected VALUES(final BatchableKeyword<T> parent, final Select.untyped.SELECT<?> select) {
+    VALUES(final BatchableKeyword<T> parent, final Select.untyped.SELECT<?> select) {
       super(parent);
       this.select = select;
     }
 
     @Override
-    protected Command normalize() {
+    Command normalize() {
       final InsertCommand command = (InsertCommand)parent().normalize();
       command.add(this);
       return command;
     }
   }
 
-  protected static final class INSERT<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert._INSERT<T> {
-    protected final type.Entity entity;
-    protected final type.DataType<?>[] columns;
+  static final class INSERT<T extends type.Subject<?>> extends BatchableKeyword<T> implements Insert._INSERT<T> {
+    final type.Entity entity;
+    final type.DataType<?>[] columns;
 
-    protected INSERT(final type.Entity entity) {
+    INSERT(final type.Entity entity) {
       super(null);
       this.entity = entity;
       this.columns = null;
     }
 
     @SafeVarargs
-    protected INSERT(final type.DataType<?> ... columns) {
+    INSERT(final type.DataType<?> ... columns) {
       super(null);
       this.entity = null;
       this.columns = columns;
-      type.Entity entity = columns[0].owner;
+      final type.Entity entity = columns[0].owner;
       if (entity == null)
         throw new IllegalArgumentException("DataType must belong to an Entity");
 
@@ -58,7 +58,7 @@ final class InsertImpl {
     }
 
     @Override
-    protected final Command normalize() {
+    final Command normalize() {
       return new InsertCommand(this);
     }
 

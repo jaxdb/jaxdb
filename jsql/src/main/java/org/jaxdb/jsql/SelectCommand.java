@@ -48,42 +48,42 @@ final class SelectCommand extends Command {
   private Collection<UNION<?>> union;
   private Map<Integer,type.ENUM<?>> translateTypes;
 
-  public SelectCommand(final SELECT<?> select) {
+  SelectCommand(final SELECT<?> select) {
     this.select = select;
   }
 
-  protected SELECT<?> select() {
+  SELECT<?> select() {
     return select;
   }
 
-  protected void add(final FROM<?> from) {
+  void add(final FROM<?> from) {
     this.from = from;
   }
 
-  protected FROM<?> from() {
+  FROM<?> from() {
     return from;
   }
 
-  protected void add(final WHERE<?> where) {
+  void add(final WHERE<?> where) {
     this.where = where;
   }
 
-  protected WHERE<?> where() {
+  WHERE<?> where() {
     return where;
   }
 
-  protected void add(final JOIN<?> join) {
+  void add(final JOIN<?> join) {
     if (this.join == null)
       this.join = new ArrayList<>();
 
     this.join.add(join);
   }
 
-  protected List<JOIN<?>> join() {
+  List<JOIN<?>> join() {
     return join;
   }
 
-  protected void add(final ON<?> on) {
+  void add(final ON<?> on) {
     if (this.on == null)
       this.on = new ArrayList<>();
 
@@ -94,58 +94,58 @@ final class SelectCommand extends Command {
     this.on.add(on);
   }
 
-  protected List<ON<?>> on() {
+  List<ON<?>> on() {
     return on;
   }
 
-  protected void add(final GROUP_BY<?> groupBy) {
+  void add(final GROUP_BY<?> groupBy) {
     this.groupBy = groupBy;
   }
 
-  protected GROUP_BY<?> groupBy() {
+  GROUP_BY<?> groupBy() {
     return groupBy;
   }
 
-  protected void add(final HAVING<?> having) {
+  void add(final HAVING<?> having) {
     this.having = having;
   }
 
-  protected HAVING<?> having() {
+  HAVING<?> having() {
     return having;
   }
 
-  protected void add(final ORDER_BY<?> orderBy) {
+  void add(final ORDER_BY<?> orderBy) {
     this.orderBy = orderBy;
   }
 
-  protected ORDER_BY<?> orderBy() {
+  ORDER_BY<?> orderBy() {
     return orderBy;
   }
 
-  protected void add(final LIMIT<?> limit) {
+  void add(final LIMIT<?> limit) {
     this.limit = limit;
   }
 
-  protected LIMIT<?> limit() {
+  LIMIT<?> limit() {
     return limit;
   }
 
-  protected void add(final OFFSET<?> offset) {
+  void add(final OFFSET<?> offset) {
     this.offset = offset;
   }
 
-  protected OFFSET<?> offset() {
+  OFFSET<?> offset() {
     return offset;
   }
 
-  protected void add(final UNION<?> union) {
+  void add(final UNION<?> union) {
     if (this.union == null)
       this.union = new ArrayList<>();
 
     this.union.add(union);
   }
 
-  protected Collection<UNION<?>> union() {
+  Collection<UNION<?>> union() {
     return union;
   }
 
@@ -160,12 +160,12 @@ final class SelectCommand extends Command {
   private Class<? extends Schema> schema;
 
   @Override
-  protected Class<? extends Schema> getSchema() {
+  Class<? extends Schema> getSchema() {
     return schema == null ? schema = (from != null ? from.tables.iterator().next().schema() : null) : schema;
   }
 
   @Override
-  protected void compile(final Compilation compilation) throws IOException {
+  void compile(final Compilation compilation) throws IOException {
     final Compiler compiler = Compiler.getCompiler(compilation.vendor);
     compiler.assignAliases(from(), join(), compilation);
     compiler.compile(this, select(), compilation);

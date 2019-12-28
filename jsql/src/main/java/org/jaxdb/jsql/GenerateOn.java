@@ -24,8 +24,8 @@ import java.time.temporal.Temporal;
 public abstract class GenerateOn<T> {
   public static final GenerateOn<Number> INCREMENT = new GenerateOn<Number>() {
     @Override
-    @SuppressWarnings("cast")
-    public void generate(final type.DataType<Number> dataType) {
+    @SuppressWarnings("unchecked")
+    public void generate(final type.DataType<? super Number> dataType) {
       final type.DataType<? extends Number> numberType = (type.DataType<? extends Number>)dataType;
       if (numberType instanceof type.TINYINT)
         ((type.TINYINT)numberType).set(DML.ADD((type.TINYINT)numberType, (byte)1));
@@ -36,7 +36,7 @@ public abstract class GenerateOn<T> {
       else if (numberType instanceof type.SMALLINT.UNSIGNED)
         ((type.SMALLINT.UNSIGNED)numberType).set(DML.ADD((type.SMALLINT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
       else if (numberType instanceof type.INT)
-        ((type.INT)numberType).set(DML.ADD((type.INT)numberType, (byte)1));
+        ((type.INT)numberType).set(DML.ADD((type.INT)numberType, 1));
       else if (numberType instanceof type.INT.UNSIGNED)
         ((type.INT.UNSIGNED)numberType).set(DML.ADD((type.INT.UNSIGNED)numberType, DML.UNSIGNED((byte)1)));
       else if (numberType instanceof type.BIGINT)
@@ -62,8 +62,8 @@ public abstract class GenerateOn<T> {
 
   public static final GenerateOn<Temporal> TIMESTAMP = new GenerateOn<Temporal>() {
     @Override
-    @SuppressWarnings("cast")
-    public void generate(final type.DataType<Temporal> dataType) {
+    @SuppressWarnings("unchecked")
+    public void generate(final type.DataType<? super Temporal> dataType) {
       final type.DataType<? extends Temporal> temporalType = (type.DataType<? extends Temporal>)dataType;
       if (temporalType instanceof type.DATE)
         dataType.value = LocalDate.now();
@@ -78,10 +78,10 @@ public abstract class GenerateOn<T> {
 
   public static final GenerateOn<String> UUID = new GenerateOn<String>() {
     @Override
-    public void generate(final type.DataType<String> dataType) {
+    public void generate(final type.DataType<? super String> dataType) {
       dataType.value = java.util.UUID.randomUUID().toString();
     }
   };
 
-  public abstract void generate(type.DataType<T> dataType);
+  public abstract void generate(type.DataType<? super T> dataType);
 }

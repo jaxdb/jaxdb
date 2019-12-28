@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.math.BigInteger;
@@ -37,16 +38,16 @@ import org.libj.io.Streams;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
-  protected DBVendor getVendor() {
+  DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
   @Override
-  protected void onConnect(final Connection connection) throws SQLException {
+  void onConnect(final Connection connection) {
   }
 
   @Override
-  protected void onRegister(final Connection connection) throws SQLException {
+  void onRegister(final Connection connection) throws SQLException {
     try (final Statement statement = connection.createStatement()) {
       final StringBuilder modulus = new StringBuilder("CREATE OR REPLACE FUNCTION MODULUS(dividend double precision, divisor double precision) RETURNS numeric AS $$");
       modulus.append("DECLARE");
@@ -89,13 +90,13 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
+  String translateEnum(final type.ENUM<?> from, final type.ENUM<?> to) {
     final EntityEnum.Spec spec = to.type().getAnnotation(EntityEnum.Spec.class);
     return "::text::" + Dialect.getTypeName(spec.table(), spec.column());
   }
 
   @Override
-  protected void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
+  void compile(final CaseImpl.Simple.CASE<?,?> case_, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append("CASE ");
     if (case_.variable instanceof type.ENUM && _else instanceof CaseImpl.CHAR.ELSE)
       toChar((type.ENUM<?>)case_.variable, compilation);
@@ -104,7 +105,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
+  void compile(final CaseImpl.WHEN<?> when, final CaseImpl.THEN<?,?> then, final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     final Class<?> conditionClass = when.condition instanceof Predicate ? ((Predicate)when.condition).dataType.getClass() : when.condition.getClass();
     if ((when.condition instanceof type.ENUM || then.value instanceof type.ENUM) && (conditionClass != then.value.getClass() || _else instanceof CaseImpl.CHAR.ELSE)) {
       compilation.append(" WHEN ");
@@ -125,7 +126,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
+  void compile(final CaseImpl.ELSE<?> _else, final Compilation compilation) throws IOException {
     compilation.append(" ELSE ");
     if (_else instanceof CaseImpl.CHAR.ELSE && _else.value instanceof type.ENUM)
       toChar((type.ENUM<?>)_else.value, compilation);
@@ -135,7 +136,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
+  void compile(final expression.Concat expression, final Compilation compilation) throws IOException {
     compilation.append("CONCAT(");
     for (int i = 0; i < expression.args.length; i++) {
       final Compilable arg = compilable(expression.args[i]);
@@ -148,7 +149,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final Interval interval, final Compilation compilation) {
+  void compile(final Interval interval, final Compilation compilation) {
     final List<TemporalUnit> units = interval.getUnits();
     final StringBuilder clause = new StringBuilder();
     for (final TemporalUnit unit : units) {
@@ -186,7 +187,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String getPreparedStatementMark(final type.DataType<?> dataType) {
+  String getPreparedStatementMark(final type.DataType<?> dataType) {
     if (!(dataType instanceof ENUM))
       return "?";
 
@@ -195,12 +196,14 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected String compile(final BLOB dataType) throws IOException {
-    if (dataType.get() == null)
-      return "NULL";
+  String compile(final BLOB dataType) throws IOException {
+    try (final InputStream in = dataType.get()) {
+      if (in == null)
+        return "NULL";
 
-    final BigInteger integer = new BigInteger(Streams.readBytes(dataType.get()));
-    return "E'\\" + integer.toString(8); // FIXME: This is only half done
+      final BigInteger integer = new BigInteger(Streams.readBytes(in));
+      return "E'\\" + integer.toString(8); // FIXME: This is only half done
+    }
   }
 
   private static void toChar(final type.ENUM<?> dataType, final Compilation compilation) throws IOException {
@@ -210,7 +213,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected final void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
+  final void compile(final ComparisonPredicate<?> predicate, final Compilation compilation) throws IOException {
     if (predicate.a.getClass() == predicate.b.getClass() || (!(predicate.a instanceof type.ENUM) && !(predicate.b instanceof type.ENUM))) {
       super.compile(predicate, compilation);
     }
@@ -229,7 +232,7 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Mod function, final Compilation compilation) throws IOException {
+  void compile(final function.Mod function, final Compilation compilation) throws IOException {
     compilation.append("MODULUS(");
     function.a.compile(compilation);
     compilation.append(", ");
@@ -261,27 +264,27 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void compile(final function.Ln function, final Compilation compilation) throws IOException {
+  void compile(final function.Ln function, final Compilation compilation) throws IOException {
     compileLog("LN", function, compilation);
   }
 
   @Override
-  protected void compile(final function.Log function, final Compilation compilation) throws IOException {
+  void compile(final function.Log function, final Compilation compilation) throws IOException {
     compileLog("LOG", function, compilation);
   }
 
   @Override
-  protected void compile(final function.Log2 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log2 function, final Compilation compilation) throws IOException {
     compileLog("LOG2", function, compilation);
   }
 
   @Override
-  protected void compile(final function.Log10 function, final Compilation compilation) throws IOException {
+  void compile(final function.Log10 function, final Compilation compilation) throws IOException {
     compileLog("LOG10", function, compilation);
   }
 
   @Override
-  protected void compile(final function.Round function, final Compilation compilation) throws IOException {
+  void compile(final function.Round function, final Compilation compilation) throws IOException {
     compilation.append("ROUND(");
     if (function.b instanceof type.Numeric<?> && ((type.Numeric<?>)function.b).get() != null && ((type.Numeric<?>)function.b).get().intValue() == 0) {
       function.a.compile(compilation);
@@ -295,24 +298,28 @@ final class PostgreSQLCompiler extends Compiler {
   }
 
   @Override
-  protected void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    if (dataType.get() != null)
-      statement.setString(parameterIndex, Readers.readFully(dataType.get()));
-    else
-      statement.setNull(parameterIndex, dataType.sqlType());
+  void setParameter(final type.CLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final Reader in = dataType.get()) {
+      if (in != null)
+        statement.setString(parameterIndex, Readers.readFully(in));
+      else
+        statement.setNull(parameterIndex, dataType.sqlType());
+    }
   }
 
   @Override
-  protected Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
+  Reader getParameter(final type.CLOB clob, final ResultSet resultSet, final int columnIndex) throws SQLException {
     final String value = resultSet.getString(columnIndex);
     return value == null ? null : new StringReader(value);
   }
 
   @Override
-  protected void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
-    if (dataType.get() != null)
-      statement.setBytes(parameterIndex, Streams.readBytes(dataType.get()));
-    else
-      statement.setNull(parameterIndex, dataType.sqlType());
+  void setParameter(final type.BLOB dataType, final PreparedStatement statement, final int parameterIndex) throws IOException, SQLException {
+    try (final InputStream in = dataType.get()) {
+      if (in != null)
+        statement.setBytes(parameterIndex, Streams.readBytes(in));
+      else
+        statement.setNull(parameterIndex, dataType.sqlType());
+    }
   }
 }

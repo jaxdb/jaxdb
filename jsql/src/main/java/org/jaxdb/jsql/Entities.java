@@ -19,12 +19,15 @@ package org.jaxdb.jsql;
 import org.jaxdb.sqlx_0_4.Database;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 
-public class Entities {
-  public static <T extends type.Entity>T[] toEntities(final Database database) {
+public final class Entities {
+  public static type.Entity[] toEntities(final Database database) {
     return EntitiesJaxb.toEntities(database);
   }
 
-  public static <T extends type.Entity>T[] toEntities(final $Database database) {
+  public static type.Entity[] toEntities(final $Database database) {
     return EntitiesXsb.toEntities(database);
+  }
+
+  private Entities() {
   }
 }

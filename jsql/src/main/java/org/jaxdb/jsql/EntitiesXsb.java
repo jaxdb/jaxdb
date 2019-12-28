@@ -111,18 +111,17 @@ final class EntitiesXsb {
     return entity;
   }
 
-  @SuppressWarnings("unchecked")
-  public static <T extends type.Entity>T[] toEntities(final $Database database) {
+  public static type.Entity[] toEntities(final $Database database) {
     try {
       final Iterator<$Row> iterator = SQL.newRowIterator(database);
       if (!iterator.hasNext())
-        return (T[])new type.Entity[0];
+        return new type.Entity[0];
 
       final List<type.Entity> entities = new ArrayList<>();
       while (iterator.hasNext())
         entities.add(toEntity(database, iterator.next()));
 
-      return (T[])entities.toArray(new type.Entity[entities.size()]);
+      return entities.toArray(new type.Entity[entities.size()]);
     }
     catch (final ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchFieldException | NoSuchMethodException e) {
       throw new UnsupportedOperationException(e);

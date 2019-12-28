@@ -16,14 +16,12 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -33,6 +31,8 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class ComparisonPredicateTest {
   @RunWith(VendorSchemaRunner.class)
@@ -72,13 +72,13 @@ public abstract class ComparisonPredicateTest {
     final classicmodels.Customer c = new classicmodels.Customer();
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(
-        AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933l)),
-        SELECT(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933l))).
+        AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)),
+        SELECT(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
           FROM(c).
-          WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933l))).
+          WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
           LIMIT(1)).
       FROM(c).
-      WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933l))).
+      WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
       execute()) {
       assertTrue(rows.nextRow());
       for (int i = 0; i < 23; ++i) {

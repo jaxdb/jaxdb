@@ -73,12 +73,8 @@ public class Generator {
 
   static {
     final StringBuilder builder = new StringBuilder();
-    builder.append("/**\n");
-    builder.append(" * ").append(GENERATED_VALUE).append('\n');
-    builder.append(" *\n");
-    builder.append(" * THIS FILE SHOULD NOT BE EDITED\n");
-    builder.append(" * @generated\n");
-    builder.append(" */\n");
+    builder.append("/* ").append(GENERATED_VALUE).append('\n');
+    builder.append(" * THIS FILE SHOULD NOT BE EDITED */\n");
     HEADER_COMMENT = builder.toString();
   }
 
@@ -192,17 +188,17 @@ public class Generator {
 
       if (column instanceof $Tinyint) {
         final $Tinyint integer = ($Tinyint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().shortValue() : integer.getDefault$().text().byteValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : Short.valueOf(integer.getMin$().text().shortValue()), integer.getMax$() == null ? null : Short.valueOf(integer.getMax$().text().shortValue()));
+        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().shortValue() : integer.getDefault$().text().byteValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().shortValue(), integer.getMax$() == null ? null : integer.getMax$().text().shortValue());
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().intValue() : integer.getDefault$().text().shortValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : Integer.valueOf(integer.getMin$().text().intValue()), integer.getMax$() == null ? null : Integer.valueOf(integer.getMax$().text().intValue()));
+        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().intValue() : integer.getDefault$().text().shortValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().intValue(), integer.getMax$() == null ? null : integer.getMax$().text().intValue());
       }
 
       if (column instanceof $Int) {
         final $Int integer = ($Int)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().longValue() : integer.getDefault$().text().intValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : Long.valueOf(integer.getMin$().text().longValue()), integer.getMax$() == null ? null : Long.valueOf(integer.getMax$().text().longValue()));
+        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().longValue() : integer.getDefault$().text().intValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().longValue(), integer.getMax$() == null ? null : integer.getMax$().text().longValue());
       }
 
       if (column instanceof $Bigint) {
@@ -216,16 +212,16 @@ public class Generator {
     if (column instanceof $Float) {
       final $Float type = ($Float)column;
       final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
-      final Number min = type.getMin$() != null ? type.getMin$().text().floatValue() : null;
-      final Number max = type.getMax$() != null ? type.getMax$().text().floatValue() : null;
+      final Number min = type.getMin$() != null ? type.getMin$().text() : null;
+      final Number max = type.getMax$() != null ? type.getMax$().text() : null;
       return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $Double) {
       final $Double type = ($Double)column;
       final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
-      final Number min = type.getMin$() != null ? type.getMin$().text().doubleValue() : null;
-      final Number max = type.getMax$() != null ? type.getMax$().text().doubleValue() : null;
+      final Number min = type.getMin$() != null ? type.getMin$().text() : null;
+      final Number max = type.getMax$() != null ? type.getMax$().text() : null;
       return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
@@ -286,7 +282,7 @@ public class Generator {
     throw new IllegalArgumentException("Unknown type: " + cls);
   }
 
-  private class Type {
+  private static final class Type {
     private final $Column column;
     @SuppressWarnings("rawtypes")
     public final Class<? extends type.DataType> type;
@@ -378,20 +374,20 @@ public class Generator {
     out.append("  public static").append(abs).append(" class ").append(entityName).append(" extends ").append(ext).append(" {\n");
     // FIXME: Gotta redesign this... right now, extended classes will all have their own copies of column and primary arrays
     if (!table.getAbstract$().text()) {
-      out.append("    protected static final ").append(entityName).append(" identity = new ").append(entityName).append("();\n\n");
-      out.append("    @").append(Override.class.getName()).append("\n");
-      out.append("    protected ").append(String.class.getName()).append(" name() {\n");
+      out.append("    static final ").append(entityName).append(" identity = new ").append(entityName).append("();\n\n");
+      out.append("    @").append(Override.class.getName()).append('\n');
+      out.append("    ").append(String.class.getName()).append(" name() {\n");
       out.append("      return \"").append(table.getName$().text()).append("\";\n");
       out.append("    }\n\n");
-      out.append("    @").append(Override.class.getName()).append("\n");
-      out.append("    protected ").append(entityName).append(" newInstance() {\n");
+      out.append("    @").append(Override.class.getName()).append('\n');
+      out.append("    ").append(entityName).append(" newInstance() {\n");
       out.append("      return new ").append(entityName).append("(true);\n");
       out.append("    }\n\n");
       out.append("    /** Creates a new {@code ").append(entityName).append("}. */\n");
       out.append("    public ").append(entityName).append("() {\n");
       out.append("      this(false, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
-      out.append("    protected ").append(entityName).append("(final boolean wasSelected) {\n");
+      out.append("    ").append(entityName).append("(final boolean wasSelected) {\n");
       out.append("      this(wasSelected, new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalColumnCount).append("], new ").append(type.DataType.class.getCanonicalName()).append("[").append(totalPrimaryCount).append("]);\n");
       out.append("    }\n\n");
 
@@ -422,9 +418,9 @@ public class Generator {
       if (table.getColumn() == null || table.getColumn().size() == 0)
         out.append("    @").append(SuppressWarnings.class.getName()).append("(\"unused\")\n");
 
-        out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
-        out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
-        out.append("      this();\n");
+      out.append("    /** Creates a new {@code ").append(entityName).append("} as a copy of the specified {@code ").append(entityName).append("} instance. */\n");
+      out.append("    public ").append(entityName).append("(final ").append(entityName).append(" copy) {\n");
+      out.append("      this();\n");
       set.setLength(0);
       if (table.getColumn() != null) {
         for (int i = 0; i < table.getColumn().size(); ++i) {
@@ -433,13 +429,13 @@ public class Generator {
           set.append("\n      this.").append(columnName).append(".set(copy.").append(columnName).append(".get());");
         }
 
-        out.append(set.substring(1)).append("\n");
+        out.append(set.substring(1)).append('\n');
       }
 
       out.append("    }\n\n");
     }
 
-    out.append("    protected ").append(entityName).append("(final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
+    out.append("    ").append(entityName).append("(final boolean wasSelected, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] column, final ").append(type.DataType.class.getCanonicalName()).append("<?>[] primary) {\n");
     out.append("      super(wasSelected, column, primary);\n");
 
     final StringBuilder defs = new StringBuilder();
@@ -450,12 +446,12 @@ public class Generator {
         final String columnName = Identifiers.toCamelCase(column.getName$().text());
         defs.append("\n      column[").append((totalColumnCount - (table.getColumn().size() - i))).append("] = ");
         if (audit.isPrimary(table, column))
-          defs.append("primary[" + (totalPrimaryCount - (localPrimaryCount - primaryIndex++)) + "] = ");
+          defs.append("primary[").append(totalPrimaryCount - (localPrimaryCount - primaryIndex++)).append("] = ");
 
         defs.append(columnName).append(';');
       }
 
-      out.append(defs.substring(1)).append("\n");
+      out.append(defs.substring(1)).append('\n');
     }
 
     out.append("    }\n");
@@ -466,24 +462,24 @@ public class Generator {
         out.append(makeColumn(table, column));
       }
 
-      out.append("\n");
+      out.append('\n');
     }
 
     if (table.getAbstract$().text()) {
-      out.append("\n");
-      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append('\n');
+      out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    public abstract ").append(entityName).append(" clone();\n");
     }
     else {
-      out.append("\n");
-      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append('\n');
+      out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    public ").append(entityName).append(" clone() {\n");
       out.append("      return new ").append(entityName).append("(this);\n");
       out.append("    }\n");
     }
 
-    out.append("\n");
-    out.append("    @").append(Override.class.getName()).append("\n");
+    out.append('\n');
+    out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public boolean equals(final ").append(Object.class.getName()).append(" obj) {\n");
     out.append("      if (obj == this)\n        return true;\n\n");
     out.append("      if (!(obj instanceof ").append(entityName).append(")").append((table.getExtends$() != null ? " || !super.equals(obj)" : "")).append(")\n        return false;\n\n");
@@ -510,7 +506,7 @@ public class Generator {
 
     if (equalsColumns != null && equalsColumns.size() > 0) {
       out.append("\n\n");
-      out.append("    @").append(Override.class.getName()).append("\n");
+      out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    public int hashCode() {\n");
       out.append("      int hashCode = 1;");
       for (final $Column column : equalsColumns)
@@ -520,7 +516,7 @@ public class Generator {
     }
 
     out.append("\n\n");
-    out.append("    @").append(Override.class.getName()).append("\n");
+    out.append("    @").append(Override.class.getName()).append('\n');
     out.append("    public ").append(String.class.getName()).append(" toString() {\n");
     out.append("      final ").append(StringBuilder.class.getName()).append(" builder = new ").append(StringBuilder.class.getName()).append("(super.toString());\n");
     out.append("      if (builder.charAt(builder.length() - 1) == '}')\n");
@@ -568,6 +564,9 @@ public class Generator {
       builder.append("\n      ").append(enums.substring(2)).append(";\n\n");
       builder.append("      public static ").append(typeName).append(" fromString(final ").append(String.class.getName()).append(" string) {\n        if (string == null)\n          return null;\n\n        for (final ").append(typeName).append(" value : values())\n          if (string.equals(value.value))\n            return value;\n\n        return null;\n      }\n\n");
       builder.append("      private final ").append(String.class.getName()).append(" value;\n\n      ").append(typeName).append("(final ").append(String.class.getName()).append(" value) {\n        this.value = value;\n      }\n\n");
+      builder.append("      @").append(Override.class.getName()).append("\n      public int length() {\n        return value.length();\n      }\n\n");
+      builder.append("      @").append(Override.class.getName()).append("\n      public char charAt(final int index) {\n        return value.charAt(index);\n      }\n\n");
+      builder.append("      @").append(Override.class.getName()).append("\n      public ").append(CharSequence.class.getName()).append(" subSequence(final int start, final int end) {\n        return value.subSequence(start, end);\n      }\n\n");
       builder.append("      @").append(Override.class.getName()).append("\n      public ").append(String.class.getName()).append(" toString() {\n        return value;\n      }\n    }");
     }
 

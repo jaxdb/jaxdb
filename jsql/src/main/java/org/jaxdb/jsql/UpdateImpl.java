@@ -17,8 +17,8 @@
 package org.jaxdb.jsql;
 
 final class UpdateImpl {
-  private static abstract class UPDATE_SET extends BatchableKeyword<type.DataType<?>> implements Update._SET {
-    protected UPDATE_SET(final BatchableKeyword<type.DataType<?>> parent) {
+  private abstract static class UPDATE_SET extends BatchableKeyword<type.DataType<?>> implements Update._SET {
+    UPDATE_SET(final BatchableKeyword<type.DataType<?>> parent) {
       super(parent);
     }
 
@@ -34,31 +34,31 @@ final class UpdateImpl {
     }
   }
 
-  protected static final class UPDATE extends UPDATE_SET {
-    protected final type.Entity entity;
+  static final class UPDATE extends UPDATE_SET {
+    final type.Entity entity;
 
-    protected UPDATE(final type.Entity entity) {
+    UPDATE(final type.Entity entity) {
       super(null);
       this.entity = entity;
     }
 
     @Override
-    protected final Command normalize() {
+    final Command normalize() {
       return new UpdateCommand(this);
     }
   }
 
-  protected static final class SET extends UPDATE_SET implements Update.SET {
-    protected final type.DataType<?> column;
-    protected final Compilable to;
+  static final class SET extends UPDATE_SET implements Update.SET {
+    final type.DataType<?> column;
+    final Compilable to;
 
-    protected <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
+    <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final Case.CASE<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = (Provision)to;
     }
 
-    protected <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
+    <T>SET(final BatchableKeyword<type.DataType<?>> parent, final type.DataType<? extends T> column, final type.DataType<? extends T> to) {
       super(parent);
       this.column = column;
       this.to = to;
@@ -70,23 +70,23 @@ final class UpdateImpl {
     }
 
     @Override
-    protected final Command normalize() {
+    final Command normalize() {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;
     }
   }
 
-  protected static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Update.UPDATE {
-    protected final Condition<?> condition;
+  static final class WHERE extends BatchableKeyword<type.DataType<?>> implements Update.UPDATE {
+    final Condition<?> condition;
 
-    protected WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
+    WHERE(final BatchableKeyword<type.DataType<?>> parent, final Condition<?> condition) {
       super(parent);
       this.condition = condition;
     }
 
     @Override
-    protected final Command normalize() {
+    final Command normalize() {
       final UpdateCommand command = (UpdateCommand)parent().normalize();
       command.add(this);
       return command;

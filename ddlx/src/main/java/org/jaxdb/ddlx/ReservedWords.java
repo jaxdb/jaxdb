@@ -19,7 +19,7 @@ package org.jaxdb.ddlx;
 import java.util.HashMap;
 import java.util.Map;
 
-class ReservedWords {
+final class ReservedWords {
   private static final Map<String,Integer> reservedWords = new HashMap<>();
 
   static {
@@ -363,8 +363,11 @@ class ReservedWords {
     reservedWords.put("ZONE", 0b110);
   }
 
-  protected static SQLStandard[] get(final String word) {
+  static SQLStandard[] get(final String word) {
     final Integer mask = reservedWords.get(word);
     return mask == null ? null : SQLStandard.toArray(mask);
+  }
+
+  private ReservedWords() {
   }
 }

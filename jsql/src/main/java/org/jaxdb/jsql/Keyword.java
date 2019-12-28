@@ -22,23 +22,23 @@ import java.util.Set;
 abstract class Keyword<T extends type.Subject<?>> extends Provision {
   private final Keyword<T> parent;
 
-  protected Keyword(final Keyword<T> parent) {
+  Keyword(final Keyword<T> parent) {
     this.parent = parent;
   }
 
-  protected final Keyword<T> parent() {
+  final Keyword<T> parent() {
     return parent;
   }
 
   @Override
-  protected final void compile(final Compilation compilation) throws IOException {
+  final void compile(final Compilation compilation) throws IOException {
     normalize().compile(compilation);
   }
 
   @Override
-  protected Object evaluate(final Set<Evaluable> visited) {
+  Object evaluate(final Set<Evaluable> visited) {
     throw new UnsupportedOperationException();
   }
 
-  protected abstract Command normalize();
+  abstract Command normalize();
 }

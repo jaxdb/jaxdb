@@ -32,7 +32,7 @@ import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Integer;
 import org.jaxdb.www.jsql_0_4.xLygluGCXAA.$Time;
 
 public class JSqlAudit extends DDLxAudit {
-  protected JSqlAudit(final DDLxAudit copy) {
+  JSqlAudit(final DDLxAudit copy) {
     super(copy);
   }
 

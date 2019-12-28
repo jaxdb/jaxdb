@@ -16,14 +16,12 @@
 
 package org.jaxdb;
 
-import static org.junit.Assert.*;
 import static org.jaxdb.jsql.DML.*;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.jaxdb.ddlx.runner.Derby;
 import org.jaxdb.ddlx.runner.MySQL;
 import org.jaxdb.ddlx.runner.Oracle;
@@ -33,6 +31,8 @@ import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.classicmodels;
 import org.jaxdb.jsql.type;
 import org.jaxdb.runner.VendorSchemaRunner;
+import org.junit.Test;
+import org.junit.runner.RunWith;
 
 public abstract class LimitExpressionTest {
   @RunWith(VendorSchemaRunner.class)
@@ -57,14 +57,14 @@ public abstract class LimitExpressionTest {
       LIMIT(3).
       execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Double.valueOf(33.19), rows.nextEntity().get().doubleValue(), 0.0000000001);
-      assertEquals(Double.valueOf(22.57), rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(33.19, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(22.57, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertTrue(rows.nextRow());
-      assertEquals(Double.valueOf(35.36), rows.nextEntity().get().doubleValue(), 0.0000000001);
-      assertEquals(Double.valueOf(15.91), rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(35.36, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(15.91, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertTrue(rows.nextRow());
-      assertEquals(Double.valueOf(37.76), rows.nextEntity().get().doubleValue(), 0.0000000001);
-      assertEquals(Double.valueOf(16.24), rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(37.76, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(16.24, rows.nextEntity().get().doubleValue(), 0.0000000001);
     }
   }
 
@@ -79,11 +79,11 @@ public abstract class LimitExpressionTest {
       OFFSET(1).
       execute()) {
       assertTrue(rows.nextRow());
-      assertEquals(Double.valueOf(35.36), rows.nextEntity().get().doubleValue(), 0.0000000001);
-      assertEquals(Double.valueOf(15.91), rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(35.36, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(15.91, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertTrue(rows.nextRow());
-      assertEquals(Double.valueOf(37.76), rows.nextEntity().get().doubleValue(), 0.0000000001);
-      assertEquals(Double.valueOf(16.24), rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(37.76, rows.nextEntity().get().doubleValue(), 0.0000000001);
+      assertEquals(16.24, rows.nextEntity().get().doubleValue(), 0.0000000001);
     }
   }
 }

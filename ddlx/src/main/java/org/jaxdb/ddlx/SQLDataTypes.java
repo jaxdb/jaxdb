@@ -29,32 +29,32 @@ import org.jaxsb.runtime.BindingList;
 import org.libj.util.ArrayUtil;
 
 final class SQLDataTypes {
-  protected static String csvNames(final Dialect dialect, final BindingList<$Named> names) {
+  static String csvNames(final Dialect dialect, final BindingList<$Named> names) {
     return names.size() == 0 ? "" : csvNames(dialect, names.toArray(new $Named[names.size()]));
   }
 
-  protected static String csvNames(final Dialect dialect, final $Named ... names) {
+  static String csvNames(final Dialect dialect, final $Named ... names) {
     if (names.length == 0)
       return "";
 
-    String csv = "";
+    final StringBuilder csv = new StringBuilder();
     for (final $Named name : names)
-      csv += ", " + dialect.quoteIdentifier(name.getName$().text());
+      csv.append(", ").append(dialect.quoteIdentifier(name.getName$().text()));
 
-    return csv.length() > 0 ? csv.substring(2) : csv;
+    return csv.length() > 0 ? csv.substring(2) : csv.toString();
   }
 
-  protected static String getSequenceName(final $Table table, final $Integer column) {
+  static String getSequenceName(final $Table table, final $Integer column) {
     return "seq_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
-  protected static String getTriggerName(final $Table table, final $Integer column) {
+  static String getTriggerName(final $Table table, final $Integer column) {
     return "trg_" + table.getName$().text() + "_" + column.getName$().text();
   }
 
   private static final Map<String,Integer> indexNameToCount = new HashMap<>();
 
-  protected static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
+  static String getIndexName(final $Table table, final $Index index, final $Named ... column) {
     if (index == null || column.length == 0)
       return null;
 
@@ -68,15 +68,15 @@ final class SQLDataTypes {
     return builder.append(count).toString();
   }
 
-  protected static String getIndexName(final $Table table, final $Table.Indexes.Index index) {
+  static String getIndexName(final $Table table, final $Table.Indexes.Index index) {
     return getIndexName(table, index, index.getColumn().toArray(new $Named[index.getColumn().size()]));
   }
 
-  protected static String getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
+  static String getTriggerName(final String tableName, final $Table.Triggers.Trigger trigger, final String action) {
     return tableName + "_" + trigger.getTime$().text().toLowerCase() + "_" + action.toLowerCase();
   }
 
-  protected static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
+  static int getNumericByteCount(final int precision, final boolean unsigned, BigInteger min, BigInteger max) {
     final BigInteger maxForPrecision = new BigInteger(String.valueOf(ArrayUtil.createRepeat('9', precision)));
     if (max == null)
       max = maxForPrecision;
@@ -90,7 +90,7 @@ final class SQLDataTypes {
       throw new IllegalArgumentException("min of " + min + " cannot be contained in a precision of " + precision + (unsigned ? " un" : " ") + "signed digits");
 
     // FIXME: getting longValue of BigInteger!!!! Cause I was having issues taking a log2 of a BigInteger
-    return (int)Math.ceil((Math.log(max.subtract(min).doubleValue()) / Math.log(2)) / 8);
+    return (int)Math.ceil((StrictMath.log(max.subtract(min).doubleValue()) / StrictMath.log(2)) / 8);
   }
 
   private SQLDataTypes() {
