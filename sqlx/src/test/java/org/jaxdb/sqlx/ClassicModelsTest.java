@@ -19,6 +19,7 @@ package org.jaxdb.sqlx;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -42,7 +43,7 @@ public abstract class ClassicModelsTest extends SQLxTest {
 
   public static class Test extends SQLxTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException {
+    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, URISyntaxException {
       createXSDs(name);
     }
   }
@@ -66,7 +67,7 @@ public abstract class ClassicModelsTest extends SQLxTest {
 
   @org.junit.Test
   @VendorRunner.Order(1)
-  public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException {
+  public void testCreateSql(final Connection connection) throws IOException, SAXException, SQLException, URISyntaxException {
     createSql(connection, name);
   }
 }

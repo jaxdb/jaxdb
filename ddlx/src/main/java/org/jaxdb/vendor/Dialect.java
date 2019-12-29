@@ -104,6 +104,7 @@ public abstract class Dialect {
 
   abstract String declareBinary(boolean varying, long length);
   abstract Integer binaryMaxLength();
+  // FIXME: Change long to Long, and declare a default value if null
   public String compileBinary(final boolean varying, final long length) {
     if (binaryMaxLength() != null && length > binaryMaxLength())
       throw new IllegalArgumentException("BINARY length of " + length + " exceeds max of " + binaryMaxLength() + " allowed by " + getVendor());
@@ -142,6 +143,7 @@ public abstract class Dialect {
 
   public abstract String declareDate();
 
+  // FIXME: Change byte to Byte, and declare a default value if null
   public abstract String declareDateTime(byte precision);
 
   public abstract String declareDecimal(Short precision, Short scale, boolean unsigned);
@@ -155,6 +157,7 @@ public abstract class Dialect {
   abstract String declareInt8(byte precision, boolean unsigned);
   static final byte int8SignedMaxPrecision = 3;
   static final byte int8UnsignedMaxPrecision = 3;
+  // FIXME: Change byte to Byte, and declare a default value if null
   public String compileInt8(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int8UnsignedMaxPrecision : Dialect.int8SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -166,6 +169,7 @@ public abstract class Dialect {
   abstract String declareInt16(byte precision, boolean unsigned);
   static final byte int16SignedMaxPrecision = 5;
   static final byte int16UnsignedMaxPrecision = 5;
+  // FIXME: Change byte to Byte, and declare a default value if null
   public String compileInt16(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int16UnsignedMaxPrecision : Dialect.int16SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -177,6 +181,7 @@ public abstract class Dialect {
   abstract String declareInt32(byte precision, boolean unsigned);
   static final byte int32SignedMaxPrecision = 10;
   static final byte int32UnsignedMaxPrecision = 10;
+  // FIXME: Change byte to Byte, and declare a default value if null
   public String compileInt32(final byte precision, final boolean unsigned) {
     final byte maxPrecision = unsigned ? Dialect.int32UnsignedMaxPrecision : Dialect.int32SignedMaxPrecision;
     if (precision > maxPrecision)
@@ -206,6 +211,7 @@ public abstract class Dialect {
     return declareInt64(precision, unsigned);
   }
 
+  // FIXME: Change byte to Byte, and declare a default value if null
   public abstract String declareTime(byte precision);
   public abstract String declareInterval();
   public abstract String declareEnum($Enum type);

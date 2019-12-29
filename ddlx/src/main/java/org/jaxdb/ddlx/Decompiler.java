@@ -249,6 +249,7 @@ abstract class Decompiler {
     throw new UnsupportedOperationException("Unsupported change rule: " + rule);
   }
 
+  @SuppressWarnings("null")
   Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
     final DatabaseMetaData metaData = connection.getMetaData();
     try (final ResultSet foreignKeyRows = metaData.getImportedKeys(null, null, null)) {

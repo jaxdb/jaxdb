@@ -62,12 +62,12 @@ public class Batch {
     return executeUpdates.size();
   }
 
-  @SuppressWarnings("resource")
+  @SuppressWarnings({"null", "resource"})
   private int[] execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
-    try {
-      if (executeUpdates.size() == 0)
-        return null;
+    if (executeUpdates.size() == 0)
+      return null;
 
+    try {
       String last = null;
       Statement statement = null;
       final ArrayIntList results = new ArrayIntList(executeUpdates.size());
@@ -103,12 +103,12 @@ public class Batch {
           ((PreparedStatement)statement).addBatch();
         }
         else {
-          if (statement instanceof PreparedStatement) {
-            results.addAll(statement.executeBatch());
-            statement.close();
+          if (statement == null) {
             statement = connection.createStatement();
           }
-          else if (statement == null) {
+          else if (statement instanceof PreparedStatement) {
+            results.addAll(statement.executeBatch());
+            statement.close();
             statement = connection.createStatement();
           }
 

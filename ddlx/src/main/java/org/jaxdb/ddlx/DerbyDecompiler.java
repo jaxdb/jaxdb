@@ -213,6 +213,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("WHERE s.schemaname = CURRENT SCHEMA ")
     .append("ORDER BY s.schemaname, t.tablename, c.columnnumber").toString();
 
+  @SuppressWarnings("null")
   private static Map<String,List<String>> getTables(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(tablesSql);
     final ResultSet rows = statement.executeQuery();
@@ -275,6 +276,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename").toString();
 
   @Override
+  @SuppressWarnings("null")
   Map<String,List<$Table.Constraints.Unique>> getUniqueConstraints(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(constraintsSql);
@@ -368,6 +370,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename ").toString();
 
   @Override
+  @SuppressWarnings("null")
   Map<String,List<$Check>> getCheckConstraints(final Connection connection) throws SQLException {
     final PreparedStatement statement = connection.prepareStatement(checkSql);
     final ResultSet rows = statement.executeQuery();
@@ -403,6 +406,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, t.tablename ").toString();
 
   @Override
+  @SuppressWarnings("null")
   Map<String,$Table.Indexes> getIndexes(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(indexSql);
@@ -461,6 +465,7 @@ final class DerbyDecompiler extends Decompiler {
     .append("ORDER BY s.schemaname, ft.tablename").toString();
 
   @Override
+  @SuppressWarnings("null")
   Map<String,Map<String,$ForeignKey>> getForeignKeys(final Connection connection) throws SQLException {
     final Map<String,List<String>> tableNameToColumns = getTables(connection);
     final PreparedStatement statement = connection.prepareStatement(foreignKeySql);

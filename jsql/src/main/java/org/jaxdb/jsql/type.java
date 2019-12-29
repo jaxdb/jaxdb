@@ -58,6 +58,7 @@ public final class type {
     }
   }
 
+  @SuppressWarnings("null")
   static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) throws NoSuchMethodException {
     Class<?> dataTypeClass;
     while ((dataTypeClass = typeToClass.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);

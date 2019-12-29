@@ -440,7 +440,7 @@ abstract class Compiler {
       }
     }
 
-    return new CreateStatement(constraintsBuilder.toString());
+    return constraintsBuilder.length() == 0 ? null : new CreateStatement(constraintsBuilder.toString());
   }
 
   /**

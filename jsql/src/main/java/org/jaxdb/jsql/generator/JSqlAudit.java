@@ -36,7 +36,7 @@ public class JSqlAudit extends DDLxAudit {
     super(copy);
   }
 
-  public boolean isKeyForUpdate(final xLygluGCXAA.$Column column) {
+  public static boolean isKeyForUpdate(final xLygluGCXAA.$Column column) {
     if (column instanceof $Char)
       return (($Char)column).getJsqlKeyForUpdate$().text();
 

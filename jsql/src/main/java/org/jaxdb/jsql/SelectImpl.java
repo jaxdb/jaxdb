@@ -94,7 +94,7 @@ final class SelectImpl {
       private type.Entity currentTable;
 
       @Override
-      @SuppressWarnings({"rawtypes", "unchecked"})
+      @SuppressWarnings({"null", "rawtypes", "unchecked"})
       public boolean nextRow() throws SQLException {
         if (rowIndex + 1 < rows.size()) {
           ++rowIndex;
@@ -127,19 +127,19 @@ final class SelectImpl {
               }
             }
 
-            if (dataTypePrototype.getValue() == -1) {
-              entity = null;
-              currentTable = null;
-              dataType = dataTypePrototype.getKey().clone();
-              row[index++] = dataType;
-            }
-            else {
+            if (dataTypePrototype.getValue() != -1) {
               currentTable = dataTypePrototype.getKey().owner;
               entity = prototypes.get(currentTable.getClass());
               if (entity == null)
                 prototypes.put(currentTable.getClass(), entity = currentTable.newInstance());
 
               dataType = entity.column[dataTypePrototype.getValue()];
+            }
+            else {
+              entity = null;
+              currentTable = null;
+              dataType = dataTypePrototype.getKey().clone();
+              row[index++] = dataType;
             }
 
             dataType.set(resultSet, i + columnOffset);

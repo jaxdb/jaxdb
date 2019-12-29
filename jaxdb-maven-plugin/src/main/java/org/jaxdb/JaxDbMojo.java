@@ -17,7 +17,7 @@
 package org.jaxdb;
 
 import java.lang.reflect.Array;
-import java.net.URL;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -34,20 +34,20 @@ import org.openjax.maven.mojo.GeneratorMojo;
 abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
   static final Pattern EXTENSION_PATTERN = Pattern.compile("\\.\\S+$");
   class Configuration extends GeneratorMojo.Configuration {
-    private final LinkedHashSet<URL> schemas;
+    private final LinkedHashSet<URI> schemas;
     private final P[] produce;
 
     Configuration(final Configuration configuration) {
       this(configuration, configuration.schemas, configuration.produce);
     }
 
-    Configuration(final GeneratorMojo.Configuration configuration, final LinkedHashSet<URL> schemas, final P[] produce) {
+    Configuration(final GeneratorMojo.Configuration configuration, final LinkedHashSet<URI> schemas, final P[] produce) {
       super(configuration);
       this.schemas = schemas;
       this.produce = produce;
     }
 
-    LinkedHashSet<URL> getSchemas() {
+    LinkedHashSet<URI> getSchemas() {
       return this.schemas;
     }
 
@@ -81,9 +81,9 @@ abstract class JaxDbMojo<P extends Produce<?>> extends GeneratorMojo {
     }
 
     try {
-      final LinkedHashSet<URL> schemas = new LinkedHashSet<>(this.schemas.size());
+      final LinkedHashSet<URI> schemas = new LinkedHashSet<>(this.schemas.size());
       for (final String schema : this.schemas)
-        schemas.add(new URL(schema));
+        schemas.add(new URI(schema));
 
       execute(new Configuration(configuration, schemas, produce));
     }

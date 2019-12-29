@@ -161,22 +161,22 @@ public class Generator {
       if (type.getSqlxGenerateOnInsert$() != null && $Char.GenerateOnInsert$.UUID.text().equals(type.getSqlxGenerateOnInsert$().text()))
         generateOnInsert = GenerateOn.UUID;
 
-      return new Type(column, type.CHAR.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), type.getVarying$().text());
+      return new Type(column, type.CHAR.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), type.getVarying$().text());
     }
 
     if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      return new Type(column, type.CLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(column, type.CLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      return new Type(column, type.BINARY.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), type.getVarying$().text());
+      return new Type(column, type.BINARY.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text(), type.getVarying$().text());
     }
 
     if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      return new Type(column, type.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
+      return new Type(column, type.BLOB.class, params, null, generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getLength$() == null ? null : type.getLength$().text());
     }
 
     if (column instanceof $Integer) {
@@ -188,22 +188,22 @@ public class Generator {
 
       if (column instanceof $Tinyint) {
         final $Tinyint integer = ($Tinyint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().shortValue() : integer.getDefault$().text().byteValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().shortValue(), integer.getMax$() == null ? null : integer.getMax$().text().shortValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.TINYINT.UNSIGNED.class : type.TINYINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().shortValue() : integer.getDefault$().text().byteValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().shortValue(), integer.getMax$() == null ? null : integer.getMax$().text().shortValue());
       }
 
       if (column instanceof $Smallint) {
         final $Smallint integer = ($Smallint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().intValue() : integer.getDefault$().text().shortValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().intValue(), integer.getMax$() == null ? null : integer.getMax$().text().intValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.SMALLINT.UNSIGNED.class : type.SMALLINT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().intValue() : integer.getDefault$().text().shortValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().intValue(), integer.getMax$() == null ? null : integer.getMax$().text().intValue());
       }
 
       if (column instanceof $Int) {
         final $Int integer = ($Int)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().longValue() : integer.getDefault$().text().intValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().longValue(), integer.getMax$() == null ? null : integer.getMax$().text().longValue());
+        return new Type(column, integer.getUnsigned$().text() ? type.INT.UNSIGNED.class : type.INT.class, params, integer.getDefault$() == null || integer.getDefault$().text() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text().longValue() : integer.getDefault$().text().intValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : integer.getMin$().text().longValue(), integer.getMax$() == null ? null : integer.getMax$().text().longValue());
       }
 
       if (column instanceof $Bigint) {
         final $Bigint integer = ($Bigint)column;
-        return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text() : integer.getDefault$().text().longValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : BigInteger.valueOf(integer.getMin$().text().longValue()), integer.getMax$() == null ? null : BigInteger.valueOf(integer.getMax$().text().longValue()));
+        return new Type(column, integer.getUnsigned$().text() ? type.BIGINT.UNSIGNED.class : type.BIGINT.class, params, integer.getDefault$() == null ? null : integer.getUnsigned$().text() ? integer.getDefault$().text() : integer.getDefault$().text().longValue(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), integer.getPrecision$() == null ? null : integer.getPrecision$().text().intValue(), integer.getMin$() == null ? null : BigInteger.valueOf(integer.getMin$().text().longValue()), integer.getMax$() == null ? null : BigInteger.valueOf(integer.getMax$().text().longValue()));
       }
 
       throw new UnsupportedOperationException("Unsupported type: " + column.getClass().getName());
@@ -214,7 +214,7 @@ public class Generator {
       final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.FLOAT.UNSIGNED.class : type.FLOAT.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $Double) {
@@ -222,12 +222,12 @@ public class Generator {
       final Class<? extends type.DataType<?>> javaType = type.getUnsigned$().text() ? type.DOUBLE.UNSIGNED.class : type.DOUBLE.class;
       final Number min = type.getMin$() != null ? type.getMin$().text() : null;
       final Number max = type.getMax$() != null ? type.getMax$().text() : null;
-      return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), min, max);
+      return new Type(column, javaType, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), min, max);
     }
 
     if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      return new Type(column, type.getUnsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
+      return new Type(column, type.getUnsigned$().text() ? type.DECIMAL.UNSIGNED.class : type.DECIMAL.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$() == null ? null : type.getPrecision$().text().intValue(), type.getScale$() == null ? null : type.getScale$().text().intValue(), type.getMin$() == null ? null : type.getMin$().text(), type.getMax$() == null ? null : type.getMax$().text());
     }
 
     if (column instanceof $Date) {
@@ -240,7 +240,7 @@ public class Generator {
         if ($Date.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATE.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.DATE.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     if (column instanceof $Time) {
@@ -253,7 +253,7 @@ public class Generator {
         if ($Time.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.TIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
+      return new Type(column, type.TIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
     }
 
     if (column instanceof $Datetime) {
@@ -266,17 +266,17 @@ public class Generator {
         if ($Datetime.GenerateOnUpdate$.TIMESTAMP.text().equals(type.getSqlxGenerateOnUpdate$().text()))
           generateOnUpdate = GenerateOn.TIMESTAMP;
 
-      return new Type(column, type.DATETIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
+      return new Type(column, type.DATETIME.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text(), type.getPrecision$().text());
     }
 
     if (column instanceof $Boolean) {
       final $Boolean type = ($Boolean)column;
-      return new Type(column, type.BOOLEAN.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.BOOLEAN.class, params, type.getDefault$() == null ? null : type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     if (column instanceof $Enum) {
       final $Enum type = ($Enum)column;
-      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() == null ? null : type.getJsqlKeyForUpdate$().text());
+      return new Type(column, type.ENUM.class, params, type.getDefault$() == null || type.getDefault$().text() == null ? null : Identifiers.toClassCase(column.getName$().text()) + "." + type.getDefault$().text(), generateOnInsert, generateOnUpdate, type.getJsqlKeyForUpdate$() != null && type.getJsqlKeyForUpdate$().text());
     }
 
     throw new IllegalArgumentException("Unknown type: " + cls);

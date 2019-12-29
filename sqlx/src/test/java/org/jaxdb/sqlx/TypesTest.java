@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -53,7 +54,7 @@ public abstract class TypesTest extends SQLxTest {
 
   public static class Test extends SQLxTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException {
+    public void testCreate() throws CompilationException, IOException, JAXBException, TransformerException, URISyntaxException {
       createXSDs(name);
       final File destDir = new File("target/test-classes/jaxdb");
       destDir.mkdirs();

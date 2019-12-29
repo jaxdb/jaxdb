@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
@@ -52,6 +52,7 @@ import org.jaxdb.vendor.DBVendor;
 import org.libj.jci.CompilationException;
 import org.libj.jci.InMemoryCompiler;
 import org.libj.lang.Identifiers;
+import org.libj.net.URIs;
 import org.libj.util.CollectionUtil;
 import org.libj.util.FlatIterableIterator;
 import org.libj.util.primitive.ArrayIntList;
@@ -269,17 +270,17 @@ final class SqlJaxb {
     }
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final Set<URL> xsds) throws CompilationException, IOException, JAXBException {
+  public static void xsd2jaxb(final File sourcesDestDir, final Set<URI> xsds) throws CompilationException, IOException, JAXBException {
     xsd2jaxb(sourcesDestDir, null, new LinkedHashSet<>(xsds));
   }
 
-  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final LinkedHashSet<URL> xsds) throws CompilationException, IOException, JAXBException {
+  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final LinkedHashSet<URI> xsds) throws CompilationException, IOException, JAXBException {
     final XJCompiler.Command command = new XJCompiler.Command();
     command.setExtension(true);
     command.setDestDir(sourcesDestDir);
 
-    final LinkedHashSet<URL> xjbs = new LinkedHashSet<>();
-    xjbs.add(ClassLoader.getSystemClassLoader().getResource("sqlx.xjb"));
+    final LinkedHashSet<URI> xjbs = new LinkedHashSet<>();
+    xjbs.add(URIs.fromURL(ClassLoader.getSystemClassLoader().getResource("sqlx.xjb")));
     command.setXJBs(xjbs);
 
     command.setSchemas(xsds);
@@ -295,11 +296,11 @@ final class SqlJaxb {
     compiler.compile(new ArrayList<>(command.getClasspath()), classedDestDir);
   }
 
-  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
+  static void xsd2jaxb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws CompilationException, IOException, JAXBException {
     xsd2jaxb(sourcesDestDir, classedDestDir, CollectionUtil.asCollection(new LinkedHashSet<>(), xsds));
   }
 
-  public static void xsd2jaxb(final File sourcesDestDir, final URL ... xsds) throws CompilationException, IOException, JAXBException {
+  public static void xsd2jaxb(final File sourcesDestDir, final URI ... xsds) throws CompilationException, IOException, JAXBException {
     xsd2jaxb(sourcesDestDir, null, CollectionUtil.asCollection(new LinkedHashSet<>(), xsds));
   }
 

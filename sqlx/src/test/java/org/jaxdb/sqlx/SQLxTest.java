@@ -21,6 +21,8 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.Connection;
@@ -65,24 +67,27 @@ public abstract class SQLxTest {
 //    classpath = testClassPath != null ? ArrayUtil.concat(ClassLoaders.getClassPath(), testClassPath) : ClassLoaders.getClassPath();
   }
 
-  private static $Database to$Database(final URL sqlxFile) throws IOException, SAXException {
+  private static $Database to$Database(final URL sqlxFile) throws IOException, SAXException, URISyntaxException {
     try {
       return ($Database)Bindings.parse(sqlxFile);
     }
     catch (final Throwable t) {
       final File sqlxTempDir = new File(FileUtil.getTempDir(), "sqlx");
       // FIXME: Files.deleteAllOnExit() is not working!
-      Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-        try {
-          FileUtil.deleteAll(sqlxTempDir.toPath());
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          try {
+            FileUtil.deleteAll(sqlxTempDir.toPath());
+          }
+          catch (final IOException e) {
+            logger.info(e.getMessage(), e);
+          }
         }
-        catch (final IOException e) {
-          logger.info(e.getMessage(), e);
-        }
-      }));
+      });
 
       final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
-      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()));
+      SqlXsb.xsd2xsb(sqlxTempDir, sqlxTempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
 
       final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), sqlxTempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
       return ($Database)Bindings.parse(sqlxFile, classLoader);
@@ -90,7 +95,7 @@ public abstract class SQLxTest {
   }
 
   @SuppressWarnings("unchecked")
-  private static Database toDatabase(final URL sqlxFile) throws IOException, UnmarshalException {
+  private static Database toDatabase(final URL sqlxFile) throws IOException, UnmarshalException, URISyntaxException {
     final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
     final QName rootElement = preview.getRootElement();
     Class<Database> bindingClass;
@@ -111,7 +116,7 @@ public abstract class SQLxTest {
       sqlxTempDir.deleteOnExit();
       final File tempDir = new File(sqlxTempDir, rootElement.getLocalPart());
       try {
-        SqlJaxb.xsd2jaxb(tempDir, tempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()));
+        SqlJaxb.xsd2jaxb(tempDir, tempDir, preview.getImports().get(preview.getRootElement().getNamespaceURI()).toURI());
         final URLClassLoader classLoader = new URLClassLoader(ArrayUtil.concat(URLs.toURL(ClassLoaders.getClassPath()), tempDir.toURI().toURL()), ClassLoader.getSystemClassLoader());
         bindingClass = (Class<Database>)Class.forName(rootElement.getLocalPart() + ".sqlx." + Identifiers.toClassCase(rootElement.getLocalPart()), true, classLoader);
       }
@@ -123,16 +128,16 @@ public abstract class SQLxTest {
     return JaxbUtil.parse(bindingClass, bindingClass.getClassLoader(), sqlxFile, false);
   }
 
-  public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException {
-    final URL ddlx = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx");
+  public static void createXSDs(final String name) throws CompilationException, IOException, JAXBException, TransformerException, URISyntaxException {
+    final URI ddlx = ClassLoader.getSystemClassLoader().getResource(name + ".ddlx").toURI();
     assertNotNull(ddlx);
     final File destFile = new File(resourcesDestDir, name + ".xsd");
     SQL.ddlx2sqlXsd(ddlx, destFile);
-    SqlXsb.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI().toURL());
-    SqlJaxb.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI().toURL());
+    SqlXsb.xsd2xsb(sourcesXsbDestDir, testClassesDir, destFile.toURI());
+    SqlJaxb.xsd2jaxb(sourcesJaxbDestDir, testClassesDir, destFile.toURI());
   }
 
-  public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException {
+  public static void createSql(final Connection connection, final String name) throws IOException, SAXException, SQLException, URISyntaxException {
     final DBVendor vendor = DBVendor.valueOf(connection.getMetaData());
     final URL sqlx = ClassLoader.getSystemClassLoader().getResource("jaxdb/" + name + ".sqlx");
     assertNotNull(sqlx);

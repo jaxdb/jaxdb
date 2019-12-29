@@ -18,6 +18,7 @@ package org.jaxdb.ddlx;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -68,17 +69,25 @@ final class PostgreSQLCompiler extends Compiler {
   List<CreateStatement> types(final $Table table) {
     final List<CreateStatement> statements = new ArrayList<>();
     if (table.getColumn() != null) {
+      StringBuilder sql = null;
       for (final $Column column : table.getColumn()) {
         if (column instanceof $Enum) {
           final $Enum type = ($Enum)column;
-          final StringBuilder sql = new StringBuilder("CREATE TYPE ").append(q(Dialect.getTypeName(type))).append(" AS ENUM (");
+          if (sql == null)
+            sql = new StringBuilder();
+          else
+            sql.setLength(0);
+
+          sql.append("CREATE TYPE ").append(q(Dialect.getTypeName(type))).append(" AS ENUM (");
           if (type.getValues$() != null) {
             final List<String> enums = Dialect.parseEnum(type.getValues$().text());
-            final StringBuilder builder = new StringBuilder();
-            for (final String value : enums)
-              builder.append(", '").append(value).append('\'');
+            final Iterator<String> iterator = enums.iterator();
+            for (int i = 0; iterator.hasNext(); ++i) {
+              if (i > 0)
+                sql.append(", ");
 
-            sql.append(builder.substring(2));
+              sql.append('\'').append(iterator.next()).append('\'');
+            }
           }
 
           statements.add(0, new CreateStatement(sql.append(')').toString()));

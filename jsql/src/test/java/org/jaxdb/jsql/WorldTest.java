@@ -17,6 +17,7 @@
 package org.jaxdb.jsql;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -42,7 +43,7 @@ public abstract class WorldTest extends JSqlTest {
 
   public static class Test extends JSqlTest {
     @org.junit.Test
-    public void testCreate() throws CompilationException, IOException, JAXBException, SAXException, TransformerException {
+    public void testCreate() throws CompilationException, IOException, JAXBException, SAXException, TransformerException, URISyntaxException {
       // Keep this order! Otherwise, #createEntities() will fail due to ClassCastException
       // caused by collision of different binding builds for ddlx, sqlx, jsql schemas
       createEntities(name);

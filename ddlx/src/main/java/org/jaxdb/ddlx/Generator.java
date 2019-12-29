@@ -17,7 +17,6 @@
 package org.jaxdb.ddlx;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,7 +51,7 @@ public final class Generator {
     }
   }
 
-  public static void main(final String[] args) throws GeneratorExecutionException, IOException, MalformedURLException, SAXException {
+  public static void main(final String[] args) throws GeneratorExecutionException, IOException, SAXException {
     if (args.length != 2) {
       final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
       throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");

@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -230,25 +230,25 @@ final class SqlXsb {
     return INSERT(connection, new RowIterator(database));
   }
 
-  public static void xsd2xsb(final File destDir, final URL ... xsds) throws IOException {
+  public static void xsd2xsb(final File destDir, final URI ... xsds) throws IOException {
     xsd2xsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URL ... xsds) throws IOException {
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final URI ... xsds) throws IOException {
     final Set<SchemaReference> schemas = new HashSet<>();
-    for (final URL xsd : xsds)
+    for (final URI xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
   }
 
-  public static void xsd2xsb(final File destDir, final Set<URL> xsds) throws IOException {
+  public static void xsd2xsb(final File destDir, final Set<URI> xsds) throws IOException {
     xsd2xsb(destDir, null, xsds);
   }
 
-  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URL> xsds) throws IOException {
+  static void xsd2xsb(final File sourcesDestDir, final File classedDestDir, final Set<URI> xsds) throws IOException {
     final Set<SchemaReference> schemas = new HashSet<>();
-    for (final URL xsd : xsds)
+    for (final URI xsd : xsds)
       schemas.add(new SchemaReference(xsd, false));
 
     Generator.generate(new GeneratorContext(sourcesDestDir, true, classedDestDir, false, null, null), schemas, null, false);
