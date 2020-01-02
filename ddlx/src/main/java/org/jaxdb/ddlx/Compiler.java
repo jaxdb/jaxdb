@@ -136,81 +136,92 @@ abstract class Compiler {
   }
 
   private String createColumns(final $Table table) {
-    final StringBuilder ddl = new StringBuilder();
-    for (final $Column column : table.getColumn())
-      ddl.append(",\n  ").append(createColumn(table, column));
+    final StringBuilder builder = new StringBuilder();
+    final Iterator<$Column> iterator = table.getColumn().iterator();
+    $Column column = null;
+    for (int i = 0; iterator.hasNext(); ++i) {
+      if (i > 0) {
+        builder.append(',');
+        if (column != null && column.getDocumentation() != null)
+          builder.append(" -- ").append(column.getDocumentation().text());
 
-    return ddl.substring(2);
+        builder.append('\n');
+      }
+
+      builder.append("  ").append(createColumn(table, column = iterator.next()));
+    }
+
+    return builder.toString();
   }
 
   private CreateStatement createColumn(final $Table table, final $Column column) {
-    final StringBuilder ddl = new StringBuilder();
-    ddl.append(q(column.getName$().text())).append(' ');
+    final StringBuilder builder = new StringBuilder();
+    builder.append(q(column.getName$().text())).append(' ');
     // FIXME: Passing null to compile*() methods will throw a NPE
     if (column instanceof $Char) {
       final $Char type = ($Char)column;
-      ddl.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getVendor().getDialect().compileChar(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Binary) {
       final $Binary type = ($Binary)column;
-      ddl.append(getVendor().getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getVendor().getDialect().compileBinary(type.getVarying$().text(), type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Blob) {
       final $Blob type = ($Blob)column;
-      ddl.append(getVendor().getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getVendor().getDialect().compileBlob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Clob) {
       final $Clob type = ($Clob)column;
-      ddl.append(getVendor().getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
+      builder.append(getVendor().getDialect().compileClob(type.getLength$() == null ? null : type.getLength$().text()));
     }
     else if (column instanceof $Integer) {
-      ddl.append(createIntegerColumn(($Integer)column));
+      builder.append(createIntegerColumn(($Integer)column));
     }
     else if (column instanceof $Float) {
       final $Float type = ($Float)column;
-      ddl.append(getVendor().getDialect().declareFloat(type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareFloat(type.getUnsigned$().text()));
     }
     else if (column instanceof $Double) {
       final $Double type = ($Double)column;
-      ddl.append(getVendor().getDialect().declareDouble(type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareDouble(type.getUnsigned$().text()));
     }
     else if (column instanceof $Decimal) {
       final $Decimal type = ($Decimal)column;
-      ddl.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getUnsigned$().text()));
+      builder.append(getVendor().getDialect().declareDecimal(type.getPrecision$() == null ? null : type.getPrecision$().text(), type.getScale$() == null ? null : type.getScale$().text(), type.getUnsigned$().text()));
     }
     else if (column instanceof $Date) {
-      ddl.append(getVendor().getDialect().declareDate());
+      builder.append(getVendor().getDialect().declareDate());
     }
     else if (column instanceof $Time) {
       final $Time type = ($Time)column;
-      ddl.append(getVendor().getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getVendor().getDialect().declareTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Datetime) {
       final $Datetime type = ($Datetime)column;
-      ddl.append(getVendor().getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
+      builder.append(getVendor().getDialect().declareDateTime(type.getPrecision$() == null ? null : type.getPrecision$().text()));
     }
     else if (column instanceof $Boolean) {
-      ddl.append(getVendor().getDialect().declareBoolean());
+      builder.append(getVendor().getDialect().declareBoolean());
     }
     else if (column instanceof $Enum) {
-      ddl.append(getVendor().getDialect().declareEnum(($Enum)column));
+      builder.append(getVendor().getDialect().declareEnum(($Enum)column));
     }
 
     final String defaultFragment = $default(column);
     if (defaultFragment != null && defaultFragment.length() > 0)
-      ddl.append(" DEFAULT ").append(defaultFragment);
+      builder.append(" DEFAULT ").append(defaultFragment);
 
     final String nullFragment = $null(table, column);
     if (nullFragment != null && nullFragment.length() > 0)
-      ddl.append(' ').append(nullFragment);
+      builder.append(' ').append(nullFragment);
 
     if (column instanceof $Integer) {
       final String autoIncrementFragment = $autoIncrement(table, ($Integer)column);
       if (autoIncrementFragment != null && autoIncrementFragment.length() > 0)
-        ddl.append(' ').append(autoIncrementFragment);
+        builder.append(' ').append(autoIncrementFragment);
     }
 
-    return new CreateStatement(ddl.toString());
+    return new CreateStatement(builder.toString());
   }
 
   String createIntegerColumn(final $Integer column) {
@@ -521,6 +532,15 @@ abstract class Compiler {
     return clause;
   }
 
+  /**
+   * Delegate method to produce {@link CreateStatement} objects of
+   * {@code TRIGGER} clauses for the specified {@link $Table table}.
+   *
+   * @param table The {@link $Table} for which to produce {@code TRIGGER}
+   *          clauses.
+   * @return A list of {@link CreateStatement} objects of {@code TRIGGER}
+   *         clauses for the specified {@link $Table table}.
+   */
   List<CreateStatement> triggers(final $Table table) {
     return new ArrayList<>();
   }
