@@ -19,8 +19,12 @@ package org.jaxdb.vendor;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MySQLDialect extends Dialect {
+  static final Logger logger = LoggerFactory.getLogger(MySQLDialect.class);
+
   @Override
   DBVendor getVendor() {
     return DBVendor.MY_SQL;
@@ -173,7 +177,12 @@ public class MySQLDialect extends Dialect {
   }
 
   @Override
-  public String declareDateTime(final byte precision) {
+  public String declareDateTime(byte precision) {
+    if (precision > 6) {
+      logger.warn("TIMESTAMP(" + precision + ") precision will be reduced to maximum allowed: 6");
+      precision = 6;
+    }
+
     return "DATETIME(" + precision + ")";
   }
 

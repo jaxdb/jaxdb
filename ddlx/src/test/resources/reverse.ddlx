@@ -147,9 +147,9 @@
     </indexes>
   </table>
   <table name="t_datetime">
-    <column name="c_null" xsi:type="datetime" precision="6"/>
-    <column name="c_default" xsi:type="datetime" precision="9" default="2017-10-10 12:34:56"/>
-    <column name="c_not_null" xsi:type="datetime" precision="12" null="false"/>
+    <column name="c_null" xsi:type="datetime" precision="3"/>
+    <column name="c_default" xsi:type="datetime" precision="6" default="2017-10-10 12:34:56"/>
+    <column name="c_not_null" xsi:type="datetime" precision="9" null="false"/>
     <column name="c_implicit" xsi:type="datetime"/>
     <constraints>
       <primaryKey>

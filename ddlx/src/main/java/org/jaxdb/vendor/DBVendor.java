@@ -48,7 +48,7 @@ public final class DBVendor {
   }
 
   public static DBVendor valueOf(final String string) {
-    return map.get(string);
+    return map.get(string.toLowerCase());
   }
 
   private final String name;
@@ -58,7 +58,7 @@ public final class DBVendor {
 
   private DBVendor(final String name, final String driverClassName, final Dialect dialect) {
     instances[this.ordinal = index++] = this;
-    map.put(name, this);
+    map.put(name.toLowerCase(), this);
     this.name = name;
     this.driverClassName = driverClassName;
     this.dialect = dialect;
