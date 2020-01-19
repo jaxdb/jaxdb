@@ -468,17 +468,22 @@ abstract class Compiler {
     if (constraints.getPrimaryKey() == null)
       return "";
 
-    final StringBuilder primaryKeyBuilder = new StringBuilder();
-    for (final $Named primaryColumn : constraints.getPrimaryKey().getColumn()) {
+    final StringBuilder builder = new StringBuilder();
+    final Iterator<$Named> iterator = constraints.getPrimaryKey().getColumn().iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      final $Named primaryColumn = iterator.next();
       final String primaryKeyColumn = primaryColumn.getName$().text();
       final $Column column = columnNameToColumn.get(primaryKeyColumn);
       if (column.getNull$().text())
         throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 
-      primaryKeyBuilder.append(", ").append(q(primaryKeyColumn));
+      if (i > 0)
+        builder.append(", ");
+
+      builder.append(q(primaryKeyColumn));
     }
 
-    return ",\n  " + primaryKey(table) + " (" + primaryKeyBuilder.substring(2) + ")";
+    return ",\n  " + primaryKey(table) + " (" + builder + ")";
   }
 
   /**

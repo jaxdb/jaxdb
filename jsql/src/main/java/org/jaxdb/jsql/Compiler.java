@@ -1101,14 +1101,18 @@ abstract class Compiler {
   }
 
   <T>String compile(final type.ARRAY<? extends T> column, final type.DataType<T> dataType) throws IOException {
-    final StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder("(");
     final type.DataType<T> clone = dataType.clone();
-    for (final T item : column.get()) {
-      type.DataType.setValue(clone, item);
-      builder.append(", ").append(type.DataType.compile(dataType, getVendor()));
+    final T[] items = column.get();
+    for (int i = 0; i < items.length; ++i) {
+      type.DataType.setValue(clone, items[i]);
+      if (i > 0)
+        builder.append(", ");
+
+      builder.append(type.DataType.compile(dataType, getVendor()));
     }
 
-    return "(" + builder.substring(2) + ")";
+    return builder.append(')').toString();
   }
 
   void compile(final Cast.AS as, final Compilation compilation) throws IOException {

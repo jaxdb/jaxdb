@@ -24,6 +24,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -116,37 +117,50 @@ public class Generator {
 
     final String classSimpleName = Identifiers.toInstanceCase(name);
 
-    final StringBuilder codeBuilder = new StringBuilder(HEADER_COMMENT);
-    codeBuilder.append("package ").append(pkg).append(";\n\n");
-    codeBuilder.append(getDoc(audit.schema(), 0, '\0', '\n'));
-    codeBuilder.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
-    codeBuilder.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
-    codeBuilder.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
+    final StringBuilder builder = new StringBuilder(HEADER_COMMENT);
+    builder.append("package ").append(pkg).append(";\n\n");
+    builder.append(getDoc(audit.schema(), 0, '\0', '\n'));
+    builder.append('@').append(SuppressWarnings.class.getName()).append("(\"all\")\n");
+    builder.append('@').append(Generated.class.getName()).append("(value=\"").append(GENERATED_VALUE).append("\", date=\"").append(GENERATED_DATE).append("\")\n");
+    builder.append("public final class ").append(classSimpleName).append(" extends ").append(Schema.class.getCanonicalName()).append(" {\n");
 
-    final StringBuilder tablesBuilder = new StringBuilder();
     // First create the abstract entities
-    for (final $Table table : audit.schema().getTable())
-      if (table.getAbstract$().text())
-        tablesBuilder.append("\n\n").append(makeTable(table));
+    Iterator<$Table> iterator = audit.schema().getTable().iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      final $Table table = iterator.next();
+      if (table.getAbstract$().text()) {
+        if (i > 0)
+          builder.append("\n\n");
+
+        builder.append(makeTable(table));
+      }
+    }
 
     // Then, in proper inheritance order, the real entities
-    for (final $Table table : audit.schema().getTable())
-      if (!table.getAbstract$().text())
-        tablesBuilder.append("\n\n").append(makeTable(table));
+    iterator = audit.schema().getTable().iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      final $Table table = iterator.next();
+      if (!table.getAbstract$().text()) {
+        if (i > 0)
+          builder.append("\n\n");
 
-    codeBuilder.append(tablesBuilder.substring(2)).append("\n\n");
+        builder.append(makeTable(table));
+      }
+    }
 
-    /*codeBuilder.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
-    codeBuilder.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
-    codeBuilder.append("    if (obj == this)\n      return true;\n\n";
-    codeBuilder.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
-    codeBuilder.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
-    codeBuilder.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+    builder.append("\n\n");
 
-    codeBuilder.append("  private ").append(classSimpleName).append("() {\n  }\n}");
+    /*builder.append("  private " + Classes.getFormalName(String.class) + " name = \"" + classSimpleName + "\";\n\n";
+    builder.append("  public boolean equals(final " + Classes.getFormalName(Object.class) + " obj) {\n";
+    builder.append("    if (obj == this)\n      return true;\n\n";
+    builder.append("    if (!(obj instanceof " + className + "))\n      return false;\n\n";
+    builder.append("    return name.equals(((" + className + ")obj).name);\n  }\n\n";
+    builder.append("  public int hashCode() {\n    return name.hashCode();\n  }\n\n";*/
+
+    builder.append("  private ").append(classSimpleName).append("() {\n  }\n}");
 
     final File javaFile = new File(dir, classSimpleName + ".java");
-    Files.write(javaFile.toPath(), codeBuilder.toString().getBytes());
+    Files.write(javaFile.toPath(), builder.toString().getBytes());
   }
 
   private static final Object THIS = new Object();
