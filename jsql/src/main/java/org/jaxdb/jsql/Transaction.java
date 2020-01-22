@@ -46,9 +46,8 @@ public class Transaction implements AutoCloseable {
       if (inited.get())
         return connection;
 
-      this.connection = Schema.getConnection(schema, dataSourceId);
       try {
-        this.connection.setAutoCommit(false);
+        this.connection = Schema.getConnection(schema, dataSourceId, false);
       }
       catch (final SQLException e) {
         throw SQLExceptions.getStrongType(e);

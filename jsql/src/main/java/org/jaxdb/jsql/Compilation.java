@@ -156,6 +156,7 @@ final class Compilation {
 
   int execute(final Connection connection) throws IOException, SQLException {
     if (prepared) {
+      // FIXME: Implement batching.
 //      if (batching) {
 //        final IntArrayList results = new IntArrayList(statements.size());
 //        PreparedStatement jdbcStatement = null;
@@ -189,6 +190,7 @@ final class Compilation {
       return jdbcStatement.executeUpdate();
     }
 
+    // FIXME: Implement batching.
 //    if (batching) {
 //      final java.sql.Statement jdbcStatement = connection.createStatement();
 //      for (int i = 0; i < statements.size(); ++i) {

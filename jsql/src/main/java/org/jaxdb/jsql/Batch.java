@@ -78,7 +78,7 @@ public class Batch {
         final Command command = keyword.normalize();
 
         if (connection == null)
-          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId);
+          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId, true);
         else if (schema != null && schema != command.getSchema())
           throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
 
