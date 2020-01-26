@@ -46,8 +46,8 @@ import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Database;
 import org.jaxdb.www.sqlx_0_4.xLygluGCXAA.$Row;
 import org.jaxsb.runtime.Attribute;
 import org.jaxsb.runtime.Id;
+import org.libj.lang.Classes;
 import org.libj.lang.Identifiers;
-import org.libj.util.Classes;
 import org.openjax.xml.datatype.HexBinary;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 

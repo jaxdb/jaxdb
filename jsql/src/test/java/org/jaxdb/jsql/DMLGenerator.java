@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.libj.util.Classes;
+import org.libj.lang.Classes;
 
 @SuppressWarnings("unused")
 public class DMLGenerator {

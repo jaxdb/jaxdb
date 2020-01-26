@@ -41,7 +41,7 @@ import java.util.Set;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
-import org.libj.util.Classes;
+import org.libj.lang.Classes;
 import org.libj.util.Numbers;
 
 public final class type {
