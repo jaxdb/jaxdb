@@ -35,7 +35,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -45,21 +44,27 @@ import org.libj.lang.Classes;
 import org.libj.util.Numbers;
 
 public final class type {
-  private static final Map<Class<?>,Class<?>> typeToClass = new HashMap<>();
+  private static final HashMap<Class<?>,Class<?>> typeToClass = new HashMap<>();
 
-  static {
-    typeToClass.put(null, ENUM.class);
-    for (final Class<?> cls : type.class.getClasses()) {
-      if (!Modifier.isAbstract(cls.getModifiers())) {
-        final Type type = Classes.getSuperclassGenericTypes(cls)[0];
-        if (type instanceof Class<?>)
-          typeToClass.put((Class<?>)type, cls);
+  private static void scanMembers(final Class<?> cls) {
+    for (final Class<?> member : cls.getClasses()) {
+      if (!Modifier.isAbstract(member.getModifiers())) {
+        final Type type = Classes.getSuperclassGenericTypes(member)[0];
+        if (type instanceof Class<?> && !typeToClass.containsKey((Class<?>)type))
+          typeToClass.put((Class<?>)type, member);
+
+        scanMembers(member);
       }
     }
   }
 
+  static {
+    typeToClass.put(null, ENUM.class);
+    scanMembers(type.class);
+  }
+
   @SuppressWarnings("null")
-  static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) throws NoSuchMethodException {
+  private static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) throws NoSuchMethodException {
     Class<?> dataTypeClass;
     while ((dataTypeClass = typeToClass.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);
     return dataTypeClass.getConstructor(genericType);
