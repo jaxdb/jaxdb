@@ -42,32 +42,35 @@ import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.lang.Classes;
 import org.libj.util.Numbers;
+import org.libj.util.function.Throwing;
 
 public final class type {
   private static final HashMap<Class<?>,Class<?>> typeToClass = new HashMap<>();
 
-  private static void scanMembers(final Class<?> cls) {
-    for (final Class<?> member : cls.getClasses()) {
-      if (!Modifier.isAbstract(member.getModifiers())) {
-        final Type type = Classes.getSuperclassGenericTypes(member)[0];
-        if (type instanceof Class<?> && !typeToClass.containsKey((Class<?>)type))
-          typeToClass.put((Class<?>)type, member);
+  private static void scanMembers(final Class<?>[] members, final int i) {
+    if (i == members.length)
+      return;
 
-        scanMembers(member);
-      }
+    final Class<?> member = members[i];
+    if (!Modifier.isAbstract(member.getModifiers())) {
+      final Type type = Classes.getSuperclassGenericTypes(member)[0];
+      if (type instanceof Class<?> && !typeToClass.containsKey((Class<?>)type))
+        typeToClass.put((Class<?>)type, member);
     }
+
+    scanMembers(members, i + 1);
+    scanMembers(member.getClasses(), 0);
   }
 
   static {
     typeToClass.put(null, ENUM.class);
-    scanMembers(type.class);
+    scanMembers(type.class.getClasses(), 0);
   }
 
-  @SuppressWarnings("null")
-  private static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) throws NoSuchMethodException {
+  private static Constructor<?> lookupDataTypeConstructor(Class<?> genericType) {
     Class<?> dataTypeClass;
     while ((dataTypeClass = typeToClass.get(genericType)) == null && (genericType = genericType.getSuperclass()) != null);
-    return dataTypeClass.getConstructor(genericType);
+    return Classes.getConstructor(dataTypeClass, genericType);
   }
 
   public abstract static class ApproxNumeric<T extends Number> extends Numeric<T> implements kind.ApproxNumeric<T> {
@@ -90,12 +93,7 @@ public final class type {
 
     ARRAY(final Entity owner, final String name, final boolean unique, final boolean primary, final boolean nullable, final T[] _default, final GenerateOn<? super T[]> generateOnInsert, final GenerateOn<? super T[]> generateOnUpdate, final boolean keyForUpdate, final Class<? extends DataType<T>> type) {
       super(owner, name, unique, primary, nullable, _default, generateOnInsert, generateOnUpdate, keyForUpdate);
-      try {
-        this.dataType = type.getDeclaredConstructor().newInstance();
-      }
-      catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-        throw new UnsupportedOperationException(e);
-      }
+      this.dataType = newInstance(Classes.getDeclaredConstructor(type));
     }
 
     @SuppressWarnings("unchecked")
@@ -1040,6 +1038,23 @@ public final class type {
     }
   }
 
+  private static <T>T newInstance(final Constructor<T> constructor, final Object ... initargs) {
+    try {
+      return constructor.newInstance(initargs);
+    }
+    catch (final IllegalAccessException | InstantiationException | InvocationTargetException e) {
+      if (e instanceof InvocationTargetException) {
+        if (e.getCause() instanceof RuntimeException)
+          throw (RuntimeException)e.getCause();
+
+        if (e.getCause() instanceof IOException)
+          Throwing.rethrow(e.getCause());
+      }
+
+      throw new RuntimeException(e);
+    }
+  }
+
   public abstract static class DataType<T> extends type.Subject<T> implements kind.DataType<T>, Cloneable {
     static <T>void setValue(final DataType<T> dataType, final T value) {
       dataType.value = value;
@@ -1051,20 +1066,15 @@ public final class type {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     static <T,V extends DataType<T>>V wrap(final T value) {
-      try {
-        if (value.getClass().isEnum())
-          return (V)new ENUM((Enum)value);
+      if (value.getClass().isEnum())
+        return (V)new ENUM((Enum)value);
 
-        if (value instanceof org.jaxdb.jsql.UNSIGNED.UnsignedNumber) {
-          final org.jaxdb.jsql.UNSIGNED.UnsignedNumber unsignedNumber = (org.jaxdb.jsql.UNSIGNED.UnsignedNumber)value;
-          return (V)unsignedNumber.getTypeClass().getConstructor(unsignedNumber.value().getClass()).newInstance(unsignedNumber.value());
-        }
+      if (value instanceof org.jaxdb.jsql.UNSIGNED.UnsignedNumber) {
+        final org.jaxdb.jsql.UNSIGNED.UnsignedNumber unsignedNumber = (org.jaxdb.jsql.UNSIGNED.UnsignedNumber)value;
+        return (V)newInstance(Classes.getConstructor(unsignedNumber.getTypeClass(), unsignedNumber.value().getClass()), unsignedNumber.value());
+      }
 
-        return (V)lookupDataTypeConstructor(value.getClass()).newInstance(value);
-      }
-      catch (final IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-        throw new UnsupportedOperationException(e);
-      }
+      return (V)newInstance(lookupDataTypeConstructor(value.getClass()), value);
     }
 
     @SuppressWarnings("unchecked")
