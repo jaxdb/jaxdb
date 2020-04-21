@@ -65,7 +65,7 @@ public abstract class Schema {
   static Connection getConnection(final Class<? extends Schema> schema, final String dataSourceId, final boolean autoCommit) throws SQLException {
     final Connector dataSource = Registry.getDataSource(schema, dataSourceId);
     if (dataSource == null)
-      throw new SQLInvalidSchemaNameException("A " + Connector.class.getSimpleName() + " has not been registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
+      throw new SQLInvalidSchemaNameException("No " + Connector.class.getName() + " registered for " + (schema == null ? null : schema.getName()) + ", id: " + dataSourceId);
 
     try {
       final Connection connection = dataSource.getConnection();
