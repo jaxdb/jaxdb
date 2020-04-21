@@ -202,8 +202,7 @@ public final class Schemas {
   private static $Column clone(final $Column column) {
     return column instanceof $Enum ? new $Enum(($Enum)column.clone()) {
       private static final long serialVersionUID = -8441464393229662197L;
-
-      private final String declaringTableName = (($Table)BindingProxy.owner(column)).getName$().text();
+      private final String declaringTableName = column.id() != null ? column.id() : (($Table)BindingProxy.owner(column)).getName$().text();
 
       @Override
       public String id() {
