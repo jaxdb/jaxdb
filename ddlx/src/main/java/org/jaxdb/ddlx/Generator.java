@@ -16,6 +16,7 @@
 
 package org.jaxdb.ddlx;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -51,13 +52,44 @@ public final class Generator {
     }
   }
 
+  private static void trapPrintUsage() {
+    final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
+    System.err.println("Usage: Generator <-d DEST_DIR> <-v VENDOR> <DDLx_FILE>");
+    System.err.println();
+    System.err.println("Mandatory arguments:");
+    System.err.println("  -v <VENDOR>        One of: <" + vendors + ">");
+    System.err.println("  -d <DEST_DIR>      Specify the destination directory.");
+    System.exit(1);
+  }
+
   public static void main(final String[] args) throws GeneratorExecutionException, IOException, SAXException {
-    if (args.length != 2) {
-      final String vendors = ArrayUtil.toString(DBVendor.values(), "|");
-      throw new GeneratorExecutionException("<" + vendors + "> <XDL_FILE>");
+    if (args.length != 5)
+      trapPrintUsage();
+
+    DBVendor vendor = null;
+    File destDir = null;
+    URL schemaUrl = null;
+    String sqlFileName = null;
+    for (int i = 0; i < args.length; ++i) {
+      if ("-v".equals(args[i]))
+        vendor = DBVendor.valueOf(args[++i]);
+      else if ("-d".equals(args[i]))
+        destDir = new File(args[++i]).getAbsoluteFile();
+      else {
+        final File schemaFile = new File(args[i]);
+        sqlFileName = schemaFile.getName().substring(0, schemaFile.getName().lastIndexOf('.') + 1) + "sql";
+        schemaUrl = schemaFile.getAbsoluteFile().toURI().toURL();
+      }
     }
 
-    createDDL((Schema)Bindings.parse(new URL("file", "", args[1])), DBVendor.valueOf(args[0]));
+    if (vendor == null || destDir == null || schemaUrl == null) {
+      trapPrintUsage();
+    }
+    else {
+      final StatementBatch statementBatch = createDDL((Schema)Bindings.parse(schemaUrl), vendor);
+      destDir.mkdirs();
+      statementBatch.writeOutput(new File(destDir, sqlFileName));
+    }
   }
 
   public static StatementBatch createDDL(final Schema schema, final DBVendor vendor) throws GeneratorExecutionException {
@@ -73,7 +105,7 @@ public final class Generator {
 
     final StringBuilder message = new StringBuilder("The name '").append(string).append("' is reserved word in ").append(enums[0]);
 
-    for (int i = 1; i < enums.length; i++)
+    for (int i = 1; i < enums.length; ++i)
       message.append(", ").append(enums[i]);
 
     message.append('.');
