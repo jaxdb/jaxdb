@@ -21,6 +21,9 @@
   <id>jaxdb-maven-archetype</id>
   <allowPartial>true</allowPartial>
   <resources>
-    <resource>src/main/resources/basis.ddlx</resource>
+    <resource>src/main/java/com/mycompany/app/MyApp.java</resource>
+    <resource>src/main/resources/config.xml</resource>
+    <resource>src/main/resources/config.xsd</resource>
+    <resource>src/main/resources/db.ddlx</resource>
   </resources>
 </archetype>

@@ -16,9 +16,27 @@ To use the archetype, execute the following:
 ```bash
 mvn archetype:generate \
 -DgroupId=com.mycompany.app -DartifactId=my-app \
--DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype \
+-DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype -DarchetypeVersion=0.4.1-SNAPSHOT \
 -DinteractiveMode=false
 ```
+
+Once the project is created, you can build it with `mvn install`.
+
+Before running `MyApp`, you must create your MySQL database:
+
+```
+CREATE DATABASE MyDB;
+CREATE USER MyDB IDENTIFIED BY 'MyDB';
+GRANT ALL ON MyDB.* TO 'MyDB'@'%';
+```
+
+Then, load the generated schema via:
+
+```bash
+mysql -D MyDB -u MyDB --password=MyDB < ./model/target/generated-resources/jaxdb/db.sql
+```
+
+**Note**: You can change the name from `MyDB` to something else, but make sure to update the DBCP spec in `config.xml`.
 
 ## Contributing
 

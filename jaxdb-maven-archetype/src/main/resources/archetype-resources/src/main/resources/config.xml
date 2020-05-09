@@ -1,0 +1,27 @@
+<config
+  xmlns="http://app.mycompany.com/config.xsd"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://app.mycompany.com/config.xsd config.xsd">
+  <dbcp xmlns="http://www.openjax.org/dbcp-1.1.xsd" name="uncommitted">
+    <jdbc>
+      <url>jdbc:mysql://localhost/MyDB?user=MyDB&amp;password=MyDB</url>
+      <driverClassName>com.mysql.cj.jdbc.Driver</driverClassName>
+    </jdbc>
+    <default>
+      <autoCommit>true</autoCommit>
+      <readOnly>false</readOnly>
+      <transactionIsolation>READ_UNCOMMITTED</transactionIsolation>
+    </default>
+    <size>
+      <initialSize>0</initialSize>
+      <maxTotal>4</maxTotal>
+      <maxIdle>4</maxIdle>
+      <minIdle>0</minIdle>
+    </size>
+    <logging>
+      <level>INFO</level>
+      <logExpiredConnections>true</logExpiredConnections>
+      <logAbandoned>true</logAbandoned>
+    </logging>
+  </dbcp>
+</config>
