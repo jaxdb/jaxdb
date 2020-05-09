@@ -14,9 +14,10 @@ The `jaxdb-maven-archetype` archetype is a quick-start example of how to use the
 To use the archetype, execute the following:
 
 ```bash
-mvn archetype:generate \
+mvn org.apache.maven.plugins:maven-archetype-plugin:2.4:generate \
 -DgroupId=com.mycompany.app -DartifactId=my-app \
 -DarchetypeGroupId=org.jaxdb -DarchetypeArtifactId=jaxdb-maven-archetype -DarchetypeVersion=0.4.1-SNAPSHOT \
+-DarchetypeCatalog=https://oss.sonatype.org/content/repositories/snapshots/ \
 -DinteractiveMode=false
 ```
 
