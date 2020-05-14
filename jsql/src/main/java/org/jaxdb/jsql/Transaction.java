@@ -18,6 +18,7 @@ package org.jaxdb.jsql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.libj.sql.exception.SQLExceptions;
@@ -26,6 +27,7 @@ public class Transaction implements AutoCloseable {
   private final Class<? extends Schema> schema;
   private final String dataSourceId;
   private final AtomicBoolean inited = new AtomicBoolean(false);
+  private volatile boolean closed;
 
   private Connection connection;
 
@@ -46,14 +48,13 @@ public class Transaction implements AutoCloseable {
       if (inited.get())
         return connection;
 
+      inited.set(true);
       try {
-        this.connection = Schema.getConnection(schema, dataSourceId, false);
+        this.connection = Objects.requireNonNull(Schema.getConnection(schema, dataSourceId, false));
       }
       catch (final SQLException e) {
-        throw SQLExceptions.getStrongType(e);
+        throw SQLExceptions.toStrongType(e);
       }
-
-      inited.set(true);
     }
 
     return connection;
@@ -72,7 +73,7 @@ public class Transaction implements AutoCloseable {
       return true;
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
   }
 
@@ -85,12 +86,16 @@ public class Transaction implements AutoCloseable {
       return true;
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
   }
 
   @Override
   public void close() throws SQLException {
+    if (closed)
+      return;
+
+    closed = true;
     if (connection == null)
       return;
 
@@ -98,7 +103,7 @@ public class Transaction implements AutoCloseable {
       connection.close();
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
   }
 }

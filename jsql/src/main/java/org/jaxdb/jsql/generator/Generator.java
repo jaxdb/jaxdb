@@ -523,8 +523,10 @@ public class Generator {
       out.append("    @").append(Override.class.getName()).append('\n');
       out.append("    public int hashCode() {\n");
       out.append("      int hashCode = 1;");
-      for (final $Column column : equalsColumns)
-        out.append("\n      hashCode = 31 * hashCode + (this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() == null ? 0 : this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode());");
+      for (final $Column column : equalsColumns) {
+        out.append("\n      if (").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get() != null)");
+        out.append("\n        hashCode = 31 * hashCode + this.").append(Identifiers.toInstanceCase(column.getName$().text())).append(".get().hashCode();\n");
+      }
       out.append("\n      return hashCode;");
       out.append("\n    }");
     }

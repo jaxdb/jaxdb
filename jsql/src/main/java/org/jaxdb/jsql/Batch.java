@@ -28,7 +28,10 @@ import java.util.List;
 import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Update.UPDATE;
+import org.libj.sql.AuditConnection;
+import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
+import org.libj.util.Throwables;
 import org.libj.util.primitive.ArrayIntList;
 
 public class Batch {
@@ -62,7 +65,7 @@ public class Batch {
     return executeUpdates.size();
   }
 
-  @SuppressWarnings({"null", "resource"})
+  @SuppressWarnings({"null"})
   private int[] execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
     if (executeUpdates.size() == 0)
       return null;
@@ -73,58 +76,74 @@ public class Batch {
       final ArrayIntList results = new ArrayIntList(executeUpdates.size());
       Class<? extends Schema> schema = null;
       Connection connection = null;
-      for (final ExecuteUpdate executeUpdate : executeUpdates) {
-        final BatchableKeyword<?> keyword = (BatchableKeyword<?>)executeUpdate;
-        final Command command = keyword.normalize();
+      SQLException suppressed = null;
+      try {
+        for (final ExecuteUpdate executeUpdate : executeUpdates) {
+          final BatchableKeyword<?> keyword = (BatchableKeyword<?>)executeUpdate;
+          final Command command = keyword.normalize();
 
-        if (connection == null)
-          connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId, true);
-        else if (schema != null && schema != command.getSchema())
-          throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
+          if (connection == null)
+            connection = transaction != null ? transaction.getConnection() : Schema.getConnection(schema = command.getSchema(), dataSourceId, true);
+          else if (schema != null && schema != command.getSchema())
+            throw new IllegalArgumentException("Cannot execute batch across different schemas: " + schema.getSimpleName() + " and " + command.getSchema().getSimpleName());
 
-        final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema()));
-        command.compile(compilation);
+          final Compilation compilation = new Compilation(command, Schema.getDBVendor(connection), Registry.isPrepared(command.getSchema()));
+          command.compile(compilation);
 
-        final String sql = compilation.getSQL();
-        if (compilation.isPrepared()) {
-          if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
-            if (statement != null) {
-              results.addAll(statement.executeBatch());
-              statement.close();
+          final String sql = compilation.getSQL();
+          if (compilation.isPrepared()) {
+            if (!(statement instanceof PreparedStatement) || !sql.equals(last)) {
+              if (statement != null) {
+                try {
+                  results.addAll(statement.executeBatch());
+                }
+                finally {
+                  suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+                }
+              }
+
+              statement = connection.prepareStatement(last = sql);
             }
 
-            statement = connection.prepareStatement(last = sql);
+            final List<type.DataType<?>> parameters = compilation.getParameters();
+            for (int j = 0; j < parameters.size(); ++j)
+              parameters.get(j).get((PreparedStatement)statement, j + 1);
+
+            ((PreparedStatement)statement).addBatch();
           }
+          else {
+            if (statement == null) {
+              statement = connection.createStatement();
+            }
+            else if (statement instanceof PreparedStatement) {
+              try {
+                results.addAll(statement.executeBatch());
+              }
+              finally {
+                suppressed = Throwables.addSuppressed(suppressed, AuditStatement.close(statement));
+              }
 
-          final List<type.DataType<?>> parameters = compilation.getParameters();
-          for (int j = 0; j < parameters.size(); ++j)
-            parameters.get(j).get((PreparedStatement)statement, j + 1);
+              statement = connection.createStatement();
+            }
 
-          ((PreparedStatement)statement).addBatch();
+            statement.addBatch(sql);
+          }
         }
-        else {
-          if (statement == null) {
-            statement = connection.createStatement();
-          }
-          else if (statement instanceof PreparedStatement) {
-            results.addAll(statement.executeBatch());
-            statement.close();
-            statement = connection.createStatement();
-          }
 
-          statement.addBatch(sql);
-        }
+        results.addAll(statement.executeBatch());
+        return results.toArray(new int[results.size()]);
       }
+      finally {
+        SQLException e = Throwables.addSuppressed(statement == null ? null : AuditStatement.close(statement), suppressed);
+        if (transaction == null && connection != null)
+          e = Throwables.addSuppressed(e, AuditConnection.close(connection));
 
-      results.addAll(statement.executeBatch());
-      statement.close();
-      if (transaction == null)
-        connection.close();
-
-      return results.toArray(new int[results.size()]);
+        if (e != null)
+          throw e;
+      }
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
   }
 

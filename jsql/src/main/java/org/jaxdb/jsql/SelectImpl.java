@@ -32,8 +32,13 @@ import java.util.Map;
 import java.util.function.Predicate;
 
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.Dialect;
+import org.libj.sql.AuditConnection;
+import org.libj.sql.AuditStatement;
+import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.CollectionUtil;
+import org.libj.util.Throwables;
 
 final class SelectImpl {
   static final Predicate<Compilable> entitiesWithOwnerPredicate = t -> (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;
@@ -65,10 +70,12 @@ final class SelectImpl {
     }
   }
 
-  static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final Keyword<T> keyword) throws IOException, SQLException {
+  static <T extends type.Subject<?>>RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config, final Keyword<T> keyword) throws IOException, SQLException {
+    Connection connection = null;
+    Statement statement = null;
     try {
       final SelectCommand command = (SelectCommand)keyword.normalize();
-      final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
+      final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(command.getSchema(), dataSourceId, true);
       final DBVendor vendor = Schema.getDBVendor(connection);
 
       final Compilation compilation = new Compilation(command, vendor, Registry.isPrepared(command.getSchema()));
@@ -80,13 +87,15 @@ final class SelectImpl {
         compile(dataTypes, entity);
 
       final int columnOffset = compilation.skipFirstColumn() ? 2 : 1;
-      final ResultSet resultSet = compilation.executeQuery(connection);
-      final Statement statement = resultSet.getStatement();
+      final ResultSet resultSet = compilation.executeQuery(connection, config);
+      final Statement finalStatement = statement = resultSet.getStatement();
       final int noColumns = resultSet.getMetaData().getColumnCount() + 1 - columnOffset;
       return new RowIterator<T>() {
         private final Map<Class<? extends type.Entity>,type.Entity> prototypes = new HashMap<>();
         private final Map<type.Entity,type.Entity> cache = new HashMap<>();
+        private SQLException suppressed;
         private type.Entity currentTable;
+        private boolean endReached;
 
         @Override
         @SuppressWarnings({"null", "rawtypes", "unchecked"})
@@ -97,12 +106,17 @@ final class SelectImpl {
             return true;
           }
 
+          if (endReached)
+            return false;
+
           final type.Subject<?>[] row;
           int index;
           type.Entity entity;
           try {
-            if (!resultSet.next())
+            if (endReached = !resultSet.next()) {
+              suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
               return false;
+            }
 
             row = new type.Subject[select.entities.size()];
             index = 0;
@@ -140,8 +154,10 @@ final class SelectImpl {
               dataType.set(resultSet, i + columnOffset);
             }
           }
-          catch (final SQLException e) {
-            throw SQLExceptions.getStrongType(e);
+          catch (SQLException e) {
+            e = Throwables.addSuppressed(e, suppressed);
+            suppressed = null;
+            throw SQLExceptions.toStrongType(e);
           }
 
           if (entity != null) {
@@ -159,27 +175,29 @@ final class SelectImpl {
 
         @Override
         public void close() throws SQLException {
-          try {
-            resultSet.close();
-            statement.close();
-            if (transaction == null)
-              connection.close();
-          }
-          catch (final SQLException e) {
-            throw SQLExceptions.getStrongType(e);
-          }
-          finally {
-            prototypes.clear();
-            cache.clear();
-            currentTable = null;
-            dataTypes.clear();
-            rows.clear();
-          }
+          SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+          e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
+          if (transaction == null)
+            e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
+
+          prototypes.clear();
+          cache.clear();
+          currentTable = null;
+          dataTypes.clear();
+          rows.clear();
+          if (e != null)
+            throw SQLExceptions.toStrongType(e);
         }
       };
     }
-    catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+    catch (SQLException e) {
+      if (statement != null)
+        e = Throwables.addSuppressed(e, AuditStatement.close(statement));
+
+      if (transaction == null && connection != null)
+        e = Throwables.addSuppressed(e, AuditConnection.close(connection));
+
+      throw SQLExceptions.toStrongType(e);
     }
   }
 
@@ -197,17 +215,32 @@ final class SelectImpl {
 
       @Override
       public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
-        return SelectImpl.execute(null, dataSourceId, this);
+        return SelectImpl.execute(null, dataSourceId, null, this);
       }
 
       @Override
       public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
-        return SelectImpl.execute(transaction, transaction.getDataSourceId(), this);
+        return SelectImpl.execute(transaction, transaction.getDataSourceId(), null, this);
       }
 
       @Override
       public RowIterator<T> execute() throws IOException, SQLException {
-        return SelectImpl.execute(null, null, this);
+        return SelectImpl.execute(null, null, null, this);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+        return SelectImpl.execute(null, dataSourceId, config, this);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
+        return SelectImpl.execute(transaction, transaction.getDataSourceId(), config, this);
+      }
+
+      @Override
+      public RowIterator<T> execute(final QueryConfig config) throws IOException, SQLException {
+        return SelectImpl.execute(null, null, config, this);
       }
     }
 
@@ -398,101 +431,134 @@ final class SelectImpl {
         return clone;
       }
 
-      private RowIterator<T> execute(final Transaction transaction, final String dataSourceId) throws IOException, SQLException {
+      private RowIterator<T> execute(final Transaction transaction, final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
         if (entities.size() == 1) {
           final Compilable subject = entities.iterator().next();
+          Connection connection = null;
+          PreparedStatement statement = null;
           if (subject instanceof type.Entity) {
             try {
               final type.Entity entity = (type.Entity)subject;
-              final Connection connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema(), dataSourceId, true);
-              final DBVendor vendor = Schema.getDBVendor(connection);
+              final Connection finalConnection = connection = transaction != null ? transaction.getConnection() : Schema.getConnection(entity.schema(), dataSourceId, true);
+              final Dialect dialect = Schema.getDBVendor(connection).getDialect();
 
               final StringBuilder sql = new StringBuilder("SELECT ");
               final StringBuilder select = new StringBuilder();
               final StringBuilder where = new StringBuilder();
               for (final type.DataType<?> dataType : entity.column) {
+                final String name = dialect.quoteIdentifier(dataType.name);
                 if (dataType.primary)
-                  where.append(" AND ").append(vendor.getDialect().quoteIdentifier(dataType.name)).append(" = ?");
+                  where.append(" AND ").append(name).append(" = ?");
                 else
-                  select.append(", ").append(vendor.getDialect().quoteIdentifier(dataType.name));
+                  select.append(", ").append(name);
               }
 
               final type.Entity out = entity.newInstance();
-              sql.append(select.substring(2)).append(" FROM ").append(vendor.getDialect().quoteIdentifier(entity.name())).append(" WHERE ").append(where.substring(5));
-              final PreparedStatement statement = connection.prepareStatement(sql.toString());
+              sql.append(select.substring(2)).append(" FROM ").append(dialect.quoteIdentifier(entity.name()));
+              if (where.length() > 0)
+                sql.append(" WHERE ").append(where.substring(5));
+
+              final PreparedStatement finalStatement = statement = Compilation.configure(connection.prepareStatement(sql.toString()), config);
               int index = 0;
               for (final type.DataType<?> dataType : entity.column)
                 if (dataType.primary)
                   dataType.get(statement, ++index);
 
-              try (final ResultSet resultSet = statement.executeQuery()) {
-                return new RowIterator<T>() {
-                  @Override
-                  @SuppressWarnings({"rawtypes", "unchecked"})
-                  public boolean nextRow() throws SQLException {
-                    if (rowIndex + 1 < rows.size()) {
-                      ++rowIndex;
-                      resetEntities();
-                      return true;
-                    }
+              final ResultSet resultSet = statement.executeQuery();
+              return new RowIterator<T>() {
+                private SQLException suppressed;
+                private boolean endReached;
 
-                    try {
-                      if (!resultSet.next())
-                        return false;
-
-                      int index = 0;
-                      for (final type.DataType dataType : out.column)
-                        dataType.set(resultSet, ++index);
-                    }
-                    catch (final SQLException e) {
-                      throw SQLExceptions.getStrongType(e);
-                    }
-
-                    rows.add((T[])new type.Entity[] {out});
+                @Override
+                @SuppressWarnings({"rawtypes", "unchecked"})
+                public boolean nextRow() throws SQLException {
+                  if (rowIndex + 1 < rows.size()) {
                     ++rowIndex;
                     resetEntities();
                     return true;
                   }
 
-                  @Override
-                  public void close() throws SQLException {
-                    try {
-                      resultSet.close();
-                      statement.close();
-                      connection.close();
+                  if (endReached)
+                    return false;
+
+                  try {
+                    if (endReached = !resultSet.next()) {
+                      suppressed = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+                      return false;
                     }
-                    catch (final SQLException e) {
-                      throw SQLExceptions.getStrongType(e);
-                    }
-                    finally {
-                      rows.clear();
-                    }
+
+                    int index = 0;
+                    for (final type.DataType dataType : out.column)
+                      dataType.set(resultSet, ++index);
                   }
-                };
-              }
+                  catch (SQLException e) {
+                    e = Throwables.addSuppressed(e, suppressed);
+                    suppressed = null;
+                    throw SQLExceptions.toStrongType(e);
+                  }
+
+                  rows.add((T[])new type.Entity[] {out});
+                  ++rowIndex;
+                  resetEntities();
+                  return true;
+                }
+
+                @Override
+                public void close() throws SQLException {
+                  SQLException e = Throwables.addSuppressed(suppressed, ResultSets.close(resultSet));
+                  e = Throwables.addSuppressed(e, AuditStatement.close(finalStatement));
+                  if (transaction == null)
+                    e = Throwables.addSuppressed(e, AuditConnection.close(finalConnection));
+
+                  rows.clear();
+                  if (e != null)
+                    throw SQLExceptions.toStrongType(e);
+                }
+              };
             }
-            catch (final SQLException e) {
-              throw SQLExceptions.getStrongType(e);
+            catch (SQLException e) {
+              if (statement != null)
+                e = Throwables.addSuppressed(e, AuditStatement.close(statement));
+
+              if (transaction == null && connection != null)
+                e = Throwables.addSuppressed(e, AuditConnection.close(connection));
+
+              throw SQLExceptions.toStrongType(e);
             }
           }
         }
 
-        return SelectImpl.execute(transaction, dataSourceId, this);
+        return SelectImpl.execute(transaction, dataSourceId, config, this);
       }
 
       @Override
       public final RowIterator<T> execute(final String dataSourceId) throws IOException, SQLException {
-        return execute(null, dataSourceId);
+        return execute(null, dataSourceId, null);
       }
 
       @Override
       public final RowIterator<T> execute(final Transaction transaction) throws IOException, SQLException {
-        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null);
+        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, null);
       }
 
       @Override
       public RowIterator<T> execute() throws IOException, SQLException {
-        return execute(null, null);
+        return execute(null, null, null);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final String dataSourceId, final QueryConfig config) throws IOException, SQLException {
+        return execute(null, dataSourceId, config);
+      }
+
+      @Override
+      public final RowIterator<T> execute(final Transaction transaction, final QueryConfig config) throws IOException, SQLException {
+        return execute(transaction, transaction != null ? transaction.getDataSourceId() : null, config);
+      }
+
+      @Override
+      public RowIterator<T> execute(final QueryConfig config) throws IOException, SQLException {
+        return execute(null, null, config);
       }
     }
 

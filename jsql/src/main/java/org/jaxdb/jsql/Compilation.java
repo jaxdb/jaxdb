@@ -21,6 +21,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -142,69 +143,23 @@ final class Compilation {
       this.afterExecute.accept(success);
   }
 
-  ResultSet executeQuery(final Connection connection) throws IOException, SQLException {
+  static <T extends Statement>T configure(final T statement, final QueryConfig config) throws SQLException {
+    if (config != null)
+      config.apply(statement);
+
+    return statement;
+  }
+
+  ResultSet executeQuery(final Connection connection, final QueryConfig config) throws IOException, SQLException {
     if (prepared) {
-      final PreparedStatement statement = connection.prepareStatement(builder.toString());
+      final PreparedStatement statement = configure(connection.prepareStatement(builder.toString()), config);
+
       for (int i = 0; i < parameters.size(); ++i)
         parameters.get(i).get(statement, i + 1);
 
       return statement.executeQuery();
     }
 
-    return connection.createStatement().executeQuery(builder.toString());
-  }
-
-  int execute(final Connection connection) throws IOException, SQLException {
-    if (prepared) {
-      // FIXME: Implement batching.
-//      if (batching) {
-//        final IntArrayList results = new IntArrayList(statements.size());
-//        PreparedStatement jdbcStatement = null;
-//        String last = null;
-//        for (int i = 0; i < statements.size(); ++i) {
-//          final Statement statement = statements.get(i);
-//          if (!statement.sql.equals(last)) {
-//            if (jdbcStatement != null)
-//              results.addAll(jdbcStatement.executeBatch());
-//
-//            jdbcStatement = connection.prepareStatement(statement.sql);
-//            last = statement.sql;
-//          }
-//
-//          for (int j = 0; j < statement.parameters.size(); ++j)
-//            statement.parameters.get(j).get(jdbcStatement, j + 1);
-//
-//          jdbcStatement.addBatch();
-//        }
-//
-//        if (jdbcStatement != null)
-//          results.addAll(jdbcStatement.executeBatch());
-//
-//        return results.toArray();
-//      }
-
-        final PreparedStatement jdbcStatement = connection.prepareStatement(builder.toString());
-        for (int j = 0; j < parameters.size(); ++j)
-          parameters.get(j).get(jdbcStatement, j + 1);
-
-      return jdbcStatement.executeUpdate();
-    }
-
-    // FIXME: Implement batching.
-//    if (batching) {
-//      final java.sql.Statement jdbcStatement = connection.createStatement();
-//      for (int i = 0; i < statements.size(); ++i) {
-//        final Statement statement = statements.get(i);
-//        jdbcStatement.addBatch(statement.sql.toString());
-//      }
-//
-//      return jdbcStatement.executeBatch();
-//    }
-
-//    final Statement batch = statements.get(i);
-    return connection.createStatement().executeUpdate(builder.toString());
-//    }
-//
-//    return results;
+    return configure(connection.createStatement(), config).executeQuery(builder.toString());
   }
 }

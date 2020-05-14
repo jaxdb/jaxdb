@@ -54,7 +54,7 @@ public abstract class Schema {
         return DBVendor.POSTGRE_SQL;
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
 
     return null;
@@ -92,7 +92,7 @@ public abstract class Schema {
       return connection;
     }
     catch (final SQLException e) {
-      throw SQLExceptions.getStrongType(e);
+      throw SQLExceptions.toStrongType(e);
     }
   }
 }
