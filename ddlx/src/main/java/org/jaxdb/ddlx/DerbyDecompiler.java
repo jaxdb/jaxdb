@@ -54,7 +54,7 @@ import org.libj.lang.Strings;
 
 final class DerbyDecompiler extends Decompiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 

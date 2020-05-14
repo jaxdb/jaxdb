@@ -24,7 +24,7 @@ public class PostgreSQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(PostgreSQLDialect.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
@@ -175,6 +175,6 @@ public class PostgreSQLDialect extends Dialect {
 
   @Override
   public String declareEnum(final $Enum type) {
-    return Dialect.getTypeName(type);
+    return q(Dialect.getTypeName(type));
   }
 }

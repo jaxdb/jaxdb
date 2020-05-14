@@ -36,7 +36,7 @@ final class OracleCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(OracleCompiler.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 

@@ -43,13 +43,19 @@ final class OracleCompiler extends Compiler {
     catch (final ClassNotFoundException | IllegalAccessException | NoSuchMethodException e) {
       throw new ExceptionInInitializerError(e);
     }
-    catch (final InstantiationException | InvocationTargetException e) {
-      throw new IllegalStateException(e);
+    catch (final InstantiationException e) {
+      throw new RuntimeException(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      throw new RuntimeException(e.getCause());
     }
   }
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 

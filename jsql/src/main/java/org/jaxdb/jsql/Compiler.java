@@ -43,6 +43,7 @@ import java.util.Set;
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.jaxdb.vendor.DBVendorSpecific;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
 import org.libj.lang.PackageLoader;
@@ -51,7 +52,7 @@ import org.libj.util.Hexadecimal;
 import org.libj.util.IdentityHashSet;
 import org.libj.util.Numbers;
 
-abstract class Compiler {
+abstract class Compiler extends DBVendorSpecific {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -64,8 +65,14 @@ abstract class Compiler {
         }
       }
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      throw new ExceptionInInitializerError(e.getCause());
     }
   }
 
@@ -138,7 +145,6 @@ abstract class Compiler {
     }
   }
 
-  abstract DBVendor getVendor();
   abstract void onRegister(Connection connection) throws SQLException;
   abstract void onConnect(Connection connection) throws SQLException;
 

@@ -101,7 +101,7 @@ final class DerbyCompiler extends Compiler {
   }
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.DERBY;
   }
 

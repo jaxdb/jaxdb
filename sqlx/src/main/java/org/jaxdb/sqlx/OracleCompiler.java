@@ -22,7 +22,7 @@ import org.libj.util.Hexadecimal;
 
 final class OracleCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 

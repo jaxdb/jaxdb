@@ -23,10 +23,11 @@ import java.util.Set;
 
 import org.jaxdb.ddlx.dt;
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DBVendorSpecific;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
 
-abstract class Compiler {
+abstract class Compiler extends DBVendorSpecific {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -39,8 +40,14 @@ abstract class Compiler {
         }
       }
     }
-    catch (final IllegalAccessException | InstantiationException | InvocationTargetException | IOException | NoSuchMethodException | PackageNotFoundException e) {
+    catch (final IllegalAccessException | InstantiationException | IOException | NoSuchMethodException | PackageNotFoundException e) {
       throw new ExceptionInInitializerError(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      throw new ExceptionInInitializerError(e.getCause());
     }
   }
 
@@ -51,8 +58,6 @@ abstract class Compiler {
 
     return compiler;
   }
-
-  abstract DBVendor getVendor();
 
   String compile(final dt.BIGINT value) {
     return value.toString();

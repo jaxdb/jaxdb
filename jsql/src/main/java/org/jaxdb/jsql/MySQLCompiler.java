@@ -30,7 +30,7 @@ import org.libj.util.Temporals;
 
 class MySQLCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 

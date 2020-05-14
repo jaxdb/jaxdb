@@ -1,4 +1,4 @@
-/* Copyright (c) 2017 JAX-DB
+/* Copyright (c) 2020 JAX-DB
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -14,13 +14,18 @@
  * program. If not, see <http://opensource.org/licenses/MIT/>.
  */
 
-package org.jaxdb.sqlx;
+package org.jaxdb.vendor;
 
-import org.jaxdb.vendor.DBVendor;
-
-final class MariaDBCompiler extends MySQLCompiler {
-  @Override
-  public DBVendor getVendor() {
-    return DBVendor.MARIA_DB;
+public abstract class DBVendorSpecific {
+  /**
+   * Quote a named identifier.
+   *
+   * @param identifier The identifier.
+   * @return The quoted identifier.
+   */
+  protected final String q(final String identifier) {
+    return getVendor().getDialect().quoteIdentifier(identifier);
   }
+
+  public abstract DBVendor getVendor();
 }

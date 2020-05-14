@@ -41,7 +41,7 @@ final class SQLiteCompiler extends Compiler {
   private static final Pattern dateTimePattern = Pattern.compile("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{1,7})?");
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 

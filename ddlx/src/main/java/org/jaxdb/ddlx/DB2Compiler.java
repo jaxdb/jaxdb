@@ -34,7 +34,7 @@ class DB2Compiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(DB2Compiler.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.DB2;
   }
 

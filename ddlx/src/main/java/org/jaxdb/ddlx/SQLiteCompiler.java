@@ -35,7 +35,7 @@ final class SQLiteCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(SQLiteCompiler.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 

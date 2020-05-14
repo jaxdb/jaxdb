@@ -29,7 +29,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 
 class MySQLCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 

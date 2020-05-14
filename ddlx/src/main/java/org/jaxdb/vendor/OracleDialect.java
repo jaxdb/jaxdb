@@ -22,7 +22,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
 
 public class OracleDialect extends Dialect {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.ORACLE;
   }
 

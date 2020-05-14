@@ -23,9 +23,9 @@ import java.sql.SQLException;
 import org.jaxdb.vendor.DBVendor;
 import org.libj.sql.AuditConnection;
 
-// CREATE USER jaxdb;
 // CREATE DATABASE jaxdb;
-// GRANT ALL ON jaxdb.* TO 'jaxdb'@'%' IDENTIFIED BY 'jaxdb';
+// CREATE USER jaxdb IDENTIFIED BY 'jaxdb';
+// GRANT ALL ON jaxdb.* TO 'jaxdb'@'%';
 public class MySQL extends Vendor {
   @Override
   public Connection getConnection() throws SQLException {

@@ -16,6 +16,7 @@
 
 package org.jaxdb.vendor;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Enum;
@@ -26,7 +27,7 @@ public class MySQLDialect extends Dialect {
   static final Logger logger = LoggerFactory.getLogger(MySQLDialect.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.MY_SQL;
   }
 
@@ -203,9 +204,14 @@ public class MySQLDialect extends Dialect {
 
     final List<String> enums = Dialect.parseEnum(type.getValues$().text());
     final StringBuilder builder = new StringBuilder();
-    for (final String value : enums)
-      builder.append(", '").append(value).append('\'');
+    final Iterator<String> iterator = enums.iterator();
+    for (int i = 0; iterator.hasNext(); ++i) {
+      if (i > 0)
+        builder.append(", ");
 
-    return "ENUM(" + builder.append(')').substring(2);
+      builder.append('\'').append(iterator.next()).append('\'');
+    }
+
+    return "ENUM(" + builder.append(')');
   }
 }

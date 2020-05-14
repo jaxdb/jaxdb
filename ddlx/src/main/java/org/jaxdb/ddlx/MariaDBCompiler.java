@@ -20,7 +20,7 @@ import org.jaxdb.vendor.DBVendor;
 
 final class MariaDBCompiler extends MySQLCompiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.MARIA_DB;
   }
 }

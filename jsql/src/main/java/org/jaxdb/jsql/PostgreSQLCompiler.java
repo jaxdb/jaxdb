@@ -29,8 +29,6 @@ import java.sql.Statement;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
 
-import org.jaxdb.jsql.type.BLOB;
-import org.jaxdb.jsql.type.ENUM;
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
 import org.libj.io.Readers;
@@ -38,7 +36,7 @@ import org.libj.io.Streams;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 
@@ -188,15 +186,15 @@ final class PostgreSQLCompiler extends Compiler {
 
   @Override
   String getPreparedStatementMark(final type.DataType<?> dataType) {
-    if (!(dataType instanceof ENUM))
+    if (!(dataType instanceof type.ENUM))
       return "?";
 
     final EntityEnum.Spec spec = dataType.type().getAnnotation(EntityEnum.Spec.class);
-    return "?::" + Dialect.getTypeName(spec.table(), spec.column());
+    return "?::" + q(Dialect.getTypeName(spec.table(), spec.column()));
   }
 
   @Override
-  String compile(final BLOB dataType) throws IOException {
+  String compile(final type.BLOB dataType) throws IOException {
     try (final InputStream in = dataType.get()) {
       if (in == null)
         return "NULL";

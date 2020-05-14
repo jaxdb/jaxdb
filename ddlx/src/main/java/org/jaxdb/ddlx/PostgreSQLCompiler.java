@@ -37,7 +37,7 @@ final class PostgreSQLCompiler extends Compiler {
   private static final Logger logger = LoggerFactory.getLogger(PostgreSQLCompiler.class);
 
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 

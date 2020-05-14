@@ -30,7 +30,7 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 
 class SQLiteDecompiler extends Decompiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 

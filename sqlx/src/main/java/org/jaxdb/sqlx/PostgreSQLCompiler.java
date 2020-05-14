@@ -21,7 +21,7 @@ import org.jaxdb.vendor.DBVendor;
 
 final class PostgreSQLCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.POSTGRE_SQL;
   }
 

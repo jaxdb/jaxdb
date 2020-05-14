@@ -21,6 +21,8 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.libj.lang.Strings;
+
 public final class DBVendor {
   private static int index;
   private static final DBVendor[] instances = new DBVendor[7];
@@ -41,7 +43,7 @@ public final class DBVendor {
   public static DBVendor valueOf(final DatabaseMetaData metaData) throws SQLException {
     final String vendorName = metaData.getDatabaseProductName().toLowerCase();
     for (final DBVendor vendor : DBVendor.values())
-      if (vendorName.contains(vendor.name.toLowerCase()))
+      if (Strings.containsIgnoreCase(vendorName, vendor.name))
         return vendor;
 
     throw new UnsupportedOperationException("Unsupported DB vendor: " + metaData.getDatabaseProductName());

@@ -29,7 +29,7 @@ import org.jaxsb.runtime.Binding;
 import org.libj.util.DecimalFormatter;
 import org.w3.www._2001.XMLSchema.yAA.$AnySimpleType;
 
-public abstract class Dialect {
+public abstract class Dialect extends DBVendorSpecific {
   private abstract static class BindingProxy extends Binding {
     private static final long serialVersionUID = -5727439225507675790L;
 
@@ -85,8 +85,6 @@ public abstract class Dialect {
   public static final ThreadLocal<DecimalFormat> NUMBER_FORMAT = DecimalFormatter.createDecimalFormat("################.################;-################.################");
   public static final DateTimeFormatter TIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
   public static final DateTimeFormatter DATETIME_FORMAT = new DateTimeFormatterBuilder().appendPattern("yyyy-MM-dd H:m:s").appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true).toFormatter();
-
-  abstract DBVendor getVendor();
 
   /**
    * Quote a named identifier.

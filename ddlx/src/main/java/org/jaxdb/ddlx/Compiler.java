@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.jaxdb.vendor.DBVendor;
+import org.jaxdb.vendor.DBVendorSpecific;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Bigint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Binary;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Blob;
@@ -61,7 +62,7 @@ import org.libj.lang.PackageNotFoundException;
 import org.libj.util.Numbers;
 import org.libj.util.function.Throwing;
 
-abstract class Compiler {
+abstract class Compiler extends DBVendorSpecific {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];
 
   static {
@@ -92,21 +93,9 @@ abstract class Compiler {
     return column.getGenerateOnInsert$() != null && $Integer.GenerateOnInsert$.AUTO_5FINCREMENT.text().equals(column.getGenerateOnInsert$().text());
   }
 
-  abstract DBVendor getVendor();
-
   abstract CreateStatement createIndex(boolean unique, String indexName, $Index.Type$ type, String tableName, $Named ... columns);
 
   abstract void init(Connection connection) throws SQLException;
-
-  /**
-   * Quote a named identifier.
-   *
-   * @param identifier The identifier.
-   * @return The quoted identifier.
-   */
-  final String q(final String identifier) {
-    return getVendor().getDialect().quoteIdentifier(identifier);
-  }
 
   /**
    * Create a "SchemaIfNotExists" {@link CreateStatement} for the specified
@@ -474,6 +463,9 @@ abstract class Compiler {
       final $Named primaryColumn = iterator.next();
       final String primaryKeyColumn = primaryColumn.getName$().text();
       final $Column column = columnNameToColumn.get(primaryKeyColumn);
+      if (column == null)
+        throw new GeneratorExecutionException("PRIMARY KEY column " + table.getName$().text() + "." + primaryKeyColumn + " is not defined");
+
       if (column.getNull$().text())
         throw new GeneratorExecutionException("Column " + column.getName$() + " must be NOT NULL to be a PRIMARY KEY");
 

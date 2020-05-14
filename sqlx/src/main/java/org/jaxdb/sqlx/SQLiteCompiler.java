@@ -21,7 +21,7 @@ import org.jaxdb.vendor.DBVendor;
 
 final class SQLiteCompiler extends Compiler {
   @Override
-  DBVendor getVendor() {
+  public DBVendor getVendor() {
     return DBVendor.SQLITE;
   }
 
