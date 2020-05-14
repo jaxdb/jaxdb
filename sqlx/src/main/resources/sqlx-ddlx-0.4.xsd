@@ -182,28 +182,7 @@
 
   <xs:complexType name="schema">
     <xs:sequence>
-      <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded">
-        <!--<xs:unique name="primaryKey">
-          <xs:selector xpath="*"/>
-          <xs:field xpath="@primary"/>
-        </xs:unique>-->
-        <xs:key name="keyColumnName">
-          <xs:selector xpath="./ddlx:column"/>
-          <xs:field xpath="@name"/>
-        </xs:key>
-        <xs:keyref name="keyrefColumnName1" refer="ddlx:keyColumnName">
-          <xs:selector xpath="./ddlx:constraints/ddlx:autoIncrement | ./ddlx:constraints/ddlx:unique/ddlx:column"/>
-          <xs:field xpath="@column | @name"/>
-        </xs:keyref>
-        <xs:keyref name="keyrefColumnName2" refer="ddlx:keyColumnName">
-          <xs:selector xpath="./ddlx:constraints/ddlx:primaryKey/ddlx:column | ./ddlx:constraints/ddlx:foreignKey/ddlx:column | ./ddlx:indexes/ddlx:index/ddlx:column"/>
-          <xs:field xpath="@name"/>
-        </xs:keyref>
-        <xs:keyref name="keyrefColumnName3" refer="ddlx:keyColumnName">
-          <xs:selector xpath="./ddlx:constraints/ddlx:check | ./ddlx:constraints/ddlx:check/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or| ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or/ddlx:and | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:and/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:and/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:and/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:and/ddlx:or/ddlx:or/ddlx:or/ddlx:or | ./ddlx:constraints/ddlx:check/ddlx:or/ddlx:or/ddlx:or"/>
-          <xs:field xpath="ddlx:column"/>
-        </xs:keyref>
-      </xs:element>
+      <xs:element name="table" type="sqlx:table" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
