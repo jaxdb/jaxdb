@@ -35,6 +35,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Objects;
 import java.util.Set;
 
@@ -1853,14 +1854,20 @@ public final class type {
 
   public static final class ENUM<T extends Enum<?> & EntityEnum> extends Textual<T> implements kind.ENUM<T> {
     public static final ENUM<?> NULL = new ENUM<>();
+    private static final IdentityHashMap<Class<?>,Short> typeToLength = new IdentityHashMap<>();
 
     private final Class<T> enumType;
 
     private static short calcEnumLength(final Class<?> enumType) {
+      final Short cached = typeToLength.get(enumType);
+      if (cached != null)
+        return cached;
+
       short length = 0;
       for (final Object constant : enumType.getEnumConstants())
         length = (short)Math.max(length, constant.toString().length());
 
+      typeToLength.put(enumType, length);
       return length;
     }
 
