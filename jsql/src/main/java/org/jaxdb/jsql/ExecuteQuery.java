@@ -23,4 +23,8 @@ public interface ExecuteQuery<T extends type.Subject<?>> {
   RowIterator<T> execute(String dataSourceId) throws IOException, SQLException;
   RowIterator<T> execute(Transaction transaction) throws IOException, SQLException;
   RowIterator<T> execute() throws IOException, SQLException;
+
+  RowIterator<T> execute(String dataSourceId, QueryConfig config) throws IOException, SQLException;
+  RowIterator<T> execute(Transaction transaction, QueryConfig config) throws IOException, SQLException;
+  RowIterator<T> execute(QueryConfig config) throws IOException, SQLException;
 }
