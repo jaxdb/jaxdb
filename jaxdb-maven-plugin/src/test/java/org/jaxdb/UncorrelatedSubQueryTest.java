@@ -66,8 +66,8 @@ public abstract class UncorrelatedSubQueryTest {
           SUB(t.decimalType, SELECT(AVG(t.intType)).FROM(t)),
           ADD(t.bigintType, SELECT(MAX(t.floatType)).FROM(t))
         ).
-        FROM(t).
-        execute(transaction);
+        FROM(t)
+          .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
     }

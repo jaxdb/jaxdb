@@ -61,8 +61,8 @@ public abstract class CorrelatedSubQueryTest {
         AS(c2)).
       WHERE(AND(
         LT(p.purchaseDate, p.requiredDate),
-        EQ(p.customerNumber, c2.customerNumber))).
-      execute()) {
+        EQ(p.customerNumber, c2.customerNumber)))
+          .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
       assertTrue(rows.nextEntity() instanceof classicmodels.Customer);
@@ -82,8 +82,8 @@ public abstract class CorrelatedSubQueryTest {
         AS(s)).
       FROM(p).
       WHERE(
-        LT(p.purchaseDate, p.requiredDate)).
-      execute()) {
+        LT(p.purchaseDate, p.requiredDate))
+          .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity() instanceof classicmodels.Purchase);
     }

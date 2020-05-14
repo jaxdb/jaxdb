@@ -67,8 +67,8 @@ public abstract class NumericValueExpressionTest {
         LT(ADD(p.msrp, p.price), 20),
         GT(SUB(p.msrp, p.quantityInStock), 10),
         EQ(MUL(p.msrp, ADD(p.msrp, p.price)), 40),
-        EQ(DIV(p.msrp, SUB(p.msrp, p.quantityInStock)), 7))).
-      execute()) {
+        EQ(DIV(p.msrp, SUB(p.msrp, p.quantityInStock)), 7)))
+          .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Long.valueOf(rows.nextEntity().get().longValue() - 5), Long.valueOf(rows.nextEntity().get().longValue() + 5));
       assertEquals(Long.valueOf(rows.nextEntity().get().longValue() / 2), Long.valueOf(rows.nextEntity().get().longValue() * 2));
@@ -218,8 +218,8 @@ public abstract class NumericValueExpressionTest {
       final Transaction transaction = new TestTransaction(world.class);
       final RowIterator<world.City> rows =
         SELECT(c).
-        FROM(c).
-        execute();
+        FROM(c)
+          .execute();
     ) {
       assertTrue(rows.nextRow());
       c = rows.nextEntity();

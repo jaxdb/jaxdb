@@ -146,7 +146,10 @@ public abstract class InsertTest {
       DELETE(b).execute(transaction);
 
       final types.Type t = new types.Type();
-      final int results = INSERT(b).VALUES(SELECT(t).FROM(t)).execute(transaction);
+      final int results =
+        INSERT(b).
+        VALUES(SELECT(t).FROM(t))
+          .execute(transaction);
       assertTrue(results > 999);
     }
   }
@@ -165,12 +168,11 @@ public abstract class InsertTest {
         VALUES(
           SELECT(t1.binaryType, t2.charType, t3.enumType).
           FROM(t1, t2, t3).
-          WHERE(
-            AND(
-              EQ(t1.charType, t2.charType),
-              EQ(t2.tinyintType, t3.tinyintType),
-              EQ(t3.booleanType, t1.booleanType)))).
-        execute(transaction);
+          WHERE(AND(
+            EQ(t1.charType, t2.charType),
+            EQ(t2.tinyintType, t3.tinyintType),
+            EQ(t3.booleanType, t1.booleanType))))
+        .execute(transaction);
       assertTrue(results > 999);
     }
   }

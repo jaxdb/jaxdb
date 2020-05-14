@@ -62,8 +62,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.Product> rows =
         SELECT(p).
         FROM(p).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
       p = rows.nextEntity();
@@ -83,8 +83,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.Product> rows1 =
         SELECT(p).
         FROM(p).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
     ) {
       assertTrue(rows1.nextRow());
       p = rows1.nextEntity();
@@ -93,8 +93,8 @@ public abstract class UpdateTest {
       final RowIterator<classicmodels.ProductLine> rows2 =
         SELECT(pl).
         FROM(pl).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
 
       assertTrue(rows2.nextRow());
       pl = rows2.nextEntity();
@@ -120,8 +120,8 @@ public abstract class UpdateTest {
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
@@ -129,8 +129,8 @@ public abstract class UpdateTest {
       final int results =
         UPDATE(t).
         SET(t.enumType, types.Type.EnumType.FOUR).
-        WHERE(EQ(t.enumType, types.Type.EnumType.ONE)).
-        execute(transaction);
+        WHERE(EQ(t.enumType, types.Type.EnumType.ONE))
+          .execute(transaction);
 
       assertTrue(results > 0);
     }
@@ -144,16 +144,16 @@ public abstract class UpdateTest {
       final RowIterator<types.Type> rows =
         SELECT(t).
         FROM(t).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
       t = rows.nextEntity();
 
       final int results =
         UPDATE(t).
-        SET(t.datetimeType, LocalDateTime.now()).
-        execute(transaction);
+        SET(t.datetimeType, LocalDateTime.now())
+          .execute(transaction);
 
       assertTrue(results > 300);
     }

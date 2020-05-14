@@ -56,11 +56,10 @@ public abstract class QuantifiedComparisonPredicateTest {
       SELECT(COUNT()).
       FROM(c).
       WHERE(
-        LT(c.creditLimit,
-          ALL(SELECT(COUNT()).
-            FROM(p).
-            WHERE(NE(p.purchaseDate, p.shippedDate))))).
-      execute()) {
+        LT(c.creditLimit, ALL(SELECT(COUNT()).
+          FROM(p).
+          WHERE(NE(p.purchaseDate, p.shippedDate)))))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Integer.valueOf(24), rows.nextEntity().get());
     }
@@ -75,11 +74,10 @@ public abstract class QuantifiedComparisonPredicateTest {
       SELECT(COUNT()).
       FROM(c).
       WHERE(
-        GT(c.customerNumber,
-          ANY(SELECT(COUNT()).
-            FROM(p).
-            WHERE(GT(p.purchaseDate, p.shippedDate))))).
-      execute()) {
+        GT(c.customerNumber, ANY(SELECT(COUNT()).
+          FROM(p).
+          WHERE(GT(p.purchaseDate, p.shippedDate)))))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 100);
     }
@@ -94,11 +92,10 @@ public abstract class QuantifiedComparisonPredicateTest {
       SELECT(COUNT()).
       FROM(c).
       WHERE(
-        GT(c.customerNumber,
-          SOME(SELECT(COUNT()).
-            FROM(p).
-            WHERE(LT(p.purchaseDate, p.shippedDate))))).
-      execute()) {
+        GT(c.customerNumber, SOME(SELECT(COUNT()).
+          FROM(p).
+          WHERE(LT(p.purchaseDate, p.shippedDate)))))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 50);
     }

@@ -29,7 +29,7 @@ import org.jaxdb.ddlx.runner.PostgreSQL;
 import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.jsql.RowIterator;
 import org.jaxdb.jsql.classicmodels;
-import org.jaxdb.jsql.type.BOOLEAN;
+import org.jaxdb.jsql.type;
 import org.jaxdb.runner.VendorSchemaRunner;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,27 +51,27 @@ public abstract class ExistsPredicateTest {
   public void testExistsPredicate() throws IOException, SQLException {
     final classicmodels.Purchase p = new classicmodels.Purchase();
     final classicmodels.Customer c = new classicmodels.Customer();
-    try (final RowIterator<BOOLEAN> rows =
+    try (final RowIterator<type.BOOLEAN> rows =
       SELECT(EXISTS(
         SELECT(p).
         FROM(p).
         WHERE(EQ(c.customerNumber, p.customerNumber))),
         SELECT(EXISTS(
-            SELECT(p).
-            FROM(p).
-            WHERE(EQ(c.customerNumber, p.customerNumber)))).
-          FROM(c).
-          WHERE(EXISTS(
-            SELECT(p).
-            FROM(p).
-            WHERE(EQ(c.customerNumber, p.customerNumber)))).
-            LIMIT(1)).
+          SELECT(p).
+          FROM(p).
+          WHERE(EQ(c.customerNumber, p.customerNumber)))).
+        FROM(c).
+        WHERE(EXISTS(
+          SELECT(p).
+          FROM(p).
+          WHERE(EQ(c.customerNumber, p.customerNumber)))).
+          LIMIT(1)).
       FROM(c).
       WHERE(EXISTS(
         SELECT(p).
         FROM(p).
-        WHERE(EQ(c.customerNumber, p.customerNumber)))).
-      execute()) {
+        WHERE(EQ(c.customerNumber, p.customerNumber))))
+          .execute()) {
       for (int i = 0; i < 98; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());

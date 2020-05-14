@@ -57,8 +57,8 @@ public abstract class CountFunctionTest {
         COUNT(o.territory),
         COUNT.DISTINCT(o.territory),
         COUNT(o.territory)).
-      FROM(o).
-      execute()) {
+      FROM(o)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Integer.valueOf(7), rows.nextEntity().get());
       assertEquals(Integer.valueOf(7), rows.nextEntity().get());

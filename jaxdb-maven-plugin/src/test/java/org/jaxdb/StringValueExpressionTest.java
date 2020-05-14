@@ -105,8 +105,8 @@ public abstract class StringValueExpressionTest {
         CONCAT(o.country, "-"),
         CONCAT("-", o.country),
         CONCAT("-", o.country, "-")).
-      FROM(o).
-      execute()) {
+      FROM(o)
+        .execute()) {
       assertTrue(rows.nextRow());
 
       // Char/Enum
@@ -198,8 +198,8 @@ public abstract class StringValueExpressionTest {
         UPPER(o.city),
         LOWER("CITY"),
         UPPER("city")).
-      FROM(o).
-      execute()) {
+      FROM(o)
+        .execute()) {
       assertTrue(rows.nextRow());
 
       assertEquals("san francisco", rows.nextEntity().get());

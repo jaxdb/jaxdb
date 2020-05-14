@@ -55,8 +55,8 @@ public abstract class BetweenPredicateTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
       FROM(p).
-      WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
-      execute()) {
+      WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))
+        .execute()) {
       Assert.assertTrue(rows.nextRow());
       Assert.assertEquals(Boolean.TRUE, rows.nextEntity().get());
     }
@@ -68,8 +68,8 @@ public abstract class BetweenPredicateTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(SELECT(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)).
         FROM(p).
-        WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate))).
-      execute()) {
+        WHERE(NOT.BETWEEN(p.shippedDate, p.purchaseDate, p.requiredDate)))
+          .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Boolean.TRUE, rows.nextEntity().get());
     }
@@ -81,8 +81,8 @@ public abstract class BetweenPredicateTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.msrp, p.price, 100)).
       FROM(p).
-      WHERE(BETWEEN(p.msrp, p.price, 100)).
-      execute()) {
+      WHERE(BETWEEN(p.msrp, p.price, 100))
+        .execute()) {
       for (int i = 0; i < 59; ++i) {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().get());
@@ -96,8 +96,8 @@ public abstract class BetweenPredicateTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.scale, "a", "b")).
       FROM(p).
-      WHERE(BETWEEN(p.scale, "a", "b")).
-      execute()) {
+      WHERE(BETWEEN(p.scale, "a", "b"))
+        .execute()) {
       assertFalse(rows.nextRow());
     }
   }
@@ -108,8 +108,8 @@ public abstract class BetweenPredicateTest {
     try (final RowIterator<type.BOOLEAN> rows =
       SELECT(BETWEEN(p.quantityInStock, 500, 1000)).
       FROM(p).
-      WHERE(BETWEEN(p.quantityInStock, 500, 1000)).
-      execute()) {
+      WHERE(BETWEEN(p.quantityInStock, 500, 1000))
+        .execute()) {
       for (int i = 0; i < 7; ++i) {
         assertTrue(rows.nextRow());
         assertEquals(Boolean.TRUE, rows.nextEntity().get());

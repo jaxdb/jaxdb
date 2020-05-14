@@ -59,8 +59,8 @@ public abstract class InPredicateTest {
         WHERE(IN(p.productLine, "Ships", "Planes", "Trains")).
         LIMIT(1)).
       FROM(p).
-      WHERE(IN(p.productLine, "Ships", "Planes", "Trains")).
-      execute()) {
+      WHERE(IN(p.productLine, "Ships", "Planes", "Trains"))
+        .execute()) {
       for (int i = 0; i < 24; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -80,8 +80,8 @@ public abstract class InPredicateTest {
         WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
         LIMIT(1)).
       FROM(p).
-      WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains")).
-      execute()) {
+      WHERE(NOT.IN(p.productLine, "Ships", "Planes", "Trains"))
+        .execute()) {
       for (int i = 0; i < 86; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -101,8 +101,8 @@ public abstract class InPredicateTest {
         WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p))).
         LIMIT(1)).
       FROM(p).
-      WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p))).
-      execute()) {
+      WHERE(IN(p.productLine, SELECT(p.productLine).FROM(p)))
+        .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -122,8 +122,8 @@ public abstract class InPredicateTest {
         WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
         LIMIT(1)).
       FROM(p).
-      WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p))).
-      execute()) {
+      WHERE(NOT.IN(p.code, SELECT(p.productLine).FROM(p)))
+        .execute()) {
       for (int i = 0; i < 110; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());

@@ -53,8 +53,8 @@ public abstract class QueryExpressionTest {
     final classicmodels.Office o = new classicmodels.Office();
     try (final RowIterator<classicmodels.Office> rows =
       SELECT(o).
-      FROM(o).
-      execute()) {
+      FROM(o)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals("100 Market Street", rows.nextEntity().address1.get());
       assertTrue(rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow() && rows.nextRow());
@@ -69,8 +69,8 @@ public abstract class QueryExpressionTest {
     final classicmodels.Customer c = new classicmodels.Customer();
     try (final RowIterator<classicmodels.Address> rows =
       SELECT(o, c).
-      FROM(o, c).
-      execute()) {
+      FROM(o, c)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals("100 Market Street", rows.nextEntity().address1.get());
       assertEquals("54, rue Royale", rows.nextEntity().address1.get());
@@ -86,8 +86,8 @@ public abstract class QueryExpressionTest {
       WHERE(AND(
         EQ(o.phone, 81332245000L),
         OR(GT(o.latitude, 20d),
-          LT(o.longitude, 100d)))).
-      execute()) {
+          LT(o.longitude, 100d))))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals("4-1 Kioicho", rows.nextEntity().get());
       assertEquals(35.6811759, ((BigDecimal)rows.nextEntity().get()).doubleValue(), 0.0000000001);

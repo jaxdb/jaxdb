@@ -64,8 +64,8 @@ public abstract class HavingClauseTest {
       WHERE(GT(p.price, 10)).
       GROUP_BY(p).
       HAVING(LT(d, 10)).
-      ORDER_BY(DESC(d)).
-      execute()) {
+      ORDER_BY(DESC(d))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(0.9995201585807313, rows.nextEntity().get().doubleValue(), 0.0000000001);

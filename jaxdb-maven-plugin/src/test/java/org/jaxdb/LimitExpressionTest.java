@@ -54,8 +54,8 @@ public abstract class LimitExpressionTest {
       SELECT(p.msrp, p.price).
       FROM(p).
       ORDER_BY(p.msrp, p.price).
-      LIMIT(3).
-      execute()) {
+      LIMIT(3)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(33.19, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(22.57, rows.nextEntity().get().doubleValue(), 0.0000000001);
@@ -76,8 +76,8 @@ public abstract class LimitExpressionTest {
       FROM(p).
       ORDER_BY(p.msrp, p.price).
       LIMIT(2).
-      OFFSET(1).
-      execute()) {
+      OFFSET(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(35.36, rows.nextEntity().get().doubleValue(), 0.0000000001);
       assertEquals(15.91, rows.nextEntity().get().doubleValue(), 0.0000000001);

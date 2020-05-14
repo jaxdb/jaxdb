@@ -101,8 +101,8 @@ public abstract class NumericFunctionStaticTest {
         ROUND(t.doubleType, 0)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = Math.round(rows.nextEntity().get());
       assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
@@ -118,8 +118,8 @@ public abstract class NumericFunctionStaticTest {
         ROUND(t.doubleType, 1)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = SafeMath.round(rows.nextEntity().get(), 1);
       assertEquals(expected, rows.nextEntity().get(), Math.ulp(expected) * 100);
@@ -135,8 +135,8 @@ public abstract class NumericFunctionStaticTest {
         SIGN(t.doubleType)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Math.signum(rows.nextEntity().get().doubleValue()), rows.nextEntity().get().intValue(), 0);
     }
@@ -151,8 +151,8 @@ public abstract class NumericFunctionStaticTest {
         FLOOR(t.doubleType)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = Math.floor(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -168,8 +168,8 @@ public abstract class NumericFunctionStaticTest {
         CEIL(t.doubleType)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.doubleType)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = Math.ceil(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -185,8 +185,8 @@ public abstract class NumericFunctionStaticTest {
         SQRT(t.doubleType)).
       FROM(t).
       WHERE(GT(t.doubleType, 10)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = Math.sqrt(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -202,8 +202,8 @@ public abstract class NumericFunctionStaticTest {
         SIN(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.sin(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -219,8 +219,8 @@ public abstract class NumericFunctionStaticTest {
         ASIN(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.asin(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -236,8 +236,8 @@ public abstract class NumericFunctionStaticTest {
         COS(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.cos(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -253,8 +253,8 @@ public abstract class NumericFunctionStaticTest {
         ACOS(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.acos(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -270,8 +270,8 @@ public abstract class NumericFunctionStaticTest {
         TAN(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.tan(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -287,8 +287,8 @@ public abstract class NumericFunctionStaticTest {
         ATAN(t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 1))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.atan(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -304,8 +304,8 @@ public abstract class NumericFunctionStaticTest {
         MOD(t.intType, 3)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % 3, rows.nextEntity().get().intValue());
     }
@@ -320,8 +320,8 @@ public abstract class NumericFunctionStaticTest {
         MOD(t.intType, -3)).
       FROM(t).
       WHERE(IS.NOT.NULL(t.intType)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % -3, rows.nextEntity().get().intValue());
     }
@@ -337,8 +337,8 @@ public abstract class NumericFunctionStaticTest {
         MOD(t.doubleType, t.intType)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), NE(t.intType, 0))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(rows.nextEntity().get().intValue() % rows.nextEntity().get().intValue(), rows.nextEntity().get().intValue());
     }
@@ -355,8 +355,8 @@ public abstract class NumericFunctionStaticTest {
         MOD(t.doubleType, 1.2)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % 1.2;
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
@@ -373,8 +373,8 @@ public abstract class NumericFunctionStaticTest {
         MOD(t.doubleType, -1.2)).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = rows.nextEntity().get().doubleValue() % -1.2;
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 1000);
@@ -391,9 +391,14 @@ public abstract class NumericFunctionStaticTest {
         t.floatType,
         MOD(t.doubleType, t.floatType)).
       FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), GT(ABS(t.floatType), 10), LT(ABS(t.floatType), 100), GT(ABS(t.doubleType), 10), LT(ABS(t.doubleType), 100))).
-      LIMIT(1).
-      execute()) {
+      WHERE(AND(
+        IS.NOT.NULL(t.doubleType),
+        GT(ABS(t.floatType), 10),
+        LT(ABS(t.floatType), 100),
+        GT(ABS(t.doubleType), 10),
+        LT(ABS(t.doubleType), 100))).
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       // FIXME: Is there something wrong with DMOD() for Derby?
       final double expected = rows.nextEntity().get().doubleValue() % rows.nextEntity().get().floatValue();
@@ -413,9 +418,11 @@ public abstract class NumericFunctionStaticTest {
         t.doubleType,
         EXP(MUL(t.doubleType, -1))).
       FROM(t).
-      WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1).
-      execute()) {
+      WHERE(AND(
+        IS.NOT.NULL(t.doubleType),
+        LT(ABS(t.doubleType), 100))).
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.exp(-rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -431,8 +438,8 @@ public abstract class NumericFunctionStaticTest {
         POW(t.doubleType, 3)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), 3);
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -448,8 +455,8 @@ public abstract class NumericFunctionStaticTest {
         POW(3, MUL(t.doubleType, -1))).
       FROM(t).
       WHERE(AND(IS.NOT.NULL(t.doubleType), LT(ABS(t.doubleType), 100))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(3, -rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -466,8 +473,8 @@ public abstract class NumericFunctionStaticTest {
         POW(t.doubleType, t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.doubleType, 0), LT(t.doubleType, 10))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.pow(rows.nextEntity().get().doubleValue(), rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -483,8 +490,8 @@ public abstract class NumericFunctionStaticTest {
         LOG(3, t.doubleType)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue()) / StrictMath.log(3);
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -500,8 +507,8 @@ public abstract class NumericFunctionStaticTest {
         LOG(t.doubleType, 3)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(3) / StrictMath.log(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -518,8 +525,8 @@ public abstract class NumericFunctionStaticTest {
         LOG(t.intType, t.doubleType)).
       FROM(t).
       WHERE(AND(GT(t.intType, 1), GT(t.doubleType, 0), GT(t.doubleType, 1), LT(t.doubleType, 10))).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue()) / StrictMath.log(rows.nextEntity().get().intValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -535,8 +542,8 @@ public abstract class NumericFunctionStaticTest {
         LN(t.doubleType)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -552,8 +559,8 @@ public abstract class NumericFunctionStaticTest {
         LOG2(t.doubleType)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log(rows.nextEntity().get().doubleValue()) / StrictMath.log(2);
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);
@@ -569,8 +576,8 @@ public abstract class NumericFunctionStaticTest {
         LOG10(t.doubleType)).
       FROM(t).
       WHERE(GT(t.doubleType, 0)).
-      LIMIT(1).
-      execute()) {
+      LIMIT(1)
+        .execute()) {
       assertTrue(rows.nextRow());
       final double expected = StrictMath.log10(rows.nextEntity().get().doubleValue());
       assertEquals(expected, rows.nextEntity().get().doubleValue(), Math.ulp(expected) * 100);

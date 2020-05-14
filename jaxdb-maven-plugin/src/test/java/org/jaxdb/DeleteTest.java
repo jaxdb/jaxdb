@@ -58,8 +58,8 @@ public abstract class DeleteTest {
       p.customerNumber.set(181);
 
       final int results =
-        DELETE(p).
-        execute(transaction);
+        DELETE(p)
+          .execute(transaction);
       assertEquals(1, results);
     }
   }
@@ -91,9 +91,8 @@ public abstract class DeleteTest {
       final classicmodels.Purchase p = new classicmodels.Purchase();
       final int results =
         DELETE(p).
-        WHERE(
-          EQ(p.purchaseDate, LocalDate.parse("2003-01-09"))).
-        execute(transaction);
+        WHERE(EQ(p.purchaseDate, LocalDate.parse("2003-01-09")))
+          .execute(transaction);
       assertEquals(1, results);
     }
   }
@@ -103,8 +102,8 @@ public abstract class DeleteTest {
     try (final Transaction transaction = new TestTransaction(classicmodels.class)) {
       final classicmodels.PurchaseDetail p = new classicmodels.PurchaseDetail();
       final int results =
-        DELETE(p).
-        execute(transaction);
+        DELETE(p)
+          .execute(transaction);
       assertTrue(results > 2985);
     }
   }

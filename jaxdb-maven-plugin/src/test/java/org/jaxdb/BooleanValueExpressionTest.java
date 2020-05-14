@@ -62,8 +62,8 @@ public abstract class BooleanValueExpressionTest {
           FROM(p).
           WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100))).LIMIT(1)).
       FROM(p).
-      WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100))).
-      execute()) {
+      WHERE(AND(LIKE(p.name, "%Ford%"), GT(p.quantityInStock, 100)))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(false, rows.nextEntity().get());
       assertEquals(true, rows.nextEntity().get());

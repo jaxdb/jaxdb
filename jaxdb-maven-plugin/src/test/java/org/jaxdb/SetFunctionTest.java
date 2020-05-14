@@ -58,8 +58,8 @@ public abstract class SetFunctionTest {
         MAX(c.city),
         MIN(c.country),
         SUM.DISTINCT(c.salesEmployeeNumber)).
-      FROM(c).
-      execute()) {
+      FROM(c)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(BigInteger.valueOf(24367857008L), rows.nextEntity().get());
       assertEquals("White Plains", rows.nextEntity().get());

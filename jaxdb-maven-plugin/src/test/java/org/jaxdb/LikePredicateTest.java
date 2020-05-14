@@ -58,8 +58,8 @@ public abstract class LikePredicateTest {
         WHERE(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%"))).
         LIMIT(1)).
       FROM(p).
-      WHERE(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%"))).
-      execute()) {
+      WHERE(OR(LIKE(p.name, "%Ford%"), LIKE(SELECT(p.name).FROM(p).LIMIT(1), "%Ford%")))
+        .execute()) {
       for (int i = 0; i < 15; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());

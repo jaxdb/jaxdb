@@ -59,8 +59,8 @@ public abstract class NullPredicateTest {
         WHERE(IS.NULL(c.locality)).
         LIMIT(1)).
       FROM(c).
-      WHERE(IS.NULL(c.locality)).
-      execute()) {
+      WHERE(IS.NULL(c.locality))
+        .execute()) {
       for (int i = 0; i < 71; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -80,8 +80,8 @@ public abstract class NullPredicateTest {
         WHERE(IS.NOT.NULL(c.locality)).
         LIMIT(1)).
       FROM(c).
-      WHERE(IS.NOT.NULL(c.locality)).
-      execute()) {
+      WHERE(IS.NOT.NULL(c.locality))
+        .execute()) {
       for (int i = 0; i < 51; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());

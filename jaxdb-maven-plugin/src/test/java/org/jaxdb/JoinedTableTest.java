@@ -54,8 +54,8 @@ public abstract class JoinedTableTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      CROSS_JOIN(c).
-      execute()) {
+      CROSS_JOIN(c)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 3900);
     }
@@ -68,8 +68,8 @@ public abstract class JoinedTableTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      NATURAL_JOIN(c).
-      execute()) {
+      NATURAL_JOIN(c)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 300);
     }
@@ -84,8 +84,8 @@ public abstract class JoinedTableTest {
       SELECT(COUNT()).
       FROM(p).
       JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
-      JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber)).
-      execute()) {
+      JOIN(e).ON(EQ(c.salesEmployeeNumber, e.employeeNumber))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 300);
     }
@@ -98,8 +98,8 @@ public abstract class JoinedTableTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber)).
-      execute()) {
+      LEFT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 300);
     }
@@ -113,8 +113,8 @@ public abstract class JoinedTableTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber)).
-      execute()) {
+      RIGHT_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 100);
     }
@@ -128,8 +128,8 @@ public abstract class JoinedTableTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber)).
-      execute()) {
+      FULL_JOIN(c).ON(EQ(p.purchaseNumber, c.customerNumber))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertTrue(rows.nextEntity().get() > 300);
     }

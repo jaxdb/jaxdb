@@ -58,8 +58,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
           LIMIT(1)).
       FROM(p).
-      WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status))).
-      execute()) {
+      WHERE(OR(LT(p.customerNumber, 100), LT(50, p.customerNumber), LT(p.comments, p.status)))
+        .execute()) {
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -78,8 +78,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
           LIMIT(1)).
       FROM(c).
-      WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L))).
-      execute()) {
+      WHERE(AND(LTE(c.creditLimit, c.customerNumber), LTE(c.longitude, c.phone), LTE(45, c.phone), LTE(c.creditLimit, 329939933L)))
+        .execute()) {
       assertTrue(rows.nextRow());
       for (int i = 0; i < 23; ++i) {
         assertTrue(rows.nextRow());
@@ -99,8 +99,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
           LIMIT(1)).
       FROM(p).
-      WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments))).
-      execute()) {
+      WHERE(AND(EQ(p.status, p.status), EQ(p.comments, p.comments)))
+        .execute()) {
       for (int i = 0; i < 79; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -119,8 +119,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(NE(p.purchaseDate, p.shippedDate)).
           LIMIT(1)).
       FROM(p).
-      WHERE(NE(p.purchaseDate, p.shippedDate)).
-      execute()) {
+      WHERE(NE(p.purchaseDate, p.shippedDate))
+        .execute()) {
       for (int i = 0; i < 309; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -139,8 +139,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(GT(p.purchaseNumber, UNSIGNED(100))).
           LIMIT(1)).
       FROM(p).
-      WHERE(GT(p.purchaseNumber, UNSIGNED(100))).
-      execute()) {
+      WHERE(GT(p.purchaseNumber, UNSIGNED(100)))
+        .execute()) {
       for (int i = 0; i < 323; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());
@@ -159,8 +159,8 @@ public abstract class ComparisonPredicateTest {
           WHERE(GTE(p.priceEach, p.quantity)).
           LIMIT(1)).
       FROM(p).
-      WHERE(GTE(p.priceEach, p.quantity)).
-      execute()) {
+      WHERE(GTE(p.priceEach, p.quantity))
+        .execute()) {
       for (int i = 0; i < 2875; ++i) {
         assertTrue(rows.nextRow());
         assertTrue(rows.nextEntity().get());

@@ -53,8 +53,8 @@ public abstract class GroupClauseTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      GROUP_BY(p.vendor, p.productLine).
-      execute()) {
+      GROUP_BY(p.vendor, p.productLine)
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals(Integer.valueOf(1), rows.nextEntity().get());
     }

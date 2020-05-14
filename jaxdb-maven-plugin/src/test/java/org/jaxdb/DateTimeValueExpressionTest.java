@@ -85,8 +85,8 @@ public abstract class DateTimeValueExpressionTest {
           SUB(p.timeType, interval)).
         FROM(p).
         WHERE(condition != null ? AND(condition, notNull) : notNull).
-        LIMIT(1).
-        execute(transaction);
+        LIMIT(1)
+          .execute(transaction);
     ) {
       assertTrue(rows.nextRow());
       p = (types.Type)rows.nextEntity();
@@ -240,8 +240,8 @@ public abstract class DateTimeValueExpressionTest {
     try (final RowIterator<type.INT> rows =
       SELECT(COUNT()).
       FROM(p).
-      WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS)))).
-      execute()) {
+      WHERE(GT(p.shippedDate, ADD(p.requiredDate, new Interval(2, Unit.DAYS))))
+        .execute()) {
       assertTrue(rows.nextRow());
       assertEquals((Integer)1, rows.nextEntity().get());
     }

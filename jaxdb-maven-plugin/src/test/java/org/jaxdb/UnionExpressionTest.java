@@ -55,10 +55,11 @@ public abstract class UnionExpressionTest {
       SELECT(p, c).
       FROM(p).
       LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)).
-      UNION(SELECT(p, c).
+      UNION(
+        SELECT(p, c).
         FROM(p).
-        LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber))).
-      execute()) {
+        LEFT_JOIN(c).ON(EQ(p.customerNumber, c.customerNumber)))
+      .execute()) {
       assertTrue(rows.nextRow());
     }
   }
