@@ -23,8 +23,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-import org.jaxdb.jsql.type.DataType;
-
 final class operator {
   abstract static class Generic {
     private final java.lang.String symbol;
@@ -446,7 +444,7 @@ final class operator {
   abstract static class Logical<D> extends Generic {
     static final Logical<type.DataType<?>> EQ = new Logical<type.DataType<?>>("=") {
       @Override
-      java.lang.Boolean evaluate(final DataType<?> a, final DataType<?> b) {
+      java.lang.Boolean evaluate(final type.DataType<?> a, final type.DataType<?> b) {
         return a == null || b == null ? null : a.equals(b);
       }
     };
