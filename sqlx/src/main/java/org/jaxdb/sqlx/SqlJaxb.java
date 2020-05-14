@@ -158,8 +158,14 @@ final class SqlJaxb {
             }
             while (!rows.hasNext() && index < tableNames.length);
           }
-          catch (final IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new UnsupportedOperationException(e);
+          catch (final IllegalAccessException | NoSuchMethodException e) {
+            throw new RuntimeException(e);
+          }
+          catch (final InvocationTargetException e) {
+            if (e.getCause() instanceof RuntimeException)
+              throw (RuntimeException)e.getCause();
+
+            throw new RuntimeException(e.getCause());
           }
 
           return rows;
@@ -244,8 +250,17 @@ final class SqlJaxb {
 
       return counts.toArray();
     }
-    catch (final IllegalAccessException | InvocationTargetException e) {
-      throw new UnsupportedOperationException(e);
+    catch (final IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      if (e.getCause() instanceof SQLException)
+        throw (SQLException)e.getCause();
+
+      throw new RuntimeException(e.getCause());
     }
   }
 
@@ -265,8 +280,17 @@ final class SqlJaxb {
         out.append(loadRow(vendor, iterator.next())).append(';');
       }
     }
-    catch (final IllegalAccessException | InvocationTargetException e) {
-      throw new UnsupportedOperationException(e);
+    catch (final IllegalAccessException e) {
+      throw new RuntimeException(e);
+    }
+    catch (final InvocationTargetException e) {
+      if (e.getCause() instanceof RuntimeException)
+        throw (RuntimeException)e.getCause();
+
+      if (e.getCause() instanceof IOException)
+        throw (IOException)e.getCause();
+
+      throw new RuntimeException(e.getCause());
     }
   }
 
