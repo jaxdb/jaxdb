@@ -278,7 +278,7 @@
   <xs:attributeGroup name="bigint">
     <xs:attribute name="precision">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
+        <xs:restriction base="ddlx:precision">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="20"/>
         </xs:restriction>
@@ -303,7 +303,7 @@
   <xs:attributeGroup name="int">
     <xs:attribute name="precision" default="10">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
+        <xs:restriction base="ddlx:precision">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="10"/>
         </xs:restriction>
@@ -328,7 +328,7 @@
   <xs:attributeGroup name="smallint">
     <xs:attribute name="precision" default="5">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
+        <xs:restriction base="ddlx:precision">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="5"/>
         </xs:restriction>
@@ -353,7 +353,7 @@
   <xs:attributeGroup name="tinyint">
     <xs:attribute name="precision" default="3">
       <xs:simpleType>
-        <xs:restriction base="xs:byte">
+        <xs:restriction base="ddlx:precision">
           <xs:minInclusive value="1"/>
           <xs:maxInclusive value="3"/>
         </xs:restriction>
@@ -414,6 +414,9 @@
   <xs:attributeGroup name="decimal">
     <xs:attribute name="unsigned" type="xs:boolean" default="false"/>
     <xs:attribute name="precision">
+      <xs:annotation>
+        <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
+      </xs:annotation>
       <xs:simpleType>
         <xs:restriction base="xs:short">
           <xs:minInclusive value="1"/>
@@ -422,6 +425,9 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="scale">
+      <xs:annotation>
+        <xs:documentation>The number of digits to the right of the decimal point.</xs:documentation>
+      </xs:annotation>
       <xs:simpleType>
         <xs:restriction base="xs:short">
           <xs:minInclusive value="0"/>
@@ -450,6 +456,14 @@
   <xs:attributeGroup name="date">
     <xs:attribute name="default" type="dt:date"/>
   </xs:attributeGroup>
+  
+  <xs:simpleType name="precision">
+    <xs:restriction base="xs:byte">
+      <xs:annotation>
+        <xs:documentation>The number of digits in the unscaled value. Note: "precision" must be greater than or equal to "scale".</xs:documentation>
+      </xs:annotation>
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:attributeGroup name="time">
     <xs:attribute name="precision" default="6">
