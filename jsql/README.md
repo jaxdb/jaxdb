@@ -30,7 +30,7 @@
    <dependency>
      <groupId>org.jaxdb</groupId>
      <artifactId>jsql</artifactId>
-     <version>0.3.9</version>
+     <version>0.4.1</version>
    </dependency>
    ```
 
@@ -40,7 +40,7 @@
    <plugin>
      <groupId>org.jaxdb</groupId>
      <artifactId>jaxdb-maven-plugin</artifactId>
-     <version>0.3.9</version>
+     <version>0.4.1</version>
      <executions>
        <!-- [...] the ddlx <execution> is here -->
        <execution>
@@ -96,14 +96,12 @@
 
    ```xml
    <dbcp name="example"
-     xmlns="http://www.openjax.org/dbcp-1.0.xsd"
+     xmlns="http://www.openjax.org/dbcp-1.1.xsd"
      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:schemaLocation="http://www.openjax.org/dbcp-1.0.xsd http://www.openjax.org/dbcp.xsd">
+     xsi:schemaLocation="http://www.openjax.org/dbcp-1.1.xsd http://www.openjax.org/dbcp.xsd">
      <jdbc>
-       <url>jdbc:postgresql://localhost/example</url>
+       <url>jdbc:postgresql://localhost/example?user=example&amp;password=example</url>
        <driverClassName>org.postgresql.Driver</driverClassName>
-       <username>example</username>
-       <password>example</password>
      </jdbc>
      <default>
        <autoCommit>true</autoCommit>
@@ -140,7 +138,7 @@
    <dependency>
      <groupId>org.openjax</groupId>
      <artifactId>dbcp</artifactId>
-     <version>1.0.4</version>
+     <version>1.1.0</version>
    </dependency>
    ```
 
