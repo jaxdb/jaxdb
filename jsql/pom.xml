@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.jaxdb</groupId>
     <artifactId>jaxdb</artifactId>
-    <version>0.4.1</version>
+    <version>0.4.2-SNAPSHOT</version>
   </parent>
   <artifactId>jsql</artifactId>
   <name>JAX-DB jSQL</name>
@@ -130,12 +130,12 @@
     <dependency>
       <groupId>org.libj</groupId>
       <artifactId>math</artifactId>
-      <version>0.6.6</version>
+      <version>0.6.7-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.libj</groupId>
       <artifactId>sql</artifactId>
-      <version>0.4.7</version>
+      <version>0.4.8-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.openjax.jaxb</groupId>
@@ -144,24 +144,24 @@
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>sqlx</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.2-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.2-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>ddlx</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.2-SNAPSHOT</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

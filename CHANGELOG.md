@@ -1,6 +1,8 @@
 # Changes by Version
 
-## [v0.4.1](https://github.com/jaxdb/jaxdb/compare/3c76b0b32592bef2d92015639f5364940c6d02b3..HEAD) (2020-05-23)
+## [v0.4.2-SNAPSHOT](https://github.com/jaxdb/jaxdb/compare/7218be9c6d299f66753a9a3943f4cefc433b733e..HEAD)
+
+## [v0.4.1](https://github.com/jaxdb/jaxdb/compare/3c76b0b32592bef2d92015639f5364940c6d02b3..7218be9c6d299f66753a9a3943f4cefc433b733e) (2020-05-23)
 * Add `DBVendorSpecific`.
 * Support CLI execution of `Generator`.
 * Improve performance of `Generator`.

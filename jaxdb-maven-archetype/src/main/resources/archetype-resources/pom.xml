@@ -16,7 +16,7 @@
       <plugin>
         <groupId>org.jaxdb</groupId>
         <artifactId>jaxdb-maven-plugin</artifactId>
-        <version>0.4.1</version>
+        <version>0.4.2-SNAPSHOT</version>
         <executions>
           <execution>
             <id>ddlx2sql</id>
@@ -52,7 +52,7 @@
       <plugin>
         <groupId>org.jaxsb</groupId>
         <artifactId>jaxsb-maven-plugin</artifactId>
-        <version>2.1.6</version>
+        <version>2.1.7-SNAPSHOT</version>
         <executions>
           <execution>
             <id>generate</id>
@@ -75,7 +75,7 @@
     <dependency>
       <groupId>org.jaxdb</groupId>
       <artifactId>jsql</artifactId>
-      <version>0.4.1</version>
+      <version>0.4.2-SNAPSHOT</version>
       <exclusions>
         <exclusion>
           <groupId>xml-apis</groupId>
@@ -86,7 +86,7 @@
     <dependency>
       <groupId>org.openjax</groupId>
       <artifactId>dbcp</artifactId>
-      <version>1.1.0</version>
+      <version>1.1.1-SNAPSHOT</version>
     </dependency>
     <dependency>
       <groupId>mysql</groupId>
