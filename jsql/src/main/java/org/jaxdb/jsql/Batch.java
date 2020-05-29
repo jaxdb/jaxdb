@@ -28,10 +28,10 @@ import java.util.List;
 import org.jaxdb.jsql.Delete.DELETE;
 import org.jaxdb.jsql.Insert.INSERT;
 import org.jaxdb.jsql.Update.UPDATE;
+import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.Throwables;
 import org.libj.util.primitive.ArrayIntList;
 
 public class Batch {

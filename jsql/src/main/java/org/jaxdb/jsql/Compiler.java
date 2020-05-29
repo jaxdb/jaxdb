@@ -46,11 +46,11 @@ import org.jaxdb.vendor.Dialect;
 import org.jaxdb.vendor.DBVendorSpecific;
 import org.libj.io.Readers;
 import org.libj.io.Streams;
+import org.libj.lang.Hexadecimal;
+import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.util.Hexadecimal;
 import org.libj.util.IdentityHashSet;
-import org.libj.util.Numbers;
 
 abstract class Compiler extends DBVendorSpecific {
   private static final Compiler[] compilers = new Compiler[DBVendor.values().length];

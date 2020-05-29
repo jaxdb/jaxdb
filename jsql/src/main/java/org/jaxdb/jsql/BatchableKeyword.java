@@ -23,10 +23,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.exception.SQLExceptions;
-import org.libj.util.Throwables;
 
 abstract class BatchableKeyword<T extends type.Subject<?>> extends Keyword<T> implements ExecuteUpdate {
   BatchableKeyword(final BatchableKeyword<T> parent) {

@@ -59,11 +59,11 @@ public abstract class Dialect extends DBVendorSpecific {
 
   public static List<String> parseEnum(final String value) {
     final List<String> enums = new ArrayList<>();
-    final char[] chars = value.replace("\\\\", "\\").toCharArray();
+    final String str = value.replace("\\\\", "\\");
     final StringBuilder builder = new StringBuilder();
     boolean escaped = false;
-    for (int i = 0; i < chars.length; i++) {
-      final char ch = chars[i];
+    for (int i = 0, len = str.length(); i < len; i++) {
+      final char ch = str.charAt(i);
       if (ch == '\\') {
         escaped = true;
       }

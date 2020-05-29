@@ -45,8 +45,8 @@ import org.jaxdb.ddlx.runner.SQLite;
 import org.jaxdb.ddlx.runner.VendorRunner;
 import org.junit.runner.RunWith;
 import org.libj.jci.CompilationException;
+import org.libj.lang.Hexadecimal;
 import org.libj.lang.Strings;
-import org.libj.util.Hexadecimal;
 import org.xml.sax.SAXException;
 
 public abstract class TypesTest extends SQLxTest {

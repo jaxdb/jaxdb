@@ -33,12 +33,12 @@ import java.util.function.Predicate;
 
 import org.jaxdb.vendor.DBVendor;
 import org.jaxdb.vendor.Dialect;
+import org.libj.lang.Throwables;
 import org.libj.sql.AuditConnection;
 import org.libj.sql.AuditStatement;
 import org.libj.sql.ResultSets;
 import org.libj.sql.exception.SQLExceptions;
 import org.libj.util.CollectionUtil;
-import org.libj.util.Throwables;
 
 final class SelectImpl {
   static final Predicate<Compilable> entitiesWithOwnerPredicate = t -> (t instanceof type.DataType) && ((type.DataType<?>)t).owner == null;

@@ -57,9 +57,9 @@ import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Table;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Time;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.$Tinyint;
 import org.jaxdb.www.ddlx_0_4.xLygluGCXAA.Schema;
+import org.libj.lang.Numbers;
 import org.libj.lang.PackageLoader;
 import org.libj.lang.PackageNotFoundException;
-import org.libj.util.Numbers;
 import org.libj.util.function.Throwing;
 
 abstract class Compiler extends DBVendorSpecific {

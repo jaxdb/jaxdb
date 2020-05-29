@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.jaxdb.jsql.GenerateOn;
-import org.libj.util.Numbers;
+import org.libj.lang.Numbers;
 
 public final class GeneratorUtil {
   public static String compile(final Object[] object) {

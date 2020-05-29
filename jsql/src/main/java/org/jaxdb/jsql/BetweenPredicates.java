@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.time.temporal.Temporal;
 import java.util.Set;
 
-import org.libj.util.Numbers;
+import org.libj.lang.Numbers;
 import org.libj.util.Temporals;
 
 final class BetweenPredicates {
