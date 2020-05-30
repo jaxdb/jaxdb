@@ -53,6 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public abstract class SQLxTest {
   private static final Logger logger = LoggerFactory.getLogger(SQLxTest.class);
@@ -95,7 +96,7 @@ public abstract class SQLxTest {
   }
 
   @SuppressWarnings("unchecked")
-  private static Database toDatabase(final URL sqlxFile) throws IOException, UnmarshalException, URISyntaxException {
+  private static Database toDatabase(final URL sqlxFile) throws IOException, SAXParseException, UnmarshalException, URISyntaxException {
     final XmlPreview preview = XmlPreviewParser.parse(sqlxFile);
     final QName rootElement = preview.getRootElement();
     Class<Database> bindingClass;
