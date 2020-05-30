@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/jaxdb/jaxdb/badge.svg?1)](https://coveralls.io/github/jaxdb/jaxdb)
 [![Javadocs](https://www.javadoc.io/badge/org.jaxdb/sqlx.svg?1)](https://www.javadoc.io/doc/org.jaxdb/sqlx)
 [![Released Version](https://img.shields.io/maven-central/v/org.jaxdb/sqlx.svg?1)](https://mvnrepository.com/artifact/org.jaxdb/sqlx)
+![Snapshot Version](https://img.shields.io/nexus/s/org.jaxdb/sqlx?label=maven-snapshot&server=https%3A%2F%2Foss.sonatype.org)
 
 ## Introduction
 
