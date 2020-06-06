@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,10 +45,14 @@ import org.jaxsb.runtime.Bindings;
 import org.libj.util.CollectionUtil;
 import org.libj.util.RefDigraph;
 
-// TODO: In addition to JAXSB Schema objects, allow JAXDB Schema objects also.
+// TODO: In addition to JAX-SB Schema objects, allow JAX-DB Schema objects also.
 public final class Schemas {
   public static int[] drop(final Connection connection, final Schema[] schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), true, false, false);
+  }
+
+  public static int[] drop(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), true, false, false);
   }
 
   public static int[] drop(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
@@ -62,6 +67,10 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), true, false, true);
   }
 
+  public static int[] dropBatched(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), true, false, true);
+  }
+
   public static int[] dropBatched(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, false, true);
   }
@@ -72,6 +81,10 @@ public final class Schemas {
 
   public static int[] create(final Connection connection, final Schema[] schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), false, true, false);
+  }
+
+  public static int[] create(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), false, true, false);
   }
 
   public static int[] create(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
@@ -86,6 +99,10 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), false, true, true);
   }
 
+  public static int[] createBatched(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), false, true, true);
+  }
+
   public static int[] createBatched(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), false, true, true);
   }
@@ -98,6 +115,10 @@ public final class Schemas {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), true, true, false);
   }
 
+  public static int[] recreate(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), true, true, false);
+  }
+
   public static int[] recreate(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length + 1), schema, schemas), true, true, false);
   }
@@ -108,6 +129,10 @@ public final class Schemas {
 
   public static int[] recreateBatched(final Connection connection, final Schema[] schemas) throws GeneratorExecutionException, SQLException {
     return exec(connection, CollectionUtil.asCollection(new ArrayList<>(schemas.length), schemas), true, true, true);
+  }
+
+  public static int[] recreateBatched(final Connection connection, final Schema schema) throws GeneratorExecutionException, SQLException {
+    return exec(connection, Collections.singletonList(schema), true, true, true);
   }
 
   public static int[] recreateBatched(final Connection connection, final Schema schema, final Schema ... schemas) throws GeneratorExecutionException, SQLException {
